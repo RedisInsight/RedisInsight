@@ -1,7 +1,13 @@
 import React from 'react'
 import { mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 
 import { AddDbType } from 'uiSrc/pages/home/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -20,7 +26,7 @@ jest.mock('uiSrc/slices/app/features', () => ({
     },
     cloudAds: {
       flag: true,
-    }
+    },
   }),
 }))
 
@@ -38,7 +44,9 @@ describe('ConnectivityOptions', () => {
 
   it('should render all additional options', () => {
     const onClickOption = jest.fn()
-    render(<ConnectivityOptions {...mockedProps} onClickOption={onClickOption} />)
+    render(
+      <ConnectivityOptions {...mockedProps} onClickOption={onClickOption} />,
+    )
 
     fireEvent.click(screen.getByTestId('option-btn-sentinel'))
     expect(onClickOption).toBeCalledWith(AddDbType.sentinel)
@@ -62,13 +70,13 @@ describe('ConnectivityOptions', () => {
   })
 
   it('should call proper actions after click on create cloud btn', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       cloudSso: {
-        flag: true
+        flag: true,
       },
       cloudAds: {
         flag: true,
-      }
+      },
     })
 
     const onClose = jest.fn()
@@ -78,19 +86,19 @@ describe('ConnectivityOptions', () => {
 
     expect(store.getActions()).toEqual([
       setSSOFlow(OAuthSocialAction.Create),
-      setSocialDialogState(OAuthSocialSource.AddDbForm)
+      setSocialDialogState(OAuthSocialSource.AddDbForm),
     ])
     expect(onClose).toBeCalled()
   })
 
   it('should not should create free db button if cloud ads feature flag is disabled', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
       cloudSso: {
-        flag: true
+        flag: true,
       },
       cloudAds: {
         flag: false,
-      }
+      },
     })
 
     const onClose = jest.fn()

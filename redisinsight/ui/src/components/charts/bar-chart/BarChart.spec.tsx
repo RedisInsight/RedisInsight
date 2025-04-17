@@ -47,16 +47,23 @@ describe('BarChart', () => {
     ) ?? { x: 0, y: 0 }
 
     render(<BarChart data={mockData} minBarHeight={minBarHeight} />)
-    expect(screen.getByTestId(`bar-${smallestBar.x}-${smallestBar.y}`)).toBeInTheDocument()
-    expect(screen.getByTestId(`bar-${smallestBar.x}-${smallestBar.y}`)).toHaveAttribute('height', `${minBarHeight}`)
+    expect(
+      screen.getByTestId(`bar-${smallestBar.x}-${smallestBar.y}`),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByTestId(`bar-${smallestBar.x}-${smallestBar.y}`),
+    ).toHaveAttribute('height', `${minBarHeight}`)
   })
 
   it('should render tooltip and content inside', async () => {
     render(<BarChart data={mockData} name="test" />)
 
-    await waitFor(() => {
-      fireEvent.mouseMove(screen.getByTestId('bar-15-50000'))
-    }, { timeout: 210 }) // Account for long delay on tooltips
+    await waitFor(
+      () => {
+        fireEvent.mouseMove(screen.getByTestId('bar-15-50000'))
+      },
+      { timeout: 210 },
+    ) // Account for long delay on tooltips
 
     expect(screen.getByTestId('bar-tooltip')).toBeInTheDocument()
     expect(screen.getByTestId('bar-tooltip')).toHaveTextContent('50000')
@@ -64,7 +71,13 @@ describe('BarChart', () => {
 
   it('when dataType="Bytes" max value should be rounded by metric', async () => {
     const lastDataValue = last(mockData)
-    const { queryByTestId } = render(<BarChart data={mockData} name="test" dataType={BarChartDataType.Bytes} />)
+    const { queryByTestId } = render(
+      <BarChart
+        data={mockData}
+        name="test"
+        dataType={BarChartDataType.Bytes}
+      />,
+    )
 
     expect(queryByTestId(`ytick-${lastDataValue?.y}-4`)).not.toBeInTheDocument()
     expect(queryByTestId('ytick-51200-8')).toBeInTheDocument()
@@ -77,6 +90,8 @@ describe('BarChart', () => {
 
     expect(queryByTestId('ytick-51200-8')).not.toBeInTheDocument()
     expect(queryByTestId(`ytick-${lastDataValue?.y}-8`)).toBeInTheDocument()
-    expect(queryByTestId(`ytick-${lastDataValue?.y}-8`)).toHaveTextContent(`${lastDataValue?.y}`)
+    expect(queryByTestId(`ytick-${lastDataValue?.y}-8`)).toHaveTextContent(
+      `${lastDataValue?.y}`,
+    )
   })
 })

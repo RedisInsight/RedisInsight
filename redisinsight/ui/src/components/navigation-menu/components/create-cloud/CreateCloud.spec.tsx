@@ -17,14 +17,16 @@ jest.mock('uiSrc/telemetry', () => ({
 }))
 
 const mockFeatureFlags = (cloudAds = true) => {
-  jest.spyOn(appFeaturesSlice, 'appFeatureFlagsFeaturesSelector').mockReturnValue({
-    cloudSso: {
-      flag: true
-    },
-    cloudAds: {
-      flag: cloudAds
-    }
-  })
+  jest
+    .spyOn(appFeaturesSlice, 'appFeatureFlagsFeaturesSelector')
+    .mockReturnValue({
+      cloudSso: {
+        flag: true,
+      },
+      cloudAds: {
+        flag: cloudAds,
+      },
+    })
 }
 
 let store: typeof mockedStore
@@ -42,37 +44,43 @@ describe('CreateCloud', () => {
 
   it('should call proper actions on click cloud button', () => {
     const { container } = render(<CreateCloud />)
-    const createCloudLink = container.querySelector('[data-test-subj="create-cloud-nav-link"]')
+    const createCloudLink = container.querySelector(
+      '[data-test-subj="create-cloud-nav-link"]',
+    )
 
     fireEvent.click(createCloudLink as Element)
 
     expect(store.getActions()).toEqual([
       setSSOFlow(OAuthSocialAction.Create),
-      setSocialDialogState(OAuthSocialSource.NavigationMenu)
+      setSocialDialogState(OAuthSocialSource.NavigationMenu),
     ])
   })
 
   it('should call proper telemetry when sso is disabled', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       cloudSso: {
-        flag: false
+        flag: false,
       },
       cloudAds: {
-        flag: true
-      }
+        flag: true,
+      },
     })
     const { container } = render(<CreateCloud />)
-    const createCloudLink = container.querySelector('[data-test-subj="create-cloud-nav-link"]')
+    const createCloudLink = container.querySelector(
+      '[data-test-subj="create-cloud-nav-link"]',
+    )
 
     fireEvent.click(createCloudLink as Element)
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: HELP_LINKS.cloud.event,
       eventData: {
-        source: OAuthSocialSource.NavigationMenu
-      }
+        source: OAuthSocialSource.NavigationMenu,
+      },
     })
   })
 

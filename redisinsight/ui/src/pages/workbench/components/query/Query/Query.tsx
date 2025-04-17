@@ -5,7 +5,12 @@ import cx from 'classnames'
 import MonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import { useParams } from 'react-router-dom'
 
-import { DSLNaming, IRedisCommand, MonacoLanguage, Theme, } from 'uiSrc/constants'
+import {
+  DSLNaming,
+  IRedisCommand,
+  MonacoLanguage,
+  Theme,
+} from 'uiSrc/constants'
 import {
   actionTriggerParameterHints,
   createSyntaxWidget,
@@ -16,22 +21,42 @@ import {
   isParamsLine,
   MonacoAction,
   Nullable,
-  toModelDeltaDecoration
+  toModelDeltaDecoration,
 } from 'uiSrc/utils'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
-import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
-import { CommandExecutionUI, RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import {
+  IEditorMount,
+  ISnippetController,
+} from 'uiSrc/pages/workbench/interfaces'
+import {
+  CommandExecutionUI,
+  RedisResponseBuffer,
+} from 'uiSrc/slices/interfaces'
 import { ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { stopProcessing, workbenchResultsSelector } from 'uiSrc/slices/workbench/wb-results'
+import {
+  stopProcessing,
+  workbenchResultsSelector,
+} from 'uiSrc/slices/workbench/wb-results'
 import DedicatedEditor from 'uiSrc/components/monaco-editor/components/dedicated-editor'
 import { QueryActions, QueryTutorials } from 'uiSrc/components/query'
 
-import { getRange, getRediSearchSignutureProvider, } from 'uiSrc/pages/workbench/utils/monaco'
+import {
+  getRange,
+  getRediSearchSignutureProvider,
+} from 'uiSrc/pages/workbench/utils/monaco'
 import { CursorContext } from 'uiSrc/pages/workbench/types'
-import { asSuggestionsRef, getCommandsSuggestions, isIndexComplete } from 'uiSrc/pages/workbench/utils/suggestions'
-import { COMMANDS_TO_GET_INDEX_INFO, COMPOSITE_ARGS, EmptySuggestionsIds, } from 'uiSrc/pages/workbench/constants'
+import {
+  asSuggestionsRef,
+  getCommandsSuggestions,
+  isIndexComplete,
+} from 'uiSrc/pages/workbench/utils/suggestions'
+import {
+  COMMANDS_TO_GET_INDEX_INFO,
+  COMPOSITE_ARGS,
+  EmptySuggestionsIds,
+} from 'uiSrc/pages/workbench/constants'
 import { useDebouncedEffect } from 'uiSrc/services'
 import { fetchRedisearchInfoAction } from 'uiSrc/slices/browser/redisearch'
 import { findSuggestionsByArg } from 'uiSrc/pages/workbench/utils/searchSuggestions'
@@ -42,7 +67,7 @@ import {
   options,
   SYNTAX_CONTEXT_ID,
   SYNTAX_WIDGET_ID,
-  TUTORIALS
+  TUTORIALS,
 } from './constants'
 import styles from './styles.module.scss'
 
@@ -62,7 +87,8 @@ export interface Props {
 
 let execHistoryPos: number = 0
 let execHistory: CommandExecutionUI[] = []
-let decorationCollection: Nullable<monacoEditor.editor.IEditorDecorationsCollection> = null
+let decorationCollection: Nullable<monacoEditor.editor.IEditorDecorationsCollection> =
+  null
 
 const Query = (props: Props) => {
   const {
@@ -76,7 +102,7 @@ const Query = (props: Props) => {
     onSubmit = () => {},
     setQueryEl = () => {},
     onQueryChangeMode = () => {},
-    onChangeGroupMode = () => {}
+    onChangeGroupMode = () => {},
   } = props
   let contribution: Nullable<ISnippetController> = null
   const [isDedicatedEditorOpen, setIsDedicatedEditorOpen] = useState(false)
@@ -85,7 +111,7 @@ const Query = (props: Props) => {
   const suggestionsRef = useRef<monacoEditor.languages.CompletionItem[]>([])
   const helpWidgetRef = useRef<any>({
     isOpen: false,
-    data: {}
+    data: {},
   })
   const indexesRef = useRef<RedisResponseBuffer[]>([])
   const attributesRef = useRef<any>([])
@@ -97,19 +123,27 @@ const Query = (props: Props) => {
   const syntaxCommand = useRef<any>(null)
   const isDedicatedEditorOpenRef = useRef<boolean>(isDedicatedEditorOpen)
   const isEscapedSuggestions = useRef<boolean>(false)
-  let syntaxWidgetContext: Nullable<monacoEditor.editor.IContextKey<boolean>> = null
+  let syntaxWidgetContext: Nullable<monacoEditor.editor.IContextKey<boolean>> =
+    null
 
-  const { commandsArray: REDIS_COMMANDS_ARRAY, spec: REDIS_COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
-  const { items: execHistoryItems, loading, processing } = useSelector(workbenchResultsSelector)
+  const { commandsArray: REDIS_COMMANDS_ARRAY, spec: REDIS_COMMANDS_SPEC } =
+    useSelector(appRedisCommandsSelector)
+  const {
+    items: execHistoryItems,
+    loading,
+    processing,
+  } = useSelector(workbenchResultsSelector)
   const { theme } = useContext(ThemeContext)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
 
-  const compositeTokens = useMemo(() =>
-    commands
-      .filter((command) => command.token && command.token.includes(' '))
-      .map(({ token }) => token)
-      .concat(...COMPOSITE_ARGS),
-  [commands])
+  const compositeTokens = useMemo(
+    () =>
+      commands
+        .filter((command) => command.token && command.token.includes(' '))
+        .map(({ token }) => token)
+        .concat(...COMPOSITE_ARGS),
+    [commands],
+  )
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
@@ -118,14 +152,17 @@ const Query = (props: Props) => {
   let disposeCompletionItemProvider = () => {}
   let disposeSignatureHelpProvider = () => {}
 
-  useEffect(() =>
-    // componentWillUnmount
-    () => {
-      dispatch(stopProcessing())
-      contribution?.dispose?.()
-      disposeCompletionItemProvider()
-      disposeSignatureHelpProvider()
-    }, [])
+  useEffect(
+    () =>
+      // componentWillUnmount
+      () => {
+        dispatch(stopProcessing())
+        contribution?.dispose?.()
+        disposeCompletionItemProvider()
+        disposeSignatureHelpProvider()
+      },
+    [],
+  )
 
   useEffect(() => {
     indexesRef.current = indexes
@@ -144,20 +181,34 @@ const Query = (props: Props) => {
     const { monaco } = monacoObjects.current
     const notCommandRegEx = /^[\s|//]/
 
-    const newDecorations = compact(commands.map((command, index) => {
-      if (!command || notCommandRegEx.test(command) || (index === 0 && isParamsLine(command))) return null
-      const lineNumber = index + 1
+    const newDecorations = compact(
+      commands.map((command, index) => {
+        if (
+          !command ||
+          notCommandRegEx.test(command) ||
+          (index === 0 && isParamsLine(command))
+        )
+          return null
+        const lineNumber = index + 1
 
-      return toModelDeltaDecoration(
-        decoration(monaco, `decoration_${lineNumber}`, lineNumber, 1, lineNumber, 1)
-      )
-    }))
+        return toModelDeltaDecoration(
+          decoration(
+            monaco,
+            `decoration_${lineNumber}`,
+            lineNumber,
+            1,
+            lineNumber,
+            1,
+          ),
+        )
+      }),
+    )
 
     // highlight the first line with params
     if (isParamsLine(firstLine)) {
       newDecorations.push({
         range: new monaco.Range(1, 1, 1, firstLine.indexOf(']') + 2),
-        options: { inlineClassName: 'monaco-params-line' }
+        options: { inlineClassName: 'monaco-params-line' },
       })
     }
 
@@ -168,26 +219,32 @@ const Query = (props: Props) => {
     isDedicatedEditorOpenRef.current = isDedicatedEditorOpen
   }, [isDedicatedEditorOpen])
 
-  useDebouncedEffect(() => {
-    attributesRef.current = []
-    if (!isIndexComplete(selectedIndex)) return
+  useDebouncedEffect(
+    () => {
+      attributesRef.current = []
+      if (!isIndexComplete(selectedIndex)) return
 
-    const index = selectedIndex.replace(/^(['"])(.*)\1$/, '$2')
-    dispatch(fetchRedisearchInfoAction(index,
-      (data: any) => {
-        attributesRef.current = data?.attributes || []
-      }))
-  }, 200, [selectedIndex])
+      const index = selectedIndex.replace(/^(['"])(.*)\1$/, '$2')
+      dispatch(
+        fetchRedisearchInfoAction(index, (data: any) => {
+          attributesRef.current = data?.attributes || []
+        }),
+      )
+    },
+    200,
+    [selectedIndex],
+  )
 
   const editorDidMount = (
     editor: monacoEditor.editor.IStandaloneCodeEditor,
-    monaco: typeof monacoEditor
+    monaco: typeof monacoEditor,
   ) => {
     monacoObjects.current = { editor, monaco }
 
     // hack for exit from snippet mode after click Enter until no answer from monaco authors
     // https://github.com/microsoft/monaco-editor/issues/2756
-    contribution = editor.getContribution<ISnippetController>('snippetController2')
+    contribution =
+      editor.getContribution<ISnippetController>('snippetController2')
 
     syntaxWidgetContext = editor.createContextKey(SYNTAX_CONTEXT_ID, false)
     editor.focus()
@@ -198,34 +255,53 @@ const Query = (props: Props) => {
 
     setupMonacoRedisLang(monaco)
     editor.addAction(
-      getMonacoAction(MonacoAction.Submit, (editor) => handleSubmit(editor.getValue()), monaco)
+      getMonacoAction(
+        MonacoAction.Submit,
+        (editor) => handleSubmit(editor.getValue()),
+        monaco,
+      ),
     )
 
-    editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Space, () => {
-      onPressWidget()
-    }, SYNTAX_CONTEXT_ID)
+    editor.addCommand(
+      monaco.KeyMod.Shift | monaco.KeyCode.Space,
+      () => {
+        onPressWidget()
+      },
+      SYNTAX_CONTEXT_ID,
+    )
 
     editor.onMouseDown((e: monacoEditor.editor.IEditorMouseEvent) => {
-      if ((e.target as monacoEditor.editor.IMouseTargetContentWidget)?.detail === SYNTAX_WIDGET_ID) {
+      if (
+        (e.target as monacoEditor.editor.IMouseTargetContentWidget)?.detail ===
+        SYNTAX_WIDGET_ID
+      ) {
         onPressWidget()
       }
     })
 
-    editor.addCommand(monaco.KeyCode.Escape, () => {
-      hideSyntaxWidget(editor)
-      isWidgetEscaped.current = true
-    }, SYNTAX_CONTEXT_ID)
+    editor.addCommand(
+      monaco.KeyCode.Escape,
+      () => {
+        hideSyntaxWidget(editor)
+        isWidgetEscaped.current = true
+      },
+      SYNTAX_CONTEXT_ID,
+    )
 
     decorationCollection = editor.createDecorationsCollection()
 
-    const suggestionWidget = editor.getContribution<any>('editor.contrib.suggestController')
-    suggestionWidget?.onWillInsertSuggestItem(({ item }: Record<'item', any>) => {
-      if (item.completion.id === EmptySuggestionsIds.NoIndexes) {
-        helpWidgetRef.current.isOpen = true
-        editor.trigger('', 'hideSuggestWidget', null)
-        editor.trigger('', 'editor.action.triggerParameterHints', '')
-      }
-    })
+    const suggestionWidget = editor.getContribution<any>(
+      'editor.contrib.suggestController',
+    )
+    suggestionWidget?.onWillInsertSuggestItem(
+      ({ item }: Record<'item', any>) => {
+        if (item.completion.id === EmptySuggestionsIds.NoIndexes) {
+          helpWidgetRef.current.isOpen = true
+          editor.trigger('', 'hideSuggestWidget', null)
+          editor.trigger('', 'editor.action.triggerParameterHints', '')
+        }
+      },
+    )
     suggestionsRef.current = getSuggestions(editor).data
   }
 
@@ -245,24 +321,30 @@ const Query = (props: Props) => {
     const model = editor.getModel()
     const { lineNumber = 0 } = editor.getPosition() ?? {}
     const lineContent = model?.getLineContent(lineNumber)?.trim() ?? ''
-    const matchedCommand = REDIS_COMMANDS_ARRAY.find((command) => lineContent?.trim().startsWith(command)) ?? ''
+    const matchedCommand =
+      REDIS_COMMANDS_ARRAY.find((command) =>
+        lineContent?.trim().startsWith(command),
+      ) ?? ''
     // trigger parameter hints only ones between command and arguments in the same line
-    const isTriggerHints = lineContent.split(' ').length < (2 + matchedCommand.split(' ').length)
+    const isTriggerHints =
+      lineContent.split(' ').length < 2 + matchedCommand.split(' ').length
 
     if (isTriggerHints && !isWidgetOpen.current) {
       actionTriggerParameterHints(editor)
     }
   }
 
-  const onTriggerContentWidget = (position: Nullable<monacoEditor.Position>, language: string = ''): monacoEditor.editor.IContentWidget => ({
+  const onTriggerContentWidget = (
+    position: Nullable<monacoEditor.Position>,
+    language: string = '',
+  ): monacoEditor.editor.IContentWidget => ({
     getId: () => SYNTAX_WIDGET_ID,
-    getDomNode: () => createSyntaxWidget(`Use ${language} Editor`, 'Shift+Space'),
+    getDomNode: () =>
+      createSyntaxWidget(`Use ${language} Editor`, 'Shift+Space'),
     getPosition: () => ({
       position,
-      preference: [
-        monacoEditor.editor.ContentWidgetPositionPreference.BELOW
-      ]
-    })
+      preference: [monacoEditor.editor.ContentWidgetPositionPreference.BELOW],
+    }),
   })
 
   const onQuickHistoryAccess = () => {
@@ -271,11 +353,12 @@ const Query = (props: Props) => {
 
     const position = editor.getPosition()
     if (
-      position?.column !== 1
-      || position?.lineNumber !== 1
+      position?.column !== 1 ||
+      position?.lineNumber !== 1 ||
       // @ts-ignore
-      || editor.getContribution('editor.contrib.suggestController')?.model?.state
-    ) return
+      editor.getContribution('editor.contrib.suggestController')?.model?.state
+    )
+      return
 
     if (execHistory[execHistoryPos]) {
       const command = execHistory[execHistoryPos].command || ''
@@ -287,21 +370,22 @@ const Query = (props: Props) => {
   const onKeyDownMonaco = (e: monacoEditor.IKeyboardEvent) => {
     // trigger parameter hints
     if (
-      e.keyCode === monacoEditor.KeyCode.Tab
-      || e.keyCode === monacoEditor.KeyCode.Enter
-      || (e.keyCode === monacoEditor.KeyCode.Space && e.ctrlKey && e.shiftKey)
-      || (e.keyCode === monacoEditor.KeyCode.Space && !e.ctrlKey && !e.shiftKey)
+      e.keyCode === monacoEditor.KeyCode.Tab ||
+      e.keyCode === monacoEditor.KeyCode.Enter ||
+      (e.keyCode === monacoEditor.KeyCode.Space && e.ctrlKey && e.shiftKey) ||
+      (e.keyCode === monacoEditor.KeyCode.Space && !e.ctrlKey && !e.shiftKey)
     ) {
       onTriggerParameterHints()
     }
 
-    if (
-      e.keyCode === monacoEditor.KeyCode.UpArrow
-    ) {
+    if (e.keyCode === monacoEditor.KeyCode.UpArrow) {
       onQuickHistoryAccess()
     }
 
-    if (e.keyCode === monacoEditor.KeyCode.Enter || e.keyCode === monacoEditor.KeyCode.Space) {
+    if (
+      e.keyCode === monacoEditor.KeyCode.Enter ||
+      e.keyCode === monacoEditor.KeyCode.Space
+    ) {
       onExitSnippetMode()
     }
 
@@ -316,12 +400,16 @@ const Query = (props: Props) => {
 
     if (contribution?.isInSnippet?.()) {
       const { lineNumber = 0, column = 0 } = editor?.getPosition() ?? {}
-      editor.setSelection(new monacoEditor.Selection(lineNumber, column, lineNumber, column))
+      editor.setSelection(
+        new monacoEditor.Selection(lineNumber, column, lineNumber, column),
+      )
       contribution?.cancel?.()
     }
   }
 
-  const onKeyChangeCursorMonaco = (e: monacoEditor.editor.ICursorPositionChangedEvent) => {
+  const onKeyChangeCursorMonaco = (
+    e: monacoEditor.editor.ICursorPositionChangedEvent,
+  ) => {
     if (!monacoObjects.current) return
     const { editor } = monacoObjects?.current
     const model = editor.getModel()
@@ -337,7 +425,7 @@ const Query = (props: Props) => {
       e.position,
       REDIS_COMMANDS_SPEC,
       REDIS_COMMANDS_ARRAY,
-      compositeTokens as string[]
+      compositeTokens as string[],
     )
     handleSuggestions(editor, command)
     handleDslSyntax(e, command)
@@ -355,7 +443,7 @@ const Query = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         lang: syntaxCommand.current.lang,
-      }
+      },
     })
   }
 
@@ -372,7 +460,7 @@ const Query = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         lang: syntaxCommand.current.lang,
-      }
+      },
     })
   }
 
@@ -387,7 +475,7 @@ const Query = (props: Props) => {
 
   const handleSuggestions = (
     editor: monacoEditor.editor.IStandaloneCodeEditor,
-    command?: Nullable<IMonacoQuery>
+    command?: Nullable<IMonacoQuery>,
   ) => {
     const { data, forceHide, forceShow } = getSuggestions(editor, command)
     suggestionsRef.current = data
@@ -408,13 +496,14 @@ const Query = (props: Props) => {
     if (forceHide) {
       setTimeout(() => editor?.trigger('', 'hideSuggestWidget', null), 0)
     } else {
-      helpWidgetRef.current.isOpen = !isSuggestionsOpened() && helpWidgetRef.current.isOpen
+      helpWidgetRef.current.isOpen =
+        !isSuggestionsOpened() && helpWidgetRef.current.isOpen
     }
   }
 
   const handleDslSyntax = (
     e: monacoEditor.editor.ICursorPositionChangedEvent,
-    command: Nullable<IMonacoQuery>
+    command: Nullable<IMonacoQuery>,
   ) => {
     const { editor } = monacoObjects?.current || {}
     if (!command?.info || !editor) {
@@ -429,7 +518,10 @@ const Query = (props: Props) => {
     }
 
     const [beforeOffsetArgs, [currentOffsetArg]] = command.args
-    const foundArg = findSuggestionsByQueryArgs([{ ...command.info, token: command.name }], beforeOffsetArgs)
+    const foundArg = findSuggestionsByQueryArgs(
+      [{ ...command.info, token: command.name }],
+      beforeOffsetArgs,
+    )
 
     const DSL = foundArg?.stopArg?.dsl
     if (DSL && argInQuotesRegExp.test(currentOffsetArg)) {
@@ -438,16 +530,24 @@ const Query = (props: Props) => {
       const lang = DSLNaming[DSL] ?? null
       lang && showSyntaxWidget(editor, e.position, lang)
       selectedArg.current = currentOffsetArg
-      syntaxCommand.current = { ...command, lang: DSL, argToReplace: currentOffsetArg }
+      syntaxCommand.current = {
+        ...command,
+        lang: DSL,
+        argToReplace: currentOffsetArg,
+      }
     } else {
       isWidgetEscaped.current = false
     }
   }
 
-  const triggerUpdateCursorPosition = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+  const triggerUpdateCursorPosition = (
+    editor: monacoEditor.editor.IStandaloneCodeEditor,
+  ) => {
     const position = editor.getPosition()
     isDedicatedEditorOpenRef.current = false
-    editor.trigger('mouse', '_moveTo', { position: { lineNumber: 1, column: 1 } })
+    editor.trigger('mouse', '_moveTo', {
+      position: { lineNumber: 1, column: 1 },
+    })
     editor.trigger('mouse', '_moveTo', { position })
     editor.focus()
   }
@@ -455,17 +555,23 @@ const Query = (props: Props) => {
   const isSuggestionsOpened = () => {
     const { editor } = monacoObjects.current || {}
     if (!editor) return false
-    const suggestController = editor.getContribution<any>('editor.contrib.suggestController')
+    const suggestController = editor.getContribution<any>(
+      'editor.contrib.suggestController',
+    )
     return suggestController?.model?.state === 1
   }
 
   const triggerSuggestions = () => {
     isEscapedSuggestions.current = false
     const { editor } = monacoObjects.current || {}
-    setTimeout(() => editor?.trigger('', 'editor.action.triggerSuggest', { auto: false }))
+    setTimeout(() =>
+      editor?.trigger('', 'editor.action.triggerSuggest', { auto: false }),
+    )
   }
 
-  const hideSyntaxWidget = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+  const hideSyntaxWidget = (
+    editor: monacoEditor.editor.IStandaloneCodeEditor,
+  ) => {
     editor.removeContentWidget(onTriggerContentWidget(null))
     syntaxWidgetContext?.set(false)
     isWidgetOpen.current = false
@@ -474,7 +580,7 @@ const Query = (props: Props) => {
   const showSyntaxWidget = (
     editor: monacoEditor.editor.IStandaloneCodeEditor,
     position: monacoEditor.Position,
-    language: string
+    language: string,
   ) => {
     editor.addContentWidget(onTriggerContentWidget(position, language))
     isWidgetOpen.current = true
@@ -491,7 +597,7 @@ const Query = (props: Props) => {
     const wrapQuote = syntaxCommand.current.argToReplace[0]
     const replaceCommand = syntaxCommand.current.fullQuery.replace(
       syntaxCommand.current.argToReplace,
-      `${wrapQuote}${value}${wrapQuote}`
+      `${wrapQuote}${value}${wrapQuote}`,
     )
     editor.updateOptions({ readOnly: false })
     editor.executeEdits(null, [
@@ -500,10 +606,11 @@ const Query = (props: Props) => {
           syntaxCommand.current.commandPosition.startLine,
           0,
           syntaxCommand.current.commandPosition.endLine,
-          model.getLineLength(syntaxCommand.current.commandPosition.endLine) + 1
+          model.getLineLength(syntaxCommand.current.commandPosition.endLine) +
+            1,
         ),
-        text: replaceCommand
-      }
+        text: replaceCommand,
+      },
     ])
     setIsDedicatedEditorOpen(false)
     triggerUpdateCursorPosition(editor)
@@ -512,25 +619,30 @@ const Query = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         lang: syntaxCommand.current.lang,
-      }
+      },
     })
   }
 
   const setupMonacoRedisLang = (monaco: typeof monacoEditor) => {
-    disposeCompletionItemProvider = monaco.languages.registerCompletionItemProvider(MonacoLanguage.Redis, {
-      // refactor/remove trigger function (TODO: after apply suggestion need trigger again)
-      // triggerCharacters: [' '], // Dot and space will trigger suggestions
-      provideCompletionItems: (): monacoEditor.languages.CompletionList => ({ suggestions: suggestionsRef.current })
-    }).dispose
+    disposeCompletionItemProvider =
+      monaco.languages.registerCompletionItemProvider(MonacoLanguage.Redis, {
+        // refactor/remove trigger function (TODO: after apply suggestion need trigger again)
+        // triggerCharacters: [' '], // Dot and space will trigger suggestions
+        provideCompletionItems: (): monacoEditor.languages.CompletionList => ({
+          suggestions: suggestionsRef.current,
+        }),
+      }).dispose
 
-    disposeSignatureHelpProvider = monaco.languages.registerSignatureHelpProvider(MonacoLanguage.Redis, {
-      provideSignatureHelp: (): any => getRediSearchSignutureProvider(helpWidgetRef?.current)
-    }).dispose
+    disposeSignatureHelpProvider =
+      monaco.languages.registerSignatureHelpProvider(MonacoLanguage.Redis, {
+        provideSignatureHelp: (): any =>
+          getRediSearchSignutureProvider(helpWidgetRef?.current),
+      }).dispose
   }
 
   const getSuggestions = (
     editor: monacoEditor.editor.IStandaloneCodeEditor,
-    command?: Nullable<IMonacoQuery>
+    command?: Nullable<IMonacoQuery>,
   ): {
     forceHide: boolean
     forceShow: boolean
@@ -546,11 +658,19 @@ const Query = (props: Props) => {
     if (position.column === 1) {
       helpWidgetRef.current.isOpen = false
       if (command?.info) return asSuggestionsRef([])
-      return asSuggestionsRef(getCommandsSuggestions(commands, range), false, false)
+      return asSuggestionsRef(
+        getCommandsSuggestions(commands, range),
+        false,
+        false,
+      )
     }
 
     if (!command?.info) {
-      return asSuggestionsRef(getCommandsSuggestions(commands, range), false, false)
+      return asSuggestionsRef(
+        getCommandsSuggestions(commands, range),
+        false,
+        false,
+      )
     }
 
     const { allArgs, args, cursor } = command
@@ -562,20 +682,25 @@ const Query = (props: Props) => {
       setSelectedIndex('')
     }
 
-    const cursorContext: CursorContext = { ...cursor, currentOffsetArg, offset: command.commandCursorPosition, range }
+    const cursorContext: CursorContext = {
+      ...cursor,
+      currentOffsetArg,
+      offset: command.commandCursorPosition,
+      range,
+    }
     const { suggestions, helpWidget } = findSuggestionsByArg(
       commands,
       command,
       cursorContext,
       { fields: attributesRef.current, indexes: indexesRef.current },
-      isEscapedSuggestions.current
+      isEscapedSuggestions.current,
     )
 
     if (helpWidget) {
       const { isOpen, data } = helpWidget
       helpWidgetRef.current = {
         isOpen,
-        data: data || helpWidgetRef.current.data
+        data: data || helpWidgetRef.current.data,
       }
     }
 
@@ -587,13 +712,19 @@ const Query = (props: Props) => {
   return (
     <div className={styles.wrapper}>
       <div
-        className={cx(styles.container, { [styles.disabled]: isDedicatedEditorOpen })}
+        className={cx(styles.container, {
+          [styles.disabled]: isDedicatedEditorOpen,
+        })}
         onKeyDown={handleKeyDown}
         role="textbox"
         tabIndex={0}
         data-testid="main-input-container-area"
       >
-        <div className={styles.input} data-testid="query-input-container" ref={input}>
+        <div
+          className={styles.input}
+          data-testid="query-input-container"
+          ref={input}
+        >
           <MonacoEditor
             language={MonacoLanguage.Redis as string}
             theme={theme === Theme.Dark ? 'dark' : 'light'}
@@ -605,7 +736,10 @@ const Query = (props: Props) => {
           />
         </div>
         <div className={styles.queryFooter}>
-          <QueryTutorials tutorials={TUTORIALS} source="advanced_workbench_editor" />
+          <QueryTutorials
+            tutorials={TUTORIALS}
+            source="advanced_workbench_editor"
+          />
           <QueryActions
             isDisabled={isDedicatedEditorOpen}
             isLoading={isLoading}
@@ -616,7 +750,6 @@ const Query = (props: Props) => {
             onSubmit={handleSubmit}
           />
         </div>
-
       </div>
       {isDedicatedEditorOpen && (
         <DedicatedEditor

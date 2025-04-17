@@ -22,14 +22,11 @@ describe('RangeFilter', () => {
         handleChangeStart={handleChangeStart}
         start={1}
         end={1000}
-      />
+      />,
     )
     const startRangeInput = screen.getByTestId(startRangeTestId)
 
-    fireEvent.mouseUp(
-      startRangeInput,
-      { target: { value: 123 } }
-    )
+    fireEvent.mouseUp(startRangeInput, { target: { value: 123 } })
     expect(handleChangeStart).toBeCalledTimes(1)
   })
 
@@ -41,14 +38,11 @@ describe('RangeFilter', () => {
         handleChangeEnd={handleChangeEnd}
         start={1}
         end={100}
-      />
+      />,
     )
     const endRangeInput = screen.getByTestId(endRangeTestId)
 
-    fireEvent.mouseUp(
-      endRangeInput,
-      { target: { value: 15 } }
-    )
+    fireEvent.mouseUp(endRangeInput, { target: { value: 15 } })
     expect(handleChangeEnd).toBeCalledTimes(1)
   })
   it('should call handleResetFilter onClick reset button', () => {
@@ -62,7 +56,7 @@ describe('RangeFilter', () => {
         end={100}
         min={1}
         max={120}
-      />
+      />,
     )
     const resetBtn = screen.getByTestId(resetBtnTestId)
 

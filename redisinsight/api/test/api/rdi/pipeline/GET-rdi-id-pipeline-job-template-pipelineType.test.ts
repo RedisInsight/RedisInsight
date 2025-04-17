@@ -1,31 +1,34 @@
 import { RdiUrl } from 'src/modules/rdi/constants';
 import { sign } from 'jsonwebtoken';
-import {
-  describe, expect, deps, getMainCheckFn,
-} from '../../deps';
+import { describe, expect, deps, getMainCheckFn } from '../../deps';
 import { nock, Joi } from '../../../helpers/test';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const testRdiId = 'someTEST_pipeline_job_template_pipelineType';
 const testPipelineType = 'someType';
 const notExistedRdiId = 'notExisted';
 const testRdiUrl = 'http://rdilocal.test';
-const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
-
-const endpoint = (id: string, type: string = '') => request(server).get(
-  `/${constants.API.RDI}/${id || testRdiId}/pipeline/job/template/${type || testPipelineType}`,
+const mockedAccessToken = sign(
+  { exp: Math.trunc(Date.now() / 1000) + 3600 },
+  'test',
 );
+
+const endpoint = (id: string, type: string = '') =>
+  request(server).get(
+    `/${constants.API.RDI}/${id || testRdiId}/pipeline/job/template/${type || testPipelineType}`,
+  );
 
 const mockResponseSuccess = {
   template: 'Some template',
 };
 
-const responseSchema = Joi.object().keys({
-  template: Joi.string().required(),
-}).required().strict(true);
+const responseSchema = Joi.object()
+  .keys({
+    template: Joi.string().required(),
+  })
+  .required()
+  .strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -43,7 +46,10 @@ describe('GET /rdi/:id/pipeline/job/template/:pipelineType', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).get(`/${RdiUrl.GetJobTemplate}/${testPipelineType}`).query(true).reply(200, mockResponseSuccess);
+        nock(testRdiUrl)
+          .get(`/${RdiUrl.GetJobTemplate}/${testPipelineType}`)
+          .query(true)
+          .reply(200, mockResponseSuccess);
       },
     },
     {
@@ -77,10 +83,13 @@ describe('GET /rdi/:id/pipeline/job/template/:pipelineType', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).get(`/${RdiUrl.GetJobTemplate}/${testPipelineType}`).query(true).reply(401, {
-          message: 'Request failed with status code 401',
-          detail: 'Unauthorized'
-        });
+        nock(testRdiUrl)
+          .get(`/${RdiUrl.GetJobTemplate}/${testPipelineType}`)
+          .query(true)
+          .reply(401, {
+            message: 'Request failed with status code 401',
+            detail: 'Unauthorized',
+          });
       },
     },
   ].forEach(mainCheckFn);

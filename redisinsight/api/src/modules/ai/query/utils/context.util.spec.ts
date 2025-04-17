@@ -1,11 +1,16 @@
 import {
   mockAiQueryFullDbContext,
   mockAiQueryGetDescriptionTopValuesReply,
-  mockAiQueryGetPriceTopValuesReply, mockAiQueryGetTypeTopValuesReply,
+  mockAiQueryGetPriceTopValuesReply,
+  mockAiQueryGetTypeTopValuesReply,
   mockAiQueryHScanReply,
-  mockAiQueryIndex, mockAiQueryIndexContext,
-  mockAiQueryIndexInfoObject, mockAiQueryIndexInfoReply,
-  mockAiQueryJsonReply, mockAiQuerySchema, mockAiQuerySchemaForHash,
+  mockAiQueryIndex,
+  mockAiQueryIndexContext,
+  mockAiQueryIndexInfoObject,
+  mockAiQueryIndexInfoReply,
+  mockAiQueryJsonReply,
+  mockAiQuerySchema,
+  mockAiQuerySchemaForHash,
   mockStandaloneRedisClient,
 } from 'src/__mocks__';
 import { when } from 'jest-when';
@@ -18,7 +23,8 @@ import {
   createIndexCreateStatement,
   createIndexContext,
   getDocumentsSchema,
-  getIndexContext, getFullDbContext,
+  getIndexContext,
+  getFullDbContext,
 } from './context.util';
 
 describe('ContextUtility', () => {
@@ -30,10 +36,13 @@ describe('ContextUtility', () => {
     it.each([
       { input: 'string', result: 'string' },
       { input: 'string with spaces', result: '"string with spaces"' },
-      { input: 'string with special characters"', result: '"string with special characters\\""' },
+      {
+        input: 'string with special characters"',
+        result: '"string with special characters\\""',
+      },
       { input: null, result: null },
       { input: undefined, result: undefined },
-      { input: ({ some: 'obj' }) as unknown as string, result: { some: 'obj' } },
+      { input: { some: 'obj' } as unknown as string, result: { some: 'obj' } },
     ])('should add quotes when needed', async ({ input, result }) => {
       expect(quotesIfNeeded(input)).toEqual(result);
     });
@@ -42,11 +51,17 @@ describe('ContextUtility', () => {
     it.each([
       { input: ['key', 'value'], result: { key: 'value' } },
       { input: [], result: {} },
-      { input: ['key', 'value', 'array', ['some', 'array']], result: { key: 'value', array: ['some', 'array'] } },
+      {
+        input: ['key', 'value', 'array', ['some', 'array']],
+        result: { key: 'value', array: ['some', 'array'] },
+      },
       { input: null, result: {} },
       { input: undefined, result: {} },
-      { input: ({ some: 'obj' }) as any, result: {} },
-      { input: ([{ some: 'obj' }, 'value']) as any, result: { '[object Object]': 'value' } },
+      { input: { some: 'obj' } as any, result: {} },
+      {
+        input: [{ some: 'obj' }, 'value'] as any,
+        result: { '[object Object]': 'value' },
+      },
     ])('should return object', async ({ input, result }) => {
       expect(convertArrayReplyToObject(input)).toEqual(result);
     });
@@ -54,16 +69,15 @@ describe('ContextUtility', () => {
   describe('convertIndexInfoAttributeReply', () => {
     it.each([
       {
-        input: [
-          'key', 'value',
-        ],
+        input: ['key', 'value'],
         result: {
           key: 'value',
         },
       },
       {
         input: [
-          'key', 'value',
+          'key',
+          'value',
           'SORTABLE',
           'NOINDEX',
           'CASESENSITIVE',
@@ -82,8 +96,11 @@ describe('ContextUtility', () => {
       { input: [], result: {} },
       { input: null, result: {} },
       { input: undefined, result: {} },
-      { input: ({ some: 'obj' }) as any, result: {} },
-      { input: ([{ some: 'obj' }, 'value']) as any, result: { '[object Object]': 'value' } },
+      { input: { some: 'obj' } as any, result: {} },
+      {
+        input: [{ some: 'obj' }, 'value'] as any,
+        result: { '[object Object]': 'value' },
+      },
     ])('should return attribute info', async ({ input, result }) => {
       expect(convertIndexInfoAttributeReply(input)).toEqual(result);
     });
@@ -91,9 +108,7 @@ describe('ContextUtility', () => {
   describe('convertIndexInfoReply', () => {
     it.each([
       {
-        input: [
-          'key', 'value',
-        ],
+        input: ['key', 'value'],
         result: {
           key: 'value',
           index_definition: {},
@@ -101,57 +116,72 @@ describe('ContextUtility', () => {
       },
       {
         input: [
-          'key', 'value',
-          'index_definition', ['index_name', 'idx:index'],
-          'attributes', [[
-            'identifier', '$.brand',
-            'attribute', 'brand',
-            'type', 'TEXT',
-            'WEIGHT', '1',
-            'SORTABLE',
-            'NOINDEX',
-            'CASESENSITIVE',
-            'UNF',
-            'NOSTEM',
-          ]],
+          'key',
+          'value',
+          'index_definition',
+          ['index_name', 'idx:index'],
+          'attributes',
+          [
+            [
+              'identifier',
+              '$.brand',
+              'attribute',
+              'brand',
+              'type',
+              'TEXT',
+              'WEIGHT',
+              '1',
+              'SORTABLE',
+              'NOINDEX',
+              'CASESENSITIVE',
+              'UNF',
+              'NOSTEM',
+            ],
+          ],
         ],
         result: {
           key: 'value',
           index_definition: { index_name: 'idx:index' },
-          attributes: [{
-            identifier: '$.brand',
-            attribute: 'brand',
-            type: 'TEXT',
-            WEIGHT: '1',
-            SORTABLE: true,
-            NOINDEX: true,
-            CASESENSITIVE: true,
-            UNF: true,
-            NOSTEM: true,
-          }],
+          attributes: [
+            {
+              identifier: '$.brand',
+              attribute: 'brand',
+              type: 'TEXT',
+              WEIGHT: '1',
+              SORTABLE: true,
+              NOINDEX: true,
+              CASESENSITIVE: true,
+              UNF: true,
+              NOSTEM: true,
+            },
+          ],
         },
       },
       { input: [], result: { index_definition: {} } },
       { input: null, result: { index_definition: {} } },
       { input: undefined, result: { index_definition: {} } },
-      { input: ({ some: 'obj' }) as any, result: { index_definition: {} } },
-      { input: ([{ some: 'obj' }, 'value']) as any, result: { '[object Object]': 'value', index_definition: {} } },
+      { input: { some: 'obj' } as any, result: { index_definition: {} } },
+      {
+        input: [{ some: 'obj' }, 'value'] as any,
+        result: { '[object Object]': 'value', index_definition: {} },
+      },
     ])('should return attribute info', async ({ input, result }) => {
       expect(convertIndexInfoReply(input)).toEqual(result);
     });
   });
   describe('getAttributeTopValues', () => {
     beforeEach(() => {
-      mockStandaloneRedisClient.sendCommand.mockResolvedValue(['3', ['1', 'v1'], ['1', 'v2'], ['1', 'v3']]);
+      mockStandaloneRedisClient.sendCommand.mockResolvedValue([
+        '3',
+        ['1', 'v1'],
+        ['1', 'v2'],
+        ['1', 'v3'],
+      ]);
     });
 
     const mockResult = {
       distinct_count: 3,
-      top_values: [
-        { value: 'v1' },
-        { value: 'v2' },
-        { value: 'v3' },
-      ],
+      top_values: [{ value: 'v1' }, { value: 'v2' }, { value: 'v3' }],
     };
 
     it.each([
@@ -163,39 +193,60 @@ describe('ContextUtility', () => {
       { input: ['idx', { type: 'rejson' }], result: {} },
       { input: [], result: {} },
       { input: [null, null], result: {} },
-      { input: ([{ some: 'obj' }, 'value']) as any, result: {} },
-    ])('should return top values', async ({ input: [index, attribute], result }) => {
-      expect(await getAttributeTopValues(mockStandaloneRedisClient, index, attribute)).toEqual(result);
-    });
+      { input: [{ some: 'obj' }, 'value'] as any, result: {} },
+    ])(
+      'should return top values',
+      async ({ input: [index, attribute], result }) => {
+        expect(
+          await getAttributeTopValues(
+            mockStandaloneRedisClient,
+            index,
+            attribute,
+          ),
+        ).toEqual(result);
+      },
+    );
 
     it('should not fail when empty array received and set count to 0', async () => {
       mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce([]);
-      expect(await getAttributeTopValues(mockStandaloneRedisClient, 'idx', { type: 'geo' }))
-        .toEqual({ distinct_count: 0, top_values: [] });
+      expect(
+        await getAttributeTopValues(mockStandaloneRedisClient, 'idx', {
+          type: 'geo',
+        }),
+      ).toEqual({ distinct_count: 0, top_values: [] });
     });
 
     it('should not fail when count 0 and no keys', async () => {
       mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce(['0']);
-      expect(await getAttributeTopValues(mockStandaloneRedisClient, 'idx', { type: 'geo' }))
-        .toEqual({ distinct_count: 0, top_values: [] });
+      expect(
+        await getAttributeTopValues(mockStandaloneRedisClient, 'idx', {
+          type: 'geo',
+        }),
+      ).toEqual({ distinct_count: 0, top_values: [] });
     });
 
     it('should not fail', async () => {
-      mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(new Error('ERR: syntax error'));
-      expect(await getAttributeTopValues(mockStandaloneRedisClient, 'idx', { type: 'geo' })).toEqual({});
+      mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(
+        new Error('ERR: syntax error'),
+      );
+      expect(
+        await getAttributeTopValues(mockStandaloneRedisClient, 'idx', {
+          type: 'geo',
+        }),
+      ).toEqual({});
     });
   });
   describe('createIndexCreateStatement', () => {
     it.each([
       {
-        input:
-          {
-            index_name: 'idx',
-            index_definition: {
-              prefixes: [],
-              key_type: 'HASH',
-            },
-            attributes: [{
+        input: {
+          index_name: 'idx',
+          index_definition: {
+            prefixes: [],
+            key_type: 'HASH',
+          },
+          attributes: [
+            {
               identifier: '$.brand',
               attribute: 'brand',
               type: 'TAG',
@@ -205,20 +256,21 @@ describe('ContextUtility', () => {
               CASESENSITIVE: true,
               UNF: true,
               NOSTEM: true,
-            }],
-          },
+            },
+          ],
+        },
         result: 'FT.CREATE idx ON HASH SCHEMA $.brand AS brand TAG',
       },
       {
-        input:
-          {
-            index_name: 'idx',
-            index_definition: {
-              prefixes: ['*'],
-              key_type: 'HASH',
-              filter: 'type',
-            },
-            attributes: [{
+        input: {
+          index_name: 'idx',
+          index_definition: {
+            prefixes: ['*'],
+            key_type: 'HASH',
+            filter: 'type',
+          },
+          attributes: [
+            {
               identifier: '$.brand',
               attribute: 'brand',
               type: 'TAG',
@@ -228,14 +280,16 @@ describe('ContextUtility', () => {
               CASESENSITIVE: true,
               UNF: true,
               NOSTEM: true,
-            }],
-          },
-        result: 'FT.CREATE idx ON HASH PREFIX 1 * FILTER type SCHEMA $.brand AS brand TAG',
+            },
+          ],
+        },
+        result:
+          'FT.CREATE idx ON HASH PREFIX 1 * FILTER type SCHEMA $.brand AS brand TAG',
       },
       { input: {}, result: undefined },
       { input: undefined, result: undefined },
       { input: null, result: undefined },
-      { input: ([{ some: 'obj' }, 'value']) as any, result: undefined },
+      { input: [{ some: 'obj' }, 'value'] as any, result: undefined },
     ])('should return object', async ({ input, result }) => {
       expect(createIndexCreateStatement(input)).toEqual(result);
     });
@@ -243,15 +297,15 @@ describe('ContextUtility', () => {
   describe('createIndexContext', () => {
     it.each([
       {
-        input:
-          {
-            index_name: 'idx',
-            index_definition: {
-              prefixes: ['*'],
-              key_type: 'HASH',
-              filter: 'type',
-            },
-            attributes: [{
+        input: {
+          index_name: 'idx',
+          index_definition: {
+            prefixes: ['*'],
+            key_type: 'HASH',
+            filter: 'type',
+          },
+          attributes: [
+            {
               identifier: '$.brand',
               attribute: 'brand',
               type: 'TAG',
@@ -261,11 +315,13 @@ describe('ContextUtility', () => {
               CASESENSITIVE: true,
               UNF: true,
               NOSTEM: true,
-            }],
-          },
+            },
+          ],
+        },
         result: {
           index_name: 'idx',
-          create_statement: 'FT.CREATE idx ON HASH PREFIX 1 * FILTER type SCHEMA $.brand AS brand TAG',
+          create_statement:
+            'FT.CREATE idx ON HASH PREFIX 1 * FILTER type SCHEMA $.brand AS brand TAG',
           attributes: {
             brand: {
               CASESENSITIVE: true,
@@ -284,7 +340,7 @@ describe('ContextUtility', () => {
       { input: {}, result: { attributes: {} } },
       { input: undefined, result: { attributes: {} } },
       { input: null, result: { attributes: {} } },
-      { input: ([{ some: 'obj' }, 'value']) as any, result: { attributes: {} } },
+      { input: [{ some: 'obj' }, 'value'] as any, result: { attributes: {} } },
     ])('should return object', async ({ input, result }) => {
       expect(createIndexContext(input)).toEqual(result);
     });
@@ -306,34 +362,37 @@ describe('ContextUtility', () => {
     });
 
     it('Should get document schema for json type', async () => {
-      expect(await getDocumentsSchema(mockStandaloneRedisClient, mockAiQueryIndex, mockAiQueryIndexInfoObject))
-        .toEqual(mockAiQuerySchema);
+      expect(
+        await getDocumentsSchema(
+          mockStandaloneRedisClient,
+          mockAiQueryIndex,
+          mockAiQueryIndexInfoObject,
+        ),
+      ).toEqual(mockAiQuerySchema);
     });
     it('Should get document schema for hash type', async () => {
-      expect(await getDocumentsSchema(
-        mockStandaloneRedisClient,
-        mockAiQueryIndex,
-        { index_definition: { key_type: 'HASH' } },
-      ))
-        .toEqual(mockAiQuerySchemaForHash);
+      expect(
+        await getDocumentsSchema(mockStandaloneRedisClient, mockAiQueryIndex, {
+          index_definition: { key_type: 'HASH' },
+        }),
+      ).toEqual(mockAiQuerySchemaForHash);
     });
     it('Should return empty schema object for non-supported type', async () => {
-      expect(await getDocumentsSchema(
-        mockStandaloneRedisClient,
-        mockAiQueryIndex,
-        { index_definition: { key_type: 'STRING' } },
-      ))
-        .toEqual({
-          $ref: '#/definitions/IdxBicycle',
-          $schema: 'http://json-schema.org/draft-06/schema#',
-          definitions: {
-            IdxBicycle: {
-              additionalProperties: false,
-              title: 'IdxBicycle',
-              type: 'object',
-            },
+      expect(
+        await getDocumentsSchema(mockStandaloneRedisClient, mockAiQueryIndex, {
+          index_definition: { key_type: 'STRING' },
+        }),
+      ).toEqual({
+        $ref: '#/definitions/IdxBicycle',
+        $schema: 'http://json-schema.org/draft-06/schema#',
+        definitions: {
+          IdxBicycle: {
+            additionalProperties: false,
+            title: 'IdxBicycle',
+            type: 'object',
           },
-        });
+        },
+      });
     });
   });
   describe('getIndexContext', () => {
@@ -344,11 +403,20 @@ describe('ContextUtility', () => {
         .calledWith(expect.arrayContaining(['FT.SEARCH']), expect.anything())
         .mockResolvedValue(['0', 'key']);
       when(mockStandaloneRedisClient.sendCommand)
-        .calledWith(expect.arrayContaining(['FT.AGGREGATE', '@price']), expect.anything())
+        .calledWith(
+          expect.arrayContaining(['FT.AGGREGATE', '@price']),
+          expect.anything(),
+        )
         .mockResolvedValue(mockAiQueryGetPriceTopValuesReply)
-        .calledWith(expect.arrayContaining(['FT.AGGREGATE', '@description']), expect.anything())
+        .calledWith(
+          expect.arrayContaining(['FT.AGGREGATE', '@description']),
+          expect.anything(),
+        )
         .mockResolvedValue(mockAiQueryGetDescriptionTopValuesReply)
-        .calledWith(expect.arrayContaining(['FT.AGGREGATE', '@type']), expect.anything())
+        .calledWith(
+          expect.arrayContaining(['FT.AGGREGATE', '@type']),
+          expect.anything(),
+        )
         .mockResolvedValue(mockAiQueryGetTypeTopValuesReply);
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith(expect.arrayContaining(['FT.INFO']), expect.anything())
@@ -362,8 +430,9 @@ describe('ContextUtility', () => {
     });
 
     it('Should get index context', async () => {
-      expect(await getIndexContext(mockStandaloneRedisClient, mockAiQueryIndex))
-        .toEqual(mockAiQueryIndexContext);
+      expect(
+        await getIndexContext(mockStandaloneRedisClient, mockAiQueryIndex),
+      ).toEqual(mockAiQueryIndexContext);
     });
   });
   describe('getFullDbContext', () => {
@@ -379,8 +448,9 @@ describe('ContextUtility', () => {
     });
 
     it('Should get index context', async () => {
-      expect(await getFullDbContext(mockStandaloneRedisClient))
-        .toEqual(mockAiQueryFullDbContext);
+      expect(await getFullDbContext(mockStandaloneRedisClient)).toEqual(
+        mockAiQueryFullDbContext,
+      );
     });
   });
 });

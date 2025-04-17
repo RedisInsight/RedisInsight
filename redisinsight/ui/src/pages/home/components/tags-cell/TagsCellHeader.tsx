@@ -70,6 +70,7 @@ export const TagsCellHeader = memo(() => {
             <div key={key}>
               <EuiCheckbox
                 id={key}
+                className={styles.filterTagLabel}
                 label={key}
                 checked={groupedTags[key].every((value) =>
                   selectedTags.has(`${key}:${value}`),
@@ -82,6 +83,7 @@ export const TagsCellHeader = memo(() => {
                 <div key={value} style={{ paddingLeft: '20px' }}>
                   <EuiCheckbox
                     id={`${key}:${value}`}
+                    className={styles.filterTagLabel}
                     data-testid={`${key}:${value}`}
                     label={value}
                     checked={selectedTags.has(`${key}:${value}`)}

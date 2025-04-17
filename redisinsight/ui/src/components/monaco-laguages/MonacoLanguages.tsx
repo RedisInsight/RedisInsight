@@ -3,7 +3,12 @@ import { useSelector } from 'react-redux'
 import { monaco } from 'react-monaco-editor'
 import { findIndex } from 'lodash'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
-import { MonacoLanguage, redisLanguageConfig, Theme, IRedisCommandTree } from 'uiSrc/constants'
+import {
+  MonacoLanguage,
+  redisLanguageConfig,
+  Theme,
+  IRedisCommandTree,
+} from 'uiSrc/constants'
 import { getRedisMonarchTokensProvider } from 'uiSrc/utils'
 import { darkTheme, lightTheme, MonacoThemes } from 'uiSrc/constants/monaco'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
@@ -15,7 +20,8 @@ import { ModuleCommandPrefix } from 'uiSrc/pages/workbench/constants'
 
 const MonacoLanguages = () => {
   const { theme } = useContext(ThemeContext)
-  const { commandsArray: REDIS_COMMANDS_ARRAY, spec: COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
+  const { commandsArray: REDIS_COMMANDS_ARRAY, spec: COMMANDS_SPEC } =
+    useSelector(appRedisCommandsSelector)
 
   useEffect(() => {
     if (monaco?.editor) {
@@ -25,7 +31,9 @@ const MonacoLanguages = () => {
   }, [])
 
   useEffect(() => {
-    monaco.editor.setTheme(theme === Theme.Dark ? MonacoThemes.Dark : MonacoThemes.Light)
+    monaco.editor.setTheme(
+      theme === Theme.Dark ? MonacoThemes.Dark : MonacoThemes.Light,
+    )
   }, [theme])
 
   useEffect(() => {
@@ -36,24 +44,36 @@ const MonacoLanguages = () => {
 
   const setupMonacoRedisLang = () => {
     const languages = monaco.languages.getLanguages()
-    const isRedisLangRegistered = findIndex(languages, { id: MonacoLanguage.Redis }) > -1
+    const isRedisLangRegistered =
+      findIndex(languages, { id: MonacoLanguage.Redis }) > -1
     if (!isRedisLangRegistered) {
       monaco.languages.register({ id: MonacoLanguage.Redis })
       monaco.languages.register({ id: MonacoLanguage.RediSearch })
     }
 
-    monaco.languages.setLanguageConfiguration(MonacoLanguage.Redis, redisLanguageConfig)
-    monaco.languages.setLanguageConfiguration(MonacoLanguage.RediSearch, redisLanguageConfig)
-    const REDIS_COMMANDS = mergeRedisCommandsSpecs(COMMANDS_SPEC, SEARCH_COMMANDS_SPEC) as IRedisCommandTree[]
-    const REDIS_SEARCH_COMMANDS = REDIS_COMMANDS.filter(({ name }) => name?.startsWith(ModuleCommandPrefix.RediSearch))
+    monaco.languages.setLanguageConfiguration(
+      MonacoLanguage.Redis,
+      redisLanguageConfig,
+    )
+    monaco.languages.setLanguageConfiguration(
+      MonacoLanguage.RediSearch,
+      redisLanguageConfig,
+    )
+    const REDIS_COMMANDS = mergeRedisCommandsSpecs(
+      COMMANDS_SPEC,
+      SEARCH_COMMANDS_SPEC,
+    ) as IRedisCommandTree[]
+    const REDIS_SEARCH_COMMANDS = REDIS_COMMANDS.filter(({ name }) =>
+      name?.startsWith(ModuleCommandPrefix.RediSearch),
+    )
 
     monaco.languages.setMonarchTokensProvider(
       MonacoLanguage.RediSearch,
-      getRediSearchSubRedisMonarchTokensProvider(REDIS_SEARCH_COMMANDS)
+      getRediSearchSubRedisMonarchTokensProvider(REDIS_SEARCH_COMMANDS),
     )
     monaco.languages.setMonarchTokensProvider(
       MonacoLanguage.Redis,
-      getRedisMonarchTokensProvider(REDIS_COMMANDS)
+      getRedisMonarchTokensProvider(REDIS_COMMANDS),
     )
   }
 

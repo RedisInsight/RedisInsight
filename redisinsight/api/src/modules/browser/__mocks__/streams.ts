@@ -1,5 +1,7 @@
 import {
-  AddStreamEntriesDto, ConsumerDto, CreateConsumerGroupDto,
+  AddStreamEntriesDto,
+  ConsumerDto,
+  CreateConsumerGroupDto,
   GetStreamEntriesDto,
   StreamEntryDto,
   StreamEntryFieldDto,
@@ -124,15 +126,25 @@ export const mockStreamInfoReply = [
   Buffer.from('groups'),
   0,
   Buffer.from('first-entry'),
-  [Buffer.from(mockEntryId), [
-    mockEntryField.name, mockEntryField.value,
-    mockEntryField2.name, mockEntryField2.value,
-  ]],
+  [
+    Buffer.from(mockEntryId),
+    [
+      mockEntryField.name,
+      mockEntryField.value,
+      mockEntryField2.name,
+      mockEntryField2.value,
+    ],
+  ],
   Buffer.from('last-entry'),
-  [Buffer.from(mockEntryId2), [
-    mockEntryField.name, mockEntryField.value,
-    mockEntryField2.name, mockEntryField2.value,
-  ]],
+  [
+    Buffer.from(mockEntryId2),
+    [
+      mockEntryField.name,
+      mockEntryField.value,
+      mockEntryField2.name,
+      mockEntryField2.value,
+    ],
+  ],
 ];
 export const mockEmptyStreamInfoReply = [
   Buffer.from('length'),
@@ -151,28 +163,46 @@ export const mockEmptyStreamInfoReply = [
   null,
 ];
 export const mockStreamEntriesReply = [
-  [mockEntryId2, [
-    mockEntryField.name, mockEntryField.value,
-    mockEntryField2.name, mockEntryField2.value,
-  ]],
-  [mockEntryId, [
-    mockEntryField.name, mockEntryField.value,
-    mockEntryField2.name, mockEntryField2.value,
-  ]],
+  [
+    mockEntryId2,
+    [
+      mockEntryField.name,
+      mockEntryField.value,
+      mockEntryField2.name,
+      mockEntryField2.value,
+    ],
+  ],
+  [
+    mockEntryId,
+    [
+      mockEntryField.name,
+      mockEntryField.value,
+      mockEntryField2.name,
+      mockEntryField2.value,
+    ],
+  ],
 ];
 export const mockEmptyStreamEntriesReply = [];
 export const mockConsumerGroupsReply = [
-  'name', mockConsumerGroup.name,
-  'consumers', mockConsumerGroup.consumers,
-  'pending', mockConsumerGroup.pending,
-  'last-delivered-id', mockConsumerGroup.lastDeliveredId,
+  'name',
+  mockConsumerGroup.name,
+  'consumers',
+  mockConsumerGroup.consumers,
+  'pending',
+  mockConsumerGroup.pending,
+  'last-delivered-id',
+  mockConsumerGroup.lastDeliveredId,
 ];
 export const mockConsumerReply = [
-  'name', mockConsumer.name,
-  'pending', mockConsumer.pending,
-  'idle', mockConsumer.idle,
+  'name',
+  mockConsumer.name,
+  'pending',
+  mockConsumer.pending,
+  'idle',
+  mockConsumer.idle,
 ];
 export const mockPendingMessageReply = Object.values(mockPendingMessage);
 export const mockClaimPendingEntriesReply = [
-  mockPendingMessage.id, mockPendingMessage.id,
+  mockPendingMessage.id,
+  mockPendingMessage.id,
 ];

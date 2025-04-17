@@ -25,7 +25,11 @@ const ValidationTooltip = ({ isValid, errors, children }: Props) => {
       data-testid="connection-form-validation-tooltip"
       position="top"
       anchorClassName="euiToolTip__btn-disabled"
-      title={!isValid ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length) : null}
+      title={
+        !isValid
+          ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
+          : null
+      }
       content={!isValid ? tooltipContent : null}
     >
       {children}

@@ -1,5 +1,11 @@
 import {
-  Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Index,
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  Index,
 } from 'typeorm';
 import { IsInt, Min } from 'class-validator';
 import { Expose, Transform } from 'class-transformer';
@@ -49,9 +55,9 @@ export class DatabaseAnalysisEntity {
   totalMemory: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((value) => JSON.stringify(value), { toClassOnly: true })
+  @Transform(({ value }) => JSON.stringify(value), { toClassOnly: true })
   @Transform(
-    (str) => {
+    ({ value: str }) => {
       try {
         return JSON.parse(str).map((value) => ({
           ...value,
@@ -67,9 +73,9 @@ export class DatabaseAnalysisEntity {
   topKeysNsp: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((value) => JSON.stringify(value), { toClassOnly: true })
+  @Transform(({ value }) => JSON.stringify(value), { toClassOnly: true })
   @Transform(
-    (str) => {
+    ({ value: str }) => {
       try {
         return JSON.parse(str).map((value) => ({
           ...value,
@@ -85,9 +91,9 @@ export class DatabaseAnalysisEntity {
   topMemoryNsp: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((value) => JSON.stringify(value), { toClassOnly: true })
+  @Transform(({ value }) => JSON.stringify(value), { toClassOnly: true })
   @Transform(
-    (str) => {
+    ({ value: str }) => {
       try {
         return JSON.parse(str).map((value) => ({
           ...value,
@@ -103,9 +109,9 @@ export class DatabaseAnalysisEntity {
   topKeysLength: string;
 
   @Column({ nullable: true, type: 'blob' })
-  @Transform((value) => JSON.stringify(value), { toClassOnly: true })
+  @Transform(({ value }) => JSON.stringify(value), { toClassOnly: true })
   @Transform(
-    (str) => {
+    ({ value: str }) => {
       try {
         return JSON.parse(str).map((value) => ({
           ...value,

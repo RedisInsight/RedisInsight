@@ -1,6 +1,9 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { RedisDefaultModules, DATABASE_LIST_MODULES_TEXT } from 'uiSrc/slices/interfaces'
+import {
+  RedisDefaultModules,
+  DATABASE_LIST_MODULES_TEXT,
+} from 'uiSrc/slices/interfaces'
 import { fireEvent, render, act } from 'uiSrc/utils/test-utils'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import DatabaseListModules, { Props } from './DatabaseListModules'
@@ -19,12 +22,19 @@ const modulesMock: AdditionalRedisModule[] = [
 
 describe('DatabaseListModules', () => {
   it('should render', () => {
-    expect(render(<DatabaseListModules {...instance(mockedProps)} modules={modulesMock} />)).toBeTruthy()
+    expect(
+      render(
+        <DatabaseListModules
+          {...instance(mockedProps)}
+          modules={modulesMock}
+        />,
+      ),
+    ).toBeTruthy()
   })
 
   it('copy module name', async () => {
     const { queryByTestId } = render(
-      <DatabaseListModules {...instance(mockedProps)} modules={modulesMock} />
+      <DatabaseListModules {...instance(mockedProps)} modules={modulesMock} />,
     )
 
     const term = DATABASE_LIST_MODULES_TEXT[RedisDefaultModules.Search]
@@ -36,6 +46,13 @@ describe('DatabaseListModules', () => {
     })
 
     // queryByTestId
-    expect(render(<DatabaseListModules {...instance(mockedProps)} modules={modulesMock} />)).toBeTruthy()
+    expect(
+      render(
+        <DatabaseListModules
+          {...instance(mockedProps)}
+          modules={modulesMock}
+        />,
+      ),
+    ).toBeTruthy()
   })
 })

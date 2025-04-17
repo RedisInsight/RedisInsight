@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { filter, isNull } from 'lodash';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { CommandExecutionEntity } from 'src/modules/workbench/entities/command-execution.entity';
 import { CommandExecution } from 'src/modules/workbench/models/command-execution';
@@ -30,7 +30,10 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
     private readonly encryptionService: EncryptionService,
   ) {
     super();
-    this.modelEncryptor = new ModelEncryptor(this.encryptionService, ['command', 'result']);
+    this.modelEncryptor = new ModelEncryptor(this.encryptionService, [
+      'command',
+      'result',
+    ]);
   }
 
   /**
@@ -39,44 +42,62 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
    * Should encrypt command executions
    * Should always throw and error in case when unable to encrypt for some reason
    */
-  async createMany(sessionMetadata: SessionMetadata, commandExecutions: Partial<CommandExecution>[]): Promise<CommandExecution[]> {
+  async createMany(
+    sessionMetadata: SessionMetadata,
+    commandExecutions: Partial<CommandExecution>[],
+  ): Promise<CommandExecution[]> {
     // todo: limit by 30 max to insert
-    const response = await Promise.all(commandExecutions.map(async (commandExecution, idx) => {
-      const entity = plainToClass(CommandExecutionEntity, commandExecution);
-      let isNotStored: undefined | boolean;
+    const response = await Promise.all(
+      commandExecutions.map(async (commandExecution, idx) => {
+        const entity = plainToInstance(
+          CommandExecutionEntity,
+          commandExecution,
+        );
+        let isNotStored: undefined | boolean;
 
-      // Do not store command execution result that exceeded limitation
-      if (JSON.stringify(entity.result).length > WORKBENCH_CONFIG.maxResultSize) {
-        entity.result = JSON.stringify([
-          {
-            status: CommandExecutionStatus.Success,
-            response: ERROR_MESSAGES.WORKBENCH_RESPONSE_TOO_BIG(),
-            sizeLimitExceeded: true,
-          },
-        ]);
-        // Hack, do not store isNotStored. Send once to show warning
-        isNotStored = true;
-      }
+        // Do not store command execution result that exceeded limitation
+        if (
+          JSON.stringify(entity.result).length > WORKBENCH_CONFIG.maxResultSize
+        ) {
+          entity.result = JSON.stringify([
+            {
+              status: CommandExecutionStatus.Success,
+              response: ERROR_MESSAGES.WORKBENCH_RESPONSE_TOO_BIG(),
+              sizeLimitExceeded: true,
+            },
+          ]);
+          // Hack, do not store isNotStored. Send once to show warning
+          isNotStored = true;
+        }
 
-      return classToClass(CommandExecution, {
-        ...(await this.commandExecutionRepository.save(await this.modelEncryptor.encryptEntity(entity))),
-        command: commandExecutions[idx].command, // avoid decryption
-        mode: commandExecutions[idx].mode,
-        // avoid decryption + show original response when it was huge
-        // also will return original response even if it wasn't stored
-        // so flag sizeLimitExceeded will be undefined
-        result: commandExecutions[idx].result,
-        summary: commandExecutions[idx].summary,
-        executionTime: commandExecutions[idx].executionTime,
-        isNotStored,
-      });
-    }));
+        return classToClass(CommandExecution, {
+          ...(await this.commandExecutionRepository.save(
+            await this.modelEncryptor.encryptEntity(entity),
+          )),
+          command: commandExecutions[idx].command, // avoid decryption
+          mode: commandExecutions[idx].mode,
+          // avoid decryption + show original response when it was huge
+          // also will return original response even if it wasn't stored
+          // so flag sizeLimitExceeded will be undefined
+          result: commandExecutions[idx].result,
+          summary: commandExecutions[idx].summary,
+          executionTime: commandExecutions[idx].executionTime,
+          isNotStored,
+        });
+      }),
+    );
 
     // cleanup history and ignore error if any
     try {
-      await this.cleanupDatabaseHistory(response[0].databaseId, { type: commandExecutions[0].type });
+      await this.cleanupDatabaseHistory(response[0].databaseId, {
+        type: commandExecutions[0].type,
+      });
     } catch (e) {
-      this.logger.error('Error when trying to cleanup history after insert', e, sessionMetadata);
+      this.logger.error(
+        'Error when trying to cleanup history after insert',
+        e,
+        sessionMetadata,
+      );
     }
 
     return response;
@@ -123,26 +144,43 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
       }),
     );
 
-    return filter(decryptedEntities, (entity) => !isNull(entity))
-      .map((entity) => classToClass(ShortCommandExecution, entity));
+    return filter(decryptedEntities, (entity) => !isNull(entity)).map(
+      (entity) => classToClass(ShortCommandExecution, entity),
+    );
   }
 
   /**
    * @inheritDoc
    */
-  async getOne(sessionMetadata: SessionMetadata, databaseId: string, id: string): Promise<CommandExecution> {
+  async getOne(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+    id: string,
+  ): Promise<CommandExecution> {
     this.logger.debug('Getting command executions', sessionMetadata);
 
-    const entity = await this.commandExecutionRepository.findOneBy({ id, databaseId });
+    const entity = await this.commandExecutionRepository.findOneBy({
+      id,
+      databaseId,
+    });
 
     if (!entity) {
-      this.logger.error(`Command execution with id:${id} and databaseId:${databaseId} was not Found`, sessionMetadata);
+      this.logger.error(
+        `Command execution with id:${id} and databaseId:${databaseId} was not Found`,
+        sessionMetadata,
+      );
       throw new NotFoundException(ERROR_MESSAGES.COMMAND_EXECUTION_NOT_FOUND);
     }
 
-    this.logger.debug(`Succeed to get command execution ${id}`, sessionMetadata);
+    this.logger.debug(
+      `Succeed to get command execution ${id}`,
+      sessionMetadata,
+    );
 
-    const decryptedEntity = await this.modelEncryptor.decryptEntity(entity, true);
+    const decryptedEntity = await this.modelEncryptor.decryptEntity(
+      entity,
+      true,
+    );
 
     return classToClass(CommandExecution, decryptedEntity);
   }
@@ -150,7 +188,11 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
   /**
    * @inheritDoc
    */
-  async delete(sessionMetadata: SessionMetadata, databaseId: string, id: string): Promise<void> {
+  async delete(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+    id: string,
+  ): Promise<void> {
     this.logger.debug('Delete command execution', sessionMetadata);
 
     await this.commandExecutionRepository.delete({ id, databaseId });
@@ -161,10 +203,17 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
   /**
    * @inheritDoc
    */
-  async deleteAll(sessionMetadata: SessionMetadata, databaseId: string, queryFilter: CommandExecutionFilter): Promise<void> {
+  async deleteAll(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+    queryFilter: CommandExecutionFilter,
+  ): Promise<void> {
     this.logger.debug('Delete all command executions', sessionMetadata);
 
-    await this.commandExecutionRepository.delete({ databaseId, type: queryFilter.type });
+    await this.commandExecutionRepository.delete({
+      databaseId,
+      type: queryFilter.type,
+    });
 
     this.logger.debug('Command executions deleted', sessionMetadata);
   }
@@ -174,15 +223,20 @@ export class LocalCommandExecutionRepository extends CommandExecutionRepository 
    * @param databaseId
    * @param queryFilter
    */
-  private async cleanupDatabaseHistory(databaseId: string, queryFilter: CommandExecutionFilter): Promise<void> {
+  private async cleanupDatabaseHistory(
+    databaseId: string,
+    queryFilter: CommandExecutionFilter,
+  ): Promise<void> {
     // todo: investigate why delete with sub-query doesn't works
-    const idsToDelete = (await this.commandExecutionRepository
-      .createQueryBuilder()
-      .where({ databaseId, type: queryFilter.type })
-      .select('id')
-      .orderBy('createdAt', 'DESC')
-      .offset(WORKBENCH_CONFIG.maxItemsPerDb)
-      .getRawMany()).map((item) => item.id);
+    const idsToDelete = (
+      await this.commandExecutionRepository
+        .createQueryBuilder()
+        .where({ databaseId, type: queryFilter.type })
+        .select('id')
+        .orderBy('createdAt', 'DESC')
+        .offset(WORKBENCH_CONFIG.maxItemsPerDb)
+        .getRawMany()
+    ).map((item) => item.id);
 
     await this.commandExecutionRepository
       .createQueryBuilder()

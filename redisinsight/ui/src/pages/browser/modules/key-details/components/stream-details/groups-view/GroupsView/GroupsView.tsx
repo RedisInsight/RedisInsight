@@ -3,9 +3,7 @@ import { useSelector } from 'react-redux'
 import cx from 'classnames'
 import { orderBy } from 'lodash'
 
-import {
-  streamGroupsSelector,
-} from 'uiSrc/slices/browser/stream'
+import { streamGroupsSelector } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
@@ -33,11 +31,13 @@ const ConsumerGroups = (props: Props) => {
   const { data = [], columns = [], onClosePopover, onSelectGroup } = props
 
   const { loading } = useSelector(streamGroupsSelector)
-  const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? { }
+  const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? {}
 
   const [groups, setGroups] = useState<IConsumerGroup[]>([])
   const [sortedColumnName, setSortedColumnName] = useState<string>('name')
-  const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(SortOrder.ASC)
+  const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(
+    SortOrder.ASC,
+  )
 
   useEffect(() => {
     setGroups(orderBy(data, sortedColumnName, sortedColumnOrder?.toLowerCase()))
@@ -48,8 +48,15 @@ const ConsumerGroups = (props: Props) => {
       setSortedColumnName(column)
       setSortedColumnOrder(order)
 
-      setGroups(orderBy(data, [column === 'name' ? `${column}.viewValue` : column], order?.toLowerCase()))
-    }, [groups]
+      setGroups(
+        orderBy(
+          data,
+          [column === 'name' ? `${column}.viewValue` : column],
+          order?.toLowerCase(),
+        ),
+      )
+    },
+    [groups],
   )
 
   return (
@@ -79,10 +86,14 @@ const ConsumerGroups = (props: Props) => {
           onWheel={onClosePopover}
           onChangeSorting={onChangeSorting}
           noItemsMessage={noItemsMessageString}
-          sortedColumn={groups?.length ? {
-            column: sortedColumnName,
-            order: sortedColumnOrder,
-          } : undefined}
+          sortedColumn={
+            groups?.length
+              ? {
+                  column: sortedColumnName,
+                  order: sortedColumnOrder,
+                }
+              : undefined
+          }
         />
       </div>
     </>

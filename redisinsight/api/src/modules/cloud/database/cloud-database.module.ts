@@ -10,9 +10,6 @@ import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-databas
     CloudDatabaseAnalytics,
   ],
   controllers: [],
-  exports: [
-    CloudDatabaseCapiService,
-    CloudDatabaseAnalytics,
-  ],
+  exports: [CloudDatabaseCapiService, CloudDatabaseAnalytics],
 })
 export class CloudDatabaseModule {}

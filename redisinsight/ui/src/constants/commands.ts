@@ -101,7 +101,7 @@ export enum CommandGroup {
   CMS = 'cms',
   TopK = 'topk',
   BloomFilter = 'bf',
-  CuckooFilter = 'cf'
+  CuckooFilter = 'cf',
 }
 
 export enum CommandPrefix {
@@ -132,9 +132,7 @@ export const commandsWBTableView = [
   CommandRediSearch.Search,
   CommandRediSearch.Aggregate,
 ]
-export const commandsWBTablePartView = [
-  CommandRediSearch.Info,
-]
+export const commandsWBTablePartView = [CommandRediSearch.Info]
 
 export enum CommandRSSearchArgument {
   NoContent = 'NOCONTENT',

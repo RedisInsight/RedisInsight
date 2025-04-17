@@ -8,7 +8,7 @@ import {
   disconnectPubSub,
   pubSubSelector,
   setLoading,
-  setPubSubConnected
+  setPubSubConnected,
 } from 'uiSrc/slices/pubsub/pubsub'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { SocketEvent } from 'uiSrc/constants'
@@ -36,14 +36,14 @@ jest.mock('uiSrc/slices/pubsub/pubsub', () => ({
   pubSubSelector: jest.fn().mockReturnValue({
     isConnected: false,
     isSubscribed: false,
-    isSubscribeTriggered: false
+    isSubscribeTriggered: false,
   }),
 }))
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
-    id: '1'
+    id: '1',
   }),
 }))
 
@@ -64,19 +64,18 @@ describe('PubSubConfig', () => {
 
     socket.socketClient.emit(SocketEvent.Connect)
 
-    const afterRenderActions = [
-      setPubSubConnected(true),
-      setLoading(true)
-    ]
+    const afterRenderActions = [setPubSubConnected(true), setLoading(true)]
     expect(store.getActions()).toEqual([...afterRenderActions])
-    expect(useIoConnectionSpy)
-      .toHaveBeenCalledWith(getSocketApiUrl('pub-sub'), { query: { instanceId: '1' }, token: '' })
+    expect(useIoConnectionSpy).toHaveBeenCalledWith(
+      getSocketApiUrl('pub-sub'),
+      { query: { instanceId: '1' }, token: '' },
+    )
   })
 
   it('should emit subscribe on channel', () => {
     const pubSubSelectorMock = jest.fn().mockReturnValue({
       isSubscribeTriggered: true,
-      subscriptions: subscriptionsMock
+      subscriptions: subscriptionsMock,
     })
     pubSubSelector.mockImplementation(pubSubSelectorMock)
 

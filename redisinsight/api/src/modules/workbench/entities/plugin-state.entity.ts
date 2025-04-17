@@ -17,13 +17,10 @@ export class PluginStateEntity {
   @Expose()
   commandExecutionId: string;
 
-  @ManyToOne(
-    () => CommandExecutionEntity,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => CommandExecutionEntity, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'commandExecutionId' })
   commandExecution: CommandExecutionEntity;
 

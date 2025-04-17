@@ -1,10 +1,21 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render, screen, act } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+  act,
+} from 'uiSrc/utils/test-utils'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
-import { OAuthSocialAction, OAuthSocialSource, OAuthStrategy } from 'uiSrc/slices/interfaces'
+import {
+  OAuthSocialAction,
+  OAuthSocialSource,
+  OAuthStrategy,
+} from 'uiSrc/slices/interfaces'
 import { setOAuthCloudSource, signIn } from 'uiSrc/slices/oauth/cloud'
 import { MOCK_OAUTH_SSO_EMAIL } from 'uiSrc/mocks/data/oauth'
 import WelcomeAiAssistant from './WelcomeAiAssistant'
@@ -37,7 +48,9 @@ describe('WelcomeAiAssistant', () => {
   it('should render sign in form', () => {
     render(<WelcomeAiAssistant />)
 
-    expect(screen.getByTestId('oauth-container-social-buttons')).toBeInTheDocument()
+    expect(
+      screen.getByTestId('oauth-container-social-buttons'),
+    ).toBeInTheDocument()
   })
 
   it('should call proper actions after click on social button', async () => {
@@ -56,10 +69,10 @@ describe('WelcomeAiAssistant', () => {
       eventData: {
         accountOption: OAuthStrategy.Google,
         action: OAuthSocialAction.SignIn,
-        source: OAuthSocialSource.AiChat
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        source: OAuthSocialSource.AiChat,
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper actions after click on sso social button', async () => {
@@ -74,12 +87,14 @@ describe('WelcomeAiAssistant', () => {
       eventData: {
         accountOption: OAuthStrategy.SSO,
         action: OAuthSocialAction.SignIn,
-        source: OAuthSocialSource.AiChat
-      }
+        source: OAuthSocialSource.AiChat,
+      },
     })
 
     await act(async () => {
-      fireEvent.change(screen.getByTestId('sso-email'), { target: { value: MOCK_OAUTH_SSO_EMAIL } })
+      fireEvent.change(screen.getByTestId('sso-email'), {
+        target: { value: MOCK_OAUTH_SSO_EMAIL },
+      })
     })
 
     expect(screen.getByTestId('btn-submit')).not.toBeDisabled()
@@ -98,8 +113,8 @@ describe('WelcomeAiAssistant', () => {
       event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_PROCEEDED,
       eventData: {
         action: OAuthSocialAction.SignIn,
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

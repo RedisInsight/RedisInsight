@@ -9,13 +9,15 @@ import './styles/styles.scss'
 
 interface Props {
   command?: string
-  data?: { response: any, status: string }[]
+  data?: { response: any; status: string }[]
 }
 
-const renderRediSearch = (props:Props) => {
+const renderRediSearch = (props: Props) => {
   const { command = '', data: result = [] } = props
-  render(<App command={command} result={result} />,
-    document.getElementById('app'))
+  render(
+    <App command={command} result={result} />,
+    document.getElementById('app'),
+  )
 }
 
 if (process.env.NODE_ENV === 'development') {

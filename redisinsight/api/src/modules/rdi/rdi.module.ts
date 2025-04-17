@@ -15,9 +15,7 @@ import { RdiStatisticsService } from 'src/modules/rdi/rdi-statistics.service';
 
 @Module({})
 export class RdiModule {
-  static register(
-    rdiRepository: Type<RdiRepository> = LocalRdiRepository,
-  ) {
+  static register(rdiRepository: Type<RdiRepository> = LocalRdiRepository) {
     return {
       module: RdiModule,
       controllers: [

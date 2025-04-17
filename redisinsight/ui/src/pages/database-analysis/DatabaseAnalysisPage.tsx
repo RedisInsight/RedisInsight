@@ -7,12 +7,20 @@ import {
   dbAnalysisReportsSelector,
   fetchDBAnalysisAction,
   fetchDBAnalysisReportsHistory,
-  setSelectedAnalysisId
+  setSelectedAnalysisId,
 } from 'uiSrc/slices/analytics/dbAnalysis'
-import { analyticsSettingsSelector, setAnalyticsViewTab } from 'uiSrc/slices/analytics/settings'
+import {
+  analyticsSettingsSelector,
+  setAnalyticsViewTab,
+} from 'uiSrc/slices/analytics/settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
-import { sendPageViewTelemetry, sendEventTelemetry, TelemetryPageView, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  sendPageViewTelemetry,
+  sendEventTelemetry,
+  TelemetryPageView,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 
 import Header from './components/header'
@@ -22,8 +30,14 @@ import styles from './styles.module.scss'
 const DatabaseAnalysisPage = () => {
   const { viewTab } = useSelector(analyticsSettingsSelector)
   const { loading: analysisLoading, data } = useSelector(dbAnalysisSelector)
-  const { data: reports, selectedAnalysis } = useSelector(dbAnalysisReportsSelector)
-  const { name: connectedInstanceName, db, provider } = useSelector(connectedInstanceSelector)
+  const { data: reports, selectedAnalysis } = useSelector(
+    dbAnalysisReportsSelector,
+  )
+  const {
+    name: connectedInstanceName,
+    db,
+    provider,
+  } = useSelector(connectedInstanceSelector)
 
   const { instanceId } = useParams<{ instanceId: string }>()
 
@@ -44,10 +58,7 @@ const DatabaseAnalysisPage = () => {
   useEffect(() => {
     if (!selectedAnalysis && reports?.length) {
       dispatch(setSelectedAnalysisId(reports[0].id!))
-      dispatch(fetchDBAnalysisAction(
-        instanceId,
-        reports[0].id!
-      ))
+      dispatch(fetchDBAnalysisAction(instanceId, reports[0].id!))
     }
   }, [selectedAnalysis, reports])
 
@@ -57,13 +68,10 @@ const DatabaseAnalysisPage = () => {
       eventData: {
         databaseId: instanceId,
         provider,
-      }
+      },
     })
     dispatch(setSelectedAnalysisId(reportId))
-    dispatch(fetchDBAnalysisAction(
-      instanceId,
-      reportId
-    ))
+    dispatch(fetchDBAnalysisAction(instanceId, reportId))
   }
 
   useEffect(() => {
@@ -76,8 +84,8 @@ const DatabaseAnalysisPage = () => {
     sendPageViewTelemetry({
       name: TelemetryPageView.DATABASE_ANALYSIS,
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
     setIsPageViewSent(true)
   }

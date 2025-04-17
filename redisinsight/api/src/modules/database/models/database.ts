@@ -42,8 +42,8 @@ export class Database {
 
   @ApiProperty({
     description:
-      'The hostname of your Redis database, for example redis.acme.com.'
-      + ' If your Redis server is running on your local machine, you can enter either 127.0.0.1 or localhost.',
+      'The hostname of your Redis database, for example redis.acme.com.' +
+      ' If your Redis server is running on your local machine, you can enter either 127.0.0.1 or localhost.',
     type: String,
     default: 'localhost',
   })
@@ -95,8 +95,8 @@ export class Database {
 
   @ApiPropertyOptional({
     description:
-      'The password, if any, for your Redis database. '
-      + 'If your database doesn’t require a password, leave this field empty.',
+      'The password, if any, for your Redis database. ' +
+      'If your database doesn’t require a password, leave this field empty.',
     type: String,
   })
   @Expose()
@@ -343,7 +343,8 @@ export class Database {
   tags?: Tag[];
 
   @ApiPropertyOptional({
-    description: 'Whether the database was created from a file or environment variables at startup',
+    description:
+      'Whether the database was created from a file or environment variables at startup',
     type: Boolean,
   })
   @Expose()

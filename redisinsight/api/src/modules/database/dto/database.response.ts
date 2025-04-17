@@ -5,7 +5,11 @@ import { SentinelMasterResponse } from 'src/modules/redis-sentinel/dto/sentinel.
 import { Expose, Type } from 'class-transformer';
 import { HiddenField } from 'src/common/decorators/hidden-field.decorator';
 
-export class DatabaseResponse extends OmitType(Database, ['password', 'sshOptions', 'sentinelMaster'] as const) {
+export class DatabaseResponse extends OmitType(Database, [
+  'password',
+  'sshOptions',
+  'sentinelMaster',
+] as const) {
   @ApiPropertyOptional({
     description: 'The database password flag (true if password was set)',
     type: Boolean,

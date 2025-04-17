@@ -6,6 +6,10 @@ export const Client = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): UserClient => {
     const socket = ctx.switchToWs().getClient();
 
-    return new UserClient(socket.id, socket, get(socket, 'handshake.query.instanceId'));
+    return new UserClient(
+      socket.id,
+      socket,
+      get(socket, 'handshake.query.instanceId'),
+    );
   },
 );

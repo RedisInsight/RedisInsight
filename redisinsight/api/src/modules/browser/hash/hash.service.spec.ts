@@ -16,10 +16,7 @@ import {
   mockDatabaseClientFactory,
   mockStandaloneRedisClient,
 } from 'src/__mocks__';
-import {
-  GetHashFieldsDto,
-  HashFieldDto,
-} from 'src/modules/browser/hash/dto';
+import { GetHashFieldsDto, HashFieldDto } from 'src/modules/browser/hash/dto';
 import {
   BrowserToolHashCommands,
   BrowserToolKeysCommands,
@@ -33,12 +30,16 @@ import {
   mockGetFieldsDto,
   mockGetFieldsResponse,
   mockGetFieldsWithTtlResponse,
-  mockHashField, mockHashFieldTtlDto, mockHashFieldTtlDto2, mockHashFieldTtlDto3,
+  mockHashField,
+  mockHashFieldTtlDto,
+  mockHashFieldTtlDto2,
+  mockHashFieldTtlDto3,
   mockHashFieldWithExpire,
   mockHashFieldWithExpire2,
   mockRedisHScanResponse,
   mockRedisHScanWithFieldsExpireResponse,
-  mockRedisHTtlResponse, mockUpdateHashFieldsTtlDto,
+  mockRedisHTtlResponse,
+  mockUpdateHashFieldsTtlDto,
 } from 'src/modules/browser/__mocks__';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { RECOMMENDATION_NAMES } from 'src/constants';
@@ -71,7 +72,9 @@ describe('HashService', () => {
     }).compile();
 
     service = module.get<HashService>(HashService);
-    recommendationService = module.get<DatabaseRecommendationService>(DatabaseRecommendationService);
+    recommendationService = module.get<DatabaseRecommendationService>(
+      DatabaseRecommendationService,
+    );
     client.sendPipeline = jest.fn().mockResolvedValue([[null, '1']]);
   });
 
@@ -82,7 +85,12 @@ describe('HashService', () => {
         .mockResolvedValue(false);
     });
     it('create hash with expiration', async () => {
-      expect(await service.createHash(mockBrowserClientMetadata, mockCreateHashWithExpireDto)).toEqual(undefined);
+      expect(
+        await service.createHash(
+          mockBrowserClientMetadata,
+          mockCreateHashWithExpireDto,
+        ),
+      ).toEqual(undefined);
       expect(mockStandaloneRedisClient.sendPipeline).toHaveBeenCalledWith([
         [
           BrowserToolHashCommands.HSet,
@@ -96,12 +104,19 @@ describe('HashService', () => {
           mockCreateHashWithExpireDto.expire,
         ],
       ]);
-      expect(mockStandaloneRedisClient.isFeatureSupported).toHaveBeenCalledWith(RedisFeature.HashFieldsExpiration);
+      expect(mockStandaloneRedisClient.isFeatureSupported).toHaveBeenCalledWith(
+        RedisFeature.HashFieldsExpiration,
+      );
     });
     it('create hash with expiration but without fields exp since no expire was provided for fields', async () => {
       mockStandaloneRedisClient.isFeatureSupported.mockResolvedValueOnce(true);
 
-      expect(await service.createHash(mockBrowserClientMetadata, mockCreateHashWithExpireDto)).toEqual(undefined);
+      expect(
+        await service.createHash(
+          mockBrowserClientMetadata,
+          mockCreateHashWithExpireDto,
+        ),
+      ).toEqual(undefined);
       expect(mockStandaloneRedisClient.sendPipeline).toHaveBeenCalledWith([
         [
           BrowserToolHashCommands.HSet,
@@ -115,13 +130,19 @@ describe('HashService', () => {
           mockCreateHashWithExpireDto.expire,
         ],
       ]);
-      expect(mockStandaloneRedisClient.isFeatureSupported).toHaveBeenCalledWith(RedisFeature.HashFieldsExpiration);
+      expect(mockStandaloneRedisClient.isFeatureSupported).toHaveBeenCalledWith(
+        RedisFeature.HashFieldsExpiration,
+      );
     });
     it('create hash with expiration and fields expiration', async () => {
       mockStandaloneRedisClient.isFeatureSupported.mockResolvedValueOnce(true);
 
-      expect(await service.createHash(mockBrowserClientMetadata, mockCreateHashWithExpireAndFieldsExpireDto))
-        .toEqual(undefined);
+      expect(
+        await service.createHash(
+          mockBrowserClientMetadata,
+          mockCreateHashWithExpireAndFieldsExpireDto,
+        ),
+      ).toEqual(undefined);
       expect(mockStandaloneRedisClient.sendPipeline).toHaveBeenCalledWith([
         [
           BrowserToolHashCommands.HSet,
@@ -142,35 +163,47 @@ describe('HashService', () => {
           BrowserToolHashCommands.HExpire,
           mockCreateHashWithExpireAndFieldsExpireDto.keyName,
           mockHashFieldWithExpire.expire,
-          'fields', '1',
+          'fields',
+          '1',
           mockHashFieldWithExpire.field,
         ],
         [
           BrowserToolHashCommands.HExpire,
           mockCreateHashWithExpireAndFieldsExpireDto.keyName,
           mockHashFieldWithExpire2.expire,
-          'fields', '1',
+          'fields',
+          '1',
           mockHashFieldWithExpire2.field,
         ],
       ]);
-      expect(mockStandaloneRedisClient.isFeatureSupported).toHaveBeenCalledWith(RedisFeature.HashFieldsExpiration);
+      expect(mockStandaloneRedisClient.isFeatureSupported).toHaveBeenCalledWith(
+        RedisFeature.HashFieldsExpiration,
+      );
     });
     it('create hash without expiration', async () => {
       const { keyName, fields } = mockAddFieldsDto;
-      const commandArgs = flatMap(fields, ({ field, value }: HashFieldDto) => [field, value]);
+      const commandArgs = flatMap(fields, ({ field, value }: HashFieldDto) => [
+        field,
+        value,
+      ]);
 
       when(client.sendCommand)
         .calledWith([BrowserToolHashCommands.HSet, keyName, ...commandArgs])
         .mockResolvedValue(1);
 
-      expect(await service.createHash(mockBrowserClientMetadata, mockAddFieldsDto)).toEqual(undefined);
+      expect(
+        await service.createHash(mockBrowserClientMetadata, mockAddFieldsDto),
+      ).toEqual(undefined);
       expect(mockStandaloneRedisClient.sendPipeline).toHaveBeenCalledWith([
         [BrowserToolHashCommands.HSet, keyName, ...commandArgs],
       ]);
     });
     it('key with this name exist', async () => {
       const { keyName, fields } = mockAddFieldsDto;
-      const args = flatMap(fields, ({ field, value }: HashFieldDto) => [field, value]);
+      const args = flatMap(fields, ({ field, value }: HashFieldDto) => [
+        field,
+        value,
+      ]);
 
       when(client.sendCommand)
         .calledWith([BrowserToolKeysCommands.Exists, keyName])
@@ -206,10 +239,12 @@ describe('HashService', () => {
     });
     it('succeed to get fields of the hash', async () => {
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolHashCommands.HScan,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolHashCommands.HScan,
+            expect.anything(),
+          ]),
+        )
         .mockResolvedValue(mockRedisHScanResponse);
 
       const result = await service.getFields(
@@ -227,22 +262,28 @@ describe('HashService', () => {
     it('succeed to get fields of the hash with ttls', async () => {
       mockStandaloneRedisClient.isFeatureSupported.mockResolvedValueOnce(true);
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolHashCommands.HScan,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolHashCommands.HScan,
+            expect.anything(),
+          ]),
+        )
         .mockResolvedValue(mockRedisHScanWithFieldsExpireResponse);
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolHashCommands.HLen,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolHashCommands.HLen,
+            expect.anything(),
+          ]),
+        )
         .mockResolvedValue(mockGetFieldsWithTtlResponse.total);
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolHashCommands.HTtl,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolHashCommands.HTtl,
+            expect.anything(),
+          ]),
+        )
         .mockResolvedValue(mockRedisHTtlResponse);
 
       const result = await service.getFields(
@@ -264,22 +305,28 @@ describe('HashService', () => {
       };
       mockStandaloneRedisClient.isFeatureSupported.mockResolvedValueOnce(true);
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolHashCommands.HScan,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolHashCommands.HScan,
+            expect.anything(),
+          ]),
+        )
         .mockResolvedValue(mockRedisHScanWithFieldsExpireResponse);
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolHashCommands.HLen,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolHashCommands.HLen,
+            expect.anything(),
+          ]),
+        )
         .mockResolvedValue(mockGetFieldsWithTtlResponse.total);
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolHashCommands.HTtl,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolHashCommands.HTtl,
+            expect.anything(),
+          ]),
+        )
         .mockRejectedValueOnce(replyError);
 
       const result = await service.getFields(
@@ -288,7 +335,10 @@ describe('HashService', () => {
       );
       expect(result).toEqual({
         ...mockGetFieldsWithTtlResponse,
-        fields: mockGetFieldsWithTtlResponse.fields.map((field) => ({ ...field, expire: undefined })),
+        fields: mockGetFieldsWithTtlResponse.fields.map((field) => ({
+          ...field,
+          expire: undefined,
+        })),
       });
       expect(client.sendCommand).toHaveBeenCalledWith(
         expect.arrayContaining([
@@ -338,7 +388,11 @@ describe('HashService', () => {
         match: 'fi\\[a-e\\]ld',
       };
       when(client.sendCommand)
-        .calledWith([BrowserToolHashCommands.HGet, dto.keyName, item.field.toString()])
+        .calledWith([
+          BrowserToolHashCommands.HGet,
+          dto.keyName,
+          item.field.toString(),
+        ])
         .mockResolvedValue('value');
 
       const result = await service.getFields(mockBrowserClientMetadata, dto);
@@ -404,10 +458,12 @@ describe('HashService', () => {
     });
     it('should call recommendationService', async () => {
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolHashCommands.HScan,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolHashCommands.HScan,
+            expect.anything(),
+          ]),
+        )
         .mockResolvedValue(mockRedisHScanResponse);
 
       const result = await service.getFields(
@@ -440,16 +496,18 @@ describe('HashService', () => {
     });
     it('should scan with match="*" by default and default count', async () => {
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolHashCommands.HScan,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolHashCommands.HScan,
+            expect.anything(),
+          ]),
+        )
         .mockResolvedValue(mockRedisHScanResponse);
 
-      const result = await service.scanHash(
-        mockStandaloneRedisClient,
-        { keyName: mockGetFieldsDto.keyName, cursor: 0 },
-      );
+      const result = await service.scanHash(mockStandaloneRedisClient, {
+        keyName: mockGetFieldsDto.keyName,
+        cursor: 0,
+      });
       expect(result).toEqual({ ...mockGetFieldsResponse, total: undefined });
       expect(client.sendCommand).toHaveBeenCalledWith([
         BrowserToolHashCommands.HScan,
@@ -463,10 +521,12 @@ describe('HashService', () => {
     });
     it('should scan with passed arguments', async () => {
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolHashCommands.HScan,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolHashCommands.HScan,
+            expect.anything(),
+          ]),
+        )
         .mockResolvedValue(mockRedisHScanResponse);
 
       const result = await service.scanHash(
@@ -493,7 +553,9 @@ describe('HashService', () => {
         .mockResolvedValue(true);
     });
     it('succeed to add/update fields to the Hash data type', async () => {
-      expect(await service.addFields(mockBrowserClientMetadata, mockAddFieldsDto)).toEqual(undefined);
+      expect(
+        await service.addFields(mockBrowserClientMetadata, mockAddFieldsDto),
+      ).toEqual(undefined);
       expect(client.sendCommand).toHaveBeenCalledWith([
         BrowserToolKeysCommands.Exists,
         mockAddFieldsDto.keyName,
@@ -508,7 +570,12 @@ describe('HashService', () => {
       ]);
     });
     it('succeed add/update fields to the Hash data type without expiration fields when feature disabled', async () => {
-      expect(await service.addFields(mockBrowserClientMetadata, mockAddFieldsWithExpirationDto)).toEqual(undefined);
+      expect(
+        await service.addFields(
+          mockBrowserClientMetadata,
+          mockAddFieldsWithExpirationDto,
+        ),
+      ).toEqual(undefined);
       expect(client.sendCommand).toHaveBeenCalledWith([
         BrowserToolKeysCommands.Exists,
         mockAddFieldsDto.keyName,
@@ -528,7 +595,12 @@ describe('HashService', () => {
     });
     it('succeed to add/update fields to the Hash data type with fields expiration', async () => {
       mockStandaloneRedisClient.isFeatureSupported.mockResolvedValueOnce(true);
-      expect(await service.addFields(mockBrowserClientMetadata, mockAddFieldsWithExpirationDto)).toEqual(undefined);
+      expect(
+        await service.addFields(
+          mockBrowserClientMetadata,
+          mockAddFieldsWithExpirationDto,
+        ),
+      ).toEqual(undefined);
       expect(client.sendCommand).toHaveBeenCalledWith([
         BrowserToolKeysCommands.Exists,
         mockAddFieldsWithExpirationDto.keyName,
@@ -548,14 +620,16 @@ describe('HashService', () => {
           BrowserToolHashCommands.HExpire,
           mockAddFieldsWithExpirationDto.keyName,
           mockHashFieldWithExpire.expire,
-          'fields', '1',
+          'fields',
+          '1',
           mockHashFieldWithExpire.field,
         ],
         [
           BrowserToolHashCommands.HExpire,
           mockAddFieldsWithExpirationDto.keyName,
           mockHashFieldWithExpire2.expire,
-          'fields', '1',
+          'fields',
+          '1',
           mockHashFieldWithExpire2.field,
         ],
       ]);
@@ -600,11 +674,19 @@ describe('HashService', () => {
   describe('updateTtl', () => {
     beforeEach(() => {
       when(client.sendCommand)
-        .calledWith([BrowserToolKeysCommands.Exists, mockUpdateHashFieldsTtlDto.keyName])
+        .calledWith([
+          BrowserToolKeysCommands.Exists,
+          mockUpdateHashFieldsTtlDto.keyName,
+        ])
         .mockResolvedValue(true);
     });
     it('should update ttl for 2 fields and persist one', async () => {
-      expect(await service.updateTtl(mockBrowserClientMetadata, mockUpdateHashFieldsTtlDto)).toEqual(undefined);
+      expect(
+        await service.updateTtl(
+          mockBrowserClientMetadata,
+          mockUpdateHashFieldsTtlDto,
+        ),
+      ).toEqual(undefined);
       expect(client.sendCommand).toHaveBeenCalledWith([
         BrowserToolKeysCommands.Exists,
         mockUpdateHashFieldsTtlDto.keyName,
@@ -637,11 +719,17 @@ describe('HashService', () => {
     });
     it('key with this name does not exist for addFields', async () => {
       when(client.sendCommand)
-        .calledWith([BrowserToolKeysCommands.Exists, mockUpdateHashFieldsTtlDto.keyName])
+        .calledWith([
+          BrowserToolKeysCommands.Exists,
+          mockUpdateHashFieldsTtlDto.keyName,
+        ])
         .mockResolvedValue(false);
 
       await expect(
-        service.updateTtl(mockBrowserClientMetadata, mockUpdateHashFieldsTtlDto),
+        service.updateTtl(
+          mockBrowserClientMetadata,
+          mockUpdateHashFieldsTtlDto,
+        ),
       ).rejects.toThrow(NotFoundException);
       expect(client.sendCommand).not.toHaveBeenCalledWith([
         BrowserToolHashCommands.HExpire,
@@ -660,7 +748,10 @@ describe('HashService', () => {
       client.sendPipeline.mockResolvedValueOnce([[replyError, null]]);
 
       await expect(
-        service.updateTtl(mockBrowserClientMetadata, mockUpdateHashFieldsTtlDto),
+        service.updateTtl(
+          mockBrowserClientMetadata,
+          mockUpdateHashFieldsTtlDto,
+        ),
       ).rejects.toThrow(BadRequestException);
     });
     it("user don't have required permissions for addFields", async () => {
@@ -679,16 +770,21 @@ describe('HashService', () => {
   describe('deleteFields', () => {
     beforeEach(() => {
       when(client.sendCommand)
-        .calledWith([BrowserToolKeysCommands.Exists, mockDeleteFieldsDto.keyName])
+        .calledWith([
+          BrowserToolKeysCommands.Exists,
+          mockDeleteFieldsDto.keyName,
+        ])
         .mockResolvedValue(true);
     });
     it('succeeded to delete fields from Hash data type', async () => {
       const { fields } = mockDeleteFieldsDto;
       when(client.sendCommand)
-        .calledWith(expect.arrayContaining([
-          BrowserToolHashCommands.HDel,
-          expect.anything(),
-        ]))
+        .calledWith(
+          expect.arrayContaining([
+            BrowserToolHashCommands.HDel,
+            expect.anything(),
+          ]),
+        )
         .mockResolvedValue(fields.length);
 
       const result = await service.deleteFields(
@@ -700,7 +796,10 @@ describe('HashService', () => {
     });
     it('key with this name does not exist for deleteFields', async () => {
       when(client.sendCommand)
-        .calledWith([BrowserToolKeysCommands.Exists, mockDeleteFieldsDto.keyName])
+        .calledWith([
+          BrowserToolKeysCommands.Exists,
+          mockDeleteFieldsDto.keyName,
+        ])
         .mockResolvedValue(false);
 
       await expect(

@@ -34,7 +34,9 @@ export default class JavaDate implements JavaSerializable {
 
     // Validate the date
     if (Number.isNaN(date.getTime())) {
-      throw new Error(`Invalid date value: ${timeValue} (original: ${this.time})`)
+      throw new Error(
+        `Invalid date value: ${timeValue} (original: ${this.time})`,
+      )
     }
 
     return date

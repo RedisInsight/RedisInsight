@@ -1,6 +1,10 @@
 import { AxiosError } from 'axios'
 import { cloneDeep, omit } from 'lodash'
-import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SortOrder } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
@@ -62,7 +66,7 @@ import reducer, {
   claimConsumerMessages,
   claimConsumerMessagesSuccess,
   claimConsumerMessagesFailure,
-  deleteMessageFromList
+  deleteMessageFromList,
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { bufferToString, stringToBuffer } from 'uiSrc/utils'
@@ -71,9 +75,12 @@ import {
   ConsumerGroupDto,
   ClaimPendingEntryDto,
   PendingEntryDto,
-  UpdateConsumerGroupDto
+  UpdateConsumerGroupDto,
 } from 'apiSrc/modules/browser/stream/dto'
-import { addErrorNotification, addMessageNotification } from '../../app/notifications'
+import {
+  addErrorNotification,
+  addMessageNotification,
+} from '../../app/notifications'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -88,63 +95,74 @@ const mockedEntryData = {
   lastGeneratedId: '1652942518810-0',
   firstEntry: {
     id: '1652942518810-0',
-    fields: { field: stringToBuffer('1'), name: stringToBuffer('2') }
+    fields: { field: stringToBuffer('1'), name: stringToBuffer('2') },
   },
   lastEntry: {
     id: '1652942518810-0',
-    fields: { field: stringToBuffer('1'), name: stringToBuffer('2') }
+    fields: { field: stringToBuffer('1'), name: stringToBuffer('2') },
   },
-  entries: [{
-    id: '1652942518810-0',
-    fields: { field: stringToBuffer('1'), name: stringToBuffer('2') }
-  }]
+  entries: [
+    {
+      id: '1652942518810-0',
+      fields: { field: stringToBuffer('1'), name: stringToBuffer('2') },
+    },
+  ],
 }
 
-const mockGroups: ConsumerGroupDto[] = [{
-  name: {
-    ...stringToBuffer('test'),
-    viewValue: 'test',
+const mockGroups: ConsumerGroupDto[] = [
+  {
+    name: {
+      ...stringToBuffer('test'),
+      viewValue: 'test',
+    },
+    consumers: 123,
+    pending: 321,
+    smallestPendingId: '123',
+    greatestPendingId: '123',
+    lastDeliveredId: '123',
   },
-  consumers: 123,
-  pending: 321,
-  smallestPendingId: '123',
-  greatestPendingId: '123',
-  lastDeliveredId: '123'
-}, {
-  name: {
-    ...stringToBuffer('test2'),
-    viewValue: 'test2',
+  {
+    name: {
+      ...stringToBuffer('test2'),
+      viewValue: 'test2',
+    },
+    consumers: 13,
+    pending: 31,
+    smallestPendingId: '3',
+    greatestPendingId: '23',
+    lastDeliveredId: '12',
   },
-  consumers: 13,
-  pending: 31,
-  smallestPendingId: '3',
-  greatestPendingId: '23',
-  lastDeliveredId: '12'
-}]
+]
 
-const mockConsumers: ConsumerDto[] = [{
-  name: stringToBuffer('test'),
-  nameString: 'test',
-  idle: 123,
-  pending: 321,
-}, {
-  name: stringToBuffer('test2'),
-  nameString: 'test2',
-  idle: 13,
-  pending: 31,
-}]
+const mockConsumers: ConsumerDto[] = [
+  {
+    name: stringToBuffer('test'),
+    nameString: 'test',
+    idle: 123,
+    pending: 321,
+  },
+  {
+    name: stringToBuffer('test2'),
+    nameString: 'test2',
+    idle: 13,
+    pending: 31,
+  },
+]
 
-const mockMessages: PendingEntryDto[] = [{
-  id: '123',
-  consumerName: stringToBuffer('test'),
-  idle: 321,
-  delivered: 321,
-}, {
-  id: '1234',
-  consumerName: stringToBuffer('test2'),
-  idle: 3213,
-  delivered: 1321,
-}]
+const mockMessages: PendingEntryDto[] = [
+  {
+    id: '123',
+    consumerName: stringToBuffer('test'),
+    idle: 321,
+    delivered: 321,
+  },
+  {
+    id: '1234',
+    consumerName: stringToBuffer('test2'),
+    idle: 3213,
+    delivered: 1321,
+  },
+]
 
 Date.now = jest.fn(() => Date.parse('2021-05-27'))
 
@@ -213,7 +231,10 @@ describe('stream slice', () => {
       }
 
       // Act
-      const tempState = reducer(initialState, loadEntriesSuccess([mockedEntryData, SortOrder.DESC]))
+      const tempState = reducer(
+        initialState,
+        loadEntriesSuccess([mockedEntryData, SortOrder.DESC]),
+      )
 
       const nextState = omit({ ...tempState }, 'data.lastRefreshTime')
 
@@ -282,7 +303,10 @@ describe('stream slice', () => {
       }
 
       // Act
-      const tempState = reducer(initialState, loadMoreEntriesSuccess(mockedEntryData))
+      const tempState = reducer(
+        initialState,
+        loadMoreEntriesSuccess(mockedEntryData),
+      )
       const nextState = omit({ ...tempState }, 'data.lastRefreshTime')
 
       // Assert
@@ -342,7 +366,7 @@ describe('stream slice', () => {
 
       const state = {
         ...initialState,
-        loading: false
+        loading: false,
       }
 
       // Act
@@ -405,7 +429,7 @@ describe('stream slice', () => {
 
       const state = {
         ...initialState,
-        loading: false
+        loading: false,
       }
 
       // Act
@@ -449,8 +473,8 @@ describe('stream slice', () => {
         ...initialState,
         range: {
           ...initialState.range,
-          start: '10'
-        }
+          start: '10',
+        },
       }
 
       // Act
@@ -472,8 +496,8 @@ describe('stream slice', () => {
         ...initialState,
         range: {
           ...initialState.range,
-          end: '100'
-        }
+          end: '100',
+        },
       }
 
       // Act
@@ -496,11 +520,11 @@ describe('stream slice', () => {
         range: {
           ...initialState.range,
           start: '100',
-          end: '200'
-        }
+          end: '200',
+        },
       }
       const stateRange = {
-        ...initialState.range
+        ...initialState.range,
       }
 
       // Act
@@ -524,7 +548,10 @@ describe('stream slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, setStreamViewType(StreamViewType.Messages))
+      const nextState = reducer(
+        initialState,
+        setStreamViewType(StreamViewType.Messages),
+      )
 
       // Assert
       const rootState = {
@@ -544,7 +571,7 @@ describe('stream slice', () => {
         groups: {
           ...initialState.groups,
           loading: true,
-        }
+        },
       }
 
       // Act
@@ -562,14 +589,16 @@ describe('stream slice', () => {
   describe('loadConsumerGroupsSuccess', () => {
     it('should properly set groups.data = payload', () => {
       // Arrange
-      const data: ConsumerGroupDto[] = [{
-        name: stringToBuffer('123'),
-        consumers: 123,
-        pending: 123,
-        smallestPendingId: '123',
-        greatestPendingId: '123',
-        lastDeliveredId: '123',
-      }]
+      const data: ConsumerGroupDto[] = [
+        {
+          name: stringToBuffer('123'),
+          consumers: 123,
+          pending: 123,
+          smallestPendingId: '123',
+          greatestPendingId: '123',
+          lastDeliveredId: '123',
+        },
+      ]
       const state = {
         ...initialState,
         loading: false,
@@ -578,7 +607,7 @@ describe('stream slice', () => {
           data,
           lastRefreshTime: Date.now(),
           loading: false,
-        }
+        },
       }
 
       // Act
@@ -596,14 +625,16 @@ describe('stream slice', () => {
   describe('loadConsumersSuccess', () => {
     it('should properly set groups.selectedGroup.data = payload', () => {
       // Arrange
-      const data: ConsumerDto[] = [{
-        name: {
-          ...stringToBuffer('123'),
-          viewValue: '123',
+      const data: ConsumerDto[] = [
+        {
+          name: {
+            ...stringToBuffer('123'),
+            viewValue: '123',
+          },
+          pending: 123,
+          idle: 123,
         },
-        pending: 123,
-        idle: 123,
-      }]
+      ]
       const state = {
         ...initialState,
         groups: {
@@ -611,8 +642,8 @@ describe('stream slice', () => {
           selectedGroup: {
             data,
             lastRefreshTime: Date.now(),
-          }
-        }
+          },
+        },
       }
 
       // Act
@@ -630,12 +661,14 @@ describe('stream slice', () => {
   describe('loadConsumerMessagesSuccess', () => {
     it('should properly set groups.selectedGroup.selectedConsumer.data = payload', () => {
       // Arrange
-      const data: PendingEntryDto[] = [{
-        id: '123',
-        consumerName: '123',
-        idle: 123,
-        delivered: 123,
-      }]
+      const data: PendingEntryDto[] = [
+        {
+          id: '123',
+          consumerName: '123',
+          idle: 123,
+          delivered: 123,
+        },
+      ]
       const state = {
         ...initialState,
         groups: {
@@ -644,9 +677,9 @@ describe('stream slice', () => {
             selectedConsumer: {
               data,
               lastRefreshTime: Date.now(),
-            }
-          }
-        }
+            },
+          },
+        },
       }
 
       // Act
@@ -672,11 +705,14 @@ describe('stream slice', () => {
           ...initialState.groups,
           loading: false,
           error,
-        }
+        },
       }
 
       // Act
-      const nextState = reducer(initialState, loadConsumerMessagesFailure(error))
+      const nextState = reducer(
+        initialState,
+        loadConsumerMessagesFailure(error),
+      )
 
       // Assert
       const rootState = {
@@ -698,7 +734,7 @@ describe('stream slice', () => {
           ...initialState.groups,
           loading: false,
           error,
-        }
+        },
       }
 
       // Act
@@ -723,7 +759,7 @@ describe('stream slice', () => {
           ...initialState.groups,
           loading: false,
           error,
-        }
+        },
       }
 
       // Act
@@ -751,7 +787,7 @@ describe('stream slice', () => {
         groups: {
           ...initialState.groups,
           selectedGroup: group,
-        }
+        },
       }
 
       // Act
@@ -769,15 +805,18 @@ describe('stream slice', () => {
   describe('setSelectedConsumer', () => {
     it('should properly set selectedConsumer', () => {
       // Arrange
-      const consumer = { name: stringToBuffer('consumer name'), nameString: 'consumer name', }
+      const consumer = {
+        name: stringToBuffer('consumer name'),
+        nameString: 'consumer name',
+      }
       const state = {
         ...initialState,
         groups: {
           ...initialState.groups,
           selectedGroup: {
-            selectedConsumer: consumer
-          }
-        }
+            selectedConsumer: consumer,
+          },
+        },
       }
 
       // Act
@@ -795,12 +834,14 @@ describe('stream slice', () => {
   describe('loadMoreConsumerMessagesSuccess', () => {
     it('should properly concat more messages', () => {
       // Arrange
-      const data: PendingEntryDto[] = [{
-        id: '123',
-        consumerName: '123',
-        idle: 123,
-        delivered: 123,
-      }]
+      const data: PendingEntryDto[] = [
+        {
+          id: '123',
+          consumerName: '123',
+          idle: 123,
+          delivered: 123,
+        },
+      ]
       const state = {
         ...initialState,
         groups: {
@@ -809,16 +850,20 @@ describe('stream slice', () => {
             selectedConsumer: {
               lastRefreshTime: Date.now(),
               data: [
-                ...initialState.groups.selectedGroup?.selectedConsumer?.data ?? [],
-                ...data
+                ...(initialState.groups.selectedGroup?.selectedConsumer?.data ??
+                  []),
+                ...data,
               ],
-            }
-          }
-        }
+            },
+          },
+        },
       }
 
       // Act
-      const nextState = reducer(initialState, loadMoreConsumerMessagesSuccess(data))
+      const nextState = reducer(
+        initialState,
+        loadMoreConsumerMessagesSuccess(data),
+      )
 
       // Assert
       const rootState = {
@@ -837,7 +882,7 @@ describe('stream slice', () => {
         groups: {
           ...initialState.groups,
           loading: true,
-        }
+        },
       }
 
       // Act
@@ -861,7 +906,7 @@ describe('stream slice', () => {
         groups: {
           ...initialState.groups,
           loading: false,
-        }
+        },
       }
 
       // Act
@@ -886,7 +931,7 @@ describe('stream slice', () => {
           ...initialState.groups,
           loading: false,
           error,
-        }
+        },
       }
 
       // Act
@@ -909,7 +954,7 @@ describe('stream slice', () => {
         groups: {
           ...initialState.groups,
           loading: true,
-        }
+        },
       }
 
       // Act
@@ -933,7 +978,7 @@ describe('stream slice', () => {
         groups: {
           ...initialState.groups,
           loading: false,
-        }
+        },
       }
 
       // Act
@@ -959,11 +1004,14 @@ describe('stream slice', () => {
           ...initialState.groups,
           loading: false,
           error,
-        }
+        },
       }
 
       // Act
-      const nextState = reducer(initialState, claimConsumerMessagesFailure(error))
+      const nextState = reducer(
+        initialState,
+        claimConsumerMessagesFailure(error),
+      )
 
       // Assert
       const rootState = {
@@ -983,12 +1031,14 @@ describe('stream slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchStreamEntries(
-          mockedEntryData.keyName,
-          500,
-          SortOrder.DESC,
-          true
-        ))
+        await store.dispatch<any>(
+          fetchStreamEntries(
+            mockedEntryData.keyName,
+            500,
+            SortOrder.DESC,
+            true,
+          ),
+        )
 
         // Assert
         const expectedActions = [
@@ -1011,18 +1061,20 @@ describe('stream slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchStreamEntries(
-          mockedEntryData.keyName,
-          500,
-          SortOrder.DESC,
-          true
-        ))
+        await store.dispatch<any>(
+          fetchStreamEntries(
+            mockedEntryData.keyName,
+            500,
+            SortOrder.DESC,
+            true,
+          ),
+        )
 
         // Assert
         const expectedActions = [
           loadEntries(true),
           addErrorNotification(responsePayload as AxiosError),
-          loadEntriesFailure(errorMessage)
+          loadEntriesFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -1037,10 +1089,9 @@ describe('stream slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(refreshStreamEntries(
-          mockedEntryData.keyName,
-          true
-        ))
+        await store.dispatch<any>(
+          refreshStreamEntries(mockedEntryData.keyName, true),
+        )
 
         // Assert
         const expectedActions = [
@@ -1063,16 +1114,15 @@ describe('stream slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(refreshStreamEntries(
-          mockedEntryData.keyName,
-          true
-        ))
+        await store.dispatch<any>(
+          refreshStreamEntries(mockedEntryData.keyName, true),
+        )
 
         // Assert
         const expectedActions = [
           loadEntries(true),
           addErrorNotification(responsePayload as AxiosError),
-          loadEntriesFailure(errorMessage)
+          loadEntriesFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -1116,7 +1166,7 @@ describe('stream slice', () => {
         const expectedActions = [
           loadConsumerGroups(),
           addErrorNotification(responsePayload as AxiosError),
-          loadConsumerGroupsFailure(errorMessage)
+          loadConsumerGroupsFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -1160,7 +1210,7 @@ describe('stream slice', () => {
         const expectedActions = [
           loadConsumerGroups(),
           addErrorNotification(responsePayload as AxiosError),
-          loadConsumersFailure(errorMessage)
+          loadConsumersFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -1204,7 +1254,7 @@ describe('stream slice', () => {
         const expectedActions = [
           loadConsumerGroups(),
           addErrorNotification(responsePayload as AxiosError),
-          loadConsumerMessagesFailure(errorMessage)
+          loadConsumerMessagesFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -1217,7 +1267,7 @@ describe('stream slice', () => {
         const data: UpdateConsumerGroupDto = {
           keyName: 'key',
           name: 'name',
-          lastDeliveredId: '0-1'
+          lastDeliveredId: '0-1',
         }
         const responsePayload = { data: mockMessages, status: 200 }
 
@@ -1238,14 +1288,16 @@ describe('stream slice', () => {
           refreshKeyInfo(),
         ]
 
-        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
 
       it('failed to fetch data', async () => {
         const data: UpdateConsumerGroupDto = {
           keyName: 'key',
           name: 'name',
-          lastDeliveredId: '0-1'
+          lastDeliveredId: '0-1',
         }
         const errorMessage = 'Something was wrong!'
         const responsePayload = {
@@ -1264,7 +1316,7 @@ describe('stream slice', () => {
         const expectedActions = [
           modifyLastDeliveredId(),
           addErrorNotification(responsePayload as AxiosError),
-          modifyLastDeliveredIdFailure(errorMessage)
+          modifyLastDeliveredIdFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -1297,12 +1349,14 @@ describe('stream slice', () => {
             successMessages.REMOVED_KEY_VALUE(
               keyName,
               groups.join(''),
-              'Group'
-            )
-          )
+              'Group',
+            ),
+          ),
         ]
 
-        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
 
       it('failed to delete data', async () => {
@@ -1325,7 +1379,7 @@ describe('stream slice', () => {
         const expectedActions = [
           deleteConsumerGroups(),
           addErrorNotification(responsePayload as AxiosError),
-          deleteConsumerGroupsFailure(errorMessage)
+          deleteConsumerGroupsFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -1347,7 +1401,9 @@ describe('stream slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayloadPost)
 
         // Act
-        await store.dispatch<any>(deleteConsumersAction(keyName, groupName, consumerNames))
+        await store.dispatch<any>(
+          deleteConsumersAction(keyName, groupName, consumerNames),
+        )
 
         // Assert
         const expectedActions = [
@@ -1359,12 +1415,14 @@ describe('stream slice', () => {
             successMessages.REMOVED_KEY_VALUE(
               keyName,
               consumerNames.map((name) => bufferToString(name)).join(''),
-              'Consumer'
-            )
-          )
+              'Consumer',
+            ),
+          ),
         ]
 
-        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
 
       it('failed to delete data', async () => {
@@ -1382,13 +1440,15 @@ describe('stream slice', () => {
         apiService.delete = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(deleteConsumersAction(keyName, groupName, consumerNames))
+        await store.dispatch<any>(
+          deleteConsumersAction(keyName, groupName, consumerNames),
+        )
 
         // Assert
         const expectedActions = [
           deleteConsumers(),
           addErrorNotification(responsePayload as AxiosError),
-          deleteConsumersFailure(errorMessage)
+          deleteConsumersFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -1398,12 +1458,14 @@ describe('stream slice', () => {
     describe('fetchMoreConsumerMessages', () => {
       it('succeed to fetch more data', async () => {
         // Arrange
-        const pendingMessages = [{
-          idle: 123,
-          id: '123',
-          consumerName: 'name',
-          delivered: 1
-        }]
+        const pendingMessages = [
+          {
+            idle: 123,
+            id: '123',
+            consumerName: 'name',
+            delivered: 1,
+          },
+        ]
         const responsePayload = { status: 200 }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
@@ -1418,7 +1480,7 @@ describe('stream slice', () => {
         // Assert
         const expectedActions = [
           loadConsumerGroups(),
-          loadMoreConsumerMessagesSuccess(pendingMessages)
+          loadMoreConsumerMessagesSuccess(pendingMessages),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -1461,7 +1523,9 @@ describe('stream slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(ackPendingEntriesAction(keyName, groupName, entries))
+        await store.dispatch<any>(
+          ackPendingEntriesAction(keyName, groupName, entries),
+        )
 
         // Assert
         const expectedActions = [
@@ -1471,14 +1535,13 @@ describe('stream slice', () => {
           loadConsumerGroups(),
           loadConsumerGroups(),
           addMessageNotification(
-            successMessages.MESSAGE_ACTION(
-              entries.join(''),
-              'acknowledged'
-            )
+            successMessages.MESSAGE_ACTION(entries.join(''), 'acknowledged'),
           ),
         ]
 
-        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
 
       it('failed to acknowledge message', async () => {
@@ -1496,13 +1559,15 @@ describe('stream slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(ackPendingEntriesAction(keyName, groupName, entries))
+        await store.dispatch<any>(
+          ackPendingEntriesAction(keyName, groupName, entries),
+        )
 
         // Assert
         const expectedActions = [
           ackPendingEntries(),
           addErrorNotification(responsePayload as AxiosError),
-          ackPendingEntriesFailure(errorMessage)
+          ackPendingEntriesFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -1517,7 +1582,7 @@ describe('stream slice', () => {
           groupName: 'group',
           consumerName: 'name',
           minIdleTime: 0,
-          entries: ['0-1']
+          entries: ['0-1'],
         }
 
         const responsePayload = { status: 200 }
@@ -1539,11 +1604,13 @@ describe('stream slice', () => {
           loadConsumerGroups(),
           deleteMessageFromList('0-1'),
           addMessageNotification(
-            successMessages.MESSAGE_ACTION('0-1', 'claimed')
-          )
+            successMessages.MESSAGE_ACTION('0-1', 'claimed'),
+          ),
         ]
 
-        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
 
       it('succeed to claim message with 0 affected', async () => {
@@ -1553,7 +1620,7 @@ describe('stream slice', () => {
           groupName: 'group',
           consumerName: 'name',
           minIdleTime: 0,
-          entries: ['0-1']
+          entries: ['0-1'],
         }
 
         const responsePayload = { status: 200 }
@@ -1573,12 +1640,12 @@ describe('stream slice', () => {
           claimConsumerMessagesSuccess(),
           loadConsumerGroups(),
           loadConsumerGroups(),
-          addMessageNotification(
-            successMessages.NO_CLAIMED_MESSAGES()
-          )
+          addMessageNotification(successMessages.NO_CLAIMED_MESSAGES()),
         ]
 
-        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
 
       it('failed to fetch data', async () => {
@@ -1587,7 +1654,7 @@ describe('stream slice', () => {
           groupName: 'group',
           consumerName: 'name',
           minIdleTime: 0,
-          entries: ['0-1']
+          entries: ['0-1'],
         }
         const errorMessage = 'Something was wrong!'
         const responsePayload = {
@@ -1606,7 +1673,7 @@ describe('stream slice', () => {
         const expectedActions = [
           claimConsumerMessages(),
           addErrorNotification(responsePayload as AxiosError),
-          claimConsumerMessagesFailure(errorMessage)
+          claimConsumerMessagesFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

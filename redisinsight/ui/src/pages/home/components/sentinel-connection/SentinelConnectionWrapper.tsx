@@ -3,15 +3,25 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
 
 import { EuiTitle } from '@elastic/eui'
-import { fetchMastersSentinelAction, sentinelSelector, } from 'uiSrc/slices/instances/sentinel'
+import {
+  fetchMastersSentinelAction,
+  sentinelSelector,
+} from 'uiSrc/slices/instances/sentinel'
 import { removeEmpty } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { caCertsSelector, fetchCaCerts } from 'uiSrc/slices/instances/caCerts'
 import { Pages } from 'uiSrc/constants'
-import { clientCertsSelector, fetchClientCerts, } from 'uiSrc/slices/instances/clientCerts'
+import {
+  clientCertsSelector,
+  fetchClientCerts,
+} from 'uiSrc/slices/instances/clientCerts'
 
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { applyTlSDatabase, autoFillFormDetails, getTlsSettings } from 'uiSrc/pages/home/utils'
+import {
+  applyTlSDatabase,
+  autoFillFormDetails,
+  getTlsSettings,
+} from 'uiSrc/pages/home/utils'
 import { ADD_NEW, NO_CA_CERT } from 'uiSrc/pages/home/constants'
 import { InstanceType } from 'uiSrc/slices/interfaces'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
@@ -33,13 +43,10 @@ const INITIAL_VALUES = {
   selectedTlsClientCertId: ADD_NEW,
   verifyServerTlsCert: false,
   selectedCaCertName: NO_CA_CERT,
-
 }
 
 const SentinelConnectionWrapper = (props: Props) => {
-  const {
-    onClose,
-  } = props
+  const { onClose } = props
   const [initialValues, setInitialValues] = useState(INITIAL_VALUES)
 
   const { loading } = useSelector(sentinelSelector)
@@ -55,8 +62,10 @@ const SentinelConnectionWrapper = (props: Props) => {
     dispatch(fetchClientCerts())
 
     setModalHeader(
-      <EuiTitle size="s"><h4>Redis Sentinel</h4></EuiTitle>,
-      true
+      <EuiTitle size="s">
+        <h4>Redis Sentinel</h4>
+      </EuiTitle>,
+      true,
     )
 
     return () => {
@@ -70,19 +79,15 @@ const SentinelConnectionWrapper = (props: Props) => {
 
   const handleSubmitDatabase = (payload: any) => {
     sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_REDIS_SENTINEL_AUTODISCOVERY_SUBMITTED
+      event:
+        TelemetryEvent.CONFIG_DATABASES_REDIS_SENTINEL_AUTODISCOVERY_SUBMITTED,
     })
 
     dispatch(fetchMastersSentinelAction(payload, onMastersSentinelFetched))
   }
 
   const addDatabase = (tlsSettings: any, values: DbConnectionInfo) => {
-    const {
-      host,
-      port,
-      username,
-      password,
-    } = values
+    const { host, port, username, password } = values
     const database: any = {
       host,
       port: +port,
@@ -101,9 +106,13 @@ const SentinelConnectionWrapper = (props: Props) => {
     addDatabase(tlsSettings, values)
   }
 
-  const handlePostHostName = (content: string): boolean => (
-    autoFillFormDetails(content, initialValues, setInitialValues, InstanceType.Sentinel)
-  )
+  const handlePostHostName = (content: string): boolean =>
+    autoFillFormDetails(
+      content,
+      initialValues,
+      setInitialValues,
+      InstanceType.Sentinel,
+    )
 
   return (
     <SentinelConnectionForm

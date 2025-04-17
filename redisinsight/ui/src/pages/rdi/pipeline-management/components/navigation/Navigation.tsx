@@ -14,18 +14,25 @@ import { Nullable } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 const getSelectedTab = (path: string, rdiInstanceId: string) => {
-  const tabsPath = path?.replace(`${Pages.rdiPipelineManagement(rdiInstanceId)}/`, '')
+  const tabsPath = path?.replace(
+    `${Pages.rdiPipelineManagement(rdiInstanceId)}/`,
+    '',
+  )
 
-  if (tabsPath.startsWith(PageNames.rdiPipelineConfig)) return RdiPipelineTabs.Config
-  if (tabsPath.startsWith(PageNames.rdiPipelineJobs)) return RdiPipelineTabs.Jobs
+  if (tabsPath.startsWith(PageNames.rdiPipelineConfig))
+    return RdiPipelineTabs.Config
+  if (tabsPath.startsWith(PageNames.rdiPipelineJobs))
+    return RdiPipelineTabs.Jobs
 
   return null
 }
 
 const Navigation = () => {
-  const [selectedTab, setSelectedTab] = useState<Nullable<RdiPipelineTabs>>(null)
+  const [selectedTab, setSelectedTab] =
+    useState<Nullable<RdiPipelineTabs>>(null)
 
-  const { loading, changes, configValidationErrors } = useSelector(rdiPipelineSelector)
+  const { loading, changes, configValidationErrors } =
+    useSelector(rdiPipelineSelector)
   const history = useHistory()
   const { pathname } = useLocation()
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
@@ -72,7 +79,10 @@ const Navigation = () => {
                 display="inlineBlock"
                 anchorClassName={styles.dotWrapper}
               >
-                <span className={styles.dot} data-testid="updated-file-config-highlight" />
+                <span
+                  className={styles.dot}
+                  data-testid="updated-file-config-highlight"
+                />
               </EuiToolTip>
             )}
           </div>

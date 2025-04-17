@@ -46,12 +46,10 @@ describe('OAuthAgreement', () => {
 
     fireEvent.click(screen.getByTestId('oauth-agreement-checkbox'))
 
-    const expectedActions = [
-      setAgreement(false),
-    ]
+    const expectedActions = [setAgreement(false)]
 
     expect(clearStoreActions(store.getActions())).toEqual(
-      clearStoreActions(expectedActions)
+      clearStoreActions(expectedActions),
     )
 
     expect(localStorageService.set).toBeCalledWith(

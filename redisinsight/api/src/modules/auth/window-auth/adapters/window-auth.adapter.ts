@@ -23,7 +23,9 @@ export class WindowsAuthAdapter extends IoAdapter {
     handlers: MessageMappingProperties[],
     transform: (data: any) => Observable<any>,
   ) {
-    const windowId = (get(socket, `handshake.headers.${API_HEADER_WINDOW_ID}`) as string) || '';
+    const windowId =
+      (get(socket, `handshake.headers.${API_HEADER_WINDOW_ID}`) as string) ||
+      '';
     const isAuthorized = await this.windowAuthService?.isAuthorized(windowId);
 
     if (!isAuthorized) {

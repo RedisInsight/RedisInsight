@@ -4,11 +4,15 @@ import { FormikErrors } from 'formik'
 import { InstanceType } from 'uiSrc/slices/interfaces'
 import {
   ADD_NEW,
-  ADD_NEW_CA_CERT, DEFAULT_ALIAS,
-  DEFAULT_HOST, DEFAULT_PORT, DEFAULT_TIMEOUT,
+  ADD_NEW_CA_CERT,
+  DEFAULT_ALIAS,
+  DEFAULT_HOST,
+  DEFAULT_PORT,
+  DEFAULT_TIMEOUT,
   fieldDisplayNames,
-  NO_CA_CERT, NONE,
-  SshPassType
+  NO_CA_CERT,
+  NONE,
+  SshPassType,
 } from 'uiSrc/pages/home/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { Nullable, parseRedisUrl } from 'uiSrc/utils'
@@ -22,34 +26,42 @@ export const getTlsSettings = (values: DbConnectionInfo) => ({
       ? undefined
       : values.selectedCaCertName === ADD_NEW_CA_CERT
         ? {
-          new: {
-            name: values.newCaCertName,
-            certificate: values.newCaCert,
-          },
-        }
+            new: {
+              name: values.newCaCertName,
+              certificate: values.newCaCert,
+            },
+          }
         : {
-          name: values.selectedCaCertName,
-        },
+            name: values.selectedCaCertName,
+          },
   clientAuth: values.tls && values.tlsClientAuthRequired,
   clientCert: !values.tls
     ? undefined
-    : typeof values.selectedTlsClientCertId === 'string'
-    && values.tlsClientAuthRequired
-    && values.selectedTlsClientCertId !== ADD_NEW
+    : typeof values.selectedTlsClientCertId === 'string' &&
+        values.tlsClientAuthRequired &&
+        values.selectedTlsClientCertId !== ADD_NEW
       ? { id: values.selectedTlsClientCertId }
-      : values.selectedTlsClientCertId === ADD_NEW && values.tlsClientAuthRequired
+      : values.selectedTlsClientCertId === ADD_NEW &&
+          values.tlsClientAuthRequired
         ? {
-          new: {
-            name: values.newTlsCertPairName,
-            certificate: values.newTlsClientCert,
-            key: values.newTlsClientKey,
-          },
-        }
+            new: {
+              name: values.newTlsCertPairName,
+              certificate: values.newTlsClientCert,
+              key: values.newTlsClientKey,
+            },
+          }
         : undefined,
 })
 
 export const applyTlSDatabase = (database: any, tlsSettings: any) => {
-  const { useTls, verifyServerCert, servername, caCert, clientAuth, clientCert } = tlsSettings
+  const {
+    useTls,
+    verifyServerCert,
+    servername,
+    caCert,
+    clientAuth,
+    clientCert,
+  } = tlsSettings
   if (!useTls) return
 
   database.tls = useTls
@@ -128,41 +140,37 @@ export const getFormErrors = (values: DbConnectionInfo) => {
   }
 
   if (
-    values.tls
-    && values.verifyServerTlsCert
-    && values.selectedCaCertName === NO_CA_CERT
+    values.tls &&
+    values.verifyServerTlsCert &&
+    values.selectedCaCertName === NO_CA_CERT
   ) {
     errs.selectedCaCertName = fieldDisplayNames.selectedCaCertName
   }
 
   if (
-    values.tls
-    && values.selectedCaCertName === ADD_NEW_CA_CERT
-    && values.newCaCertName === ''
+    values.tls &&
+    values.selectedCaCertName === ADD_NEW_CA_CERT &&
+    values.newCaCertName === ''
   ) {
     errs.newCaCertName = fieldDisplayNames.newCaCertName
   }
 
   if (
-    values.tls
-    && values.selectedCaCertName === ADD_NEW_CA_CERT
-    && values.newCaCert === ''
+    values.tls &&
+    values.selectedCaCertName === ADD_NEW_CA_CERT &&
+    values.newCaCert === ''
   ) {
     errs.newCaCert = fieldDisplayNames.newCaCert
   }
 
-  if (
-    values.tls
-    && values.sni
-    && values.servername === ''
-  ) {
+  if (values.tls && values.sni && values.servername === '') {
     errs.servername = fieldDisplayNames.servername
   }
 
   if (
-    values.tls
-    && values.tlsClientAuthRequired
-    && values.selectedTlsClientCertId === ADD_NEW
+    values.tls &&
+    values.tlsClientAuthRequired &&
+    values.selectedTlsClientCertId === ADD_NEW
   ) {
     if (values.newTlsCertPairName === '') {
       errs.newTlsCertPairName = fieldDisplayNames.newTlsCertPairName
@@ -185,7 +193,10 @@ export const getFormErrors = (values: DbConnectionInfo) => {
     if (!values.sshUsername) {
       errs.sshUsername = fieldDisplayNames.sshUsername
     }
-    if (values.sshPassType === SshPassType.PrivateKey && !values.sshPrivateKey) {
+    if (
+      values.sshPassType === SshPassType.PrivateKey &&
+      !values.sshPrivateKey
+    ) {
       errs.sshPrivateKey = fieldDisplayNames.sshPrivateKey
     }
   }
@@ -197,7 +208,7 @@ export const autoFillFormDetails = (
   content: string,
   initialValues: any,
   setInitialValues: (data: any) => void,
-  instanceType: InstanceType
+  instanceType: InstanceType,
 ): boolean => {
   try {
     const details = parseRedisUrl(content)
@@ -207,12 +218,12 @@ export const autoFillFormDetails = (
     const getUpdatedInitialValues = () => {
       switch (instanceType) {
         case InstanceType.RedisEnterpriseCluster: {
-          return ({
+          return {
             host: details.host || initialValues.host || 'localhost',
             port: `${details.port || initialValues.port || 9443}`,
             username: details.username || '',
             password: details.password || '',
-          })
+          }
         }
 
         case InstanceType.Sentinel: {
@@ -235,7 +246,7 @@ export const autoFillFormDetails = (
             tls: details.protocol === 'rediss',
             db: details.dbNumber,
             ssh: false,
-            sshPassType: SshPassType.Password
+            sshPassType: SshPassType.Password,
           })
         }
         default: {
@@ -245,8 +256,8 @@ export const autoFillFormDetails = (
     }
     setInitialValues(getUpdatedInitialValues())
     /*
-       * autofill was successfull so return true
-       */
+     * autofill was successfull so return true
+     */
     return true
   } catch (err) {
     /* The pasted content is not a connection URI so ignore. */
@@ -254,7 +265,10 @@ export const autoFillFormDetails = (
   }
 }
 
-export const getSubmitButtonContent = (errors: FormikErrors<DbConnectionInfo>, submitIsDisabled?: boolean) => {
+export const getSubmitButtonContent = (
+  errors: FormikErrors<DbConnectionInfo>,
+  submitIsDisabled?: boolean,
+) => {
   const maxErrorsCount = 5
   const errorsArr = Object.values(errors).map((err) => [
     err,
@@ -285,7 +299,8 @@ export const getFormValues = (instance?: Nullable<Record<string, any>>) => ({
   modules: instance?.modules,
   showDb: !!instance?.db,
   forceStandalone: instance?.forceStandalone ?? false,
-  showCompressor: instance && instance.compressor && instance.compressor !== NONE,
+  showCompressor:
+    instance && instance.compressor && instance.compressor !== NONE,
   sni: !!instance?.tlsServername,
   servername: instance?.tlsServername,
   newCaCert: '',
@@ -302,12 +317,14 @@ export const getFormValues = (instance?: Nullable<Record<string, any>>) => ({
   sentinelMasterPassword: instance?.sentinelMaster?.password,
   ssh: instance?.ssh ?? false,
   sshPassType: instance?.sshOptions
-    ? (instance.sshOptions.privateKey ? SshPassType.PrivateKey : SshPassType.Password)
+    ? instance.sshOptions.privateKey
+      ? SshPassType.PrivateKey
+      : SshPassType.Password
     : SshPassType.Password,
   sshHost: instance?.sshOptions?.host ?? '',
   sshPort: instance?.sshOptions?.port ?? 22,
   sshUsername: instance?.sshOptions?.username ?? '',
   sshPassword: instance?.sshOptions?.password ?? '',
   sshPrivateKey: instance?.sshOptions?.privateKey ?? '',
-  sshPassphrase: instance?.sshOptions?.passphrase ?? ''
+  sshPassphrase: instance?.sshOptions?.passphrase ?? '',
 })

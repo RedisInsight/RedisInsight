@@ -1,12 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import {
-  mockRedisNoPermError,
-  mockStandaloneRedisClient,
-} from 'src/__mocks__';
+import { mockRedisNoPermError, mockStandaloneRedisClient } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import config from 'src/utils/config';
-import { GetKeyInfoResponse, GetKeysDto, RedisDataType } from 'src/modules/browser/keys/dto';
+import {
+  GetKeyInfoResponse,
+  GetKeysDto,
+  RedisDataType,
+} from 'src/modules/browser/keys/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { IScannerNodeKeys } from 'src/modules/browser/keys/scanner/scanner.interface';
 import * as Utils from 'src/modules/redis/utils/keys.util';
@@ -46,9 +47,7 @@ describe('StandaloneScannerStrategy', () => {
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        StandaloneScannerStrategy,
-      ],
+      providers: [StandaloneScannerStrategy],
     }).compile();
 
     strategy = module.get(StandaloneScannerStrategy);
@@ -56,11 +55,20 @@ describe('StandaloneScannerStrategy', () => {
 
   describe('getKeys', () => {
     const getKeysDto: GetKeysDto = {
-      cursor: '0', count: 15, keysInfo: true, scanThreshold: 1000,
+      cursor: '0',
+      count: 15,
+      keysInfo: true,
+      scanThreshold: 1000,
     };
     it('should return appropriate value with filter by type', async () => {
-      const args = { ...getKeysDto, type: RedisDataType.String, match: 'pattern*' };
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse1);
+      const args = {
+        ...getKeysDto,
+        type: RedisDataType.String,
+        match: 'pattern*',
+      };
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValue(mockGetTotalResponse1);
 
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith(expect.arrayContaining([BrowserToolKeysCommands.Scan]))
@@ -79,14 +87,22 @@ describe('StandaloneScannerStrategy', () => {
         },
       ]);
       expect(strategy.getKeysInfo).toHaveBeenCalled();
-      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '0', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
-      );
+      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '0',
+        'MATCH',
+        args.match,
+        'COUNT',
+        args.count,
+        'TYPE',
+        args.type,
+      ]);
     });
     it('should scan 2000 items when count provided more then 2k', async () => {
       const args = { ...getKeysDto, count: 10_000, match: '*' };
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse1);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValue(mockGetTotalResponse1);
 
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith(expect.arrayContaining([BrowserToolKeysCommands.Scan]))
@@ -105,16 +121,25 @@ describe('StandaloneScannerStrategy', () => {
         },
       ]);
       expect(strategy.getKeysInfo).toHaveBeenCalled();
-      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '0', 'MATCH', args.match, 'COUNT', 2000],
-      );
+      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '0',
+        'MATCH',
+        args.match,
+        'COUNT',
+        2000,
+      ]);
     });
     it('should return keys names and type only', async () => {
       const args = {
-        ...getKeysDto, type: RedisDataType.String, match: 'pattern*', keysInfo: false,
+        ...getKeysDto,
+        type: RedisDataType.String,
+        match: 'pattern*',
+        keysInfo: false,
       };
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse1);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValue(mockGetTotalResponse1);
 
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith(expect.arrayContaining([BrowserToolKeysCommands.Scan]))
@@ -130,12 +155,16 @@ describe('StandaloneScannerStrategy', () => {
           ...mockNodeEmptyResult,
           total: 1,
           scanned: getKeysDto.count,
-          keys: [{ name: getKeyInfoResponse.name, type: getKeyInfoResponse.type }],
+          keys: [
+            { name: getKeyInfoResponse.name, type: getKeyInfoResponse.type },
+          ],
         },
       ]);
     });
     it('should call scan 3 times and return appropriate value', async () => {
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse1000000);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValue(mockGetTotalResponse1000000);
 
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith([
@@ -172,7 +201,10 @@ describe('StandaloneScannerStrategy', () => {
         .fn()
         .mockResolvedValue(new Array(9).fill(getKeyInfoResponse));
 
-      const result = await strategy.getKeys(mockStandaloneRedisClient, getKeysDto);
+      const result = await strategy.getKeys(
+        mockStandaloneRedisClient,
+        getKeysDto,
+      );
 
       expect(result).toEqual([
         {
@@ -184,21 +216,35 @@ describe('StandaloneScannerStrategy', () => {
       ]);
       expect(strategy.getKeysInfo).toHaveBeenCalled();
       expect(mockStandaloneRedisClient.sendCommand).toBeCalledTimes(3);
-      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '0', 'MATCH', '*', 'COUNT', getKeysDto.count],
-      );
-      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(
-        2,
-        [BrowserToolKeysCommands.Scan, '1', 'MATCH', '*', 'COUNT', getKeysDto.count],
-      );
-      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(
-        3,
-        [BrowserToolKeysCommands.Scan, '2', 'MATCH', '*', 'COUNT', getKeysDto.count],
-      );
+      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '0',
+        'MATCH',
+        '*',
+        'COUNT',
+        getKeysDto.count,
+      ]);
+      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(2, [
+        BrowserToolKeysCommands.Scan,
+        '1',
+        'MATCH',
+        '*',
+        'COUNT',
+        getKeysDto.count,
+      ]);
+      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(3, [
+        BrowserToolKeysCommands.Scan,
+        '2',
+        'MATCH',
+        '*',
+        'COUNT',
+        getKeysDto.count,
+      ]);
     });
     it('should call scan N times until threshold exceeds', async () => {
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse1000000);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValue(mockGetTotalResponse1000000);
 
       when(mockStandaloneRedisClient.sendCommand)
         .calledWith(expect.arrayContaining([BrowserToolKeysCommands.Scan]))
@@ -206,7 +252,10 @@ describe('StandaloneScannerStrategy', () => {
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([]);
 
-      const result = await strategy.getKeys(mockStandaloneRedisClient, getKeysDto);
+      const result = await strategy.getKeys(
+        mockStandaloneRedisClient,
+        getKeysDto,
+      );
 
       expect(result).toEqual([
         {
@@ -214,9 +263,9 @@ describe('StandaloneScannerStrategy', () => {
           cursor: 1,
           total: 1000000,
           scanned:
-            Math.trunc(getKeysDto.scanThreshold / getKeysDto.count)
-            * getKeysDto.count
-            + getKeysDto.count,
+            Math.trunc(getKeysDto.scanThreshold / getKeysDto.count) *
+              getKeysDto.count +
+            getKeysDto.count,
           keys: [],
         },
       ]);
@@ -231,7 +280,10 @@ describe('StandaloneScannerStrategy', () => {
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([]);
 
-      const result = await strategy.getKeys(mockStandaloneRedisClient, getKeysDto);
+      const result = await strategy.getKeys(
+        mockStandaloneRedisClient,
+        getKeysDto,
+      );
 
       expect(result).toEqual([
         {
@@ -239,16 +291,18 @@ describe('StandaloneScannerStrategy', () => {
           cursor: 1,
           total: null,
           scanned:
-            Math.trunc(getKeysDto.scanThreshold / getKeysDto.count)
-            * getKeysDto.count
-            + getKeysDto.count,
+            Math.trunc(getKeysDto.scanThreshold / getKeysDto.count) *
+              getKeysDto.count +
+            getKeysDto.count,
           keys: [],
         },
       ]);
       expect(strategy.getKeysInfo).toHaveBeenCalledTimes(0);
     });
     it('should call scan with required args', async () => {
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse0);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValue(mockGetTotalResponse0);
 
       strategy.getKeysInfo = jest.fn().mockResolvedValue([]);
       strategy['scan'] = jest.fn().mockResolvedValue(undefined);
@@ -271,7 +325,9 @@ describe('StandaloneScannerStrategy', () => {
       expect(strategy.getKeysInfo).toBeCalledTimes(0);
     });
     it('should throw error on scan command', async () => {
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse1);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValue(mockGetTotalResponse1);
 
       const replyError: ReplyError = {
         ...mockRedisNoPermError,
@@ -290,7 +346,9 @@ describe('StandaloneScannerStrategy', () => {
     });
     describe('get keys by glob patter', () => {
       beforeEach(async () => {
-        jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse10);
+        jest
+          .spyOn(Utils, 'getTotalKeys')
+          .mockResolvedValue(mockGetTotalResponse10);
 
         strategy['scan'] = jest.fn();
       });
@@ -359,7 +417,9 @@ describe('StandaloneScannerStrategy', () => {
       const key = getKeyInfoResponse.name;
       const total = 10;
       beforeEach(async () => {
-        jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse10);
+        jest
+          .spyOn(Utils, 'getTotalKeys')
+          .mockResolvedValue(mockGetTotalResponse10);
 
         strategy['scan'] = jest.fn();
       });
@@ -384,7 +444,7 @@ describe('StandaloneScannerStrategy', () => {
           [Buffer.from(key)],
           undefined,
           true,
-          true
+          true,
         );
         expect(strategy['scan']).not.toHaveBeenCalled();
       });
@@ -393,7 +453,9 @@ describe('StandaloneScannerStrategy', () => {
         const mockSearchPattern = 'testString*';
         strategy.getKeysInfo = jest
           .fn()
-          .mockResolvedValue([{ ...getKeyInfoResponse, name: mockSearchPattern }]);
+          .mockResolvedValue([
+            { ...getKeyInfoResponse, name: mockSearchPattern },
+          ]);
 
         const result = await strategy.getKeys(mockStandaloneRedisClient, dto);
 
@@ -410,7 +472,7 @@ describe('StandaloneScannerStrategy', () => {
           [Buffer.from(mockSearchPattern)],
           undefined,
           true,
-          true
+          true,
         );
         expect(strategy['scan']).not.toHaveBeenCalled();
       });
@@ -511,8 +573,8 @@ describe('StandaloneScannerStrategy', () => {
         mockStandaloneRedisClient,
         keys,
         undefined,
-        true,   // includeSize
-        true    // includeTTL
+        true, // includeSize
+        true, // includeTTL
       );
 
       const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
@@ -536,8 +598,8 @@ describe('StandaloneScannerStrategy', () => {
         mockStandaloneRedisClient,
         keys,
         undefined,
-        false,  // includeSize
-        false    // includeTTL
+        false, // includeSize
+        false, // includeTTL
       );
 
       const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
@@ -565,8 +627,8 @@ describe('StandaloneScannerStrategy', () => {
         mockStandaloneRedisClient,
         keys,
         undefined,
-        false,  // includeSize
-        true    // includeTTL
+        false, // includeSize
+        true, // includeTTL
       );
 
       const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({
@@ -612,8 +674,8 @@ describe('StandaloneScannerStrategy', () => {
         mockStandaloneRedisClient,
         keys,
         undefined,
-        true,   // includeSize
-        true    // includeTTL
+        true, // includeSize
+        true, // includeTTL
       );
 
       const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({

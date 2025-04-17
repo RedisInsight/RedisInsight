@@ -12,7 +12,10 @@ import { classToClass } from 'src/utils';
 import { RdiClientProvider } from 'src/modules/rdi/providers/rdi.client.provider';
 import { RdiClientFactory } from 'src/modules/rdi/providers/rdi.client.factory';
 import { SessionMetadata } from 'src/common/models';
-import { RdiPipelineNotFoundException, wrapRdiPipelineError } from 'src/modules/rdi/exceptions';
+import {
+  RdiPipelineNotFoundException,
+  wrapRdiPipelineError,
+} from 'src/modules/rdi/exceptions';
 import { isUndefined, omitBy } from 'lodash';
 import { deepMerge } from 'src/common/utils';
 import { RdiAnalytics } from './rdi.analytics';
@@ -24,10 +27,7 @@ const DEFAULT_RDI_VERSION = '-';
 export class RdiService {
   private logger = new Logger('RdiService');
 
-  static connectionFields: string[] = [
-    'username',
-    'password',
-  ];
+  static connectionFields: string[] = ['username', 'password'];
 
   constructor(
     private readonly repository: RdiRepository,
@@ -37,12 +37,15 @@ export class RdiService {
   ) {}
 
   static isConnectionAffected(dto: UpdateRdiDto) {
-    return Object.keys(omitBy(dto, isUndefined)).some((field) => this.connectionFields.includes(field));
+    return Object.keys(omitBy(dto, isUndefined)).some((field) =>
+      this.connectionFields.includes(field),
+    );
   }
 
   private static async getRdiVersion(client: RdiClient): Promise<string> {
     const pipelineStatus = await client.getPipelineStatus();
-    const version = pipelineStatus?.components?.processor?.version || DEFAULT_RDI_VERSION;
+    const version =
+      pipelineStatus?.components?.processor?.version || DEFAULT_RDI_VERSION;
     return version;
   }
 
@@ -60,24 +63,37 @@ export class RdiService {
     return rdi;
   }
 
-  async update(rdiClientMetadata: RdiClientMetadata, dto: UpdateRdiDto): Promise<Rdi> {
+  async update(
+    rdiClientMetadata: RdiClientMetadata,
+    dto: UpdateRdiDto,
+  ): Promise<Rdi> {
     const oldRdiInstance = await this.get(rdiClientMetadata.id);
     const newRdiInstance = await deepMerge(oldRdiInstance, dto);
 
     try {
       if (RdiService.isConnectionAffected(dto)) {
-        await this.rdiClientFactory.createClient(rdiClientMetadata, newRdiInstance);
+        await this.rdiClientFactory.createClient(
+          rdiClientMetadata,
+          newRdiInstance,
+        );
         await this.rdiClientProvider.deleteManyByRdiId(rdiClientMetadata.id);
       }
 
       return await this.repository.update(rdiClientMetadata.id, newRdiInstance);
     } catch (error) {
-      this.logger.error(`Failed to update rdi instance ${rdiClientMetadata.id}`, error, rdiClientMetadata);
+      this.logger.error(
+        `Failed to update rdi instance ${rdiClientMetadata.id}`,
+        error,
+        rdiClientMetadata,
+      );
       throw wrapRdiPipelineError(error);
     }
   }
 
-  async create(sessionMetadata: SessionMetadata, dto: CreateRdiDto): Promise<Rdi> {
+  async create(
+    sessionMetadata: SessionMetadata,
+    dto: CreateRdiDto,
+  ): Promise<Rdi> {
     const model = classToClass(Rdi, dto);
     model.lastConnection = new Date();
 
@@ -87,7 +103,10 @@ export class RdiService {
     };
 
     try {
-      const client = await this.rdiClientFactory.createClient(rdiClientMetadata, model);
+      const client = await this.rdiClientFactory.createClient(
+        rdiClientMetadata,
+        model,
+      );
       model.version = await RdiService.getRdiVersion(client);
     } catch (error) {
       this.logger.error('Failed to create rdi instance', sessionMetadata);
@@ -110,8 +129,16 @@ export class RdiService {
 
       this.analytics.sendRdiInstanceDeleted(sessionMetadata, ids.length);
     } catch (error) {
-      this.logger.error(`Failed to delete instance(s): ${ids}`, error.message, sessionMetadata);
-      this.analytics.sendRdiInstanceDeleted(sessionMetadata, ids.length, error.message);
+      this.logger.error(
+        `Failed to delete instance(s): ${ids}`,
+        error.message,
+        sessionMetadata,
+      );
+      this.analytics.sendRdiInstanceDeleted(
+        sessionMetadata,
+        ids.length,
+        error.message,
+      );
       throw new InternalServerErrorException();
     }
   }
@@ -124,10 +151,16 @@ export class RdiService {
     try {
       await this.rdiClientProvider.getOrCreate(rdiClientMetadata);
     } catch (error) {
-      this.logger.error(`Failed to connect to rdi instance ${rdiClientMetadata.id}`, rdiClientMetadata);
+      this.logger.error(
+        `Failed to connect to rdi instance ${rdiClientMetadata.id}`,
+        rdiClientMetadata,
+      );
       throw wrapRdiPipelineError(error);
     }
 
-    this.logger.debug(`Succeed to connect to rdi instance ${rdiClientMetadata.id}`, rdiClientMetadata);
+    this.logger.debug(
+      `Succeed to connect to rdi instance ${rdiClientMetadata.id}`,
+      rdiClientMetadata,
+    );
   }
 }

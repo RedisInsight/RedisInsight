@@ -27,3 +27,11 @@
     margin: 8px;
   }
 }
+
+.filterTagLabel {
+  label {
+    text-overflow: ellipsis;
+    width: 100%;
+    overflow: hidden;
+  }
+}

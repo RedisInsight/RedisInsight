@@ -62,37 +62,42 @@ const cliCommandTestId = 'cli-command'
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
-  useSelector: jest.fn()
+  useSelector: jest.fn(),
 }))
 
 describe('CliBodyWrapper', () => {
   beforeEach(() => {
-    const state: any = store.getState();
+    const state: any = store.getState()
 
-    (useSelector as jest.Mock).mockImplementation((callback: (arg0: any) => any) => callback({
-      ...state,
-      cli: {
-        ...state.cli,
-        settings: { ...state.cli.settings, loading: false }
-      }
-    }))
+    ;(useSelector as jest.Mock).mockImplementation(
+      (callback: (arg0: any) => any) =>
+        callback({
+          ...state,
+          cli: {
+            ...state.cli,
+            settings: { ...state.cli.settings, loading: false },
+          },
+        }),
+    )
   })
   it('should render and call process cli client', () => {
     const expectedActions = [processCliClient()]
 
     expect(render(<CliBodyWrapper />)).toBeTruthy()
-    expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
-      clearStoreActions(expectedActions)
-    )
+    expect(
+      clearStoreActions(store.getActions().slice(0, expectedActions.length)),
+    ).toEqual(clearStoreActions(expectedActions))
   })
 
   // It's not possible to simulate events on contenteditable with testing-react-library,
   // or any testing library that uses js - dom, because of a limitation on js - dom itself.
   // https://github.com/testing-library/dom-testing-library/pull/235
   it.skip('"onSubmit" should check unsupported commands', () => {
-    const processUnsupportedCommandMock = jest.fn();
+    const processUnsupportedCommandMock = jest.fn()
 
-    (processUnsupportedCommand as jest.Mock).mockImplementation(() => processUnsupportedCommandMock)
+    ;(processUnsupportedCommand as jest.Mock).mockImplementation(
+      () => processUnsupportedCommandMock,
+    )
 
     render(<CliBodyWrapper />)
 
@@ -110,15 +115,17 @@ describe('CliBodyWrapper', () => {
   })
 
   it('"onSubmit" for Cluster connection should call "sendCliClusterCommandAction"', () => {
-    (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
+    ;(connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
       id: '123',
       connectionType: 'CLUSTER',
       db: 0,
     }))
 
-    const sendCliClusterActionMock = jest.fn();
+    const sendCliClusterActionMock = jest.fn()
 
-    (sendCliClusterCommandAction as jest.Mock).mockImplementation(() => sendCliClusterActionMock)
+    ;(sendCliClusterCommandAction as jest.Mock).mockImplementation(
+      () => sendCliClusterActionMock,
+    )
 
     render(<CliBodyWrapper />)
 

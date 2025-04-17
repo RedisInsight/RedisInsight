@@ -17,10 +17,7 @@ describe('RedisEnterpriseAnalytics', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        EventEmitter2,
-        RedisEnterpriseAnalytics,
-      ],
+      providers: [EventEmitter2, RedisEnterpriseAnalytics],
     }).compile();
 
     service = module.get<RedisEnterpriseAnalytics>(RedisEnterpriseAnalytics);
@@ -36,13 +33,10 @@ describe('RedisEnterpriseAnalytics', () => {
 
   describe('sendGetREClusterDbsSucceedEvent', () => {
     it('should emit event with active databases', () => {
-      service.sendGetREClusterDbsSucceedEvent(
-        mockSessionMetadata,
-        [
-          mockRedisEnterpriseDatabaseDto,
-          mockRedisEnterpriseDatabaseDto,
-        ],
-      );
+      service.sendGetREClusterDbsSucceedEvent(mockSessionMetadata, [
+        mockRedisEnterpriseDatabaseDto,
+        mockRedisEnterpriseDatabaseDto,
+      ]);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -54,16 +48,13 @@ describe('RedisEnterpriseAnalytics', () => {
       );
     });
     it('should emit event with active and not active database', () => {
-      service.sendGetREClusterDbsSucceedEvent(
-        mockSessionMetadata,
-        [
-          {
-            ...mockRedisEnterpriseDatabaseDto,
-            status: RedisEnterpriseDatabaseStatus.Pending,
-          },
-          mockRedisEnterpriseDatabaseDto,
-        ],
-      );
+      service.sendGetREClusterDbsSucceedEvent(mockSessionMetadata, [
+        {
+          ...mockRedisEnterpriseDatabaseDto,
+          status: RedisEnterpriseDatabaseStatus.Pending,
+        },
+        mockRedisEnterpriseDatabaseDto,
+      ]);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -75,19 +66,16 @@ describe('RedisEnterpriseAnalytics', () => {
       );
     });
     it('should emit event without active databases', () => {
-      service.sendGetREClusterDbsSucceedEvent(
-        mockSessionMetadata,
-        [
-          {
-            ...mockRedisEnterpriseDatabaseDto,
-            status: RedisEnterpriseDatabaseStatus.Pending,
-          },
-          {
-            ...mockRedisEnterpriseDatabaseDto,
-            status: RedisEnterpriseDatabaseStatus.Pending,
-          },
-        ],
-      );
+      service.sendGetREClusterDbsSucceedEvent(mockSessionMetadata, [
+        {
+          ...mockRedisEnterpriseDatabaseDto,
+          status: RedisEnterpriseDatabaseStatus.Pending,
+        },
+        {
+          ...mockRedisEnterpriseDatabaseDto,
+          status: RedisEnterpriseDatabaseStatus.Pending,
+        },
+      ]);
 
       expect(sendEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -125,14 +113,19 @@ describe('RedisEnterpriseAnalytics', () => {
     it('should not throw on error when sending GetREClusterDbsSucceed event', () => {
       const input: any = {};
 
-      expect(() => service.sendGetREClusterDbsSucceedEvent(mockSessionMetadata, input)).not.toThrow();
+      expect(() =>
+        service.sendGetREClusterDbsSucceedEvent(mockSessionMetadata, input),
+      ).not.toThrow();
       expect(sendEventMethod).not.toHaveBeenCalled();
     });
   });
 
   describe('sendGetREClusterDbsFailedEvent', () => {
     it('should emit GetREClusterDbsFailed event', () => {
-      service.sendGetREClusterDbsFailedEvent(mockSessionMetadata, httpException);
+      service.sendGetREClusterDbsFailedEvent(
+        mockSessionMetadata,
+        httpException,
+      );
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,

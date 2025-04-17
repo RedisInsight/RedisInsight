@@ -61,7 +61,7 @@ export const GROUP_TYPES_DISPLAY = Object.freeze({
   [KeyTypes.ZSet]: 'Zset',
   [KeyTypes.String]: 'String',
   [KeyTypes.ReJSON]: 'JSON',
-  [KeyTypes.JSON]: 'JSON'
+  [KeyTypes.JSON]: 'JSON',
 })
 
 // Enums don't allow to use dynamic key

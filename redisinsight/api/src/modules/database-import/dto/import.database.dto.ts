@@ -3,7 +3,13 @@ import { Database } from 'src/modules/database/models/database';
 import { Expose, Type } from 'class-transformer';
 import {
   IsArray,
-  IsInt, IsNotEmpty, IsNotEmptyObject, IsOptional, Max, Min, ValidateNested,
+  IsInt,
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsOptional,
+  Max,
+  Min,
+  ValidateNested,
 } from 'class-validator';
 import { NoDuplicatesByKey } from 'src/common/decorators';
 import { caCertTransformer } from 'src/modules/certificate/transformers/ca-cert.transformer';
@@ -15,9 +21,25 @@ import { UseClientCertificateDto } from 'src/modules/certificate/dto/use.client-
 import { Tag } from 'src/modules/tag/models/tag';
 
 export class ImportDatabaseDto extends PickType(Database, [
-  'host', 'port', 'name', 'db', 'username', 'password',
-  'connectionType', 'tls', 'verifyServerCert', 'sentinelMaster', 'nodes',
-  'new', 'ssh', 'sshOptions', 'provider', 'compressor', 'modules', 'tlsServername', 'forceStandalone',
+  'host',
+  'port',
+  'name',
+  'db',
+  'username',
+  'password',
+  'connectionType',
+  'tls',
+  'verifyServerCert',
+  'sentinelMaster',
+  'nodes',
+  'new',
+  'ssh',
+  'sshOptions',
+  'provider',
+  'compressor',
+  'modules',
+  'tlsServername',
+  'forceStandalone',
   'tags',
 ] as const) {
   @Expose()
@@ -57,7 +79,9 @@ export class ImportDatabaseDto extends PickType(Database, [
   @Expose()
   @IsOptional()
   @IsArray()
-  @NoDuplicatesByKey('key', { message: 'Tags must not contain duplicates by key.' })
+  @NoDuplicatesByKey('key', {
+    message: 'Tags must not contain duplicates by key.',
+  })
   @Type(() => Tag)
   tags?: Tag[];
 }

@@ -1,10 +1,13 @@
 import React from 'react'
-import { KeyTypes, MODULES_KEY_TYPES_NAMES, ModulesKeyTypes } from 'uiSrc/constants'
+import {
+  KeyTypes,
+  MODULES_KEY_TYPES_NAMES,
+  ModulesKeyTypes,
+} from 'uiSrc/constants'
 import { KeyDetailsHeaderProps } from 'uiSrc/pages/browser/modules'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { isTruncatedString } from 'uiSrc/utils'
-import TooLongKeyNameDetails
-  from 'uiSrc/pages/browser/modules/key-details/components/too-long-key-name-details/TooLongKeyNameDetails'
+import TooLongKeyNameDetails from 'uiSrc/pages/browser/modules/key-details/components/too-long-key-name-details/TooLongKeyNameDetails'
 import ModulesTypeDetails from '../modules-type-details/ModulesTypeDetails'
 import UnsupportedTypeDetails from '../unsupported-type-details/UnsupportedTypeDetails'
 import { RejsonDetailsWrapper } from '../rejson-details'
@@ -36,7 +39,7 @@ const DynamicTypeDetails = (props: Props) => {
   }
 
   if (isTruncatedString(keyProp)) {
-    return <TooLongKeyNameDetails onClose={ props.onCloseKey }/>
+    return <TooLongKeyNameDetails onClose={props.onCloseKey} />
   }
 
   // Supported key type
@@ -45,12 +48,19 @@ const DynamicTypeDetails = (props: Props) => {
   }
 
   // Unsupported redis modules key type
-  if (Object.values(ModulesKeyTypes).includes(selectedKeyType as ModulesKeyTypes)) {
-    return <ModulesTypeDetails moduleName={MODULES_KEY_TYPES_NAMES[selectedKeyType]} onClose={ props.onCloseKey }/>
+  if (
+    Object.values(ModulesKeyTypes).includes(selectedKeyType as ModulesKeyTypes)
+  ) {
+    return (
+      <ModulesTypeDetails
+        moduleName={MODULES_KEY_TYPES_NAMES[selectedKeyType]}
+        onClose={props.onCloseKey}
+      />
+    )
   }
 
   // Unsupported key type
-  return <UnsupportedTypeDetails onClose={ props.onCloseKey }/>
+  return <UnsupportedTypeDetails onClose={props.onCloseKey} />
 }
 
 export { DynamicTypeDetails }

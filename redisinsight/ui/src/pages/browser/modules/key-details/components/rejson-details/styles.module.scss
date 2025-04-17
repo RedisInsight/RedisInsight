@@ -58,6 +58,9 @@
   font-family: "Inconsolata", monospace !important;
   letter-spacing: 0.15px;
   flex-grow: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 
   input {
     width: 100%;
@@ -137,6 +140,10 @@
   div {
     min-height: 25px;
   }
+}
+
+.topRow {
+  justify-content: space-between;
 }
 
 .rowContainer {
@@ -254,4 +261,41 @@
   height: 150px;
   width: 100%;
   max-width: none;
+}
+
+.confirmDialogActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+
+  button {
+    margin-left: 8px;
+
+    &:first-of-type {
+      margin-left: 0;
+    }
+  }
+}
+
+.actions {
+  margin-top: 1em;
+  display: flex;
+  flex-direction: row !important;
+  width: 100%;
+  justify-content: flex-end;
+
+  button {
+
+    &:first-of-type {
+      margin-right: 1em;
+    }
+  }
+}
+
+.editor, .editorWrapper {
+  // Using 100% height starts a weird Monaco animation,
+  // which causes the editor to overflow its container.
+  // Probably it's related to the borders of the inside elements.
+  // TODO: Find a cleaner fix for this.
+  height: calc(100% - 2px) !important;
 }

@@ -13,20 +13,20 @@ appendIconComponentCache({
 
 interface Props {
   command?: string
-  data?: { response: any, status: string }[]
+  data?: { response: any; status: string }[]
 }
 
-const renderChart = (props:Props) => {
+const renderChart = (props: Props) => {
   const { command = '', data: result = [] } = props
   render(
     <App command={command} result={result} />,
-    document.getElementById('app')
+    document.getElementById('app'),
   )
 }
 
 if (process.env.NODE_ENV === 'development') {
   const command = 'TS.RANGE bike_sales_3_per_day - + FILTER_BY_VALUE 3000 5000'
-  renderChart({ command, data: result, mode: 'ASCII'})
+  renderChart({ command, data: result, mode: 'ASCII' })
 }
 
 // This is a required action - export the main function for execution of the visualization

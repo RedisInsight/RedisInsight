@@ -11,7 +11,7 @@ const mockedProps = {
       name: 'Client 1',
       ageSec: 11,
       idleSec: 5,
-      user: 'user1'
+      user: 'user1',
     },
     client2: {
       id: 'client2',
@@ -19,13 +19,13 @@ const mockedProps = {
       name: 'Client 2',
       ageSec: 20,
       idleSec: 12,
-      user: 'user2'
+      user: 'user2',
     },
   },
   loading: false,
   onRefresh: jest.fn(),
   onRefreshClicked: jest.fn(),
-  onChangeAutoRefresh: jest.fn()
+  onChangeAutoRefresh: jest.fn(),
 }
 
 describe('Clients', () => {

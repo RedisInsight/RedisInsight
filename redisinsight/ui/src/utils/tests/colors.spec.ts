@@ -4,7 +4,7 @@ const colorScheme: ColorScheme = {
   cHueStart: 180,
   cHueRange: 140,
   cSaturation: 55,
-  cLightness: 45
+  cLightness: 45,
 }
 
 const RGBColorsTests: any[] = [
@@ -22,11 +22,13 @@ const RGBColorsTests: any[] = [
 ]
 
 describe('getRGBColorByScheme', () => {
-  it.each(RGBColorsTests)('for input: %s (index), %s (shift), should be output: %s',
+  it.each(RGBColorsTests)(
+    'for input: %s (index), %s (shift), should be output: %s',
     (index, shift, expected) => {
       const result = getRGBColorByScheme(index, shift, colorScheme)
       expect(result).toEqual(expected)
-    })
+    },
+  )
 })
 
 describe('rgb', () => {

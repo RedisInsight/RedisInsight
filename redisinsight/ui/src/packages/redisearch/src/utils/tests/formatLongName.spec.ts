@@ -7,24 +7,35 @@ const formatLongNameTests: any[] = [
 ]
 
 describe('formatLongName', () => {
-  it.each(formatLongNameTests)('for input: %s (name), %s (maxNameLength), %s (endPartLength), %s (separator), should be output: %s',
+  it.each(formatLongNameTests)(
+    'for input: %s (name), %s (maxNameLength), %s (endPartLength), %s (separator), should be output: %s',
     (name, maxNameLength, endPartLength, separator, expected) => {
-      const result = formatLongName(name, maxNameLength, endPartLength, separator)
+      const result = formatLongName(
+        name,
+        maxNameLength,
+        endPartLength,
+        separator,
+      )
       expect(result).toBe(expected)
-    })
+    },
+  )
 })
 
 const formatNameShortTests: any[] = [
   ['11111111111112', '11111111111112'],
   ['uaoe uaoeu aoeuaoeua', 'uaoe uaoeu aoeuaoeua'],
-  ['test test test test test test test test test test test test test test test test test test test ',
-    'test test test test test test test test test test ...test test test '],
+  [
+    'test test test test test test test test test test test test test test test test test test test ',
+    'test test test test test test test test test test ...test test test ',
+  ],
 ]
 
 describe('formatNameShort', () => {
-  it.each(formatNameShortTests)('for input: %s (name), should be output: %s',
+  it.each(formatNameShortTests)(
+    'for input: %s (name), should be output: %s',
     (name, expected) => {
       const result = formatNameShort(name)
       expect(result).toBe(expected)
-    })
+    },
+  )
 })

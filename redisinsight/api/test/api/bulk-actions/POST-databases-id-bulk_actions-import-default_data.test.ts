@@ -10,28 +10,33 @@ import {
 import { AdmZip, path } from '../../helpers/test';
 const { rte, request, server, constants } = deps;
 
-const endpoint = (
-  id = constants.TEST_INSTANCE_ID,
-) => request(server).post(`/${constants.API.DATABASES}/${id}/bulk-actions/import/default-data`);
+const endpoint = (id = constants.TEST_INSTANCE_ID) =>
+  request(server).post(
+    `/${constants.API.DATABASES}/${id}/bulk-actions/import/default-data`,
+  );
 
-const connectEndpoint = (
-  id = constants.TEST_INSTANCE_ID,
-) => request(server).get(`/${constants.API.DATABASES}/${id}/connect`);
+const connectEndpoint = (id = constants.TEST_INSTANCE_ID) =>
+  request(server).get(`/${constants.API.DATABASES}/${id}/connect`);
 
 const getZipArchive = () => {
   const zipArchive = new AdmZip();
 
   zipArchive.addFile('info.md', Buffer.from('# info.md', 'utf8'));
-  zipArchive.addFile('_data/data.txt', Buffer.from(
-    `set ${constants.TEST_STRING_KEY_1} bulkimport`,
-    'utf8',
-  ));
+  zipArchive.addFile(
+    '_data/data.txt',
+    Buffer.from(`set ${constants.TEST_STRING_KEY_1} bulkimport`, 'utf8'),
+  );
 
   return zipArchive;
-}
+};
 
 describe('POST /databases/:id/bulk-actions/import/default-data', () => {
-  requirements('!rte.sharedData', '!rte.bigData', 'rte.serverType=local', 'rte.modules.rejson')
+  requirements(
+    '!rte.sharedData',
+    '!rte.bigData',
+    'rte.serverType=local',
+    'rte.modules.rejson',
+  );
 
   beforeEach(async () => await rte.data.truncate());
 
@@ -56,14 +61,26 @@ describe('POST /databases/:id/bulk-actions/import/default-data', () => {
           {
             path: 'notexistingmodule',
             modules: ['not existing'],
-          }
+          },
         ],
-      }
+      };
 
-      await fsExtra.writeFile(path.join(constants.TEST_DATA_DIR, 'manifest.json'), JSON.stringify(manifest));
-      await fsExtra.writeFile(path.join(constants.TEST_DATA_DIR, 'common'), 'set string string');
-      await fsExtra.writeFile(path.join(constants.TEST_DATA_DIR, 'json'), 'set json json');
-      await fsExtra.writeFile(path.join(constants.TEST_DATA_DIR, 'notexistingmodule'), 'set should_not_exists value');
+      await fsExtra.writeFile(
+        path.join(constants.TEST_DATA_DIR, 'manifest.json'),
+        JSON.stringify(manifest),
+      );
+      await fsExtra.writeFile(
+        path.join(constants.TEST_DATA_DIR, 'common'),
+        'set string string',
+      );
+      await fsExtra.writeFile(
+        path.join(constants.TEST_DATA_DIR, 'json'),
+        'set json json',
+      );
+      await fsExtra.writeFile(
+        path.join(constants.TEST_DATA_DIR, 'notexistingmodule'),
+        'set should_not_exists value',
+      );
 
       // connect to database
       await validateApiCall({

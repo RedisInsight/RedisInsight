@@ -18,7 +18,10 @@ export abstract class ClientCertificateRepository {
    * @return ClientCertificate
    * @throws BadRequestException with ERROR_MESSAGES.CLIENT_CERT_EXIST when such CA exists
    */
-  abstract create(clientCertificate: ClientCertificate, uniqueCheck?: boolean): Promise<ClientCertificate>;
+  abstract create(
+    clientCertificate: ClientCertificate,
+    uniqueCheck?: boolean,
+  ): Promise<ClientCertificate>;
 
   /**
    * Delete certificate by id
@@ -31,5 +34,7 @@ export abstract class ClientCertificateRepository {
    * Cleanup CA certificates which were created on startup from a file or env variables
    * @param excludeIds
    */
-  abstract cleanupPreSetup(excludeIds?: string[]): Promise<{ affected: number }>;
+  abstract cleanupPreSetup(
+    excludeIds?: string[],
+  ): Promise<{ affected: number }>;
 }

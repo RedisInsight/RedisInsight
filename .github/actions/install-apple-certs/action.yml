@@ -46,4 +46,3 @@ runs:
         security import certs/mac-installer.p12 -k $KEYCHAIN -P "$CSC_MAC_INSTALLER_PASSWORD" -T /usr/bin/codesign -T /usr/bin/productbuild
         security set-key-partition-list -S apple-tool:,apple: -s -k mysecretpassword $KEYCHAIN
         security list-keychain -d user -s $KEYCHAIN
-

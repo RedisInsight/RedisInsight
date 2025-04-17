@@ -1,4 +1,7 @@
-import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
+import {
+  GetKeyInfoResponse,
+  RedisDataType,
+} from 'src/modules/browser/keys/dto';
 import {
   BrowserToolKeysCommands,
   BrowserToolTSCommands,
@@ -9,12 +12,15 @@ import { KeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/ke
 import { RedisClient } from 'src/modules/redis/client';
 
 export class TsKeyInfoStrategy extends KeyInfoStrategy {
-  private async getTotalSamples(client: RedisClient, key: RedisString): Promise<number> {
+  private async getTotalSamples(
+    client: RedisClient,
+    key: RedisString,
+  ): Promise<number> {
     try {
-      const info = await client.sendCommand(
+      const info = (await client.sendCommand(
         [BrowserToolTSCommands.TSInfo, key],
         { replyEncoding: 'utf8' },
-      ) as string[];
+      )) as string[];
 
       return convertArrayReplyToObject(info).totalsamples;
     } catch (error) {
@@ -29,13 +35,10 @@ export class TsKeyInfoStrategy extends KeyInfoStrategy {
   ): Promise<GetKeyInfoResponse> {
     this.logger.debug(`Getting ${RedisDataType.TS} type info.`);
 
-    const [
-      [, ttl = null],
-      [, size = null],
-    ] = await client.sendPipeline([
+    const [[, ttl = null], [, size = null]] = (await client.sendPipeline([
       [BrowserToolKeysCommands.Ttl, key],
       [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-    ]) as [any, number][];
+    ])) as [any, number][];
 
     const length = await this.getTotalSamples(client, key);
 

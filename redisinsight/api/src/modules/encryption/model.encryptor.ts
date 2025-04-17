@@ -13,18 +13,22 @@ export class ModelEncryptor {
   ) {}
 
   async encryptEntities<T>(entities: T[]): Promise<T[]> {
-    return Promise.all(entities.map(async (entity) => {
-      return this.encryptEntity(entity);
-    }));
+    return Promise.all(
+      entities.map(async (entity) => {
+        return this.encryptEntity(entity);
+      }),
+    );
   }
 
   async decryptEntities<T>(
     entities: T[],
     ignoreErrors: boolean = false,
   ): Promise<T[]> {
-    return Promise.all(entities.map(async (entity) => {
-      return this.decryptEntity(entity, ignoreErrors);
-    }));
+    return Promise.all(
+      entities.map(async (entity) => {
+        return this.decryptEntity(entity, ignoreErrors);
+      }),
+    );
   }
 
   /**
@@ -39,13 +43,17 @@ export class ModelEncryptor {
     const encryptedEntity = cloneClassInstance(entity);
 
     // TODO: implement support depth in field, 'obj.field'
-    await Promise.all(this.fields.map(async (field) => {
-      if (entity[field]) {
-        const { data, encryption } = await this.encryptionService.encrypt(entity[field]);
-        encryptedEntity[field] = data;
-        encryptedEntity['encryption'] = encryption;
-      }
-    }));
+    await Promise.all(
+      this.fields.map(async (field) => {
+        if (entity[field]) {
+          const { data, encryption } = await this.encryptionService.encrypt(
+            entity[field],
+          );
+          encryptedEntity[field] = data;
+          encryptedEntity['encryption'] = encryption;
+        }
+      }),
+    );
 
     return encryptedEntity;
   }
@@ -62,19 +70,18 @@ export class ModelEncryptor {
    * @param ignoreErrors
    * @private
    */
-  async decryptEntity<T>(
-    entity: T,
-    ignoreErrors: boolean = false,
-  ): Promise<T> {
+  async decryptEntity<T>(entity: T, ignoreErrors: boolean = false): Promise<T> {
     if (!entity) {
       return null;
     }
 
     const decrypted = cloneClassInstance(entity);
 
-    await Promise.all(this.fields.map(async (field) => {
-      decrypted[field] = await this.decryptField(entity, field, ignoreErrors);
-    }));
+    await Promise.all(
+      this.fields.map(async (field) => {
+        decrypted[field] = await this.decryptField(entity, field, ignoreErrors);
+      }),
+    );
 
     return decrypted;
   }
@@ -97,7 +104,10 @@ export class ModelEncryptor {
     }
 
     try {
-      return await this.encryptionService.decrypt(entity[field], entity['encryption']);
+      return await this.encryptionService.decrypt(
+        entity[field],
+        entity['encryption'],
+      );
     } catch (error) {
       this.logger.error(`Unable to decrypt entity fields: ${field}`, error);
       if (!ignoreErrors) {

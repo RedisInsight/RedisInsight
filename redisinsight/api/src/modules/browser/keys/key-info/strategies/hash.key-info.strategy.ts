@@ -1,4 +1,7 @@
-import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
+import {
+  GetKeyInfoResponse,
+  RedisDataType,
+} from 'src/modules/browser/keys/dto';
 import {
   BrowserToolHashCommands,
   BrowserToolKeysCommands,
@@ -17,15 +20,12 @@ export class HashKeyInfoStrategy extends KeyInfoStrategy {
     this.logger.debug(`Getting ${RedisDataType.Hash} type info.`);
 
     if (includeSize !== false) {
-      const [
-        [, ttl = null],
-        [, length = null],
-        [, size = null],
-      ] = await client.sendPipeline([
-        [BrowserToolKeysCommands.Ttl, key],
-        [BrowserToolHashCommands.HLen, key],
-        [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-      ]) as [any, number][];
+      const [[, ttl = null], [, length = null], [, size = null]] =
+        (await client.sendPipeline([
+          [BrowserToolKeysCommands.Ttl, key],
+          [BrowserToolHashCommands.HLen, key],
+          [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+        ])) as [any, number][];
 
       return {
         name: key,
@@ -36,19 +36,16 @@ export class HashKeyInfoStrategy extends KeyInfoStrategy {
       };
     }
 
-    const [
-      [, ttl = null],
-      [, length = null],
-    ] = await client.sendPipeline([
+    const [[, ttl = null], [, length = null]] = (await client.sendPipeline([
       [BrowserToolKeysCommands.Ttl, key],
       [BrowserToolHashCommands.HLen, key],
-    ]) as [any, number][];
+    ])) as [any, number][];
 
     let size = -1;
     if (length < 50_000) {
-      const sizeData = await client.sendPipeline([
+      const sizeData = (await client.sendPipeline([
         [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-      ]) as [any, number][];
+      ])) as [any, number][];
       size = sizeData && sizeData[0] && sizeData[0][1];
     }
 
@@ -59,6 +56,5 @@ export class HashKeyInfoStrategy extends KeyInfoStrategy {
       size,
       length,
     };
-
   }
 }

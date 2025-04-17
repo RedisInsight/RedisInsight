@@ -1,27 +1,27 @@
 import { v4 as uuidv4 } from 'uuid';
-import {
-  describe, expect, deps, getMainCheckFn,
-} from '../deps';
+import { describe, expect, deps, getMainCheckFn } from '../deps';
 import { Joi } from '../../helpers/test';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const testRdiId = uuidv4();
 const notExistedRdiId = 'not-existed-rdi-id';
 
-const endpoint = (rdiId) => request(server).get(`/${constants.API.RDI}/${rdiId || testRdiId}`);
+const endpoint = (rdiId) =>
+  request(server).get(`/${constants.API.RDI}/${rdiId || testRdiId}`);
 
-const responseSchema = Joi.object().keys({
-  id: Joi.string().required(),
-  url: Joi.string().required(),
-  name: Joi.string().max(500).required(),
-  username: Joi.string().required(),
-  password: Joi.string().required(),
-  lastConnection: Joi.string().isoDate().required(),
-  version: Joi.string().required(),
-}).required().strict(true);
+const responseSchema = Joi.object()
+  .keys({
+    id: Joi.string().required(),
+    url: Joi.string().required(),
+    name: Joi.string().max(500).required(),
+    username: Joi.string().required(),
+    password: Joi.string().required(),
+    lastConnection: Joi.string().isoDate().required(),
+    version: Joi.string().required(),
+  })
+  .required()
+  .strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 

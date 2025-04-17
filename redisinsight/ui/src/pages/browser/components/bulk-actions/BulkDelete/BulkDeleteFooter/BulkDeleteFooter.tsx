@@ -11,7 +11,11 @@ import {
   bulkActionsDeleteSelector,
 } from 'uiSrc/slices/browser/bulkActions'
 import { keysDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
-import { getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  getMatchType,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import { BulkActionsType } from 'uiSrc/constants'
 import { getRangeForNumber, BULK_THRESHOLD_BREAKPOINTS } from 'uiSrc/utils'
 
@@ -31,7 +35,7 @@ const BulkDeleteFooter = (props: Props) => {
   const { filter, search } = useSelector(keysSelector)
   const { scanned, total } = useSelector(keysDataSelector)
   const { loading } = useSelector(bulkActionsDeleteSelector)
-  const { status } = useSelector(bulkActionsDeleteOverviewSelector) ?? { }
+  const { status } = useSelector(bulkActionsDeleteOverviewSelector) ?? {}
 
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
 
@@ -64,8 +68,8 @@ const BulkDeleteFooter = (props: Props) => {
           totalRange: getRangeForNumber(total, BULK_THRESHOLD_BREAKPOINTS),
         },
         databaseId: instanceId,
-        action: BulkActionsType.Delete
-      }
+        action: BulkActionsType.Delete,
+      },
     })
   }
 
@@ -114,7 +118,7 @@ const BulkDeleteFooter = (props: Props) => {
             closePopover={() => setIsPopoverOpen(false)}
             panelClassName={styles.panelPopover}
             panelPaddingSize="none"
-            button={(
+            button={
               <EuiButton
                 fill
                 color="secondary"
@@ -125,13 +129,14 @@ const BulkDeleteFooter = (props: Props) => {
               >
                 Delete
               </EuiButton>
-            )}
+            }
           >
-            <EuiText color="subdued" className={styles.containerPopover} data-testid="bulk-action-tooltip">
-              <EuiIcon
-                type="alert"
-                className={styles.popoverIcon}
-              />
+            <EuiText
+              color="subdued"
+              className={styles.containerPopover}
+              data-testid="bulk-action-tooltip"
+            >
+              <EuiIcon type="alert" className={styles.popoverIcon} />
               <div className={cx(styles.popoverItem, styles.popoverItemTitle)}>
                 Are you sure you want to perform this action?
               </div>

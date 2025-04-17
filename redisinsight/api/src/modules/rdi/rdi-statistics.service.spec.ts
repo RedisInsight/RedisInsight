@@ -1,6 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MockType, mockRdiClientProvider } from 'src/__mocks__';
-import { RdiClientMetadata, RdiStatisticsResult, RdiStatisticsStatus } from 'src/modules/rdi/models';
+import {
+  RdiClientMetadata,
+  RdiStatisticsResult,
+  RdiStatisticsStatus,
+} from 'src/modules/rdi/models';
 import { RdiClientProvider } from 'src/modules/rdi/providers/rdi.client.provider';
 import { RdiStatisticsService } from 'src/modules/rdi/rdi-statistics.service';
 
@@ -38,7 +42,9 @@ describe('RdiStatisticsService', () => {
 
       await service.getStatistics(rdiClientMetadata, sections);
 
-      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(
+        rdiClientMetadata,
+      );
     });
 
     it('should call getStatistics on RdiClient with correct arguments', async () => {

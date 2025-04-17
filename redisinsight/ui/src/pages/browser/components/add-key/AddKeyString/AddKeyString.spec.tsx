@@ -9,12 +9,10 @@ const mockedProps = mock<Props>()
 jest.mock('../AddKeyFooter/AddKeyFooter', () => ({
   __esModule: true,
   namedExport: jest.fn(),
-  default: jest.fn()
+  default: jest.fn(),
 }))
 
-const MockAddKeyFooter = (props) => (
-  <div {...props} />
-)
+const MockAddKeyFooter = (props) => <div {...props} />
 
 describe('AddKeyString', () => {
   beforeAll(() => {
@@ -29,10 +27,7 @@ describe('AddKeyString', () => {
     render(<AddKeyString {...instance(mockedProps)} />)
     const valueInput = screen.getByTestId('string-value')
     const value = 'string stringstringstringstringstring stringstring string'
-    fireEvent.change(
-      valueInput,
-      { target: { value } }
-    )
+    fireEvent.change(valueInput, { target: { value } })
     expect(valueInput).toHaveValue(value)
   })
 
@@ -42,7 +37,9 @@ describe('AddKeyString', () => {
   })
 
   it('should not be disabled add key with proper values', () => {
-    const { container } = render(<AddKeyString {...instance(mockedProps)} keyName="name" />)
+    const { container } = render(
+      <AddKeyString {...instance(mockedProps)} keyName="name" />,
+    )
     expect(container.querySelector('.btn-add')).not.toBeDisabled()
   })
 })

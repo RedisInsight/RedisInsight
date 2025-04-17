@@ -1,5 +1,9 @@
 import { cloneDeep } from 'lodash'
-import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import { MOCK_TUTORIALS } from 'uiSrc/constants'
 import { resourcesService } from 'uiSrc/services'
@@ -41,7 +45,7 @@ describe('slices', () => {
       const loading = true
       const state = {
         ...initialState,
-        loading
+        loading,
       }
 
       // Act
@@ -89,7 +93,7 @@ describe('slices', () => {
         ...initialState,
         loading: false,
         items: defaultItems,
-        error
+        error,
       }
 
       // Act
@@ -120,10 +124,7 @@ describe('slices', () => {
       await store.dispatch<any>(fetchTutorials(jest.fn()))
 
       // Assert
-      const expectedActions = [
-        getWBTutorials(),
-        getWBTutorialsSuccess(data),
-      ]
+      const expectedActions = [getWBTutorials(), getWBTutorialsSuccess(data)]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)
     })

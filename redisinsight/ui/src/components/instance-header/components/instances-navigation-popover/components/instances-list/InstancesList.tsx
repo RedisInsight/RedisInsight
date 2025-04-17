@@ -1,12 +1,24 @@
 import React, { useState } from 'react'
-import { EuiListGroup, EuiListGroupItem, EuiLoadingSpinner, EuiText } from '@elastic/eui'
+import {
+  EuiListGroup,
+  EuiListGroupItem,
+  EuiLoadingSpinner,
+  EuiText,
+} from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { checkConnectToRdiInstanceAction } from 'uiSrc/slices/rdi/instances'
-import { checkConnectToInstanceAction, setConnectedInstanceId } from 'uiSrc/slices/instances/instances'
+import {
+  checkConnectToInstanceAction,
+  setConnectedInstanceId,
+} from 'uiSrc/slices/instances/instances'
 import { Pages } from 'uiSrc/constants'
 import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
-import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
+import {
+  TelemetryEvent,
+  getRedisModulesSummary,
+  sendEventTelemetry,
+} from 'uiSrc/telemetry'
 import { getDbIndex } from 'uiSrc/utils'
 import { InstancesTabs } from '../../InstancesNavigationPopover'
 import styles from '../../styles.module.scss'
@@ -23,14 +35,20 @@ const InstancesList = ({
   filteredDbInstances,
   filteredRdiInstances,
   onItemClick,
-} :InstancesListProps) => {
+}: InstancesListProps) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [selected, setSelected] = useState<string>('')
 
-  const { instanceId, rdiInstanceId } = useParams<{ instanceId: string, rdiInstanceId: string }>()
+  const { instanceId, rdiInstanceId } = useParams<{
+    instanceId: string
+    rdiInstanceId: string
+  }>()
   const history = useHistory()
   const dispatch = useDispatch()
-  const instances = selectedTab === InstancesTabs.Databases ? filteredDbInstances : filteredRdiInstances
+  const instances =
+    selectedTab === InstancesTabs.Databases
+      ? filteredDbInstances
+      : filteredRdiInstances
 
   const connectToInstance = (id = '') => {
     dispatch(setConnectedInstanceId(id))
@@ -53,9 +71,16 @@ const InstancesList = ({
         source: 'navigation_panel',
         provider: instance.provider,
         ...modulesSummary,
-      }
+      },
     })
-    dispatch(checkConnectToInstanceAction(instance.id, connectToInstance, () => setLoading(false), false))
+    dispatch(
+      checkConnectToInstanceAction(
+        instance.id,
+        connectToInstance,
+        () => setLoading(false),
+        false,
+      ),
+    )
   }
 
   const goToRdiInstance = (instance: RdiInstance) => {
@@ -64,15 +89,17 @@ const InstancesList = ({
       return
     }
     setLoading(true)
-    dispatch(checkConnectToRdiInstanceAction(
-      instance.id,
-      (id: string) => {
-        setLoading(false)
-        onItemClick?.()
-        history.push(Pages.rdiPipelineConfig(id))
-      },
-      () => setLoading(false)
-    ))
+    dispatch(
+      checkConnectToRdiInstanceAction(
+        instance.id,
+        (id: string) => {
+          setLoading(false)
+          onItemClick?.()
+          history.push(Pages.rdiPipelineConfig(id))
+        },
+        () => setLoading(false),
+      ),
+    )
   }
 
   const goToPage = (instance: Instance | RdiInstance) => {
@@ -91,10 +118,11 @@ const InstancesList = ({
   }
 
   if (!instances?.length) {
-    const emptyMsg = selectedTab === InstancesTabs.Databases ? 'No databases' : 'No RDI endpoints'
-    return (
-      <div className={styles.emptyMsg}>{emptyMsg}</div>
-    )
+    const emptyMsg =
+      selectedTab === InstancesTabs.Databases
+        ? 'No databases'
+        : 'No RDI endpoints'
+    return <div className={styles.emptyMsg}>{emptyMsg}</div>
   }
 
   return (
@@ -106,19 +134,14 @@ const InstancesList = ({
             isActive={isInstanceActive(instance.id)}
             disabled={loading}
             key={instance.id}
-            label={(
+            label={
               <EuiText style={{ display: 'flex', alignItems: 'center' }}>
                 {loading && instance?.id === selected && (
-                <EuiLoadingSpinner
-                  size="s"
-                  className={styles.loading}
-                />
+                  <EuiLoadingSpinner size="s" className={styles.loading} />
                 )}
-                {instance.name}
-                {' '}
-                {getDbIndex(instance.db)}
+                {instance.name} {getDbIndex(instance.db)}
               </EuiText>
-        )}
+            }
             onClick={() => {
               setSelected(instance.id)
               goToPage(instance)

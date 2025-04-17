@@ -17,7 +17,7 @@ jest.mock(appInfoSlicesPath, () => ({
   ...jest.requireActual(appInfoSlicesPath),
   appInfoSelector: jest.fn().mockReturnValue({
     ...jest.requireActual(appInfoSlicesPath).appInfoSelector,
-    isShortcutsFlyoutOpen: true
+    isShortcutsFlyoutOpen: true,
   }),
 }))
 
@@ -31,7 +31,9 @@ describe('ShortcutsFlyout', () => {
 
     SHORTCUTS.forEach((group: ShortcutGroup) => {
       expect(
-        document.querySelector(`[data-test-subj="shortcuts-section-${group.name}"]`)
+        document.querySelector(
+          `[data-test-subj="shortcuts-section-${group.name}"]`,
+        ),
       ).toBeInTheDocument()
     })
   })

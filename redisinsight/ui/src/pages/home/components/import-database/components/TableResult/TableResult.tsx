@@ -34,14 +34,20 @@ const TableResult = (props: Props) => {
       name: '#',
       field: 'index',
       width: '4%',
-      render: (index: number) => (<span data-testid={`table-index-${index}`}>({index})</span>)
+      render: (index: number) => (
+        <span data-testid={`table-index-${index}`}>({index})</span>
+      ),
     },
     {
       name: 'Host:Port',
       field: 'host',
       width: '25%',
       truncateText: true,
-      render: (_host, { host, port, index }) => (<div data-testid={`table-host-port-${index}`}>{host}:{port}</div>)
+      render: (_host, { host, port, index }) => (
+        <div data-testid={`table-host-port-${index}`}>
+          {host}:{port}
+        </div>
+      ),
     },
     {
       name: 'Result',
@@ -49,10 +55,14 @@ const TableResult = (props: Props) => {
       width: '25%',
       render: (errors: Maybe<ErrorImportResult[]>, { index }) => (
         <div data-testid={`table-result-${index}`}>
-          {errors ? (<ErrorResult errors={errors.map((e) => e.message)} />) : 'Successful'}
+          {errors ? (
+            <ErrorResult errors={errors.map((e) => e.message)} />
+          ) : (
+            'Successful'
+          )}
         </div>
-      )
-    }
+      ),
+    },
   ]
 
   if (data?.length === 0) return null
@@ -62,7 +72,12 @@ const TableResult = (props: Props) => {
       <EuiInMemoryTable
         items={data ?? []}
         columns={columns}
-        className={cx('inMemoryTableDefault', 'noBorders', 'stickyHeader', styles.table)}
+        className={cx(
+          'inMemoryTableDefault',
+          'noBorders',
+          'stickyHeader',
+          styles.table,
+        )}
         responsive={false}
         itemId="index"
         data-testid="result-log-table"

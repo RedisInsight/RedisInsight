@@ -8,6 +8,4 @@ enum TutorialsIds {
   FullTextSearch = 'sq-full-text',
 }
 
-export {
-  TutorialsIds
-}
+export { TutorialsIds }

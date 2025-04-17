@@ -21,23 +21,28 @@ const DynamicTypeDetailsTypeTests: any[] = [
 
 describe('DynamicTypeDetails', () => {
   it('should render', () => {
-    expect(render(<DynamicTypeDetails {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<DynamicTypeDetails {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 
-  it.each(DynamicTypeDetailsTypeTests)('for key type: %s (reply), data-subj should exists: %s',
+  it.each(DynamicTypeDetailsTypeTests)(
+    'for key type: %s (reply), data-subj should exists: %s',
     (type: KeyTypes, testId: string) => {
-      const { queryByTestId } = render(<DynamicTypeDetails
-        {...instance(mockedProps)}
-        keyType={type}
-      />)
+      const { queryByTestId } = render(
+        <DynamicTypeDetails {...instance(mockedProps)} keyType={type} />,
+      )
       expect(queryByTestId(testId)).toBeInTheDocument()
-    })
+    },
+  )
 
   it('should show TooLongKeyNameDetails component when key name is truncated', () => {
-    const { queryByTestId } = render(<DynamicTypeDetails
-      {...instance(mockedProps)}
-      keyProp={MOCK_TRUNCATED_BUFFER_VALUE}
-    />)
+    const { queryByTestId } = render(
+      <DynamicTypeDetails
+        {...instance(mockedProps)}
+        keyProp={MOCK_TRUNCATED_BUFFER_VALUE}
+      />,
+    )
     expect(queryByTestId('too-long-key-name-details')).toBeInTheDocument()
   })
 })

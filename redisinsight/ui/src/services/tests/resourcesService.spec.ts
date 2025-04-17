@@ -6,9 +6,9 @@ import { cloneDeep } from 'lodash'
 
 Object.defineProperty(window, 'location', {
   value: {
-    origin: 'http://localhost'
+    origin: 'http://localhost',
   },
-  writable: true
+  writable: true,
 })
 
 const OLD_ENV = cloneDeep(riConfig)
@@ -41,7 +41,9 @@ describe('getPathToResource', () => {
   test('shoud return url with absolute path', () => {
     const { getPathToResource } = require('../resourcesService')
 
-    expect(getPathToResource('data/file.txt')).toEqual('http://localhost:5001/data/file.txt')
+    expect(getPathToResource('data/file.txt')).toEqual(
+      'http://localhost:5001/data/file.txt',
+    )
   })
 
   test('shoud return origin with not absolute path', () => {
@@ -49,6 +51,8 @@ describe('getPathToResource', () => {
     riConfig.app.env = 'production'
 
     const { getPathToResource } = require('../resourcesService')
-    expect(getPathToResource('data/file.txt')).toEqual('http://localhost/data/file.txt')
+    expect(getPathToResource('data/file.txt')).toEqual(
+      'http://localhost/data/file.txt',
+    )
   })
 })

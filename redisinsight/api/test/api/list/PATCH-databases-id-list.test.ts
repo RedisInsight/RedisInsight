@@ -8,7 +8,8 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn
+  validateApiCall,
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -52,7 +53,13 @@ describe('PATCH /databases/:instanceId/list', () => {
           element: constants.TEST_LIST_ELEMENT_BIN_UTF8_1,
         },
         after: async () => {
-          expect(await rte.client.lrangeBuffer(constants.TEST_LIST_KEY_BIN_BUFFER_1, 0, 100)).to.deep.eq([
+          expect(
+            await rte.client.lrangeBuffer(
+              constants.TEST_LIST_KEY_BIN_BUFFER_1,
+              0,
+              100,
+            ),
+          ).to.deep.eq([
             Buffer.from(constants.TEST_LIST_ELEMENT_BIN_UTF8_1, 'utf8'),
           ]);
         },
@@ -72,9 +79,13 @@ describe('PATCH /databases/:instanceId/list', () => {
           element: constants.TEST_LIST_ELEMENT_BIN_BUF_OBJ_1,
         },
         after: async () => {
-          expect(await rte.client.lrangeBuffer(constants.TEST_LIST_KEY_BIN_BUFFER_1, 0, 100)).to.deep.eq([
-            constants.TEST_LIST_ELEMENT_BIN_BUFFER_1,
-          ]);
+          expect(
+            await rte.client.lrangeBuffer(
+              constants.TEST_LIST_KEY_BIN_BUFFER_1,
+              0,
+              100,
+            ),
+          ).to.deep.eq([constants.TEST_LIST_ELEMENT_BIN_BUFFER_1]);
         },
       },
       {
@@ -92,9 +103,13 @@ describe('PATCH /databases/:instanceId/list', () => {
           element: constants.TEST_LIST_ELEMENT_BIN_ASCII_1,
         },
         after: async () => {
-          expect(await rte.client.lrangeBuffer(constants.TEST_LIST_KEY_BIN_BUFFER_1, 0, 100)).to.deep.eq([
-            constants.TEST_LIST_ELEMENT_BIN_BUFFER_1,
-          ]);
+          expect(
+            await rte.client.lrangeBuffer(
+              constants.TEST_LIST_KEY_BIN_BUFFER_1,
+              0,
+              100,
+            ),
+          ).to.deep.eq([constants.TEST_LIST_ELEMENT_BIN_BUFFER_1]);
         },
       },
     ].map(mainCheckFn);
@@ -120,11 +135,10 @@ describe('PATCH /databases/:instanceId/list', () => {
           },
           statusCode: 200,
           after: async () => {
-            expect(await rte.client.lrange(constants.TEST_LIST_KEY_1, 0, 100)).to.eql([
-              '',
-              constants.TEST_LIST_ELEMENT_2,
-            ]);
-          }
+            expect(
+              await rte.client.lrange(constants.TEST_LIST_KEY_1, 0, 100),
+            ).to.eql(['', constants.TEST_LIST_ELEMENT_2]);
+          },
         },
         {
           name: 'Should return NotFound error if key does not exists',
@@ -213,7 +227,7 @@ describe('PATCH /databases/:instanceId/list', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -lset')
+          before: () => rte.data.setAclUserRules('~* +@all -lset'),
         },
         {
           name: 'Should throw error if no permissions for "exists" command',
@@ -228,7 +242,7 @@ describe('PATCH /databases/:instanceId/list', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
       ].map(mainCheckFn);
     });

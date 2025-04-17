@@ -1,14 +1,21 @@
-import { createParamDecorator, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import {
+  createParamDecorator,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Validator } from 'class-validator';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
 
 const validator = new Validator();
 
-export const cloudAuthDtoFromRequestHeadersFactory = (data: unknown, ctx: ExecutionContext): CloudCapiAuthDto => {
+export const cloudAuthDtoFromRequestHeadersFactory = (
+  data: unknown,
+  ctx: ExecutionContext,
+): CloudCapiAuthDto => {
   const request = ctx.switchToHttp().getRequest();
 
-  const dto = plainToClass(CloudCapiAuthDto, {
+  const dto = plainToInstance(CloudCapiAuthDto, {
     capiKey: request.headers['x-cloud-api-key'],
     capiSecret: request.headers['x-cloud-api-secret'],
   });
@@ -16,10 +23,14 @@ export const cloudAuthDtoFromRequestHeadersFactory = (data: unknown, ctx: Execut
   const errors = validator.validateSync(dto);
 
   if (errors?.length) {
-    throw new UnauthorizedException('Required authentication credentials were not provided');
+    throw new UnauthorizedException(
+      'Required authentication credentials were not provided',
+    );
   }
 
   return dto;
 };
 
-export const CloudAuthHeaders = createParamDecorator(cloudAuthDtoFromRequestHeadersFactory);
+export const CloudAuthHeaders = createParamDecorator(
+  cloudAuthDtoFromRequestHeadersFactory,
+);

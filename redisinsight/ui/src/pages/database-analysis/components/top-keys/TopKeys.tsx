@@ -23,7 +23,7 @@ const TopKeys = ({ data, loading }: Props) => {
     return <TableLoader />
   }
 
-  if ((!topKeysLength?.length) && (!topKeysMemory?.length)) {
+  if (!topKeysLength?.length && !topKeysMemory?.length) {
     return null
   }
 
@@ -43,7 +43,9 @@ const TopKeys = ({ data, loading }: Props) => {
           color="secondary"
           onClick={() => setTableView(TableView.MEMORY)}
           disabled={tableView === TableView.MEMORY}
-          className={cx(styles.textBtn, { [styles.activeBtn]: tableView === TableView.MEMORY })}
+          className={cx(styles.textBtn, {
+            [styles.activeBtn]: tableView === TableView.MEMORY,
+          })}
           data-testid="btn-change-table-memory"
         >
           by Memory
@@ -54,7 +56,9 @@ const TopKeys = ({ data, loading }: Props) => {
           color="secondary"
           onClick={() => setTableView(TableView.KEYS)}
           disabled={tableView === TableView.KEYS}
-          className={cx(styles.textBtn, { [styles.activeBtn]: tableView === TableView.KEYS })}
+          className={cx(styles.textBtn, {
+            [styles.activeBtn]: tableView === TableView.KEYS,
+          })}
           data-testid="btn-change-table-keys"
         >
           by Length

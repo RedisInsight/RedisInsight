@@ -7,5 +7,5 @@ export {
   ModuleNotLoaded,
   ModuleNotLoadedMinimalized,
   FilterNotAvailable,
-  DatabaseNotOpened
+  DatabaseNotOpened,
 }

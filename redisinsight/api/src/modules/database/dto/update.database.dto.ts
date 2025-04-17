@@ -1,17 +1,28 @@
-import {
-  ApiPropertyOptional, OmitType, PartialType,
-} from '@nestjs/swagger';
+import { ApiPropertyOptional, OmitType, PartialType } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import {
-  IsInt, IsNotEmpty, IsNotEmptyObject, IsOptional, Max, Min, ValidateNested, ValidateIf, IsString, MaxLength,
+  IsInt,
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsOptional,
+  Max,
+  Min,
+  ValidateNested,
+  ValidateIf,
+  IsString,
+  MaxLength,
 } from 'class-validator';
 import { UpdateSshOptionsDto } from 'src/modules/ssh/dto/update.ssh-options.dto';
 import { UpdateSentinelMasterDto } from 'src/modules/redis-sentinel/dto/update.sentinel.master.dto';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
 
-export class UpdateDatabaseDto extends PartialType(OmitType(CreateDatabaseDto, [
-  'sshOptions', 'timeout', 'sentinelMaster',
-] as const)) {
+export class UpdateDatabaseDto extends PartialType(
+  OmitType(CreateDatabaseDto, [
+    'sshOptions',
+    'timeout',
+    'sentinelMaster',
+  ] as const),
+) {
   @ValidateIf((object, value) => value !== undefined)
   @IsString({ always: true })
   @MaxLength(500)

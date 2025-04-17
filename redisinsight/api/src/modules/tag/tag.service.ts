@@ -50,13 +50,17 @@ export class TagService {
     const tag = await this.tagRepository.getByKeyValuePair(key, value);
 
     if (!tag) {
-      throw new NotFoundException(`Tag with key ${key} and value ${value} not found`);
+      throw new NotFoundException(
+        `Tag with key ${key} and value ${value} not found`,
+      );
     }
 
     return tag;
   }
 
-  async getOrCreateByKeyValuePairs(keyValuePairs: CreateTagDto[]): Promise<Tag[]> {
+  async getOrCreateByKeyValuePairs(
+    keyValuePairs: CreateTagDto[],
+  ): Promise<Tag[]> {
     return this.tagRepository.getOrCreateByKeyValuePairs(keyValuePairs);
   }
 

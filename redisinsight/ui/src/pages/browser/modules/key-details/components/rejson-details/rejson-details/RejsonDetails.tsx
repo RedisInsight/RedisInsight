@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { EuiButtonIcon } from '@elastic/eui'
+import cx from 'classnames'
 import {
   appendReJSONArrayItemAction,
   fetchVisualisationResults,
@@ -13,6 +14,7 @@ import { getBrackets, isRealArray, isRealObject, wrapPath } from '../utils'
 import { BaseProps, ObjectTypes } from '../interfaces'
 import RejsonDynamicTypes from '../rejson-dynamic-types'
 import { AddItem } from '../components'
+import ChangeEditorTypeButton from '../../change-editor-type-button'
 
 import styles from '../styles.module.scss'
 
@@ -87,13 +89,14 @@ const RejsonDetails = (props: BaseProps) => {
     <div className={styles.jsonData} id="jsonData" data-testid="json-data">
       <>
         {(isObject || isArray) && (
-          <div className={styles.row}>
+          <div className={cx(styles.row, styles.topRow)}>
             <span>
               {getBrackets(
                 isObject ? ObjectTypes.Object : ObjectTypes.Array,
                 'start',
               )}
             </span>
+            <ChangeEditorTypeButton />
           </div>
         )}
         <RejsonDynamicTypes
@@ -113,6 +116,7 @@ const RejsonDetails = (props: BaseProps) => {
             isPair={isObject}
             onCancel={() => setAddRootKVPair(false)}
             onSubmit={handleFormSubmit}
+            parentPath={parentPath || '$'}
           />
         )}
         {(isObject || isArray) && (

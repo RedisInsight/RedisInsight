@@ -3,8 +3,10 @@ import { get } from 'lodash';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { SettingsService } from 'src/modules/settings/settings.service';
 import {
-  FeatureConfigFilter, FeatureConfigFilterAnd,
-  FeatureConfigFilterCondition, FeatureConfigFilterOr,
+  FeatureConfigFilter,
+  FeatureConfigFilterAnd,
+  FeatureConfigFilterCondition,
+  FeatureConfigFilterOr,
   FeatureConfigFilterType,
 } from 'src/modules/feature/model/features-config';
 import config, { Config } from 'src/utils/config';
@@ -21,11 +23,17 @@ export abstract class FeatureFlagStrategy {
     protected readonly settingsService: SettingsService,
   ) {}
 
-  abstract calculate(sessionMetadata: SessionMetadata, knownFeature: IFeatureFlag, data: any): Promise<Feature>;
+  abstract calculate(
+    sessionMetadata: SessionMetadata,
+    knownFeature: IFeatureFlag,
+    data: any,
+  ): Promise<Feature>;
 
   static async getCustomConfig(): Promise<object> {
     try {
-      const customConfig = JSON.parse(await fs.readFile(PATH_CONFIG.customConfig, 'utf8'));
+      const customConfig = JSON.parse(
+        await fs.readFile(PATH_CONFIG.customConfig, 'utf8'),
+      );
       return customConfig?.features || {};
     } catch (e) {
       return {};
@@ -39,11 +47,17 @@ export abstract class FeatureFlagStrategy {
    * @param perc
    * @protected
    */
-  protected async isInTargetRange(sessionMetadata: SessionMetadata, perc: number[][] = [[-1]]): Promise<boolean> {
+  protected async isInTargetRange(
+    sessionMetadata: SessionMetadata,
+    perc: number[][] = [[-1]],
+  ): Promise<boolean> {
     try {
-      const { controlNumber } = await this.featuresConfigService.getControlInfo(sessionMetadata);
+      const { controlNumber } =
+        await this.featuresConfigService.getControlInfo(sessionMetadata);
 
-      return !!perc.find((range) => controlNumber >= range[0] && controlNumber < range[1]);
+      return !!perc.find(
+        (range) => controlNumber >= range[0] && controlNumber < range[1],
+      );
     } catch (e) {
       return false;
     }
@@ -60,10 +74,12 @@ export abstract class FeatureFlagStrategy {
     // determine agreements and settings
     try {
       // todo: [USER_CONTEXT] temporary workaround
-      const appSettings = await this.settingsService.getAppSettings({
-        userId: '1',
-        sessionId: '1',
-      }).catch(null);
+      const appSettings = await this.settingsService
+        .getAppSettings({
+          userId: '1',
+          sessionId: '1',
+        })
+        .catch(null);
 
       state.agreements = appSettings?.agreements;
       state.settings = appSettings;
@@ -93,7 +109,10 @@ export abstract class FeatureFlagStrategy {
    * @param serverState
    * @private
    */
-  private checkFilter(filter: FeatureConfigFilterType, serverState: object): boolean {
+  private checkFilter(
+    filter: FeatureConfigFilterType,
+    serverState: object,
+  ): boolean {
     try {
       if (filter instanceof FeatureConfigFilterAnd) {
         return this.checkAndFilters(filter.and, serverState);
@@ -140,7 +159,10 @@ export abstract class FeatureFlagStrategy {
    * @param serverState
    * @private
    */
-  private checkAndFilters(filters: FeatureConfigFilterType[], serverState: object): boolean {
+  private checkAndFilters(
+    filters: FeatureConfigFilterType[],
+    serverState: object,
+  ): boolean {
     try {
       return !!filters.every((filter) => this.checkFilter(filter, serverState));
     } catch (e) {
@@ -154,7 +176,10 @@ export abstract class FeatureFlagStrategy {
    * @param serverState
    * @private
    */
-  private checkOrFilters(filters: FeatureConfigFilterType[], serverState: object): boolean {
+  private checkOrFilters(
+    filters: FeatureConfigFilterType[],
+    serverState: object,
+  ): boolean {
     try {
       return !!filters.some((filter) => this.checkFilter(filter, serverState));
     } catch (e) {

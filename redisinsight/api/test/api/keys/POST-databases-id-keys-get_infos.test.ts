@@ -15,14 +15,20 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/keys/get-metadata`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/keys/get-metadata`,
+  );
 
-const responseSchema = Joi.array().items(Joi.object().keys({
-  name: JoiRedisString.required(),
-  type: Joi.string().required(),
-  ttl: Joi.number().integer().allow(null).optional(),
-  size: Joi.number().integer().allow(null).optional(),
-})).required();
+const responseSchema = Joi.array()
+  .items(
+    Joi.object().keys({
+      name: JoiRedisString.required(),
+      type: Joi.string().required(),
+      ttl: Joi.number().integer().allow(null).optional(),
+      size: Joi.number().integer().allow(null).optional(),
+    }),
+  )
+  .required();
 
 const mainCheckFn = async (testCase) => {
   it(testCase.name, async () => {
@@ -54,7 +60,7 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
         responseSchema,
         checkFn: ({ body }) => {
           expect(body[0].size).to.eql(undefined);
-        }
+        },
       },
       {
         name: 'Should return size if includeSize is true',
@@ -64,8 +70,8 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
         },
         responseSchema,
         checkFn: ({ body }) => {
-          expect(body[0].size).to.be.a('number')
-        }
+          expect(body[0].size).to.be.a('number');
+        },
       },
       {
         name: 'Should not return ttl if includeTTL is false',
@@ -76,7 +82,7 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
         responseSchema,
         checkFn: ({ body }) => {
           expect(body[0].ttl).to.eql(undefined);
-        }
+        },
       },
       {
         name: 'Should return ttl if includeTTL is true',
@@ -86,8 +92,8 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
         },
         responseSchema,
         checkFn: ({ body }) => {
-          expect(body[0].ttl).to.be.a('number')
-        }
+          expect(body[0].ttl).to.be.a('number');
+        },
       },
       {
         name: 'Should return string info in utf8 (default)',
@@ -97,7 +103,7 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
         responseSchema,
         checkFn: ({ body }) => {
           expect(body[0].name).to.eq(constants.TEST_STRING_KEY_BIN_UTF8_1);
-        }
+        },
       },
       {
         name: 'Should return string info in utf8',
@@ -110,7 +116,7 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
         responseSchema,
         checkFn: ({ body }) => {
           expect(body[0].name).to.eq(constants.TEST_STRING_KEY_BIN_UTF8_1);
-        }
+        },
       },
       {
         name: 'Should return string info in ASCII',
@@ -123,7 +129,7 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
         responseSchema,
         checkFn: ({ body }) => {
           expect(body[0].name).to.eq(constants.TEST_STRING_KEY_BIN_ASCII_1);
-        }
+        },
       },
       {
         name: 'Should return string info in Buffer',
@@ -135,8 +141,10 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
         },
         responseSchema,
         checkFn: ({ body }) => {
-          expect(body[0].name).to.deep.eq(constants.TEST_STRING_KEY_BIN_BUF_OBJ_1);
-        }
+          expect(body[0].name).to.deep.eq(
+            constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
+          );
+        },
       },
       {
         name: 'Should return error when send unicode with unprintable chars',
@@ -152,7 +160,7 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
           expect(body[0].ttl).to.be.oneOf([-2, undefined]);
           expect(body[0].size).to.be.oneOf([null, undefined]);
           expect(body[0].type).to.deep.eq('none');
-        }
+        },
       },
       {
         name: 'Should return string info in Buffer and Type',
@@ -165,9 +173,11 @@ describe('POST /databases/:instanceId/keys/get-metadata', () => {
         },
         responseSchema,
         checkFn: ({ body }) => {
-          expect(body[0].name).to.deep.eq(constants.TEST_STRING_KEY_BIN_BUF_OBJ_1);
+          expect(body[0].name).to.deep.eq(
+            constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
+          );
           expect(body[0].type).to.deep.eq(constants.TEST_LIST_TYPE);
-        }
+        },
       },
     ].map(mainCheckFn);
   });

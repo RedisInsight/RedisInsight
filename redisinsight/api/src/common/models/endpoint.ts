@@ -3,15 +3,15 @@ import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { Expose, Type } from 'class-transformer';
 
 export interface IEndpoint {
-  host: string,
-  port: number,
+  host: string;
+  port: number;
 }
 
 export class Endpoint implements IEndpoint {
   @ApiProperty({
     description:
-      'The hostname of your Redis database, for example redis.acme.com.'
-      + ' If your Redis server is running on your local machine, you can enter either 127.0.0.1 or localhost.',
+      'The hostname of your Redis database, for example redis.acme.com.' +
+      ' If your Redis server is running on your local machine, you can enter either 127.0.0.1 or localhost.',
     type: String,
     default: 'localhost',
   })

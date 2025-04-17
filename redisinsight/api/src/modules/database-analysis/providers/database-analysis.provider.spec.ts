@@ -3,7 +3,9 @@ import { when } from 'jest-when';
 import { v4 as uuidv4 } from 'uuid';
 import {
   mockEncryptionService,
-  mockEncryptResult, mockQueryBuilderGetMany, mockQueryBuilderGetManyRaw,
+  mockEncryptResult,
+  mockQueryBuilderGetMany,
+  mockQueryBuilderGetManyRaw,
   mockRepository,
   mockDatabase,
   MockType,
@@ -13,9 +15,12 @@ import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DatabaseAnalysisProvider } from 'src/modules/database-analysis/providers/database-analysis.provider';
 import { DatabaseAnalysis } from 'src/modules/database-analysis/models';
-import { CreateDatabaseAnalysisDto, RecommendationVoteDto } from 'src/modules/database-analysis/dto';
+import {
+  CreateDatabaseAnalysisDto,
+  RecommendationVoteDto,
+} from 'src/modules/database-analysis/dto';
 import { RedisDataType } from 'src/modules/browser/keys/dto';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { ScanFilter } from 'src/modules/database-analysis/models/scan-filter';
 import { DatabaseAnalysisEntity } from 'src/modules/database-analysis/entities/database-analysis.entity';
 import { NotFoundException } from '@nestjs/common';
@@ -24,7 +29,7 @@ import { KeytarDecryptionErrorException } from 'src/modules/encryption/exception
 
 export const mockCreateDatabaseAnalysisDto: CreateDatabaseAnalysisDto = {
   delimiter: ':',
-  filter: plainToClass(ScanFilter, {
+  filter: plainToInstance(ScanFilter, {
     type: RedisDataType.String,
     match: 'key*',
     count: 15,
@@ -59,52 +64,68 @@ const mockDatabaseAnalysis = {
   createdAt: mockDatabaseAnalysisEntity.createdAt,
   totalKeys: {
     total: 1,
-    types: [{
-      type: 'string',
-      total: 1,
-    }],
+    types: [
+      {
+        type: 'string',
+        total: 1,
+      },
+    ],
   },
   totalMemory: {
     total: 10,
-    types: [{
-      type: 'set',
-      total: 10,
-    }],
+    types: [
+      {
+        type: 'set',
+        total: 10,
+      },
+    ],
   },
-  topKeysNsp: [{
-    nsp: Buffer.from('nsp1'),
-    keys: 1,
-    memory: 10,
-    types: [{
-      type: 'string',
+  topKeysNsp: [
+    {
+      nsp: Buffer.from('nsp1'),
       keys: 1,
       memory: 10,
-    }],
-  }],
-  topMemoryNsp: [{
-    nsp: Buffer.from('nsp1'),
-    keys: 1,
-    memory: 10,
-    types: [{
-      type: 'string',
+      types: [
+        {
+          type: 'string',
+          keys: 1,
+          memory: 10,
+        },
+      ],
+    },
+  ],
+  topMemoryNsp: [
+    {
+      nsp: Buffer.from('nsp1'),
       keys: 1,
       memory: 10,
-    }],
-  }],
-  topKeysLength: [{
-    name: Buffer.from('nsp1:key1'),
-    type: 'string',
-    memory: 10,
-    length: 1,
-    ttl: -1,
-  }],
-  topKeysMemory: [{
-    name: Buffer.from('nsp1:key1'),
-    type: 'string',
-    memory: 10,
-    length: 1,
-    ttl: -1,
-  }],
+      types: [
+        {
+          type: 'string',
+          keys: 1,
+          memory: 10,
+        },
+      ],
+    },
+  ],
+  topKeysLength: [
+    {
+      name: Buffer.from('nsp1:key1'),
+      type: 'string',
+      memory: 10,
+      length: 1,
+      ttl: -1,
+    },
+  ],
+  topKeysMemory: [
+    {
+      name: Buffer.from('nsp1:key1'),
+      type: 'string',
+      memory: 10,
+      length: 1,
+      ttl: -1,
+    },
+  ],
   expirationGroups: [
     {
       label: 'No Expire',
@@ -186,8 +207,15 @@ describe('DatabaseAnalysisProvider', () => {
 
     // encryption mocks
     [
-      'filter', 'totalKeys', 'totalMemory', 'topKeysNsp', 'topMemoryNsp',
-      'topKeysLength', 'topKeysMemory', 'expirationGroups', 'recommendations',
+      'filter',
+      'totalKeys',
+      'totalMemory',
+      'topKeysNsp',
+      'topMemoryNsp',
+      'topKeysLength',
+      'topKeysMemory',
+      'expirationGroups',
+      'recommendations',
     ].forEach((field) => {
       when(encryptionService.encrypt)
         .calledWith(JSON.stringify(mockDatabaseAnalysis[field]))
@@ -196,7 +224,10 @@ describe('DatabaseAnalysisProvider', () => {
           data: mockDatabaseAnalysisEntity[field],
         });
       when(encryptionService.decrypt)
-        .calledWith(mockDatabaseAnalysisEntity[field], mockEncryptResult.encryption)
+        .calledWith(
+          mockDatabaseAnalysisEntity[field],
+          mockEncryptResult.encryption,
+        )
         .mockReturnValue(JSON.stringify(mockDatabaseAnalysis[field]));
     });
   });
@@ -204,7 +235,9 @@ describe('DatabaseAnalysisProvider', () => {
   describe('create', () => {
     it('should process new entity', async () => {
       repository.save.mockReturnValueOnce(mockDatabaseAnalysisEntity);
-      expect(await service.create(mockDatabaseAnalysisPartial)).toEqual(mockDatabaseAnalysis);
+      expect(await service.create(mockDatabaseAnalysisPartial)).toEqual(
+        mockDatabaseAnalysis,
+      );
     });
   });
 
@@ -212,11 +245,16 @@ describe('DatabaseAnalysisProvider', () => {
     it('should get analysis', async () => {
       repository.findOneBy.mockReturnValueOnce(mockDatabaseAnalysisEntity);
 
-      expect(await service.get(mockDatabaseAnalysis.id)).toEqual(mockDatabaseAnalysis);
+      expect(await service.get(mockDatabaseAnalysis.id)).toEqual(
+        mockDatabaseAnalysis,
+      );
     });
     it('should return null fields in case of decryption errors', async () => {
       when(encryptionService.decrypt)
-        .calledWith(mockDatabaseAnalysisEntity['filter'], mockEncryptResult.encryption)
+        .calledWith(
+          mockDatabaseAnalysisEntity['filter'],
+          mockEncryptResult.encryption,
+        )
         .mockRejectedValueOnce(new KeytarDecryptionErrorException());
       repository.findOneBy.mockReturnValueOnce(mockDatabaseAnalysisEntity);
 
@@ -240,15 +278,19 @@ describe('DatabaseAnalysisProvider', () => {
 
   describe('list', () => {
     it('should get list of analysis', async () => {
-      mockQueryBuilderGetMany.mockReturnValueOnce([{
-        id: mockDatabaseAnalysis.id,
-        createdAt: mockDatabaseAnalysis.createdAt,
-        notExposed: 'field',
-      }]);
-      expect(await service.list(mockDatabaseAnalysis.databaseId)).toEqual([{
-        id: mockDatabaseAnalysis.id,
-        createdAt: mockDatabaseAnalysis.createdAt,
-      }]);
+      mockQueryBuilderGetMany.mockReturnValueOnce([
+        {
+          id: mockDatabaseAnalysis.id,
+          createdAt: mockDatabaseAnalysis.createdAt,
+          notExposed: 'field',
+        },
+      ]);
+      expect(await service.list(mockDatabaseAnalysis.databaseId)).toEqual([
+        {
+          id: mockDatabaseAnalysis.id,
+          createdAt: mockDatabaseAnalysis.createdAt,
+        },
+      ]);
     });
   });
 
@@ -271,15 +313,22 @@ describe('DatabaseAnalysisProvider', () => {
       repository.update.mockReturnValueOnce(true);
       await encryptionService.encrypt.mockReturnValue(mockEncryptResult);
 
-      expect(await service.recommendationVote(mockDatabaseAnalysis.id, mockRecommendationVoteDto))
-        .toEqual(mockDatabaseAnalysisWithVote);
+      expect(
+        await service.recommendationVote(
+          mockDatabaseAnalysis.id,
+          mockRecommendationVoteDto,
+        ),
+      ).toEqual(mockDatabaseAnalysisWithVote);
     });
 
     it('should throw an error', async () => {
       repository.findOneBy.mockReturnValueOnce(null);
 
       try {
-        await service.recommendationVote(mockDatabaseAnalysis.id, mockRecommendationVoteDto);
+        await service.recommendationVote(
+          mockDatabaseAnalysis.id,
+          mockRecommendationVoteDto,
+        );
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);

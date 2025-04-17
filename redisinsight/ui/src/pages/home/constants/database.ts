@@ -3,12 +3,12 @@ export enum AddDbType {
   cloud,
   sentinel,
   software,
-  import
+  import,
 }
 
 export enum CloudConnectionOptions {
   Account = 'cloud-account',
-  ApiKeys = 'cloud-api-keys'
+  ApiKeys = 'cloud-api-keys',
 }
 
 export const CREATE_CLOUD_DB_ID = 'create-free-cloud-db'

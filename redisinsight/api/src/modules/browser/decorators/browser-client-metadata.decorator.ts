@@ -4,7 +4,8 @@ import { ClientMetadataParam } from 'src/common/decorators';
 
 export const BrowserClientMetadata = (
   databaseIdParam = API_PARAM_DATABASE_ID,
-) => ClientMetadataParam({
-  context: ClientContext.Browser,
-  databaseIdParam,
-});
+) =>
+  ClientMetadataParam({
+    context: ClientContext.Browser,
+    databaseIdParam,
+  });

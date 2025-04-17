@@ -8,7 +8,7 @@ import {
   CustomTutorialManifestType,
   RootCustomTutorialManifest,
 } from 'src/modules/custom-tutorial/models/custom-tutorial.manifest';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { winPathToNormalPath } from 'src/utils';
 
 const MANIFEST_FILE = 'manifest.json';
@@ -23,13 +23,19 @@ export class CustomTutorialManifestProvider {
    * @param path
    * @private
    */
-  private async generateManifestFile(path: string): Promise<Partial<RootCustomTutorialManifest>> {
+  private async generateManifestFile(
+    path: string,
+  ): Promise<Partial<RootCustomTutorialManifest>> {
     try {
       const manifest = {
         children: await this.generateManifestEntry(path, '/'),
       };
 
-      await fs.writeFile(join(path, SYS_MANIFEST_FILE), JSON.stringify(manifest), 'utf8');
+      await fs.writeFile(
+        join(path, SYS_MANIFEST_FILE),
+        JSON.stringify(manifest),
+        'utf8',
+      );
 
       return manifest;
     } catch (e) {
@@ -47,7 +53,10 @@ export class CustomTutorialManifestProvider {
    * @param relativePath
    * @private
    */
-  private async generateManifestEntry(path: string, relativePath: string = '/'): Promise<CustomTutorialManifest[]> {
+  private async generateManifestEntry(
+    path: string,
+    relativePath: string = '/',
+  ): Promise<CustomTutorialManifest[]> {
     const manifest = [];
     const entries = await fs.readdir(path);
 
@@ -68,7 +77,10 @@ export class CustomTutorialManifestProvider {
           id: entry,
           label: name,
           type: CustomTutorialManifestType.Group,
-          children: await this.generateManifestEntry(join(path, entry), join(relativePath, entry)),
+          children: await this.generateManifestEntry(
+            join(path, entry),
+            join(relativePath, entry),
+          ),
         });
       } else if (ext === '.md') {
         manifest.push({
@@ -89,11 +101,11 @@ export class CustomTutorialManifestProvider {
     return fs.existsSync(join(path, MANIFEST_FILE));
   }
 
-  public async getOriginalManifestJson(path: string): Promise<RootCustomTutorialManifest> {
+  public async getOriginalManifestJson(
+    path: string,
+  ): Promise<RootCustomTutorialManifest> {
     try {
-      return JSON.parse(
-        await fs.readFile(join(path, MANIFEST_FILE), 'utf8'),
-      );
+      return JSON.parse(await fs.readFile(join(path, MANIFEST_FILE), 'utf8'));
     } catch (e) {
       this.logger.warn('Unable to find original manifest.json');
     }
@@ -101,7 +113,9 @@ export class CustomTutorialManifestProvider {
     return null;
   }
 
-  private async getManifestJsonFile(path): Promise<Partial<RootCustomTutorialManifest>> {
+  private async getManifestJsonFile(
+    path,
+  ): Promise<Partial<RootCustomTutorialManifest>> {
     const manifest = await this.getOriginalManifestJson(path);
 
     if (manifest) {
@@ -126,7 +140,9 @@ export class CustomTutorialManifestProvider {
    * So user will be able to fix (re-import) tutorial or remove it
    * @param path
    */
-  public async getManifestJson(path: string): Promise<RootCustomTutorialManifest> {
+  public async getManifestJson(
+    path: string,
+  ): Promise<RootCustomTutorialManifest> {
     try {
       const manifestJson = await this.getManifestJsonFile(path);
 
@@ -134,7 +150,9 @@ export class CustomTutorialManifestProvider {
         return null;
       }
 
-      return plainToClass(RootCustomTutorialManifest, manifestJson, { excludeExtraneousValues: true });
+      return plainToInstance(RootCustomTutorialManifest, manifestJson, {
+        excludeExtraneousValues: true,
+      });
     } catch (e) {
       this.logger.warn('Unable to get manifest for tutorial');
       return null;
@@ -146,9 +164,13 @@ export class CustomTutorialManifestProvider {
    * additional data from local database
    * @param tutorial
    */
-  public async generateTutorialManifest(tutorial: CustomTutorial): Promise<RootCustomTutorialManifest> {
+  public async generateTutorialManifest(
+    tutorial: CustomTutorial,
+  ): Promise<RootCustomTutorialManifest> {
     try {
-      const manifest = await this.getManifestJson(tutorial.absolutePath) || {} as RootCustomTutorialManifest;
+      const manifest =
+        (await this.getManifestJson(tutorial.absolutePath)) ||
+        ({} as RootCustomTutorialManifest);
 
       return {
         ...manifest,

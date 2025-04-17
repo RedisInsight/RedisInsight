@@ -5,7 +5,15 @@ import { remove } from 'lodash'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { ApiEndpoints, SearchHistoryMode } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { bufferToString, getApiErrorMessage, getUrl, isEqualBuffers, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
+import {
+  bufferToString,
+  getApiErrorMessage,
+  getUrl,
+  isEqualBuffers,
+  isStatusSuccessful,
+  Maybe,
+  Nullable,
+} from 'uiSrc/utils'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import ApiErrors from 'uiSrc/constants/apiErrors'
@@ -13,11 +21,17 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { SearchHistoryItem } from 'uiSrc/slices/interfaces/keys'
 import { GetKeysWithDetailsResponse } from 'apiSrc/modules/browser/keys/dto'
-import { CreateRedisearchIndexDto, ListRedisearchIndexesResponse } from 'apiSrc/modules/browser/redisearch/dto'
+import {
+  CreateRedisearchIndexDto,
+  ListRedisearchIndexesResponse,
+} from 'apiSrc/modules/browser/redisearch/dto'
 
 import { AppDispatch, RootState } from '../store'
 import { RedisResponseBuffer, StateRedisearch } from '../interfaces'
-import { addErrorNotification, addMessageNotification } from '../app/notifications'
+import {
+  addErrorNotification,
+  addMessageNotification,
+} from '../app/notifications'
 
 export const initialState: StateRedisearch = {
   loading: false,
@@ -37,7 +51,7 @@ export const initialState: StateRedisearch = {
   list: {
     loading: false,
     error: '',
-    data: []
+    data: [],
   },
   createIndex: {
     loading: false,
@@ -46,7 +60,7 @@ export const initialState: StateRedisearch = {
   searchHistory: {
     data: null,
     loading: false,
-  }
+  },
 }
 
 // A slice for recipes
@@ -61,7 +75,12 @@ const redisearchSlice = createSlice({
       state.loading = true
       state.error = ''
     },
-    loadKeysSuccess: (state, { payload: [data, isSearched] }: PayloadAction<[GetKeysWithDetailsResponse, boolean]>) => {
+    loadKeysSuccess: (
+      state,
+      {
+        payload: [data, isSearched],
+      }: PayloadAction<[GetKeysWithDetailsResponse, boolean]>,
+    ) => {
       state.data = {
         ...state.data,
         ...data,
@@ -84,7 +103,10 @@ const redisearchSlice = createSlice({
       state.loading = true
       state.error = ''
     },
-    loadMoreKeysSuccess: (state, { payload }: PayloadAction<GetKeysWithDetailsResponse>) => {
+    loadMoreKeysSuccess: (
+      state,
+      { payload }: PayloadAction<GetKeysWithDetailsResponse>,
+    ) => {
       state.data.keys = payload.keys
       state.data.total = payload.total
       state.data.scanned = payload.scanned
@@ -108,7 +130,10 @@ const redisearchSlice = createSlice({
         error: '',
       }
     },
-    loadListSuccess: (state, { payload }: PayloadAction<RedisResponseBuffer[]>) => {
+    loadListSuccess: (
+      state,
+      { payload }: PayloadAction<RedisResponseBuffer[]>,
+    ) => {
       state.list = {
         ...state.list,
         loading: false,
@@ -144,7 +169,10 @@ const redisearchSlice = createSlice({
     },
 
     // create an index
-    setSelectedIndex: (state, { payload }: PayloadAction<RedisResponseBuffer>) => {
+    setSelectedIndex: (
+      state,
+      { payload }: PayloadAction<RedisResponseBuffer>,
+    ) => {
       state.selectedIndex = payload
     },
 
@@ -189,7 +217,10 @@ const redisearchSlice = createSlice({
       }
     },
 
-    editRedisearchKeyTTLFromList: (state, { payload: [key, ttl] }: PayloadAction<[RedisResponseBuffer, number]>) => {
+    editRedisearchKeyTTLFromList: (
+      state,
+      { payload: [key, ttl] }: PayloadAction<[RedisResponseBuffer, number]>,
+    ) => {
       const keys = state.data.keys.map((keyData) => {
         if (isEqualBuffers(keyData.name, key)) {
           keyData.ttl = ttl
@@ -205,7 +236,10 @@ const redisearchSlice = createSlice({
     loadRediSearchHistory: (state) => {
       state.searchHistory.loading = true
     },
-    loadRediSearchHistorySuccess: (state, { payload }: PayloadAction<SearchHistoryItem[]>) => {
+    loadRediSearchHistorySuccess: (
+      state,
+      { payload }: PayloadAction<SearchHistoryItem[]>,
+    ) => {
       state.searchHistory.loading = false
       state.searchHistory.data = payload
     },
@@ -215,7 +249,10 @@ const redisearchSlice = createSlice({
     deleteRediSearchHistory: (state) => {
       state.searchHistory.loading = true
     },
-    deleteRediSearchHistorySuccess: (state, { payload }: { payload: string[] }) => {
+    deleteRediSearchHistorySuccess: (
+      state,
+      { payload }: { payload: string[] },
+    ) => {
       state.searchHistory.loading = false
       if (state.searchHistory.data) {
         remove(state.searchHistory.data, (item) => payload.includes(item.id))
@@ -254,15 +291,19 @@ export const {
   loadRediSearchHistoryFailure,
   deleteRediSearchHistory,
   deleteRediSearchHistorySuccess,
-  deleteRediSearchHistoryFailure
+  deleteRediSearchHistoryFailure,
 } = redisearchSlice.actions
 
 // Selectors
 export const redisearchSelector = (state: RootState) => state.browser.redisearch
-export const redisearchDataSelector = (state: RootState) => state.browser.redisearch.data
-export const redisearchListSelector = (state: RootState) => state.browser.redisearch.list
-export const createIndexStateSelector = (state: RootState) => state.browser.redisearch.createIndex
-export const redisearchHistorySelector = (state: RootState) => state.browser.redisearch.searchHistory
+export const redisearchDataSelector = (state: RootState) =>
+  state.browser.redisearch.data
+export const redisearchListSelector = (state: RootState) =>
+  state.browser.redisearch.list
+export const createIndexStateSelector = (state: RootState) =>
+  state.browser.redisearch.createIndex
+export const redisearchHistorySelector = (state: RootState) =>
+  state.browser.redisearch.searchHistory
 
 // The reducer
 export default redisearchSlice.reducer
@@ -288,19 +329,23 @@ export function fetchRedisearchKeysAction(
       const state = stateInit()
       const { encoding } = state.app.info
       const { selectedIndex: index, search: query } = state.browser.redisearch
-      const { data, status } = await apiService.post<GetKeysWithDetailsResponse>(
-        getUrl(
-          state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.REDISEARCH_SEARCH
-        ),
-        {
-          offset: +cursor, limit: count, query: query || DEFAULT_SEARCH_MATCH, index,
-        },
-        {
-          params: { encoding },
-          signal: controller.signal,
-        }
-      )
+      const { data, status } =
+        await apiService.post<GetKeysWithDetailsResponse>(
+          getUrl(
+            state.connections.instances.connectedInstance?.id,
+            ApiEndpoints.REDISEARCH_SEARCH,
+          ),
+          {
+            offset: +cursor,
+            limit: count,
+            query: query || DEFAULT_SEARCH_MATCH,
+            index,
+          },
+          {
+            params: { encoding },
+            signal: controller.signal,
+          },
+        )
 
       controller = null
 
@@ -316,7 +361,7 @@ export function fetchRedisearchKeysAction(
               scanCount: data.scanned,
               source: telemetryProperties.source ?? 'manual',
               ...telemetryProperties,
-            }
+            },
           })
         }
 
@@ -329,7 +374,11 @@ export function fetchRedisearchKeysAction(
         dispatch(addErrorNotification(error))
         dispatch(loadKeysFailure(errorMessage))
 
-        if (error?.response?.data?.message?.toString().endsWith(ApiErrors.RedisearchIndexNotFound)) {
+        if (
+          error?.response?.data?.message
+            ?.toString()
+            .endsWith(ApiErrors.RedisearchIndexNotFound)
+        ) {
           dispatch(setRedisearchInitialState())
           dispatch(fetchRedisearchListAction())
         }
@@ -356,27 +405,33 @@ export function fetchMoreRedisearchKeysAction(
       const state = stateInit()
       const { encoding } = state.app.info
       const { selectedIndex: index, search: query } = state.browser.redisearch
-      const { data, status } = await apiService.post<GetKeysWithDetailsResponse>(
-        getUrl(
-          state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.REDISEARCH_SEARCH
-        ),
-        {
-          offset: +cursor, limit: count, query: query || DEFAULT_SEARCH_MATCH, index
-        },
-        {
-          params: { encoding },
-          signal: controller.signal,
-        }
-      )
+      const { data, status } =
+        await apiService.post<GetKeysWithDetailsResponse>(
+          getUrl(
+            state.connections.instances.connectedInstance?.id,
+            ApiEndpoints.REDISEARCH_SEARCH,
+          ),
+          {
+            offset: +cursor,
+            limit: count,
+            query: query || DEFAULT_SEARCH_MATCH,
+            index,
+          },
+          {
+            params: { encoding },
+            signal: controller.signal,
+          },
+        )
 
       controller = null
 
       if (isStatusSuccessful(status)) {
-        dispatch(loadMoreKeysSuccess({
-          ...data,
-          keys: oldKeys.concat(data.keys)
-        }))
+        dispatch(
+          loadMoreKeysSuccess({
+            ...data,
+            keys: oldKeys.concat(data.keys),
+          }),
+        )
       }
     } catch (_err) {
       if (!axios.isCancel(_err)) {
@@ -394,7 +449,7 @@ export function fetchMoreRedisearchKeysAction(
 export function fetchRedisearchListAction(
   onSuccess?: (value: RedisResponseBuffer[]) => void,
   onFailed?: () => void,
-  showError = true
+  showError = true,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadList())
@@ -402,15 +457,16 @@ export function fetchRedisearchListAction(
     try {
       const state = stateInit()
       const { encoding } = state.app.info
-      const { data, status } = await apiService.get<ListRedisearchIndexesResponse>(
-        getUrl(
-          state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.REDISEARCH
-        ),
-        {
-          params: { encoding },
-        }
-      )
+      const { data, status } =
+        await apiService.get<ListRedisearchIndexesResponse>(
+          getUrl(
+            state.connections.instances.connectedInstance?.id,
+            ApiEndpoints.REDISEARCH,
+          ),
+          {
+            params: { encoding },
+          },
+        )
 
       if (isStatusSuccessful(status)) {
         dispatch(loadListSuccess(data.indexes))
@@ -439,14 +495,14 @@ export function createRedisearchIndexAction(
       const { status } = await apiService.post<void>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.REDISEARCH
+          ApiEndpoints.REDISEARCH,
         ),
         {
-          ...data
+          ...data,
         },
         {
           params: { encoding },
-        }
+        },
       )
 
       if (isStatusSuccessful(status)) {
@@ -477,13 +533,13 @@ export function fetchRedisearchHistoryAction(
       const { data, status } = await apiService.get<SearchHistoryItem[]>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.HISTORY
+          ApiEndpoints.HISTORY,
         ),
         {
           params: {
-            mode: SearchHistoryMode.Redisearch
-          }
-        }
+            mode: SearchHistoryMode.Redisearch,
+          },
+        },
       )
 
       if (isStatusSuccessful(status)) {
@@ -510,16 +566,16 @@ export function deleteRedisearchHistoryAction(
       const { status } = await apiService.delete(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.HISTORY
+          ApiEndpoints.HISTORY,
         ),
         {
           data: {
-            ids
+            ids,
           },
           params: {
-            mode: SearchHistoryMode.Redisearch
-          }
-        }
+            mode: SearchHistoryMode.Redisearch,
+          },
+        },
       )
 
       if (isStatusSuccessful(status)) {
@@ -544,11 +600,11 @@ export function fetchRedisearchInfoAction(
       const { data, status } = await apiService.post(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.REDISEARCH_INFO
+          ApiEndpoints.REDISEARCH_INFO,
         ),
         {
-          index
-        }
+          index,
+        },
       )
 
       if (isStatusSuccessful(status)) {

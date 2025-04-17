@@ -22,8 +22,8 @@ const HomeTabs = () => {
     sendEventTelemetry({
       event: TelemetryEvent.INSTANCES_TAB_CHANGED,
       eventData: {
-        tab: title
-      }
+        tab: title,
+      },
     })
 
     if (path === Pages.rdi) {
@@ -34,32 +34,40 @@ const HomeTabs = () => {
     history.push(Pages.home)
   }
 
-  const renderTabs = useCallback(() => tabs.map(({ id, title, path, featureFlag }) => (
-    featureFlag ? (
-      <FeatureFlagComponent name={featureFlag} key={id}>
-        <EuiTab
-          isSelected={path === activeTab}
-          onClick={() => onSelectedTabChanged(path, title)}
-          className={styles.tab}
-          data-testid={`home-tab-${id}`}
-        >
-          {title}
-        </EuiTab>
-      </FeatureFlagComponent>
-    ) : (
-      <EuiTab
-        key={id}
-        isSelected={path === activeTab}
-        onClick={() => onSelectedTabChanged(path, title)}
-        className={styles.tab}
-        data-testid={`home-tab-${id}`}
-      >
-        {title}
-      </EuiTab>
-    )
-  )), [activeTab])
+  const renderTabs = useCallback(
+    () =>
+      tabs.map(({ id, title, path, featureFlag }) =>
+        featureFlag ? (
+          <FeatureFlagComponent name={featureFlag} key={id}>
+            <EuiTab
+              isSelected={path === activeTab}
+              onClick={() => onSelectedTabChanged(path, title)}
+              className={styles.tab}
+              data-testid={`home-tab-${id}`}
+            >
+              {title}
+            </EuiTab>
+          </FeatureFlagComponent>
+        ) : (
+          <EuiTab
+            key={id}
+            isSelected={path === activeTab}
+            onClick={() => onSelectedTabChanged(path, title)}
+            className={styles.tab}
+            data-testid={`home-tab-${id}`}
+          >
+            {title}
+          </EuiTab>
+        ),
+      ),
+    [activeTab],
+  )
 
-  return (<EuiTabs data-testid="home-tabs" className={styles.tabs}>{renderTabs()}</EuiTabs>)
+  return (
+    <EuiTabs data-testid="home-tabs" className={styles.tabs}>
+      {renderTabs()}
+    </EuiTabs>
+  )
 }
 
 export default React.memo(HomeTabs)

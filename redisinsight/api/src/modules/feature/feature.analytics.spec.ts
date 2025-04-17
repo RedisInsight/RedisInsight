@@ -26,22 +26,16 @@ describe('FeatureAnalytics', () => {
 
     service = module.get(FeatureAnalytics);
     eventEmitter = module.get<EventEmitter2>(EventEmitter2);
-    sendEventSpy = jest.spyOn(
-      service as any,
-      'sendEvent',
-    );
+    sendEventSpy = jest.spyOn(service as any, 'sendEvent');
   });
 
   describe('sendFeatureFlagConfigUpdated', () => {
     it('should emit FEATURE_FLAG_CONFIG_UPDATED telemetry event', async () => {
-      service.sendFeatureFlagConfigUpdated(
-        mockSessionMetadata,
-        {
-          configVersion: 7.78,
-          oldVersion: 7.77,
-          type: 'default',
-        },
-      );
+      service.sendFeatureFlagConfigUpdated(mockSessionMetadata, {
+        configVersion: 7.78,
+        oldVersion: 7.77,
+        type: 'default',
+      });
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         AppAnalyticsEvents.Track,
@@ -57,7 +51,9 @@ describe('FeatureAnalytics', () => {
       );
     });
     it('should not fail and do not send in case of any error', async () => {
-      sendEventSpy.mockImplementationOnce(() => { throw new Error('some kind of an error'); });
+      sendEventSpy.mockImplementationOnce(() => {
+        throw new Error('some kind of an error');
+      });
 
       service.sendFeatureFlagConfigUpdated(mockSessionMetadata, {} as any);
 
@@ -67,20 +63,17 @@ describe('FeatureAnalytics', () => {
 
   describe('sendFeatureFlagRecalculated', () => {
     it('should emit FEATURE_FLAG_RECALCULATED telemetry event', async () => {
-      service.sendFeatureFlagRecalculated(
-        mockSessionMetadata,
-        {
-          configVersion: 7.78,
-          features: {
-            insightsRecommendations: {
-              flag: true,
-            },
-            another_feature: {
-              flag: false,
-            },
+      service.sendFeatureFlagRecalculated(mockSessionMetadata, {
+        configVersion: 7.78,
+        features: {
+          insightsRecommendations: {
+            flag: true,
+          },
+          another_feature: {
+            flag: false,
           },
         },
-      );
+      });
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         AppAnalyticsEvents.Track,
@@ -98,7 +91,9 @@ describe('FeatureAnalytics', () => {
       );
     });
     it('should not fail and do not send in case of an error', async () => {
-      sendEventSpy.mockImplementationOnce(() => { throw new Error(); });
+      sendEventSpy.mockImplementationOnce(() => {
+        throw new Error();
+      });
 
       service.sendFeatureFlagRecalculated(mockSessionMetadata, {} as any);
 
@@ -108,14 +103,11 @@ describe('FeatureAnalytics', () => {
 
   describe('sendFeatureFlagConfigUpdateError', () => {
     it('should emit telemetry event (common Error)', async () => {
-      service.sendFeatureFlagConfigUpdateError(
-        mockSessionMetadata,
-        {
-          configVersion: 7.78,
-          type: 'default',
-          error: new Error('some sensitive information'),
-        },
-      );
+      service.sendFeatureFlagConfigUpdateError(mockSessionMetadata, {
+        configVersion: 7.78,
+        type: 'default',
+        error: new Error('some sensitive information'),
+      });
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         AppAnalyticsEvents.Track,
@@ -131,13 +123,10 @@ describe('FeatureAnalytics', () => {
       );
     });
     it('should emit telemetry event (UnableToFetchRemoteConfigException)', async () => {
-      service.sendFeatureFlagConfigUpdateError(
-        mockSessionMetadata,
-        {
-          configVersion: 7.78,
-          error: new UnableToFetchRemoteConfigException('some PII'),
-        },
-      );
+      service.sendFeatureFlagConfigUpdateError(mockSessionMetadata, {
+        configVersion: 7.78,
+        error: new UnableToFetchRemoteConfigException('some PII'),
+      });
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         AppAnalyticsEvents.Track,
@@ -152,14 +141,11 @@ describe('FeatureAnalytics', () => {
       );
     });
     it('should emit telemetry event (ValidationError)', async () => {
-      service.sendFeatureFlagConfigUpdateError(
-        mockSessionMetadata,
-        {
-          configVersion: 7.78,
-          type: 'remote',
-          error: new ValidationError(),
-        } as any,
-      );
+      service.sendFeatureFlagConfigUpdateError(mockSessionMetadata, {
+        configVersion: 7.78,
+        type: 'remote',
+        error: new ValidationError(),
+      } as any);
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         AppAnalyticsEvents.Track,
@@ -175,14 +161,14 @@ describe('FeatureAnalytics', () => {
       );
     });
     it('should emit telemetry event ([ValidationError] only first exception)', async () => {
-      service.sendFeatureFlagConfigUpdateError(
-        mockSessionMetadata,
-        {
-          configVersion: 7.78,
-          type: 'remote',
-          error: [new ValidationError(), new Error('2nd error which will be ignored')] as any[],
-        },
-      );
+      service.sendFeatureFlagConfigUpdateError(mockSessionMetadata, {
+        configVersion: 7.78,
+        type: 'remote',
+        error: [
+          new ValidationError(),
+          new Error('2nd error which will be ignored'),
+        ] as any[],
+      });
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         AppAnalyticsEvents.Track,
@@ -198,7 +184,9 @@ describe('FeatureAnalytics', () => {
       );
     });
     it('should not fail and not send in case of an error', async () => {
-      sendEventSpy.mockImplementationOnce(() => { throw new Error('some error'); });
+      sendEventSpy.mockImplementationOnce(() => {
+        throw new Error('some error');
+      });
 
       service.sendFeatureFlagConfigUpdateError(mockSessionMetadata, {} as any);
 
@@ -208,14 +196,11 @@ describe('FeatureAnalytics', () => {
 
   describe('sendFeatureFlagInvalidRemoteConfig', () => {
     it('should emit telemetry event (common Error)', async () => {
-      service.sendFeatureFlagInvalidRemoteConfig(
-        mockSessionMetadata,
-        {
-          configVersion: 7.78,
-          type: 'default',
-          error: new Error('some sensitive information'),
-        },
-      );
+      service.sendFeatureFlagInvalidRemoteConfig(mockSessionMetadata, {
+        configVersion: 7.78,
+        type: 'default',
+        error: new Error('some sensitive information'),
+      });
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         AppAnalyticsEvents.Track,
@@ -231,13 +216,10 @@ describe('FeatureAnalytics', () => {
       );
     });
     it('should emit telemetry event (UnableToFetchRemoteConfigException)', async () => {
-      service.sendFeatureFlagInvalidRemoteConfig(
-        mockSessionMetadata,
-        {
-          configVersion: 7.78,
-          error: new UnableToFetchRemoteConfigException('some PII'),
-        },
-      );
+      service.sendFeatureFlagInvalidRemoteConfig(mockSessionMetadata, {
+        configVersion: 7.78,
+        error: new UnableToFetchRemoteConfigException('some PII'),
+      });
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         AppAnalyticsEvents.Track,
@@ -252,14 +234,11 @@ describe('FeatureAnalytics', () => {
       );
     });
     it('should emit telemetry event (ValidationError)', async () => {
-      service.sendFeatureFlagInvalidRemoteConfig(
-        mockSessionMetadata,
-        {
-          configVersion: 7.78,
-          type: 'remote',
-          error: new ValidationError() as any,
-        },
-      );
+      service.sendFeatureFlagInvalidRemoteConfig(mockSessionMetadata, {
+        configVersion: 7.78,
+        type: 'remote',
+        error: new ValidationError() as any,
+      });
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         AppAnalyticsEvents.Track,
@@ -275,14 +254,14 @@ describe('FeatureAnalytics', () => {
       );
     });
     it('should emit telemetry event ([ValidationError] only first exception)', async () => {
-      service.sendFeatureFlagInvalidRemoteConfig(
-        mockSessionMetadata,
-        {
-          configVersion: 7.78,
-          type: 'remote',
-          error: [new ValidationError(), new Error('2nd error which will be ignored')] as any[],
-        },
-      );
+      service.sendFeatureFlagInvalidRemoteConfig(mockSessionMetadata, {
+        configVersion: 7.78,
+        type: 'remote',
+        error: [
+          new ValidationError(),
+          new Error('2nd error which will be ignored'),
+        ] as any[],
+      });
 
       expect(eventEmitter.emit).toHaveBeenCalledWith(
         AppAnalyticsEvents.Track,
@@ -298,9 +277,14 @@ describe('FeatureAnalytics', () => {
       );
     });
     it('should not fail and not send in case of an error', async () => {
-      sendEventSpy.mockImplementationOnce(() => { throw new Error('some error'); });
+      sendEventSpy.mockImplementationOnce(() => {
+        throw new Error('some error');
+      });
 
-      service.sendFeatureFlagInvalidRemoteConfig(mockSessionMetadata, {} as any);
+      service.sendFeatureFlagInvalidRemoteConfig(
+        mockSessionMetadata,
+        {} as any,
+      );
 
       expect(eventEmitter.emit).not.toHaveBeenCalled();
     });

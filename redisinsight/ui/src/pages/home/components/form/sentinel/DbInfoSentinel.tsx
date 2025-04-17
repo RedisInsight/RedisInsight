@@ -1,5 +1,10 @@
 import React from 'react'
-import { EuiListGroup, EuiListGroupItem, EuiText, EuiTextColor } from '@elastic/eui'
+import {
+  EuiListGroup,
+  EuiListGroupItem,
+  EuiText,
+  EuiTextColor,
+} from '@elastic/eui'
 
 import { capitalize } from 'lodash'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
@@ -22,48 +27,43 @@ const DbInfoSentinel = (props: Props) => {
   return (
     <EuiListGroup className={styles.dbInfoGroup} flush>
       <EuiListGroupItem
-        label={(
+        label={
           <EuiText color="subdued" size="s">
             Connection Type:
             <EuiTextColor color="default" className={styles.dbInfoListValue}>
               {capitalize(connectionType)}
             </EuiTextColor>
           </EuiText>
-        )}
+        }
       />
 
       {sentinelMaster?.name && (
         <EuiListGroupItem
-          label={(
+          label={
             <EuiText color="subdued" size="s">
               Primary Group Name:
               <EuiTextColor color="default" className={styles.dbInfoListValue}>
                 {sentinelMaster?.name}
               </EuiTextColor>
             </EuiText>
-          )}
+          }
         />
       )}
 
       {nameFromProvider && (
         <EuiListGroupItem
-          label={(
+          label={
             <EuiText color="subdued" size="s">
               Database Name from Provider:
               <EuiTextColor color="default" className={styles.dbInfoListValue}>
                 {nameFromProvider}
               </EuiTextColor>
             </EuiText>
-          )}
+          }
         />
       )}
 
-      {host && port && (
-        <SentinelHostPort
-          host={host}
-          port={port}
-        />
-      )}
+      {host && port && <SentinelHostPort host={host} port={port} />}
     </EuiListGroup>
   )
 }

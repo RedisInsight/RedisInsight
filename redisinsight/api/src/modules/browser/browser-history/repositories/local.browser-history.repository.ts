@@ -1,10 +1,13 @@
 import {
-  Injectable, InternalServerErrorException, Logger, NotFoundException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { classToClass } from 'src/utils';
 import config from 'src/utils/config';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -38,18 +41,34 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
    * @param sessionMetadata
    * @param history
    */
-  async create(sessionMetadata: SessionMetadata, history: Partial<BrowserHistory>): Promise<BrowserHistory> {
-    const encryptedDto = await this.modelEncryptor.encryptEntity(plainToClass(BrowserHistoryEntity, history));
+  async create(
+    sessionMetadata: SessionMetadata,
+    history: Partial<BrowserHistory>,
+  ): Promise<BrowserHistory> {
+    const encryptedDto = await this.modelEncryptor.encryptEntity(
+      plainToInstance(BrowserHistoryEntity, history),
+    );
     const entity = await this.repository.save(encryptedDto);
 
     // cleanup history and ignore error if any
     try {
-      await this.cleanupDatabaseHistory(sessionMetadata, entity.databaseId, entity.mode);
+      await this.cleanupDatabaseHistory(
+        sessionMetadata,
+        entity.databaseId,
+        entity.mode,
+      );
     } catch (e) {
-      this.logger.error('Error when trying to cleanup history after insert', e, sessionMetadata);
+      this.logger.error(
+        'Error when trying to cleanup history after insert',
+        e,
+        sessionMetadata,
+      );
     }
 
-    return classToClass(BrowserHistory, await this.modelEncryptor.decryptEntity(entity));
+    return classToClass(
+      BrowserHistory,
+      await this.modelEncryptor.decryptEntity(entity),
+    );
   }
 
   /**
@@ -57,15 +76,26 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
    * @param sessionMetadata
    * @param id
    */
-  async get(sessionMetadata: SessionMetadata, id: string): Promise<BrowserHistory> {
+  async get(
+    sessionMetadata: SessionMetadata,
+    id: string,
+  ): Promise<BrowserHistory> {
     const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
-      this.logger.error(`Browser history item with id:${id} was not Found`, sessionMetadata);
-      throw new NotFoundException(ERROR_MESSAGES.BROWSER_HISTORY_ITEM_NOT_FOUND);
+      this.logger.error(
+        `Browser history item with id:${id} was not Found`,
+        sessionMetadata,
+      );
+      throw new NotFoundException(
+        ERROR_MESSAGES.BROWSER_HISTORY_ITEM_NOT_FOUND,
+      );
     }
 
-    return classToClass(BrowserHistory, await this.modelEncryptor.decryptEntity(entity, true));
+    return classToClass(
+      BrowserHistory,
+      await this.modelEncryptor.decryptEntity(entity, true),
+    );
   }
 
   /**
@@ -83,12 +113,7 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
     const entities = await this.repository
       .createQueryBuilder('a')
       .where({ databaseId, mode })
-      .select([
-        'a.id',
-        'a.filter',
-        'a.mode',
-        'a.encryption',
-      ])
+      .select(['a.id', 'a.filter', 'a.mode', 'a.encryption'])
       .orderBy('a.createdAt', 'DESC')
       .limit(BROWSER_HISTORY_CONFIG.maxItemsPerModeInDb)
       .getMany();
@@ -105,7 +130,9 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
       }),
     );
 
-    return decryptedEntities.map((entity) => classToClass(BrowserHistory, entity));
+    return decryptedEntities.map((entity) =>
+      classToClass(BrowserHistory, entity),
+    );
   }
 
   /**
@@ -115,14 +142,26 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
    * @param mode
    * @param id
    */
-  async delete(sessionMetadata: SessionMetadata, databaseId: string, mode: BrowserHistoryMode, id: string): Promise<void> {
+  async delete(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+    mode: BrowserHistoryMode,
+    id: string,
+  ): Promise<void> {
     this.logger.debug(`Deleting browser history item: ${id}`, sessionMetadata);
     try {
       await this.repository.delete({ id, databaseId, mode });
       // todo: rethink
-      this.logger.debug('Succeed to delete browser history item.', sessionMetadata);
+      this.logger.debug(
+        'Succeed to delete browser history item.',
+        sessionMetadata,
+      );
     } catch (error) {
-      this.logger.error(`Failed to delete history items: ${id}`, error, sessionMetadata);
+      this.logger.error(
+        `Failed to delete history items: ${id}`,
+        error,
+        sessionMetadata,
+      );
       throw new InternalServerErrorException();
     }
   }
@@ -134,23 +173,33 @@ export class LocalBrowserHistoryRepository extends BrowserHistoryRepository {
    * @param databaseId
    * @param mode
    */
-  async cleanupDatabaseHistory(_sessionMetadata: SessionMetadata, databaseId: string, mode: string): Promise<void> {
+  async cleanupDatabaseHistory(
+    _sessionMetadata: SessionMetadata,
+    databaseId: string,
+    mode: string,
+  ): Promise<void> {
     // todo: investigate why delete with sub-query doesn't works
-    const idsDuplicates = (await this.repository
-      .createQueryBuilder()
-      .where({ databaseId, mode })
-      .select('id')
-      .groupBy('filter')
-      .having('COUNT(filter) > 1')
-      .getRawMany()).map((item) => item.id);
+    const idsDuplicates = (
+      await this.repository
+        .createQueryBuilder()
+        .where({ databaseId, mode })
+        .select('id')
+        .groupBy('filter')
+        .having('COUNT(filter) > 1')
+        .getRawMany()
+    ).map((item) => item.id);
 
-    const idsOverLimit = (await this.repository
-      .createQueryBuilder()
-      .where({ databaseId, mode })
-      .select('id')
-      .orderBy('createdAt', 'DESC')
-      .offset(BROWSER_HISTORY_CONFIG.maxItemsPerModeInDb + idsDuplicates.length)
-      .getRawMany()).map((item) => item.id);
+    const idsOverLimit = (
+      await this.repository
+        .createQueryBuilder()
+        .where({ databaseId, mode })
+        .select('id')
+        .orderBy('createdAt', 'DESC')
+        .offset(
+          BROWSER_HISTORY_CONFIG.maxItemsPerModeInDb + idsDuplicates.length,
+        )
+        .getRawMany()
+    ).map((item) => item.id);
 
     await this.repository
       .createQueryBuilder()

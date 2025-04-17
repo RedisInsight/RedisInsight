@@ -12,7 +12,8 @@ import {
 import { Pages } from 'uiSrc/constants'
 import {
   InstanceRedisCloud,
-  LoadedCloud, OAuthSocialAction,
+  LoadedCloud,
+  OAuthSocialAction,
   RedisCloudSubscription,
   RedisCloudSubscriptionStatus,
   RedisCloudSubscriptionStatusText,
@@ -97,9 +98,16 @@ const RedisCloudSubscriptionsPage = () => {
   }
 
   const handleLoadInstances = (
-    subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'free'>>[]
+    subscriptions: Maybe<
+      Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'free'>
+    >[],
   ) => {
-    dispatch(fetchInstancesRedisCloud({ subscriptions, credentials }, ssoFlow === OAuthSocialAction.Import))
+    dispatch(
+      fetchInstancesRedisCloud(
+        { subscriptions, credentials },
+        ssoFlow === OAuthSocialAction.Import,
+      ),
+    )
   }
 
   const AlertStatusContent = () => (
@@ -128,26 +136,26 @@ const RedisCloudSubscriptionsPage = () => {
       align: 'center',
       dataType: 'auto',
       render: function AlertIcon(_, { status, numberOfDatabases }) {
-        return status !== RedisCloudSubscriptionStatus.Active
-          || numberOfDatabases === 0 ? (
-            <EuiToolTip
-              title={(
-                <p>
-                  This subscription is not available for one of the following
-                  reasons:
-                </p>
-            )}
-              content={<AlertStatusContent />}
-              position="right"
-              className={styles.tooltipStatus}
-            >
-              <EuiButtonIcon
-                iconType="alert"
-                color="subdued"
-                aria-label="subscription alert"
-              />
-            </EuiToolTip>
-          ) : null
+        return status !== RedisCloudSubscriptionStatus.Active ||
+          numberOfDatabases === 0 ? (
+          <EuiToolTip
+            title={
+              <p>
+                This subscription is not available for one of the following
+                reasons:
+              </p>
+            }
+            content={<AlertStatusContent />}
+            position="right"
+            className={styles.tooltipStatus}
+          >
+            <EuiButtonIcon
+              iconType="alert"
+              color="subdued"
+              aria-label="subscription alert"
+            />
+          </EuiToolTip>
+        ) : null
       },
     },
     {
@@ -191,7 +199,8 @@ const RedisCloudSubscriptionsPage = () => {
       width: '120px',
       dataType: 'string',
       sortable: true,
-      render: (type: RedisCloudSubscriptionType) => RedisCloudSubscriptionTypeText[type] ?? '-',
+      render: (type: RedisCloudSubscriptionType) =>
+        RedisCloudSubscriptionTypeText[type] ?? '-',
     },
     {
       field: 'provider',
@@ -219,7 +228,7 @@ const RedisCloudSubscriptionsPage = () => {
       dataType: 'string',
       sortable: true,
       render: (numberOfDatabases: number) =>
-        (isNumber(numberOfDatabases) ? numberOfDatabases : '-'),
+        isNumber(numberOfDatabases) ? numberOfDatabases : '-',
     },
     {
       field: 'status',

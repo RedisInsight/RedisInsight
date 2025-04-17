@@ -1,9 +1,19 @@
 import { when } from 'jest-when';
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
-import { ForbiddenException, INestApplication, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {
+  ForbiddenException,
+  INestApplication,
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+} from '@nestjs/common';
 import { RedisSentinelService } from 'src/modules/redis-sentinel/redis-sentinel.service';
-import { mockCreateSentinelDatabasesDto, mockRedisSentinelService, mockSessionService } from 'src/__mocks__';
+import {
+  mockCreateSentinelDatabasesDto,
+  mockRedisSentinelService,
+  mockSessionService,
+} from 'src/__mocks__';
 import { RedisSentinelController } from 'src/modules/redis-sentinel/redis-sentinel.controller';
 import { SingleUserAuthMiddleware } from 'src/common/middlewares/single-user-auth.middleware';
 import { SessionService } from 'src/modules/session/session.service';
@@ -11,9 +21,10 @@ import config, { Config } from 'src/utils/config';
 
 const mockServerConfig = config.get('server') as Config['server'];
 
-jest.mock('src/utils/config', jest.fn(
-  () => jest.requireActual('src/utils/config') as object,
-));
+jest.mock(
+  'src/utils/config',
+  jest.fn(() => jest.requireActual('src/utils/config') as object),
+);
 
 @Module({
   controllers: [RedisSentinelController],
@@ -30,9 +41,7 @@ jest.mock('src/utils/config', jest.fn(
 })
 class TestModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(SingleUserAuthMiddleware)
-      .forRoutes('*');
+    consumer.apply(SingleUserAuthMiddleware).forRoutes('*');
   }
 }
 
@@ -77,7 +86,9 @@ describe('RedisSentinelController', () => {
         .send(mockCreateSentinelDatabasesDto)
         .expect(403)
         .expect(
-          (new ForbiddenException('Database connection management is disabled.')).getResponse(),
+          new ForbiddenException(
+            'Database connection management is disabled.',
+          ).getResponse(),
         );
     });
   });

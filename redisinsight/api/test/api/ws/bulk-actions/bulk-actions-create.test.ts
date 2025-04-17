@@ -1,10 +1,5 @@
-import {
-  describe,
-  it,
-  deps,
-  expect,
-} from '../../deps';
-import { Socket } from "socket.io-client";
+import { describe, it, deps, expect } from '../../deps';
+import { Socket } from 'socket.io-client';
 const { getSocket, constants, rte } = deps;
 
 const getClient = async (): Promise<Socket> => {
@@ -37,28 +32,33 @@ describe('bulk-actions', function () {
     it('should not crash on 100 the same concurrent bulk-actions create events', async () => {
       let errors = 0;
       let created = 0;
-      await Promise.all((new Array(10).fill(1)).map(() => new Promise((res, rej) => {
-        client.emit('create', createDto, (ack, err) => {
-          if (ack.status === 'error') {
-            errors += 1;
-          } else {
-            created += 1;
-            expect(ack.id).to.eq(createDto.id);
-            expect(ack.type).to.eq(createDto.type);
-            expect(['running', 'ready'].includes(ack.status)).to.eq(true);
-            expect(ack.filter.match).to.eq(createDto.filter.match);
-            expect(ack.filter.type).to.eq(null);
-            expect(ack.progress.total).to.gt(0);
-            expect(ack.progress.scanned).to.gte(0);
-            expect(ack.summary.processed).to.gte(0);
-            expect(ack.summary.succeed).to.gte(0);
-            expect(ack.summary.failed).to.eq(0);
-            expect(ack.summary.errors).to.deep.eq([]);
-          }
-          res(ack);
-        });
-        client.on('exception', rej);
-      })));
+      await Promise.all(
+        new Array(10).fill(1).map(
+          () =>
+            new Promise((res, rej) => {
+              client.emit('create', createDto, (ack, err) => {
+                if (ack.status === 'error') {
+                  errors += 1;
+                } else {
+                  created += 1;
+                  expect(ack.id).to.eq(createDto.id);
+                  expect(ack.type).to.eq(createDto.type);
+                  expect(['running', 'ready'].includes(ack.status)).to.eq(true);
+                  expect(ack.filter.match).to.eq(createDto.filter.match);
+                  expect(ack.filter.type).to.eq(null);
+                  expect(ack.progress.total).to.gt(0);
+                  expect(ack.progress.scanned).to.gte(0);
+                  expect(ack.summary.processed).to.gte(0);
+                  expect(ack.summary.succeed).to.gte(0);
+                  expect(ack.summary.failed).to.eq(0);
+                  expect(ack.summary.errors).to.deep.eq([]);
+                }
+                res(ack);
+              });
+              client.on('exception', rej);
+            }),
+        ),
+      );
 
       expect(errors).to.eq(9);
       expect(created).to.eq(1);
@@ -68,7 +68,7 @@ describe('bulk-actions', function () {
     it('should abort just started bulk action', (done) => {
       client.emit('create', createDto, (ack) => {
         if (ack.status === 'error') {
-          fail(ack.message)
+          fail(ack.message);
         }
         client.emit('abort', { id: createDto.id }, (ack) => {
           expect(ack.id).to.eq(createDto.id);
@@ -91,7 +91,7 @@ describe('bulk-actions', function () {
     it('should get just started bulk action', (done) => {
       client.emit('create', createDto, (ack) => {
         if (ack.status === 'error') {
-          fail(ack.message)
+          fail(ack.message);
         }
         client.emit('get', { id: createDto.id }, (ack) => {
           expect(ack.id).to.eq(createDto.id);
@@ -113,7 +113,7 @@ describe('bulk-actions', function () {
     it('should receive overview', async () => {
       client.emit('create', createDto, (ack) => {
         if (ack.status === 'error') {
-          fail(ack.message)
+          fail(ack.message);
         }
       });
 
@@ -122,7 +122,9 @@ describe('bulk-actions', function () {
           res(overview);
         });
 
-        setTimeout(() => { rej(new Error('Timedout'))}, 3000);
+        setTimeout(() => {
+          rej(new Error('Timedout'));
+        }, 3000);
       });
 
       expect(overview.id).to.eq(createDto.id);

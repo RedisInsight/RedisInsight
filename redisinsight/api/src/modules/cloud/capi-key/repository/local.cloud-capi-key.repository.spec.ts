@@ -49,14 +49,19 @@ describe('LocalCloudCapiKeyRepository', () => {
     encryptionService = await module.get(EncryptionService);
 
     repository.findOneBy.mockResolvedValue(mockCloudCapiKeyEntity);
-    repository.find.mockResolvedValue([mockCloudCapiKeyEntity, mockCloudCapiKeyEntity]);
+    repository.find.mockResolvedValue([
+      mockCloudCapiKeyEntity,
+      mockCloudCapiKeyEntity,
+    ]);
     repository.save.mockResolvedValue(mockCloudCapiKeyEntity);
     repository.delete.mockResolvedValue({ deleted: 1 });
     repository.merge.mockResolvedValue(mockCloudApiCapiKey);
-    repository.createQueryBuilder().getMany.mockResolvedValue([
-      pick(mockCloudCapiKey, 'id', 'name', 'valid', 'createdAt', 'lastUsed'),
-      pick(mockCloudCapiKey, 'id', 'name', 'valid', 'createdAt', 'lastUsed'),
-    ]);
+    repository
+      .createQueryBuilder()
+      .getMany.mockResolvedValue([
+        pick(mockCloudCapiKey, 'id', 'name', 'valid', 'createdAt', 'lastUsed'),
+        pick(mockCloudCapiKey, 'id', 'name', 'valid', 'createdAt', 'lastUsed'),
+      ]);
     repository.merge.mockReturnValue(mockFeatureEntity);
 
     when(encryptionService.decrypt)
@@ -67,16 +72,20 @@ describe('LocalCloudCapiKeyRepository', () => {
 
     when(encryptionService.encrypt)
       .calledWith(mockCloudCapiAuthDto.capiKey)
-      .mockResolvedValue({ data: mockCapiKeyEncrypted, encryption: mockCloudCapiKeyEntity.encryption })
+      .mockResolvedValue({
+        data: mockCapiKeyEncrypted,
+        encryption: mockCloudCapiKeyEntity.encryption,
+      })
       .calledWith(mockCloudCapiAuthDto.capiSecret)
-      .mockResolvedValue({ data: mockCapiSecretEncrypted, encryption: mockCloudCapiKeyEntity.encryption });
+      .mockResolvedValue({
+        data: mockCapiSecretEncrypted,
+        encryption: mockCloudCapiKeyEntity.encryption,
+      });
   });
 
   describe('get', () => {
     it('should return decrypted and transformed capi key', async () => {
-      expect(await service.get(mockDatabase.id)).toEqual(
-        mockCloudCapiKey,
-      );
+      expect(await service.get(mockDatabase.id)).toEqual(mockCloudCapiKey);
     });
     it('should return null fields in case of decryption errors', async () => {
       when(encryptionService.decrypt)
@@ -106,7 +115,9 @@ describe('LocalCloudCapiKeyRepository', () => {
   describe('getByUserAccount', () => {
     it('should return decrypted and transformed capi key', async () => {
       const result = await service.getByUserAccount(
-        mockCloudCapiKey.userId, mockCloudCapiKey.cloudUserId, mockCloudCapiKey.cloudAccountId,
+        mockCloudCapiKey.userId,
+        mockCloudCapiKey.cloudUserId,
+        mockCloudCapiKey.cloudAccountId,
       );
 
       expect(result).toEqual(mockCloudCapiKey);
@@ -116,7 +127,9 @@ describe('LocalCloudCapiKeyRepository', () => {
       repository.findOneBy.mockResolvedValueOnce(null);
 
       const result = await service.getByUserAccount(
-        mockCloudCapiKey.userId, mockCloudCapiKey.cloudUserId, mockCloudCapiKey.cloudAccountId,
+        mockCloudCapiKey.userId,
+        mockCloudCapiKey.cloudUserId,
+        mockCloudCapiKey.cloudAccountId,
       );
 
       expect(result).toEqual(null);
@@ -173,7 +186,10 @@ describe('LocalCloudCapiKeyRepository', () => {
 
   describe('delete', () => {
     it('should delete and do not return anything', async () => {
-      const result = await service.delete(mockCloudCapiKey.userId, mockCloudCapiKey.id);
+      const result = await service.delete(
+        mockCloudCapiKey.userId,
+        mockCloudCapiKey.id,
+      );
 
       expect(result).toEqual(undefined);
     });

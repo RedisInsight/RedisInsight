@@ -1,7 +1,4 @@
-import {
-  IsEnum,
-  IsInt, NotEquals, ValidateIf,
-} from 'class-validator';
+import { IsEnum, IsInt, NotEquals, ValidateIf } from 'class-validator';
 import { NotificationType } from 'src/modules/notification/constants';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 

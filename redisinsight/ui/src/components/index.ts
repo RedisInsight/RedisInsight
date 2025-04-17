@@ -10,7 +10,12 @@ import PageBreadcrumbs from './page-breadcrumbs/PageBreadcrumbs'
 import ContentEditable from './ContentEditable'
 import Config from './config'
 import SettingItem from './settings-item/SettingItem'
-import { ConsentsSettings, ConsentsSettingsPopup, ConsentsPrivacy, ConsentsNotifications } from './consents-settings'
+import {
+  ConsentsSettings,
+  ConsentsSettingsPopup,
+  ConsentsPrivacy,
+  ConsentsNotifications,
+} from './consents-settings'
 import KeyboardShortcut from './keyboard-shortcut/KeyboardShortcut'
 import ShortcutsFlyout from './shortcuts-flyout/ShortcutsFlyout'
 import MonitorConfig from './monitor-config'
@@ -82,5 +87,5 @@ export {
   RecommendationBadgesLegend,
   FormatedDate,
   UploadWarning,
-  FormDialog
+  FormDialog,
 }

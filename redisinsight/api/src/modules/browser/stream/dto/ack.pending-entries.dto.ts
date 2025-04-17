@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  ArrayNotEmpty, IsArray, IsDefined, IsNotEmpty,
-} from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsDefined, IsNotEmpty } from 'class-validator';
 import { IsRedisString, RedisStringType } from 'src/common/decorators';
 import { RedisString } from 'src/common/constants';
 import { GetConsumersDto } from './get.consumers.dto';

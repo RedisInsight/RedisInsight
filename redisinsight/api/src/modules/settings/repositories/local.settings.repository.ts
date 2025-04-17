@@ -19,7 +19,7 @@ export class LocalSettingsRepository extends SettingsRepository {
 
     if (!entity) {
       try {
-        entity = await this.repository.save(this.repository.create({ id : 1 }));
+        entity = await this.repository.save(this.repository.create({ id: 1 }));
       } catch (e) {
         if (e.code === 'SQLITE_CONSTRAINT') {
           return this.getOrCreate();

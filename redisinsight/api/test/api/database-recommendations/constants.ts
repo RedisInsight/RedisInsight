@@ -11,8 +11,7 @@ export const recommendationSchema = Joi.object({
   databaseId: Joi.string(),
   params: Joi.object({
     keys: Joi.array().items(JoiRedisString),
-  }
-  ).allow(null),
+  }).allow(null),
 });
 
 export const recommendationsSchema = Joi.object({

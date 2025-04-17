@@ -9,9 +9,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  ApiBody, ApiOkResponse, ApiOperation, ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { ClientMetadata } from 'src/common/models';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
@@ -44,7 +42,7 @@ export class SetController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async createSet(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: CreateSetWithExpireDto,
+    @Body() dto: CreateSetWithExpireDto,
   ): Promise<void> {
     return await this.setService.createSet(clientMetadata, dto);
   }
@@ -64,7 +62,7 @@ export class SetController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async getMembers(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetSetMembersDto,
+    @Body() dto: GetSetMembersDto,
   ): Promise<GetSetMembersResponse> {
     return await this.setService.getMembers(clientMetadata, dto);
   }
@@ -78,7 +76,7 @@ export class SetController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async addMembers(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: AddMembersToSetDto,
+    @Body() dto: AddMembersToSetDto,
   ): Promise<void> {
     return await this.setService.addMembers(clientMetadata, dto);
   }
@@ -92,7 +90,7 @@ export class SetController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async deleteMembers(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: DeleteMembersFromSetDto,
+    @Body() dto: DeleteMembersFromSetDto,
   ): Promise<DeleteMembersFromSetResponse> {
     return await this.setService.deleteMembers(clientMetadata, dto);
   }

@@ -5,9 +5,6 @@ import { ConvAiProvider } from 'src/modules/ai/chat/providers/conv-ai.provider';
 
 @Module({
   controllers: [AiChatController],
-  providers: [
-    ConvAiProvider,
-    AiChatService,
-  ],
+  providers: [ConvAiProvider, AiChatService],
 })
 export class AiChatModule {}

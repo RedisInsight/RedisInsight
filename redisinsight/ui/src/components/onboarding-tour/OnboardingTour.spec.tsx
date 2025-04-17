@@ -1,8 +1,18 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { render, screen, fireEvent, mockedStore, cleanup } from 'uiSrc/utils/test-utils'
+import {
+  render,
+  screen,
+  fireEvent,
+  mockedStore,
+  cleanup,
+} from 'uiSrc/utils/test-utils'
 
-import { setOnboardNextStep, setOnboardPrevStep, skipOnboarding } from 'uiSrc/slices/app/features'
+import {
+  setOnboardNextStep,
+  setOnboardPrevStep,
+  skipOnboarding,
+} from 'uiSrc/slices/app/features'
 import OnboardingTour from './OnboardingTour'
 
 const mockedOptions = {
@@ -10,7 +20,7 @@ const mockedOptions = {
   title: 'Title',
   Inner: () => ({
     content: 'Content',
-  })
+  }),
 }
 
 let store: typeof mockedStore
@@ -31,8 +41,8 @@ describe('OnboardingTour', () => {
           isActive
         >
           <span />
-        </OnboardingTour>
-      )
+        </OnboardingTour>,
+      ),
     ).toBeTruthy()
   })
 
@@ -45,7 +55,7 @@ describe('OnboardingTour', () => {
         isActive
       >
         <span />
-      </OnboardingTour>
+      </OnboardingTour>,
     )
 
     expect(screen.getByTestId('step-title')).toHaveTextContent('Title')
@@ -60,14 +70,14 @@ describe('OnboardingTour', () => {
       <OnboardingTour
         options={{
           ...mockedOptions,
-          step: 1
+          step: 1,
         }}
         currentStep={1}
         totalSteps={3}
         isActive
       >
         <span />
-      </OnboardingTour>
+      </OnboardingTour>,
     )
 
     expect(screen.queryByTestId('back-btn')).not.toBeInTheDocument()
@@ -82,8 +92,8 @@ describe('OnboardingTour', () => {
           ...mockedOptions,
           Inner: () => ({
             content: '',
-            onBack
-          })
+            onBack,
+          }),
         }}
         currentStep={2}
         totalSteps={3}
@@ -91,7 +101,7 @@ describe('OnboardingTour', () => {
         preventPropagation
       >
         <span />
-      </OnboardingTour>
+      </OnboardingTour>,
     )
 
     fireEvent.click(screen.getByTestId('back-btn'))
@@ -108,15 +118,15 @@ describe('OnboardingTour', () => {
           ...mockedOptions,
           Inner: () => ({
             content: '',
-            onNext
-          })
+            onNext,
+          }),
         }}
         currentStep={2}
         totalSteps={3}
         isActive
       >
         <span />
-      </OnboardingTour>
+      </OnboardingTour>,
     )
 
     fireEvent.click(screen.getByTestId('next-btn'))
@@ -133,15 +143,15 @@ describe('OnboardingTour', () => {
           ...mockedOptions,
           Inner: () => ({
             content: '',
-            onSkip
-          })
+            onSkip,
+          }),
         }}
         currentStep={2}
         totalSteps={3}
         isActive
       >
         <span />
-      </OnboardingTour>
+      </OnboardingTour>,
     )
 
     fireEvent.click(screen.getByTestId('skip-tour-btn'))
@@ -158,7 +168,7 @@ describe('OnboardingTour', () => {
         isActive
       >
         <span />
-      </OnboardingTour>
+      </OnboardingTour>,
     )
 
     expect(screen.queryByTestId('step-title')).not.toBeInTheDocument()
@@ -173,7 +183,7 @@ describe('OnboardingTour', () => {
         isActive={false}
       >
         <span />
-      </OnboardingTour>
+      </OnboardingTour>,
     )
 
     expect(screen.queryByTestId('step-title')).not.toBeInTheDocument()

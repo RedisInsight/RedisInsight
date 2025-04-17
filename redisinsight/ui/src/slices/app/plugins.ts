@@ -5,11 +5,16 @@ import {
   getApiErrorMessage,
   getUrl,
   isStatusSuccessful,
-  multilineCommandToOneLine
+  multilineCommandToOneLine,
 } from 'uiSrc/utils'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
-import { CommandExecutionType, IPlugin, PluginsResponse, StateAppPlugins } from 'uiSrc/slices/interfaces'
+import {
+  CommandExecutionType,
+  IPlugin,
+  PluginsResponse,
+  StateAppPlugins,
+} from 'uiSrc/slices/interfaces'
 import { SendCommandResponse } from 'apiSrc/modules/cli/dto/cli.dto'
 import { PluginState } from 'apiSrc/modules/workbench/models/plugin-state'
 
@@ -20,7 +25,7 @@ export const initialState: StateAppPlugins = {
   error: '',
   staticPath: '',
   plugins: [],
-  visualizations: []
+  visualizations: [],
 }
 
 // A slice for recipes
@@ -33,23 +38,27 @@ const appPluginsSlice = createSlice({
       state.loading = true
       state.error = ''
     },
-    getAllPluginsSuccess: (state, { payload }: { payload: PluginsResponse }) => {
+    getAllPluginsSuccess: (
+      state,
+      { payload }: { payload: PluginsResponse },
+    ) => {
       state.loading = false
       state.staticPath = payload?.static
       state.plugins = reject(payload?.plugins, isEmpty)
       state.visualizations = flatMap(
         reject(payload?.plugins, isEmpty),
-        (plugin: IPlugin) => plugin.visualizations.map((view) => ({
-          ...view,
-          plugin: {
-            name: plugin.name,
-            baseUrl: plugin.baseUrl,
-            internal: plugin.internal,
-            stylesSrc: plugin.styles,
-            scriptSrc: plugin.main
-          },
-          uniqId: `${plugin.name}__${view.id}`
-        }))
+        (plugin: IPlugin) =>
+          plugin.visualizations.map((view) => ({
+            ...view,
+            plugin: {
+              name: plugin.name,
+              baseUrl: plugin.baseUrl,
+              internal: plugin.internal,
+              stylesSrc: plugin.styles,
+              scriptSrc: plugin.main,
+            },
+            uniqId: `${plugin.name}__${view.id}`,
+          })),
       )
     },
     getAllPluginsFailure: (state, { payload }) => {
@@ -64,12 +73,11 @@ export const {
   setAppPluginsInitialState,
   getAllPlugins,
   getAllPluginsSuccess,
-  getAllPluginsFailure
+  getAllPluginsFailure,
 } = appPluginsSlice.actions
 
 // Selectors
-export const appPluginsSelector = (state: RootState) =>
-  state.app.plugins
+export const appPluginsSelector = (state: RootState) => state.app.plugins
 
 // The reducer
 export default appPluginsSlice.reducer
@@ -80,9 +88,7 @@ export function loadPluginsAction() {
     dispatch(getAllPlugins())
 
     try {
-      const { data, status } = await apiService.get(
-        `${ApiEndpoints.PLUGINS}`
-      )
+      const { data, status } = await apiService.get(`${ApiEndpoints.PLUGINS}`)
 
       if (isStatusSuccessful(status)) {
         dispatch(getAllPluginsSuccess(data))
@@ -95,34 +101,28 @@ export function loadPluginsAction() {
 }
 
 // Asynchronous thunk action
-export function sendPluginCommandAction(
-  {
-    command = '',
-    executionType = CommandExecutionType.Workbench,
-    onSuccessAction,
-    onFailAction
-  }: {
-    command: string
-    executionType?: CommandExecutionType
-    onSuccessAction?: (responseData: any) => void
-    onFailAction?: (error: any) => void
-  }
-) {
+export function sendPluginCommandAction({
+  command = '',
+  executionType = CommandExecutionType.Workbench,
+  onSuccessAction,
+  onFailAction,
+}: {
+  command: string
+  executionType?: CommandExecutionType
+  onSuccessAction?: (responseData: any) => void
+  onFailAction?: (error: any) => void
+}) {
   return async (_dispatch: AppDispatch, stateInit: () => RootState) => {
     try {
       const state = stateInit()
       const { id = '' } = state.connections.instances.connectedInstance
 
       const { data, status } = await apiService.post<SendCommandResponse>(
-        getUrl(
-          id,
-          ApiEndpoints.PLUGINS,
-          ApiEndpoints.COMMAND_EXECUTIONS
-        ),
+        getUrl(id, ApiEndpoints.PLUGINS, ApiEndpoints.COMMAND_EXECUTIONS),
         {
           command: multilineCommandToOneLine(command),
-          type: executionType
-        }
+          type: executionType,
+        },
       )
 
       if (isStatusSuccessful(status)) {
@@ -134,7 +134,12 @@ export function sendPluginCommandAction(
   }
 }
 
-export function getPluginStateAction({ visualizationId = '', commandId = '', onSuccessAction, onFailAction }: {
+export function getPluginStateAction({
+  visualizationId = '',
+  commandId = '',
+  onSuccessAction,
+  onFailAction,
+}: {
   visualizationId: string
   commandId: string
   onSuccessAction?: (responseData: any) => void
@@ -152,8 +157,8 @@ export function getPluginStateAction({ visualizationId = '', commandId = '', onS
           visualizationId,
           ApiEndpoints.COMMAND_EXECUTIONS,
           commandId,
-          ApiEndpoints.STATE
-        )
+          ApiEndpoints.STATE,
+        ),
       )
 
       if (isStatusSuccessful(status)) {
@@ -165,7 +170,13 @@ export function getPluginStateAction({ visualizationId = '', commandId = '', onS
   }
 }
 
-export function setPluginStateAction({ visualizationId = '', commandId = '', pluginState, onSuccessAction, onFailAction }: {
+export function setPluginStateAction({
+  visualizationId = '',
+  commandId = '',
+  pluginState,
+  onSuccessAction,
+  onFailAction,
+}: {
   visualizationId: string
   commandId: string
   pluginState: any
@@ -184,11 +195,11 @@ export function setPluginStateAction({ visualizationId = '', commandId = '', plu
           visualizationId,
           ApiEndpoints.COMMAND_EXECUTIONS,
           commandId,
-          ApiEndpoints.STATE
+          ApiEndpoints.STATE,
         ),
         {
-          state: pluginState
-        }
+          state: pluginState,
+        },
       )
 
       if (isStatusSuccessful(status)) {

@@ -31,8 +31,10 @@ describe('TestConnectionsPanel', () => {
   it('should render loading', () => {
     const rdiTestConnectionsSelectorMock = jest.fn().mockReturnValue({
       loading: true,
-    });
-    (rdiTestConnectionsSelector as jest.Mock).mockImplementation(rdiTestConnectionsSelectorMock)
+    })
+    ;(rdiTestConnectionsSelector as jest.Mock).mockImplementation(
+      rdiTestConnectionsSelectorMock,
+    )
 
     render(<TestConnectionsPanel {...instance(mockedProps)} />)
 
@@ -40,7 +42,7 @@ describe('TestConnectionsPanel', () => {
   })
 
   it('should show "No results found" when results are null', () => {
-    (rdiTestConnectionsSelector as jest.Mock).mockReturnValue({
+    ;(rdiTestConnectionsSelector as jest.Mock).mockReturnValue({
       loading: false,
       results: null,
     })
@@ -71,9 +73,9 @@ describe('TestConnectionsPanel', () => {
         ],
         fail: [],
       },
-    };
+    }
 
-    (rdiTestConnectionsSelector as jest.Mock).mockReturnValue({
+    ;(rdiTestConnectionsSelector as jest.Mock).mockReturnValue({
       loading: false,
       results: mockResults,
     })

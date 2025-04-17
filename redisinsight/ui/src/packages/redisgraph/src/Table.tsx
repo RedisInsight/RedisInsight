@@ -1,13 +1,10 @@
-import {
-    EuiInMemoryTable,
-} from '@elastic/eui'
+import { EuiInMemoryTable } from '@elastic/eui'
 
 export function capitalize(str: string) {
-    return str.charAt(0).toUpperCase() + str.slice(1)
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-export function Table(props: {data: {[key: string]: any}, columns: any}) {
-
+export function Table(props: { data: { [key: string]: any }; columns: any }) {
   if (props.data.length === 0) {
     return null
   }
@@ -24,4 +21,3 @@ export function Table(props: {data: {[key: string]: any}, columns: any}) {
     />
   )
 }
-

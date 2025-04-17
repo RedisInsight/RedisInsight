@@ -11,10 +11,9 @@ describe('CHSearchInput', () => {
   it('should call submitSearch with after typing', () => {
     const submitSearch = jest.fn()
     render(<CHSearchInput submitSearch={submitSearch} />)
-    fireEvent.change(
-      screen.getByTestId('cli-helper-search'),
-      { target: { value: 'set' } }
-    )
+    fireEvent.change(screen.getByTestId('cli-helper-search'), {
+      target: { value: 'set' },
+    })
     expect(submitSearch).toBeCalledWith('set')
   })
 })

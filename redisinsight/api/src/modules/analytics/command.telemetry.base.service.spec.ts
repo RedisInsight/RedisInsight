@@ -41,7 +41,10 @@ describe('CommandTelemetryBaseService', () => {
 
     eventEmitter = await module.get<EventEmitter2>(EventEmitter2);
     commandsService = await module.get(CommandsService);
-    service = new Service(eventEmitter, commandsService as unknown as CommandsService);
+    service = new Service(
+      eventEmitter,
+      commandsService as unknown as CommandsService,
+    );
     commandsService.getCommandsGroups.mockResolvedValue({
       main: {
         SET: {
@@ -49,11 +52,7 @@ describe('CommandTelemetryBaseService', () => {
           since: '1.0.0',
           group: 'string',
           complexity: 'O(1)',
-          acl_categories: [
-            '@write',
-            '@string',
-            '@slow',
-          ],
+          acl_categories: ['@write', '@string', '@slow'],
         },
       },
       redisbloom: {

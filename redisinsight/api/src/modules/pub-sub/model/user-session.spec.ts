@@ -19,7 +19,10 @@ nodeClient.quit = jest.fn();
 
 const mockUserClient = new UserClient('socketId', mockSocket, 'databaseId');
 
-const mockRedisClientSubscriber = new RedisClientSubscriber('databaseId', getRedisClientFn);
+const mockRedisClientSubscriber = new RedisClientSubscriber(
+  'databaseId',
+  getRedisClientFn,
+);
 
 const mockSubscriptionDto = {
   channel: 'channel-a',
@@ -31,8 +34,14 @@ const mockPSubscriptionDto = {
   type: SubscriptionType.PSubscribe,
 };
 
-const mockSubscription = new SimpleSubscription(mockUserClient, mockSubscriptionDto);
-const mockPSubscription = new PatternSubscription(mockUserClient, mockPSubscriptionDto);
+const mockSubscription = new SimpleSubscription(
+  mockUserClient,
+  mockSubscriptionDto,
+);
+const mockPSubscription = new PatternSubscription(
+  mockUserClient,
+  mockPSubscriptionDto,
+);
 
 const mockMessage = {
   channel: 'channel-a',
@@ -59,12 +68,16 @@ describe('UserSession', () => {
       expect(userSession['subscriptions'].size).toEqual(1);
       await userSession.subscribe(mockSubscription);
       expect(userSession['subscriptions'].size).toEqual(1);
-      expect(userSession['subscriptions'].get(mockSubscription.getId())).toEqual(mockSubscription);
+      expect(
+        userSession['subscriptions'].get(mockSubscription.getId()),
+      ).toEqual(mockSubscription);
       await userSession.subscribe(mockPSubscription);
       expect(userSession['subscriptions'].size).toEqual(2);
       await userSession.subscribe(mockPSubscription);
       expect(userSession['subscriptions'].size).toEqual(2);
-      expect(userSession['subscriptions'].get(mockPSubscription.getId())).toEqual(mockPSubscription);
+      expect(
+        userSession['subscriptions'].get(mockPSubscription.getId()),
+      ).toEqual(mockPSubscription);
     });
   });
 

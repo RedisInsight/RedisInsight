@@ -1,5 +1,9 @@
 import { ReactNode } from 'react'
-import { CellMeasurerCache, IndexRange, OverscanIndexRange } from 'react-virtualized'
+import {
+  CellMeasurerCache,
+  IndexRange,
+  OverscanIndexRange,
+} from 'react-virtualized'
 import {
   SortOrder,
   TableCellAlignment,
@@ -19,8 +23,8 @@ export interface IColumnSearchState {
 }
 
 export interface IResizeEvent {
-  width: number,
-  height: number,
+  width: number
+  height: number
 }
 
 export interface ITableColumn {
@@ -40,7 +44,12 @@ export interface ITableColumn {
   absoluteWidth?: number | string
   alignment?: TableCellAlignment
   textAlignment?: TableCellTextAlignment
-  render?: (cellData?: any, columnItem?: any, expanded?: boolean, rowIndex?: number) => any
+  render?: (
+    cellData?: any,
+    columnItem?: any,
+    expanded?: boolean,
+    rowIndex?: number,
+  ) => any
   className?: string
   prependSearchName?: string
   staySearchAlwaysOpen?: boolean

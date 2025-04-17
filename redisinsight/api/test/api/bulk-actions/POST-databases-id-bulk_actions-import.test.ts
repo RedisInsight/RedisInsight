@@ -8,12 +8,11 @@ import {
 } from '../deps';
 const { rte, request, server, constants } = deps;
 
-const endpoint = (
-  id = constants.TEST_INSTANCE_ID,
-) => request(server).post(`/${constants.API.DATABASES}/${id}/bulk-actions/import`);
+const endpoint = (id = constants.TEST_INSTANCE_ID) =>
+  request(server).post(`/${constants.API.DATABASES}/${id}/bulk-actions/import`);
 
 describe('POST /databases/:id/bulk-actions/import', () => {
-  requirements('!rte.sharedData', '!rte.bigData')
+  requirements('!rte.sharedData', '!rte.bigData');
   beforeEach(async () => await rte.data.truncate());
 
   describe('Common', function () {
@@ -41,9 +40,10 @@ describe('POST /databases/:id/bulk-actions/import', () => {
         attach: [
           'file',
           Buffer.from(
-            (new Array(100)).fill(100).map(
-              (_v, idx) => `SET key${idx} value${idx}`,
-            ).join('\n'),
+            new Array(100)
+              .fill(100)
+              .map((_v, idx) => `SET key${idx} value${idx}`)
+              .join('\n'),
           ),
           'any_filename_and_ext',
         ],
@@ -71,9 +71,10 @@ describe('POST /databases/:id/bulk-actions/import', () => {
         attach: [
           'file',
           Buffer.from(
-            (new Array(10_000)).fill(1).map(
-              (_v, idx) => `SET key${idx} value${idx}`,
-            ).join('\n'),
+            new Array(10_000)
+              .fill(1)
+              .map((_v, idx) => `SET key${idx} value${idx}`)
+              .join('\n'),
           ),
           'any_filename_and_ext',
         ],
@@ -81,7 +82,12 @@ describe('POST /databases/:id/bulk-actions/import', () => {
           id: 'empty',
           databaseId: constants.TEST_INSTANCE_ID,
           type: 'upload',
-          summary: { processed: 10_000, succeed: 10_000, failed: 0, errors: [] },
+          summary: {
+            processed: 10_000,
+            succeed: 10_000,
+            failed: 0,
+            errors: [],
+          },
           progress: null,
           filter: null,
           status: 'completed',
@@ -101,14 +107,17 @@ describe('POST /databases/:id/bulk-actions/import', () => {
         attach: [
           'file',
           Buffer.from(
-            (new Array(25)).fill(1).map(
-              (_v, idx) => [
-                `SET key${idx}_1 value${idx}_1`,
-                `SET "key${idx}_2" "value${idx}_2 \\xE2\\x82\\xAC"`,
-                `SET no-value`,
-                JSON.stringify({ something: 'bad' }),
-              ].join('\n'),
-            ).join('\n'),
+            new Array(25)
+              .fill(1)
+              .map((_v, idx) =>
+                [
+                  `SET key${idx}_1 value${idx}_1`,
+                  `SET "key${idx}_2" "value${idx}_2 \\xE2\\x82\\xAC"`,
+                  `SET no-value`,
+                  JSON.stringify({ something: 'bad' }),
+                ].join('\n'),
+              )
+              .join('\n'),
           ),
           'any_filename_and_ext',
         ],
@@ -173,25 +182,27 @@ describe('POST /databases/:id/bulk-actions/import', () => {
       });
     });
     it('Should import 100K strings', async () => {
-      const b =           Buffer.from(
-        (new Array(100_000)).fill(1).map(
-          (_v, idx) => `SET key${idx} value${idx}`,
-        ).join('\n'),
-        )
+      const b = Buffer.from(
+        new Array(100_000)
+          .fill(1)
+          .map((_v, idx) => `SET key${idx} value${idx}`)
+          .join('\n'),
+      );
 
       require('fs').writeFileSync('_data', b);
-        await validateApiCall({
+      await validateApiCall({
         endpoint,
-        attach: [
-          'file',
-          b,
-          'any_filename_and_ext',
-        ],
+        attach: ['file', b, 'any_filename_and_ext'],
         responseBody: {
           id: 'empty',
           databaseId: constants.TEST_INSTANCE_ID,
           type: 'upload',
-          summary: { processed: 100_000, succeed: 100_000, failed: 0, errors: [] },
+          summary: {
+            processed: 100_000,
+            succeed: 100_000,
+            failed: 0,
+            errors: [],
+          },
           progress: null,
           filter: null,
           status: 'completed',

@@ -11,7 +11,9 @@ const mockedRoutes = [
 describe('AnalyticsPageRouter', () => {
   it('should render', () => {
     expect(
-      render(<AnalyticsPageRouter routes={mockedRoutes} />, { withRouter: true })
+      render(<AnalyticsPageRouter routes={mockedRoutes} />, {
+        withRouter: true,
+      }),
     ).toBeTruthy()
   })
 })

@@ -23,23 +23,27 @@ const SOCKETS_CONFIG = config.get('sockets') as Config['sockets'];
   path: SOCKETS_CONFIG.path,
   namespace: 'monitor',
   cors: SOCKETS_CONFIG.cors.enabled
-    ? { origin: SOCKETS_CONFIG.cors.origin, credentials: SOCKETS_CONFIG.cors.credentials } : false,
-  serveClient: SOCKETS_CONFIG.serveClient
+    ? {
+        origin: SOCKETS_CONFIG.cors.origin,
+        credentials: SOCKETS_CONFIG.cors.credentials,
+      }
+    : false,
+  serveClient: SOCKETS_CONFIG.serveClient,
 })
-export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class ProfilerGateway
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer() wss: Server;
 
   private logger: Logger = new Logger('MonitorGateway');
 
-  constructor(
-    private service: ProfilerService,
-  ) {}
+  constructor(private service: ProfilerService) {}
 
   @SubscribeMessage(ProfilerClientEvents.Monitor)
   async monitor(
     @WSSessionMetadata() sessionMetadata: SessionMetadata,
-      @ConnectedSocket() client: Socket,
-      @Body() settings: MonitorSettings = null,
+    @ConnectedSocket() client: Socket,
+    @Body() settings: MonitorSettings = null,
   ): Promise<any> {
     try {
       await this.service.addListenerForInstance(
@@ -56,9 +60,15 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   @SubscribeMessage(ProfilerClientEvents.Pause)
-  async pause(@WSSessionMetadata() sessionMetadata: SessionMetadata, @ConnectedSocket() client: Socket): Promise<any> {
+  async pause(
+    @WSSessionMetadata() sessionMetadata: SessionMetadata,
+    @ConnectedSocket() client: Socket,
+  ): Promise<any> {
     try {
-      await this.service.removeListenerFromInstance(ProfilerGateway.getInstanceId(client), client.id);
+      await this.service.removeListenerFromInstance(
+        ProfilerGateway.getInstanceId(client),
+        client.id,
+      );
       return { status: 'ok' };
     } catch (error) {
       this.logger.error('Unable to pause monitor', error);
@@ -68,7 +78,8 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   @SubscribeMessage(ProfilerClientEvents.FlushLogs)
   async flushLogs(
-    @WSSessionMetadata() sessionMetadata: SessionMetadata, @ConnectedSocket() client: Socket,
+    @WSSessionMetadata() sessionMetadata: SessionMetadata,
+    @ConnectedSocket() client: Socket,
   ): Promise<any> {
     try {
       await this.service.flushLogs(client.id);
@@ -81,13 +92,17 @@ export class ProfilerGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   async handleConnection(client: Socket): Promise<void> {
     const instanceId = ProfilerGateway.getInstanceId(client);
-    this.logger.debug(`Client connected: ${client.id}, instanceId: ${instanceId}`);
+    this.logger.debug(
+      `Client connected: ${client.id}, instanceId: ${instanceId}`,
+    );
   }
 
   async handleDisconnect(client: Socket): Promise<void> {
     const instanceId = ProfilerGateway.getInstanceId(client);
     await this.service.disconnectListenerFromInstance(instanceId, client.id);
-    this.logger.debug(`Client disconnected: ${client.id}, instanceId: ${instanceId}`);
+    this.logger.debug(
+      `Client disconnected: ${client.id}, instanceId: ${instanceId}`,
+    );
   }
 
   static getInstanceId(client: Socket): string {

@@ -21,7 +21,9 @@ describe('DeleteKeyPopover', () => {
   it('should render delete button with proper data-testid', () => {
     render(<DeleteKeyPopover {...mockProps} />)
 
-    expect(screen.getByTestId(`delete-key-btn-${mockProps.nameString}`)).toBeInTheDocument()
+    expect(
+      screen.getByTestId(`delete-key-btn-${mockProps.nameString}`),
+    ).toBeInTheDocument()
   })
 
   it('should not show popover content by default', () => {
@@ -32,7 +34,9 @@ describe('DeleteKeyPopover', () => {
   })
 
   it('should show popover content when deletePopoverId matches rowId', () => {
-    render(<DeleteKeyPopover {...mockProps} deletePopoverId={mockProps.rowId} />)
+    render(
+      <DeleteKeyPopover {...mockProps} deletePopoverId={mockProps.rowId} />,
+    )
 
     expect(screen.getByText('will be deleted.')).toBeInTheDocument()
     expect(screen.getByTestId('submit-delete-key')).toBeInTheDocument()
@@ -41,13 +45,20 @@ describe('DeleteKeyPopover', () => {
   it('should call onOpenPopover when delete button is clicked', () => {
     render(<DeleteKeyPopover {...mockProps} />)
 
-    fireEvent.click(screen.getByTestId(`delete-key-btn-${mockProps.nameString}`))
+    fireEvent.click(
+      screen.getByTestId(`delete-key-btn-${mockProps.nameString}`),
+    )
 
-    expect(mockProps.onOpenPopover).toHaveBeenCalledWith(mockProps.rowId, mockProps.type)
+    expect(mockProps.onOpenPopover).toHaveBeenCalledWith(
+      mockProps.rowId,
+      mockProps.type,
+    )
   })
 
   it('should call onOpenPopover with -1 when closing the popover', () => {
-    const { container } = render(<DeleteKeyPopover {...mockProps} deletePopoverId={mockProps.rowId} />)
+    const { container } = render(
+      <DeleteKeyPopover {...mockProps} deletePopoverId={mockProps.rowId} />,
+    )
 
     container.querySelector('.euiPopover')
     const closePopover = () => mockProps.onOpenPopover(-1, mockProps.type)
@@ -57,7 +68,9 @@ describe('DeleteKeyPopover', () => {
   })
 
   it('should call onDelete with proper arguments when confirm button is clicked', () => {
-    render(<DeleteKeyPopover {...mockProps} deletePopoverId={mockProps.rowId} />)
+    render(
+      <DeleteKeyPopover {...mockProps} deletePopoverId={mockProps.rowId} />,
+    )
 
     fireEvent.click(screen.getByTestId('submit-delete-key'))
 
@@ -65,7 +78,13 @@ describe('DeleteKeyPopover', () => {
   })
 
   it('should disable delete button when deleting is true', () => {
-    render(<DeleteKeyPopover {...mockProps} deletePopoverId={mockProps.rowId} deleting />)
+    render(
+      <DeleteKeyPopover
+        {...mockProps}
+        deletePopoverId={mockProps.rowId}
+        deleting
+      />,
+    )
 
     expect(screen.getByTestId('submit-delete-key')).toBeDisabled()
   })
@@ -74,7 +93,7 @@ describe('DeleteKeyPopover', () => {
     const longNameProps = {
       ...mockProps,
       nameString: 'very-long-key-name-that-might-need-formatting',
-      deletePopoverId: mockProps.rowId
+      deletePopoverId: mockProps.rowId,
     }
 
     render(<DeleteKeyPopover {...longNameProps} />)

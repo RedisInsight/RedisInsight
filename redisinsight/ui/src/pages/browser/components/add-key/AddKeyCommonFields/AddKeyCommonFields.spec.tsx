@@ -12,11 +12,8 @@ describe('AddKeyCommonFields', () => {
   it('should render', () => {
     expect(
       render(
-        <AddKeyCommonFields
-          {...instance(mockedProps)}
-          options={options}
-        />
-      )
+        <AddKeyCommonFields {...instance(mockedProps)} options={options} />,
+      ),
     ).toBeTruthy()
   })
 
@@ -27,14 +24,13 @@ describe('AddKeyCommonFields', () => {
         {...instance(mockedProps)}
         setKeyName={setKeyName}
         options={options}
-      />
+      />,
     )
-    const ttlInput = screen.getByPlaceholderText(AddCommonFieldsFormConfig.keyName.placeholder)
+    const ttlInput = screen.getByPlaceholderText(
+      AddCommonFieldsFormConfig.keyName.placeholder,
+    )
 
-    fireEvent.change(
-      ttlInput,
-      { target: { value: 123 } }
-    )
+    fireEvent.change(ttlInput, { target: { value: 123 } })
     expect(setKeyName).toBeCalledTimes(1)
   })
 
@@ -45,14 +41,13 @@ describe('AddKeyCommonFields', () => {
         {...instance(mockedProps)}
         setKeyTTL={setKeyTTL}
         options={options}
-      />
+      />,
     )
-    const ttlInput = screen.getByPlaceholderText(AddCommonFieldsFormConfig.keyTTL.placeholder)
+    const ttlInput = screen.getByPlaceholderText(
+      AddCommonFieldsFormConfig.keyTTL.placeholder,
+    )
 
-    fireEvent.change(
-      ttlInput,
-      { target: { value: 123 } }
-    )
+    fireEvent.change(ttlInput, { target: { value: 123 } })
     expect(setKeyTTL).toBeCalledTimes(1)
   })
 
@@ -67,14 +62,13 @@ describe('AddKeyCommonFields', () => {
         // @ts-ignore
         setKeyTTL={setKeyTTL}
         options={options}
-      />
+      />,
     )
-    const ttlInput = screen.getByPlaceholderText(AddCommonFieldsFormConfig.keyTTL.placeholder)
+    const ttlInput = screen.getByPlaceholderText(
+      AddCommonFieldsFormConfig.keyTTL.placeholder,
+    )
 
-    fireEvent.change(
-      ttlInput,
-      { target: { value: 'q123' } }
-    )
+    fireEvent.change(ttlInput, { target: { value: 'q123' } })
     expect(ttlValue).toBe(123)
   })
 })

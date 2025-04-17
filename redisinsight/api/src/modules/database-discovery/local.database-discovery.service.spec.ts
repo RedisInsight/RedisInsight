@@ -13,9 +13,10 @@ import { LocalDatabaseDiscoveryService } from 'src/modules/database-discovery/lo
 import { AutoDatabaseDiscoveryService } from 'src/modules/database-discovery/auto.database-discovery.service';
 import { SettingsService } from 'src/modules/settings/settings.service';
 
-jest.mock('src/utils/config', jest.fn(
-  () => jest.requireActual('src/utils/config') as object,
-));
+jest.mock(
+  'src/utils/config',
+  jest.fn(() => jest.requireActual('src/utils/config') as object),
+);
 
 const mockServerConfig = config.get('server') as Config['server'];
 
@@ -54,7 +55,9 @@ describe('PreSetupDatabaseDiscoveryService', () => {
 
     service = module.get(LocalDatabaseDiscoveryService);
     settingsService = module.get(SettingsService);
-    preSetupDatabaseDiscoveryService = module.get(PreSetupDatabaseDiscoveryService);
+    preSetupDatabaseDiscoveryService = module.get(
+      PreSetupDatabaseDiscoveryService,
+    );
     autoDatabaseDiscoveryService = module.get(AutoDatabaseDiscoveryService);
   });
 
@@ -62,7 +65,9 @@ describe('PreSetupDatabaseDiscoveryService', () => {
     it('should skip when buildType = REDIS_STACK', async () => {
       mockServerConfig.buildType = 'REDIS_STACK';
 
-      await expect(service.discover(mockSessionMetadata)).resolves.toEqual(undefined);
+      await expect(service.discover(mockSessionMetadata)).resolves.toEqual(
+        undefined,
+      );
 
       expect(settingsService.getAppSettings).not.toHaveBeenCalled();
       expect(preSetupDatabaseDiscoveryService.discover).not.toHaveBeenCalled();
@@ -72,63 +77,113 @@ describe('PreSetupDatabaseDiscoveryService', () => {
     it('should skip there is no eula consent', async () => {
       settingsService.getAppSettings.mockResolvedValueOnce({});
 
-      await expect(service.discover(mockSessionMetadata)).resolves.toEqual(undefined);
+      await expect(service.discover(mockSessionMetadata)).resolves.toEqual(
+        undefined,
+      );
 
-      expect(settingsService.getAppSettings).toHaveBeenCalledWith(mockSessionMetadata);
+      expect(settingsService.getAppSettings).toHaveBeenCalledWith(
+        mockSessionMetadata,
+      );
       expect(preSetupDatabaseDiscoveryService.discover).not.toHaveBeenCalled();
       expect(autoDatabaseDiscoveryService.discover).not.toHaveBeenCalled();
     });
 
     it('should discover pre setup databases', async () => {
-      settingsService.getAppSettings.mockResolvedValueOnce({ agreements: { eula: true } });
-      preSetupDatabaseDiscoveryService.discover.mockResolvedValueOnce({ discovered: 3 });
+      settingsService.getAppSettings.mockResolvedValueOnce({
+        agreements: { eula: true },
+      });
+      preSetupDatabaseDiscoveryService.discover.mockResolvedValueOnce({
+        discovered: 3,
+      });
 
-      await expect(service.discover(mockSessionMetadata)).resolves.toEqual(undefined);
+      await expect(service.discover(mockSessionMetadata)).resolves.toEqual(
+        undefined,
+      );
 
-      expect(settingsService.getAppSettings).toHaveBeenCalledWith(mockSessionMetadata);
-      expect(preSetupDatabaseDiscoveryService.discover).toHaveBeenCalledWith(mockSessionMetadata);
+      expect(settingsService.getAppSettings).toHaveBeenCalledWith(
+        mockSessionMetadata,
+      );
+      expect(preSetupDatabaseDiscoveryService.discover).toHaveBeenCalledWith(
+        mockSessionMetadata,
+      );
       expect(autoDatabaseDiscoveryService.discover).not.toHaveBeenCalled();
     });
 
     it('should discover pre setup databases and not auto discover on first start', async () => {
-      settingsService.getAppSettings.mockResolvedValueOnce({ agreements: { eula: true } });
-      preSetupDatabaseDiscoveryService.discover.mockResolvedValueOnce({ discovered: 3 });
+      settingsService.getAppSettings.mockResolvedValueOnce({
+        agreements: { eula: true },
+      });
+      preSetupDatabaseDiscoveryService.discover.mockResolvedValueOnce({
+        discovered: 3,
+      });
 
-      await expect(service.discover(mockSessionMetadata, true)).resolves.toEqual(undefined);
+      await expect(
+        service.discover(mockSessionMetadata, true),
+      ).resolves.toEqual(undefined);
 
-      expect(settingsService.getAppSettings).toHaveBeenCalledWith(mockSessionMetadata);
-      expect(preSetupDatabaseDiscoveryService.discover).toHaveBeenCalledWith(mockSessionMetadata);
+      expect(settingsService.getAppSettings).toHaveBeenCalledWith(
+        mockSessionMetadata,
+      );
+      expect(preSetupDatabaseDiscoveryService.discover).toHaveBeenCalledWith(
+        mockSessionMetadata,
+      );
       expect(autoDatabaseDiscoveryService.discover).not.toHaveBeenCalled();
     });
 
     it('should not run auto discover when no pre setup databases discovered but it is not first start', async () => {
-      settingsService.getAppSettings.mockResolvedValueOnce({ agreements: { eula: true } });
-      preSetupDatabaseDiscoveryService.discover.mockResolvedValueOnce({ discovered: 0 });
+      settingsService.getAppSettings.mockResolvedValueOnce({
+        agreements: { eula: true },
+      });
+      preSetupDatabaseDiscoveryService.discover.mockResolvedValueOnce({
+        discovered: 0,
+      });
 
-      await expect(service.discover(mockSessionMetadata)).resolves.toEqual(undefined);
+      await expect(service.discover(mockSessionMetadata)).resolves.toEqual(
+        undefined,
+      );
 
-      expect(settingsService.getAppSettings).toHaveBeenCalledWith(mockSessionMetadata);
-      expect(preSetupDatabaseDiscoveryService.discover).toHaveBeenCalledWith(mockSessionMetadata);
+      expect(settingsService.getAppSettings).toHaveBeenCalledWith(
+        mockSessionMetadata,
+      );
+      expect(preSetupDatabaseDiscoveryService.discover).toHaveBeenCalledWith(
+        mockSessionMetadata,
+      );
       expect(autoDatabaseDiscoveryService.discover).not.toHaveBeenCalled();
     });
 
     it('should run auto discover when no pre setup databases discovered and it is first start', async () => {
-      settingsService.getAppSettings.mockResolvedValueOnce({ agreements: { eula: true } });
-      preSetupDatabaseDiscoveryService.discover.mockResolvedValueOnce({ discovered: 0 });
+      settingsService.getAppSettings.mockResolvedValueOnce({
+        agreements: { eula: true },
+      });
+      preSetupDatabaseDiscoveryService.discover.mockResolvedValueOnce({
+        discovered: 0,
+      });
 
-      await expect(service.discover(mockSessionMetadata, true)).resolves.toEqual(undefined);
+      await expect(
+        service.discover(mockSessionMetadata, true),
+      ).resolves.toEqual(undefined);
 
-      expect(settingsService.getAppSettings).toHaveBeenCalledWith(mockSessionMetadata);
-      expect(preSetupDatabaseDiscoveryService.discover).toHaveBeenCalledWith(mockSessionMetadata);
-      expect(autoDatabaseDiscoveryService.discover).toHaveBeenCalledWith(mockSessionMetadata);
+      expect(settingsService.getAppSettings).toHaveBeenCalledWith(
+        mockSessionMetadata,
+      );
+      expect(preSetupDatabaseDiscoveryService.discover).toHaveBeenCalledWith(
+        mockSessionMetadata,
+      );
+      expect(autoDatabaseDiscoveryService.discover).toHaveBeenCalledWith(
+        mockSessionMetadata,
+      );
     });
 
     it('should not fail inn case of any error', async () => {
       settingsService.getAppSettings.mockRejectedValueOnce(new Error());
 
-      await expect(service.discover(mockSessionMetadata, true)).resolves.toEqual(undefined);
+      await expect(
+        service.discover(mockSessionMetadata, true),
+      ).resolves.toEqual(undefined);
 
-      expect(settingsService.getAppSettings).toHaveBeenCalledWith(mockSessionMetadata);
+      expect(settingsService.getAppSettings).toHaveBeenCalledWith(
+        mockSessionMetadata,
+      );
       expect(preSetupDatabaseDiscoveryService.discover).not.toHaveBeenCalled();
       expect(autoDatabaseDiscoveryService.discover).not.toHaveBeenCalled();
     });

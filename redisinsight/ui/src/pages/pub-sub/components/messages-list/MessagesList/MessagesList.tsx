@@ -1,5 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { ListChildComponentProps, ListOnScrollProps, VariableSizeList as List } from 'react-window'
+import {
+  ListChildComponentProps,
+  ListOnScrollProps,
+  VariableSizeList as List,
+} from 'react-window'
 import { useParams } from 'react-router-dom'
 import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 
@@ -50,9 +54,10 @@ const MessagesList = (props: Props) => {
     }
   }, [width, height])
 
-  const getRowHeight = (index: number) => (
-    rowHeights.current[index] > MIN_ROW_HEIGHT ? (rowHeights.current[index] + 2) : MIN_ROW_HEIGHT
-  )
+  const getRowHeight = (index: number) =>
+    rowHeights.current[index] > MIN_ROW_HEIGHT
+      ? rowHeights.current[index] + 2
+      : MIN_ROW_HEIGHT
 
   const setRowHeight = (index: number, size: number) => {
     listRef.current?.resetAfterIndex(0)
@@ -77,12 +82,15 @@ const MessagesList = (props: Props) => {
     }
 
     if (!e.scrollUpdateWasRequested) {
-      if (followRef.current && outerRef.current?.scrollHeight !== outerRef.current?.offsetHeight) {
+      if (
+        followRef.current &&
+        outerRef.current?.scrollHeight !== outerRef.current?.offsetHeight
+      ) {
         sendEventTelemetry({
           event: TelemetryEvent.PUBSUB_AUTOSCROLL_PAUSED,
           eventData: {
-            databaseId: instanceId
-          }
+            databaseId: instanceId,
+          },
         })
       }
       followRef.current = false
@@ -93,13 +101,19 @@ const MessagesList = (props: Props) => {
       return
     }
 
-    if (e.scrollOffset + outerRef.current.offsetHeight === outerRef.current.scrollHeight) {
-      if (!followRef.current && outerRef.current.scrollHeight !== outerRef.current.offsetHeight) {
+    if (
+      e.scrollOffset + outerRef.current.offsetHeight ===
+      outerRef.current.scrollHeight
+    ) {
+      if (
+        !followRef.current &&
+        outerRef.current.scrollHeight !== outerRef.current.offsetHeight
+      ) {
         sendEventTelemetry({
           event: TelemetryEvent.PUBSUB_AUTOSCROLL_RESUMED,
           eventData: {
             databaseId: instanceId,
-          }
+          },
         })
       }
       followRef.current = true
@@ -120,17 +134,17 @@ const MessagesList = (props: Props) => {
 
     return (
       <div style={style} className={styles.item} data-testid={`row-${index}`}>
-        <div className={styles.time}><FormatedDate date={time} /></div>
+        <div className={styles.time}>
+          <FormatedDate date={time} />
+        </div>
         <div className={styles.channel}>
-          <EuiToolTip
-            content={channel}
-            position="bottom"
-            display="inlineBlock"
-          >
+          <EuiToolTip content={channel} position="bottom" display="inlineBlock">
             <div className={styles.channelAnchor}>{channel}</div>
           </EuiToolTip>
         </div>
-        <div className={styles.message} ref={rowRef}><span>{message}</span></div>
+        <div className={styles.message} ref={rowRef}>
+          <span>{message}</span>
+        </div>
       </div>
     )
   }

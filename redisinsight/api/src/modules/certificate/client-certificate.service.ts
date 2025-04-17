@@ -1,13 +1,12 @@
 import {
-  BadRequestException, HttpException,
+  BadRequestException,
+  HttpException,
   Injectable,
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import {
-  EncryptionServiceErrorException,
-} from 'src/modules/encryption/exceptions';
+import { EncryptionServiceErrorException } from 'src/modules/encryption/exceptions';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
 import { CreateClientCertificateDto } from 'src/modules/certificate/dto/create.client-certificate.dto';
@@ -71,10 +70,12 @@ export class ClientCertificateService {
     try {
       const { affectedDatabases } = await this.repository.delete(id);
 
-      await Promise.all(affectedDatabases.map(async (databaseId) => {
-        // If the certificate is used by the database, remove the client
-        await this.redisClientStorage.removeManyByMetadata({ databaseId });
-      }));
+      await Promise.all(
+        affectedDatabases.map(async (databaseId) => {
+          // If the certificate is used by the database, remove the client
+          await this.redisClientStorage.removeManyByMetadata({ databaseId });
+        }),
+      );
     } catch (error) {
       this.logger.error(`Failed to delete certificate ${id}`, error);
 

@@ -14,15 +14,16 @@ export interface Props {
   Actions?: (props: { width: number }) => ReactElement
 }
 
-export const KeyDetailsSubheader = ({
-  keyType,
-  Actions,
-}: Props) => (
+export const KeyDetailsSubheader = ({ keyType, Actions }: Props) => (
   <div className={styles.subheaderContainer}>
     <AutoSizer disableHeight>
       {({ width = 0 }) => (
         <div style={{ width }}>
-          <EuiFlexGroup justifyContent="flexEnd" alignItems="center" gutterSize="none">
+          <EuiFlexGroup
+            justifyContent="flexEnd"
+            alignItems="center"
+            gutterSize="none"
+          >
             {Object.values(KeyTypes).includes(keyType as KeyTypes) && (
               <>
                 <EuiFlexItem className={styles.keyFormatterItem} grow={false}>

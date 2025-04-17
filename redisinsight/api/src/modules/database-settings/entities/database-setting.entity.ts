@@ -2,7 +2,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import {
-  Column, Entity, Index, JoinColumn, OneToOne, PrimaryGeneratedColumn,
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DataAsJsonString } from 'src/common/decorators';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
@@ -18,14 +23,10 @@ export class DatabaseSettingsEntity {
   @Expose()
   databaseId: string;
 
-  @OneToOne(
-    () => DatabaseEntity,
-    (database) => database.dbSettings,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-    },
-  )
+  @OneToOne(() => DatabaseEntity, (database) => database.dbSettings, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   database: DatabaseEntity;
 

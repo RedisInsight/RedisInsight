@@ -15,10 +15,18 @@ interface Props {
 }
 
 const JSONViewer = (props: Props) => {
-  const { value, expanded = false, space = 2, useNativeBigInt = true, tooltip = false } = props
+  const {
+    value,
+    expanded = false,
+    space = 2,
+    useNativeBigInt = true,
+    tooltip = false,
+  } = props
 
   try {
-    const className = cx('jsonViewer', { 'jsonViewer-collapsed': !expanded && !tooltip })
+    const className = cx('jsonViewer', {
+      'jsonViewer-collapsed': !expanded && !tooltip,
+    })
     const data = JSONBigInt({ useNativeBigInt }).parse(value)
 
     if (tooltip && value?.length > TOOLTIP_CONTENT_MAX_LENGTH) {
@@ -31,12 +39,12 @@ const JSONViewer = (props: Props) => {
           <JsonPretty data={data} space={space} />
         </div>
       ),
-      isValid: true
+      isValid: true,
     }
   } catch (e) {
     return {
       value,
-      isValid: false
+      isValid: false,
     }
   }
 }

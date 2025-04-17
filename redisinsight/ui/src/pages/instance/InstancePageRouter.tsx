@@ -4,7 +4,7 @@ import RouteWithSubRoutes from 'uiSrc/utils/routerWithSubRoutes'
 import { Pages } from 'uiSrc/constants'
 
 export interface Props {
-  routes: any[];
+  routes: any[]
 }
 const InstancePageRouter = ({ routes }: Props) => (
   <Switch>
@@ -12,10 +12,7 @@ const InstancePageRouter = ({ routes }: Props) => (
       // eslint-disable-next-line react/no-array-index-key
       <RouteWithSubRoutes key={i} {...route} />
     ))}
-    <Route
-      path="*"
-      render={() => <Redirect to={Pages.notFound} />}
-    />
+    <Route path="*" render={() => <Redirect to={Pages.notFound} />} />
   </Switch>
 )
 

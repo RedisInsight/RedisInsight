@@ -13,7 +13,10 @@ export class RdiClientStorage {
   private readonly syncInterval: NodeJS.Timeout;
 
   constructor() {
-    this.syncInterval = setInterval(this.syncClients.bind(this), RDI_SYNC_INTERVAL);
+    this.syncInterval = setInterval(
+      this.syncClients.bind(this),
+      RDI_SYNC_INTERVAL,
+    );
   }
 
   onModuleDestroy() {
@@ -41,13 +44,17 @@ export class RdiClientStorage {
     return client;
   }
 
-  async getByMetadata(rdiClientMetadata: RdiClientMetadata): Promise<RdiClient> {
+  async getByMetadata(
+    rdiClientMetadata: RdiClientMetadata,
+  ): Promise<RdiClient> {
     if (
-      !rdiClientMetadata.id
-      || !rdiClientMetadata.sessionMetadata?.sessionId
-      || !rdiClientMetadata.sessionMetadata.userId
+      !rdiClientMetadata.id ||
+      !rdiClientMetadata.sessionMetadata?.sessionId ||
+      !rdiClientMetadata.sessionMetadata.userId
     ) {
-      throw new BadRequestException('Client metadata missed required properties');
+      throw new BadRequestException(
+        'Client metadata missed required properties',
+      );
     }
     return this.get(RdiClient.generateId(rdiClientMetadata));
   }
@@ -91,12 +98,14 @@ export class RdiClientStorage {
   async set(client: RdiClient): Promise<RdiClient> {
     // Additional validation
     if (
-      !client.id
-      || !client.metadata.sessionMetadata?.sessionId
-      || !client.metadata.sessionMetadata.userId
-      || !client.metadata.id
+      !client.id ||
+      !client.metadata.sessionMetadata?.sessionId ||
+      !client.metadata.sessionMetadata.userId ||
+      !client.metadata.id
     ) {
-      throw new BadRequestException('Client metadata missed required properties');
+      throw new BadRequestException(
+        'Client metadata missed required properties',
+      );
     }
     this.clients.set(client.id, client);
     return client;

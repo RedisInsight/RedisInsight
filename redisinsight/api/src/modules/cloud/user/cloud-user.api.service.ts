@@ -40,7 +40,9 @@ export class CloudUserApiService {
    */
   private async ensureCsrf(sessionMetadata: SessionMetadata): Promise<void> {
     try {
-      const session = await this.sessionService.getSession(sessionMetadata.sessionId);
+      const session = await this.sessionService.getSession(
+        sessionMetadata.sessionId,
+      );
 
       if (!session?.csrf) {
         this.logger.debug('Trying to get csrf token', sessionMetadata);
@@ -50,7 +52,9 @@ export class CloudUserApiService {
           throw new CloudApiUnauthorizedException();
         }
 
-        await this.sessionService.updateSessionData(sessionMetadata.sessionId, { csrf });
+        await this.sessionService.updateSessionData(sessionMetadata.sessionId, {
+          csrf,
+        });
       }
     } catch (e) {
       this.logger.error('Unable to get csrf token', e, sessionMetadata);
@@ -63,9 +67,13 @@ export class CloudUserApiService {
    * @param sessionMetadata
    * @private
    */
-  private async ensureAccessToken(sessionMetadata: SessionMetadata): Promise<void> {
+  private async ensureAccessToken(
+    sessionMetadata: SessionMetadata,
+  ): Promise<void> {
     try {
-      const session = await this.sessionService.getSession(sessionMetadata.sessionId);
+      const session = await this.sessionService.getSession(
+        sessionMetadata.sessionId,
+      );
 
       if (!isValidToken(session?.accessToken)) {
         if (!session?.refreshToken) {
@@ -73,7 +81,11 @@ export class CloudUserApiService {
           throw new CloudApiUnauthorizedException();
         }
 
-        await this.cloudAuthService.renewTokens(sessionMetadata, session?.idpType, session?.refreshToken);
+        await this.cloudAuthService.renewTokens(
+          sessionMetadata,
+          session?.idpType,
+          session?.refreshToken,
+        );
       }
     } catch (e) {
       this.logger.error('Error trying renew token', e);
@@ -87,11 +99,16 @@ export class CloudUserApiService {
    * @param utm
    * @private
    */
-  private async ensureLogin(sessionMetadata: SessionMetadata, utm?: CloudRequestUtm): Promise<void> {
+  private async ensureLogin(
+    sessionMetadata: SessionMetadata,
+    utm?: CloudRequestUtm,
+  ): Promise<void> {
     try {
       await this.ensureAccessToken(sessionMetadata);
 
-      const session = await this.sessionService.getSession(sessionMetadata.sessionId);
+      const session = await this.sessionService.getSession(
+        sessionMetadata.sessionId,
+      );
 
       if (!session?.apiSessionId) {
         this.logger.debug('Trying to login user', sessionMetadata);
@@ -99,23 +116,32 @@ export class CloudUserApiService {
         const preparedUtm = utm && { ...utm };
 
         if (preparedUtm && (!preparedUtm.amp || !preparedUtm.package)) {
-          await this.serverService.getInfo(sessionMetadata)
+          await this.serverService
+            .getInfo(sessionMetadata)
             .then(({ id, packageType }) => {
               preparedUtm.amp = preparedUtm.amp || id;
               preparedUtm.package = preparedUtm.package || packageType;
             })
             .catch(() => {
-              this.logger.warn('Unable to get server id for utm parameters', sessionMetadata);
+              this.logger.warn(
+                'Unable to get server id for utm parameters',
+                sessionMetadata,
+              );
             });
         }
 
-        const apiSessionId = await this.api.getApiSessionId(session, preparedUtm);
+        const apiSessionId = await this.api.getApiSessionId(
+          session,
+          preparedUtm,
+        );
 
         if (!apiSessionId) {
           throw new CloudApiUnauthorizedException();
         }
 
-        await this.sessionService.updateSessionData(sessionMetadata.sessionId, { apiSessionId });
+        await this.sessionService.updateSessionData(sessionMetadata.sessionId, {
+          apiSessionId,
+        });
       }
 
       await this.ensureCsrf(sessionMetadata);
@@ -133,11 +159,17 @@ export class CloudUserApiService {
    * @param utm
    * @private
    */
-  private async ensureCloudUser(sessionMetadata: SessionMetadata, force = false, utm?: CloudRequestUtm) {
+  private async ensureCloudUser(
+    sessionMetadata: SessionMetadata,
+    force = false,
+    utm?: CloudRequestUtm,
+  ) {
     try {
       await this.ensureLogin(sessionMetadata, utm);
 
-      const session = await this.sessionService.getSession(sessionMetadata.sessionId);
+      const session = await this.sessionService.getSession(
+        sessionMetadata.sessionId,
+      );
 
       const existingUser = await this.repository.get(sessionMetadata.sessionId);
 
@@ -165,7 +197,10 @@ export class CloudUserApiService {
       }));
 
       await this.repository.update(sessionMetadata.sessionId, user);
-      this.logger.debug('Successfully synchronized user profile', sessionMetadata);
+      this.logger.debug(
+        'Successfully synchronized user profile',
+        sessionMetadata,
+      );
     } catch (e) {
       this.logger.error('Unable to sync user profile', e, sessionMetadata);
       throw wrapHttpError(e);
@@ -178,7 +213,11 @@ export class CloudUserApiService {
    * @param forceSync
    * @param utm
    */
-  async getCloudUser(sessionMetadata: SessionMetadata, forceSync = false, utm?: CloudRequestUtm): Promise<CloudUser> {
+  async getCloudUser(
+    sessionMetadata: SessionMetadata,
+    forceSync = false,
+    utm?: CloudRequestUtm,
+  ): Promise<CloudUser> {
     try {
       await this.ensureCloudUser(sessionMetadata, forceSync, utm);
 
@@ -194,10 +233,13 @@ export class CloudUserApiService {
    * @param forceSync
    * @param utm
    */
-  async me(sessionMetadata: SessionMetadata, forceSync = false, utm?: CloudRequestUtm): Promise<CloudUser> {
-    return this.api.callWithAuthRetry(
-      sessionMetadata.sessionId,
-      async () => this.getCloudUser(sessionMetadata, forceSync, utm),
+  async me(
+    sessionMetadata: SessionMetadata,
+    forceSync = false,
+    utm?: CloudRequestUtm,
+  ): Promise<CloudUser> {
+    return this.api.callWithAuthRetry(sessionMetadata.sessionId, async () =>
+      this.getCloudUser(sessionMetadata, forceSync, utm),
     );
   }
 
@@ -227,9 +269,7 @@ export class CloudUserApiService {
    * Invalidate user SM API session
    * @param sessionMetadata
    */
-  async invalidateApiSession(
-    sessionMetadata: SessionMetadata,
-  ): Promise<void> {
+  async invalidateApiSession(sessionMetadata: SessionMetadata): Promise<void> {
     await this.sessionService.invalidateApiSession(sessionMetadata.sessionId);
   }
 
@@ -238,20 +278,29 @@ export class CloudUserApiService {
    * @param sessionMetadata
    * @param accountId
    */
-  async setCurrentAccount(sessionMetadata: SessionMetadata, accountId: string | number): Promise<CloudUser> {
+  async setCurrentAccount(
+    sessionMetadata: SessionMetadata,
+    accountId: string | number,
+  ): Promise<CloudUser> {
     return this.api.callWithAuthRetry(sessionMetadata.sessionId, async () => {
       try {
         await this.ensureCloudUser(sessionMetadata);
 
         this.logger.debug('Switching user account', sessionMetadata);
 
-        const session = await this.sessionService.getSession(sessionMetadata.sessionId);
+        const session = await this.sessionService.getSession(
+          sessionMetadata.sessionId,
+        );
 
         await this.api.setCurrentAccount(session, +accountId);
 
         return this.getCloudUser(sessionMetadata, true);
       } catch (e) {
-        this.logger.error('Unable to switch current account', e, sessionMetadata);
+        this.logger.error(
+          'Unable to switch current account',
+          e,
+          sessionMetadata,
+        );
         throw wrapHttpError(e);
       }
     });
@@ -262,7 +311,10 @@ export class CloudUserApiService {
    * @param sessionMetadata
    * @param data
    */
-  async updateUser(sessionMetadata: SessionMetadata, data: Partial<CloudUser>): Promise<CloudUser> {
+  async updateUser(
+    sessionMetadata: SessionMetadata,
+    data: Partial<CloudUser>,
+  ): Promise<CloudUser> {
     return this.repository.update(sessionMetadata.sessionId, data);
   }
 }

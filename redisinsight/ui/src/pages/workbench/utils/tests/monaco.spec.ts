@@ -9,57 +9,68 @@ const getRediSearchSignatureProviderTests = [
       isOpen: false,
       data: {
         currentArg: {},
-        parent: {}
-      }
+        parent: {},
+      },
     },
-    result: null
+    result: null,
   },
   {
     input: {
       isOpen: true,
       data: {
-        currentArg: ftAggregateCommand.arguments.find(({ name }) => name === 'groupby'),
-        parent: null
-      }
+        currentArg: ftAggregateCommand.arguments.find(
+          ({ name }) => name === 'groupby',
+        ),
+        parent: null,
+      },
     },
     result: {
       dispose: expect.any(Function),
       value: {
         activeParameter: 0,
         activeSignature: 0,
-        signatures: [{
-          label: '',
-          parameters: [{ label: 'nargs' }]
-        }]
-      }
-    }
+        signatures: [
+          {
+            label: '',
+            parameters: [{ label: 'nargs' }],
+          },
+        ],
+      },
+    },
   },
   {
     input: {
       isOpen: true,
       data: {
         currentArg: { name: 'expression' },
-        parent: ftAggregateCommand.arguments.find(({ name }) => name === 'apply')
-      }
+        parent: ftAggregateCommand.arguments.find(
+          ({ name }) => name === 'apply',
+        ),
+      },
     },
     result: {
       dispose: expect.any(Function),
       value: {
         activeParameter: 0,
         activeSignature: 0,
-        signatures: [{
-          label: 'APPLY expression AS name',
-          parameters: [{ label: 'expression' }]
-        }]
-      }
-    }
-  }
+        signatures: [
+          {
+            label: 'APPLY expression AS name',
+            parameters: [{ label: 'expression' }],
+          },
+        ],
+      },
+    },
+  },
 ]
 
 describe('getRediSearchSignatureProvider', () => {
-  it.each(getRediSearchSignatureProviderTests)('should properly return result', ({ input, result }) => {
-    const testResult = getRediSearchSignutureProvider(input)
+  it.each(getRediSearchSignatureProviderTests)(
+    'should properly return result',
+    ({ input, result }) => {
+      const testResult = getRediSearchSignutureProvider(input)
 
-    expect(result).toEqual(testResult)
-  })
+      expect(result).toEqual(testResult)
+    },
+  )
 })

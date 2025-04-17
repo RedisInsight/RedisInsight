@@ -9,7 +9,7 @@ const GUIDE_ICONS: Record<string, any> = {
   json: JSONIcon,
   'probabilistic-data-structures': ProbabilisticDataIcon,
   'time-series': TimeSeriesIcon,
-  'vector-similarity-search': VectorSimilarity
+  'vector-similarity-search': VectorSimilarity,
 }
 
 export default GUIDE_ICONS

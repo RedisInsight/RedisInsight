@@ -1,4 +1,9 @@
-import { BrowserColumns, KeyTypes, KeyValueCompressor, KeyValueFormat } from 'uiSrc/constants'
+import {
+  BrowserColumns,
+  KeyTypes,
+  KeyValueCompressor,
+  KeyValueFormat,
+} from 'uiSrc/constants'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
 import { Maybe, Nullable } from 'uiSrc/utils'
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
@@ -69,13 +74,16 @@ export interface KeysStoreData {
   scanned: number
   nextCursor: string
   keys: GetKeyInfoResponse[]
-  shardsMeta: Record<string, {
-    cursor: number
-    scanned: number
-    total: number
-    host?: string
-    port?: number
-  }>
+  shardsMeta: Record<
+    string,
+    {
+      cursor: number
+      scanned: number
+      total: number
+      host?: string
+      port?: number
+    }
+  >
   previousResultCount: number
   lastRefreshTime: Nullable<number>
   maxResults?: Nullable<number>

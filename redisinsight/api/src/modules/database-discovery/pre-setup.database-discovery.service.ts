@@ -40,7 +40,10 @@ export class PreSetupDatabaseDiscoveryService {
       }
 
       if (database.clientCert) {
-        await this.clientCertificateRepository.create(database.clientCert, false);
+        await this.clientCertificateRepository.create(
+          database.clientCert,
+          false,
+        );
         database.clientCert = {
           id: database.clientCert.id,
         } as ClientCertificate;
@@ -88,7 +91,9 @@ export class PreSetupDatabaseDiscoveryService {
     ]);
   }
 
-  async discover(sessionMetadata: SessionMetadata): Promise<{ discovered: number }> {
+  async discover(
+    sessionMetadata: SessionMetadata,
+  ): Promise<{ discovered: number }> {
     let addedIds: string[] = [];
 
     try {
@@ -109,7 +114,9 @@ export class PreSetupDatabaseDiscoveryService {
       if (databasesToAdd.length > 0) {
         addedIds = (
           await Promise.all(
-            databasesToAdd.map((database) => this.addDatabase(sessionMetadata, database)),
+            databasesToAdd.map((database) =>
+              this.addDatabase(sessionMetadata, database),
+            ),
           )
         ).filter((v) => !isNull(v));
       }

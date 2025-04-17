@@ -33,11 +33,14 @@ import { RequestSessionMetadata } from 'src/common/decorators';
 const cloudConf = config.get('cloud');
 
 @ApiTags('Cloud Autodiscovery')
-@ApiHeaders([{
-  name: 'x-cloud-api-key',
-}, {
-  name: 'x-cloud-api-secret',
-}])
+@ApiHeaders([
+  {
+    name: 'x-cloud-api-key',
+  },
+  {
+    name: 'x-cloud-api-secret',
+  },
+])
 @UsePipes(new ValidationPipe({ transform: true }))
 @UseInterceptors(new TimeoutInterceptor(undefined, cloudConf.discoveryTimeout))
 @Controller('cloud/autodiscovery')
@@ -57,7 +60,9 @@ export class CloudAutodiscoveryController {
       },
     ],
   })
-  async getAccount(@CloudAuthHeaders() authDto: CloudCapiAuthDto): Promise<CloudAccountInfo> {
+  async getAccount(
+    @CloudAuthHeaders() authDto: CloudCapiAuthDto,
+  ): Promise<CloudAccountInfo> {
     return await this.service.getAccount(authDto);
   }
 
@@ -77,7 +82,7 @@ export class CloudAutodiscoveryController {
   })
   async discoverSubscriptions(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @CloudAuthHeaders() authDto: CloudCapiAuthDto,
+    @CloudAuthHeaders() authDto: CloudCapiAuthDto,
   ): Promise<CloudSubscription[]> {
     return await this.service.discoverSubscriptions(
       sessionMetadata,
@@ -103,8 +108,8 @@ export class CloudAutodiscoveryController {
   })
   async discoverDatabases(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @CloudAuthHeaders() authDto: CloudCapiAuthDto,
-      @Body() dto: DiscoverCloudDatabasesDto,
+    @CloudAuthHeaders() authDto: CloudCapiAuthDto,
+    @Body() dto: DiscoverCloudDatabasesDto,
   ): Promise<CloudDatabase[]> {
     return await this.service.discoverDatabases(
       sessionMetadata,
@@ -130,13 +135,18 @@ export class CloudAutodiscoveryController {
   })
   async addDiscoveredDatabases(
     @RequestSessionMetadata() sessionMetadata,
-      @CloudAuthHeaders() authDto: CloudCapiAuthDto,
-      @Body() dto: ImportCloudDatabasesDto,
-      @Res() res: Response,
+    @CloudAuthHeaders() authDto: CloudCapiAuthDto,
+    @Body() dto: ImportCloudDatabasesDto,
+    @Res() res: Response,
   ): Promise<Response> {
-    const result = await this.service.addRedisCloudDatabases(sessionMetadata, authDto, dto.databases);
+    const result = await this.service.addRedisCloudDatabases(
+      sessionMetadata,
+      authDto,
+      dto.databases,
+    );
     const hasSuccessResult = result.some(
-      (addResponse: ImportCloudDatabaseResponse) => addResponse.status === ActionStatus.Success,
+      (addResponse: ImportCloudDatabaseResponse) =>
+        addResponse.status === ActionStatus.Success,
     );
     if (!hasSuccessResult) {
       return res.status(200).json(result);

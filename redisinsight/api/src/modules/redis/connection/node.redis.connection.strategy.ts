@@ -3,7 +3,10 @@ import serverConfig from 'src/utils/config';
 import { ClientMetadata, Endpoint } from 'src/common/models';
 import { Database } from 'src/modules/database/models/database';
 import {
-  RedisClientOptions, createClient, createCluster, RedisClusterOptions,
+  RedisClientOptions,
+  createClient,
+  createCluster,
+  RedisClusterOptions,
 } from 'redis';
 import { isNumber } from 'lodash';
 import { IRedisConnectionOptions } from 'src/modules/redis/redis.client.factory';
@@ -40,15 +43,13 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
     database: Database,
     options: IRedisConnectionOptions,
   ): Promise<RedisClientOptions> {
-    const {
-      host, port, password, username, tls, db, timeout,
-    } = database;
+    const { host, port, password, username, tls, db, timeout } = database;
 
-    let tlsOptions = { };
+    let tlsOptions = {};
     if (tls) {
       tlsOptions = {
         tls: true,
-        ...await this.getTLSConfig(database),
+        ...(await this.getTLSConfig(database)),
       };
     }
 
@@ -58,13 +59,16 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
         port,
         connectTimeout: timeout,
         ...tlsOptions,
-        reconnectStrategy: options?.useRetry ? this.retryStrategy.bind(this) : false,
+        reconnectStrategy: options?.useRetry
+          ? this.retryStrategy.bind(this)
+          : false,
       },
       username,
       password,
       database: isNumber(clientMetadata.db) ? clientMetadata.db : db,
-      name: options?.connectionName
-        || RedisConnectionStrategy.generateRedisConnectionName(clientMetadata),
+      name:
+        options?.connectionName ||
+        RedisConnectionStrategy.generateRedisConnectionName(clientMetadata),
       // maxRetriesPerRequest: REDIS_CLIENTS_CONFIG.maxRetriesPerRequest,
     };
   }
@@ -81,19 +85,25 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
     database: Database,
     options: IRedisConnectionOptions,
   ): Promise<RedisClusterOptions> {
-    const config = await this.getRedisOptions(clientMetadata, database, options);
+    const config = await this.getRedisOptions(
+      clientMetadata,
+      database,
+      options,
+    );
 
     return {
-      rootNodes: [{
-        socket: {
-          host: database.host,
-          port: database.port,
+      rootNodes: [
+        {
+          socket: {
+            host: database.host,
+            port: database.port,
+          },
         },
-      }],
+      ],
       // TODO: node-redis issue
       // create a bug. reconnectStrategy has no effect (both in defaults.socket or rootNodes[].socket)
       defaults: { ...config },
-      maxCommandRedirections: database.nodes ? (database.nodes.length * 16) : 16, // TODO: Temporary solution
+      maxCommandRedirections: database.nodes ? database.nodes.length * 16 : 16, // TODO: Temporary solution
     };
   }
 
@@ -173,21 +183,32 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
     let tnl: SshTunnel;
 
     try {
-      const config = await this.getRedisOptions(clientMetadata, database, options);
+      const config = await this.getRedisOptions(
+        clientMetadata,
+        database,
+        options,
+      );
 
       if (database.ssh) {
-        tnl = await this.sshTunnelProvider.createTunnel(database, database.sshOptions);
+        tnl = await this.sshTunnelProvider.createTunnel(
+          database,
+          database.sshOptions,
+        );
         config.socket = {
           ...config.socket,
-          host: tnl.serverAddress.host,
-          port: tnl.serverAddress.port,
+          // fix typings issue. todo: investigate/fix properly
+          ...{
+            host: tnl.serverAddress.host,
+            port: tnl.serverAddress.port,
+          },
         };
       }
 
       const client = await createClient({
         ...config,
         // cover cases when we are connecting to sentinel as to standalone to discover master groups
-        database: config.database > 0 && !database.sentinelMaster ? config.database : 0,
+        database:
+          config.database > 0 && !database.sentinelMaster ? config.database : 0,
       })
         .on('error', (e): void => {
           this.logger.error('Failed to connect to the redis database.', e);
@@ -197,15 +218,11 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
         })
         .connect();
 
-      return new StandaloneNodeRedisClient(
-        clientMetadata,
-        client,
-        {
-          host: database.host,
-          port: database.port,
-          connectTimeout: database.timeout,
-        },
-      );
+      return new StandaloneNodeRedisClient(clientMetadata, client, {
+        host: database.host,
+        port: database.port,
+        connectTimeout: database.timeout,
+      });
     } catch (e) {
       tnl?.close?.();
       throw e;
@@ -227,28 +244,42 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
     let standaloneClient: RedisClient;
 
     try {
-      const config = await this.getRedisClusterOptions(clientMetadata, database, options);
+      const config = await this.getRedisClusterOptions(
+        clientMetadata,
+        database,
+        options,
+      );
 
-      standaloneClient = await this.createStandaloneClient(clientMetadata, database, options);
+      standaloneClient = await this.createStandaloneClient(
+        clientMetadata,
+        database,
+        options,
+      );
 
-      config.rootNodes = (await discoverClusterNodes(standaloneClient)).map((rootNode) => ({
-        socket: rootNode,
-      }));
+      config.rootNodes = (await discoverClusterNodes(standaloneClient)).map(
+        (rootNode) => ({
+          socket: rootNode,
+        }),
+      );
 
       await standaloneClient.disconnect();
 
       if (database.ssh) {
         tnls = await Promise.all(
-          config.rootNodes.map((node) => this.sshTunnelProvider.createTunnel(
-            node.socket as Endpoint,
-            database.sshOptions,
-          )),
+          config.rootNodes.map((node) =>
+            this.sshTunnelProvider.createTunnel(
+              node.socket as Endpoint,
+              database.sshOptions,
+            ),
+          ),
         );
 
         // create NAT map
         config.nodeAddressMap = {};
         tnls.forEach((tnl) => {
-          config.nodeAddressMap[`${tnl.options.targetHost}:${tnl.options.targetPort}`] = {
+          config.nodeAddressMap[
+            `${tnl.options.targetHost}:${tnl.options.targetPort}`
+          ] = {
             host: tnl.serverAddress.host,
             port: tnl.serverAddress.port,
           };
@@ -272,15 +303,11 @@ export class NodeRedisConnectionStrategy extends RedisConnectionStrategy {
       // connect() doesn't return the client instance
       await client.connect();
 
-      return new ClusterNodeRedisClient(
-        clientMetadata,
-        client,
-        {
-          host: database.host,
-          port: database.port,
-          connectTimeout: database.timeout,
-        },
-      );
+      return new ClusterNodeRedisClient(clientMetadata, client, {
+        host: database.host,
+        port: database.port,
+        connectTimeout: database.timeout,
+      });
     } catch (e) {
       tnls?.forEach((tnl) => tnl?.close?.());
       // TODO: node-redis issue

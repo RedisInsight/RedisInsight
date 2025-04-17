@@ -28,11 +28,10 @@ describe('getRediSearchMonarchTokensProvider', () => {
   })
 
   it('should be truthy with command', () => {
-    const commands = Object.keys(MOCKED_REDIS_COMMANDS)
-      .map((key) => ({
-        ...MOCKED_REDIS_COMMANDS[key],
-        name: key,
-      }))
+    const commands = Object.keys(MOCKED_REDIS_COMMANDS).map((key) => ({
+      ...MOCKED_REDIS_COMMANDS[key],
+      name: key,
+    }))
     expect(getRediSearchSubRedisMonarchTokensProvider(commands)).toBeTruthy()
   })
 })

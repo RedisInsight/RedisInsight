@@ -5,7 +5,7 @@ import {
   EuiOutsideClickDetector,
   EuiSuperSelect,
   EuiSuperSelectOption,
-  EuiText
+  EuiText,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
@@ -16,16 +16,19 @@ import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import styles from './styles.module.scss'
 
 export interface Props {
-  submitFilter: (type: string) => void;
-  isLoading?: boolean;
+  submitFilter: (type: string) => void
+  isLoading?: boolean
 }
 
 const CHSearchFilter = ({ submitFilter, isLoading }: Props) => {
   const { commandGroups = [] } = useSelector(appRedisCommandsSelector)
-  const { isEnteringCommand, matchedCommand, searchingCommandFilter } = useSelector(cliSettingsSelector)
+  const { isEnteringCommand, matchedCommand, searchingCommandFilter } =
+    useSelector(cliSettingsSelector)
 
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(false)
-  const [typeSelected, setTypeSelected] = useState<string>(searchingCommandFilter)
+  const [typeSelected, setTypeSelected] = useState<string>(
+    searchingCommandFilter,
+  )
 
   useEffect(() => {
     if (isEnteringCommand && matchedCommand) {
@@ -39,24 +42,25 @@ const CHSearchFilter = ({ submitFilter, isLoading }: Props) => {
 
   const groupOptions = [...commandGroups].sort().map((group: string) => ({
     text: (GROUP_TYPES_DISPLAY as any)[group] || group.replace(/_/g, ' '),
-    value: group
+    value: group,
   }))
 
-  const options: EuiSuperSelectOption<string>[] = groupOptions.map(
-    (item) => {
-      const { value, text } = item
-      return {
-        value,
-        inputDisplay: (
-          <EuiText className={cx(styles.selectedType, 'text-capitalize')} size="s">
-            {text}
-          </EuiText>
-        ),
-        dropdownDisplay: <EuiText className="text-capitalize">{text}</EuiText>,
-        'data-test-subj': `filter-option-group-type-${value}`,
-      }
+  const options: EuiSuperSelectOption<string>[] = groupOptions.map((item) => {
+    const { value, text } = item
+    return {
+      value,
+      inputDisplay: (
+        <EuiText
+          className={cx(styles.selectedType, 'text-capitalize')}
+          size="s"
+        >
+          {text}
+        </EuiText>
+      ),
+      dropdownDisplay: <EuiText className="text-capitalize">{text}</EuiText>,
+      'data-test-subj': `filter-option-group-type-${value}`,
     }
-  )
+  })
 
   const onChangeType = (initValue: string) => {
     const value = typeSelected === initValue ? '' : initValue
@@ -66,14 +70,8 @@ const CHSearchFilter = ({ submitFilter, isLoading }: Props) => {
   }
 
   return (
-    <EuiOutsideClickDetector
-      onOutsideClick={() => setIsSelectOpen(false)}
-    >
-      <div
-        className={cx(
-          styles.container
-        )}
-      >
+    <EuiOutsideClickDetector onOutsideClick={() => setIsSelectOpen(false)}>
+      <div className={cx(styles.container)}>
         {!typeSelected && (
           <div
             className={styles.allTypes}

@@ -1,5 +1,8 @@
 import {
-  CloudAuthIdpType, CloudAuthRequest, CloudAuthResponse, CloudAuthStatus,
+  CloudAuthIdpType,
+  CloudAuthRequest,
+  CloudAuthResponse,
+  CloudAuthStatus,
 } from 'src/modules/cloud/auth/models';
 import { mockSessionMetadata } from 'src/__mocks__/common';
 
@@ -51,14 +54,17 @@ export const mockCloudAuthSsoTokenParams = {
   idpType: 'sso',
 };
 
-export const mockCloudAuthGoogleRequest = Object.assign(new CloudAuthRequest(), {
-  ...mockCloudAuthGoogleTokenParams,
-  sessionMetadata: {
-    ...mockSessionMetadata,
+export const mockCloudAuthGoogleRequest = Object.assign(
+  new CloudAuthRequest(),
+  {
+    ...mockCloudAuthGoogleTokenParams,
+    sessionMetadata: {
+      ...mockSessionMetadata,
+    },
+    tokenManager: { storage: {} },
+    createdAt: new Date(),
   },
-  tokenManager: { storage: {} },
-  createdAt: new Date(),
-});
+);
 
 export const mockCloudAuthSsoRequest = Object.assign(new CloudAuthRequest(), {
   ...mockCloudAuthGoogleRequest,
@@ -69,95 +75,106 @@ export const mockCloudAuthSsoRequest = Object.assign(new CloudAuthRequest(), {
   idp: 'idp_p6vA6A5tF36Jf6twH2cBOqtSSO',
 });
 
-export const mockCloudAuthGoogleAuthUrl = `${mockCloudAuthGoogleRequest.issuer}`
-  + `/${mockCloudAuthGoogleRequest.authorizeUrl}`
-  + `?client_id=${mockCloudAuthGoogleRequest.clientId}`
-  + `&${new URLSearchParams({ redirect_uri: mockCloudAuthGoogleRequest.redirectUri }).toString()}`
-  + `&response_type=${mockCloudAuthGoogleRequest.responseType}`
-  + `&response_mode=${mockCloudAuthGoogleRequest.responseMode}`
-  + `&idp=${mockCloudAuthGoogleRequest.idp}`
-  + `&state=${mockCloudAuthGoogleRequest.state}`
-  + `&nonce=${mockCloudAuthGoogleRequest.nonce}`
-  + `&code_challenge_method=${mockCloudAuthGoogleRequest.codeChallengeMethod}`
-  + `&code_challenge=${mockCloudAuthGoogleRequest.codeChallenge}`
-  + `&${new URLSearchParams({ scope: mockCloudAuthGoogleRequest.scopes.join(' ') }).toString()}`
-  + '&prompt=login';
+export const mockCloudAuthGoogleAuthUrl =
+  `${mockCloudAuthGoogleRequest.issuer}` +
+  `/${mockCloudAuthGoogleRequest.authorizeUrl}` +
+  `?client_id=${mockCloudAuthGoogleRequest.clientId}` +
+  `&${new URLSearchParams({ redirect_uri: mockCloudAuthGoogleRequest.redirectUri }).toString()}` +
+  `&response_type=${mockCloudAuthGoogleRequest.responseType}` +
+  `&response_mode=${mockCloudAuthGoogleRequest.responseMode}` +
+  `&idp=${mockCloudAuthGoogleRequest.idp}` +
+  `&state=${mockCloudAuthGoogleRequest.state}` +
+  `&nonce=${mockCloudAuthGoogleRequest.nonce}` +
+  `&code_challenge_method=${mockCloudAuthGoogleRequest.codeChallengeMethod}` +
+  `&code_challenge=${mockCloudAuthGoogleRequest.codeChallenge}` +
+  `&${new URLSearchParams({ scope: mockCloudAuthGoogleRequest.scopes.join(' ') }).toString()}` +
+  '&prompt=login';
 
-export const mockCloudAuthSsoAuthUrl = `${mockCloudAuthSsoRequest.issuer}`
-  + `/${mockCloudAuthSsoRequest.authorizeUrl}`
-  + `?client_id=${mockCloudAuthSsoRequest.clientId}`
-  + `&${new URLSearchParams({ redirect_uri: mockCloudAuthSsoRequest.redirectUri }).toString()}`
-  + `&response_type=${mockCloudAuthSsoRequest.responseType}`
-  + `&response_mode=${mockCloudAuthSsoRequest.responseMode}`
-  + `&idp=${mockCloudAuthSsoRequest.idp}`
-  + `&state=${mockCloudAuthSsoRequest.state}`
-  + `&nonce=${mockCloudAuthSsoRequest.nonce}`
-  + `&code_challenge_method=${mockCloudAuthSsoRequest.codeChallengeMethod}`
-  + `&code_challenge=${mockCloudAuthSsoRequest.codeChallenge}`
-  + `&${new URLSearchParams({ scope: mockCloudAuthSsoRequest.scopes.join(' ') }).toString()}`
-  + '&prompt=login';
+export const mockCloudAuthSsoAuthUrl =
+  `${mockCloudAuthSsoRequest.issuer}` +
+  `/${mockCloudAuthSsoRequest.authorizeUrl}` +
+  `?client_id=${mockCloudAuthSsoRequest.clientId}` +
+  `&${new URLSearchParams({ redirect_uri: mockCloudAuthSsoRequest.redirectUri }).toString()}` +
+  `&response_type=${mockCloudAuthSsoRequest.responseType}` +
+  `&response_mode=${mockCloudAuthSsoRequest.responseMode}` +
+  `&idp=${mockCloudAuthSsoRequest.idp}` +
+  `&state=${mockCloudAuthSsoRequest.state}` +
+  `&nonce=${mockCloudAuthSsoRequest.nonce}` +
+  `&code_challenge_method=${mockCloudAuthSsoRequest.codeChallengeMethod}` +
+  `&code_challenge=${mockCloudAuthSsoRequest.codeChallenge}` +
+  `&${new URLSearchParams({ scope: mockCloudAuthSsoRequest.scopes.join(' ') }).toString()}` +
+  '&prompt=login';
 
-export const mockCloudAuthGoogleTokenUrl = `${mockCloudAuthGoogleRequest.issuer}`
-  + `/${mockCloudAuthGoogleRequest.tokenUrl}`
-  + `?client_id=${mockCloudAuthGoogleRequest.clientId}`
-  + '&grant_type=authorization_code'
-  + `&code=${mockCloudAuthCode}`
-  + `&code_verifier=${mockCloudAuthGoogleRequest.codeVerifier}`
-  + `&${new URLSearchParams({ redirect_uri: mockCloudAuthGoogleRequest.redirectUri }).toString()}`
-  + `&state=${mockCloudAuthGoogleRequest.state}`
-  + `&nonce=${mockCloudAuthGoogleRequest.nonce}`
-  + `&idp=${mockCloudAuthGoogleRequest.idp}`;
+export const mockCloudAuthGoogleTokenUrl =
+  `${mockCloudAuthGoogleRequest.issuer}` +
+  `/${mockCloudAuthGoogleRequest.tokenUrl}` +
+  `?client_id=${mockCloudAuthGoogleRequest.clientId}` +
+  '&grant_type=authorization_code' +
+  `&code=${mockCloudAuthCode}` +
+  `&code_verifier=${mockCloudAuthGoogleRequest.codeVerifier}` +
+  `&${new URLSearchParams({ redirect_uri: mockCloudAuthGoogleRequest.redirectUri }).toString()}` +
+  `&state=${mockCloudAuthGoogleRequest.state}` +
+  `&nonce=${mockCloudAuthGoogleRequest.nonce}` +
+  `&idp=${mockCloudAuthGoogleRequest.idp}`;
 
-export const mockCloudAuthGoogleRevokeTokenUrl = `${mockCloudAuthGoogleRequest.issuer}`
-  + `/${mockCloudAuthGoogleIdpConfig.revokeTokenUrl}`
-  + `?client_id=${mockCloudAuthGoogleRequest.clientId}`
-  + `&token_type_hint=${mockCloudRevokeRefreshTokenHint}`
-  + `&token=${mockCloudRefreshToken}`;
+export const mockCloudAuthGoogleRevokeTokenUrl =
+  `${mockCloudAuthGoogleRequest.issuer}` +
+  `/${mockCloudAuthGoogleIdpConfig.revokeTokenUrl}` +
+  `?client_id=${mockCloudAuthGoogleRequest.clientId}` +
+  `&token_type_hint=${mockCloudRevokeRefreshTokenHint}` +
+  `&token=${mockCloudRefreshToken}`;
 
-export const mockCloudAuthSsoRevokeTokenUrl = `${mockCloudAuthSsoRequest.issuer}`
-  + `/${mockCloudAuthGoogleIdpConfig.revokeTokenUrl}`
-  + `?client_id=${mockCloudAuthSsoRequest.clientId}`
-  + `&token_type_hint=${mockCloudRevokeRefreshTokenHint}`
-  + `&token=${mockCloudRefreshToken}`;
+export const mockCloudAuthSsoRevokeTokenUrl =
+  `${mockCloudAuthSsoRequest.issuer}` +
+  `/${mockCloudAuthGoogleIdpConfig.revokeTokenUrl}` +
+  `?client_id=${mockCloudAuthSsoRequest.clientId}` +
+  `&token_type_hint=${mockCloudRevokeRefreshTokenHint}` +
+  `&token=${mockCloudRefreshToken}`;
 
-export const mockCloudAuthGoogleRenewTokenUrl = `${mockCloudAuthGoogleRequest.issuer}`
-  + `/${mockCloudAuthGoogleIdpConfig.tokenUrl}`
-  + `?client_id=${mockCloudAuthGoogleRequest.clientId}`
-  + '&grant_type=refresh_token'
-  + `&${new URLSearchParams({ redirect_uri: mockCloudAuthGoogleRequest.redirectUri }).toString()}`
-  + `&${new URLSearchParams({ scope: mockCloudAuthGoogleRequest.scopes.join(' ') }).toString()}`
-  + `&refresh_token=${mockCloudRefreshToken}`;
+export const mockCloudAuthGoogleRenewTokenUrl =
+  `${mockCloudAuthGoogleRequest.issuer}` +
+  `/${mockCloudAuthGoogleIdpConfig.tokenUrl}` +
+  `?client_id=${mockCloudAuthGoogleRequest.clientId}` +
+  '&grant_type=refresh_token' +
+  `&${new URLSearchParams({ redirect_uri: mockCloudAuthGoogleRequest.redirectUri }).toString()}` +
+  `&${new URLSearchParams({ scope: mockCloudAuthGoogleRequest.scopes.join(' ') }).toString()}` +
+  `&refresh_token=${mockCloudRefreshToken}`;
 
-export const mockCloudAuthSsoRenewTokenUrl = `${mockCloudAuthSsoRequest.issuer}`
-  + `/${mockCloudAuthGoogleIdpConfig.tokenUrl}`
-  + `?client_id=${mockCloudAuthSsoRequest.clientId}`
-  + '&grant_type=refresh_token'
-  + `&${new URLSearchParams({ redirect_uri: mockCloudAuthSsoRequest.redirectUri }).toString()}`
-  + `&${new URLSearchParams({ scope: mockCloudAuthSsoRequest.scopes.join(' ') }).toString()}`
-  + `&refresh_token=${mockCloudRefreshToken}`;
+export const mockCloudAuthSsoRenewTokenUrl =
+  `${mockCloudAuthSsoRequest.issuer}` +
+  `/${mockCloudAuthGoogleIdpConfig.tokenUrl}` +
+  `?client_id=${mockCloudAuthSsoRequest.clientId}` +
+  '&grant_type=refresh_token' +
+  `&${new URLSearchParams({ redirect_uri: mockCloudAuthSsoRequest.redirectUri }).toString()}` +
+  `&${new URLSearchParams({ scope: mockCloudAuthSsoRequest.scopes.join(' ') }).toString()}` +
+  `&refresh_token=${mockCloudRefreshToken}`;
 
-export const mockCloudAuthGithubRequest = Object.assign(new CloudAuthRequest(), {
-  ...mockCloudAuthGithubTokenParams,
-  sessionMetadata: {
-    ...mockSessionMetadata,
+export const mockCloudAuthGithubRequest = Object.assign(
+  new CloudAuthRequest(),
+  {
+    ...mockCloudAuthGithubTokenParams,
+    sessionMetadata: {
+      ...mockSessionMetadata,
+    },
+    tokenManager: { storage: {} },
+    createdAt: new Date(),
   },
-  tokenManager: { storage: {} },
-  createdAt: new Date(),
-});
+);
 
-export const mockCloudAuthGithubAuthUrl = `${mockCloudAuthGithubRequest.issuer}`
-  + `/${mockCloudAuthGithubRequest.authorizeUrl}`
-  + `?client_id=${mockCloudAuthGithubRequest.clientId}`
-  + `&${new URLSearchParams({ redirect_uri: mockCloudAuthGithubRequest.redirectUri }).toString()}`
-  + `&response_type=${mockCloudAuthGithubRequest.responseType}`
-  + `&response_mode=${mockCloudAuthGithubRequest.responseMode}`
-  + `&idp=${mockCloudAuthGithubRequest.idp}`
-  + `&state=${mockCloudAuthGithubRequest.state}`
-  + `&nonce=${mockCloudAuthGithubRequest.nonce}`
-  + `&code_challenge_method=${mockCloudAuthGithubRequest.codeChallengeMethod}`
-  + `&code_challenge=${mockCloudAuthGithubRequest.codeChallenge}`
-  + `&${new URLSearchParams({ scope: mockCloudAuthGithubRequest.scopes.join(' ') }).toString()}`
-  + '&prompt=login';
+export const mockCloudAuthGithubAuthUrl =
+  `${mockCloudAuthGithubRequest.issuer}` +
+  `/${mockCloudAuthGithubRequest.authorizeUrl}` +
+  `?client_id=${mockCloudAuthGithubRequest.clientId}` +
+  `&${new URLSearchParams({ redirect_uri: mockCloudAuthGithubRequest.redirectUri }).toString()}` +
+  `&response_type=${mockCloudAuthGithubRequest.responseType}` +
+  `&response_mode=${mockCloudAuthGithubRequest.responseMode}` +
+  `&idp=${mockCloudAuthGithubRequest.idp}` +
+  `&state=${mockCloudAuthGithubRequest.state}` +
+  `&nonce=${mockCloudAuthGithubRequest.nonce}` +
+  `&code_challenge_method=${mockCloudAuthGithubRequest.codeChallengeMethod}` +
+  `&code_challenge=${mockCloudAuthGithubRequest.codeChallenge}` +
+  `&${new URLSearchParams({ scope: mockCloudAuthGithubRequest.scopes.join(' ') }).toString()}` +
+  '&prompt=login';
 
 export const mockTokenResponse = {
   access_token: mockCloudAccessToken,
@@ -184,14 +201,19 @@ export const mockCloudAuthResponse = Object.assign(new CloudAuthResponse(), {
   message: 'Successfully authenticated',
 });
 
-export const mockCloudAuthFailedResponse = Object.assign(new CloudAuthResponse(), {
-  status: CloudAuthStatus.Failed,
-  message: 'Successfully authenticated',
-});
+export const mockCloudAuthFailedResponse = Object.assign(
+  new CloudAuthResponse(),
+  {
+    status: CloudAuthStatus.Failed,
+    message: 'Successfully authenticated',
+  },
+);
 
 export const mockOktaAuthClient = {
   token: {
-    prepareTokenParams: jest.fn().mockResolvedValue(mockCloudAuthGoogleTokenParams),
+    prepareTokenParams: jest
+      .fn()
+      .mockResolvedValue(mockCloudAuthGoogleTokenParams),
   },
 };
 
@@ -201,14 +223,22 @@ export const mockGithubIdpCloudAuthStrategy = jest.fn(() => ({
 
 export const mockGoogleIdpCloudAuthStrategy = jest.fn(() => ({
   generateAuthRequest: jest.fn().mockResolvedValue(mockCloudAuthGoogleRequest),
-  generateRevokeTokensUrl: jest.fn().mockReturnValue(new URL(mockCloudAuthGoogleRevokeTokenUrl)),
-  generateRenewTokensUrl: jest.fn().mockReturnValue(new URL(mockCloudAuthGoogleRenewTokenUrl)),
+  generateRevokeTokensUrl: jest
+    .fn()
+    .mockReturnValue(new URL(mockCloudAuthGoogleRevokeTokenUrl)),
+  generateRenewTokensUrl: jest
+    .fn()
+    .mockReturnValue(new URL(mockCloudAuthGoogleRenewTokenUrl)),
 }));
 
 export const mockSsoIdpCloudAuthStrategy = jest.fn(() => ({
   generateAuthRequest: jest.fn().mockResolvedValue(mockCloudAuthSsoRequest),
-  generateRevokeTokensUrl: jest.fn().mockReturnValue(new URL(mockCloudAuthSsoRevokeTokenUrl)),
-  generateRenewTokensUrl: jest.fn().mockReturnValue(new URL(mockCloudAuthSsoRenewTokenUrl)),
+  generateRevokeTokensUrl: jest
+    .fn()
+    .mockReturnValue(new URL(mockCloudAuthSsoRevokeTokenUrl)),
+  generateRenewTokensUrl: jest
+    .fn()
+    .mockReturnValue(new URL(mockCloudAuthSsoRenewTokenUrl)),
 }));
 
 export const mockCloudAuthService = jest.fn(() => ({

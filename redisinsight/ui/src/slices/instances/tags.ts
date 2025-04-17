@@ -20,7 +20,10 @@ const tagsSlice = createSlice({
   name: 'tags',
   initialState,
   reducers: {
-    setSelectedTags: (state, action: PayloadAction<InitialTagsState['selectedTags']>) => {
+    setSelectedTags: (
+      state,
+      action: PayloadAction<InitialTagsState['selectedTags']>,
+    ) => {
       state.selectedTags = action.payload
     },
   },

@@ -2,7 +2,7 @@ import React from 'react'
 import { EuiText, EuiTitle } from '@elastic/eui'
 
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import TextDetailsWrapper from '../text-details-wrapper/TextDetailsWrapper';
+import TextDetailsWrapper from '../text-details-wrapper/TextDetailsWrapper'
 
 import styles from './styles.module.scss'
 
@@ -20,8 +20,8 @@ const UnsupportedTypeDetails = ({ onClose }: { onClose: () => void }) => (
         rel="noreferrer"
       >
         our repository
-      </a>
-      {' '}for the list of supported key types.
+      </a>{' '}
+      for the list of supported key types.
     </EuiText>
   </TextDetailsWrapper>
 )

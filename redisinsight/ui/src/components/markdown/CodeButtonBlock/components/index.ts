@@ -1,5 +1,3 @@
 import RunConfirmationPopover from './RunConfirmationPopover'
 
-export {
-  RunConfirmationPopover
-}
+export { RunConfirmationPopover }

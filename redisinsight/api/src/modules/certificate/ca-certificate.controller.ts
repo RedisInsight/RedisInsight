@@ -4,7 +4,9 @@ import {
   Delete,
   Get,
   Param,
-  UseInterceptors, UsePipes, ValidationPipe,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiOkResponse,
@@ -20,9 +22,7 @@ import { CaCertificateService } from 'src/modules/certificate/ca-certificate.ser
 @UseInterceptors(ClassSerializerInterceptor)
 @UsePipes(new ValidationPipe({ transform: true }))
 export class CaCertificateController {
-  constructor(
-    private service: CaCertificateService,
-  ) {}
+  constructor(private service: CaCertificateService) {}
 
   @Get('')
   @ApiOperation({ description: 'Get Ca Certificate list' })

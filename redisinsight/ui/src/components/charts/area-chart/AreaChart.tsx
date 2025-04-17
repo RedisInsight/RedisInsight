@@ -13,12 +13,12 @@ export interface AreaChartData {
   ylabel: string
 }
 
-interface IDatum extends AreaChartData{
+interface IDatum extends AreaChartData {
   index: number
 }
 
 export enum AreaChartDataType {
-  Bytes = 'bytes'
+  Bytes = 'bytes',
 }
 
 interface IProps {
@@ -79,25 +79,25 @@ const AreaChart = (props: IProps) => {
       return undefined
     }
 
-    const tooltip = d3.select('body').append('div')
+    const tooltip = d3
+      .select('body')
+      .append('div')
       .attr('class', cx(styles.tooltip, classNames?.tooltip || ''))
       .style('opacity', 0)
 
-    d3
-      .select(svgRef.current)
-      .select('g')
-      .remove()
+    d3.select(svgRef.current).select('g').remove()
 
     // append the svg object to the body of the page
-    const svg = d3.select(svgRef.current)
+    const svg = d3
+      .select(svgRef.current)
       .attr('data-testid', `area-${name}`)
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom + 30)
       .append('g')
-      .attr('transform',
-        `translate(${margin.left},${margin.top})`)
+      .attr('transform', `translate(${margin.left},${margin.top})`)
 
-    const area = d3.area<IDatum>()
+    const area = d3
+      .area<IDatum>()
       .x((d) => xAxis(d.index))
       .y0(height)
       .y1((d) => yAxis(d.y))
@@ -108,10 +108,11 @@ const AreaChart = (props: IProps) => {
       xlabel: `${datum?.xlabel || ''}`,
       ylabel: `${datum?.ylabel || ''}`,
       y: datum.y,
-      x: datum.x
+      x: datum.x,
     }))
 
-    const xAxis = d3.scaleLinear()
+    const xAxis = d3
+      .scaleLinear()
       .domain(d3.extent(cleanedData, (d) => d.index) as [number, number])
       .range([0, width])
 
@@ -125,30 +126,34 @@ const AreaChart = (props: IProps) => {
         toNumber,
         Math.ceil,
         getRoundedYMaxValue,
-        curriedTyBytes(`${type}`)
+        curriedTyBytes(`${type}`),
       )(maxYFormatted)
     }
 
     // Add Y axis
-    const yAxis = d3.scaleLinear()
+    const yAxis = d3
+      .scaleLinear()
       .domain([0, maxY || 0])
       .range([height, 0])
 
-    svg.append('path')
+    svg
+      .append('path')
       .datum(cleanedData)
       .attr('fill', 'none')
       .attr('stroke', 'var(--euiColorPrimary)')
       .attr('stroke-width', 2)
       .attr(
         'd',
-        d3.line<IDatum>()
+        d3
+          .line<IDatum>()
           .x((d) => xAxis(d.index))
           .y((d) => yAxis(d.y))
-          .curve(d3.curveMonotoneX)
+          .curve(d3.curveMonotoneX),
       )
 
     if (divideLastColumn) {
-      svg.append('line')
+      svg
+        .append('line')
         .attr('class', cx(styles.dashedLine, classNames?.dashedLine))
         .attr('x1', xAxis(cleanedData.length - 1.5))
         .attr('x2', xAxis(cleanedData.length - 1.5))
@@ -156,34 +161,38 @@ const AreaChart = (props: IProps) => {
         .attr('y2', height)
     }
 
-    svg.append('path')
+    svg
+      .append('path')
       .datum(cleanedData)
       .attr('class', cx(styles.area, classNames?.area))
       .attr('d', area)
 
-    svg.append('g')
-      .call(
-        d3.axisLeft(yAxis)
-          .tickSize(-width)
-          .tickValues([...d3.range(0, maxY, maxY / yCountTicks), maxY])
-          .tickFormat((d, i) => leftAxiosValidation(d, i))
-          .tickPadding(10)
-      )
+    svg.append('g').call(
+      d3
+        .axisLeft(yAxis)
+        .tickSize(-width)
+        .tickValues([...d3.range(0, maxY, maxY / yCountTicks), maxY])
+        .tickFormat((d, i) => leftAxiosValidation(d, i))
+        .tickPadding(10),
+    )
 
     const yTicks = d3.selectAll('text')
     yTicks.attr('data-testid', (d, i) => `ytick-${d}-${i}`)
 
-    svg.append('g')
+    svg
+      .append('g')
       .attr('transform', `translate(0,${height})`)
       .call(
-        d3.axisBottom(xAxis)
+        d3
+          .axisBottom(xAxis)
           .ticks(cleanedData.length * multiplierGrid)
           .tickFormat((d, i) => bottomAxiosValidation(d, i))
           .tickSize(-height)
-          .tickPadding(22)
+          .tickPadding(22),
       )
 
-    svg.selectAll('circle')
+    svg
+      .selectAll('circle')
       .data(cleanedData)
       .enter()
       .append('circle')
@@ -194,18 +203,18 @@ const AreaChart = (props: IProps) => {
       .attr('data-testid', (d) => `circle-${d.x}-${d.y}`)
       .raise()
       .on('mousemove mouseenter', (event, d) => {
-        tooltip.transition()
-          .duration(200)
-          .style('opacity', 1)
-        tooltip.html(tooltipValidation(d.y, d.index))
-          .style('left', `${event.pageX - (tooltip?.node()?.getBoundingClientRect()?.width || 0) / 2}px`)
+        tooltip.transition().duration(200).style('opacity', 1)
+        tooltip
+          .html(tooltipValidation(d.y, d.index))
+          .style(
+            'left',
+            `${event.pageX - (tooltip?.node()?.getBoundingClientRect()?.width || 0) / 2}px`,
+          )
           .style('top', `${event.pageY - 66}px`)
           .attr('data-testid', 'area-tooltip-circle')
       })
       .on('mouseout', () => {
-        tooltip.transition()
-          .duration(100)
-          .style('opacity', 0)
+        tooltip.transition().duration(100).style('opacity', 0)
       })
 
     return () => {
@@ -218,7 +227,10 @@ const AreaChart = (props: IProps) => {
   }
 
   return (
-    <div className={styles.wrapper} style={{ width: propWidth, height: propHeight }}>
+    <div
+      className={styles.wrapper}
+      style={{ width: propWidth, height: propHeight }}
+    >
       <svg ref={svgRef} className={styles.svg} />
     </div>
   )

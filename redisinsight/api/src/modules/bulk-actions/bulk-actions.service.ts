@@ -13,8 +13,16 @@ export class BulkActionsService {
     private readonly analytics: BulkActionsAnalytics,
   ) {}
 
-  async create(sessionMetadata: SessionMetadata, dto: CreateBulkActionDto, socket: Socket) {
-    const bulkAction = await this.bulkActionsProvider.create(sessionMetadata, dto, socket);
+  async create(
+    sessionMetadata: SessionMetadata,
+    dto: CreateBulkActionDto,
+    socket: Socket,
+  ) {
+    const bulkAction = await this.bulkActionsProvider.create(
+      sessionMetadata,
+      dto,
+      socket,
+    );
     const overview = bulkAction.getOverview();
 
     this.analytics.sendActionStarted(sessionMetadata, overview);

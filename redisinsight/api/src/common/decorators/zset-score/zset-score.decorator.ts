@@ -1,7 +1,4 @@
-import {
-  registerDecorator,
-  ValidationOptions,
-} from 'class-validator';
+import { registerDecorator, ValidationOptions } from 'class-validator';
 import { ZSetScoreValidator } from 'src/common/validators';
 
 export function isZSetScore(validationOptions?: ValidationOptions) {

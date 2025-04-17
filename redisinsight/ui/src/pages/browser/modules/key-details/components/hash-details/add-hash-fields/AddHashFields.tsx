@@ -11,7 +11,10 @@ import {
   EuiPanel,
 } from '@elastic/eui'
 import { toNumber } from 'lodash'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import {
+  selectedKeyDataSelector,
+  keysSelector,
+} from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import {
   updateHashValueStateSelector,
@@ -19,12 +22,22 @@ import {
   addHashFieldsAction,
 } from 'uiSrc/slices/browser/hash'
 import { KeyTypes } from 'uiSrc/constants'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 
 import { stringToBuffer, validateTTLNumberForAddKey } from 'uiSrc/utils'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
-import { IHashFieldState, INITIAL_HASH_FIELD_STATE } from 'uiSrc/pages/browser/components/add-key/AddKeyHash/interfaces'
-import { AddFieldsToHashDto, HashFieldDto } from 'apiSrc/modules/browser/hash/dto'
+import {
+  IHashFieldState,
+  INITIAL_HASH_FIELD_STATE,
+} from 'uiSrc/pages/browser/components/add-key/AddKeyHash/interfaces'
+import {
+  AddFieldsToHashDto,
+  HashFieldDto,
+} from 'apiSrc/modules/browser/hash/dto'
 
 import styles from './styles.module.scss'
 
@@ -36,20 +49,26 @@ export interface Props {
 const AddHashFields = (props: Props) => {
   const { isExpireFieldsAvailable, closePanel } = props
   const dispatch = useDispatch()
-  const [fields, setFields] = useState<IHashFieldState[]>([{ ...INITIAL_HASH_FIELD_STATE }])
+  const [fields, setFields] = useState<IHashFieldState[]>([
+    { ...INITIAL_HASH_FIELD_STATE },
+  ])
   const { loading } = useSelector(updateHashValueStateSelector)
-  const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
+  const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) ?? {
+    name: undefined,
+  }
   const { viewType } = useSelector(keysSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
 
   const lastAddedFieldName = useRef<HTMLInputElement>(null)
 
-  useEffect(() =>
-    // componentWillUnmount
-    () => {
-      dispatch(resetUpdateValue())
-    },
-  [])
+  useEffect(
+    () =>
+      // componentWillUnmount
+      () => {
+        dispatch(resetUpdateValue())
+      },
+    [],
+  )
 
   useEffect(() => {
     lastAddedFieldName.current?.focus()
@@ -73,14 +92,16 @@ const AddHashFields = (props: Props) => {
   }
 
   const clearFieldsValues = (id: number) => {
-    const newState = fields.map((item) => (item.id === id
-      ? {
-        ...item,
-        fieldName: '',
-        fieldValue: '',
-        fieldTTL: undefined,
-      }
-      : item))
+    const newState = fields.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            fieldName: '',
+            fieldValue: '',
+            fieldTTL: undefined,
+          }
+        : item,
+    )
     setFields(newState)
   }
 
@@ -99,13 +120,13 @@ const AddHashFields = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED,
       ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.Hash,
         numberOfAdded: fields.length,
-      }
+      },
     })
   }
 
@@ -136,13 +157,14 @@ const AddHashFields = (props: Props) => {
         }
 
         return defaultFields
-      })
+      }),
     }
     dispatch(addHashFieldsAction(data, onSuccessAdded))
   }
 
   const isClearDisabled = (item: IHashFieldState): boolean =>
-    fields.length === 1 && !(item.fieldName.length || item.fieldValue.length || item.fieldTTL?.length)
+    fields.length === 1 &&
+    !(item.fieldName.length || item.fieldValue.length || item.fieldTTL?.length)
 
   return (
     <>
@@ -151,7 +173,12 @@ const AddHashFields = (props: Props) => {
         hasShadow={false}
         borderRadius="none"
         data-test-subj="add-hash-field-panel"
-        className={cx(styles.container, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
+        className={cx(
+          styles.container,
+          'eui-yScroll',
+          'flexItemNoFullWidth',
+          'inlineFieldsNoSpace',
+        )}
       >
         <AddMultipleFields
           items={fields}
@@ -171,8 +198,11 @@ const AddHashFields = (props: Props) => {
                     value={item.fieldName}
                     disabled={loading}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      handleFieldChange('fieldName', item.id, e.target.value)}
-                    inputRef={index === fields.length - 1 ? lastAddedFieldName : null}
+                      handleFieldChange('fieldName', item.id, e.target.value)
+                    }
+                    inputRef={
+                      index === fields.length - 1 ? lastAddedFieldName : null
+                    }
                     data-testid="hash-field"
                   />
                 </EuiFormRow>
@@ -187,7 +217,8 @@ const AddHashFields = (props: Props) => {
                     value={item.fieldValue}
                     disabled={loading}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      handleFieldChange('fieldValue', item.id, e.target.value)}
+                      handleFieldChange('fieldValue', item.id, e.target.value)
+                    }
                     data-testid="hash-value"
                   />
                 </EuiFormRow>
@@ -203,7 +234,12 @@ const AddHashFields = (props: Props) => {
                       value={item.fieldTTL || ''}
                       disabled={loading}
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        handleFieldChange('fieldTTL', item.id, validateTTLNumberForAddKey(e.target.value))}
+                        handleFieldChange(
+                          'fieldTTL',
+                          item.id,
+                          validateTTLNumberForAddKey(e.target.value),
+                        )
+                      }
                       data-testid="hash-ttl"
                     />
                   </EuiFormRow>
@@ -222,7 +258,11 @@ const AddHashFields = (props: Props) => {
         <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
           <EuiFlexItem grow={false}>
             <div>
-              <EuiButton color="secondary" onClick={() => closePanel(true)} data-testid="cancel-fields-btn">
+              <EuiButton
+                color="secondary"
+                onClick={() => closePanel(true)}
+                data-testid="cancel-fields-btn"
+              >
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>

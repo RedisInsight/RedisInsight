@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react';
 
 const editor = {
   addCommand: jest.fn(),
@@ -24,59 +24,63 @@ const editor = {
   }),
   getPosition: jest.fn().mockReturnValue({}),
   trigger: jest.fn(),
-}
+};
 
 const monacoEditor = {
-  Range: jest.fn().mockImplementation((startLineNumber, startColumn, endLineNumber, endColumn) => ({
-    startLineNumber,
-    startColumn,
-    endLineNumber,
-    endColumn,
-  })),
+  Range: jest
+    .fn()
+    .mockImplementation(
+      (startLineNumber, startColumn, endLineNumber, endColumn) => ({
+        startLineNumber,
+        startColumn,
+        endLineNumber,
+        endColumn,
+      }),
+    ),
   languages: {
     getLanguages: jest.fn(),
     register: jest.fn(),
     registerCompletionItemProvider: jest.fn().mockReturnValue({
-      dispose: jest.fn()
+      dispose: jest.fn(),
     }),
     registerSignatureHelpProvider: jest.fn().mockReturnValue({
-      dispose: jest.fn()
+      dispose: jest.fn(),
     }),
     setLanguageConfiguration: jest.fn(),
     setMonarchTokensProvider: jest.fn(),
     json: {
       jsonDefaults: {
-        setDiagnosticsOptions: jest.fn()
-      }
-    }
+        setDiagnosticsOptions: jest.fn(),
+      },
+    },
   },
   KeyMod: {},
-  KeyCode: {}
-}
+  KeyCode: {},
+};
 
 export default function MonacoEditor(props) {
   useEffect(() => {
-    props.editorDidMount && props.editorDidMount(editor, monacoEditor)
-    props.editorWillMount && props.editorWillMount(monacoEditor)
-  }, [])
+    props.editorDidMount && props.editorDidMount(editor, monacoEditor);
+    props.editorWillMount && props.editorWillMount(monacoEditor);
+  }, []);
   return (
     <textarea
       {...props}
       onChange={(e) => props.onChange && props.onChange(e.target.value)}
       data-testid={props['data-testid'] ? props['data-testid'] : 'monaco'}
     />
-  )
+  );
 }
 
 export const languages = {
   CompletionItemKind: {
-    Function: 1
+    Function: 1,
   },
   CompletionItemInsertTextRule: {
-    InsertAsSnippet: 4
+    InsertAsSnippet: 4,
   },
-  ...monacoEditor.languages
-}
+  ...monacoEditor.languages,
+};
 
 export const monaco = {
   languages,
@@ -87,5 +91,5 @@ export const monaco = {
     defineTheme: jest.fn(),
     setTheme: jest.fn(),
   },
-  Range: monacoEditor.Range
-}
+  Range: monacoEditor.Range,
+};

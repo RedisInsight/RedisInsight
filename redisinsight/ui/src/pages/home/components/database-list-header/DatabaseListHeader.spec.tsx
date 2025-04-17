@@ -10,14 +10,14 @@ jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     enhancedCloudUI: {
-      flag: false
+      flag: false,
     },
     databaseManagement: {
       flag: true,
     },
     cloudAds: {
       flag: true,
-    }
+    },
   }),
 }))
 
@@ -27,15 +27,16 @@ jest.mock('uiSrc/slices/content/create-redis-buttons', () => ({
     data: {
       cloud: {
         title: 'Try Redis Cloud: your ultimate Redis starting point',
-        description: 'Includes native support for JSON, Search and Query, and more',
+        description:
+          'Includes native support for JSON, Search and Query, and more',
         links: {
           main: {
             altText: 'Try Redis Cloud.',
-            url: 'https://redis.io/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=main'
-          }
+            url: 'https://redis.io/try-free/?utm_source=redisinsight&utm_medium=main&utm_campaign=main',
+          },
         },
-      }
-    }
+      },
+    },
   }),
 }))
 
@@ -46,14 +47,16 @@ jest.mock('uiSrc/telemetry', () => ({
 
 describe('DatabaseListHeader', () => {
   it('should render', () => {
-    expect(render(<DatabaseListHeader {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<DatabaseListHeader {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 
   it('should not show promo cloud button with disabled feature flag', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
       enhancedCloudUI: {
-        flag: true
-      }
+        flag: true,
+      },
     })
 
     render(<DatabaseListHeader {...instance(mockedProps)} />)
@@ -68,19 +71,23 @@ describe('DatabaseListHeader', () => {
   })
 
   it('should show "create database" button when database management feature flag is enabled', () => {
-    const { queryByTestId } = render(<DatabaseListHeader {...instance(mockedProps)} />)
+    const { queryByTestId } = render(
+      <DatabaseListHeader {...instance(mockedProps)} />,
+    )
 
     expect(queryByTestId('add-redis-database-short')).toBeInTheDocument()
   })
 
   it('should hide "create database" button when database management feature flag is disabled', () => {
-    (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
       databaseManagement: {
-        flag: false
-      }
+        flag: false,
+      },
     })
 
-    const { queryByTestId } = render(<DatabaseListHeader {...instance(mockedProps)} />)
+    const { queryByTestId } = render(
+      <DatabaseListHeader {...instance(mockedProps)} />,
+    )
 
     expect(queryByTestId('add-redis-database-short')).not.toBeInTheDocument()
   })

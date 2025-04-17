@@ -8,7 +8,8 @@ export const wrapHttpError = (error: Error | AxiosError, message?: string) => {
 
   const { response } = error as any;
   const errorMessage = error.message || message || response?.data?.message;
-  const descriptionOrOptions = response?.data?.description || response?.data?.options;
+  const descriptionOrOptions =
+    response?.data?.description || response?.data?.options;
 
   return new InternalServerErrorException(errorMessage, descriptionOrOptions);
 };

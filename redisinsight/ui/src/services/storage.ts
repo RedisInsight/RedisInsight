@@ -70,7 +70,7 @@ export const getObjectStorageField = (itemName = '', field = '') => {
     return null
   }
 }
-export const getObjectStorage = (itemName = '',) => {
+export const getObjectStorage = (itemName = '') => {
   try {
     return localStorageService?.get(itemName)
   } catch (e) {
@@ -78,7 +78,11 @@ export const getObjectStorage = (itemName = '',) => {
   }
 }
 
-export const setObjectStorageField = (itemName = '', field = '', value?: any) => {
+export const setObjectStorageField = (
+  itemName = '',
+  field = '',
+  value?: any,
+) => {
   try {
     const config = localStorageService?.get(itemName) || {}
 
@@ -90,7 +94,7 @@ export const setObjectStorageField = (itemName = '', field = '', value?: any) =>
 
     localStorageService?.set(itemName, {
       ...config,
-      [field]: value
+      [field]: value,
     })
   } catch (e) {
     console.error(e)
@@ -108,17 +112,23 @@ export const setObjectStorage = (itemName = '', obj?: Record<string, any>) => {
 
     localStorageService?.set(itemName, {
       ...config,
-      ...obj
+      ...obj,
     })
   } catch (e) {
     console.error(e)
   }
 }
 
-export const getDBConfigStorageField = (instanceId: string, field: string = '') =>
-  getObjectStorageField(BrowserStorageItem.dbConfig + instanceId, field)
+export const getDBConfigStorageField = (
+  instanceId: string,
+  field: string = '',
+) => getObjectStorageField(BrowserStorageItem.dbConfig + instanceId, field)
 
-export const setDBConfigStorageField = (instanceId: string, field: string = '', value?: any) => {
+export const setDBConfigStorageField = (
+  instanceId: string,
+  field: string = '',
+  value?: any,
+) => {
   const itemName = BrowserStorageItem.dbConfig + instanceId
   setObjectStorageField(itemName, field, value)
   // on each update of config value, update db settings via the API

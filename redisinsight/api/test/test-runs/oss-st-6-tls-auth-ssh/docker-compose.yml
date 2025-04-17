@@ -1,4 +1,4 @@
-version: "3.4"
+version: '3.4'
 
 services:
   ssh:
@@ -19,7 +19,17 @@ services:
   test:
     env_file:
       - ./oss-st-6-tls-auth-ssh/.env
-    command: ['./wait-for-it.sh', 'ssh:2222', '-s', '-t', '120', '--', 'yarn', 'test:api:ci:cov']
+    command:
+      [
+        './wait-for-it.sh',
+        'ssh:2222',
+        '-s',
+        '-t',
+        '120',
+        '--',
+        'yarn',
+        'test:api:ci:cov',
+      ]
     links:
       - ssh:ssh
     networks:
@@ -38,8 +48,8 @@ services:
 
 networks:
   private:
-    name: "oss-st-6-tls-auth-ssh-net-private"
+    name: 'oss-st-6-tls-auth-ssh-net-private'
     internal: true
   ssh:
-    name: "oss-st-6-tls-auth-ssh-net"
+    name: 'oss-st-6-tls-auth-ssh-net'
     internal: false

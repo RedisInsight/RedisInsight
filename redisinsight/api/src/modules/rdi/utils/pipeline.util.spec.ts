@@ -1,7 +1,8 @@
 import {
   convertApiDataToRdiJobs,
   convertApiDataToRdiPipeline,
-  convertRdiJobsToApiPayload, convertRdiPipelineToApiPayload,
+  convertRdiJobsToApiPayload,
+  convertRdiPipelineToApiPayload,
 } from 'src/modules/rdi/utils/pipeline.util';
 import { RdiPipeline } from '../models';
 
@@ -29,7 +30,9 @@ describe('convertApiDataToRdiJobs', () => {
   });
 
   it('should return an empty object when an empty array is provided', () => {
-    const result = convertApiDataToRdiJobs([] as unknown as [Record<string, any>]);
+    const result = convertApiDataToRdiJobs(
+      [] as unknown as [Record<string, any>],
+    );
     expect(result).toEqual({});
   });
 
@@ -57,9 +60,7 @@ describe('convertApiDataToRdiJobs', () => {
       transform: [],
       output: [],
     };
-    const jobs = [
-      jobWithoutName, job2,
-    ] as unknown as [Record<string, any>];
+    const jobs = [jobWithoutName, job2] as unknown as [Record<string, any>];
     const result = convertApiDataToRdiJobs(jobs);
     expect(result).toEqual({
       [job2.name]: { ...job2, name: undefined },
@@ -73,9 +74,7 @@ describe('convertApiDataToRdiPipeline', () => {
       targets: {
         target: {},
       },
-      jobs: [
-        job1, job2,
-      ],
+      jobs: [job1, job2],
       sources: { psql: {} },
       processors: {},
     };
@@ -89,7 +88,8 @@ describe('convertApiDataToRdiPipeline', () => {
         processors: undefined,
       },
       jobs: {
-        [job1.name]: { ...job1, name: undefined }, [job2.name]: { ...job2, name: undefined },
+        [job1.name]: { ...job1, name: undefined },
+        [job2.name]: { ...job2, name: undefined },
       },
     });
 
@@ -128,9 +128,7 @@ describe('convertApiDataToRdiPipeline', () => {
       targets: {
         target: {},
       },
-      jobs: [
-        job1, job2,
-      ],
+      jobs: [job1, job2],
       sources: { psql: {} },
       processors: {},
     };
@@ -144,7 +142,8 @@ describe('convertApiDataToRdiPipeline', () => {
         processors: undefined,
       },
       jobs: {
-        job1: { ...job1, name: undefined }, job2: { ...job2, name: undefined },
+        job1: { ...job1, name: undefined },
+        job2: { ...job2, name: undefined },
       },
     });
 
@@ -153,7 +152,10 @@ describe('convertApiDataToRdiPipeline', () => {
     expect(actualPipeline).toBeInstanceOf(RdiPipeline);
     expect(actualPipeline.config).toBeTruthy();
     expect(actualPipeline.jobs.job1).toBeTruthy();
-    expect(Object.keys(actualPipeline.jobs)).toStrictEqual([job1.name, job2.name]);
+    expect(Object.keys(actualPipeline.jobs)).toStrictEqual([
+      job1.name,
+      job2.name,
+    ]);
     expect(actualPipeline).toEqual(expectedPipeline);
   });
 });
@@ -212,7 +214,8 @@ describe('convertRdiPipelineToApiPayload', () => {
         description: 'This is my pipeline',
       },
       jobs: {
-        job1: { ...job1, name: undefined }, job2: { ...job2, name: undefined },
+        job1: { ...job1, name: undefined },
+        job2: { ...job2, name: undefined },
       },
     });
 

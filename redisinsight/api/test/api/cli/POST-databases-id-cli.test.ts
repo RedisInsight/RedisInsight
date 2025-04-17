@@ -13,9 +13,11 @@ const { server, request, constants, rte } = deps;
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
   request(server).post(`/${constants.API.DATABASES}/${instanceId}/cli`);
 
-const responseSchema = Joi.object().keys({
-  uuid: Joi.string().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    uuid: Joi.string().required(),
+  })
+  .required();
 
 const mainCheckFn = async (testCase) => {
   it(testCase.name, async () => {

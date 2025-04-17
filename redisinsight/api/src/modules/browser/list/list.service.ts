@@ -27,10 +27,13 @@ import {
   BrowserToolKeysCommands,
   BrowserToolListCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClient, RedisClientCommandReply } from 'src/modules/redis/client';
-import { checkIfKeyExists, checkIfKeyNotExists } from 'src/modules/browser/utils';
+import {
+  checkIfKeyExists,
+  checkIfKeyNotExists,
+} from 'src/modules/browser/utils';
 
 @Injectable()
 export class ListService {
@@ -45,7 +48,8 @@ export class ListService {
     try {
       this.logger.debug('Creating list data type.', clientMetadata);
       const { keyName, expire } = dto;
-      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client: RedisClient =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyExists(keyName, client);
 
@@ -58,7 +62,11 @@ export class ListService {
       this.logger.debug('Succeed to create list data type.', clientMetadata);
       return null;
     } catch (error) {
-      this.logger.error('Failed to create list data type.', error, clientMetadata);
+      this.logger.error(
+        'Failed to create list data type.',
+        error,
+        clientMetadata,
+      );
       throw catchAclError(error);
     }
   }
@@ -68,12 +76,18 @@ export class ListService {
     dto: PushElementToListDto,
   ): Promise<PushListElementsResponse> {
     try {
-      this.logger.debug('Insert element at the tail/head of the list data type.', clientMetadata);
+      this.logger.debug(
+        'Insert element at the tail/head of the list data type.',
+        clientMetadata,
+      );
       const { keyName, elements, destination } = dto;
-      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client: RedisClient =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       const total: RedisClientCommandReply = await client.sendCommand([
-        BrowserToolListCommands[destination === ListElementDestination.Tail ? 'RPushX' : 'LPushX'],
+        BrowserToolListCommands[
+          destination === ListElementDestination.Tail ? 'RPushX' : 'LPushX'
+        ],
         keyName,
         ...elements,
       ]);
@@ -82,13 +96,22 @@ export class ListService {
           `Failed to inserts element at the ${destination} of the list data type. Key not found. key: ${keyName}`,
           clientMetadata,
         );
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
+        return Promise.reject(
+          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
+        );
       }
 
-      this.logger.debug(`Succeed to insert element at the ${destination} of the list data type.`, clientMetadata);
-      return plainToClass(PushListElementsResponse, { keyName, total });
+      this.logger.debug(
+        `Succeed to insert element at the ${destination} of the list data type.`,
+        clientMetadata,
+      );
+      return plainToInstance(PushListElementsResponse, { keyName, total });
     } catch (error) {
-      this.logger.error('Failed to inserts element to the list data type.', error, clientMetadata);
+      this.logger.error(
+        'Failed to inserts element to the list data type.',
+        error,
+        clientMetadata,
+      );
       if (error.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
@@ -101,14 +124,26 @@ export class ListService {
     dto: GetListElementsDto,
   ): Promise<GetListElementsResponse> {
     try {
-      this.logger.debug('Getting elements of the list stored at key.', clientMetadata);
+      this.logger.debug(
+        'Getting elements of the list stored at key.',
+        clientMetadata,
+      );
       const { keyName, offset, count } = dto;
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const total = (await client.sendCommand([BrowserToolListCommands.LLen, keyName]));
+      const total = await client.sendCommand([
+        BrowserToolListCommands.LLen,
+        keyName,
+      ]);
       if (!total) {
-        this.logger.error(`Failed to get elements of the list. Key not found. key: ${keyName}`, clientMetadata);
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
+        this.logger.error(
+          `Failed to get elements of the list. Key not found. key: ${keyName}`,
+          clientMetadata,
+        );
+        return Promise.reject(
+          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
+        );
       }
 
       const elements = await client.sendCommand([
@@ -119,9 +154,17 @@ export class ListService {
       ]);
 
       this.logger.debug('Succeed to get elements of the list.', clientMetadata);
-      return plainToClass(GetListElementsResponse, { keyName, total, elements });
+      return plainToInstance(GetListElementsResponse, {
+        keyName,
+        total,
+        elements,
+      });
     } catch (error) {
-      this.logger.error('Failed to to get elements of the list.', error, clientMetadata);
+      this.logger.error(
+        'Failed to to get elements of the list.',
+        error,
+        clientMetadata,
+      );
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
@@ -144,19 +187,33 @@ export class ListService {
     try {
       this.logger.debug('Getting List element by index.', clientMetadata);
       const { keyName } = dto;
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyNotExists(keyName, client);
 
-      const value = await client.sendCommand([BrowserToolListCommands.LIndex, keyName, index]);
+      const value = await client.sendCommand([
+        BrowserToolListCommands.LIndex,
+        keyName,
+        index,
+      ]);
       if (value === null) {
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.INDEX_OUT_OF_RANGE()));
+        return Promise.reject(
+          new NotFoundException(ERROR_MESSAGES.INDEX_OUT_OF_RANGE()),
+        );
       }
 
-      this.logger.debug('Succeed to get List element by index.', clientMetadata);
-      return plainToClass(GetListElementResponse, { keyName, value });
+      this.logger.debug(
+        'Succeed to get List element by index.',
+        clientMetadata,
+      );
+      return plainToInstance(GetListElementResponse, { keyName, value });
     } catch (error) {
-      this.logger.error('Failed to to get List element by index.', error, clientMetadata);
+      this.logger.error(
+        'Failed to to get List element by index.',
+        error,
+        clientMetadata,
+      );
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
@@ -171,13 +228,22 @@ export class ListService {
     try {
       this.logger.debug('Setting the list element at index', clientMetadata);
       const { keyName, element, index } = dto;
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyNotExists(keyName, client);
-      await client.sendCommand([BrowserToolListCommands.LSet, keyName, index, element]);
+      await client.sendCommand([
+        BrowserToolListCommands.LSet,
+        keyName,
+        index,
+        element,
+      ]);
 
-      this.logger.debug('Succeed to set the list element at index.', clientMetadata);
-      return plainToClass(SetListElementResponse, { index, element });
+      this.logger.debug(
+        'Succeed to set the list element at index.',
+        clientMetadata,
+      );
+      return plainToInstance(SetListElementResponse, { index, element });
     } catch (error) {
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
@@ -185,7 +251,11 @@ export class ListService {
       if (error?.message.includes('index out of range')) {
         throw new BadRequestException(error.message);
       }
-      this.logger.error('Failed to set the list element at index.', error, clientMetadata);
+      this.logger.error(
+        'Failed to set the list element at index.',
+        error,
+        clientMetadata,
+      );
       throw catchAclError(error);
     }
   }
@@ -201,31 +271,52 @@ export class ListService {
     dto: DeleteListElementsDto,
   ): Promise<DeleteListElementsResponse> {
     try {
-      this.logger.debug('Deleting elements from the list stored at key.', clientMetadata);
+      this.logger.debug(
+        'Deleting elements from the list stored at key.',
+        clientMetadata,
+      );
       const { keyName, count, destination } = dto;
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
       const execArgs = !!count && count > 1 ? [keyName, count] : [keyName];
       let result;
 
       if (destination === ListElementDestination.Head) {
-        result = await client.sendCommand([BrowserToolListCommands.LPop, ...execArgs]);
+        result = await client.sendCommand([
+          BrowserToolListCommands.LPop,
+          ...execArgs,
+        ]);
       } else {
-        result = await client.sendCommand([BrowserToolListCommands.RPop, ...execArgs]);
+        result = await client.sendCommand([
+          BrowserToolListCommands.RPop,
+          ...execArgs,
+        ]);
       }
       if (isNull(result)) {
-        return Promise.reject(new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST));
+        return Promise.reject(
+          new NotFoundException(ERROR_MESSAGES.KEY_NOT_EXIST),
+        );
       }
 
-      return plainToClass(DeleteListElementsResponse, {
+      return plainToInstance(DeleteListElementsResponse, {
         elements: isArray(result) ? [...result] : [result],
       });
     } catch (error) {
-      this.logger.error('Failed to delete elements from the list stored at key.', error, clientMetadata);
+      this.logger.error(
+        'Failed to delete elements from the list stored at key.',
+        error,
+        clientMetadata,
+      );
       if (error?.message.includes(RedisErrorCodes.WrongType)) {
         throw new BadRequestException(error.message);
       }
-      if (error?.message.includes('wrong number of arguments') && error?.command?.args?.length === 2) {
-        throw new BadRequestException(ERROR_MESSAGES.REMOVING_MULTIPLE_ELEMENTS_NOT_SUPPORT());
+      if (
+        error?.message.includes('wrong number of arguments') &&
+        error?.command?.args?.length === 2
+      ) {
+        throw new BadRequestException(
+          ERROR_MESSAGES.REMOVING_MULTIPLE_ELEMENTS_NOT_SUPPORT(),
+        );
       }
       throw catchAclError(error);
     }
@@ -237,7 +328,9 @@ export class ListService {
   ): Promise<void> {
     const { keyName, elements, destination } = dto;
     await client.sendCommand([
-      BrowserToolListCommands[destination === ListElementDestination.Tail ? 'RPush' : 'LPush'],
+      BrowserToolListCommands[
+        destination === ListElementDestination.Tail ? 'RPush' : 'LPush'
+      ],
       keyName,
       ...elements,
     ]);
@@ -247,12 +340,12 @@ export class ListService {
     client: RedisClient,
     dto: CreateListWithExpireDto,
   ): Promise<void> {
-    const {
-      keyName, elements, expire, destination,
-    } = dto;
+    const { keyName, elements, expire, destination } = dto;
     const transactionResults = await client.sendPipeline([
       [
-        BrowserToolListCommands[destination === ListElementDestination.Tail ? 'RPush' : 'LPush'],
+        BrowserToolListCommands[
+          destination === ListElementDestination.Tail ? 'RPush' : 'LPush'
+        ],
         keyName,
         ...elements,
       ],

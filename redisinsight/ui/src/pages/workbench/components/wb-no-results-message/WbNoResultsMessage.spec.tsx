@@ -1,8 +1,17 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 
-import { changeSelectedTab, changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
+import {
+  changeSelectedTab,
+  changeSidePanel,
+} from 'uiSrc/slices/panels/sidePanels'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import WbNoResultsMessage from './WbNoResultsMessage'
@@ -15,7 +24,7 @@ jest.mock('uiSrc/telemetry', () => ({
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
-    provider: 'RE_CLOUD'
+    provider: 'RE_CLOUD',
   }),
 }))
 
@@ -38,13 +47,15 @@ describe('WbNoResultsMessage', () => {
 
     expect(store.getActions()).toEqual([
       changeSelectedTab(InsightsPanelTabs.Explore),
-      changeSidePanel(SidePanels.Insights)
+      changeSidePanel(SidePanels.Insights),
     ])
   })
 
   it('should call proper telemetry events after click on insights', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<WbNoResultsMessage />)
 
@@ -56,8 +67,8 @@ describe('WbNoResultsMessage', () => {
         databaseId: 'instanceId',
         provider: 'RE_CLOUD',
         source: 'workbench',
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

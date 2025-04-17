@@ -8,7 +8,9 @@ const SERVER_CONFIG = config.get('server') as Config['server'];
 export class DatabaseManagementGuard implements CanActivate {
   canActivate(): boolean {
     if (!SERVER_CONFIG.databaseManagement) {
-      throw new ForbiddenException(ERROR_MESSAGES.DATABASE_MANAGEMENT_IS_DISABLED);
+      throw new ForbiddenException(
+        ERROR_MESSAGES.DATABASE_MANAGEMENT_IS_DISABLED,
+      );
     }
 
     return true;

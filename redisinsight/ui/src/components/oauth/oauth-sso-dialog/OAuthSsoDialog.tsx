@@ -4,7 +4,10 @@ import { EuiModal, EuiModalBody } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import cx from 'classnames'
-import { oauthCloudSelector, setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
+import {
+  oauthCloudSelector,
+  setSocialDialogState,
+} from 'uiSrc/slices/oauth/cloud'
 import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
 import { cloudSelector } from 'uiSrc/slices/instances/cloud'
 import { OAuthCreateDb, OAuthSignIn } from 'uiSrc/components/oauth/oauth-sso'
@@ -23,7 +26,7 @@ const OAuthSsoDialog = () => {
       event: TelemetryEvent.CLOUD_SIGN_IN_FORM_CLOSED,
       eventData: {
         action: ssoFlow,
-      }
+      },
     })
     dispatch(setSocialDialogState(null))
   }, [ssoFlow])
@@ -43,9 +46,15 @@ const OAuthSsoDialog = () => {
       data-testid="social-oauth-dialog"
     >
       <EuiModalBody>
-        {ssoFlow === OAuthSocialAction.Create && (<OAuthCreateDb source={source} />)}
-        {ssoFlow === OAuthSocialAction.SignIn && (<OAuthSignIn source={source} />)}
-        {ssoFlow === OAuthSocialAction.Import && (<OAuthSignIn action={OAuthSocialAction.Import} source={source} />)}
+        {ssoFlow === OAuthSocialAction.Create && (
+          <OAuthCreateDb source={source} />
+        )}
+        {ssoFlow === OAuthSocialAction.SignIn && (
+          <OAuthSignIn source={source} />
+        )}
+        {ssoFlow === OAuthSocialAction.Import && (
+          <OAuthSignIn action={OAuthSocialAction.Import} source={source} />
+        )}
       </EuiModalBody>
     </EuiModal>
   )

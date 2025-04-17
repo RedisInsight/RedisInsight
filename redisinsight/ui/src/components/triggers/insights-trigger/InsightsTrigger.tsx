@@ -9,14 +9,21 @@ import {
   changeSidePanel,
   insightsPanelSelector,
   sidePanelsSelector,
-  toggleSidePanel
+  toggleSidePanel,
 } from 'uiSrc/slices/panels/sidePanels'
 
 import TriggerIcon from 'uiSrc/assets/img/bulb.svg?react'
 
-import { recommendationsSelector, resetRecommendationsHighlighting } from 'uiSrc/slices/recommendations/recommendations'
+import {
+  recommendationsSelector,
+  resetRecommendationsHighlighting,
+} from 'uiSrc/slices/recommendations/recommendations'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
-import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  sendEventTelemetry,
+  TELEMETRY_EMPTY_VALUE,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import styles from './styles.module.scss'
@@ -29,7 +36,7 @@ const InsightsTrigger = (props: Props) => {
   const { source = 'overview' } = props
   const { openedPanel } = useSelector(sidePanelsSelector)
   const { tabSelected } = useSelector(insightsPanelSelector)
-  const { isHighlighted, } = useSelector(recommendationsSelector)
+  const { isHighlighted } = useSelector(recommendationsSelector)
   const { provider } = useSelector(connectedInstanceSelector)
 
   const isInsightsOpen = openedPanel === SidePanels.Insights
@@ -38,9 +45,7 @@ const InsightsTrigger = (props: Props) => {
   const { pathname, search } = useLocation()
   const { instanceId } = useParams<{ instanceId: string }>()
 
-  const page = pathname
-    .replace(instanceId, '')
-    .replace(/^\//g, '')
+  const page = pathname.replace(instanceId, '').replace(/^\//g, '')
 
   useEffect(() => {
     const searchParams = new URLSearchParams(search)
@@ -60,7 +65,9 @@ const InsightsTrigger = (props: Props) => {
     dispatch(toggleSidePanel(SidePanels.Insights))
 
     sendEventTelemetry({
-      event: isInsightsOpen ? TelemetryEvent.INSIGHTS_PANEL_CLOSED : TelemetryEvent.INSIGHTS_PANEL_OPENED,
+      event: isInsightsOpen
+        ? TelemetryEvent.INSIGHTS_PANEL_CLOSED
+        : TelemetryEvent.INSIGHTS_PANEL_OPENED,
       eventData: {
         provider,
         page,
@@ -72,14 +79,14 @@ const InsightsTrigger = (props: Props) => {
   }
 
   return (
-    <div
-      className={cx(styles.container, { [styles.isOpen]: isInsightsOpen })}
-    >
+    <div className={cx(styles.container, { [styles.isOpen]: isInsightsOpen })}>
       <EuiToolTip
         title={isHighlighted && instanceId ? undefined : 'Insights'}
-        content={isHighlighted && instanceId
-          ? 'New tips are available'
-          : 'Open interactive tutorials to learn more about Redis or Redis Stack capabilities, or use tips to improve your database.'}
+        content={
+          isHighlighted && instanceId
+            ? 'New tips are available'
+            : 'Open interactive tutorials to learn more about Redis or Redis Stack capabilities, or use tips to improve your database.'
+        }
       >
         <EuiButton
           fill
@@ -91,7 +98,9 @@ const InsightsTrigger = (props: Props) => {
           onClick={handleClickTrigger}
           data-testid="insights-trigger"
         >
-          {(isHighlighted && instanceId) && (<span className={styles.highlighting} />)}
+          {isHighlighted && instanceId && (
+            <span className={styles.highlighting} />
+          )}
         </EuiButton>
       </EuiToolTip>
     </div>

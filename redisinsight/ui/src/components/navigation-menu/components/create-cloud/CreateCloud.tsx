@@ -20,8 +20,8 @@ const CreateCloud = () => {
     sendEventTelemetry({
       event: HELP_LINKS.cloud.event,
       eventData: {
-        source: OAuthSocialSource.NavigationMenu
-      }
+        source: OAuthSocialSource.NavigationMenu,
+      },
     })
   }
 
@@ -38,11 +38,15 @@ const CreateCloud = () => {
                 external={false}
                 onClick={(e) => {
                   onCLickLink(isSSOEnabled)
-                  ssoCloudHandlerClick(e,
-                    { source: OAuthSocialSource.NavigationMenu, action: OAuthSocialAction.Create })
+                  ssoCloudHandlerClick(e, {
+                    source: OAuthSocialSource.NavigationMenu,
+                    action: OAuthSocialAction.Create,
+                  })
                 }}
                 className={styles.cloudLink}
-                href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: 'navigation_menu' })}
+                href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
+                  campaign: 'navigation_menu',
+                })}
                 target="_blank"
                 data-test-subj="create-cloud-nav-link"
               >

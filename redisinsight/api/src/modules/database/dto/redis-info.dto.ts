@@ -9,8 +9,8 @@ export class RedisNodeInfoResponse {
 
   @ApiPropertyOptional({
     description:
-      'Value is "master" if the instance is replica of no one, '
-      + 'or "slave" if the instance is a replica of some master instance',
+      'Value is "master" if the instance is replica of no one, ' +
+      'or "slave" if the instance is a replica of some master instance',
     enum: ['master', 'slave'],
     default: 'master',
   })
@@ -126,7 +126,7 @@ export class RedisDatabaseHelloResponse {
     description: 'Redis database mode',
     type: String,
   })
-  mode: "standalone" | "sentinel" | "cluster";
+  mode: 'standalone' | 'sentinel' | 'cluster';
 
   @ApiProperty({
     description: 'Redis database role',
@@ -139,5 +139,5 @@ export class RedisDatabaseHelloResponse {
     type: RedisDatabaseModuleDto,
     isArray: true,
   })
-  modules: RedisDatabaseModuleDto[]
+  modules: RedisDatabaseModuleDto[];
 }

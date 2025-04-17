@@ -4,13 +4,13 @@ import {
   Joi,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn, _,
+  getMainCheckFn,
+  _,
 } from '../deps';
 const { server, request, constants } = deps;
 
 // endpoint to test
-const endpoint = () =>
-  request(server).post('/analytics/send-event');
+const endpoint = () => request(server).post('/analytics/send-event');
 
 // input data schema
 const dataSchema = Joi.object({

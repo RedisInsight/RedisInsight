@@ -1,10 +1,20 @@
 import {
-  Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Index,
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  Index,
 } from 'typeorm';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 import { Expose } from 'class-transformer';
 import { IsInt, Min } from 'class-validator';
-import { CommandExecutionType, ResultsMode, RunQueryMode } from 'src/modules/workbench/models/command-execution';
+import {
+  CommandExecutionType,
+  ResultsMode,
+  RunQueryMode,
+} from 'src/modules/workbench/models/command-execution';
 import { DataAsJsonString } from 'src/common/decorators';
 
 @Entity('command_execution')
@@ -17,13 +27,10 @@ export class CommandExecutionEntity {
   @Expose()
   databaseId: string;
 
-  @ManyToOne(
-    () => DatabaseEntity,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => DatabaseEntity, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'databaseId' })
   @Expose()
   database: DatabaseEntity;

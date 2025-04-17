@@ -100,7 +100,7 @@ const cloudSlice = createSlice({
         subscriptionName:
           find(
             state.subscriptions,
-            (subscription) => subscription.id === instance.subscriptionId
+            (subscription) => subscription.id === instance.subscriptionId,
           )?.name ?? '',
       }))
     },
@@ -120,7 +120,7 @@ const cloudSlice = createSlice({
       state.loaded[LoadedCloud.InstancesAdded] = true
 
       state.dataAdded = payload?.map((instance: InstanceRedisCloud) => ({
-        ...instance.databaseDetails || {},
+        ...(instance.databaseDetails || {}),
         databaseIdAdded: instance.databaseId,
         subscriptionIdAdded: instance.subscriptionId,
         statusAdded: instance.status,
@@ -128,7 +128,7 @@ const cloudSlice = createSlice({
         subscriptionName:
           find(
             state.subscriptions,
-            (subscription) => subscription.id === instance.subscriptionId
+            (subscription) => subscription.id === instance.subscriptionId,
           )?.name ?? '',
       }))
     },
@@ -150,10 +150,16 @@ const cloudSlice = createSlice({
     resetLoadedRedisCloud: (state, { payload }: PayloadAction<LoadedCloud>) => {
       state.loaded[payload] = false
     },
-    setSSOFlow: (state, { payload }: PayloadAction<Maybe<OAuthSocialAction>>) => {
+    setSSOFlow: (
+      state,
+      { payload }: PayloadAction<Maybe<OAuthSocialAction>>,
+    ) => {
       state.ssoFlow = payload
     },
-    setIsRecommendedSettingsSSO: (state, { payload }: PayloadAction<Maybe<boolean>>) => {
+    setIsRecommendedSettingsSSO: (
+      state,
+      { payload }: PayloadAction<Maybe<boolean>>,
+    ) => {
       state.isRecommendedSettings = payload
     },
   },
@@ -177,7 +183,7 @@ export const {
   resetSubscriptionsRedisCloud,
   resetLoadedRedisCloud,
   setSSOFlow,
-  setIsRecommendedSettingsSSO
+  setIsRecommendedSettingsSSO,
 } = cloudSlice.actions
 
 // A selector
@@ -186,7 +192,9 @@ export const cloudSelector = (state: RootState) => state.connections.cloud
 // The reducer
 export default cloudSlice.reducer
 
-const generateAuthHeaders = (credentials: Nullable<ICredentialsRedisCloud>) => ({
+const generateAuthHeaders = (
+  credentials: Nullable<ICredentialsRedisCloud>,
+) => ({
   'x-cloud-api-key': credentials?.accessKey || '',
   'x-cloud-api-secret': credentials?.secretKey || '',
 })
@@ -196,7 +204,7 @@ export function fetchSubscriptionsRedisCloud(
   credentials: Nullable<ICredentialsRedisCloud>,
   isWithinOauth?: boolean,
   onSuccessAction?: () => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(loadSubscriptionsRedisCloud())
@@ -209,8 +217,8 @@ export function fetchSubscriptionsRedisCloud(
         {
           headers: {
             ...(!isWithinOauth ? generateAuthHeaders(credentials) : {}),
-          }
-        }
+          },
+        },
       )
 
       if (isStatusSuccessful(status)) {
@@ -218,7 +226,7 @@ export function fetchSubscriptionsRedisCloud(
           loadSubscriptionsRedisCloudSuccess({
             data,
             credentials,
-          })
+          }),
         )
         onSuccessAction?.()
         dispatch<any>(fetchAccountRedisCloud(credentials, isWithinOauth))
@@ -250,8 +258,8 @@ export function fetchAccountRedisCloud(
         {
           headers: {
             ...(!isWithinOauth ? generateAuthHeaders(credentials) : {}),
-          }
-        }
+          },
+        },
       )
 
       if (isStatusSuccessful(status)) {
@@ -270,10 +278,12 @@ export function fetchAccountRedisCloud(
 // Asynchronous thunk action
 export function fetchInstancesRedisCloud(
   payload: {
-    subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'free'>>[],
-    credentials: Nullable<ICredentialsRedisCloud>,
+    subscriptions: Maybe<
+      Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'free'>
+    >[]
+    credentials: Nullable<ICredentialsRedisCloud>
   },
-  isWithinOauth?: boolean
+  isWithinOauth?: boolean,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(loadInstancesRedisCloud())
@@ -289,14 +299,12 @@ export function fetchInstancesRedisCloud(
         {
           headers: {
             ...(!isWithinOauth ? generateAuthHeaders(payload.credentials) : {}),
-          }
-        }
+          },
+        },
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(
-          loadInstancesRedisCloudSuccess({ data, credentials: payload })
-        )
+        dispatch(loadInstancesRedisCloudSuccess({ data, credentials: payload }))
       }
     } catch (error) {
       const errorMessage = getApiErrorMessage(error as EnhancedAxiosError)
@@ -311,10 +319,13 @@ export function fetchInstancesRedisCloud(
 // Asynchronous thunk action
 export function addInstancesRedisCloud(
   payload: {
-    databases: Pick<InstanceRedisCloud, 'subscriptionId' | 'databaseId' | 'free'>[];
-    credentials: Nullable<ICredentialsRedisCloud>;
+    databases: Pick<
+      InstanceRedisCloud,
+      'subscriptionId' | 'databaseId' | 'free'
+    >[]
+    credentials: Nullable<ICredentialsRedisCloud>
   },
-  isWithinOauth?: boolean
+  isWithinOauth?: boolean,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(createInstancesRedisCloud())
@@ -330,12 +341,15 @@ export function addInstancesRedisCloud(
         {
           headers: {
             ...(!isWithinOauth ? generateAuthHeaders(payload.credentials) : {}),
-          }
-        }
+          },
+        },
       )
 
       if (isStatusSuccessful(status)) {
-        const encryptionErrors = getApiErrorsFromBulkOperation(data, ...ApiEncryptionErrors)
+        const encryptionErrors = getApiErrorsFromBulkOperation(
+          data,
+          ...ApiEncryptionErrors,
+        )
         if (encryptionErrors.length) {
           dispatch(addErrorNotification(encryptionErrors[0]))
         }

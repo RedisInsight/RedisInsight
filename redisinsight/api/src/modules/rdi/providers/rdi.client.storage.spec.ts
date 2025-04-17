@@ -40,9 +40,7 @@ describe('RdiClientStorage', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        RdiClientStorage,
-      ],
+      providers: [RdiClientStorage],
     }).compile();
 
     service = await module.get(RdiClientStorage);
@@ -111,30 +109,36 @@ describe('RdiClientStorage', () => {
       });
 
       it('should throw BadRequestException when metadata is invalid', async () => {
-        await expect(service.getByMetadata({
-          ...mockNotExistClientMetadata,
-          id: undefined,
-        })).rejects.toThrow(
+        await expect(
+          service.getByMetadata({
+            ...mockNotExistClientMetadata,
+            id: undefined,
+          }),
+        ).rejects.toThrow(
           new BadRequestException('Client metadata missed required properties'),
         );
 
-        await expect(service.getByMetadata({
-          ...mockNotExistClientMetadata,
-          sessionMetadata: {
-            ...mockNotExistClientMetadata.sessionMetadata,
-            sessionId: undefined,
-          },
-        })).rejects.toThrow(
+        await expect(
+          service.getByMetadata({
+            ...mockNotExistClientMetadata,
+            sessionMetadata: {
+              ...mockNotExistClientMetadata.sessionMetadata,
+              sessionId: undefined,
+            },
+          }),
+        ).rejects.toThrow(
           new BadRequestException('Client metadata missed required properties'),
         );
 
-        await expect(service.getByMetadata({
-          ...mockNotExistClientMetadata,
-          sessionMetadata: {
-            ...mockNotExistClientMetadata.sessionMetadata,
-            userId: undefined,
-          },
-        })).rejects.toThrow(
+        await expect(
+          service.getByMetadata({
+            ...mockNotExistClientMetadata,
+            sessionMetadata: {
+              ...mockNotExistClientMetadata.sessionMetadata,
+              userId: undefined,
+            },
+          }),
+        ).rejects.toThrow(
           new BadRequestException('Client metadata missed required properties'),
         );
       });
@@ -170,37 +174,56 @@ describe('RdiClientStorage', () => {
       });
 
       it('should throw BadRequestException when metadata is invalid', async () => {
-        await expect(service.set(generateMockRdiClient({
-          sessionMetadata: {} as SessionMetadata,
-          id: 'id',
-        }))).rejects.toThrow(
+        await expect(
+          service.set(
+            generateMockRdiClient({
+              sessionMetadata: {} as SessionMetadata,
+              id: 'id',
+            }),
+          ),
+        ).rejects.toThrow(
           new BadRequestException('Client metadata missed required properties'),
         );
 
-        await expect(service.set(generateMockRdiClient({
-          sessionMetadata: {
-            userId: 'u2', sessionId: 's1',
-          } as SessionMetadata,
-          id: undefined,
-        }))).rejects.toThrow(
+        await expect(
+          service.set(
+            generateMockRdiClient({
+              sessionMetadata: {
+                userId: 'u2',
+                sessionId: 's1',
+              } as SessionMetadata,
+              id: undefined,
+            }),
+          ),
+        ).rejects.toThrow(
           new BadRequestException('Client metadata missed required properties'),
         );
 
-        await expect(service.set(generateMockRdiClient({
-          sessionMetadata: {
-            userId: 'u2', sessionId: undefined,
-          } as SessionMetadata,
-          id: 'id',
-        }))).rejects.toThrow(
+        await expect(
+          service.set(
+            generateMockRdiClient({
+              sessionMetadata: {
+                userId: 'u2',
+                sessionId: undefined,
+              } as SessionMetadata,
+              id: 'id',
+            }),
+          ),
+        ).rejects.toThrow(
           new BadRequestException('Client metadata missed required properties'),
         );
 
-        await expect(service.set(generateMockRdiClient({
-          sessionMetadata: {
-            userId: undefined, sessionId: 's2',
-          } as SessionMetadata,
-          id: 'id',
-        }))).rejects.toThrow(
+        await expect(
+          service.set(
+            generateMockRdiClient({
+              sessionMetadata: {
+                userId: undefined,
+                sessionId: 's2',
+              } as SessionMetadata,
+              id: 'id',
+            }),
+          ),
+        ).rejects.toThrow(
           new BadRequestException('Client metadata missed required properties'),
         );
       });
@@ -229,10 +252,14 @@ describe('RdiClientStorage', () => {
 
         expect(result.length).toEqual(3);
         result.forEach((id) => {
-          expect(service['clients'].get(id)['metadata'].id).toEqual(mockClientMetadata1.id);
+          expect(service['clients'].get(id)['metadata'].id).toEqual(
+            mockClientMetadata1.id,
+          );
         });
 
-        expect(await service.deleteManyByRdiId(mockClientMetadata1.id)).toEqual(3);
+        expect(await service.deleteManyByRdiId(mockClientMetadata1.id)).toEqual(
+          3,
+        );
         expect(service['clients'].size).toEqual(1);
       });
 

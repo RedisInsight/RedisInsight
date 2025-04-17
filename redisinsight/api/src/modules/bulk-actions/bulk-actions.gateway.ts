@@ -9,7 +9,10 @@ import {
 } from '@nestjs/websockets';
 import {
   Body,
-  Logger, UseFilters, UsePipes, ValidationPipe,
+  Logger,
+  UseFilters,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import config, { Config } from 'src/utils/config';
 import { BulkActionsServerEvents } from 'src/modules/bulk-actions/constants';
@@ -28,21 +31,25 @@ const SOCKETS_CONFIG = config.get('sockets') as Config['sockets'];
   path: SOCKETS_CONFIG.path,
   namespace: 'bulk-actions',
   cors: SOCKETS_CONFIG.cors.enabled
-    ? { origin: SOCKETS_CONFIG.cors.origin, credentials: SOCKETS_CONFIG.cors.credentials } : false,
+    ? {
+        origin: SOCKETS_CONFIG.cors.origin,
+        credentials: SOCKETS_CONFIG.cors.credentials,
+      }
+    : false,
   serveClient: SOCKETS_CONFIG.serveClient,
 })
-export class BulkActionsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class BulkActionsGateway
+  implements OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer() wss: Server;
 
   private logger: Logger = new Logger('BulkActionsGateway');
 
-  constructor(
-    private service: BulkActionsService,
-  ) {}
+  constructor(private service: BulkActionsService) {}
 
   @SubscribeMessage(BulkActionsServerEvents.Create)
   create(
-  @WSSessionMetadata() sessionMetadata: SessionMetadata,
+    @WSSessionMetadata() sessionMetadata: SessionMetadata,
     @ConnectedSocket() socket: Socket,
     @Body() dto: CreateBulkActionDto,
   ) {
@@ -51,13 +58,19 @@ export class BulkActionsGateway implements OnGatewayConnection, OnGatewayDisconn
   }
 
   @SubscribeMessage(BulkActionsServerEvents.Get)
-  get(@WSSessionMetadata() sessionMetadata: SessionMetadata, @Body() dto: BulkActionIdDto) {
+  get(
+    @WSSessionMetadata() sessionMetadata: SessionMetadata,
+    @Body() dto: BulkActionIdDto,
+  ) {
     this.logger.debug('Subscribing to bulk action.');
     return this.service.get(dto);
   }
 
   @SubscribeMessage(BulkActionsServerEvents.Abort)
-  abort(@WSSessionMetadata() sessionMetadata: SessionMetadata, @Body() dto: BulkActionIdDto) {
+  abort(
+    @WSSessionMetadata() sessionMetadata: SessionMetadata,
+    @Body() dto: BulkActionIdDto,
+  ) {
     this.logger.debug('Aborting bulk action.');
     return this.service.abort(dto);
   }

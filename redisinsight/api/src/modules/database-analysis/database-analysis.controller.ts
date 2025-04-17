@@ -1,14 +1,30 @@
 import {
   Body,
-  Controller, Get, Param, Post, Patch, UseInterceptors, UsePipes, ValidationPipe,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Patch,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { DatabaseAnalysisService } from 'src/modules/database-analysis/database-analysis.service';
-import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
+import {
+  DatabaseAnalysis,
+  ShortDatabaseAnalysis,
+} from 'src/modules/database-analysis/models';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
-import { ApiQueryRedisStringEncoding, ClientMetadataParam } from 'src/common/decorators';
-import { CreateDatabaseAnalysisDto, RecommendationVoteDto } from 'src/modules/database-analysis/dto';
+import {
+  ApiQueryRedisStringEncoding,
+  ClientMetadataParam,
+} from 'src/common/decorators';
+import {
+  CreateDatabaseAnalysisDto,
+  RecommendationVoteDto,
+} from 'src/modules/database-analysis/dto';
 import { ClientMetadata } from 'src/common/models';
 
 @UseInterceptors(BrowserSerializeInterceptor)
@@ -32,7 +48,7 @@ export class DatabaseAnalysisController {
   @ApiQueryRedisStringEncoding()
   async create(
     @ClientMetadataParam() clientMetadata: ClientMetadata,
-      @Body() dto: CreateDatabaseAnalysisDto,
+    @Body() dto: CreateDatabaseAnalysisDto,
   ): Promise<DatabaseAnalysis> {
     return this.service.create(clientMetadata, dto);
   }
@@ -49,9 +65,7 @@ export class DatabaseAnalysisController {
   })
   @Get(':id')
   @ApiQueryRedisStringEncoding()
-  async get(
-    @Param('id') id: string,
-  ): Promise<DatabaseAnalysis> {
+  async get(@Param('id') id: string): Promise<DatabaseAnalysis> {
     return this.service.get(id);
   }
 
@@ -80,7 +94,7 @@ export class DatabaseAnalysisController {
     responses: [
       {
         status: 200,
-        description: 'Updated database instance\' response',
+        description: "Updated database instance' response",
         type: DatabaseAnalysis,
       },
     ],
@@ -94,7 +108,7 @@ export class DatabaseAnalysisController {
   )
   async modify(
     @Param('id') id: string,
-      @Body() dto: RecommendationVoteDto,
+    @Body() dto: RecommendationVoteDto,
   ): Promise<DatabaseAnalysis> {
     return await this.service.vote(id, dto);
   }

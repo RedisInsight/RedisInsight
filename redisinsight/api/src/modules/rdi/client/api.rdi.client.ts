@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { Logger } from '@nestjs/common';
 
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
@@ -30,12 +30,17 @@ import {
   RdiPipeline,
   RdiStatisticsResult,
   RdiStatisticsStatus,
-  RdiStatisticsData, RdiClientMetadata, Rdi,
+  RdiStatisticsData,
+  RdiClientMetadata,
+  Rdi,
 } from 'src/modules/rdi/models';
 import { convertKeysToCamelCase } from 'src/utils/base.helper';
 import { RdiPipelineTimeoutException } from 'src/modules/rdi/exceptions/rdi-pipeline.timeout-error.exception';
 import * as https from 'https';
-import { convertApiDataToRdiPipeline, convertRdiPipelineToApiPayload } from 'src/modules/rdi/utils/pipeline.util';
+import {
+  convertApiDataToRdiPipeline,
+  convertRdiPipelineToApiPayload,
+} from 'src/modules/rdi/utils/pipeline.util';
 import { RdiResetPipelineFailedException } from '../exceptions/rdi-reset-pipeline-failed.exception';
 import { RdiStartPipelineFailedException } from '../exceptions/rdi-start-pipeline-failed.exception';
 import { RdiStopPipelineFailedException } from '../exceptions/rdi-stop-pipeline-failed.exception';
@@ -49,7 +54,7 @@ export class ApiRdiClient extends RdiClient {
 
   private readonly logger = new Logger('ApiRdiClient');
 
-  private auth: { jwt: string, exp: number };
+  private auth: { jwt: string; exp: number };
 
   constructor(clientMetadata: RdiClientMetadata, rdi: Rdi) {
     super(clientMetadata, rdi);
@@ -98,9 +103,14 @@ export class ApiRdiClient extends RdiClient {
     }
   }
 
-  async getConfigTemplate(pipelineType: string, dbType: string): Promise<RdiTemplateResponseDto> {
+  async getConfigTemplate(
+    pipelineType: string,
+    dbType: string,
+  ): Promise<RdiTemplateResponseDto> {
     try {
-      const response = await this.client.get(`${RdiUrl.GetConfigTemplate}/${pipelineType}/${dbType}`);
+      const response = await this.client.get(
+        `${RdiUrl.GetConfigTemplate}/${pipelineType}/${dbType}`,
+      );
       return response.data;
     } catch (e) {
       throw wrapRdiPipelineError(e);
@@ -109,7 +119,9 @@ export class ApiRdiClient extends RdiClient {
 
   async getJobTemplate(pipelineType: string): Promise<RdiTemplateResponseDto> {
     try {
-      const response = await this.client.get(`${RdiUrl.GetJobTemplate}/${pipelineType}`);
+      const response = await this.client.get(
+        `${RdiUrl.GetJobTemplate}/${pipelineType}`,
+      );
       return response.data;
     } catch (e) {
       throw wrapRdiPipelineError(e);
@@ -133,9 +145,7 @@ export class ApiRdiClient extends RdiClient {
 
   async stopPipeline(): Promise<void> {
     try {
-      const response = await this.client.post(
-        RdiUrl.StopPipeline, {},
-      );
+      const response = await this.client.post(RdiUrl.StopPipeline, {});
       const actionId = response.data.action_id;
 
       return await this.pollActionStatus(actionId, PipelineActions.Stop);
@@ -146,9 +156,7 @@ export class ApiRdiClient extends RdiClient {
 
   async startPipeline(): Promise<void> {
     try {
-      const response = await this.client.post(
-        RdiUrl.StartPipeline, {},
-      );
+      const response = await this.client.post(RdiUrl.StartPipeline, {});
       const actionId = response.data.action_id;
 
       return await this.pollActionStatus(actionId, PipelineActions.Start);
@@ -159,9 +167,7 @@ export class ApiRdiClient extends RdiClient {
 
   async resetPipeline(): Promise<void> {
     try {
-      const response = await this.client.post(
-        RdiUrl.ResetPipeline, {},
-      );
+      const response = await this.client.post(RdiUrl.ResetPipeline, {});
       const actionId = response.data.action_id;
 
       return await this.pollActionStatus(actionId, PipelineActions.Reset);
@@ -230,11 +236,13 @@ export class ApiRdiClient extends RdiClient {
 
   async getStatistics(sections?: string): Promise<RdiStatisticsResult> {
     try {
-      const { data } = await this.client.get(RdiUrl.GetStatistics, { params: { sections } });
+      const { data } = await this.client.get(RdiUrl.GetStatistics, {
+        params: { sections },
+      });
 
       return {
         status: RdiStatisticsStatus.Success,
-        data: plainToClass(RdiStatisticsData, convertKeysToCamelCase(data)),
+        data: plainToInstance(RdiStatisticsData, convertKeysToCamelCase(data)),
       };
     } catch (e) {
       const message: string = parseErrorMessage(e);
@@ -253,15 +261,18 @@ export class ApiRdiClient extends RdiClient {
 
   async connect(): Promise<void> {
     try {
-      const response = await this.client.post(
-        RdiUrl.Login,
-        { username: this.rdi.username, password: this.rdi.password },
-      );
+      const response = await this.client.post(RdiUrl.Login, {
+        username: this.rdi.username,
+        password: this.rdi.password,
+      });
       const accessToken = response.data.access_token;
-      const { exp } = JSON.parse(Buffer.from(accessToken.split('.')[1], 'base64').toString());
+      const { exp } = JSON.parse(
+        Buffer.from(accessToken.split('.')[1], 'base64').toString(),
+      );
 
       this.auth = { jwt: accessToken, exp };
-      this.client.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      this.client.defaults.headers.common['Authorization'] =
+        `Bearer ${accessToken}`;
     } catch (e) {
       throw wrapRdiPipelineError(e);
     }
@@ -275,24 +286,29 @@ export class ApiRdiClient extends RdiClient {
     }
   }
 
-  private async pollActionStatus(actionId: string, action: PipelineActions, abortSignal?: AbortSignal): Promise<any> {
+  private async pollActionStatus(
+    actionId: string,
+    action: PipelineActions,
+    abortSignal?: AbortSignal,
+  ): Promise<any> {
     await new Promise((resolve) => setTimeout(resolve, WAIT_BEFORE_POLLING));
 
     const startTime = Date.now();
 
     while (true) {
       if (abortSignal?.aborted) {
-        throw new RdiPipelineInternalServerErrorException('Operation is aborted');
+        throw new RdiPipelineInternalServerErrorException(
+          'Operation is aborted',
+        );
       }
       if (Date.now() - startTime > MAX_POLLING_TIME) {
         throw new RdiPipelineTimeoutException();
       }
 
       try {
-        const response = await this.client.get(
-          `${RdiUrl.Action}/${actionId}`,
-          { signal: abortSignal },
-        );
+        const response = await this.client.get(`${RdiUrl.Action}/${actionId}`, {
+          signal: abortSignal,
+        });
         const { status, data, error } = response.data;
 
         if (status === 'failed') {

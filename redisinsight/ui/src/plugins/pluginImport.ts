@@ -2,7 +2,8 @@
 /* eslint-disable no-restricted-globals */
 // @ts-nocheck
 export const importPluginScript = () => (config) => {
-  const { scriptSrc, stylesSrc, iframeId, modules, baseUrl, appVersion } = JSON.parse(config)
+  const { scriptSrc, stylesSrc, iframeId, modules, baseUrl, appVersion } =
+    JSON.parse(config)
   const events = {
     ERROR: 'error',
     LOADED: 'loaded',
@@ -11,7 +12,7 @@ export const importPluginScript = () => (config) => {
     EXECUTE_REDIS_COMMAND: 'executeRedisCommand',
     GET_STATE: 'getState',
     SET_STATE: 'setState',
-    FORMAT_REDIS_REPLY: 'formatRedisReply'
+    FORMAT_REDIS_REPLY: 'formatRedisReply',
   }
 
   Object.defineProperty(globalThis, 'state', {
@@ -19,9 +20,9 @@ export const importPluginScript = () => (config) => {
       callbacks: { counter: 0 },
       pluginState: {},
       config: { scriptSrc, stylesSrc, iframeId, baseUrl, appVersion },
-      modules
+      modules,
     },
-    writable: false
+    writable: false,
   })
 
   const { callbacks } = globalThis.state
@@ -48,7 +49,7 @@ export const importPluginScript = () => (config) => {
           iframeId,
           error,
         })
-      }
+      },
     }
   }
 
@@ -57,7 +58,7 @@ export const importPluginScript = () => (config) => {
       events.EXECUTE_REDIS_COMMAND,
       events.GET_STATE,
       events.SET_STATE,
-      events.FORMAT_REDIS_REPLY
+      events.FORMAT_REDIS_REPLY,
     ]
     globalThis.onmessage = (e) => {
       // eslint-disable-next-line sonarjs/no-collapsible-if
@@ -94,7 +95,7 @@ export const importPluginScript = () => (config) => {
       sendMessageToMain({
         event: 'heightChanged',
         iframeId,
-        height: document.body.offsetHeight
+        height: document.body.offsetHeight,
       })
     })
 
@@ -115,7 +116,9 @@ export const importPluginScript = () => (config) => {
 export const prepareIframeHtml = (config) => {
   const importPluginScriptInner: string = importPluginScript().toString()
   const { scriptSrc, scriptPath, stylesSrc, bodyClass } = config
-  const stylesLinks = stylesSrc.map((styleSrc: string) => `<link rel="stylesheet" href=${styleSrc} />`).join('')
+  const stylesLinks = stylesSrc
+    .map((styleSrc: string) => `<link rel="stylesheet" href=${styleSrc} />`)
+    .join('')
   const configString = JSON.stringify(config)
 
   return `

@@ -1,6 +1,10 @@
 import { cloneDeep } from 'lodash'
 import MockedSocket from 'socket.io-mock'
-import { cleanup, mockedStore, initialStateDefault } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  mockedStore,
+  initialStateDefault,
+} from 'uiSrc/utils/test-utils'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import reducer, {
   initialState,
@@ -120,7 +124,7 @@ describe('monitor slice', () => {
       const state: typeof initialState = {
         ...initialState,
         isRunning: true,
-        isSaveToFile: true
+        isSaveToFile: true,
       }
 
       // Act
@@ -144,8 +148,8 @@ describe('monitor slice', () => {
         timestamp: {
           ...initialState.timestamp,
           start: MOCK_TIMESTAMP,
-          unPaused: MOCK_TIMESTAMP
-        }
+          unPaused: MOCK_TIMESTAMP,
+        },
       }
 
       // Act
@@ -165,15 +169,18 @@ describe('monitor slice', () => {
     it('should properly set new state', () => {
       // Arrange
       const diffTimestamp = 5
-      const intermediateState = reducer(initialState, setStartTimestamp(MOCK_TIMESTAMP - diffTimestamp))
+      const intermediateState = reducer(
+        initialState,
+        setStartTimestamp(MOCK_TIMESTAMP - diffTimestamp),
+      )
       const state: typeof intermediateState = {
         ...intermediateState,
         isPaused: true,
         timestamp: {
           ...intermediateState.timestamp,
           paused: MOCK_TIMESTAMP,
-          duration: diffTimestamp
-        }
+          duration: diffTimestamp,
+        },
       }
 
       // Act
@@ -194,7 +201,7 @@ describe('monitor slice', () => {
       // Arrange
       const state: typeof initialState = {
         ...initialState,
-        isRunning: false
+        isRunning: false,
       }
 
       // Act
@@ -216,7 +223,7 @@ describe('monitor slice', () => {
       const state: typeof initialState = {
         ...initialState,
         socket,
-        isStarted: true
+        isStarted: true,
       }
 
       // Act
@@ -234,25 +241,27 @@ describe('monitor slice', () => {
 
   describe('concatMonitorItems', () => {
     it('should properly set payload to items', () => {
-      const payload = [{
-        time: '1',
-        args: ['monitor'],
-        source: 'source',
-        database: 0,
-        shardOptions: { host: '127.0.0.1', port: 6379 }
-      },
-      {
-        time: '2',
-        args: ['get'],
-        source: 'source',
-        database: 0,
-        shardOptions: { host: '127.0.0.1', port: 6379 }
-      }]
+      const payload = [
+        {
+          time: '1',
+          args: ['monitor'],
+          source: 'source',
+          database: 0,
+          shardOptions: { host: '127.0.0.1', port: 6379 },
+        },
+        {
+          time: '2',
+          args: ['get'],
+          source: 'source',
+          database: 0,
+          shardOptions: { host: '127.0.0.1', port: 6379 },
+        },
+      ]
 
       // Arrange
       const state: typeof initialState = {
         ...initialState,
-        items: payload
+        items: payload,
       }
 
       // Act
@@ -273,7 +282,7 @@ describe('monitor slice', () => {
       // Arrange
       const state: typeof initialState = {
         ...initialState,
-        items: new Array(MONITOR_ITEMS_MAX_COUNT)
+        items: new Array(MONITOR_ITEMS_MAX_COUNT),
       }
 
       // Act

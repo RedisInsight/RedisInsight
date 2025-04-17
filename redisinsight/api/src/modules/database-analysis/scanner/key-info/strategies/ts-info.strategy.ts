@@ -6,10 +6,9 @@ import { RedisClient } from 'src/modules/redis/client';
 export class TsInfoStrategy extends AbstractInfoStrategy {
   async getLength(client: RedisClient, key: RedisString): Promise<number> {
     const { totalsamples } = convertArrayReplyToObject(
-      await client.sendCommand(
-        ['ts.info', key],
-        { replyEncoding: 'utf8' },
-      ) as string[],
+      (await client.sendCommand(['ts.info', key], {
+        replyEncoding: 'utf8',
+      })) as string[],
     );
 
     return totalsamples;

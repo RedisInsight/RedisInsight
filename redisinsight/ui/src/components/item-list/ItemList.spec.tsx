@@ -6,7 +6,7 @@ import ItemList, { Props } from './ItemList'
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
-  sendEventTelemetry: jest.fn()
+  sendEventTelemetry: jest.fn(),
 }))
 
 const columnsMock: EuiTableFieldDataColumnType<Instance>[] = [
@@ -17,8 +17,8 @@ const columnsMock: EuiTableFieldDataColumnType<Instance>[] = [
     dataType: 'string',
     sortable: true,
     width: '170px',
-    truncateText: true
-  }
+    truncateText: true,
+  },
 ]
 
 const mockedProps: Props<Instance> = {
@@ -35,7 +35,7 @@ const mockedProps: Props<Instance> = {
       nameFromProvider: null,
       modules: [],
       version: null,
-      lastConnection: new Date('2021-04-22T09:03:56.917Z')
+      lastConnection: new Date('2021-04-22T09:03:56.917Z'),
     },
     {
       id: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4',
@@ -48,8 +48,8 @@ const mockedProps: Props<Instance> = {
       nameFromProvider: null,
       modules: [],
       version: null,
-      tls: true
-    }
+      tls: true,
+    },
   ],
   width: 0,
   editedInstance: null,
@@ -60,8 +60,8 @@ const mockedProps: Props<Instance> = {
   onTableChange: () => {},
   sort: {
     field: 'subscriptionId',
-    direction: 'asc'
-  }
+    direction: 'asc',
+  },
 }
 
 describe('ItemList', () => {
@@ -143,7 +143,9 @@ describe('ItemList', () => {
   })
 
   it('should add hideSelectableCheckboxes class when isSelectable = false', async () => {
-    const { container } = render(<ItemList {...mockedProps} hideSelectableCheckboxes />)
+    const { container } = render(
+      <ItemList {...mockedProps} hideSelectableCheckboxes />,
+    )
     const div = container.querySelector('.itemList')
 
     expect(div).toHaveClass('hideSelectableCheckboxes')

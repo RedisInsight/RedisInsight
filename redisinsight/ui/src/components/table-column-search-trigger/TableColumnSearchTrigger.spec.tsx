@@ -8,24 +8,16 @@ const mockedProps = mock<Props>()
 describe('TableColumnSearchTrigger', () => {
   it('should render', () => {
     expect(
-      render(<TableColumnSearchTrigger {...instance(mockedProps)} />)
+      render(<TableColumnSearchTrigger {...instance(mockedProps)} />),
     ).toBeTruthy()
   })
 
   it('should change search value', () => {
-    render(
-      <TableColumnSearchTrigger
-        {...instance(mockedProps)}
-        isOpen
-      />
-    )
+    render(<TableColumnSearchTrigger {...instance(mockedProps)} isOpen />)
     const searchInput = screen.getByTestId('search')
-    fireEvent.change(
-      searchInput,
-      {
-        target: { value: '*1*' }
-      }
-    )
+    fireEvent.change(searchInput, {
+      target: { value: '*1*' },
+    })
     expect(searchInput).toHaveValue('*1*')
   })
 })

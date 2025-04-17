@@ -1,8 +1,17 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { AnyAction } from '@reduxjs/toolkit'
-import { cleanup, clearStoreActions, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
-import { MOCK_RDI_PIPELINE_DATA, MOCK_RDI_PIPELINE_JSON_DATA, MOCK_RDI_PIPELINE_STATUS_DATA } from 'uiSrc/mocks/data/rdi'
+import {
+  cleanup,
+  clearStoreActions,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
+import {
+  MOCK_RDI_PIPELINE_DATA,
+  MOCK_RDI_PIPELINE_JSON_DATA,
+  MOCK_RDI_PIPELINE_STATUS_DATA,
+} from 'uiSrc/mocks/data/rdi'
 import reducer, {
   initialState,
   getPipeline,
@@ -44,7 +53,11 @@ import reducer, {
   setPipelineJobs,
 } from 'uiSrc/slices/rdi/pipeline'
 import { apiService } from 'uiSrc/services'
-import { addErrorNotification, addInfiniteNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import {
+  addErrorNotification,
+  addInfiniteNotification,
+  addMessageNotification,
+} from 'uiSrc/slices/app/notifications'
 import { INFINITE_MESSAGES } from 'uiSrc/components/notifications/components'
 import { FileChangeType, PipelineAction } from 'uiSrc/slices/interfaces'
 import { parseJMESPathFunctions } from 'uiSrc/utils'
@@ -87,7 +100,7 @@ describe('rdi pipe slice', () => {
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -102,13 +115,16 @@ describe('rdi pipe slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, setPipeline(MOCK_RDI_PIPELINE_DATA))
+      const nextState = reducer(
+        initialState,
+        setPipeline(MOCK_RDI_PIPELINE_DATA),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -125,13 +141,16 @@ describe('rdi pipe slice', () => {
         jobs: MOCK_RDI_PIPELINE_DATA.jobs,
       }
       // Act
-      const nextState = reducer(initialState, getPipelineSuccess(MOCK_RDI_PIPELINE_DATA))
+      const nextState = reducer(
+        initialState,
+        getPipelineSuccess(MOCK_RDI_PIPELINE_DATA),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -145,13 +164,16 @@ describe('rdi pipe slice', () => {
         config: MOCK_RDI_PIPELINE_DATA.config,
       }
       // Act
-      const nextState = reducer(initialState, setPipelineConfig(MOCK_RDI_PIPELINE_DATA.config))
+      const nextState = reducer(
+        initialState,
+        setPipelineConfig(MOCK_RDI_PIPELINE_DATA.config),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -165,13 +187,16 @@ describe('rdi pipe slice', () => {
         jobs: MOCK_RDI_PIPELINE_DATA.jobs,
       }
       // Act
-      const nextState = reducer(initialState, setPipelineJobs(MOCK_RDI_PIPELINE_DATA.jobs))
+      const nextState = reducer(
+        initialState,
+        setPipelineJobs(MOCK_RDI_PIPELINE_DATA.jobs),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -194,7 +219,7 @@ describe('rdi pipe slice', () => {
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -215,7 +240,7 @@ describe('rdi pipe slice', () => {
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -236,7 +261,7 @@ describe('rdi pipe slice', () => {
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -257,7 +282,7 @@ describe('rdi pipe slice', () => {
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -270,7 +295,7 @@ describe('rdi pipe slice', () => {
         ...initialState,
         strategies: {
           ...initialState.strategies,
-          loading: true
+          loading: true,
         },
       }
 
@@ -281,7 +306,7 @@ describe('rdi pipe slice', () => {
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -300,13 +325,16 @@ describe('rdi pipe slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, getPipelineStrategiesSuccess(mockData))
+      const nextState = reducer(
+        initialState,
+        getPipelineStrategiesSuccess(mockData),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -325,13 +353,16 @@ describe('rdi pipe slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, getPipelineStrategiesFailure(mockError))
+      const nextState = reducer(
+        initialState,
+        getPipelineStrategiesFailure(mockError),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -355,7 +386,7 @@ describe('rdi pipe slice', () => {
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -379,7 +410,7 @@ describe('rdi pipe slice', () => {
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(initialState)
     })
@@ -397,13 +428,16 @@ describe('rdi pipe slice', () => {
       }
 
       // Act
-      const nextState = reducer({ ...initialState, changes: mockChangedFiles1 }, setChangedFiles(mockChangedFiles2))
+      const nextState = reducer(
+        { ...initialState, changes: mockChangedFiles1 },
+        setChangedFiles(mockChangedFiles2),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -412,23 +446,25 @@ describe('rdi pipe slice', () => {
   describe('setJobFunctions', () => {
     it('should set job functions as monaco compilation items', () => {
       const summaryValue = 'summary'
-      const argumentsValue = [{
-        name: 'encoded',
-        type: 'string',
-        display_text: 'base64 encoded string',
-        optional: false
-      }]
+      const argumentsValue = [
+        {
+          name: 'encoded',
+          type: 'string',
+          display_text: 'base64 encoded string',
+          optional: false,
+        },
+      ]
       const mockData = {
         function: {
           summary: summaryValue,
           arguments: argumentsValue,
-        }
+        },
       }
 
       // Arrange
       const state = {
         ...initialState,
-        jobFunctions: parseJMESPathFunctions(mockData)
+        jobFunctions: parseJMESPathFunctions(mockData),
       }
 
       // Act
@@ -438,7 +474,7 @@ describe('rdi pipe slice', () => {
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineSelector(rootState)).toEqual(state)
     })
@@ -459,7 +495,7 @@ describe('rdi pipe slice', () => {
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineStatusSelector(rootState)).toEqual(state)
     })
@@ -482,7 +518,7 @@ describe('rdi pipe slice', () => {
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineStatusSelector(rootState)).toEqual(state)
     })
@@ -505,7 +541,7 @@ describe('rdi pipe slice', () => {
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineStatusSelector(rootState)).toEqual(state)
     })
@@ -522,13 +558,16 @@ describe('rdi pipe slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, triggerPipelineAction(PipelineAction.Start))
+      const nextState = reducer(
+        initialState,
+        triggerPipelineAction(PipelineAction.Start),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineActionSelector(rootState)).toEqual(state)
     })
@@ -550,7 +589,7 @@ describe('rdi pipe slice', () => {
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineActionSelector(rootState)).toEqual(state)
     })
@@ -567,13 +606,16 @@ describe('rdi pipe slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, triggerPipelineActionFailure(error))
+      const nextState = reducer(
+        initialState,
+        triggerPipelineActionFailure(error),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
         rdi: {
           pipeline: nextState,
-        }
+        },
       })
       expect(rdiPipelineActionSelector(rootState)).toEqual(state)
     })
@@ -589,15 +631,13 @@ describe('rdi pipe slice', () => {
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchRdiPipeline('123')
-        )
+        await store.dispatch<any>(fetchRdiPipeline('123'))
 
         // Assert
         const expectedActions = [
           getPipeline(),
           getPipelineSuccess(MOCK_RDI_PIPELINE_DATA),
-          setChangedFiles({})
+          setChangedFiles({}),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -615,15 +655,13 @@ describe('rdi pipe slice', () => {
         apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchRdiPipeline('123')
-        )
+        await store.dispatch<any>(fetchRdiPipeline('123'))
 
         // Assert
         const expectedActions = [
           getPipeline(),
           addErrorNotification(responsePayload as AxiosError),
-          getPipelineFailure(errorMessage)
+          getPipelineFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -638,9 +676,7 @@ describe('rdi pipe slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          deployPipelineAction('123', mockData)
-        )
+        await store.dispatch<any>(deployPipelineAction('123', mockData))
 
         // Assert
         const expectedActions = [
@@ -650,7 +686,9 @@ describe('rdi pipe slice', () => {
           addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_DEPLOY_PIPELINE()),
         ]
 
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(store.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
 
       it('failed to post data', async () => {
@@ -666,15 +704,13 @@ describe('rdi pipe slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          deployPipelineAction('123', mockData)
-        )
+        await store.dispatch<any>(deployPipelineAction('123', mockData))
 
         // Assert
         const expectedActions = [
           deployPipeline(),
           addErrorNotification(responsePayload as AxiosError),
-          deployPipelineFailure()
+          deployPipelineFailure(),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -689,9 +725,7 @@ describe('rdi pipe slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          resetPipelineAction('123', cb, cb)
-        )
+        await store.dispatch<any>(resetPipelineAction('123', cb, cb))
 
         // Assert
         const expectedActions = [
@@ -700,7 +734,9 @@ describe('rdi pipe slice', () => {
           addMessageNotification(successMessages.SUCCESS_RESET_PIPELINE()),
         ]
 
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(store.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
 
       it('failed to post data', async () => {
@@ -716,15 +752,13 @@ describe('rdi pipe slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          resetPipelineAction('123', cb, cb)
-        )
+        await store.dispatch<any>(resetPipelineAction('123', cb, cb))
 
         // Assert
         const expectedActions = [
           triggerPipelineAction(PipelineAction.Reset),
           addErrorNotification(responsePayload as AxiosError),
-          triggerPipelineActionFailure(errorMessage)
+          triggerPipelineActionFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -739,9 +773,7 @@ describe('rdi pipe slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          stopPipelineAction('123', cb, cb)
-        )
+        await store.dispatch<any>(stopPipelineAction('123', cb, cb))
 
         // Assert
         const expectedActions = [
@@ -749,7 +781,9 @@ describe('rdi pipe slice', () => {
           triggerPipelineActionSuccess(),
         ]
 
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(store.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
 
       it('failed to post data', async () => {
@@ -765,15 +799,13 @@ describe('rdi pipe slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          stopPipelineAction('123', cb, cb)
-        )
+        await store.dispatch<any>(stopPipelineAction('123', cb, cb))
 
         // Assert
         const expectedActions = [
           triggerPipelineAction(PipelineAction.Stop),
           addErrorNotification(responsePayload as AxiosError),
-          triggerPipelineActionFailure(errorMessage)
+          triggerPipelineActionFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -788,9 +820,7 @@ describe('rdi pipe slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          startPipelineAction('123', cb, cb)
-        )
+        await store.dispatch<any>(startPipelineAction('123', cb, cb))
 
         // Assert
         const expectedActions = [
@@ -798,7 +828,9 @@ describe('rdi pipe slice', () => {
           triggerPipelineActionSuccess(),
         ]
 
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(store.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
 
       it('failed to post data', async () => {
@@ -814,15 +846,13 @@ describe('rdi pipe slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          startPipelineAction('123', cb, cb)
-        )
+        await store.dispatch<any>(startPipelineAction('123', cb, cb))
 
         // Assert
         const expectedActions = [
           triggerPipelineAction(PipelineAction.Start),
           addErrorNotification(responsePayload as AxiosError),
-          triggerPipelineActionFailure(errorMessage)
+          triggerPipelineActionFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -837,14 +867,10 @@ describe('rdi pipe slice', () => {
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchRdiPipelineSchema('123')
-        )
+        await store.dispatch<any>(fetchRdiPipelineSchema('123'))
 
         // Assert
-        const expectedActions = [
-          setPipelineSchema(data),
-        ]
+        const expectedActions = [setPipelineSchema(data)]
 
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -861,14 +887,10 @@ describe('rdi pipe slice', () => {
         apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchRdiPipelineSchema('123')
-        )
+        await store.dispatch<any>(fetchRdiPipelineSchema('123'))
 
         // Assert
-        const expectedActions = [
-          setPipelineSchema(null),
-        ]
+        const expectedActions = [setPipelineSchema(null)]
 
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -882,14 +904,10 @@ describe('rdi pipe slice', () => {
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchRdiPipelineJobFunctions('123')
-        )
+        await store.dispatch<any>(fetchRdiPipelineJobFunctions('123'))
 
         // Assert
-        const expectedActions = [
-          setJobFunctions(data),
-        ]
+        const expectedActions = [setJobFunctions(data)]
 
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -906,9 +924,7 @@ describe('rdi pipe slice', () => {
         apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchRdiPipelineJobFunctions('123')
-        )
+        await store.dispatch<any>(fetchRdiPipelineJobFunctions('123'))
 
         expect(store.getActions().length).toEqual(0)
       })
@@ -916,16 +932,16 @@ describe('rdi pipe slice', () => {
 
     describe('fetchPipelineStrategies', () => {
       it('succeed to fetch data', async () => {
-        const data = { strategies: [{ strategy: 'ingest', databases: ['oracle'] }] }
+        const data = {
+          strategies: [{ strategy: 'ingest', databases: ['oracle'] }],
+        }
 
         const responsePayload = { data, status: 200 }
 
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchPipelineStrategies('123')
-        )
+        await store.dispatch<any>(fetchPipelineStrategies('123'))
 
         // Assert
         const expectedActions = [
@@ -948,9 +964,7 @@ describe('rdi pipe slice', () => {
         apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchPipelineStrategies('123')
-        )
+        await store.dispatch<any>(fetchPipelineStrategies('123'))
 
         // Assert
         const expectedActions = [
@@ -975,9 +989,7 @@ describe('rdi pipe slice', () => {
         apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchJobTemplate('123', 'db_type')
-        )
+        await store.dispatch<any>(fetchJobTemplate('123', 'db_type'))
 
         // Assert
         const expectedActions = [
@@ -1002,7 +1014,7 @@ describe('rdi pipe slice', () => {
 
         // Act
         await store.dispatch<any>(
-          fetchConfigTemplate('123', 'ingest', 'db_type')
+          fetchConfigTemplate('123', 'ingest', 'db_type'),
         )
 
         // Assert
@@ -1022,9 +1034,7 @@ describe('rdi pipe slice', () => {
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          getPipelineStatusAction('123')
-        )
+        await store.dispatch<any>(getPipelineStatusAction('123'))
 
         // Assert
         const expectedActions = [
@@ -1047,14 +1057,12 @@ describe('rdi pipe slice', () => {
         apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          getPipelineStatusAction('123')
-        )
+        await store.dispatch<any>(getPipelineStatusAction('123'))
 
         // Assert
         const expectedActions = [
           getPipelineStatus(),
-          getPipelineStatusFailure(errorMessage)
+          getPipelineStatusFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

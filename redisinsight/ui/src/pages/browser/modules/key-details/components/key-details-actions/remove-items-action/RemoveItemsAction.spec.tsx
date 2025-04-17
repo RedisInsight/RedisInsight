@@ -7,6 +7,8 @@ const mockedProps = mock<Props>()
 
 describe('RemoveItemsAction', () => {
   it('should render', () => {
-    expect(render(<RemoveItemsAction {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<RemoveItemsAction {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 })

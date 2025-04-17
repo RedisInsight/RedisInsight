@@ -11,7 +11,11 @@ import {
   EuiIcon,
 } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { resetCliHelperSettings, toggleCliHelper, toggleHideCliHelper } from 'uiSrc/slices/cli/cli-settings'
+import {
+  resetCliHelperSettings,
+  toggleCliHelper,
+  toggleHideCliHelper,
+} from 'uiSrc/slices/cli/cli-settings'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
@@ -25,8 +29,8 @@ const CommandHelperHeader = () => {
     sendEventTelemetry({
       event: TelemetryEvent.COMMAND_HELPER_CLOSED,
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
     dispatch(resetCliHelperSettings())
   }
@@ -35,8 +39,8 @@ const CommandHelperHeader = () => {
     sendEventTelemetry({
       event: TelemetryEvent.COMMAND_HELPER_MINIMIZED,
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
     dispatch(toggleCliHelper())
     dispatch(toggleHideCliHelper())

@@ -53,7 +53,9 @@ describe('RdiPipelineService', () => {
 
       const result = await service.getSchema(rdiClientMetadata);
 
-      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(
+        rdiClientMetadata,
+      );
       expect(rdiClient.getSchema).toHaveBeenCalled();
       expect(result).toEqual(schema);
     });
@@ -68,7 +70,9 @@ describe('RdiPipelineService', () => {
 
       const result = await service.getPipeline(rdiClientMetadata);
 
-      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(
+        rdiClientMetadata,
+      );
       expect(result).toEqual(pipeline);
     });
 
@@ -80,19 +84,26 @@ describe('RdiPipelineService', () => {
 
       await service.getPipeline(rdiClientMetadata);
 
-      expect(analytics.sendRdiPipelineFetched)
-        .toHaveBeenCalledWith(mockSessionMetadata, rdiClientMetadata.id, pipeline);
+      expect(analytics.sendRdiPipelineFetched).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        rdiClientMetadata.id,
+        pipeline,
+      );
     });
 
-    it('should call sendRdiPipelineFetchFailed on the RdiPipelineAnalytics and throw an error if unsuccessful',
-      async () => {
-        const error = new Error('Failed to get pipeline');
-        rdiClientProvider.getOrCreate.mockRejectedValue(error);
+    it('should call sendRdiPipelineFetchFailed on the RdiPipelineAnalytics and throw an error if unsuccessful', async () => {
+      const error = new Error('Failed to get pipeline');
+      rdiClientProvider.getOrCreate.mockRejectedValue(error);
 
-        await expect(service.getPipeline(rdiClientMetadata)).rejects.toThrow(wrapHttpError(error));
-        expect(analytics.sendRdiPipelineFetchFailed)
-          .toHaveBeenCalledWith(mockSessionMetadata, error, rdiClientMetadata.id);
-      });
+      await expect(service.getPipeline(rdiClientMetadata)).rejects.toThrow(
+        wrapHttpError(error),
+      );
+      expect(analytics.sendRdiPipelineFetchFailed).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        error,
+        rdiClientMetadata.id,
+      );
+    });
   });
 
   describe('dryRunJob', () => {
@@ -102,7 +113,9 @@ describe('RdiPipelineService', () => {
 
       await service.dryRunJob(rdiClientMetadata, mockRdiDryRunJob);
 
-      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(
+        rdiClientMetadata,
+      );
     });
 
     it('should call dryRunJob on the client with the correct dto', async () => {
@@ -159,7 +172,9 @@ describe('RdiPipelineService', () => {
 
       await service.deploy(rdiClientMetadata, dto);
 
-      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(
+        rdiClientMetadata,
+      );
       expect(client.deploy).toHaveBeenCalledWith(dto);
     });
 
@@ -178,8 +193,10 @@ describe('RdiPipelineService', () => {
 
       await service.deploy(rdiClientMetadata, dto);
 
-      expect(analytics.sendRdiPipelineDeployed)
-        .toHaveBeenCalledWith(mockSessionMetadata, rdiClientMetadata.id);
+      expect(analytics.sendRdiPipelineDeployed).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        rdiClientMetadata.id,
+      );
     });
 
     it('should call sendRdiPipelineDeployFailed on analytics if deploy fails', async () => {
@@ -190,8 +207,11 @@ describe('RdiPipelineService', () => {
       try {
         await service.deploy(rdiClientMetadata, dto);
       } catch (e) {
-        expect(analytics.sendRdiPipelineDeployFailed)
-          .toHaveBeenCalledWith(mockSessionMetadata, error, rdiClientMetadata.id);
+        expect(analytics.sendRdiPipelineDeployFailed).toHaveBeenCalledWith(
+          mockSessionMetadata,
+          error,
+          rdiClientMetadata.id,
+        );
       }
     });
 
@@ -201,7 +221,9 @@ describe('RdiPipelineService', () => {
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
       client.deploy.mockRejectedValueOnce(error);
 
-      await expect(service.deploy(rdiClientMetadata, dto)).rejects.toThrow(error);
+      await expect(service.deploy(rdiClientMetadata, dto)).rejects.toThrow(
+        error,
+      );
     });
   });
 
@@ -214,7 +236,9 @@ describe('RdiPipelineService', () => {
 
       await service.startPipeline(rdiClientMetadata);
 
-      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(
+        rdiClientMetadata,
+      );
       expect(client.startPipeline).toHaveBeenCalled();
     });
 
@@ -224,7 +248,9 @@ describe('RdiPipelineService', () => {
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
       client.startPipeline.mockRejectedValueOnce(error);
 
-      await expect(service.startPipeline(rdiClientMetadata)).rejects.toThrow(error);
+      await expect(service.startPipeline(rdiClientMetadata)).rejects.toThrow(
+        error,
+      );
     });
   });
 
@@ -237,7 +263,9 @@ describe('RdiPipelineService', () => {
 
       await service.stopPipeline(rdiClientMetadata);
 
-      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(
+        rdiClientMetadata,
+      );
       expect(client.stopPipeline).toHaveBeenCalled();
     });
 
@@ -247,7 +275,9 @@ describe('RdiPipelineService', () => {
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
       client.stopPipeline.mockRejectedValueOnce(error);
 
-      await expect(service.stopPipeline(rdiClientMetadata)).rejects.toThrow(error);
+      await expect(service.stopPipeline(rdiClientMetadata)).rejects.toThrow(
+        error,
+      );
     });
   });
 
@@ -260,7 +290,9 @@ describe('RdiPipelineService', () => {
 
       await service.resetPipeline(rdiClientMetadata);
 
-      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(
+        rdiClientMetadata,
+      );
       expect(client.resetPipeline).toHaveBeenCalled();
     });
 
@@ -270,7 +302,9 @@ describe('RdiPipelineService', () => {
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
       client.resetPipeline.mockRejectedValueOnce(error);
 
-      await expect(service.resetPipeline(rdiClientMetadata)).rejects.toThrow(error);
+      await expect(service.resetPipeline(rdiClientMetadata)).rejects.toThrow(
+        error,
+      );
     });
   });
 
@@ -282,7 +316,9 @@ describe('RdiPipelineService', () => {
 
       await service.testConnections(rdiClientMetadata, config);
 
-      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(
+        rdiClientMetadata,
+      );
     });
 
     it('should call testConnections on the client with the correct config', async () => {
@@ -315,7 +351,9 @@ describe('RdiPipelineService', () => {
 
       await service.getStrategies(rdiClientMetadata);
 
-      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(
+        rdiClientMetadata,
+      );
     });
 
     it('should call getStrategies on the client', async () => {
@@ -348,7 +386,9 @@ describe('RdiPipelineService', () => {
 
       await service.getConfigTemplate(rdiClientMetadata, pipelineType, dbType);
 
-      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(
+        rdiClientMetadata,
+      );
     });
 
     it('should call getConfigTemplate on the client with the correct arguments', async () => {
@@ -359,7 +399,10 @@ describe('RdiPipelineService', () => {
 
       await service.getConfigTemplate(rdiClientMetadata, pipelineType, dbType);
 
-      expect(client.getConfigTemplate).toHaveBeenCalledWith(pipelineType, dbType);
+      expect(client.getConfigTemplate).toHaveBeenCalledWith(
+        pipelineType,
+        dbType,
+      );
     });
 
     it('should return the result of getConfigTemplate on the client', async () => {
@@ -369,7 +412,11 @@ describe('RdiPipelineService', () => {
       const client = generateMockRdiClient(rdiClientMetadata);
       rdiClientProvider.getOrCreate.mockResolvedValue(client);
       client.getConfigTemplate.mockResolvedValue(response);
-      const result = await service.getConfigTemplate(rdiClientMetadata, pipelineType, dbType);
+      const result = await service.getConfigTemplate(
+        rdiClientMetadata,
+        pipelineType,
+        dbType,
+      );
 
       expect(result).toBe(response);
     });
@@ -382,7 +429,9 @@ describe('RdiPipelineService', () => {
 
       await service.getPipelineStatus(rdiClientMetadata);
 
-      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(
+        rdiClientMetadata,
+      );
     });
 
     it('should call getPipelineStatus on the client', async () => {
@@ -413,7 +462,9 @@ describe('RdiPipelineService', () => {
 
       await service.getJobFunctions(rdiClientMetadata);
 
-      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(rdiClientMetadata);
+      expect(rdiClientProvider.getOrCreate).toHaveBeenCalledWith(
+        rdiClientMetadata,
+      );
     });
 
     it('should call getJobFunctions on the client', async () => {

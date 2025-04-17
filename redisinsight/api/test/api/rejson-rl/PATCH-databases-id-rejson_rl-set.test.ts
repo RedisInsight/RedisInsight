@@ -8,13 +8,16 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn
+  validateApiCall,
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).patch(`/${constants.API.DATABASES}/${instanceId}/rejson-rl/set`);
+  request(server).patch(
+    `/${constants.API.DATABASES}/${instanceId}/rejson-rl/set`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
@@ -56,52 +59,78 @@ describe('PATCH /databases/:instanceId/rejson-rl/set', () => {
             data: [...Buffer.from(constants.TEST_REJSON_KEY_1)],
           },
           data: JSON.stringify(''),
-          path: 'test'
+          path: 'test',
         },
         statusCode: 200,
         after: async () => {
-          expect(JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '$'))[0])
-            .to.eql({ test: '' });
-        }
+          expect(
+            JSON.parse(
+              await rte.data.executeCommand(
+                'json.get',
+                constants.TEST_REJSON_KEY_1,
+                '$',
+              ),
+            )[0],
+          ).to.eql({ test: '' });
+        },
       },
       {
         name: 'Should modify item with null value',
         data: {
           keyName: constants.TEST_REJSON_KEY_1,
           data: JSON.stringify(null),
-          path: 'test'
+          path: 'test',
         },
         statusCode: 200,
         after: async () => {
-          expect(JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '$'))[0])
-            .to.eql({ test: null });
-        }
+          expect(
+            JSON.parse(
+              await rte.data.executeCommand(
+                'json.get',
+                constants.TEST_REJSON_KEY_1,
+                '$',
+              ),
+            )[0],
+          ).to.eql({ test: null });
+        },
       },
       {
         name: 'Should modify item with array in the root',
         data: {
           keyName: constants.TEST_REJSON_KEY_1,
           data: JSON.stringify([1, 2]),
-          path: '$'
+          path: '$',
         },
         statusCode: 200,
         after: async () => {
-          expect(JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '$'))[0])
-            .to.eql([1, 2]);
-        }
+          expect(
+            JSON.parse(
+              await rte.data.executeCommand(
+                'json.get',
+                constants.TEST_REJSON_KEY_1,
+                '$',
+              ),
+            )[0],
+          ).to.eql([1, 2]);
+        },
       },
       {
         name: 'Should modify item with object in the root',
         data: {
           keyName: constants.TEST_REJSON_KEY_1,
           data: JSON.stringify({ test: 'test' }),
-          path: '$'
+          path: '$',
         },
         statusCode: 200,
         after: async () => {
-          expect(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '.'))
-            .to.eql(JSON.stringify({ test: 'test' }));
-        }
+          expect(
+            await rte.data.executeCommand(
+              'json.get',
+              constants.TEST_REJSON_KEY_1,
+              '.',
+            ),
+          ).to.eql(JSON.stringify({ test: 'test' }));
+        },
       },
       {
         name: 'Should return NotFound error if instance id does not exists',
@@ -109,7 +138,7 @@ describe('PATCH /databases/:instanceId/rejson-rl/set', () => {
         data: {
           keyName: constants.TEST_REJSON_KEY_1,
           data: JSON.stringify(constants.getRandomString()),
-          path: '.'
+          path: '.',
         },
         statusCode: 404,
         responseBody: {
@@ -132,13 +161,18 @@ describe('PATCH /databases/:instanceId/rejson-rl/set', () => {
         data: {
           keyName: constants.TEST_REJSON_KEY_1,
           data: JSON.stringify([1, 2]),
-          path: '.'
+          path: '.',
         },
         statusCode: 200,
         after: async () => {
-          expect(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '.'))
-            .to.eql(JSON.stringify([1, 2]));
-        }
+          expect(
+            await rte.data.executeCommand(
+              'json.get',
+              constants.TEST_REJSON_KEY_1,
+              '.',
+            ),
+          ).to.eql(JSON.stringify([1, 2]));
+        },
       },
       {
         name: 'Should throw error if no permissions for "json.set" command',
@@ -153,7 +187,7 @@ describe('PATCH /databases/:instanceId/rejson-rl/set', () => {
           statusCode: 403,
           error: 'Forbidden',
         },
-        before: () => rte.data.setAclUserRules('~* +@all -json.set')
+        before: () => rte.data.setAclUserRules('~* +@all -json.set'),
       },
     ].map(mainCheckFn);
   });

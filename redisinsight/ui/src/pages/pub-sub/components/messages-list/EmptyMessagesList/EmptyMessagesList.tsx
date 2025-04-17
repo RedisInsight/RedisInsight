@@ -11,25 +11,34 @@ export interface Props {
   isSpublishNotSupported: boolean
 }
 
-const EmptyMessagesList = ({ connectionType, isSpublishNotSupported }: Props) => (
+const EmptyMessagesList = ({
+  connectionType,
+  isSpublishNotSupported,
+}: Props) => (
   <div className={styles.container} data-testid="empty-messages-list">
-    <div className={cx(styles.content, { [styles.contentCluster]: connectionType === ConnectionType.Cluster })}>
+    <div
+      className={cx(styles.content, {
+        [styles.contentCluster]: connectionType === ConnectionType.Cluster,
+      })}
+    >
       <EuiText className={styles.title}>No messages to display</EuiText>
       <EuiText className={styles.summary}>
-        Subscribe to the Channel to see all the messages published to your database
+        Subscribe to the Channel to see all the messages published to your
+        database
       </EuiText>
       <EuiText className={styles.alert}>
         <EuiIcon type="alert" className={styles.alertIcon} />
         Running in production may decrease performance and memory available
       </EuiText>
-      {(connectionType === ConnectionType.Cluster && isSpublishNotSupported) && (
+      {connectionType === ConnectionType.Cluster && isSpublishNotSupported && (
         <>
           <div className={styles.separator} />
-          <EuiText className={styles.cluster} data-testid="empty-messages-list-cluster">
+          <EuiText
+            className={styles.cluster}
+            data-testid="empty-messages-list-cluster"
+          >
             {'Messages published with '}
-            <span className={styles.badge}>
-              SPUBLISH
-            </span>
+            <span className={styles.badge}>SPUBLISH</span>
             {' will not appear in this channel'}
           </EuiText>
         </>

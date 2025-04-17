@@ -8,7 +8,7 @@ const mockedProps = mock<Props>()
 describe('ClusterConnectionForm', () => {
   it('should render', () => {
     expect(
-      render(<ClusterConnectionForm {...instance(mockedProps)} />)
+      render(<ClusterConnectionForm {...instance(mockedProps)} />),
     ).toBeTruthy()
   })
 })

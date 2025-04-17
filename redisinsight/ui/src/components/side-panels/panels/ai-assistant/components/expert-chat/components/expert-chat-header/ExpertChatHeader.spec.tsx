@@ -1,13 +1,20 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
-import { cleanup, fireEvent, mockedStore, render, screen, waitForEuiPopoverVisible } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+  waitForEuiPopoverVisible,
+} from 'uiSrc/utils/test-utils'
 
 import {
   changeSelectedTab,
   changeSidePanel,
   resetExplorePanelSearch,
-  setExplorePanelIsPageOpen
+  setExplorePanelIsPageOpen,
 } from 'uiSrc/slices/panels/sidePanels'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -37,8 +44,10 @@ describe('ExpertChatHeader', () => {
   })
 
   it('should call proper actions after click on tutorial button', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
@@ -64,7 +73,7 @@ describe('ExpertChatHeader', () => {
       eventData: {
         databaseId: '1',
         source: 'chatbot_tutorials_button',
-      }
+      },
     })
   })
 })

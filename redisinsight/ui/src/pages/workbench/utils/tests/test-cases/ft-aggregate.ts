@@ -7,8 +7,8 @@ export const findArgumentftAggreageTests = [
       isBlocked: true,
       isComplete: false,
       parent: expect.any(Object),
-      token: expect.any(Object)
-    }
+      token: expect.any(Object),
+    },
   },
   {
     args: ['index', '"query"', 'APPLY', 'expression'],
@@ -18,8 +18,8 @@ export const findArgumentftAggreageTests = [
       isBlocked: false,
       isComplete: false,
       parent: expect.any(Object),
-      token: expect.any(Object)
-    }
+      token: expect.any(Object),
+    },
   },
   {
     args: ['index', '"query"', 'APPLY', 'expression', 'AS'],
@@ -29,8 +29,8 @@ export const findArgumentftAggreageTests = [
       isBlocked: true,
       isComplete: false,
       parent: expect.any(Object),
-      token: expect.any(Object)
-    }
+      token: expect.any(Object),
+    },
   },
   {
     args: ['index', '"query"', 'APPLY', 'expression', 'AS', 'name'],
@@ -40,8 +40,8 @@ export const findArgumentftAggreageTests = [
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object),
-      token: expect.any(Object)
-    }
+      token: expect.any(Object),
+    },
   },
   {
     args: ['""', '""', 'GROUPBY', '2', 'p1', 'p2', 'REDUCE', 'f'],
@@ -51,8 +51,8 @@ export const findArgumentftAggreageTests = [
       isBlocked: true,
       isComplete: false,
       parent: expect.any(Object),
-      token: expect.any(Object)
-    }
+      token: expect.any(Object),
+    },
   },
   {
     args: ['""', '""', 'GROUPBY', '2', 'p1', 'p2', 'REDUCE', 'f', '0'],
@@ -61,7 +61,7 @@ export const findArgumentftAggreageTests = [
         name: 'name',
         type: 'string',
         token: 'AS',
-        optional: true
+        optional: true,
       },
       append: [
         [
@@ -79,27 +79,27 @@ export const findArgumentftAggreageTests = [
                 {
                   name: 'function',
                   token: 'REDUCE',
-                  type: 'string'
+                  type: 'string',
                 },
                 {
                   name: 'nargs',
-                  type: 'integer'
+                  type: 'integer',
                 },
                 {
                   name: 'arg',
                   type: 'string',
-                  multiple: true
+                  multiple: true,
                 },
                 {
                   name: 'name',
                   type: 'string',
                   token: 'AS',
-                  optional: true
-                }
+                  optional: true,
+                },
               ],
-              parent: expect.any(Object)
-            }
-          }
+              parent: expect.any(Object),
+            },
+          },
         ],
         [
           {
@@ -108,18 +108,30 @@ export const findArgumentftAggreageTests = [
             type: 'string',
             multiple: true,
             optional: true,
-            parent: expect.any(Object)
-          }
-        ]
+            parent: expect.any(Object),
+          },
+        ],
       ],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object),
-      token: expect.any(Object)
-    }
+      token: expect.any(Object),
+    },
   },
   {
-    args: ['""', '""', 'GROUPBY', '2', 'p1', 'p2', 'REDUCE', 'f', '1', 'AS', 'name'],
+    args: [
+      '""',
+      '""',
+      'GROUPBY',
+      '2',
+      'p1',
+      'p2',
+      'REDUCE',
+      'f',
+      '1',
+      'AS',
+      'name',
+    ],
     result: {
       stopArg: undefined,
       append: [
@@ -131,15 +143,15 @@ export const findArgumentftAggreageTests = [
             type: 'string',
             multiple: true,
             optional: true,
-            parent: expect.any(Object)
-          }
-        ]
+            parent: expect.any(Object),
+          },
+        ],
       ],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object),
-      token: expect.any(Object)
-    }
+      token: expect.any(Object),
+    },
   },
   {
     args: ['index', '"query"', 'SORTBY'],
@@ -149,8 +161,8 @@ export const findArgumentftAggreageTests = [
       isBlocked: true,
       isComplete: false,
       parent: expect.any(Object),
-      token: expect.any(Object)
-    }
+      token: expect.any(Object),
+    },
   },
   {
     args: ['index', '"query"', 'SORTBY', '1', 'p1'],
@@ -159,7 +171,7 @@ export const findArgumentftAggreageTests = [
         name: 'num',
         type: 'integer',
         token: 'MAX',
-        optional: true
+        optional: true,
       },
       append: [
         [
@@ -168,15 +180,15 @@ export const findArgumentftAggreageTests = [
             type: 'integer',
             token: 'MAX',
             optional: true,
-            parent: expect.any(Object)
-          }
-        ]
+            parent: expect.any(Object),
+          },
+        ],
       ],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object),
-      token: expect.any(Object)
-    }
+      token: expect.any(Object),
+    },
   },
   {
     args: ['index', '"query"', 'SORTBY', '2', 'p1', 'ASC'],
@@ -185,7 +197,7 @@ export const findArgumentftAggreageTests = [
         name: 'num',
         type: 'integer',
         token: 'MAX',
-        optional: true
+        optional: true,
       },
       append: [
         [
@@ -194,14 +206,14 @@ export const findArgumentftAggreageTests = [
             type: 'integer',
             token: 'MAX',
             optional: true,
-            parent: expect.any(Object)
-          }
-        ]
+            parent: expect.any(Object),
+          },
+        ],
       ],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object),
-      token: expect.any(Object)
+      token: expect.any(Object),
     },
   },
   {
@@ -211,22 +223,24 @@ export const findArgumentftAggreageTests = [
         name: 'num',
         type: 'integer',
         token: 'MAX',
-        optional: true
+        optional: true,
       },
       append: [
-        [{
-          name: 'num',
-          type: 'integer',
-          token: 'MAX',
-          optional: true,
-          parent: expect.any(Object)
-        }]
+        [
+          {
+            name: 'num',
+            type: 'integer',
+            token: 'MAX',
+            optional: true,
+            parent: expect.any(Object),
+          },
+        ],
       ],
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object),
-      token: expect.any(Object)
-    }
+      token: expect.any(Object),
+    },
   },
   {
     args: ['index', '"query"', 'SORTBY', '2', 'p1', 'ASC', 'MAX'],
@@ -235,14 +249,14 @@ export const findArgumentftAggreageTests = [
         name: 'num',
         type: 'integer',
         token: 'MAX',
-        optional: true
+        optional: true,
       },
       append: [],
       isBlocked: true,
       isComplete: false,
       parent: expect.any(Object),
-      token: expect.any(Object)
-    }
+      token: expect.any(Object),
+    },
   },
   {
     args: ['index', '"query"', 'LOAD', '4'],
@@ -252,8 +266,8 @@ export const findArgumentftAggreageTests = [
       isBlocked: true,
       isComplete: false,
       parent: expect.any(Object),
-      token: expect.any(Object)
-    }
+      token: expect.any(Object),
+    },
   },
   {
     args: ['index', '"query"', 'LOAD', '4', '1', '2', '3'],
@@ -263,8 +277,8 @@ export const findArgumentftAggreageTests = [
       isBlocked: true,
       isComplete: false,
       parent: expect.any(Object),
-      token: expect.any(Object)
-    }
+      token: expect.any(Object),
+    },
   },
   {
     args: ['index', '"query"', 'LOAD', '4', '1', '2', '3', '4'],
@@ -274,7 +288,7 @@ export const findArgumentftAggreageTests = [
       isBlocked: false,
       isComplete: true,
       parent: expect.any(Object),
-      token: expect.any(Object)
-    }
+      token: expect.any(Object),
+    },
   },
 ]

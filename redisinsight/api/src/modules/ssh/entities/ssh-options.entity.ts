@@ -1,5 +1,9 @@
 import {
-  Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
@@ -38,14 +42,10 @@ export class SshOptionsEntity {
   @Column({ nullable: true })
   passphrase: string;
 
-  @OneToOne(
-    () => DatabaseEntity,
-    (database) => database.sshOptions,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-    },
-  )
+  @OneToOne(() => DatabaseEntity, (database) => database.sshOptions, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   database: DatabaseEntity;
 }

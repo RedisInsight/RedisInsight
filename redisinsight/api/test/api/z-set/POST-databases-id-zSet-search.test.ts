@@ -35,15 +35,21 @@ const validInputData = {
   match: '*',
 };
 
-const responseSchema = Joi.object().keys({
-  keyName: JoiRedisString.required(),
-  total: Joi.number().integer().required(),
-  nextCursor: Joi.number().integer().required(),
-  members: Joi.array().items(Joi.object().keys({
-    name: JoiRedisString.required(),
-    score: Joi.number().required().allow('inf', '-inf'),
-  })).required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    keyName: JoiRedisString.required(),
+    total: Joi.number().integer().required(),
+    nextCursor: Joi.number().integer().required(),
+    members: Joi.array()
+      .items(
+        Joi.object().keys({
+          name: JoiRedisString.required(),
+          score: Joi.number().required().allow('inf', '-inf'),
+        }),
+      )
+      .required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -68,10 +74,12 @@ describe('POST /databases/:instanceId/zSet/search', () => {
         responseBody: {
           keyName: constants.TEST_ZSET_KEY_BIN_UTF8_1,
           total: 1,
-          members: [{
-            name: constants.TEST_ZSET_MEMBER_BIN_UTF8_1,
-            score: constants.TEST_ZSET_MEMBER_1_SCORE,
-          }],
+          members: [
+            {
+              name: constants.TEST_ZSET_MEMBER_BIN_UTF8_1,
+              score: constants.TEST_ZSET_MEMBER_1_SCORE,
+            },
+          ],
         },
       },
       {
@@ -89,10 +97,12 @@ describe('POST /databases/:instanceId/zSet/search', () => {
         responseBody: {
           keyName: constants.TEST_ZSET_KEY_BIN_BUF_OBJ_1,
           total: 1,
-          members: [{
-            name: constants.TEST_ZSET_MEMBER_BIN_BUF_OBJ_1,
-            score: constants.TEST_ZSET_MEMBER_1_SCORE,
-          }],
+          members: [
+            {
+              name: constants.TEST_ZSET_MEMBER_BIN_BUF_OBJ_1,
+              score: constants.TEST_ZSET_MEMBER_1_SCORE,
+            },
+          ],
         },
       },
       {
@@ -110,10 +120,12 @@ describe('POST /databases/:instanceId/zSet/search', () => {
         responseBody: {
           keyName: constants.TEST_ZSET_KEY_BIN_ASCII_1,
           total: 1,
-          members: [{
-            name: constants.TEST_ZSET_MEMBER_BIN_ASCII_1,
-            score: constants.TEST_ZSET_MEMBER_1_SCORE,
-          }],
+          members: [
+            {
+              name: constants.TEST_ZSET_MEMBER_BIN_ASCII_1,
+              score: constants.TEST_ZSET_MEMBER_1_SCORE,
+            },
+          ],
         },
       },
     ].map(mainCheckFn);
@@ -260,7 +272,6 @@ describe('POST /databases/:instanceId/zSet/search', () => {
         },
       ].map(mainCheckFn);
 
-
       describe('Search in huge number of elements', () => {
         const ELEMENTS_NUMBER = 1_000_000;
 
@@ -271,16 +282,18 @@ describe('POST /databases/:instanceId/zSet/search', () => {
             data: {
               keyName: constants.TEST_ZSET_HUGE_KEY,
               cursor: 0,
-              match: constants.TEST_ZSET_HUGE_MEMBER
+              match: constants.TEST_ZSET_HUGE_MEMBER,
             },
             responseSchema,
             responseBody: {
               keyName: constants.TEST_ZSET_HUGE_KEY,
               total: ELEMENTS_NUMBER,
-              members: [{
-                name: constants.TEST_ZSET_HUGE_MEMBER,
-                score: constants.TEST_ZSET_HUGE_SCORE,
-              }],
+              members: [
+                {
+                  name: constants.TEST_ZSET_HUGE_MEMBER,
+                  score: constants.TEST_ZSET_HUGE_SCORE,
+                },
+              ],
               nextCursor: 0,
             },
           },
@@ -333,7 +346,7 @@ describe('POST /databases/:instanceId/zSet/search', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -zcard')
+          before: () => rte.data.setAclUserRules('~* +@all -zcard'),
         },
         {
           name: 'Should throw error if no permissions for "zscan" command',
@@ -349,7 +362,7 @@ describe('POST /databases/:instanceId/zSet/search', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -zscan')
+          before: () => rte.data.setAclUserRules('~* +@all -zscan'),
         },
         {
           name: 'Should throw error if no permissions for "zscore" command',
@@ -365,7 +378,7 @@ describe('POST /databases/:instanceId/zSet/search', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -zscore')
+          before: () => rte.data.setAclUserRules('~* +@all -zscore'),
         },
       ].map(mainCheckFn);
     });

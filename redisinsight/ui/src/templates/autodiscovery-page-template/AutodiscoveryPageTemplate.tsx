@@ -1,8 +1,8 @@
 import React from 'react'
-import { EuiPage, EuiPageBody } from '@elastic/eui'
 import { PageHeader } from 'uiSrc/components'
 import ExplorePanelTemplate from 'uiSrc/templates/explore-panel/ExplorePanelTemplate'
 
+import { Page, PageBody } from 'uiSrc/components/base/layout/page'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -16,13 +16,11 @@ const AutodiscoveryPageTemplate = (props: Props) => {
       <PageHeader title="Redis databases" showInsights />
       <div />
       <ExplorePanelTemplate panelClassName={styles.explorePanel}>
-        <EuiPage className={styles.page}>
-          <EuiPageBody component="div">
-            <div className="homePage">
-              {children}
-            </div>
-          </EuiPageBody>
-        </EuiPage>
+        <Page className={styles.page}>
+          <PageBody component="div">
+            <div className="homePage">{children}</div>
+          </PageBody>
+        </Page>
       </ExplorePanelTemplate>
     </>
   )

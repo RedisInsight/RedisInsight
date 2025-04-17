@@ -1,4 +1,4 @@
-import { EuiPage, EuiPageBody, EuiPanel, EuiResizeObserver } from '@elastic/eui'
+import { EuiPanel, EuiResizeObserver } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -8,16 +8,17 @@ import {
   createInstanceAction,
   editInstanceAction,
   fetchInstancesAction,
-  instancesSelector
+  instancesSelector,
 } from 'uiSrc/slices/rdi/instances'
 import {
+  sendEventTelemetry,
+  sendPageViewTelemetry,
   TelemetryEvent,
   TelemetryPageView,
-  sendEventTelemetry,
-  sendPageViewTelemetry
 } from 'uiSrc/telemetry'
 import HomePageTemplate from 'uiSrc/templates/home-page-template'
 import { setTitle } from 'uiSrc/utils'
+import { Page, PageBody } from 'uiSrc/components/base/layout/page'
 import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
 import EmptyMessage from './empty-message/EmptyMessage'
 import ConnectionForm from './connection-form/ConnectionFormWrapper'
@@ -45,8 +46,8 @@ const RdiPage = () => {
     sendPageViewTelemetry({
       name: TelemetryPageView.RDI_INSTANCES_PAGE,
       eventData: {
-        instancesCount: data.length
-      }
+        instancesCount: data.length,
+      },
     })
   }
 
@@ -63,30 +64,32 @@ const RdiPage = () => {
     if (editInstance) {
       dispatch(editInstanceAction(editInstance.id, instance, onSuccess))
     } else {
-      dispatch(createInstanceAction(
-        { ...instance },
-        (data: RdiInstanceResponse) => {
-          sendEventTelemetry({
-            event: TelemetryEvent.RDI_ENDPOINT_ADDED,
-            eventData: {
-              rdiId: data.id,
-            }
-          })
-          onSuccess()
-        },
-        (error) => {
-          sendEventTelemetry({
-            event: TelemetryEvent.RDI_ENDPOINT_ADD_FAILED,
-            eventData: {
-              error,
-            }
-          })
-        }
-      ))
+      dispatch(
+        createInstanceAction(
+          { ...instance },
+          (data: RdiInstanceResponse) => {
+            sendEventTelemetry({
+              event: TelemetryEvent.RDI_ENDPOINT_ADDED,
+              eventData: {
+                rdiId: data.id,
+              },
+            })
+            onSuccess()
+          },
+          (error) => {
+            sendEventTelemetry({
+              event: TelemetryEvent.RDI_ENDPOINT_ADD_FAILED,
+              eventData: {
+                error,
+              },
+            })
+          },
+        ),
+      )
     }
 
     sendEventTelemetry({
-      event: TelemetryEvent.RDI_INSTANCE_SUBMITTED
+      event: TelemetryEvent.RDI_INSTANCE_SUBMITTED,
     })
   }
 
@@ -94,7 +97,7 @@ const RdiPage = () => {
     setIsConnectionFormOpen(true)
     setEditInstance(null)
     sendEventTelemetry({
-      event: TelemetryEvent.RDI_INSTANCE_ADD_CLICKED
+      event: TelemetryEvent.RDI_INSTANCE_ADD_CLICKED,
     })
   }
 
@@ -102,7 +105,7 @@ const RdiPage = () => {
     setIsConnectionFormOpen(false)
     setEditInstance(null)
     sendEventTelemetry({
-      event: TelemetryEvent.RDI_INSTANCE_ADD_CANCELLED
+      event: TelemetryEvent.RDI_INSTANCE_ADD_CANCELLED,
     })
   }
 
@@ -117,14 +120,20 @@ const RdiPage = () => {
   }
 
   const InstanceList = () =>
-    (!data.length ? (
+    !data.length ? (
       <EuiPanel className={styles.emptyPanel} borderRadius="none">
-        {!loading && !loadingChanging && <EmptyMessage onAddInstanceClick={handleOpenConnectionForm} />}
+        {!loading && !loadingChanging && (
+          <EmptyMessage onAddInstanceClick={handleOpenConnectionForm} />
+        )}
       </EuiPanel>
     ) : (
       <EuiResizeObserver onResize={onResize}>
         {(resizeRef) => (
-          <div data-testid="rdi-instance-list" className={styles.fullHeight} ref={resizeRef}>
+          <div
+            data-testid="rdi-instance-list"
+            className={styles.fullHeight}
+            ref={resizeRef}
+          >
             <RdiInstancesListWrapper
               width={width}
               editedInstance={editInstance}
@@ -134,12 +143,12 @@ const RdiPage = () => {
           </div>
         )}
       </EuiResizeObserver>
-    ))
+    )
 
   return (
     <HomePageTemplate>
-      <EuiPage className={cx(styles.page, 'homePage')}>
-        <EuiPageBody component="div">
+      <Page className={cx(styles.page, 'homePage')}>
+        <PageBody component="div">
           <RdiHeader onRdiInstanceClick={handleOpenConnectionForm} />
           <InstanceList />
           <ConnectionForm
@@ -149,8 +158,8 @@ const RdiPage = () => {
             editInstance={editInstance}
             isLoading={loading || loadingChanging}
           />
-        </EuiPageBody>
-      </EuiPage>
+        </PageBody>
+      </Page>
     </HomePageTemplate>
   )
 }

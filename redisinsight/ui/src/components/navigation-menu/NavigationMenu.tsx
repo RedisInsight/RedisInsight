@@ -10,9 +10,11 @@ import {
   EuiIcon,
   EuiLink,
   EuiPageSideBar,
-  EuiToolTip
+  EuiToolTip,
 } from '@elastic/eui'
-import HighlightedFeature, { Props as HighlightedFeatureProps } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
+import HighlightedFeature, {
+  Props as HighlightedFeatureProps,
+} from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
 import { ANALYTICS_ROUTES } from 'uiSrc/components/main-router/constants/sub-routes'
 
 import { FeatureFlags, PageNames, Pages } from 'uiSrc/constants'
@@ -20,7 +22,7 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import {
   appFeatureFlagsFeaturesSelector,
   appFeaturePagesHighlightingSelector,
-  removeFeatureFromHighlighting
+  removeFeatureFromHighlighting,
 } from 'uiSrc/slices/app/features'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { connectedInstanceSelector as connectedRdiInstanceSelector } from 'uiSrc/slices/rdi/instances'
@@ -79,12 +81,16 @@ const NavigationMenu = () => {
   const [activePage, setActivePage] = useState(Pages.home)
 
   const { workspace } = useSelector(appContextSelector)
-  const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
-  const { id: connectedRdiInstanceId = '' } = useSelector(connectedRdiInstanceSelector)
+  const { id: connectedInstanceId = '' } = useSelector(
+    connectedInstanceSelector,
+  )
+  const { id: connectedRdiInstanceId = '' } = useSelector(
+    connectedRdiInstanceSelector,
+  )
   const highlightedPages = useSelector(appFeaturePagesHighlightingSelector)
-  const {
-    [FeatureFlags.envDependent]: envDependentFeature
-  } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { [FeatureFlags.envDependent]: envDependentFeature } = useSelector(
+    appFeatureFlagsFeaturesSelector,
+  )
 
   const isRdiWorkspace = workspace === AppWorkspace.RDI
 
@@ -94,20 +100,25 @@ const NavigationMenu = () => {
 
   const handleGoPage = (page: string) => history.push(page)
 
-  const isAnalyticsPath = (activePage: string) => !!ANALYTICS_ROUTES.find(
-    ({ path }) => (`/${last(path.split('/'))}` === activePage)
-  )
+  const isAnalyticsPath = (activePage: string) =>
+    !!ANALYTICS_ROUTES.find(
+      ({ path }) => `/${last(path.split('/'))}` === activePage,
+    )
 
   const isPipelineManagementPath = () =>
-    location.pathname?.startsWith(Pages.rdiPipelineManagement(connectedRdiInstanceId))
+    location.pathname?.startsWith(
+      Pages.rdiPipelineManagement(connectedRdiInstanceId),
+    )
 
-  const getAdditionPropsForHighlighting = (pageName: string): Omit<HighlightedFeatureProps, 'children'> => {
+  const getAdditionPropsForHighlighting = (
+    pageName: string,
+  ): Omit<HighlightedFeatureProps, 'children'> => {
     if (BUILD_FEATURES[pageName]?.asPageFeature) {
-      return ({
+      return {
         hideFirstChild: true,
         onClick: () => dispatch(removeFeatureFromHighlighting(pageName)),
-        ...BUILD_FEATURES[pageName]
-      })
+        ...BUILD_FEATURES[pageName],
+      }
     }
 
     return {}
@@ -115,7 +126,7 @@ const NavigationMenu = () => {
 
   const navigationButtonStyle = {
     [styles.navigationButton]: true,
-    [styles.navigationButtonAlt]: !envDependentFeature?.flag
+    [styles.navigationButtonAlt]: !envDependentFeature?.flag,
   }
 
   const privateRoutes: INavigations[] = [
@@ -133,7 +144,7 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? BrowserSVG : BrowserActiveSVG
       },
-      onboard: ONBOARDING_FEATURES.BROWSER_PAGE
+      onboard: ONBOARDING_FEATURES.BROWSER_PAGE,
     },
     {
       tooltipText: 'Workbench',
@@ -149,7 +160,7 @@ const NavigationMenu = () => {
       getIconType() {
         return this.isActivePage ? WorkbenchSVG : WorkbenchActiveSVG
       },
-      onboard: ONBOARDING_FEATURES.WORKBENCH_PAGE
+      onboard: ONBOARDING_FEATURES.WORKBENCH_PAGE,
     },
     {
       tooltipText: 'Analysis Tools',
@@ -198,21 +209,26 @@ const NavigationMenu = () => {
         return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
       },
       getIconType() {
-        return this.isActivePage ? PipelineStatisticsActiveSvg : PipelineStatisticsSvg
+        return this.isActivePage
+          ? PipelineStatisticsActiveSvg
+          : PipelineStatisticsSvg
       },
     },
     {
       tooltipText: 'Pipeline Management',
       pageName: PageNames.rdiPipelineManagement,
       ariaLabel: 'Pipeline Management page button',
-      onClick: () => handleGoPage(Pages.rdiPipelineManagement(connectedRdiInstanceId)),
+      onClick: () =>
+        handleGoPage(Pages.rdiPipelineManagement(connectedRdiInstanceId)),
       dataTestId: 'pipeline-management-page-btn',
       isActivePage: isPipelineManagementPath(),
       getClassName() {
         return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
       },
       getIconType() {
-        return this.isActivePage ? PipelineManagementActiveSVG : PipelineManagementSVG
+        return this.isActivePage
+          ? PipelineManagementActiveSVG
+          : PipelineManagementSVG
       },
     },
   ]
@@ -239,46 +255,48 @@ const NavigationMenu = () => {
     const fragment = (
       <React.Fragment key={nav.tooltipText}>
         {renderOnboardingTourWithChild(
-          (
-            <HighlightedFeature
-              {...getAdditionPropsForHighlighting(nav.pageName)}
-              key={nav.tooltipText}
-              isHighlight={!!highlightedPages[nav.pageName]?.length}
-              dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
-              tooltipPosition="right"
-              transformOnHover
-            >
-              <EuiToolTip content={nav.tooltipText} position="right">
-                <div className={styles.navigationButtonWrapper}>
-                  <EuiButtonIcon
-                    className={nav.getClassName()}
-                    iconType={nav.getIconType()}
-                    aria-label={nav.ariaLabel}
-                    onClick={nav.onClick}
-                    data-testid={nav.dataTestId}
-                  />
-                  {nav.isBeta && (<EuiBadge className={styles.betaLabel}>BETA</EuiBadge>)}
-                </div>
-              </EuiToolTip>
-            </HighlightedFeature>
-          ),
+          <HighlightedFeature
+            {...getAdditionPropsForHighlighting(nav.pageName)}
+            key={nav.tooltipText}
+            isHighlight={!!highlightedPages[nav.pageName]?.length}
+            dotClassName={cx(styles.highlightDot, {
+              [styles.activePage]: nav.isActivePage,
+            })}
+            tooltipPosition="right"
+            transformOnHover
+          >
+            <EuiToolTip content={nav.tooltipText} position="right">
+              <div className={styles.navigationButtonWrapper}>
+                <EuiButtonIcon
+                  className={nav.getClassName()}
+                  iconType={nav.getIconType()}
+                  aria-label={nav.ariaLabel}
+                  onClick={nav.onClick}
+                  data-testid={nav.dataTestId}
+                />
+                {nav.isBeta && (
+                  <EuiBadge className={styles.betaLabel}>BETA</EuiBadge>
+                )}
+              </div>
+            </EuiToolTip>
+          </HighlightedFeature>,
           { options: nav.onboard },
-          nav.isActivePage
+          nav.isActivePage,
         )}
       </React.Fragment>
     )
 
-    return nav.featureFlag
-      ? (
-        <FeatureFlagComponent
-          name={nav.featureFlag}
-          key={nav.tooltipText}
-          enabledByDefault
-        >
-          {fragment}
-        </FeatureFlagComponent>
-      )
-      : fragment
+    return nav.featureFlag ? (
+      <FeatureFlagComponent
+        name={nav.featureFlag}
+        key={nav.tooltipText}
+        enabledByDefault
+      >
+        {fragment}
+      </FeatureFlagComponent>
+    ) : (
+      fragment
+    )
   }
 
   const renderPublicNavItem = (nav: INavigations) => {
@@ -286,7 +304,9 @@ const NavigationMenu = () => {
       <HighlightedFeature
         key={nav.tooltipText}
         isHighlight={!!highlightedPages[nav.pageName]?.length}
-        dotClassName={cx(styles.highlightDot, { [styles.activePage]: nav.isActivePage })}
+        dotClassName={cx(styles.highlightDot, {
+          [styles.activePage]: nav.isActivePage,
+        })}
         transformOnHover
       >
         <EuiToolTip content={nav.tooltipText} position="right">
@@ -301,25 +321,32 @@ const NavigationMenu = () => {
       </HighlightedFeature>
     )
 
-    return nav.featureFlag
-      ? (
-        <FeatureFlagComponent
-          name={nav.featureFlag}
-          key={nav.tooltipText}
-          enabledByDefault
-        >
-          {fragment}
-        </FeatureFlagComponent>
-      )
-      : fragment
+    return nav.featureFlag ? (
+      <FeatureFlagComponent
+        name={nav.featureFlag}
+        key={nav.tooltipText}
+        enabledByDefault
+      >
+        {fragment}
+      </FeatureFlagComponent>
+    ) : (
+      fragment
+    )
   }
 
   return (
-    <EuiPageSideBar aria-label="Main navigation" className={cx(styles.navigation, 'eui-yScroll')}>
+    <EuiPageSideBar
+      aria-label="Main navigation"
+      className={cx(styles.navigation, 'eui-yScroll')}
+    >
       <div className={styles.container}>
         <RedisLogo isRdiWorkspace={isRdiWorkspace} />
-        {connectedInstanceId && !isRdiWorkspace && (privateRoutes.map(renderNavItem))}
-        {connectedRdiInstanceId && isRdiWorkspace && (privateRdiRoutes.map(renderNavItem))}
+        {connectedInstanceId &&
+          !isRdiWorkspace &&
+          privateRoutes.map(renderNavItem)}
+        {connectedRdiInstanceId &&
+          isRdiWorkspace &&
+          privateRdiRoutes.map(renderNavItem)}
       </div>
       <div className={styles.bottomContainer}>
         <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
@@ -332,17 +359,22 @@ const NavigationMenu = () => {
         {publicRoutes.map(renderPublicNavItem)}
         <FeatureFlagComponent
           name={FeatureFlags.envDependent}
-          otherwise={(
+          otherwise={
             <Divider
               color="transparent"
               className="eui-hideFor--xs eui-hideFor--s"
               variant="middle"
               data-testid="github-repo-divider-otherwise"
             />
-          )}
+          }
           enabledByDefault
         >
-          <Divider data-testid="github-repo-divider-default" colorVariable="separatorNavigationColor" className="eui-hideFor--xs eui-hideFor--s" variant="middle" />
+          <Divider
+            data-testid="github-repo-divider-default"
+            colorVariable="separatorNavigationColor"
+            className="eui-hideFor--xs eui-hideFor--s"
+            variant="middle"
+          />
         </FeatureFlagComponent>
         <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
           <Divider
@@ -351,10 +383,7 @@ const NavigationMenu = () => {
             variant="middle"
             orientation="vertical"
           />
-          <EuiToolTip
-            content="Star us on GitHub"
-            position="right"
-          >
+          <EuiToolTip content="Star us on GitHub" position="right">
             <span className={cx(styles.iconNavItem, styles.githubLink)}>
               <EuiLink
                 external={false}

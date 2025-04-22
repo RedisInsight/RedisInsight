@@ -96,6 +96,7 @@
     "**/cross-spawn": "^7.0.5",
     "@elastic/eui/**/prismjs": "~1.30.0",
     "vite/esbuild": "^0.25.0",
+    "styled-components": "^5",
     "react-router-dom/react-router/path-to-regexp": "^1.9.0"
   },
   "devDependencies": {
@@ -135,6 +136,7 @@
     "@types/react-window-infinite-loader": "^1.0.6",
     "@types/redux-mock-store": "^1.0.2",
     "@types/segment-analytics": "^0.0.34",
+    "@types/styled-components": "^5.1.34",
     "@types/supertest": "^2.0.8",
     "@types/text-encoding": "^0.0.37",
     "@types/uuid": "^8.3.4",
@@ -271,6 +273,7 @@
     "react": "^18.2.0",
     "react-contenteditable": "^3.3.5",
     "react-dom": "^18.2.0",
+    "react-focus-on": "^3.9.4",
     "react-hotkeys-hook": "^3.3.1",
     "react-jsx-parser": "^1.28.4",
     "react-monaco-editor": "^0.55.0",
@@ -287,6 +290,7 @@
     "remark-parse": "^10.0.1",
     "remark-rehype": "^10.0.1",
     "socket.io-client": "^4.8.0",
+    "styled-components": "^5.0.0",
     "unified": "^10.1.1",
     "unist-util-visit": "^4.1.0",
     "url-parse": "^1.5.10",

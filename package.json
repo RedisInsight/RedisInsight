@@ -98,6 +98,7 @@
     "styled-components": "^5",
     "@elastic/eui/**/prismjs": "~1.30.0",
     "vite/esbuild": "^0.25.0",
+    "styled-components": "^5",
     "react-router-dom/react-router/path-to-regexp": "^1.9.0"
   },
   "devDependencies": {

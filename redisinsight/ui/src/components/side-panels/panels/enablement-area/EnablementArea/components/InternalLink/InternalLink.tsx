@@ -55,22 +55,20 @@ const InternalLink = (props: Props) => {
     </EuiToolTip>
   )
   return (
-    <>
-      <ListItem
-        data-testid={`internal-link-${testId}`}
-        className={cx(
-          styles.link,
-          iconPosition === 'right' && styles.linkIconRight,
-        )}
-        iconType={iconType}
-        size={size}
-        wrapText
-        color="subdued"
-        onClick={handleOpenPage}
-        label={content}
-        {...rest}
-      />
-    </>
+    <ListItem
+      data-testid={`internal-link-${testId}`}
+      className={cx(
+        styles.link,
+        iconPosition === 'right' && styles.linkIconRight,
+      )}
+      iconType={iconType}
+      size={size}
+      wrapText
+      color="subdued"
+      onClick={handleOpenPage}
+      label={content}
+      {...rest}
+    />
   )
 }
 

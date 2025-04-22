@@ -208,12 +208,7 @@ const listItemStyles = {
     `,
   },
 }
-/*
-      $size={size}
-      $isActive={isActive}
-      $isDisabled={isDisabled}
-      $color={color}
- */
+
 export const StyledItem = styled.li<
   Omit<
     ListGroupItemProps,

@@ -1,0 +1,63 @@
+import { HTMLAttributes } from "react"
+import styled, { css } from "styled-components"
+
+export const SIZES = ['full', 'half', 'quarter'] as const
+export const MARGINS = ['none', 'xs', 's', 'm', 'l', 'xl', 'xxl'] as const
+
+export type HorizontalRuleSize = (typeof SIZES)[number]
+export type HorizontalRuleMargin = (typeof MARGINS)[number]
+
+const horizontalRuleStyles = {
+  size: {
+    full: css`
+      width: 100%;
+    `,
+    half: css`
+      width: 50%;
+      margin-horizontal: auto;
+    `,
+    quarter: css`
+      width: 25%;
+      margin-horizontal: auto;
+    `
+  },
+  margin: {
+    none: '',
+    xs: css`
+      margin-block: var(--size-xs);
+    `,
+    s: css`
+      margin-block: var(--size-s);
+    `,
+    m: css`
+      margin-block: var(--size-ms);
+    `,
+    l: css`
+      margin-block: var(--size-l);
+    `,
+    xl: css`
+      margin-block: var(--size-xl);
+    `,
+    xxl: css`
+      margin-block: var(--size-xxl);
+    `,
+  }
+}
+
+export interface HorizontalRuleProps
+  extends HTMLAttributes<HTMLHRElement> {
+  size?: HorizontalRuleSize
+  margin?: HorizontalRuleMargin
+}
+
+export const StyledHorizontalRule = styled.hr<
+  Omit<HorizontalRuleProps, 'size' | 'margin'> & {
+    size: HorizontalRuleSize
+    margin: HorizontalRuleMargin
+  }
+>`
+  border: none;
+
+  flex-shrink: 0;
+  flex-grow: 0;
+`

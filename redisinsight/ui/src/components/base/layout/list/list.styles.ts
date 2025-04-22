@@ -25,6 +25,8 @@ export const ListClassNames = {
   listItemDisabled: 'isDisabled',
 }
 
+export const MAX_FORM_WIDTH = 400
+
 export const GAP_SIZES = ['none', 's', 'm'] as const
 export type ListGroupGapSize = (typeof GAP_SIZES)[number]
 

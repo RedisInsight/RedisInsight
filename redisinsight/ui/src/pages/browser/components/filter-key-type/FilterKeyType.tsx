@@ -10,10 +10,18 @@ import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import {
+  SCAN_COUNT_DEFAULT,
+  SCAN_TREE_COUNT_DEFAULT,
+} from 'uiSrc/constants/api'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
-import { fetchKeys, fetchSearchHistoryAction, keysSelector, setFilter } from 'uiSrc/slices/browser/keys'
+import {
+  fetchKeys,
+  fetchSearchHistoryAction,
+  keysSelector,
+  setFilter,
+} from 'uiSrc/slices/browser/keys'
 import { isVersionHigherOrEquals } from 'uiSrc/utils'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { FilterNotAvailable } from 'uiSrc/components'
@@ -48,8 +56,8 @@ const FilterKeyType = ({ modules }: Props) => {
     setIsVersionSupported(
       isVersionHigherOrEquals(
         version,
-        CommandsVersions.FILTER_PER_KEY_TYPES.since
-      )
+        CommandsVersions.FILTER_PER_KEY_TYPES.since,
+      ),
     )
   }, [version])
 
@@ -57,31 +65,41 @@ const FilterKeyType = ({ modules }: Props) => {
     setTypeSelected(filter ?? ALL_KEY_TYPES_VALUE)
   }, [filter])
 
-  const options: EuiSuperSelectOption<string>[] = FILTER_KEY_TYPE_OPTIONS
-    .filter(({ featureFlag, skipIfNoModule }) => {
-      if (skipIfNoModule && !modules?.some(({ name }) => name === skipIfNoModule)) {
+  const options: EuiSuperSelectOption<string>[] =
+    FILTER_KEY_TYPE_OPTIONS.filter(({ featureFlag, skipIfNoModule }) => {
+      if (
+        skipIfNoModule &&
+        !modules?.some(({ name }) => name === skipIfNoModule)
+      ) {
         return false
       }
       return !featureFlag || features[featureFlag]?.flag
-    })
-    .map(
-      (item) => {
-        const { value, color, text } = item
-        return {
-          value,
-          inputDisplay: (
-            <EuiHealth color={color} className={styles.dropdownDisplay}>{text}</EuiHealth>
-          ),
-          dropdownDisplay: <EuiHealth color={color} className={styles.dropdownDisplay}>{text}</EuiHealth>,
-          'data-test-subj': `filter-option-type-${value}`,
-        }
+    }).map((item) => {
+      const { value, color, text } = item
+      return {
+        value,
+        inputDisplay: (
+          <EuiHealth color={color} className={styles.dropdownDisplay}>
+            {text}
+          </EuiHealth>
+        ),
+        dropdownDisplay: (
+          <EuiHealth color={color} className={styles.dropdownDisplay}>
+            {text}
+          </EuiHealth>
+        ),
+        'data-test-subj': `filter-option-type-${value}`,
       }
-    )
+    })
 
   options.unshift({
     value: ALL_KEY_TYPES_VALUE,
-    inputDisplay: (<div className={styles.dropdownOption} data-testid="all-key-types-option">All Key Types</div>),
-    dropdownDisplay: 'All Key Types'
+    inputDisplay: (
+      <div className={styles.dropdownOption} data-testid="all-key-types-option">
+        All Key Types
+      </div>
+    ),
+    dropdownDisplay: 'All Key Types',
   })
 
   const onChangeType = (initValue: string) => {
@@ -97,10 +115,15 @@ const FilterKeyType = ({ modules }: Props) => {
         {
           searchMode,
           cursor: '0',
-          count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
+          count:
+            viewType === KeyViewType.Browser
+              ? SCAN_COUNT_DEFAULT
+              : SCAN_TREE_COUNT_DEFAULT,
         },
-        () => { dispatch(fetchSearchHistoryAction(searchMode)) }
-      )
+        () => {
+          dispatch(fetchSearchHistoryAction(searchMode))
+        },
+      ),
     )
   }
 
@@ -110,7 +133,7 @@ const FilterKeyType = ({ modules }: Props) => {
       event: TelemetryEvent.BROWSER_FILTER_MODE_CHANGE_FAILED,
       eventData: {
         databaseId: instanceId,
-      }
+      },
     })
   }
 
@@ -121,7 +144,7 @@ const FilterKeyType = ({ modules }: Props) => {
       <div
         className={cx(
           styles.container,
-          !isVersionSupported && styles.unsupported
+          !isVersionSupported && styles.unsupported,
         )}
       >
         {!isVersionSupported && isInfoPopoverOpen && (

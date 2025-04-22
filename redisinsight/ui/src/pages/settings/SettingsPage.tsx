@@ -35,8 +35,12 @@ import {
 } from 'uiSrc/slices/user/user-settings'
 
 import Divider from 'uiSrc/components/divider/Divider'
-import { Page, PageBody, PageHeader } from 'uiSrc/components/base/layout/page'
-import { PageContentBody } from 'uiSrc/components/base/layout/page/Page'
+import {
+  Page,
+  PageBody,
+  PageHeader,
+  PageContentBody,
+} from 'uiSrc/components/base/layout/page'
 import {
   AdvancedSettings,
   CloudSettings,

@@ -75,6 +75,7 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
     loading: false,
     error: '',
     data: mockInstances,
+    shownColumns: ['name', 'host', 'controls'],
   }),
 }))
 

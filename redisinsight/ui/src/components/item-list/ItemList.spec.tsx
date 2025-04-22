@@ -150,4 +150,39 @@ describe('ItemList', () => {
 
     expect(div).toHaveClass('hideSelectableCheckboxes')
   })
+
+  it('should display propely configured shown columns and not display the hidden columns', async () => {
+    const partialColumnsMock: EuiTableFieldDataColumnType<Instance>[] = [
+      {
+        field: 'name',
+        className: 'column_name',
+        name: 'Database Alias',
+        dataType: 'string',
+        sortable: true,
+        width: '170px',
+        truncateText: true,
+      },
+      {
+        field: 'host',
+        className: 'column_host',
+        name: 'Host:Port',
+        dataType: 'string',
+        sortable: true,
+        width: '170px',
+        truncateText: true,
+      },
+    ]
+
+    render(<ItemList {...mockedProps} columns={partialColumnsMock} />)
+
+    const nameColumnHeader = screen.queryByTitle('Database Alias')
+    const hostColumnHeader = screen.queryByTitle('Host:Port')
+
+    const connectionTypeColumnHeader = screen.queryByTitle('Connection Type')
+
+    expect(nameColumnHeader).toBeInTheDocument()
+    expect(hostColumnHeader).toBeInTheDocument()
+
+    expect(connectionTypeColumnHeader).not.toBeInTheDocument()
+  })
 })

@@ -842,6 +842,70 @@ describe('JsonService', () => {
         });
       });
     });
+
+    describe('prepareJsonPath', () => {
+      it('should convert "$" to "." for RedisJSON v1 (legacy)', async () => {
+        const database = {
+          ...mockDatabaseWithModules,
+          modules: [{ name: 'ReJSON', semanticVersion: ['1', '0', '0'] }],
+        };
+        databaseService.get.mockResolvedValue(database);
+
+        const result = await service['prepareJsonPath'](
+          mockBrowserClientMetadata,
+          '$',
+        );
+
+        expect(result).toBe('.');
+      });
+
+      it('should strip "$" from path for RedisJSON v1', async () => {
+        const database = {
+          ...mockDatabaseWithModules,
+          modules: [{ name: 'ReJSON', semanticVersion: ['1', '4', '2'] }],
+        };
+        databaseService.get.mockResolvedValue(database);
+
+        const result = await service['prepareJsonPath'](
+          mockBrowserClientMetadata,
+          '$.user.name',
+        );
+
+        expect(result).toBe('.user.name');
+      });
+
+      it('should fallback to dot path when semanticVersion is missing', async () => {
+        const database = {
+          ...mockDatabaseWithModules,
+          modules: [
+            { name: 'ReJSON' }, // no semanticVersion field
+          ],
+        };
+        databaseService.get.mockResolvedValue(database);
+
+        const result = await service['prepareJsonPath'](
+          mockBrowserClientMetadata,
+          '$',
+        );
+
+        expect(result).toBe('.');
+      });
+
+      it('should return original path for RedisJSON v2', async () => {
+        const database = {
+          ...mockDatabaseWithModules,
+          modules: [{ name: 'ReJSON', semanticVersion: ['2', '0', '0'] }],
+        };
+        databaseService.get.mockResolvedValue(database);
+
+        const result = await service['prepareJsonPath'](
+          mockBrowserClientMetadata,
+          '$.user.name',
+        );
+
+        expect(result).toBe('$.user.name');
+      });
+    });
   });
   describe('create', () => {
     beforeEach(() => {
@@ -1094,6 +1158,11 @@ describe('JsonService', () => {
       // JSON.ARRAPEND returns an array of integer replies for each path, the array's new size,
       // or nil, if the matching JSON value is not an array
       client.sendCommand.mockReturnValueOnce([10]);
+      const database = {
+        ...mockDatabaseWithModules,
+        modules: [{ name: 'ReJSON', semanticVersion: ['2', '0', '0'] }],
+      };
+      databaseService.get.mockResolvedValue(database);
       await service.arrAppend(mockBrowserClientMetadata, {
         keyName: testKey,
         path: testPath,

@@ -22,7 +22,10 @@ import {
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { toBytes, truncatePercentage } from 'uiSrc/utils'
-import { appConnectivityError } from 'uiSrc/slices/app/connectivity'
+import {
+  appConnectivityError,
+  setConnectivityError,
+} from 'uiSrc/slices/app/connectivity'
 import WarningIcon from 'uiSrc/assets/img/warning.svg?react'
 import { getOverviewMetrics, IMetric } from './components/OverviewMetrics'
 
@@ -90,7 +93,6 @@ const DatabaseOverview = () => {
       isBdbPackages,
     } = {},
   } = overview
-
   const loadData = () => {
     if (connectedInstanceId && !connectivityError) {
       dispatch(getDatabaseConfigInfoAction(connectedInstanceId))
@@ -259,6 +261,9 @@ const DatabaseOverview = () => {
                       DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL,
                     )}
                     onRefresh={loadData}
+                    onRefreshClicked={() =>
+                      dispatch(setConnectivityError(null))
+                    }
                     onEnableAutoRefresh={handleEnableAutoRefresh}
                   />
                 </EuiFlexItem>

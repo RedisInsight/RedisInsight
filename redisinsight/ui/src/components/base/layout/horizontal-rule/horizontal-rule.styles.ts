@@ -55,11 +55,25 @@ export const StyledHorizontalRule = styled.hr<
     margin: HorizontalRuleMargin
   }
 >`
-  border: none;
-
-  flex-shrink: 0;
-  flex-grow: 0;
+  :root {
+    --size-xs: 4px;
+    --size-s: 6px;
+    --size-m: 12px;
+    --size-l: 20px;
+    --size-xl: 32px;
+    --size-xxl: 40px;
+  }
 
   ${({ size }) => horizontalRuleStyles.size[size]}
   ${({ margin }) => horizontalRuleStyles.margin[margin]}
+
+  /* Reset the default styles */
+  border: none;
+
+  /* If the component is inside a flex box */
+  flex-shrink: 0;
+  flex-grow: 0;
+
+  /* The default color of the horizontal rule */
+  background-color: var(--color-border);
 `

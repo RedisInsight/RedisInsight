@@ -30,7 +30,7 @@ const horizontalRuleStyles = {
       margin-block: var(--size-s);
     `,
     m: css`
-      margin-block: var(--size-ms);
+      margin-block: var(--size-m);
     `,
     l: css`
       margin-block: var(--size-l);
@@ -51,21 +51,12 @@ export interface HorizontalRuleProps extends HTMLAttributes<HTMLHRElement> {
 
 export const StyledHorizontalRule = styled.hr<
   Omit<HorizontalRuleProps, 'size' | 'margin'> & {
-    size: HorizontalRuleSize
-    margin: HorizontalRuleMargin
+    size?: HorizontalRuleSize
+    margin?: HorizontalRuleMargin
   }
 >`
-  :root {
-    --size-xs: 4px;
-    --size-s: 6px;
-    --size-m: 12px;
-    --size-l: 20px;
-    --size-xl: 32px;
-    --size-xxl: 40px;
-  }
-
-  ${({ size }) => horizontalRuleStyles.size[size]}
-  ${({ margin }) => horizontalRuleStyles.margin[margin]}
+  ${({ size = 'full' }) => horizontalRuleStyles.size[size]}
+  ${({ margin = 'l' }) => horizontalRuleStyles.margin[margin]}
 
   /* Reset the default styles */
   border: none;

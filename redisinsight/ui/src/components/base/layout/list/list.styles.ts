@@ -225,28 +225,6 @@ export const StyledItem = styled.li<
     $isActive?: boolean
   }
 >`
-  // todo: take from theme
-  --color-primary: #e8f1ff;
-  --color-subdued: #e8f1ff;
-  --color-ghost: rgba(255, 255, 255, 0.1);
-  --color-primary-text: #006bb4;
-  --color-ghost-text: #fff;
-  --color-text-text: #343741;
-  --background-hover: rgba(23 80 186 / 0.04);
-  --background-primary-hover: rgba(23 80 186 / 0.04);
-  --border-radius-small: 4px;
-  --border-radius-medium: 6px;
-  --size-xs: 4px;
-  --size-s: 6px;
-  --size-m: 12px;
-  --size-l: 20px;
-  --size-xl: 32px;
-  --size-xxl: 40px;
-  --font-weight-m: 500;
-  --font-size-xs: 12px;
-  --font-size-s: 14px;
-  --font-size-m: 16px;
-  --font-size-l: 18px;
   padding: 0;
   display: flex;
   align-items: center;

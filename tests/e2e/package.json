@@ -24,7 +24,7 @@
   "keywords": [],
   "author": "",
   "dependencies": {
-    "axios": "^1.7.7",
+    "axios": "^1.8.4",
     "brotli-unicode": "^1.0.2",
     "cli-argument-parser": "0.7.4",
     "fflate": "^0.8.2",
@@ -55,7 +55,7 @@
     "@typescript-eslint/parser": "8.9.0",
     "archiver": "^7.0.1",
     "chance": "1.1.12",
-    "chromedriver": "^130.0.0",
+    "chromedriver": "^135.0.2",
     "cli-argument-parser": "0.7.4",
     "cross-env": "^7.0.3",
     "date-fns": "^4.1.0",

@@ -12,7 +12,7 @@ import {
 export function getInvalidTagErrors(
   tags: { key: string; value: string }[],
   index: number,
-): (string | undefined)[] {
+) {
   const tag = tags[index]
 
   let keyError: string | undefined
@@ -36,5 +36,5 @@ export function getInvalidTagErrors(
     }
   }
 
-  return [keyError, valueError]
+  return { keyError, valueError }
 }

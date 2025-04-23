@@ -64,6 +64,7 @@ export const ManageTagsModal = ({
 
   const isSaveButtonDisabled = !isModified || hasErrors
   const isCloudDb = instance.provider === ConnectionProvider.RE_CLOUD
+  const isClusterDb = instance.provider === ConnectionProvider.RE_CLUSTER
 
   const handleTagChange = useCallback(
     (index: number, key: 'key' | 'value', value: string) => {
@@ -117,12 +118,12 @@ export const ManageTagsModal = ({
       }
       footer={
         <>
-          {isCloudDb && (
+          {(isCloudDb || isClusterDb) && (
             <div className={styles.warning}>
               <EuiIcon type={WarningIcon} color="warning" size="m" />
               <EuiText size="m">
                 Tag changes in Redis Insight apply locally and are not synced
-                with Redis Cloud.
+                with Redis {isCloudDb ? 'Cloud' : 'Software'}.
               </EuiText>
             </div>
           )}
@@ -152,7 +153,7 @@ export const ManageTagsModal = ({
         </div>
         <div className={styles.tagFormBody}>
           {tags.map((tag, index) => {
-            const [keyError, valueError] = getInvalidTagErrors(tags, index)
+            const { keyError, valueError } = getInvalidTagErrors(tags, index)
 
             return (
               <div key={`tag-row-${index}`} className={styles.tagFormRow}>

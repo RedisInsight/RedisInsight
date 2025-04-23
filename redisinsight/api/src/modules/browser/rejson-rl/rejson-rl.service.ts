@@ -58,8 +58,10 @@ export class RejsonRlService {
       (module) => module.name === AdditionalRedisModuleName.RedisJSON,
     );
 
-    // first version needs to have different path
-    if (jsonModule && jsonModule.semanticVersion[0] === '1') {
+    // RedisJSON v1 (legacy) uses a different path format.
+    // If the module version isn't reported, assume legacy format just to be safe.
+    // Ref: https://redis.io/docs/latest/develop/data-types/json/path/#legacy-path-syntax
+    if (!jsonModule?.semanticVersion || jsonModule.semanticVersion[0] === '1') {
       if (path.length === 1) {
         return '.';
       }

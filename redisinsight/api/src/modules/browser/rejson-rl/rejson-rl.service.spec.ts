@@ -1158,6 +1158,11 @@ describe('JsonService', () => {
       // JSON.ARRAPEND returns an array of integer replies for each path, the array's new size,
       // or nil, if the matching JSON value is not an array
       client.sendCommand.mockReturnValueOnce([10]);
+      const database = {
+        ...mockDatabaseWithModules,
+        modules: [{ name: 'ReJSON', semanticVersion: ['2', '0', '0'] }],
+      };
+      databaseService.get.mockResolvedValue(database);
       await service.arrAppend(mockBrowserClientMetadata, {
         keyName: testKey,
         path: testPath,

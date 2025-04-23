@@ -74,6 +74,6 @@ export const StyledHorizontalRule = styled.hr<
   flex-shrink: 0;
   flex-grow: 0;
 
-  /* The default color of the horizontal rule */
   background-color: var(--hrBackgroundColor);
+  height: 1px;
 `

@@ -7,6 +7,7 @@ export const mockRedisEnterpriseDatabaseDto: RedisEnterpriseDatabase = {
   address: '172.17.0.2',
   dnsName: 'redis-12000.clus.local',
   modules: [],
+  tags: [],
   name: 'db',
   options: {},
   port: 12000,

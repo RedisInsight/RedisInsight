@@ -670,6 +670,7 @@ const DatabasesListWrapper = (props: Props) => {
         event: TelemetryEvent.CONFIG_DATABASES_DATABASE_LIST_SORTED,
         eventData: sort,
       })
+      forceRerender({})
     }
   }, [])
 

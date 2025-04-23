@@ -4,7 +4,6 @@ import {
   EuiText,
   EuiButtonEmpty,
   EuiLoadingContent,
-  EuiHorizontalRule,
   EuiPopover,
 } from '@elastic/eui'
 import JsxParser from 'react-jsx-parser'
@@ -13,7 +12,7 @@ import { debounce } from 'lodash'
 import { useLocation, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-import { ExternalLink } from 'uiSrc/components'
+import { ExternalLink, HorizontalRule } from 'uiSrc/components'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import {
   sendEventTelemetry,
@@ -207,7 +206,7 @@ const InternalPage = (props: Props) => {
           </EuiPopover>
         </div>
         <div>
-          <EuiHorizontalRule margin="xs" />
+          <HorizontalRule margin="xs" />
         </div>
         <div>
           <EuiText className={styles.pageTitle} color="default">

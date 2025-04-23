@@ -1,6 +1,10 @@
 import classNames from 'classnames'
+import React from 'react'
 
-import { HorizontalRuleProps } from './horizontal-rule.styles'
+import {
+  HorizontalRuleProps,
+  StyledHorizontalRule,
+} from './horizontal-rule.styles'
 
 export const HorizontalRule = ({
   className,
@@ -10,7 +14,12 @@ export const HorizontalRule = ({
 }: HorizontalRuleProps) => {
   const classes = classNames('RI-horizontal-rule', className)
 
-  const cssStyles = [styles.euiHorizontalRule, styles[size], styles[margin]]
-
-  return <hr css={cssStyles} className={classes} {...rest} />
+  return (
+    <StyledHorizontalRule
+      size={size}
+      margin={margin}
+      className={classes}
+      {...rest}
+    />
+  )
 }

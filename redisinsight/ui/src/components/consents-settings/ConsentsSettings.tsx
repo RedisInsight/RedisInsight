@@ -12,7 +12,6 @@ import {
   EuiTitle,
   EuiToolTip,
   EuiForm,
-  EuiHorizontalRule,
   EuiCallOut,
   EuiLink,
 } from '@elastic/eui'
@@ -26,6 +25,7 @@ import {
 } from 'uiSrc/slices/user/user-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import ConsentOption from './ConsentOption'
+import { HorizontalRule } from '../base'
 
 import styles from './styles.module.scss'
 
@@ -261,7 +261,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
                 </EuiFlexItem>
               </EuiFlexGroup>
             </EuiFlexItem>
-            <EuiHorizontalRule
+            <HorizontalRule
               margin="l"
               className={cx({
                 [styles.pluginWarningHR]: !!requiredConsents.length,
@@ -310,7 +310,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
       </div>
       {requiredConsents.length ? (
         <>
-          <EuiHorizontalRule margin="l" className={styles.requiredHR} />
+          <HorizontalRule margin="l" className={styles.requiredHR} />
           <EuiSpacer size="m" />
           <EuiText color="subdued" size="s" className={styles.smallText}>
             To use Redis Insight, please accept the terms and conditions:{' '}

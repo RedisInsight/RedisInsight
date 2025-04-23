@@ -1,5 +1,5 @@
-import { HTMLAttributes } from "react"
-import styled, { css } from "styled-components"
+import { HTMLAttributes } from 'react'
+import styled, { css } from 'styled-components'
 
 export const SIZES = ['full', 'half', 'quarter'] as const
 export const MARGINS = ['none', 'xs', 's', 'm', 'l', 'xl', 'xxl'] as const
@@ -19,7 +19,7 @@ const horizontalRuleStyles = {
     quarter: css`
       width: 25%;
       margin-horizontal: auto;
-    `
+    `,
   },
   margin: {
     none: '',
@@ -41,11 +41,10 @@ const horizontalRuleStyles = {
     xxl: css`
       margin-block: var(--size-xxl);
     `,
-  }
+  },
 }
 
-export interface HorizontalRuleProps
-  extends HTMLAttributes<HTMLHRElement> {
+export interface HorizontalRuleProps extends HTMLAttributes<HTMLHRElement> {
   size?: HorizontalRuleSize
   margin?: HorizontalRuleMargin
 }
@@ -60,4 +59,7 @@ export const StyledHorizontalRule = styled.hr<
 
   flex-shrink: 0;
   flex-grow: 0;
+
+  ${({ size }) => horizontalRuleStyles.size[size]}
+  ${({ margin }) => horizontalRuleStyles.margin[margin]}
 `

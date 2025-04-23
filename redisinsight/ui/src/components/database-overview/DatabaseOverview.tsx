@@ -22,11 +22,8 @@ import {
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { toBytes, truncatePercentage } from 'uiSrc/utils'
-import {
-  appConnectivityError,
-  setConnectivityError,
-} from 'uiSrc/slices/app/connectivity'
-import ApiErrors from 'uiSrc/constants/apiErrors'
+import { appConnectivityError } from 'uiSrc/slices/app/connectivity'
+import WarningIcon from 'uiSrc/assets/img/warning.svg?react'
 import { getOverviewMetrics, IMetric } from './components/OverviewMetrics'
 
 import AutoRefresh from '../auto-refresh'
@@ -141,105 +138,135 @@ const DatabaseOverview = () => {
       gutterSize="none"
       responsive={false}
     >
-      {metrics?.length! > 0 && (
-        <EuiFlexItem key="overview">
-          <EuiFlexGroup
-            className={cx('flex-row', styles.itemContainer, styles.overview)}
-            gutterSize="none"
-            responsive={false}
-            alignItems="center"
-          >
-            {subscriptionId && subscriptionType === 'fixed' && (
-              <EuiFlexItem
-                className={cx(styles.overviewItem, styles.upgradeBtnItem)}
-                grow={false}
-                style={{ borderRight: 'none' }}
-              >
-                <EuiButton
-                  color="secondary"
-                  fill={!!usedMemoryPercent && usedMemoryPercent >= 75}
-                  className={cx(styles.upgradeBtn)}
-                  style={{ fontWeight: '400' }}
-                  onClick={() => {
-                    const upgradeUrl = isBdbPackages
-                      ? `${riConfig.app.returnUrlBase}/databases/upgrade/${subscriptionId}`
-                      : `${riConfig.app.returnUrlBase}/subscription/${subscriptionId}/change-plan`
-                    window.open(upgradeUrl, '_blank')
-                  }}
-                  data-testid="upgrade-ri-db-button"
-                >
-                  Upgrade plan
-                </EuiButton>
-              </EuiFlexItem>
-            )}
-            {metrics?.map((overviewItem) => (
-              <EuiFlexItem
-                className={cx(
-                  styles.overviewItem,
-                  overviewItem.className ?? '',
-                )}
-                key={overviewItem.id}
-                data-test-subj={overviewItem.id}
-                grow={false}
-              >
-                <EuiToolTip
-                  position="bottom"
-                  className={styles.tooltip}
-                  content={getTooltipContent(overviewItem)}
-                >
-                  <EuiFlexGroup
-                    gutterSize="none"
-                    responsive={false}
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    {overviewItem.icon && (
-                      <EuiFlexItem grow={false} className={styles.icon}>
-                        <EuiIcon
-                          size="m"
-                          type={overviewItem.icon}
-                          className={styles.icon}
-                        />
-                      </EuiFlexItem>
-                    )}
-                    <EuiFlexItem
-                      grow={false}
-                      className={styles.overviewItemContent}
-                    >
-                      {overviewItem.content}
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                </EuiToolTip>
-              </EuiFlexItem>
-            ))}
+      <EuiFlexItem key="overview">
+        <EuiFlexGroup
+          className={cx('flex-row', styles.itemContainer, styles.overview)}
+          gutterSize="none"
+          responsive={false}
+          alignItems="center"
+        >
+          {connectivityError && (
             <EuiFlexItem
-              className={cx(styles.overviewItem, styles.autoRefresh)}
+              key="connectivityError"
+              className={styles.overviewItem}
+              data-test-subj="connectivityError"
               grow={false}
-              data-testid="overview-auto-refresh"
             >
-              <EuiFlexItem grow={false} className={styles.overviewItemContent}>
-                <AutoRefresh
-                  displayText={false}
-                  displayLastRefresh={false}
-                  iconSize="xs"
-                  loading={false}
-                  enableAutoRefreshDefault
-                  lastRefreshTime={lastRefreshTime}
-                  containerClassName=""
-                  postfix="overview"
-                  testid="auto-refresh-overview"
-                  defaultRefreshRate={DATABASE_OVERVIEW_REFRESH_INTERVAL}
-                  minimumRefreshRate={parseInt(
-                    DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL,
-                  )}
-                  onRefresh={loadData}
-                  onEnableAutoRefresh={handleEnableAutoRefresh}
-                />
-              </EuiFlexItem>
+              <EuiToolTip
+                position="bottom"
+                className={styles.tooltip}
+                content={connectivityError}
+              >
+                <EuiFlexGroup
+                  gutterSize="none"
+                  responsive={false}
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <EuiFlexItem grow={false}>
+                    <EuiIcon size="m" type={WarningIcon} />
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              </EuiToolTip>
             </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
-      )}
+          )}
+          {metrics?.length! > 0 && (
+            <>
+              {subscriptionId && subscriptionType === 'fixed' && (
+                <EuiFlexItem
+                  className={cx(styles.overviewItem, styles.upgradeBtnItem)}
+                  grow={false}
+                  style={{ borderRight: 'none' }}
+                >
+                  <EuiButton
+                    color="secondary"
+                    fill={!!usedMemoryPercent && usedMemoryPercent >= 75}
+                    className={cx(styles.upgradeBtn)}
+                    style={{ fontWeight: '400' }}
+                    onClick={() => {
+                      const upgradeUrl = isBdbPackages
+                        ? `${riConfig.app.returnUrlBase}/databases/upgrade/${subscriptionId}`
+                        : `${riConfig.app.returnUrlBase}/subscription/${subscriptionId}/change-plan`
+                      window.open(upgradeUrl, '_blank')
+                    }}
+                    data-testid="upgrade-ri-db-button"
+                  >
+                    Upgrade plan
+                  </EuiButton>
+                </EuiFlexItem>
+              )}
+              {metrics?.map((overviewItem) => (
+                <EuiFlexItem
+                  className={cx(
+                    styles.overviewItem,
+                    overviewItem.className ?? '',
+                  )}
+                  key={overviewItem.id}
+                  data-test-subj={overviewItem.id}
+                  grow={false}
+                >
+                  <EuiToolTip
+                    position="bottom"
+                    className={styles.tooltip}
+                    content={getTooltipContent(overviewItem)}
+                  >
+                    <EuiFlexGroup
+                      gutterSize="none"
+                      responsive={false}
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      {overviewItem.icon && (
+                        <EuiFlexItem grow={false} className={styles.icon}>
+                          <EuiIcon
+                            size="m"
+                            type={overviewItem.icon}
+                            className={styles.icon}
+                          />
+                        </EuiFlexItem>
+                      )}
+                      <EuiFlexItem
+                        grow={false}
+                        className={styles.overviewItemContent}
+                      >
+                        {overviewItem.content}
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+                  </EuiToolTip>
+                </EuiFlexItem>
+              ))}
+              <EuiFlexItem
+                className={cx(styles.overviewItem, styles.autoRefresh)}
+                grow={false}
+                data-testid="overview-auto-refresh"
+              >
+                <EuiFlexItem
+                  grow={false}
+                  className={styles.overviewItemContent}
+                >
+                  <AutoRefresh
+                    displayText={false}
+                    displayLastRefresh={false}
+                    iconSize="xs"
+                    loading={false}
+                    enableAutoRefreshDefault
+                    lastRefreshTime={lastRefreshTime}
+                    containerClassName=""
+                    postfix="overview"
+                    testid="auto-refresh-overview"
+                    defaultRefreshRate={DATABASE_OVERVIEW_REFRESH_INTERVAL}
+                    minimumRefreshRate={parseInt(
+                      DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL,
+                    )}
+                    onRefresh={loadData}
+                    onEnableAutoRefresh={handleEnableAutoRefresh}
+                  />
+                </EuiFlexItem>
+              </EuiFlexItem>
+            </>
+          )}
+        </EuiFlexGroup>
+      </EuiFlexItem>
     </EuiFlexGroup>
   )
 }

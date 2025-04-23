@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo } from 'react'
+import React, { useContext, useState, useMemo, useEffect } from 'react'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -22,6 +22,11 @@ import {
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { toBytes, truncatePercentage } from 'uiSrc/utils'
+import {
+  appConnectivityError,
+  setConnectivityError,
+} from 'uiSrc/slices/app/connectivity'
+import ApiErrors from 'uiSrc/constants/apiErrors'
 import { getOverviewMetrics, IMetric } from './components/OverviewMetrics'
 
 import AutoRefresh from '../auto-refresh'
@@ -75,6 +80,7 @@ const DatabaseOverview = () => {
   const { id: connectedInstanceId = '', db } = useSelector(
     connectedInstanceSelector,
   )
+  const connectivityError = useSelector(appConnectivityError)
 
   const overview = useSelector(connectedInstanceOverviewSelector)
   const {
@@ -89,11 +95,16 @@ const DatabaseOverview = () => {
   } = overview
 
   const loadData = () => {
-    if (connectedInstanceId) {
+    if (connectedInstanceId && !connectivityError) {
       dispatch(getDatabaseConfigInfoAction(connectedInstanceId))
       setLastRefreshTime(Date.now())
     }
   }
+  useEffect(() => {
+    if (!connectivityError) {
+      loadData()
+    }
+  }, [connectivityError])
 
   const handleEnableAutoRefresh = (
     enableAutoRefresh: boolean,

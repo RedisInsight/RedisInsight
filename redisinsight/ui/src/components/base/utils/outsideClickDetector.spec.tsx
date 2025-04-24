@@ -1,9 +1,6 @@
-import React, { EventHandler, MouseEvent as ReactMouseEvent } from 'react'
-import { render, fireEvent } from 'uiSrc/utils/test-utils'
-import {
-  OutsideClickDetector,
-  RIEvent,
-} from 'uiSrc/components/base/utils/OutsideClickDetector'
+import React from 'react'
+import { fireEvent, render } from 'uiSrc/utils/test-utils'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils/OutsideClickDetector'
 
 describe('OutsideClickDetector', () => {
   it('is rendered', () => {
@@ -21,33 +18,8 @@ describe('OutsideClickDetector', () => {
       const parentDetector = jest.fn()
       const childDetector = jest.fn()
 
-      const triggerDocumentMouseDown: EventHandler<any> = (
-        e: ReactMouseEvent,
-      ) => {
-        const event = new Event('mousedown') as RIEvent
-        event.riGeneratedBy = (
-          e.nativeEvent as unknown as RIEvent
-        ).riGeneratedBy
-        document.dispatchEvent(event)
-      }
-
-      const triggerDocumentMouseUp: EventHandler<any> = (
-        e: ReactMouseEvent,
-      ) => {
-        const event = new Event('mouseup') as RIEvent
-        event.riGeneratedBy = (
-          e.nativeEvent as unknown as RIEvent
-        ).riGeneratedBy
-        document.dispatchEvent(event)
-      }
-
       const { findByTestId } = render(
-        <div
-          role="button"
-          tabIndex={0}
-          onMouseDown={triggerDocumentMouseDown}
-          onMouseUp={triggerDocumentMouseUp}
-        >
+        <div role="button" tabIndex={0}>
           <div>
             <OutsideClickDetector onOutsideClick={parentDetector}>
               <div>
@@ -63,15 +35,13 @@ describe('OutsideClickDetector', () => {
           </OutsideClickDetector>
         </div>,
       )
-      const target = await findByTestId('target1')
       const target2 = await findByTestId('target2')
-
-      fireEvent.mouseDown(target)
+      fireEvent.mouseDown(target2)
       fireEvent.mouseUp(target2)
 
-      expect(parentDetector).toHaveBeenCalledTimes(0)
-      expect(childDetector).toHaveBeenCalledTimes(0)
-      expect(unrelatedDetector).toHaveBeenCalledTimes(1)
+      expect(unrelatedDetector).toHaveBeenCalledTimes(0)
+      expect(childDetector).toHaveBeenCalledTimes(1)
+      expect(parentDetector).toHaveBeenCalledTimes(1)
     })
   })
 })

@@ -82,7 +82,6 @@ export const OutsideClickDetector = ({
         capturedDownIds.current = []
         return
       }
-
       capturedDownIds.current = []
       onOutsideClick(event)
     },

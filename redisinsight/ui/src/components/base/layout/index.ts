@@ -1,3 +1,1 @@
-import { HorizontalRule } from './horizontal-rule'
-
-export { HorizontalRule }
+export * from './horizontal-rule'

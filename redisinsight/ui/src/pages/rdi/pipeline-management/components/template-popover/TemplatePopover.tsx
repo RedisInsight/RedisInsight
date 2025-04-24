@@ -1,11 +1,12 @@
 import React from 'react'
-import { EuiButton, EuiPopover, EuiOutsideClickDetector } from '@elastic/eui'
+import { EuiButton, EuiPopover } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import TemplateForm from 'uiSrc/pages/rdi/pipeline-management/components/template-form'
 import { fetchPipelineStrategies } from 'uiSrc/slices/rdi/pipeline'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 
 import styles from './styles.module.scss'
 
@@ -42,7 +43,7 @@ const TemplatePopover = (props: Props) => {
   }
 
   return (
-    <EuiOutsideClickDetector onOutsideClick={handleClose}>
+    <OutsideClickDetector onOutsideClick={handleClose}>
       <EuiPopover
         ownFocus
         anchorPosition="downRight"
@@ -71,7 +72,7 @@ const TemplatePopover = (props: Props) => {
           value={value}
         />
       </EuiPopover>
-    </EuiOutsideClickDetector>
+    </OutsideClickDetector>
   )
 }
 

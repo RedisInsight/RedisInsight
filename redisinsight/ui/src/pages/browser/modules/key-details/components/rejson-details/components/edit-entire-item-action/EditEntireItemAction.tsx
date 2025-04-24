@@ -4,7 +4,6 @@ import {
   EuiFlexItem,
   EuiFocusTrap,
   EuiForm,
-  EuiOutsideClickDetector,
   EuiTextArea,
   EuiWindowEvent,
   keys,
@@ -13,6 +12,7 @@ import cx from 'classnames'
 
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { isValidJSON } from '../../utils'
 import { JSONErrors } from '../../constants'
 
@@ -50,7 +50,7 @@ const EditEntireItemAction = (props: Props) => {
   return (
     <div className={styles.row}>
       <div className={styles.fullWidthContainer}>
-        <EuiOutsideClickDetector onOutsideClick={() => onCancel?.()}>
+        <OutsideClickDetector onOutsideClick={() => onCancel?.()}>
           <div>
             <EuiWindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
             <EuiFocusTrap>
@@ -112,7 +112,7 @@ const EditEntireItemAction = (props: Props) => {
               )}
             </EuiFocusTrap>
           </div>
-        </EuiOutsideClickDetector>
+        </OutsideClickDetector>
       </div>
     </div>
   )

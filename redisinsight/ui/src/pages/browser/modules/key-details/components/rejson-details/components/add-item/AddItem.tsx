@@ -6,7 +6,6 @@ import {
   EuiFlexItem,
   EuiFocusTrap,
   EuiForm,
-  EuiOutsideClickDetector,
   EuiWindowEvent,
   keys,
 } from '@elastic/eui'
@@ -16,6 +15,7 @@ import { rejsonDataSelector } from 'uiSrc/slices/browser/rejson'
 import { checkExistingPath } from 'uiSrc/utils/rejson'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import ConfirmOverwrite from './ConfirmOverwrite'
 import { isValidJSON, isValidKey, parseJsonData, wrapPath } from '../../utils'
 import { JSONErrors } from '../../constants'
@@ -88,7 +88,7 @@ const AddItem = (props: Props) => {
         paddingLeft: `${leftPadding}em`,
       }}
     >
-      <EuiOutsideClickDetector onOutsideClick={() => {}}>
+      <OutsideClickDetector onOutsideClick={() => {}}>
         <div>
           <EuiWindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
           <EuiFocusTrap>
@@ -165,7 +165,7 @@ const AddItem = (props: Props) => {
             )}
           </EuiFocusTrap>
         </div>
-      </EuiOutsideClickDetector>
+      </OutsideClickDetector>
     </div>
   )
 }

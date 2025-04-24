@@ -2,7 +2,6 @@ import {
   EuiButtonIcon,
   EuiFieldText,
   EuiIcon,
-  EuiOutsideClickDetector,
   EuiProgress,
   EuiToolTip,
   keys,
@@ -10,6 +9,7 @@ import {
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { GroupBadge } from 'uiSrc/components'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { Nullable } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
@@ -160,7 +160,7 @@ const MultiSearch = (props: Props) => {
   )
 
   return (
-    <EuiOutsideClickDetector onOutsideClick={exitAutoSuggestions}>
+    <OutsideClickDetector onOutsideClick={exitAutoSuggestions}>
       <div
         className={cx(styles.multiSearchWrapper, className)}
         onKeyDown={handleKeyDown}
@@ -314,7 +314,7 @@ const MultiSearch = (props: Props) => {
           {!disableSubmit && SubmitBtn()}
         </div>
       </div>
-    </EuiOutsideClickDetector>
+    </OutsideClickDetector>
   )
 }
 

@@ -4,7 +4,6 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
-  EuiOutsideClickDetector,
   EuiPopover,
   EuiSpacer,
   EuiText,
@@ -28,6 +27,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { createAxiosError, pipelineToJson } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -104,7 +104,7 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
   }
 
   return (
-    <EuiOutsideClickDetector onOutsideClick={handleClosePopover}>
+    <OutsideClickDetector onOutsideClick={handleClosePopover}>
       <EuiPopover
         closePopover={handleClosePopover}
         ownFocus
@@ -184,7 +184,7 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiPopover>
-    </EuiOutsideClickDetector>
+    </OutsideClickDetector>
   )
 }
 

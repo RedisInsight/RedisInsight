@@ -14,11 +14,11 @@ const horizontalRuleStyles = {
     `,
     half: css`
       width: 50%;
-      margin-horizontal: auto;
+      margin-inline: auto;
     `,
     quarter: css`
       width: 25%;
-      margin-horizontal: auto;
+      margin-inline: auto;
     `,
   },
   margin: {

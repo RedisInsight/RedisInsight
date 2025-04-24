@@ -216,6 +216,7 @@ export default {
       : true,
     pipelineSummaryLimit:
       parseInt(process.env.RI_LOGGER_PIPELINE_SUMMARY_LIMIT, 10) || 5,
+    logDepthLevel: parseInt(process.env.RI_LOGGER_DEPTH_LEVEL, 10) || 5,
   },
   plugins: {
     stateMaxSize:

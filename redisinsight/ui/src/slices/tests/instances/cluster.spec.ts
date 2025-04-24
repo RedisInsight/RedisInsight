@@ -56,6 +56,7 @@ beforeEach(() => {
       status: 'active',
       tls: false,
       modules: [],
+      tags: [],
       options: {
         enabledDataPersistence: false,
         persistencePolicy: 'none',
@@ -77,6 +78,7 @@ beforeEach(() => {
       status: 'active',
       tls: false,
       modules: ['graph', 'search', 'ReJSON', 'bf', 'timeseries'],
+      tags: [],
       options: {
         enabledDataPersistence: true,
         persistencePolicy: 'aof-every-write',
@@ -105,6 +107,7 @@ beforeEach(() => {
         status: 'active',
         tls: false,
         modules: ['graph', 'search', 'ReJSON', 'bf', 'timeseries'],
+        tags: [],
         options: {
           enabledDataPersistence: true,
           persistencePolicy: 'aof-every-write',
@@ -132,6 +135,7 @@ beforeEach(() => {
         status: 'active',
         tls: false,
         modules: [],
+        tags: [],
         options: {
           enabledDataPersistence: false,
           persistencePolicy: 'none',

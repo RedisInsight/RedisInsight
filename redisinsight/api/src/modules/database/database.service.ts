@@ -97,7 +97,7 @@ export class DatabaseService {
     if (dto?.clientCert) {
       updatedDatabase.clientCert = dto.clientCert as ClientCertificate;
     }
-    return deepMerge(updatedDatabase, dto);
+    return deepMerge(updatedDatabase, dto) as Database;
   }
 
   /**

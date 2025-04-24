@@ -18,6 +18,7 @@ import {
 import { EuiSwitchEvent } from '@elastic/eui/src/components/form/switch'
 import cx from 'classnames'
 
+import { HorizontalRule } from 'uiSrc/components'
 import { compareConsents } from 'uiSrc/utils'
 import {
   updateUserConfigSettingsAction,
@@ -25,7 +26,6 @@ import {
 } from 'uiSrc/slices/user/user-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import ConsentOption from './ConsentOption'
-import { HorizontalRule } from '../base'
 
 import styles from './styles.module.scss'
 

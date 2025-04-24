@@ -63,7 +63,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   app.enableCors();
 
   if (
-    process.env.RI_APP_TYPE !== 'electron' ||
+    (process.env.RI_BUILD_TYPE || '').toLowerCase() !== 'electron' ||
     process.env.NODE_ENV === 'development'
   ) {
     let prefix = serverConfig.globalPrefix;

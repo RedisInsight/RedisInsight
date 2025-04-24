@@ -24,8 +24,10 @@ export enum AppType {
   RedisStackWeb = 'REDIS_STACK_WEB',
   RedisStackApp = 'REDIS_STACK_ELECTRON',
   Electron = 'ELECTRON',
+  ElectronEnterprise = 'ELECTRON_ENTERPRISE',
   Docker = 'DOCKER',
   VSCode = 'VS_CODE',
+  VSCodeEnterprise = 'VS_CODE_ENTERPRISE',
   Unknown = 'UNKNOWN',
 }
 

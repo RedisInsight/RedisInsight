@@ -6,6 +6,9 @@ import {
 } from 'src/modules/server/models/server';
 import { GetServerInfoResponse } from 'src/modules/server/dto/server.dto';
 import { SessionMetadata } from 'src/common/models';
+import config, { Config } from 'src/utils/config';
+
+const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
 export abstract class ServerService {
@@ -14,6 +17,18 @@ export abstract class ServerService {
   protected sessionId: number = new Date().getTime();
 
   static getAppType(buildType: string): AppType {
+    if (SERVER_CONFIG.appType) {
+      const predefinedAppType = SERVER_CONFIG.appType.toUpperCase();
+      const enumValues = Object.values(AppType);
+      const appType = enumValues.find(
+        (value) => value === predefinedAppType,
+      );
+
+      if (appType) {
+        return appType;
+      }
+    }
+
     switch (buildType) {
       case BuildType.DockerOnPremise:
         return AppType.Docker;

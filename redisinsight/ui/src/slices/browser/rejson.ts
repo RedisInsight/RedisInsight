@@ -189,6 +189,7 @@ export function fetchReJSON(
         dispatch(addErrorNotification(error))
       }
     }
+    dispatch(setEditorType(EditorType.Default))
   }
 }
 

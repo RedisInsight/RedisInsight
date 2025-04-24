@@ -13,9 +13,11 @@ const MonacoJson = (props: CommonProps) => {
       validate: true,
       schemaValidation: 'error',
       schemaRequest: 'error',
-      trailingCommas: 'error'
+      trailingCommas: 'error',
     })
-    const messageContribution = editor.getContribution('editor.contrib.messageController')
+    const messageContribution = editor.getContribution(
+      'editor.contrib.messageController',
+    )
     editor.onDidAttemptReadOnlyEdit(() => messageContribution?.dispose())
   }
 

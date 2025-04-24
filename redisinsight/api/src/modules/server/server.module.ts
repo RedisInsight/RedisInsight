@@ -15,10 +15,7 @@ export class ServerModule {
   ) {
     return {
       module: ServerModule,
-      controllers: [
-        ServerController,
-        HealthController,
-      ],
+      controllers: [ServerController, HealthController],
       providers: [
         {
           provide: ServerRepository,

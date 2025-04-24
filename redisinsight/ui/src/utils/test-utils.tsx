@@ -5,7 +5,11 @@ import { Provider } from 'react-redux'
 import thunk from 'redux-thunk'
 import { BrowserRouter } from 'react-router-dom'
 import configureMockStore from 'redux-mock-store'
-import { render as rtlRender, renderHook as rtlRenderHook, waitFor } from '@testing-library/react'
+import {
+  render as rtlRender,
+  renderHook as rtlRenderHook,
+  waitFor,
+} from '@testing-library/react'
 
 import { RootState, store as rootStore } from 'uiSrc/slices/store'
 import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
@@ -85,7 +89,7 @@ const initialStateDefault: RootState = {
     urlHandling: cloneDeep(initialStateAppUrlHandlingReducer),
     csrf: cloneDeep(initialStateAppCsrfReducer),
     init: cloneDeep(initialStateAppInit),
-    connectivity: cloneDeep(initialStateAppConnectivity)
+    connectivity: cloneDeep(initialStateAppConnectivity),
   },
   connections: {
     instances: cloneDeep(initialStateInstances),
@@ -149,8 +153,8 @@ const initialStateDefault: RootState = {
     instances: cloneDeep(initialStateRdi),
     dryRun: cloneDeep(initialStateRdiDryRunJob),
     statistics: cloneDeep(initialStateRdiStatistics),
-    testConnections: cloneDeep(initialStateRdiTestConnections)
-  }
+    testConnections: cloneDeep(initialStateRdiTestConnections),
+  },
 }
 
 // mocked store
@@ -161,7 +165,12 @@ export const mockedStoreFn = () => mockStore(initialStateDefault)
 // insert root state to the render Component
 const render = (
   ui: JSX.Element,
-  { initialState, store = mockedStore, withRouter, ...renderOptions }: Options = initialStateDefault
+  {
+    initialState,
+    store = mockedStore,
+    withRouter,
+    ...renderOptions
+  }: Options = initialStateDefault,
 ) => {
   const Wrapper = ({ children }: { children: JSX.Element }) => (
     <Provider store={store}>{children}</Provider>
@@ -174,7 +183,12 @@ const render = (
 
 const renderHook = (
   hook: (initialProps: unknown) => unknown,
-  { initialState, store = mockedStore, withRouter, ...renderOptions }: Options = initialStateDefault
+  {
+    initialState,
+    store = mockedStore,
+    withRouter,
+    ...renderOptions
+  }: Options = initialStateDefault,
 ) => {
   const Wrapper = ({ children }: { children: JSX.Element }) => (
     <Provider store={store}>{children}</Provider>
@@ -196,10 +210,11 @@ const clearStoreActions = (actions: any[]) => {
   const newActions = map(actions, (action) => {
     const newAction = { ...action }
     if (newAction?.payload) {
-      const payload = {
-        ...first<any>(newAction.payload),
-        key: '',
-      } || {}
+      const payload =
+        {
+          ...first<any>(newAction.payload),
+          key: '',
+        } || {}
       newAction.payload = [payload]
     }
     return newAction
@@ -216,7 +231,7 @@ const waitForEuiToolTipVisible = async (timeout = 500) => {
       const tooltip = document.querySelector('.euiToolTipPopover')
       expect(tooltip).toBeInTheDocument()
     },
-    { timeout } // Account for long delay on tooltips
+    { timeout }, // Account for long delay on tooltips
   )
 }
 
@@ -233,12 +248,12 @@ const waitForEuiPopoverVisible = async () => {
       const tooltip = document.querySelector('.euiPopover__panel-isOpen')
       expect(tooltip).toBeInTheDocument()
     },
-    { timeout: 200 } // Account for long delay on popover
+    { timeout: 200 }, // Account for long delay on popover
   )
 }
 
 export const waitForStack = async (timeout = 0) => {
-  await waitFor(() => { }, { timeout })
+  await waitFor(() => {}, { timeout })
 }
 
 // mock useHistory
@@ -269,29 +284,31 @@ jest.mock('react-router-dom', () => ({
 // mock <AutoSizer />
 jest.mock(
   'react-virtualized-auto-sizer',
-  () => ({ children }: { children: any }) => children({ height: 600, width: 600 })
+  () =>
+    ({ children }: { children: any }) =>
+      children({ height: 600, width: 600 }),
 )
 
-export const MOCKED_HIGHLIGHTING_FEATURES = ['importDatabases', 'anotherFeature']
-jest.mock(
-  'uiSrc/constants/featuresHighlighting',
-  () => ({
-    BUILD_FEATURES: {
-      importDatabases: {
-        type: 'tooltip',
-        title: 'Import Database Connections',
-        content: 'Import your database connections from other Redis UIs',
-        page: 'browser'
-      },
-      anotherFeature: {
-        type: 'tooltip',
-        title: 'Import Database Connections',
-        content: 'Import your database connections from other Redis UIs',
-        page: 'browser'
-      }
-    }
-  })
-)
+export const MOCKED_HIGHLIGHTING_FEATURES = [
+  'importDatabases',
+  'anotherFeature',
+]
+jest.mock('uiSrc/constants/featuresHighlighting', () => ({
+  BUILD_FEATURES: {
+    importDatabases: {
+      type: 'tooltip',
+      title: 'Import Database Connections',
+      content: 'Import your database connections from other Redis UIs',
+      page: 'browser',
+    },
+    anotherFeature: {
+      type: 'tooltip',
+      title: 'Import Database Connections',
+      content: 'Import your database connections from other Redis UIs',
+      page: 'browser',
+    },
+  },
+}))
 
 jest.mock('uiSrc/constants/recommendations', () => ({
   ...jest.requireActual('uiSrc/constants/recommendations'),
@@ -332,9 +349,12 @@ Object.defineProperty(window, 'matchMedia', {
   value: jest.fn().mockImplementation((query) => matchMediaMock(query)),
 })
 
-export const getMswResourceURL = (path: string = '') => RESOURCES_BASE_URL.concat(path)
+export const getMswResourceURL = (path: string = '') =>
+  RESOURCES_BASE_URL.concat(path)
 export const getMswURL = (path: string = '') =>
-  apiService.defaults.baseURL?.concat(path.startsWith('/') ? path.slice(1) : path) ?? ''
+  apiService.defaults.baseURL?.concat(
+    path.startsWith('/') ? path.slice(1) : path,
+  ) ?? ''
 
 export const mockWindowLocation = (initialHref = '') => {
   const setHrefMock = jest.fn()
@@ -355,7 +375,11 @@ export const mockWindowLocation = (initialHref = '') => {
   return setHrefMock
 }
 
-export const mockFeatureFlags = (overrides?: Partial<typeof initialStateAppFeaturesReducer.featureFlags.features>) => {
+export const mockFeatureFlags = (
+  overrides?: Partial<
+    typeof initialStateAppFeaturesReducer.featureFlags.features
+  >,
+) => {
   const initialFlags = initialStateAppFeaturesReducer.featureFlags.features
 
   return jest

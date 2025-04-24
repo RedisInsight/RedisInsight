@@ -12,8 +12,8 @@ describe('RdiConfigFileActionMenu', () => {
       handleSubmit: jest.fn(),
       resetForm: jest.fn(),
       // values: MOCK_RDI_PIPELINE_DATA,
-    };
-    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+    }
+    ;(useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
   })
 
   it('should render', () => {
@@ -22,7 +22,9 @@ describe('RdiConfigFileActionMenu', () => {
 
   it('should show menu with file actions when clicked', async () => {
     render(<RdiConfigFileActionMenu />)
-    const actionBtn = screen.getByTestId('rdi-config-file-action-menu-trigger') as HTMLElement
+    const actionBtn = screen.getByTestId(
+      'rdi-config-file-action-menu-trigger',
+    ) as HTMLElement
     expect(actionBtn).toBeInTheDocument()
     fireEvent.click(screen.getByTestId('rdi-config-file-action-menu-trigger'))
     await waitFor(() => screen.getByTestId('upload-file-btn'))

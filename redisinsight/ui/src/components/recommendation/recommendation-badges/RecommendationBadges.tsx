@@ -10,10 +10,18 @@ export interface Props {
 }
 
 const RecommendationBadges = ({ badges = [] }: Props) => (
-  <EuiFlexGroup className={styles.badgesContainer} responsive={false} alignItems="center" justifyContent="spaceBetween">
-    {badgesContent.map(({ id, name, icon }) => (
-      badges.includes(id) && <BadgeIcon key={id} id={id} icon={icon} name={name} />
-    ))}
+  <EuiFlexGroup
+    className={styles.badgesContainer}
+    responsive={false}
+    alignItems="center"
+    justifyContent="spaceBetween"
+  >
+    {badgesContent.map(
+      ({ id, name, icon }) =>
+        badges.includes(id) && (
+          <BadgeIcon key={id} id={id} icon={icon} name={name} />
+        ),
+    )}
   </EuiFlexGroup>
 )
 

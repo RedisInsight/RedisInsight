@@ -73,20 +73,20 @@ jobs:
       desktop: ${{ steps.filter.outputs.desktop }}
       e2e: ${{ steps.filter.outputs.e2e }}
     steps:
-    - uses: actions/checkout@v4
-    - uses: dorny/paths-filter@v3.0.2
-      id: filter
-      with:
-        base: ${{ github.ref }}
-        filters: |
-          frontend:
-            - 'redisinsight/ui/**'
-          backend:
-            - 'redisinsight/api/**'
-          desktop:
-            - 'redisinsight/desktop/**'
-          e2e:
-            - 'tests/e2e/**'
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3.0.2
+        id: filter
+        with:
+          base: ${{ github.ref }}
+          filters: |
+            frontend:
+              - 'redisinsight/ui/**'
+            backend:
+              - 'redisinsight/api/**'
+            desktop:
+              - 'redisinsight/desktop/**'
+            e2e:
+              - 'tests/e2e/**'
 
   frontend-tests:
     needs: changes
@@ -156,14 +156,28 @@ jobs:
   clean:
     uses: ./.github/workflows/clean-deployments.yml
     if: always()
-    needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
+    needs:
+      [
+        frontend-tests,
+        backend-tests,
+        integration-tests,
+        e2e-docker-tests,
+        e2e-appimage-tests,
+      ]
 
   # Remove artifacts from github actions
   remove-artifacts:
     name: Remove artifacts
-    needs: [frontend-tests, backend-tests, integration-tests, e2e-docker-tests, e2e-appimage-tests]
+    needs:
+      [
+        frontend-tests,
+        backend-tests,
+        integration-tests,
+        e2e-docker-tests,
+        e2e-appimage-tests,
+      ]
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Remove all artifacts
-      uses: ./.github/actions/remove-artifacts
+      - uses: actions/checkout@v4
+      - name: Remove all artifacts
+        uses: ./.github/actions/remove-artifacts

@@ -18,18 +18,18 @@ export const mockServerEntity = Object.assign(new ServerEntity(), {
   createDateTime: mockServer.createDateTime,
 });
 
-export const mockGetServerInfoResponse = Object.assign(new GetServerInfoResponse(), {
-  ...mockServer,
-  appVersion: SERVER_CONFIG.appVersion,
-  osPlatform: process.platform,
-  buildType: SERVER_CONFIG.buildType,
-  appType: AppType.Docker,
-  encryptionStrategies: [
-    EncryptionStrategy.PLAIN,
-    EncryptionStrategy.KEYTAR,
-  ],
-  packageType: PackageType.Unknown,
-});
+export const mockGetServerInfoResponse = Object.assign(
+  new GetServerInfoResponse(),
+  {
+    ...mockServer,
+    appVersion: SERVER_CONFIG.appVersion,
+    osPlatform: process.platform,
+    buildType: SERVER_CONFIG.buildType,
+    appType: AppType.Docker,
+    encryptionStrategies: [EncryptionStrategy.PLAIN, EncryptionStrategy.KEYTAR],
+    packageType: PackageType.Unknown,
+  },
+);
 
 export const mockServerRepository = jest.fn(() => ({
   exists: jest.fn().mockResolvedValue(true),

@@ -3,10 +3,14 @@ import React, { Fragment } from 'react'
 import JsonPretty from 'uiSrc/components/json-viewer/components/json-pretty'
 import { IJsonArrayProps } from 'uiSrc/components/json-viewer/interfaces'
 
-const JsonArray = ({ data, space = 2, gap = 0, lastElement = true }: IJsonArrayProps) => (
+const JsonArray = ({
+  data,
+  space = 2,
+  gap = 0,
+  lastElement = true,
+}: IJsonArrayProps) => (
   <span data-testid="json-array-component">
-    [
-    {!!data.length && '\n'}
+    [{!!data.length && '\n'}
     {data.map((value, idx) => (
       // eslint-disable-next-line react/no-array-index-key
       <Fragment key={idx}>
@@ -19,8 +23,7 @@ const JsonArray = ({ data, space = 2, gap = 0, lastElement = true }: IJsonArrayP
         />
       </Fragment>
     ))}
-    {!!data.length && !!gap && Array.from({ length: gap }, () => ' ')}
-    ]
+    {!!data.length && !!gap && Array.from({ length: gap }, () => ' ')}]
     {!lastElement && ','}
     {'\n'}
   </span>

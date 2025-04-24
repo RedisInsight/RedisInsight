@@ -2,7 +2,12 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { act } from '@testing-library/react'
 import { anyToBuffer } from 'uiSrc/utils'
-import { render, screen, fireEvent, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
+import {
+  render,
+  screen,
+  fireEvent,
+  waitForEuiToolTipVisible,
+} from 'uiSrc/utils/test-utils'
 import { MOCK_TRUNCATED_STRING_VALUE } from 'uiSrc/mocks/data/bigString'
 import { TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA } from 'uiSrc/constants'
 import PopoverDelete, { Props } from './PopoverDelete'
@@ -21,7 +26,7 @@ describe('PopoverDelete', () => {
         {...instance(mockedProps)}
         item="name"
         showPopover={showPopover}
-      />
+      />,
     )
     fireEvent.click(screen.getByLabelText(/remove field/i))
 
@@ -35,7 +40,7 @@ describe('PopoverDelete', () => {
         {...instance(mockedProps)}
         item={MOCK_TRUNCATED_STRING_VALUE}
         showPopover={showPopover}
-      />
+      />,
     )
     fireEvent.click(screen.getByLabelText(/remove field/i))
 
@@ -50,7 +55,9 @@ describe('PopoverDelete', () => {
     })
     await waitForEuiToolTipVisible()
 
-    expect(screen.getByTestId('remove-tooltip')).toHaveTextContent(TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA)
+    expect(screen.getByTestId('remove-tooltip')).toHaveTextContent(
+      TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA,
+    )
   })
 
   it('should call handleDeleteItem on delete', () => {
@@ -62,7 +69,7 @@ describe('PopoverDelete', () => {
         suffix="_"
         deleting="name_"
         handleDeleteItem={handleDeleteItem}
-      />
+      />,
     )
 
     const deleteBtn = screen.getByTestId('remove')
@@ -81,7 +88,7 @@ describe('PopoverDelete', () => {
         suffix="_"
         deleting="name_"
         handleDeleteItem={handleDeleteItem}
-      />
+      />,
     )
 
     const deleteBtn = screen.getByTestId('remove')
@@ -101,7 +108,7 @@ describe('PopoverDelete', () => {
         suffix="_"
         deleting="name_"
         handleDeleteItem={handleDeleteItem}
-      />
+      />,
     )
 
     const deleteBtn = screen.getByTestId('remove')

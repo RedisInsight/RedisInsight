@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsDefined,
-} from 'class-validator';
+import { IsDefined } from 'class-validator';
 import { IsRedisString, RedisStringType } from 'src/common/decorators';
 import { RedisString } from 'src/common/constants';
 import { Expose } from 'class-transformer';
@@ -19,14 +17,16 @@ export class IndexInfoRequestBodyDto {
 
 export class IndexOptionsDto {
   @ApiProperty({
-    description: 'is a filter expression with the full RediSearch aggregation expression language.',
+    description:
+      'is a filter expression with the full RediSearch aggregation expression language.',
     type: String,
   })
   @Expose()
   filter?: string;
 
   @ApiProperty({
-    description: 'if set, indicates the default language for documents in the index. Default is English.',
+    description:
+      'if set, indicates the default language for documents in the index. Default is English.',
     type: String,
   })
   @Expose()
@@ -94,7 +94,8 @@ export class IndexAttibuteDto {
   SORTABLE?: boolean;
 
   @ApiProperty({
-    description: 'Attributes can have the NOINDEX option, which means they will not be indexed. ',
+    description:
+      'Attributes can have the NOINDEX option, which means they will not be indexed. ',
     type: Boolean,
   })
   @Expose()
@@ -152,7 +153,7 @@ export class FieldStatisticsDto {
     type: Object,
   })
   @Expose()
-  [ 'Index Errors']: object;
+  ['Index Errors']: object;
 }
 
 // The list of return fields from redis: https://redis.io/docs/latest/commands/ft.info/
@@ -168,14 +169,16 @@ export class IndexInfoDto {
   index_name: string;
 
   @ApiProperty({
-    description: 'The index options selected during FT.CREATE such as FILTER {filter}, LANGUAGE {default_lang}, etc.',
+    description:
+      'The index options selected during FT.CREATE such as FILTER {filter}, LANGUAGE {default_lang}, etc.',
     type: IndexOptionsDto,
   })
   @Expose()
   index_options: IndexOptionsDto;
 
   @ApiProperty({
-    description: 'Includes key_type, hash or JSON; prefixes, if any; and default_score.',
+    description:
+      'Includes key_type, hash or JSON; prefixes, if any; and default_score.',
     type: IndexDefinitionDto,
   })
   @Expose()
@@ -302,7 +305,8 @@ export class IndexInfoDto {
   geoshapes_sz_mb?: string;
 
   @ApiProperty({
-    description: 'The average number of records (including deletions) per document.',
+    description:
+      'The average number of records (including deletions) per document.',
     type: String,
   })
   @Expose()
@@ -316,7 +320,8 @@ export class IndexInfoDto {
   bytes_per_record_avg?: string;
 
   @ApiProperty({
-    description: 'The average number of offsets (position information) per term.',
+    description:
+      'The average number of offsets (position information) per term.',
     type: String,
   })
   @Expose()
@@ -352,7 +357,8 @@ export class IndexInfoDto {
   indexing?: string;
 
   @ApiProperty({
-    description: 'The percentage of the index that has been successfully generated.',
+    description:
+      'The percentage of the index that has been successfully generated.',
     type: String,
   })
   @Expose()
@@ -366,7 +372,8 @@ export class IndexInfoDto {
   number_of_uses?: number;
 
   @ApiProperty({
-    description: 'The index deletion flag. A value of 1 indicates index deletion is in progress.',
+    description:
+      'The index deletion flag. A value of 1 indicates index deletion is in progress.',
     type: Number,
   })
   @Expose()
@@ -388,7 +395,8 @@ export class IndexInfoDto {
   cursor_stats?: object;
 
   @ApiProperty({
-    description: 'Dialect statistics: the number of times the index was searched using each DIALECT, 1 - 4.',
+    description:
+      'Dialect statistics: the number of times the index was searched using each DIALECT, 1 - 4.',
     type: Object,
   })
   @Expose()
@@ -403,7 +411,8 @@ export class IndexInfoDto {
   ['Index Errors']?: object;
 
   @ApiProperty({
-    description: 'Dialect statistics: the number of times the index was searched using each DIALECT, 1 - 4.',
+    description:
+      'Dialect statistics: the number of times the index was searched using each DIALECT, 1 - 4.',
     type: FieldStatisticsDto,
     isArray: true,
   })

@@ -9,12 +9,14 @@ import {
   mockClusterDatabaseWithTlsAuth,
   mockClusterDatabaseWithTlsAuthEntity,
   mockDatabase,
-  mockDatabaseEntity, mockDatabaseEntityWithCloudDetails,
+  mockDatabaseEntity,
+  mockDatabaseEntityWithCloudDetails,
   mockDatabaseId,
   mockDatabasePasswordEncrypted,
   mockDatabasePasswordPlain,
   mockDatabaseSentinelMasterPasswordEncrypted,
-  mockDatabaseSentinelMasterPasswordPlain, mockDatabaseWithCloudDetails,
+  mockDatabaseSentinelMasterPasswordPlain,
+  mockDatabaseWithCloudDetails,
   mockDatabaseWithSshBasic,
   mockDatabaseWithSshBasicEntity,
   mockDatabaseWithSshPrivateKey,
@@ -35,7 +37,8 @@ import {
   mockSshOptionsPassphrasePlain,
   mockSshOptionsPasswordEncrypted,
   mockSshOptionsPasswordPlain,
-  mockSshOptionsPrivateKeyEncrypted, mockSshOptionsPrivateKeyEntity,
+  mockSshOptionsPrivateKeyEncrypted,
+  mockSshOptionsPrivateKeyEntity,
   mockSshOptionsPrivateKeyPlain,
   mockSshOptionsUsernameEncrypted,
   mockSshOptionsUsernamePlain,
@@ -54,8 +57,17 @@ import { DatabaseAlreadyExistsException } from 'src/modules/database/exeptions';
 import { TagRepository } from 'src/modules/tag/repository/tag.repository';
 
 const listFields = [
-  'id', 'name', 'host', 'port', 'db', 'timeout',
-  'connectionType', 'modules', 'lastConnection', 'version', 'cloudDetails',
+  'id',
+  'name',
+  'host',
+  'port',
+  'db',
+  'timeout',
+  'connectionType',
+  'modules',
+  'lastConnection',
+  'version',
+  'cloudDetails',
   'tags',
 ];
 
@@ -97,24 +109,36 @@ describe('LocalDatabaseRepository', () => {
         {
           provide: TagRepository,
           useFactory: mockTagsRepository,
-        }
+        },
       ],
     }).compile();
 
     repository = await module.get(getRepositoryToken(DatabaseEntity));
     tagRepository = await module.get(TagRepository);
-    sshOptionsRepository = await module.get(getRepositoryToken(SshOptionsEntity));
+    sshOptionsRepository = await module.get(
+      getRepositoryToken(SshOptionsEntity),
+    );
     caCertRepository = await module.get(CaCertificateRepository);
     clientCertRepository = await module.get(ClientCertificateRepository);
     encryptionService = await module.get(EncryptionService);
     service = await module.get(LocalDatabaseRepository);
 
     repository.findOne.mockResolvedValue(mockDatabaseEntity);
-    repository.createQueryBuilder().getOne.mockResolvedValue(mockDatabaseEntity);
-    repository.createQueryBuilder().getMany.mockResolvedValue([
-      Object.assign(new DatabaseEntity(), pick(mockDatabaseWithTlsAuthEntity, ...listFields)),
-      Object.assign(new DatabaseEntity(), pick(mockDatabaseWithTlsAuthEntity, ...listFields)),
-    ]);
+    repository
+      .createQueryBuilder()
+      .getOne.mockResolvedValue(mockDatabaseEntity);
+    repository
+      .createQueryBuilder()
+      .getMany.mockResolvedValue([
+        Object.assign(
+          new DatabaseEntity(),
+          pick(mockDatabaseWithTlsAuthEntity, ...listFields),
+        ),
+        Object.assign(
+          new DatabaseEntity(),
+          pick(mockDatabaseWithTlsAuthEntity, ...listFields),
+        ),
+      ]);
     repository.save.mockResolvedValue(mockDatabaseEntity);
     repository.update.mockResolvedValue(mockDatabaseEntity);
 
@@ -122,7 +146,10 @@ describe('LocalDatabaseRepository', () => {
       .defaultImplementation(async (data) => data || undefined)
       .calledWith(mockDatabasePasswordEncrypted, expect.anything())
       .mockResolvedValue(mockDatabasePasswordPlain)
-      .calledWith(mockDatabaseSentinelMasterPasswordEncrypted, expect.anything())
+      .calledWith(
+        mockDatabaseSentinelMasterPasswordEncrypted,
+        expect.anything(),
+      )
       .mockResolvedValue(mockDatabaseSentinelMasterPasswordPlain)
       .calledWith(mockSshOptionsUsernameEncrypted, expect.anything())
       .mockResolvedValue(mockSshOptionsUsernamePlain)
@@ -168,12 +195,16 @@ describe('LocalDatabaseRepository', () => {
 
   describe('exists', () => {
     it('should return true when receive database entity', async () => {
-      expect(await service.exists(mockSessionMetadata, mockDatabaseId)).toEqual(true);
+      expect(await service.exists(mockSessionMetadata, mockDatabaseId)).toEqual(
+        true,
+      );
     });
 
     it('should return false when no database received', async () => {
       repository.createQueryBuilder().getOne.mockResolvedValue(null);
-      expect(await service.exists(mockSessionMetadata, mockDatabaseId)).toEqual(false);
+      expect(await service.exists(mockSessionMetadata, mockDatabaseId)).toEqual(
+        false,
+      );
     });
   });
 
@@ -188,7 +219,10 @@ describe('LocalDatabaseRepository', () => {
 
     it('should return standalone database model with ssh enabled (basic)', async () => {
       repository.findOne.mockResolvedValue(mockDatabaseWithSshBasicEntity);
-      const result = await service.get(mockSessionMetadata, mockDatabaseWithSshBasic.id);
+      const result = await service.get(
+        mockSessionMetadata,
+        mockDatabaseWithSshBasic.id,
+      );
 
       expect(result).toEqual(mockDatabaseWithSshBasic);
       expect(caCertRepository.get).not.toHaveBeenCalled();
@@ -197,7 +231,10 @@ describe('LocalDatabaseRepository', () => {
 
     it('should return standalone database model with ssh enabled (privateKey + passphrase)', async () => {
       repository.findOne.mockResolvedValue(mockDatabaseWithSshPrivateKeyEntity);
-      const result = await service.get(mockSessionMetadata, mockDatabaseWithSshPrivateKey.id);
+      const result = await service.get(
+        mockSessionMetadata,
+        mockDatabaseWithSshPrivateKey.id,
+      );
 
       expect(result).toEqual(mockDatabaseWithSshPrivateKey);
       expect(caCertRepository.get).not.toHaveBeenCalled();
@@ -215,7 +252,9 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should return sentinel tls database model (with fields decryption)', async () => {
-      repository.findOne.mockResolvedValue(mockSentinelDatabaseWithTlsAuthEntity);
+      repository.findOne.mockResolvedValue(
+        mockSentinelDatabaseWithTlsAuthEntity,
+      );
 
       const result = await service.get(mockSessionMetadata, mockDatabaseId);
 
@@ -225,7 +264,9 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should return cluster database model (with fields decryption)', async () => {
-      repository.findOne.mockResolvedValue(mockClusterDatabaseWithTlsAuthEntity);
+      repository.findOne.mockResolvedValue(
+        mockClusterDatabaseWithTlsAuthEntity,
+      );
 
       const result = await service.get(mockSessionMetadata, mockDatabaseId);
 
@@ -246,25 +287,46 @@ describe('LocalDatabaseRepository', () => {
 
     it('should return standalone database model without omit fields', async () => {
       const omitFields = ['compressor', 'connectionType'];
-      const result = await service.get(mockSessionMetadata, mockDatabaseId, false, omitFields);
+      const result = await service.get(
+        mockSessionMetadata,
+        mockDatabaseId,
+        false,
+        omitFields,
+      );
 
       expect(result).toEqual(omit(mockDatabase, omitFields));
     });
 
     it('should return standalone database model without nested fields', async () => {
-      const omitFields = ['compressor', 'sshOptions.passphrase', 'sshOptions.privateKey'];
+      const omitFields = [
+        'compressor',
+        'sshOptions.passphrase',
+        'sshOptions.privateKey',
+      ];
 
-      repository.findOne.mockResolvedValueOnce(mockDatabaseWithSshPrivateKeyEntity);
-      const result = await service.get(mockSessionMetadata, mockDatabaseWithSshPrivateKey.id, false, omitFields);
+      repository.findOne.mockResolvedValueOnce(
+        mockDatabaseWithSshPrivateKeyEntity,
+      );
+      const result = await service.get(
+        mockSessionMetadata,
+        mockDatabaseWithSshPrivateKey.id,
+        false,
+        omitFields,
+      );
 
-      expect(result).toEqual(omit(cloneClassInstance(mockDatabaseWithSshPrivateKey), omitFields));
+      expect(result).toEqual(
+        omit(cloneClassInstance(mockDatabaseWithSshPrivateKey), omitFields),
+      );
       expect(caCertRepository.get).not.toHaveBeenCalled();
       expect(clientCertRepository.get).not.toHaveBeenCalled();
     });
 
     it('should return standalone database model with tags', async () => {
       repository.findOne.mockResolvedValue(mockDatabaseWithTagsEntity);
-      const result = await service.get(mockSessionMetadata, mockDatabaseWithTags.id);
+      const result = await service.get(
+        mockSessionMetadata,
+        mockDatabaseWithTags.id,
+      );
 
       expect(result).toEqual(mockDatabaseWithTags);
       expect(caCertRepository.get).not.toHaveBeenCalled();
@@ -280,10 +342,18 @@ describe('LocalDatabaseRepository', () => {
       ]);
     });
     it('should return list with cloud details', async () => {
-      repository.createQueryBuilder().getMany.mockResolvedValue([
-        Object.assign(new DatabaseEntity(), pick(mockDatabaseEntityWithCloudDetails, ...listFields)),
-        Object.assign(new DatabaseEntity(), pick(mockDatabaseEntityWithCloudDetails, ...listFields)),
-      ]);
+      repository
+        .createQueryBuilder()
+        .getMany.mockResolvedValue([
+          Object.assign(
+            new DatabaseEntity(),
+            pick(mockDatabaseEntityWithCloudDetails, ...listFields),
+          ),
+          Object.assign(
+            new DatabaseEntity(),
+            pick(mockDatabaseEntityWithCloudDetails, ...listFields),
+          ),
+        ]);
 
       expect(await service.list(mockSessionMetadata)).toEqual([
         pick(mockDatabaseWithCloudDetails, ...listFields),
@@ -292,10 +362,18 @@ describe('LocalDatabaseRepository', () => {
     });
 
     it('should return list of databases with tags', async () => {
-      repository.createQueryBuilder().getMany.mockResolvedValue([
-        Object.assign(new DatabaseEntity(), pick(mockDatabaseWithTagsEntity, ...listFields)),
-        Object.assign(new DatabaseEntity(), pick(mockDatabaseWithTagsEntity, ...listFields)),
-      ]);
+      repository
+        .createQueryBuilder()
+        .getMany.mockResolvedValue([
+          Object.assign(
+            new DatabaseEntity(),
+            pick(mockDatabaseWithTagsEntity, ...listFields),
+          ),
+          Object.assign(
+            new DatabaseEntity(),
+            pick(mockDatabaseWithTagsEntity, ...listFields),
+          ),
+        ]);
 
       expect(await service.list(mockSessionMetadata)).toEqual([
         pick(mockDatabaseWithTags, ...listFields),
@@ -306,7 +384,11 @@ describe('LocalDatabaseRepository', () => {
 
   describe('create', () => {
     it('should create standalone database', async () => {
-      const result = await service.create(mockSessionMetadata, mockDatabase, false);
+      const result = await service.create(
+        mockSessionMetadata,
+        mockDatabase,
+        false,
+      );
 
       expect(result).toEqual(mockDatabase);
       expect(caCertRepository.create).not.toHaveBeenCalled();
@@ -316,7 +398,11 @@ describe('LocalDatabaseRepository', () => {
     it('should create standalone database with cloud details', async () => {
       repository.save.mockResolvedValue(mockDatabaseEntityWithCloudDetails);
 
-      const result = await service.create(mockSessionMetadata, mockDatabaseWithCloudDetails, false);
+      const result = await service.create(
+        mockSessionMetadata,
+        mockDatabaseWithCloudDetails,
+        false,
+      );
 
       expect(result).toEqual(mockDatabaseWithCloudDetails);
       expect(caCertRepository.create).not.toHaveBeenCalled();
@@ -326,7 +412,11 @@ describe('LocalDatabaseRepository', () => {
     it('should create standalone database (with existing certificates)', async () => {
       repository.save.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
 
-      const result = await service.create(mockSessionMetadata, mockDatabaseWithTlsAuth, false);
+      const result = await service.create(
+        mockSessionMetadata,
+        mockDatabaseWithTlsAuth,
+        false,
+      );
 
       expect(result).toEqual(mockDatabaseWithTlsAuth);
       expect(caCertRepository.create).not.toHaveBeenCalled();
@@ -338,7 +428,11 @@ describe('LocalDatabaseRepository', () => {
 
       const result = await service.create(
         mockSessionMetadata,
-        omit(cloneClassInstance(mockDatabaseWithTlsAuth), 'caCert.id', 'clientCert.id'),
+        omit(
+          cloneClassInstance(mockDatabaseWithTlsAuth),
+          'caCert.id',
+          'clientCert.id',
+        ),
         false,
       );
 
@@ -350,7 +444,11 @@ describe('LocalDatabaseRepository', () => {
     it('should throw an error if create called with cloud details and have the same entity', async () => {
       repository.findOne.mockResolvedValueOnce(mockDatabaseEntity);
       try {
-        await service.create(mockSessionMetadata, mockDatabaseEntityWithCloudDetails, true);
+        await service.create(
+          mockSessionMetadata,
+          mockDatabaseEntityWithCloudDetails,
+          true,
+        );
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(DatabaseAlreadyExistsException);
@@ -363,9 +461,15 @@ describe('LocalDatabaseRepository', () => {
     it('should create standalone database with tags', async () => {
       repository.save.mockResolvedValue(mockDatabaseWithTagsEntity);
 
-      const result = await service.create(mockSessionMetadata, mockDatabaseWithTags, false);
+      const result = await service.create(
+        mockSessionMetadata,
+        mockDatabaseWithTags,
+        false,
+      );
 
-      expect(tagRepository.getOrCreateByKeyValuePairs).toHaveBeenCalledWith(mockDatabaseWithTags.tags);
+      expect(tagRepository.getOrCreateByKeyValuePairs).toHaveBeenCalledWith(
+        mockDatabaseWithTags.tags,
+      );
       expect(result).toEqual(mockDatabaseWithTags);
       expect(caCertRepository.create).not.toHaveBeenCalled();
       expect(clientCertRepository.create).not.toHaveBeenCalled();
@@ -376,16 +480,12 @@ describe('LocalDatabaseRepository', () => {
     it('should update standalone database', async () => {
       repository.merge.mockReturnValue(mockDatabaseEntity);
 
-      const result = await service.update(
-        mockSessionMetadata,
-        mockDatabaseId,
-        {
-          ...mockDatabase,
-          caCert: null,
-          clientCert: null,
-          sshOptions: null,
-        },
-      );
+      const result = await service.update(mockSessionMetadata, mockDatabaseId, {
+        ...mockDatabase,
+        caCert: null,
+        clientCert: null,
+        sshOptions: null,
+      });
 
       expect(result).toEqual({
         ...mockDatabase,
@@ -402,7 +502,11 @@ describe('LocalDatabaseRepository', () => {
       repository.findOne.mockResolvedValue(mockDatabaseWithSshBasicEntity);
       repository.merge.mockReturnValue(mockDatabaseWithSshBasic);
 
-      const result = await service.update(mockSessionMetadata, mockDatabaseId, mockDatabaseWithSshBasic);
+      const result = await service.update(
+        mockSessionMetadata,
+        mockDatabaseId,
+        mockDatabaseWithSshBasic,
+      );
 
       expect(result).toEqual(mockDatabaseWithSshBasic);
       expect(caCertRepository.create).not.toHaveBeenCalled();
@@ -413,7 +517,11 @@ describe('LocalDatabaseRepository', () => {
       repository.findOne.mockResolvedValue(mockDatabaseWithSshPrivateKeyEntity);
       repository.merge.mockReturnValue(mockDatabaseWithSshPrivateKey);
 
-      const result = await service.update(mockSessionMetadata, mockDatabaseId, mockDatabaseWithSshPrivateKey);
+      const result = await service.update(
+        mockSessionMetadata,
+        mockDatabaseId,
+        mockDatabaseWithSshPrivateKey,
+      );
 
       expect(result).toEqual(mockDatabaseWithSshPrivateKey);
       expect(caCertRepository.create).not.toHaveBeenCalled();
@@ -425,7 +533,11 @@ describe('LocalDatabaseRepository', () => {
       repository.findOne.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
       repository.findOne.mockResolvedValueOnce(mockDatabaseWithTlsAuthEntity);
 
-      const result = await service.update(mockSessionMetadata, mockDatabaseId, mockDatabaseWithTlsAuth);
+      const result = await service.update(
+        mockSessionMetadata,
+        mockDatabaseId,
+        mockDatabaseWithTlsAuth,
+      );
 
       expect(result).toEqual(mockDatabaseWithTlsAuth);
       expect(caCertRepository.create).not.toHaveBeenCalled();
@@ -452,7 +564,11 @@ describe('LocalDatabaseRepository', () => {
       repository.findOne.mockResolvedValue(mockDatabaseWithTagsEntity);
       repository.merge.mockReturnValue(mockDatabaseWithTags);
 
-      const result = await service.update(mockSessionMetadata, mockDatabaseId, mockDatabaseWithTags);
+      const result = await service.update(
+        mockSessionMetadata,
+        mockDatabaseId,
+        mockDatabaseWithTags,
+      );
 
       expect(result).toEqual(mockDatabaseWithTags);
       expect(caCertRepository.create).not.toHaveBeenCalled();
@@ -463,7 +579,11 @@ describe('LocalDatabaseRepository', () => {
       repository.findOne.mockResolvedValue(mockDatabaseWithTagsEntity);
       repository.merge.mockReturnValue(mockDatabaseWithTags);
 
-      const result = await service.update(mockSessionMetadata, mockDatabaseId, mockDatabaseWithTags);
+      const result = await service.update(
+        mockSessionMetadata,
+        mockDatabaseId,
+        mockDatabaseWithTags,
+      );
 
       expect(result).toEqual(mockDatabaseWithTags);
       expect(tagRepository.cleanupUnusedTags).toHaveBeenCalled();
@@ -474,7 +594,9 @@ describe('LocalDatabaseRepository', () => {
 
   describe('delete', () => {
     it('should delete database by id', async () => {
-      expect(await service.delete(mockSessionMetadata, mockDatabaseId)).toEqual(undefined);
+      expect(await service.delete(mockSessionMetadata, mockDatabaseId)).toEqual(
+        undefined,
+      );
     });
 
     it('should delete database by id and cleanup unused tags', async () => {
@@ -487,7 +609,10 @@ describe('LocalDatabaseRepository', () => {
     it('should delete databases with isPreSetup flag enabled', async () => {
       const excludeIds = ['_1', '_2'];
 
-      repository.createQueryBuilder().delete().execute.mockResolvedValue({ raw: [], affected: 1 });
+      repository
+        .createQueryBuilder()
+        .delete()
+        .execute.mockResolvedValue({ raw: [], affected: 1 });
 
       const result = await service.cleanupPreSetup(excludeIds);
 

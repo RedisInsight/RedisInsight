@@ -6,12 +6,15 @@ import { findMarkdownPath } from 'uiSrc/utils/workbench'
 const getCapability = (
   telemetryName: string = '',
   name: string = '',
-  path: Nullable<string> = null
+  path: Nullable<string> = null,
 ) => ({
-  telemetryName, name, path
+  telemetryName,
+  name,
+  path,
 })
 
-export const getSourceTutorialByCapability = (moduleName = '') => `${moduleName}_tutorial`
+export const getSourceTutorialByCapability = (moduleName = '') =>
+  `${moduleName}_tutorial`
 
 export const getTutorialCapability = (source: any = '') => {
   switch (source) {
@@ -25,7 +28,9 @@ export const getTutorialCapability = (source: any = '') => {
       return getCapability(
         'searchAndQuery',
         'Redis Query Engine',
-        findMarkdownPath(store.getState()?.workbench?.tutorials?.items, { id: 'sq-intro' })
+        findMarkdownPath(store.getState()?.workbench?.tutorials?.items, {
+          id: 'sq-intro',
+        }),
       )
 
     // RedisJSON
@@ -34,7 +39,9 @@ export const getTutorialCapability = (source: any = '') => {
       return getCapability(
         'JSON',
         'JSON data structure',
-        findMarkdownPath(store.getState()?.workbench?.tutorials?.items, { id: 'ds-json-intro' })
+        findMarkdownPath(store.getState()?.workbench?.tutorials?.items, {
+          id: 'ds-json-intro',
+        }),
       )
 
     // TimeSeries
@@ -43,7 +50,9 @@ export const getTutorialCapability = (source: any = '') => {
       return getCapability(
         'timeSeries',
         'Time series data structure',
-        findMarkdownPath(store.getState()?.workbench?.tutorials?.items, { id: 'ds-ts-intro' })
+        findMarkdownPath(store.getState()?.workbench?.tutorials?.items, {
+          id: 'ds-ts-intro',
+        }),
       )
 
     // Bloom
@@ -52,7 +61,9 @@ export const getTutorialCapability = (source: any = '') => {
       return getCapability(
         'probabilistic',
         'Probabilistic data structures',
-        findMarkdownPath(store.getState()?.workbench?.tutorials?.items, { id: 'ds-prob-intro' })
+        findMarkdownPath(store.getState()?.workbench?.tutorials?.items, {
+          id: 'ds-prob-intro',
+        }),
       )
 
     default:

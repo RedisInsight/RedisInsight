@@ -4,9 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export abstract class SessionProvider {
-  constructor(
-    protected readonly sessionStorage: SessionStorage,
-  ) {}
+  constructor(protected readonly sessionStorage: SessionStorage) {}
 
   abstract getSession(id: string): Promise<Session>;
   abstract createSession(session: Session): Promise<Session>;

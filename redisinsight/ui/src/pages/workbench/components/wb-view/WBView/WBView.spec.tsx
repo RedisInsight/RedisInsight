@@ -38,7 +38,7 @@ describe('WBView', () => {
           {...instance(mockedProps)}
           script={command}
           onSubmit={onSubmitMock}
-        />
+        />,
       )
 
       const monacoEl = queryByTestId('monaco')

@@ -17,7 +17,10 @@ describe('RdiPipelineAnalytics', () => {
     }).compile();
 
     service = await module.get(RdiPipelineAnalytics);
-    sendEventMethod = jest.spyOn<RdiPipelineAnalytics, any>(service, 'sendEvent');
+    sendEventMethod = jest.spyOn<RdiPipelineAnalytics, any>(
+      service,
+      'sendEvent',
+    );
     sendFailedEventMethod = jest.spyOn<RdiPipelineAnalytics, any>(
       service,
       'sendFailedEvent',
@@ -38,7 +41,11 @@ describe('RdiPipelineAnalytics', () => {
     });
 
     it('should emit event when rdi pipeline is not deployed successfully', () => {
-      service.sendRdiPipelineDeployFailed(mockSessionMetadata, httpException, 'id');
+      service.sendRdiPipelineDeployFailed(
+        mockSessionMetadata,
+        httpException,
+        'id',
+      );
 
       expect(sendFailedEventMethod).toHaveBeenCalledWith(
         mockSessionMetadata,

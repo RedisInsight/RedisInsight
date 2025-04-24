@@ -24,9 +24,15 @@ import reducer, {
   getContentRecommendations,
   getContentRecommendationsSuccess,
   getContentRecommendationsFailure,
-  fetchContentRecommendations, addUnreadRecommendations,
+  fetchContentRecommendations,
+  addUnreadRecommendations,
 } from 'uiSrc/slices/recommendations/recommendations'
-import { cleanup, initialStateDefault, mockStore, mockedStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockStore,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 
 let store: typeof mockedStore
 
@@ -34,7 +40,9 @@ const mockId = 'id'
 const mockName = 'name'
 const mockVote = Vote.Like
 const mockRecommendations = {
-  recommendations: [{ id: mockId, name: mockName, read: false, vote: null, hide: false }],
+  recommendations: [
+    { id: mockId, name: mockName, read: false, vote: null, hide: false },
+  ],
   totalUnread: 1,
 }
 const mockRecommendationVoted = cloneDeep(mockRecommendations)
@@ -90,7 +98,10 @@ describe('recommendations slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, getRecommendationsFailure(error))
+        const nextState = reducer(
+          initialState,
+          getRecommendationsFailure(error),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -107,11 +118,14 @@ describe('recommendations slice', () => {
         const state = {
           ...initialState,
           loading: false,
-          data: mockRecommendations
+          data: mockRecommendations,
         }
 
         // Act
-        const nextState = reducer(initialState, getRecommendationsSuccess(payload))
+        const nextState = reducer(
+          initialState,
+          getRecommendationsSuccess(payload),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -130,8 +144,8 @@ describe('recommendations slice', () => {
           isHighlighted: true,
           data: {
             ...initialState.data,
-            totalUnread: data
-          }
+            totalUnread: data,
+          },
         }
 
         // Act
@@ -153,8 +167,8 @@ describe('recommendations slice', () => {
           data: {
             ...initialState.data,
             recommendations: [{ id: '1' }, { id: '2' }],
-            totalUnread: 1
-          }
+            totalUnread: 1,
+          },
         }
 
         const state = {
@@ -163,12 +177,18 @@ describe('recommendations slice', () => {
           data: {
             ...initialState.data,
             recommendations: [{ id: '3' }, { id: '1' }, { id: '2' }],
-            totalUnread: 2
-          }
+            totalUnread: 2,
+          },
         }
 
         // Act
-        const nextState = reducer(currentState, addUnreadRecommendations({ recommendations: [{ id: '3' }], totalUnread: 2 }))
+        const nextState = reducer(
+          currentState,
+          addUnreadRecommendations({
+            recommendations: [{ id: '3' }],
+            totalUnread: 2,
+          }),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -206,15 +226,18 @@ describe('recommendations slice', () => {
         const state = {
           ...initialState,
           loading: false,
-          data: mockRecommendationVoted
+          data: mockRecommendationVoted,
         }
 
         // Act
         const initialStateWithRecs = {
           ...initialState,
-          data: mockRecommendations
+          data: mockRecommendations,
         }
-        const nextState = reducer(initialStateWithRecs, updateRecommendationSuccess(payload))
+        const nextState = reducer(
+          initialStateWithRecs,
+          updateRecommendationSuccess(payload),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -234,7 +257,10 @@ describe('recommendations slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, updateRecommendationError(error))
+        const nextState = reducer(
+          initialState,
+          updateRecommendationError(error),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -253,7 +279,7 @@ describe('recommendations slice', () => {
         data: {
           ...initialState.data,
           recommendations: [{ id: '1' }, { id: '2' }, { id: '3' }],
-          totalUnread: 1
+          totalUnread: 1,
         },
         loading: false,
         error: '',
@@ -264,14 +290,17 @@ describe('recommendations slice', () => {
         data: {
           ...initialState.data,
           recommendations: [{ id: '1' }, { id: '3' }],
-          totalUnread: 0
+          totalUnread: 0,
         },
         loading: false,
         error: '',
       }
 
       // Act
-      const nextState = reducer(currentState, deleteRecommendations([{ id: '2', isRead: false }]))
+      const nextState = reducer(
+        currentState,
+        deleteRecommendations([{ id: '2', isRead: false }]),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -310,7 +339,10 @@ describe('recommendations slice', () => {
         }
 
         // Act
-        const nextState = reducer(initialState, getContentRecommendationsFailure())
+        const nextState = reducer(
+          initialState,
+          getContentRecommendationsFailure(),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -327,11 +359,14 @@ describe('recommendations slice', () => {
         const state = {
           ...initialState,
           loading: false,
-          content: MOCK_RECOMMENDATIONS
+          content: MOCK_RECOMMENDATIONS,
         }
 
         // Act
-        const nextState = reducer(initialState, getContentRecommendationsSuccess(payload))
+        const nextState = reducer(
+          initialState,
+          getContentRecommendationsSuccess(payload),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -355,9 +390,7 @@ describe('recommendations slice', () => {
         apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchRecommendationsAction('instanceId')
-        )
+        await store.dispatch<any>(fetchRecommendationsAction('instanceId'))
 
         // Assert
         const expectedActions = [
@@ -388,7 +421,7 @@ describe('recommendations slice', () => {
 
         // Act
         await tempStore.dispatch<any>(
-          fetchRecommendationsAction('instanceId', onSuccessActionMock)
+          fetchRecommendationsAction('instanceId', onSuccessActionMock),
         )
 
         // Assert
@@ -399,7 +432,9 @@ describe('recommendations slice', () => {
         ]
 
         expect(tempStore.getActions()).toEqual(expectedActions)
-        expect(onSuccessActionMock).toBeCalledWith(mockRecommendations.recommendations)
+        expect(onSuccessActionMock).toBeCalledWith(
+          mockRecommendations.recommendations,
+        )
         expect(onSuccessActionMock).toBeCalledTimes(1)
       })
 
@@ -415,15 +450,13 @@ describe('recommendations slice', () => {
         apiService.get = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          fetchRecommendationsAction('instanceId')
-        )
+        await store.dispatch<any>(fetchRecommendationsAction('instanceId'))
 
         // Assert
         const expectedActions = [
           getRecommendations(),
           addErrorNotification(responsePayload as AxiosError),
-          getRecommendationsFailure(errorMessage)
+          getRecommendationsFailure(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -441,9 +474,7 @@ describe('recommendations slice', () => {
         apiService.patch = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          readRecommendationsAction('instanceId')
-        )
+        await store.dispatch<any>(readRecommendationsAction('instanceId'))
 
         // Assert
         const expectedActions = [
@@ -466,9 +497,7 @@ describe('recommendations slice', () => {
         apiService.patch = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          readRecommendationsAction('instanceId')
-        )
+        await store.dispatch<any>(readRecommendationsAction('instanceId'))
 
         expect(store.getActions()).toEqual([])
       })
@@ -485,7 +514,11 @@ describe('recommendations slice', () => {
 
         // Act
         await store.dispatch<any>(
-          updateLiveRecommendation(mockId, { vote: mockVote }, onSuccessActionMock)
+          updateLiveRecommendation(
+            mockId,
+            { vote: mockVote },
+            onSuccessActionMock,
+          ),
         )
 
         // Assert
@@ -511,14 +544,14 @@ describe('recommendations slice', () => {
 
         // Act
         await store.dispatch<any>(
-          updateLiveRecommendation(mockId, mockVote, mockName)
+          updateLiveRecommendation(mockId, mockVote, mockName),
         )
 
         // Assert
         const expectedActions = [
           updateRecommendation(),
           addErrorNotification(responsePayload as AxiosError),
-          updateRecommendationError(errorMessage)
+          updateRecommendationError(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -534,14 +567,14 @@ describe('recommendations slice', () => {
 
         // Act
         await store.dispatch<any>(
-          deleteLiveRecommendations([mockId], onSuccessActionMock)
+          deleteLiveRecommendations([mockId], onSuccessActionMock),
         )
 
         // Assert
         expect(onSuccessActionMock).toBeCalledWith('')
         const expectedActions = [
           updateRecommendation(),
-          deleteRecommendations([mockId])
+          deleteRecommendations([mockId]),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -559,15 +592,13 @@ describe('recommendations slice', () => {
         apiService.delete = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          deleteLiveRecommendations([mockId])
-        )
+        await store.dispatch<any>(deleteLiveRecommendations([mockId]))
 
         // Assert
         const expectedActions = [
           updateRecommendation(),
           addErrorNotification(responsePayload as AxiosError),
-          updateRecommendationError(errorMessage)
+          updateRecommendationError(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -610,7 +641,7 @@ describe('recommendations slice', () => {
         // Assert
         const expectedActions = [
           getContentRecommendations(),
-          getContentRecommendationsFailure()
+          getContentRecommendationsFailure(),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

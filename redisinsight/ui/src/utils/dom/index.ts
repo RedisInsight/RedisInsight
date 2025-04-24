@@ -6,6 +6,4 @@ export * from './handleBrowsers'
 
 export { removePagePlaceholder } from './pagePlaceholder'
 
-export {
-  setTitle,
-}
+export { setTitle }

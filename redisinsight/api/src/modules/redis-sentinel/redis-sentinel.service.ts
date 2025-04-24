@@ -1,11 +1,13 @@
-import {
-  HttpException, Injectable, Logger,
-} from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateSentinelDatabaseResponse } from 'src/modules/redis-sentinel/dto/create.sentinel.database.response';
 import { CreateSentinelDatabasesDto } from 'src/modules/redis-sentinel/dto/create.sentinel.databases.dto';
 import { Database } from 'src/modules/database/models/database';
-import { ActionStatus, ClientContext, SessionMetadata } from 'src/common/models';
+import {
+  ActionStatus,
+  ClientContext,
+  SessionMetadata,
+} from 'src/common/models';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { getRedisConnectionException } from 'src/utils';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
@@ -67,46 +69,50 @@ export class RedisSentinelService {
       // }
       //
 
-      await Promise.all(masters.map(async (master) => {
-        const {
-          alias, name, password, username, db,
-        } = master;
-        try {
-          const model = await this.databaseService.create(
-            sessionMetadata,
-            {
-              ...connectionOptions,
-              name: alias,
-              db,
-              sentinelMaster: {
-                name,
-                username,
-                password,
-              },
-            } as Database,
-            undefined,
-            { enableReadyCheck: false },
-          );
+      await Promise.all(
+        masters.map(async (master) => {
+          const { alias, name, password, username, db } = master;
+          try {
+            const model = await this.databaseService.create(
+              sessionMetadata,
+              {
+                ...connectionOptions,
+                name: alias,
+                db,
+                sentinelMaster: {
+                  name,
+                  username,
+                  password,
+                },
+              } as Database,
+              undefined,
+              { enableReadyCheck: false },
+            );
 
-          result.push({
-            id: model.id,
-            name,
-            status: ActionStatus.Success,
-            message: 'Added',
-          });
-        } catch (error) {
-          result.push({
-            name,
-            status: ActionStatus.Fail,
-            message: error?.response?.message,
-            error: error?.response,
-          });
-        }
-      }));
+            result.push({
+              id: model.id,
+              name,
+              status: ActionStatus.Success,
+              message: 'Added',
+            });
+          } catch (error) {
+            result.push({
+              name,
+              status: ActionStatus.Fail,
+              message: error?.response?.message,
+              error: error?.response,
+            });
+          }
+        }),
+      );
 
       return result;
     } catch (error) {
-      this.logger.error('Failed to add Sentinel masters.', error, sessionMetadata);
+      this.logger.error(
+        'Failed to add Sentinel masters.',
+        error,
+        sessionMetadata,
+      );
       throw getRedisConnectionException(error, connectionOptions);
     }
   }
@@ -120,22 +126,38 @@ export class RedisSentinelService {
     sessionMetadata: SessionMetadata,
     dto: Database,
   ): Promise<SentinelMaster[]> {
-    this.logger.debug('Connection and getting sentinel masters.', sessionMetadata);
+    this.logger.debug(
+      'Connection and getting sentinel masters.',
+      sessionMetadata,
+    );
     let result: SentinelMaster[];
     try {
-      const database = await this.databaseFactory.createStandaloneDatabaseModel(dto);
-      const client = await this.redisClientFactory.getConnectionStrategy().createStandaloneClient({
-        sessionMetadata: this.constantsProvider.getSystemSessionMetadata(),
-        databaseId: database.id || uuidv4(),
-        context: ClientContext.Common,
-      }, database, { useRetry: false, enableReadyCheck: false });
+      const database =
+        await this.databaseFactory.createStandaloneDatabaseModel(dto);
+      const client = await this.redisClientFactory
+        .getConnectionStrategy()
+        .createStandaloneClient(
+          {
+            sessionMetadata: this.constantsProvider.getSystemSessionMetadata(),
+            databaseId: database.id || uuidv4(),
+            context: ClientContext.Common,
+          },
+          database,
+          { useRetry: false, enableReadyCheck: false },
+        );
       result = await discoverSentinelMasterGroups(client);
-      this.redisSentinelAnalytics.sendGetSentinelMastersSucceedEvent(sessionMetadata, result);
+      this.redisSentinelAnalytics.sendGetSentinelMastersSucceedEvent(
+        sessionMetadata,
+        result,
+      );
 
       await client.disconnect();
     } catch (error) {
       const exception: HttpException = getRedisConnectionException(error, dto);
-      this.redisSentinelAnalytics.sendGetSentinelMastersFailedEvent(sessionMetadata, exception);
+      this.redisSentinelAnalytics.sendGetSentinelMastersFailedEvent(
+        sessionMetadata,
+        exception,
+      );
       throw exception;
     }
     return result;

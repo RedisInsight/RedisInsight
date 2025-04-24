@@ -6,7 +6,7 @@ import { StateAppConnectivity } from '../interfaces'
 
 export const initialState: StateAppConnectivity = {
   loading: false,
-  error: undefined
+  error: undefined,
 }
 
 const appConnectivitySlice = createSlice({
@@ -23,36 +23,39 @@ const appConnectivitySlice = createSlice({
 })
 
 // Actions generated from the slice
-export const {
-  setConnectivityLoading,
-  setConnectivityError
-} = appConnectivitySlice.actions
+export const { setConnectivityLoading, setConnectivityError } =
+  appConnectivitySlice.actions
 
 // A selector
 export const appConnectivity = (state: RootState) => state.app.connectivity
-export const appConnectivityError = (state: RootState) => state.app.connectivity.error
+export const appConnectivityError = (state: RootState) =>
+  state.app.connectivity.error
 
 // The reducer
 export default appConnectivitySlice.reducer
 
 // Asynchronous thunk action
-export const retryConnection = (
-  connectionInstanceId: string,
-  onSuccessAction?: () => void,
-  onFailAction?: () => void
-) => (dispatch: AppDispatch) => {
-  dispatch(setConnectivityLoading(true))
+export const retryConnection =
+  (
+    connectionInstanceId: string,
+    onSuccessAction?: () => void,
+    onFailAction?: () => void,
+  ) =>
+  (dispatch: AppDispatch) => {
+    dispatch(setConnectivityLoading(true))
 
-  return dispatch(getDatabaseConfigInfoAction(
-    connectionInstanceId,
-    () => {
-      dispatch(setConnectivityError(null))
-      dispatch(setConnectivityLoading(false))
-      onSuccessAction?.()
-    },
-    () => {
-      dispatch(setConnectivityLoading(false))
-      onFailAction?.()
-    }
-  ))
-}
+    return dispatch(
+      getDatabaseConfigInfoAction(
+        connectionInstanceId,
+        () => {
+          dispatch(setConnectivityError(null))
+          dispatch(setConnectivityLoading(false))
+          onSuccessAction?.()
+        },
+        () => {
+          dispatch(setConnectivityLoading(false))
+          onFailAction?.()
+        },
+      ),
+    )
+  }

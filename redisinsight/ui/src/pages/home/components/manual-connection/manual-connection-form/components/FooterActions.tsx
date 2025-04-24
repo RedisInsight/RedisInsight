@@ -1,5 +1,11 @@
 import React from 'react'
-import { EuiButton, EuiButtonEmpty, EuiFlexGroup, EuiFlexItem, EuiToolTip } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiButtonEmpty,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiToolTip,
+} from '@elastic/eui'
 import { FormikErrors } from 'formik'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { getSubmitButtonContent } from 'uiSrc/pages/home/utils'
@@ -24,7 +30,7 @@ const FooterActions = (props: Props) => {
     errors,
     onClickTestConnection,
     onClose,
-    onClickSubmit
+    onClickSubmit,
   } = props
 
   const SubmitButton = ({

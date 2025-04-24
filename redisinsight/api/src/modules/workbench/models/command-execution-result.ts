@@ -20,7 +20,8 @@ export class CommandExecutionResult {
 
   @ApiProperty({
     type: Boolean,
-    description: 'Flag showing if response was replaced with message notification about response size limit threshold',
+    description:
+      'Flag showing if response was replaced with message notification about response size limit threshold',
   })
   @Expose()
   sizeLimitExceeded?: boolean;

@@ -69,4 +69,3 @@ jobs:
       - name: Generate job summary
         run: |
           node ./.github/generate-build-summary.js
-

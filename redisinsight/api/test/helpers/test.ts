@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
 import * as chai from 'chai';
-import chaiDeepEqualIgnoreUndefined from "chai-deep-equal-ignore-undefined";
+import chaiDeepEqualIgnoreUndefined from 'chai-deep-equal-ignore-undefined';
 import * as nock from 'nock';
 import * as Joi from 'joi';
 import * as AdmZip from 'adm-zip';
@@ -17,7 +17,7 @@ import serverConfig from 'src/utils/config';
 
 chai.use(chaiDeepEqualIgnoreUndefined);
 
-export { _, path, fs, fsExtra, AdmZip, serverConfig, axios, nock }
+export { _, path, fs, fsExtra, AdmZip, serverConfig, axios, nock };
 export const expect = chai.expect;
 export const testEnv: Record<any, any> = {};
 export { Joi, describe, it, before, after, beforeEach };
@@ -35,7 +35,7 @@ interface ITestCaseInput {
   statusCode?: number;
   responseSchema?: Joi.AnySchema;
   responseBody?: any;
-  responseHeaders?: object,
+  responseHeaders?: object;
   checkFn?: Function;
   preconditionFn?: Function;
   postCheckFn?: Function;
@@ -76,7 +76,7 @@ export const validateApiCall = async function ({
   if (fields?.length) {
     fields.forEach((field) => {
       request.field(...field);
-    })
+    });
   }
 
   // data to send with url query string
@@ -96,7 +96,7 @@ export const validateApiCall = async function ({
     checkResponseBody(response.body, responseBody);
   }
 
-  expect(response.res.statusCode).to.eq(statusCode)
+  expect(response.res.statusCode).to.eq(statusCode);
 
   // validate response headers if passed
   if (responseHeaders) {
@@ -130,10 +130,14 @@ export const checkResponseBody = (body, expected) => {
     // todo: improve to support array, arrays of objects etc.
     expect(expected).to.eql(body);
   } catch (e) {
-    const errorMessage = 'Response does not includes expected value(s)' +
-      '\nExpect:\n' + util.inspect(body, { depth: null }) +
-      '\nTo include:\n' + util.inspect(expected, { depth: null }) +
-      '\nDiff:\n' + util.inspect(diff(body, expected), { depth: null });
+    const errorMessage =
+      'Response does not includes expected value(s)' +
+      '\nExpect:\n' +
+      util.inspect(body, { depth: null }) +
+      '\nTo include:\n' +
+      util.inspect(expected, { depth: null }) +
+      '\nDiff:\n' +
+      util.inspect(diff(body, expected), { depth: null });
 
     throw new Error(errorMessage);
   }
@@ -161,7 +165,11 @@ const defaultValidationErrorMessages = {
  * @param schema
  * @param target
  */
-export const validateInvalidDataTestCase = (endpoint, schema, target = 'data') => {
+export const validateInvalidDataTestCase = (
+  endpoint,
+  schema,
+  target = 'data',
+) => {
   return (testCase) => {
     it(testCase.name, async () => {
       await validateApiCall({
@@ -238,10 +246,13 @@ export const getMainCheckFn = (endpoint) => async (testCase) => {
   });
 };
 
-export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
-export const JoiRedisString = Joi.alternatives()
-  .try(Joi.string(), Joi.object().keys({
+export const JoiRedisString = Joi.alternatives().try(
+  Joi.string(),
+  Joi.object().keys({
     type: Joi.string().valid('Buffer').required(),
     data: Joi.array().items(Joi.number()).required(),
-  }));
+  }),
+);

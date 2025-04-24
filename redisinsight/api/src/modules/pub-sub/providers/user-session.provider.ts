@@ -12,7 +12,10 @@ export class UserSessionProvider {
 
   constructor(private readonly redisClientProvider: RedisClientProvider) {}
 
-  getOrCreateUserSession(sessionMetadata: SessionMetadata, userClient: UserClient) {
+  getOrCreateUserSession(
+    sessionMetadata: SessionMetadata,
+    userClient: UserClient,
+  ) {
     let session = this.getUserSession(userClient.getId());
 
     if (!session) {
@@ -44,11 +47,9 @@ export class UserSessionProvider {
   }
 
   toString() {
-    return `UserSessionProvider:${
-      JSON.stringify({
-        sessionsSize: this.sessions.size,
-        sessions: [...this.sessions.keys()],
-      })
-    }`;
+    return `UserSessionProvider:${JSON.stringify({
+      sessionsSize: this.sessions.size,
+      sessions: [...this.sessions.keys()],
+    })}`;
   }
 }

@@ -12,7 +12,9 @@ const mockedRoutes = [
 describe('PipelinePageRouter', () => {
   it('should render', () => {
     expect(
-      render(<PipelinePageRouter routes={mockedRoutes as IRoute[]} />, { withRouter: true })
+      render(<PipelinePageRouter routes={mockedRoutes as IRoute[]} />, {
+        withRouter: true,
+      }),
     ).toBeTruthy()
   })
 })

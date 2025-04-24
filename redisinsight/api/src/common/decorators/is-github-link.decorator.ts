@@ -1,7 +1,4 @@
-import {
-  registerDecorator,
-  ValidationOptions,
-} from 'class-validator';
+import { registerDecorator, ValidationOptions } from 'class-validator';
 import { GitHubLink } from 'src/common/validators';
 
 export function IsGitHubLink(validationOptions?: ValidationOptions) {

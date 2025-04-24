@@ -6,7 +6,7 @@ import {
   EuiLink,
   EuiText,
   EuiTitle,
-  EuiToolTip
+  EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
@@ -20,7 +20,11 @@ export interface Props {
   onCreateIndex?: () => void
 }
 
-const CreateRedisearchIndexWrapper = ({ arePanelsCollapsed, onClosePanel, onCreateIndex }: Props) => (
+const CreateRedisearchIndexWrapper = ({
+  arePanelsCollapsed,
+  onClosePanel,
+  onCreateIndex,
+}: Props) => (
   <div className={styles.page} data-testid="create-index-panel">
     <EuiFlexGroup
       justifyContent="center"
@@ -52,16 +56,14 @@ const CreateRedisearchIndexWrapper = ({ arePanelsCollapsed, onClosePanel, onCrea
           )}
         </EuiFlexItem>
         <EuiFlexItem className={styles.header}>
-          <EuiText size="s">Use CLI or Workbench to create more advanced indexes. See more details in the
-            {' '}
+          <EuiText size="s">
+            Use CLI or Workbench to create more advanced indexes. See more
+            details in the{' '}
             <EuiLink
               color="text"
-              href={getUtmExternalLink(
-                'https://redis.io/commands/ft.create/',
-                {
-                  campaign: 'browser_search'
-                }
-              )}
+              href={getUtmExternalLink('https://redis.io/commands/ft.create/', {
+                campaign: 'browser_search',
+              })}
               className={styles.link}
               external={false}
               target="_blank"

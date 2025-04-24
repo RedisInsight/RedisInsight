@@ -1,7 +1,10 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import TableView, { Props } from './TableView'
-import { render, waitFor } from '../../../../../RedisInsight/redisinsight/ui/src/utils/test-utils'
+import {
+  render,
+  waitFor,
+} from '../../../../../RedisInsight/redisinsight/ui/src/utils/test-utils'
 
 const mockedProps = mock<Props>()
 
@@ -12,11 +15,13 @@ describe.skip('TableResult', () => {
 
   it('Result element should be "Not found." meanwhile result is [0]', async () => {
     const { queryByTestId, rerender } = render(
-      <TableView {...instance(mockedProps)} result={null} query="ft.search" />
+      <TableView {...instance(mockedProps)} result={null} query="ft.search" />,
     )
 
     await waitFor(() => {
-      rerender(<TableView {...instance(mockedProps)} result={[]} query="ft.search" />)
+      rerender(
+        <TableView {...instance(mockedProps)} result={[]} query="ft.search" />,
+      )
     })
 
     const resultEl = queryByTestId(/query-table-no-results/)
@@ -37,12 +42,16 @@ describe.skip('TableResult', () => {
     ]
 
     const { queryByTestId, queryAllByTestId, rerender } = render(
-      <TableView {...instance(mockedProps)} result={[]} query="ft.search" />
+      <TableView {...instance(mockedProps)} result={[]} query="ft.search" />,
     )
 
     await waitFor(() => {
       rerender(
-        <TableView {...instance(mockedProps)} result={result} query="ft.search" />
+        <TableView
+          {...instance(mockedProps)}
+          result={result}
+          query="ft.search"
+        />,
       )
     })
 

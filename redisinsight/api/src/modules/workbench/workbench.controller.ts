@@ -26,7 +26,7 @@ import { CommandExecutionFilter } from 'src/modules/workbench/models/command-exe
 @UsePipes(new ValidationPipe({ transform: true }))
 @Controller('workbench/command-executions')
 export class WorkbenchController {
-  constructor(private service: WorkbenchService) { }
+  constructor(private service: WorkbenchService) {}
 
   @ApiEndpoint({
     description: 'Send Redis Batch Commands from the Workbench',
@@ -43,7 +43,7 @@ export class WorkbenchController {
   @ApiRedisParams()
   async sendCommands(
     @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: CreateCommandExecutionsDto,
+    @Body() dto: CreateCommandExecutionsDto,
   ): Promise<CommandExecution[]> {
     return this.service.createCommandExecutions(clientMetadata, dto);
   }
@@ -64,7 +64,7 @@ export class WorkbenchController {
   @ApiRedisParams()
   async listCommandExecutions(
     @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
-      @Query() filter: CommandExecutionFilter,
+    @Query() filter: CommandExecutionFilter,
   ): Promise<ShortCommandExecution[]> {
     return this.service.listCommandExecutions(clientMetadata, filter);
   }
@@ -84,7 +84,7 @@ export class WorkbenchController {
   @ApiRedisParams()
   async getCommandExecution(
     @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
-      @Param('id') id: string,
+    @Param('id') id: string,
   ): Promise<CommandExecution> {
     return this.service.getCommandExecution(clientMetadata, id);
   }
@@ -97,7 +97,7 @@ export class WorkbenchController {
   @ApiRedisParams()
   async deleteCommandExecution(
     @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
-      @Param('id') id: string,
+    @Param('id') id: string,
   ): Promise<void> {
     return this.service.deleteCommandExecution(clientMetadata, id);
   }
@@ -110,7 +110,7 @@ export class WorkbenchController {
   @ApiRedisParams()
   async deleteCommandExecutions(
     @WorkbenchClientMetadata() clientMetadata: ClientMetadata,
-      @Body() filter: CommandExecutionFilter,
+    @Body() filter: CommandExecutionFilter,
   ): Promise<void> {
     return this.service.deleteCommandExecutions(clientMetadata, filter);
   }

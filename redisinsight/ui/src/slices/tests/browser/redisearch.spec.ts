@@ -2,15 +2,20 @@ import { AxiosError } from 'axios'
 import { cloneDeep, omit } from 'lodash'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { apiService } from 'uiSrc/services'
-import { cleanup, initialStateDefault, mockedStore, mockStore } from 'uiSrc/utils/test-utils'
-import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+  mockStore,
+} from 'uiSrc/utils/test-utils'
+import {
+  addErrorNotification,
+  addMessageNotification,
+} from 'uiSrc/slices/app/notifications'
 import { stringToBuffer, UTF8ToBuffer } from 'uiSrc/utils'
 import { REDISEARCH_LIST_DATA_MOCK } from 'uiSrc/mocks/handlers/browser/redisearchHandlers'
 import { SearchHistoryItem, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import {
-  fetchKeys,
-  fetchMoreKeys,
-} from 'uiSrc/slices/browser/keys'
+import { fetchKeys, fetchMoreKeys } from 'uiSrc/slices/browser/keys'
 import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
@@ -47,7 +52,8 @@ import reducer, {
   deleteRediSearchHistorySuccess,
   deleteRediSearchHistoryFailure,
   fetchRedisearchHistoryAction,
-  deleteRedisearchHistoryAction, fetchRedisearchInfoAction,
+  deleteRedisearchHistoryAction,
+  fetchRedisearchInfoAction,
 } from '../../browser/redisearch'
 
 let store: typeof mockedStore
@@ -143,10 +149,7 @@ describe('redisearch slice', () => {
       }
 
       // Act
-      const nextState = reducer(
-        initialState,
-        loadKeysSuccess([data, false])
-      )
+      const nextState = reducer(initialState, loadKeysSuccess([data, false]))
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -275,7 +278,7 @@ describe('redisearch slice', () => {
           ...omit(data, 'cursor'),
           nextCursor: `${data.cursor}`,
           previousResultCount: data.keys.length,
-          lastRefreshTime: initialState.data.lastRefreshTime
+          lastRefreshTime: initialState.data.lastRefreshTime,
         },
       }
 
@@ -375,7 +378,7 @@ describe('redisearch slice', () => {
         list: {
           ...initialState.list,
           loading: true,
-        }
+        },
       }
 
       // Act
@@ -402,7 +405,7 @@ describe('redisearch slice', () => {
           data,
           error: '',
           loading: false,
-        }
+        },
       }
 
       // Act
@@ -428,7 +431,7 @@ describe('redisearch slice', () => {
           data,
           error: '',
           loading: false,
-        }
+        },
       }
 
       // Act
@@ -455,7 +458,7 @@ describe('redisearch slice', () => {
           data: [],
           loading: false,
           error: data,
-        }
+        },
       }
 
       // Act
@@ -517,7 +520,13 @@ describe('redisearch slice', () => {
   describe('setLastBatchKeys', () => {
     it('should properly set the state', () => {
       // Arrange
-      const strToKey = (name:string) => ({ name, nameString: name, ttl: 1, size: 1, type: 'hash' })
+      const strToKey = (name: string) => ({
+        name,
+        nameString: name,
+        ttl: 1,
+        size: 1,
+        type: 'hash',
+      })
       const data = ['44', '55', '66'].map(strToKey)
 
       const state = {
@@ -525,7 +534,7 @@ describe('redisearch slice', () => {
         data: {
           ...initialState.data,
           keys: ['1', '2', '3', '44', '55', '66'].map(strToKey),
-        }
+        },
       }
 
       const prevState = {
@@ -533,7 +542,7 @@ describe('redisearch slice', () => {
         data: {
           ...initialState.data,
           keys: ['1', '2', '3', '4', '5', '6'].map(strToKey),
-        }
+        },
       }
 
       // Act
@@ -555,8 +564,8 @@ describe('redisearch slice', () => {
         createIndex: {
           ...initialState.createIndex,
           loading: true,
-          error: ''
-        }
+          error: '',
+        },
       }
 
       // Act
@@ -580,14 +589,11 @@ describe('redisearch slice', () => {
         createIndex: {
           ...initialState.createIndex,
           loading: false,
-        }
+        },
       }
 
       // Act
-      const nextState = reducer(
-        initialState,
-        createIndexSuccess()
-      )
+      const nextState = reducer(initialState, createIndexSuccess())
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -606,8 +612,8 @@ describe('redisearch slice', () => {
         createIndex: {
           ...initialState.createIndex,
           loading: false,
-          error: data
-        }
+          error: data,
+        },
       }
 
       // Act
@@ -623,7 +629,13 @@ describe('redisearch slice', () => {
 
   describe('resetRedisearchKeysData', () => {
     it('should reset keys data', () => {
-      const strToKey = (name:string) => ({ name, nameString: name, ttl: 1, size: 1, type: 'hash' })
+      const strToKey = (name: string) => ({
+        name,
+        nameString: name,
+        ttl: 1,
+        size: 1,
+        type: 'hash',
+      })
 
       // Arrange
       const state = {
@@ -631,7 +643,7 @@ describe('redisearch slice', () => {
         data: {
           ...initialState.data,
           keys: [],
-        }
+        },
       }
 
       const prevState = {
@@ -639,7 +651,7 @@ describe('redisearch slice', () => {
         data: {
           ...initialState.data,
           keys: ['1', '2', '3', '4', '5', '6'].map(strToKey),
-        }
+        },
       }
 
       // Act
@@ -657,7 +669,13 @@ describe('redisearch slice', () => {
     it('should delete keys from list', () => {
       const scanned = 5
       const total = 5
-      const strToKey = (name:string) => ({ name: stringToBuffer(name), nameString: name, ttl: 1, size: 1, type: 'hash' })
+      const strToKey = (name: string) => ({
+        name: stringToBuffer(name),
+        nameString: name,
+        ttl: 1,
+        size: 1,
+        type: 'hash',
+      })
 
       // Arrange
       const state = {
@@ -666,8 +684,8 @@ describe('redisearch slice', () => {
           ...initialState.data,
           keys: ['1', '2', '3', '5', '6'].map(strToKey),
           scanned: scanned - 1,
-          total: total - 1
-        }
+          total: total - 1,
+        },
       }
 
       const prevState = {
@@ -677,11 +695,14 @@ describe('redisearch slice', () => {
           scanned,
           total,
           keys: ['1', '2', '3', '4', '5', '6'].map(strToKey),
-        }
+        },
       }
 
       // Act
-      const nextState = reducer(prevState, deleteRedisearchKeyFromList(strToKey('4')?.name))
+      const nextState = reducer(
+        prevState,
+        deleteRedisearchKeyFromList(strToKey('4')?.name),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -693,7 +714,13 @@ describe('redisearch slice', () => {
 
   describe('editRedisearchKeyFromList', () => {
     it('should rename key in the list', () => {
-      const strToKey = (name:string) => ({ name: stringToBuffer(name), nameString: name, ttl: 1, size: 1, type: 'hash' })
+      const strToKey = (name: string) => ({
+        name: stringToBuffer(name),
+        nameString: name,
+        ttl: 1,
+        size: 1,
+        type: 'hash',
+      })
 
       // Arrange
       const state = {
@@ -701,7 +728,7 @@ describe('redisearch slice', () => {
         data: {
           ...initialState.data,
           keys: ['1', '2', '3', '44', '5', '6'].map(strToKey),
-        }
+        },
       }
 
       const prevState = {
@@ -709,13 +736,16 @@ describe('redisearch slice', () => {
         data: {
           ...initialState.data,
           keys: ['1', '2', '3', '4', '5', '6'].map(strToKey),
-        }
+        },
       }
 
       // Act
       const nextState = reducer(
         prevState,
-        editRedisearchKeyFromList({ key: strToKey('4')?.name, newKey: strToKey('44')?.name }),
+        editRedisearchKeyFromList({
+          key: strToKey('4')?.name,
+          newKey: strToKey('44')?.name,
+        }),
       )
 
       // Assert
@@ -749,7 +779,10 @@ describe('redisearch slice', () => {
       }
 
       // Act
-      const nextState = reducer(prevState, editRedisearchKeyTTLFromList([key, ttl]))
+      const nextState = reducer(
+        prevState,
+        editRedisearchKeyTTLFromList([key, ttl]),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -766,8 +799,8 @@ describe('redisearch slice', () => {
         ...initialState,
         searchHistory: {
           ...initialState.searchHistory,
-          loading: true
-        }
+          loading: true,
+        },
       }
 
       // Act
@@ -785,15 +818,19 @@ describe('redisearch slice', () => {
     it('should properly set state', () => {
       // Arrange
       const data: SearchHistoryItem[] = [
-        { id: '1', mode: SearchMode.Redisearch, filter: { type: 'list', match: '*' } }
+        {
+          id: '1',
+          mode: SearchMode.Redisearch,
+          filter: { type: 'list', match: '*' },
+        },
       ]
       const state = {
         ...initialState,
         searchHistory: {
           ...initialState.searchHistory,
           loading: false,
-          data
-        }
+          data,
+        },
       }
 
       // Act
@@ -814,8 +851,8 @@ describe('redisearch slice', () => {
         ...initialState,
         searchHistory: {
           ...initialState.searchHistory,
-          loading: false
-        }
+          loading: false,
+        },
       }
 
       // Act
@@ -836,8 +873,8 @@ describe('redisearch slice', () => {
         ...initialState,
         searchHistory: {
           ...initialState.searchHistory,
-          loading: true
-        }
+          loading: true,
+        },
       }
 
       // Act
@@ -855,16 +892,24 @@ describe('redisearch slice', () => {
     it('should properly set state', () => {
       // Arrange
       const data: SearchHistoryItem[] = [
-        { id: '1', mode: SearchMode.Redisearch, filter: { type: 'list', match: '*' } },
-        { id: '2', mode: SearchMode.Redisearch, filter: { type: 'list', match: '*' } },
+        {
+          id: '1',
+          mode: SearchMode.Redisearch,
+          filter: { type: 'list', match: '*' },
+        },
+        {
+          id: '2',
+          mode: SearchMode.Redisearch,
+          filter: { type: 'list', match: '*' },
+        },
       ]
       const currentState = {
         ...initialState,
         searchHistory: {
           ...initialState.searchHistory,
           loading: false,
-          data
-        }
+          data,
+        },
       }
 
       const state = {
@@ -873,13 +918,20 @@ describe('redisearch slice', () => {
           ...initialState.searchHistory,
           loading: false,
           data: [
-            { id: '1', mode: SearchMode.Redisearch, filter: { type: 'list', match: '*' } },
-          ]
-        }
+            {
+              id: '1',
+              mode: SearchMode.Redisearch,
+              filter: { type: 'list', match: '*' },
+            },
+          ],
+        },
       }
 
       // Act
-      const nextState = reducer(currentState, deleteRediSearchHistorySuccess(['2']))
+      const nextState = reducer(
+        currentState,
+        deleteRediSearchHistorySuccess(['2']),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -896,8 +948,8 @@ describe('redisearch slice', () => {
         ...initialState,
         searchHistory: {
           ...initialState.searchHistory,
-          loading: false
-        }
+          loading: false,
+        },
       }
 
       // Act
@@ -935,7 +987,7 @@ describe('redisearch slice', () => {
 
     describe('fetchRedisearchKeysAction', () => {
       it('call both loadKeys and loadKeysSuccess when fetch is successed', async () => {
-      // Arrange
+        // Arrange
         const data = {
           total: 10,
           cursor: 20,
@@ -973,20 +1025,23 @@ describe('redisearch slice', () => {
             instances: {
               ...cloneDeep(initialStateInstances),
               connectedInstance: {
-                modules: [{ name: RedisDefaultModules.Search }]
-              }
-            }
-          }
+                modules: [{ name: RedisDefaultModules.Search }],
+              },
+            },
+          },
         })
 
         // Act
-        await newStore.dispatch<any>(fetchKeys({ searchMode: SearchMode.Redisearch, cursor: '0', count: 20 }))
+        await newStore.dispatch<any>(
+          fetchKeys({
+            searchMode: SearchMode.Redisearch,
+            cursor: '0',
+            count: 20,
+          }),
+        )
 
         // Assert
-        const expectedActions = [
-          loadKeys(),
-          loadKeysSuccess([data, false]),
-        ]
+        const expectedActions = [loadKeys(), loadKeysSuccess([data, false])]
         expect(newStore.getActions()).toEqual(expectedActions)
       })
 
@@ -1008,14 +1063,20 @@ describe('redisearch slice', () => {
             instances: {
               ...cloneDeep(initialStateInstances),
               connectedInstance: {
-                modules: [{ name: RedisDefaultModules.Search }]
-              }
-            }
-          }
+                modules: [{ name: RedisDefaultModules.Search }],
+              },
+            },
+          },
         })
 
         // Act
-        await newStore.dispatch<any>(fetchKeys({ searchMode: SearchMode.Redisearch, cursor: '0', count: 20 }))
+        await newStore.dispatch<any>(
+          fetchKeys({
+            searchMode: SearchMode.Redisearch,
+            cursor: '0',
+            count: 20,
+          }),
+        )
 
         // Assert
         const expectedActions = [
@@ -1044,14 +1105,20 @@ describe('redisearch slice', () => {
             instances: {
               ...cloneDeep(initialStateInstances),
               connectedInstance: {
-                modules: [{ name: RedisDefaultModules.Search }]
-              }
-            }
-          }
+                modules: [{ name: RedisDefaultModules.Search }],
+              },
+            },
+          },
         })
 
         // Act
-        await newStore.dispatch<any>(fetchKeys({ searchMode: SearchMode.Redisearch, cursor: '0', count: 20 }))
+        await newStore.dispatch<any>(
+          fetchKeys({
+            searchMode: SearchMode.Redisearch,
+            cursor: '0',
+            count: 20,
+          }),
+        )
 
         // Assert
         const expectedActions = [
@@ -1103,7 +1170,9 @@ describe('redisearch slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchMoreKeys(SearchMode.Redisearch, [], '0', 20))
+        await store.dispatch<any>(
+          fetchMoreKeys(SearchMode.Redisearch, [], '0', 20),
+        )
 
         // Assert
         const expectedActions = [
@@ -1126,7 +1195,9 @@ describe('redisearch slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchMoreKeys(SearchMode.Redisearch, [], '0', 20))
+        await store.dispatch<any>(
+          fetchMoreKeys(SearchMode.Redisearch, [], '0', 20),
+        )
 
         // Assert
         const expectedActions = [
@@ -1145,7 +1216,7 @@ describe('redisearch slice', () => {
           index: stringToBuffer('index'),
           type: 'hash',
           prefixes: ['prefix1', 'prefix 2'].map((p) => stringToBuffer(p)),
-          fields: [{ name: stringToBuffer('field'), type: 'numeric' }]
+          fields: [{ name: stringToBuffer('field'), type: 'numeric' }],
         }
 
         const responsePayload = { status: 200 }
@@ -1194,8 +1265,16 @@ describe('redisearch slice', () => {
       it('success fetch history', async () => {
         // Arrange
         const data: SearchHistoryItem[] = [
-          { id: '1', mode: SearchMode.Redisearch, filter: { type: 'list', match: '*' } },
-          { id: '2', mode: SearchMode.Redisearch, filter: { type: 'list', match: '*' } },
+          {
+            id: '1',
+            mode: SearchMode.Redisearch,
+            filter: { type: 'list', match: '*' },
+          },
+          {
+            id: '2',
+            mode: SearchMode.Redisearch,
+            filter: { type: 'list', match: '*' },
+          },
         ]
         const responsePayload = { data, status: 200 }
 
@@ -1305,7 +1384,9 @@ describe('redisearch slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchRedisearchInfoAction('index', undefined, onFailed))
+        await store.dispatch<any>(
+          fetchRedisearchInfoAction('index', undefined, onFailed),
+        )
 
         // Assert
         expect(onFailed).toBeCalled()

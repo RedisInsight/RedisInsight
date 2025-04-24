@@ -14,9 +14,19 @@ const RdiHeader = ({ onRdiInstanceClick }: Props) => {
 
   return (
     <div className="containerDl">
-      <EuiFlexGroup className="contentDL" alignItems="center" responsive={false} gutterSize="s">
+      <EuiFlexGroup
+        className="contentDL"
+        alignItems="center"
+        responsive={false}
+        gutterSize="s"
+      >
         <EuiFlexItem grow={false}>
-          <EuiButton fill color="secondary" onClick={onRdiInstanceClick} data-testid="rdi-instance">
+          <EuiButton
+            fill
+            color="secondary"
+            onClick={onRdiInstanceClick}
+            data-testid="rdi-instance"
+          >
             <span>+ Endpoint</span>
           </EuiButton>
         </EuiFlexItem>

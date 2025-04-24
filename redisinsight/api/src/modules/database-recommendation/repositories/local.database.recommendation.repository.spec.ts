@@ -15,10 +15,8 @@ import {
   MockType,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
-import { LocalDatabaseRecommendationRepository }
-  from 'src/modules/database-recommendation/repositories/local.database.recommendation.repository';
-import { DatabaseRecommendationEntity }
-  from 'src/modules/database-recommendation/entities/database-recommendation.entity';
+import { LocalDatabaseRecommendationRepository } from 'src/modules/database-recommendation/repositories/local.database.recommendation.repository';
+import { DatabaseRecommendationEntity } from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 
 describe('LocalDatabaseRecommendationRepository', () => {
@@ -47,7 +45,9 @@ describe('LocalDatabaseRecommendationRepository', () => {
       ],
     }).compile();
 
-    repository = await module.get(getRepositoryToken(DatabaseRecommendationEntity));
+    repository = await module.get(
+      getRepositoryToken(DatabaseRecommendationEntity),
+    );
     encryptionService = await module.get(EncryptionService);
     service = module.get(LocalDatabaseRecommendationRepository);
 
@@ -68,17 +68,23 @@ describe('LocalDatabaseRecommendationRepository', () => {
 
   describe('isExist', () => {
     it('should return true when receive database entity', async () => {
-      expect(await service.isExist(mockClientMetadata, mockRecommendationName)).toEqual(true);
+      expect(
+        await service.isExist(mockClientMetadata, mockRecommendationName),
+      ).toEqual(true);
     });
 
     it('should return false when no database received', async () => {
       repository.findOneBy.mockResolvedValueOnce(null);
-      expect(await service.isExist(mockClientMetadata, mockRecommendationName)).toEqual(false);
+      expect(
+        await service.isExist(mockClientMetadata, mockRecommendationName),
+      ).toEqual(false);
     });
 
     it('should return false when received error', async () => {
       repository.findOneBy.mockRejectedValueOnce(new Error());
-      expect(await service.isExist(mockClientMetadata, mockRecommendationName)).toEqual(false);
+      expect(
+        await service.isExist(mockClientMetadata, mockRecommendationName),
+      ).toEqual(false);
     });
   });
 
@@ -86,7 +92,9 @@ describe('LocalDatabaseRecommendationRepository', () => {
     it('should return results for multiple recommendation names', async () => {
       repository.findOneBy.mockResolvedValueOnce(null);
       repository.findOneBy.mockResolvedValueOnce({});
-      expect(await service.isExistMulti(mockClientMetadata, ['test1', 'test2'])).toEqual({
+      expect(
+        await service.isExistMulti(mockClientMetadata, ['test1', 'test2']),
+      ).toEqual({
         test1: false,
         test2: true,
       });
@@ -94,21 +102,25 @@ describe('LocalDatabaseRecommendationRepository', () => {
 
     it('should return empty Map when received error', async () => {
       repository.findOneBy.mockRejectedValueOnce(new Error());
-      expect(await service.isExistMulti(mockClientMetadata, ['test1', 'test2'])).toEqual({});
+      expect(
+        await service.isExistMulti(mockClientMetadata, ['test1', 'test2']),
+      ).toEqual({});
     });
   });
 
   describe('create', () => {
     it('should create recommendation', async () => {
-      const result = await service.create(mockClientMetadata.sessionMetadata, mockDatabaseRecommendation);
+      const result = await service.create(
+        mockClientMetadata.sessionMetadata,
+        mockDatabaseRecommendation,
+      );
 
       expect(result).toEqual(mockDatabaseRecommendation);
       expect(mockEventEmitter.emit).toHaveBeenCalledTimes(1);
-      expect(mockEventEmitter.emit).toHaveBeenCalledWith(
-        'new-recommendation',
-        {
-          sessionMetadata: mockClientMetadata.sessionMetadata,
-          recommendations: [{
+      expect(mockEventEmitter.emit).toHaveBeenCalledWith('new-recommendation', {
+        sessionMetadata: mockClientMetadata.sessionMetadata,
+        recommendations: [
+          {
             databaseId: 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id',
             disabled: false,
             hide: false,
@@ -117,15 +129,18 @@ describe('LocalDatabaseRecommendationRepository', () => {
             params: {},
             read: false,
             vote: null,
-          }],
-        },
-      );
+          },
+        ],
+      });
     });
 
     it('should not create recommendation', async () => {
       repository.save.mockRejectedValueOnce(new Error());
 
-      const result = await service.create(mockClientMetadata.sessionMetadata, mockDatabaseRecommendation);
+      const result = await service.create(
+        mockClientMetadata.sessionMetadata,
+        mockDatabaseRecommendation,
+      );
 
       expect(result).toEqual(null);
       expect(mockEventEmitter.emit).not.toHaveBeenCalled();
@@ -147,7 +162,9 @@ describe('LocalDatabaseRecommendationRepository', () => {
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
-        expect(e.message).toEqual(ERROR_MESSAGES.DATABASE_RECOMMENDATION_NOT_FOUND);
+        expect(e.message).toEqual(
+          ERROR_MESSAGES.DATABASE_RECOMMENDATION_NOT_FOUND,
+        );
       }
     });
   });

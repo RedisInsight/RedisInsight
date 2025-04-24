@@ -25,15 +25,15 @@ import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 import styles from '../../../styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<ModifiedSentinelMaster>[];
-  masters: ModifiedSentinelMaster[];
-  onClose: () => void;
-  onBack: () => void;
-  onSubmit: (databases: ModifiedSentinelMaster[]) => void;
+  columns: EuiBasicTableColumn<ModifiedSentinelMaster>[]
+  masters: ModifiedSentinelMaster[]
+  onClose: () => void
+  onBack: () => void
+  onSubmit: (databases: ModifiedSentinelMaster[]) => void
 }
 
 interface IPopoverProps {
-  isPopoverOpen: boolean;
+  isPopoverOpen: boolean
 }
 
 const loadingMsg = 'loading...'
@@ -61,10 +61,10 @@ const SentinelDatabases = ({
 
   const updateSelection = (
     selected: ModifiedSentinelMaster[],
-    masters: ModifiedSentinelMaster[]
+    masters: ModifiedSentinelMaster[],
   ) =>
     selected.map(
-      (select) => masters.find((master) => master.id === select.id) ?? select
+      (select) => masters.find((master) => master.id === select.id) ?? select,
     )
 
   useEffect(() => {
@@ -106,12 +106,12 @@ const SentinelDatabases = ({
 
     const itemsTemp = masters.filter(
       (item: ModifiedSentinelMaster) =>
-        item.name?.toLowerCase().includes(value)
-        || item.host?.toLowerCase().includes(value)
-        || item.alias?.toLowerCase().includes(value)
-        || item.username?.toLowerCase().includes(value)
-        || item.port?.toString()?.includes(value)
-        || item.numberOfSlaves?.toString().includes(value)
+        item.name?.toLowerCase().includes(value) ||
+        item.host?.toLowerCase().includes(value) ||
+        item.alias?.toLowerCase().includes(value) ||
+        item.username?.toLowerCase().includes(value) ||
+        item.port?.toString()?.includes(value) ||
+        item.numberOfSlaves?.toString().includes(value),
     )
 
     if (!itemsTemp.length) {
@@ -127,11 +127,16 @@ const SentinelDatabases = ({
       closePopover={closePopover}
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
-      button={(
-        <EuiButton onClick={showPopover} color="secondary" className="btn-cancel" data-testid="btn-cancel">
+      button={
+        <EuiButton
+          onClick={showPopover}
+          color="secondary"
+          className="btn-cancel"
+          data-testid="btn-cancel"
+        >
           Cancel
         </EuiButton>
-      )}
+      }
     >
       <EuiText size="m">
         <p>
@@ -141,7 +146,13 @@ const SentinelDatabases = ({
       </EuiText>
       <br />
       <div>
-        <EuiButton fill size="s" color="warning" onClick={onClose} data-testid="btn-cancel-proceed">
+        <EuiButton
+          fill
+          size="s"
+          color="warning"
+          onClick={onClose}
+          data-testid="btn-cancel-proceed"
+        >
           Proceed
         </EuiButton>
       </div>
@@ -201,9 +212,7 @@ const SentinelDatabases = ({
           <EuiFlexItem>
             <EuiText color="subdued" className={styles.subTitle}>
               <span>
-                Redis Sentinel instance found.
-                {' '}
-                <br />
+                Redis Sentinel instance found. <br />
                 Here is a list of primary groups your Sentinel instance is
                 managing. Select the primary group(s) you want to add:
               </span>
@@ -234,16 +243,13 @@ const SentinelDatabases = ({
             columns={columns}
             sorting={{ sort }}
             selection={selectionValue}
-            className={cx(
-              styles.table,
-              !masters.length && styles.tableEmpty
-            )}
+            className={cx(styles.table, !masters.length && styles.tableEmpty)}
             data-testid="table"
           />
           {!masters.length && (
-          <EuiText className={styles.notFoundMsg} color="subdued">
-            {notMastersMsg}
-          </EuiText>
+            <EuiText className={styles.notFoundMsg} color="subdued">
+              {notMastersMsg}
+            </EuiText>
           )}
         </div>
       </div>

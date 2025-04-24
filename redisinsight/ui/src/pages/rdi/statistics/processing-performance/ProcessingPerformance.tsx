@@ -8,7 +8,15 @@ import VerticalDivider from '../components/vertical-divider'
 
 import styles from './styles.module.scss'
 
-const InfoPanel = ({ label, value, suffix }: { label: string; value: number; suffix: string }) => (
+const InfoPanel = ({
+  label,
+  value,
+  suffix,
+}: {
+  label: string
+  value: number
+  suffix: string
+}) => (
   <EuiFlexItem className={styles.infoPanel}>
     <EuiFlexGroup>
       <EuiFlexItem className={styles.infoLabel}>{label}</EuiFlexItem>
@@ -31,11 +39,19 @@ interface Props {
 }
 
 const ProcessingPerformance = ({
-  data: { totalBatches, batchSizeAvg, processTimeAvg, ackTimeAvg, recPerSecAvg, readTimeAvg, totalTimeAvg },
+  data: {
+    totalBatches,
+    batchSizeAvg,
+    processTimeAvg,
+    ackTimeAvg,
+    recPerSecAvg,
+    readTimeAvg,
+    totalTimeAvg,
+  },
   loading,
   onRefresh,
   onRefreshClicked,
-  onChangeAutoRefresh
+  onChangeAutoRefresh,
 }: Props) => (
   <Panel>
     <Accordion
@@ -51,23 +67,55 @@ const ProcessingPerformance = ({
         <EuiFlexGroup gutterSize="s">
           <EuiFlexItem>
             <EuiFlexGroup direction="column" gutterSize="s" responsive={false}>
-              <InfoPanel label="Total batches" value={totalBatches} suffix="Total" />
-              <InfoPanel label="Batch size average" value={batchSizeAvg} suffix="MB" />
-              <InfoPanel label="Process time average" value={processTimeAvg} suffix="ms" />
+              <InfoPanel
+                label="Total batches"
+                value={totalBatches}
+                suffix="Total"
+              />
+              <InfoPanel
+                label="Batch size average"
+                value={batchSizeAvg}
+                suffix="MB"
+              />
+              <InfoPanel
+                label="Process time average"
+                value={processTimeAvg}
+                suffix="ms"
+              />
             </EuiFlexGroup>
           </EuiFlexItem>
           <VerticalDivider />
           <EuiFlexItem>
             <EuiFlexGroup direction="column" gutterSize="s" responsive={false}>
-              <InfoPanel label="ACK time average" value={ackTimeAvg} suffix="sec" />
-              <InfoPanel label="Records per second average" value={recPerSecAvg} suffix="/sec" />
-              <InfoPanel label="Read time average" value={readTimeAvg} suffix="ms" />
+              <InfoPanel
+                label="ACK time average"
+                value={ackTimeAvg}
+                suffix="sec"
+              />
+              <InfoPanel
+                label="Records per second average"
+                value={recPerSecAvg}
+                suffix="/sec"
+              />
+              <InfoPanel
+                label="Read time average"
+                value={readTimeAvg}
+                suffix="ms"
+              />
             </EuiFlexGroup>
           </EuiFlexItem>
           <VerticalDivider />
           <EuiFlexItem>
-            <EuiFlexGroup gutterSize="s" alignItems="flexStart" responsive={false}>
-              <InfoPanel label="Total time average" value={totalTimeAvg} suffix="sec" />
+            <EuiFlexGroup
+              gutterSize="s"
+              alignItems="flexStart"
+              responsive={false}
+            >
+              <InfoPanel
+                label="Total time average"
+                value={totalTimeAvg}
+                suffix="sec"
+              />
             </EuiFlexGroup>
           </EuiFlexItem>
         </EuiFlexGroup>

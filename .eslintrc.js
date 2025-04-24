@@ -82,4 +82,4 @@ module.exports = {
     createDefaultProgram: true,
   },
   ignorePatterns: ['redisinsight/ui', 'redisinsight/api'],
-}
+};

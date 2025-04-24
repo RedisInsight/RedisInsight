@@ -52,7 +52,7 @@ export class ConsumerController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async getConsumers(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetConsumersDto,
+    @Body() dto: GetConsumersDto,
   ): Promise<ConsumerDto[]> {
     return this.service.getConsumers(clientMetadata, dto);
   }
@@ -64,7 +64,7 @@ export class ConsumerController extends BrowserBaseController {
   })
   async deleteConsumers(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: DeleteConsumersDto,
+    @Body() dto: DeleteConsumersDto,
   ): Promise<void> {
     return this.service.deleteConsumers(clientMetadata, dto);
   }
@@ -84,7 +84,7 @@ export class ConsumerController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async getPendingEntries(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetPendingEntriesDto,
+    @Body() dto: GetPendingEntriesDto,
   ): Promise<PendingEntryDto[]> {
     return this.service.getPendingEntries(clientMetadata, dto);
   }
@@ -102,7 +102,7 @@ export class ConsumerController extends BrowserBaseController {
   })
   async ackPendingEntries(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: AckPendingEntriesDto,
+    @Body() dto: AckPendingEntriesDto,
   ): Promise<AckPendingEntriesResponse> {
     return this.service.ackPendingEntries(clientMetadata, dto);
   }
@@ -120,7 +120,7 @@ export class ConsumerController extends BrowserBaseController {
   })
   async claimPendingEntries(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: ClaimPendingEntryDto,
+    @Body() dto: ClaimPendingEntryDto,
   ): Promise<ClaimPendingEntriesResponse> {
     return this.service.claimPendingEntries(clientMetadata, dto);
   }

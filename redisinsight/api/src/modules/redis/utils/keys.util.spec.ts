@@ -15,31 +15,58 @@ describe('getTotalKeys', () => {
     mockStandaloneRedisClient.sendCommand.mockResolvedValue('1');
     expect(await getTotalKeys(mockStandaloneRedisClient)).toEqual(1);
     expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledTimes(1);
-    expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledWith(['dbsize'], { replyEncoding: 'utf8' });
+    expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledWith(
+      ['dbsize'],
+      { replyEncoding: 'utf8' },
+    );
   });
 
   it('Should return total from info (when dbsize returned error)', async () => {
-    mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(new Error('some error'));
-    mockStandaloneRedisClient.getInfo.mockResolvedValueOnce(convertRedisInfoReplyToObject(mockRedisKeyspaceInfoResponse));
+    mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(
+      new Error('some error'),
+    );
+    mockStandaloneRedisClient.getInfo.mockResolvedValueOnce(
+      convertRedisInfoReplyToObject(mockRedisKeyspaceInfoResponse),
+    );
     expect(await getTotalKeys(mockStandaloneRedisClient)).toEqual(1);
     expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledTimes(1);
-    expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(1, ['dbsize'], { replyEncoding: 'utf8' });
-    expect(mockStandaloneRedisClient.getInfo)
-      .toHaveBeenNthCalledWith(1, 'keyspace');
+    expect(mockStandaloneRedisClient.sendCommand).toHaveBeenNthCalledWith(
+      1,
+      ['dbsize'],
+      { replyEncoding: 'utf8' },
+    );
+    expect(mockStandaloneRedisClient.getInfo).toHaveBeenNthCalledWith(
+      1,
+      'keyspace',
+    );
   });
-  it('Should return 0 since info keyspace hasn\'t keys values', async () => {
-    mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(new Error('some error'));
-    mockStandaloneRedisClient.getInfo.mockResolvedValueOnce(convertRedisInfoReplyToObject(mockRedisKeyspaceInfoResponseNoKeyspaceData));
+  it("Should return 0 since info keyspace hasn't keys values", async () => {
+    mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(
+      new Error('some error'),
+    );
+    mockStandaloneRedisClient.getInfo.mockResolvedValueOnce(
+      convertRedisInfoReplyToObject(
+        mockRedisKeyspaceInfoResponseNoKeyspaceData,
+      ),
+    );
     expect(await getTotalKeys(mockStandaloneRedisClient)).toEqual(0);
   });
   it('Should return 0 since info returned empty string', async () => {
-    mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(new Error('some error'));
-    mockStandaloneRedisClient.getInfo.mockResolvedValueOnce(convertRedisInfoReplyToObject(''));
+    mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(
+      new Error('some error'),
+    );
+    mockStandaloneRedisClient.getInfo.mockResolvedValueOnce(
+      convertRedisInfoReplyToObject(''),
+    );
     expect(await getTotalKeys(mockStandaloneRedisClient)).toEqual(0);
   });
   it('Should return -1 when dbsize and info returned error', async () => {
-    mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(new Error('some error'));
-    mockStandaloneRedisClient.getInfo.mockRejectedValue(new Error('some error'));
+    mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(
+      new Error('some error'),
+    );
+    mockStandaloneRedisClient.getInfo.mockRejectedValue(
+      new Error('some error'),
+    );
     expect(await getTotalKeys(mockStandaloneRedisClient)).toEqual(-1);
   });
 });

@@ -24,9 +24,9 @@ export const getBaseApiUrl = () => {
     return hostedApiBaseUrl
   }
 
-  return (!isDevelopment && isWebApp
+  return !isDevelopment && isWebApp
     ? window.location.origin
-    : `${riConfig.api.baseUrl}:${apiPort}`)
+    : `${riConfig.api.baseUrl}:${apiPort}`
 }
 
 export const getProxyPath = () => {
@@ -63,8 +63,5 @@ export const openNewWindowDatabase = (location: string) => {
     return
   }
 
-  window.app?.ipc?.invoke(
-    IpcInvokeEvent.windowOpen,
-    { location },
-  )
+  window.app?.ipc?.invoke(IpcInvokeEvent.windowOpen, { location })
 }

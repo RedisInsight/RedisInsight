@@ -12,13 +12,10 @@ export class UnsupportedKeyInfoStrategy extends KeyInfoStrategy {
   ): Promise<GetKeyInfoResponse> {
     this.logger.debug(`Getting ${type} type info.`);
 
-    const [
-      [, ttl = null],
-      [, size = null],
-    ] = await client.sendPipeline([
+    const [[, ttl = null], [, size = null]] = (await client.sendPipeline([
       [BrowserToolKeysCommands.Ttl, key],
       [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-    ]) as [any, number][];
+    ])) as [any, number][];
 
     return {
       name: key,

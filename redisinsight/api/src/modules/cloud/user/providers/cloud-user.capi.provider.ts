@@ -11,7 +11,9 @@ export class CloudUserCapiProvider extends CloudCapiProvider {
    * Get cloud account short info
    * @param authDto
    */
-  async getCurrentAccount(authDto: CloudCapiAuthDto): Promise<ICloudCapiAccount> {
+  async getCurrentAccount(
+    authDto: CloudCapiAuthDto,
+  ): Promise<ICloudCapiAccount> {
     try {
       const { data }: AxiosResponse = await this.api.get(
         '/',

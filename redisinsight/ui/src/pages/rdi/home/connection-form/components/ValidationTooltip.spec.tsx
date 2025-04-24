@@ -6,7 +6,7 @@ import ValidationTooltip, { Props } from './ValidationTooltip'
 const mockedProps: Props = {
   isValid: true,
   errors: {},
-  children: <div data-testid="child" />
+  children: <div data-testid="child" />,
 }
 
 describe('ValidationTooltip', () => {
@@ -31,22 +31,38 @@ describe('ValidationTooltip', () => {
   })
 
   it('should show tooltip when an error is present', async () => {
-    render(<ValidationTooltip {...mockedProps} isValid={false} errors={{ name: 'error' }} />)
+    render(
+      <ValidationTooltip
+        {...mockedProps}
+        isValid={false}
+        errors={{ name: 'error' }}
+      />,
+    )
 
     fireEvent.mouseOver(screen.getByTestId('child'))
 
-    const tooltip = await screen.findByTestId('connection-form-validation-tooltip')
+    const tooltip = await screen.findByTestId(
+      'connection-form-validation-tooltip',
+    )
 
     expect(tooltip).toHaveTextContent('Enter a value for required fields (1)')
     expect(tooltip).toHaveTextContent('error')
   })
 
   it('should show tooltip when multiple errors are present', async () => {
-    render(<ValidationTooltip {...mockedProps} isValid={false} errors={{ name: 'error 1', url: 'error 2' }} />)
+    render(
+      <ValidationTooltip
+        {...mockedProps}
+        isValid={false}
+        errors={{ name: 'error 1', url: 'error 2' }}
+      />,
+    )
 
     fireEvent.mouseOver(screen.getByTestId('child'))
 
-    const tooltip = await screen.findByTestId('connection-form-validation-tooltip')
+    const tooltip = await screen.findByTestId(
+      'connection-form-validation-tooltip',
+    )
 
     expect(tooltip).toHaveTextContent('Enter a value for required fields (2)')
     expect(tooltip).toHaveTextContent('error 1')

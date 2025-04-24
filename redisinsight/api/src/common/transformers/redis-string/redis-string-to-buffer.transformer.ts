@@ -18,7 +18,9 @@ const ArrayRedisStringToBuffer = ({ value }) => {
   return Buffer.from(value);
 };
 
-export const RedisStringToBufferTransformer = (opts?: RedisStringTransformOptions) => {
+export const RedisStringToBufferTransformer = (
+  opts?: RedisStringTransformOptions,
+) => {
   if (opts?.each === true) {
     return Transform(ArrayRedisStringToBuffer, opts);
   }

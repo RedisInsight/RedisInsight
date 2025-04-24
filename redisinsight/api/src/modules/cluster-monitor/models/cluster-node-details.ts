@@ -64,14 +64,15 @@ export class ClusterNodeDetails {
   @ApiProperty({
     type: String,
     enum: HealthStatus,
-    description: 'Node\'s current health status',
+    description: "Node's current health status",
   })
   health: HealthStatus;
 
   @ApiProperty({
     type: String,
     isArray: true,
-    description: 'Array of assigned slots or slots ranges. Shown for primary nodes only',
+    description:
+      'Array of assigned slots or slots ranges. Shown for primary nodes only',
     example: ['0-5638', '11256'],
   })
   slots?: string[];
@@ -92,64 +93,73 @@ export class ClusterNodeDetails {
 
   @ApiProperty({
     type: Number,
-    description: 'Current operations per second. "stats.instantaneous_ops_per_sec" from INFO command',
+    description:
+      'Current operations per second. "stats.instantaneous_ops_per_sec" from INFO command',
     example: 12569,
   })
   opsPerSecond: number;
 
   @ApiProperty({
     type: Number,
-    description: 'Total connections received by node. "stats.total_connections_received" from INFO command',
+    description:
+      'Total connections received by node. "stats.total_connections_received" from INFO command',
     example: 3256,
   })
   connectionsReceived: number;
 
   @ApiProperty({
     type: Number,
-    description: 'Currently connected clients. "clients.connected_clients" from INFO command',
+    description:
+      'Currently connected clients. "clients.connected_clients" from INFO command',
     example: 3256,
   })
   connectedClients: number;
 
   @ApiProperty({
     type: Number,
-    description: 'Total commands processed by node. "stats.total_commands_processed" from INFO command',
+    description:
+      'Total commands processed by node. "stats.total_commands_processed" from INFO command',
     example: 32560000000,
   })
   commandsProcessed: number;
 
   @ApiProperty({
     type: Number,
-    description: 'Current input network usage in KB/s. "stats.instantaneous_input_kbps" from INFO command',
+    description:
+      'Current input network usage in KB/s. "stats.instantaneous_input_kbps" from INFO command',
     example: 12000,
   })
   networkInKbps: number;
 
   @ApiProperty({
     type: Number,
-    description: 'Current output network usage in KB/s. "stats.instantaneous_output_kbps" from INFO command',
+    description:
+      'Current output network usage in KB/s. "stats.instantaneous_output_kbps" from INFO command',
     example: 12000,
   })
   networkOutKbps: number;
 
   @ApiProperty({
     type: Number,
-    description: 'Ratio for cache hits and misses [0 - 1]. Ideally should be close to 1',
+    description:
+      'Ratio for cache hits and misses [0 - 1]. Ideally should be close to 1',
     example: 0.8,
   })
   cacheHitRatio?: number;
 
   @ApiProperty({
     type: Number,
-    description: 'The replication offset of this node. This information can be used to '
-      + 'send commands to the most up to date replicas.',
+    description:
+      'The replication offset of this node. This information can be used to ' +
+      'send commands to the most up to date replicas.',
     example: 12000,
   })
   replicationOffset: number;
 
   @ApiProperty({
     type: Number,
-    description: 'For replicas only. Determines on how much replica is behind of primary.',
+    description:
+      'For replicas only. Determines on how much replica is behind of primary.',
     example: 0,
   })
   replicationLag?: number;

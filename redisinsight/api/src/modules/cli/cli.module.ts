@@ -19,9 +19,12 @@ const COMMANDS_CONFIGS = config.get('commands');
     CliAnalyticsService,
     {
       provide: CommandsService,
-      useFactory: () => new CommandsService(
-        COMMANDS_CONFIGS.map(({ name, url }) => new CommandsJsonProvider(name, url)),
-      ),
+      useFactory: () =>
+        new CommandsService(
+          COMMANDS_CONFIGS.map(
+            ({ name, url }) => new CommandsJsonProvider(name, url),
+          ),
+        ),
     },
     DatabaseClientFactory,
     DatabaseAnalytics,

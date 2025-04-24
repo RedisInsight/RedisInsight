@@ -1,8 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  mockDataToEncrypt,
-  mockEncryptResult,
-} from 'src/__mocks__';
+import { mockDataToEncrypt, mockEncryptResult } from 'src/__mocks__';
 import { PlainEncryptionStrategy } from 'src/modules/encryption/strategies/plain-encryption.strategy';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
 
@@ -28,16 +25,14 @@ describe('PlainEncryptionStrategy', () => {
 
   describe('decrypt', () => {
     it('Should return plain data', async () => {
-      expect(await service.decrypt(
-        mockEncryptResult.data,
-        EncryptionStrategy.PLAIN,
-      )).toEqual(mockEncryptResult.data);
+      expect(
+        await service.decrypt(mockEncryptResult.data, EncryptionStrategy.PLAIN),
+      ).toEqual(mockEncryptResult.data);
     });
-    it('Should return null when encryption doesn\'t match PLAIN', async () => {
-      expect(await service.decrypt(
-        mockEncryptResult.data,
-        'KEYTAR',
-      )).toEqual(null);
+    it("Should return null when encryption doesn't match PLAIN", async () => {
+      expect(await service.decrypt(mockEncryptResult.data, 'KEYTAR')).toEqual(
+        null,
+      );
     });
   });
 });

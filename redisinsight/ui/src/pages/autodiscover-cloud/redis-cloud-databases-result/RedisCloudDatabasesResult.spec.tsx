@@ -23,8 +23,8 @@ describe('RedisCloudDatabasesResult', () => {
         <RedisCloudDatabasesResult
           {...instance(mockedProps)}
           columns={columnsMock}
-        />
-      )
+        />,
+      ),
     ).toBeTruthy()
   })
 })

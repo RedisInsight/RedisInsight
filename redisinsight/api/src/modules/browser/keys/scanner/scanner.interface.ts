@@ -1,4 +1,7 @@
-import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
+import {
+  GetKeyInfoResponse,
+  RedisDataType,
+} from 'src/modules/browser/keys/dto';
 import { RedisString } from 'src/common/constants';
 import { RedisClient } from 'src/modules/redis/client';
 
@@ -16,7 +19,7 @@ export interface IScannerNodeKeys {
   scanned: number;
   cursor: number;
   keys: any[];
-  node?: RedisClient,
+  node?: RedisClient;
   host?: string;
   port?: number;
 }
@@ -29,7 +32,16 @@ export interface IScannerStrategy {
    * @param client
    * @param args
    */
-  getKeys(client: RedisClient, args: IScannerGetKeysArgs): Promise<IScannerNodeKeys[]>;
+  getKeys(
+    client: RedisClient,
+    args: IScannerGetKeysArgs,
+  ): Promise<IScannerNodeKeys[]>;
 
-  getKeysInfo(client: RedisClient, keys: RedisString[], type?: RedisDataType, includeSize?: boolean, includeTTL?: boolean): Promise<GetKeyInfoResponse[]>;
+  getKeysInfo(
+    client: RedisClient,
+    keys: RedisString[],
+    type?: RedisDataType,
+    includeSize?: boolean,
+    includeTTL?: boolean,
+  ): Promise<GetKeyInfoResponse[]>;
 }

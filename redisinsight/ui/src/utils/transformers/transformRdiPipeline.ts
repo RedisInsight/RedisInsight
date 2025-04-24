@@ -6,7 +6,7 @@ import {
   IPipelineJSON,
   IYamlFormatError,
   TestConnectionStatus,
-  TransformResult
+  TransformResult,
 } from 'uiSrc/slices/interfaces'
 
 export const yamlToJson = (value: string, onError: (e: string) => void) => {
@@ -24,23 +24,30 @@ export const pipelineToYaml = (pipeline: IPipelineJSON) => ({
   config: isEmpty(pipeline?.config) ? '' : yaml.dump(pipeline.config),
   jobs: pipeline?.jobs
     ? Object.entries(pipeline.jobs)?.map(([key, value]) => ({
-      name: key,
-      value: yaml.dump(value)
-    }))
-    : []
+        name: key,
+        value: yaml.dump(value),
+      }))
+    : [],
 })
 
-export const pipelineToJson = ({ config, jobs }: IPipeline, onError: (errors: IYamlFormatError[]) => void) => {
+export const pipelineToJson = (
+  { config, jobs }: IPipeline,
+  onError: (errors: IYamlFormatError[]) => void,
+) => {
   const result: IPipelineJSON = {
     config: {},
-    jobs: []
+    jobs: [],
   }
   const errors: IYamlFormatError[] = []
 
-  result.config = yamlToJson(config, (msg) => errors.push({ filename: 'config', msg })) || {}
+  result.config =
+    yamlToJson(config, (msg) => errors.push({ filename: 'config', msg })) || {}
 
   result.jobs = jobs.reduce<{ [key: string]: unknown }>((acc, job) => {
-    acc[job.name] = yamlToJson(job.value, (msg) => errors.push({ filename: job.name, msg })) || {}
+    acc[job.name] =
+      yamlToJson(job.value, (msg) =>
+        errors.push({ filename: job.name, msg }),
+      ) || {}
     return acc
   }, {})
 

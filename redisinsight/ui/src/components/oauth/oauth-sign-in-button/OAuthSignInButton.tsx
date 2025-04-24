@@ -21,13 +21,12 @@ const OAuthSignInButton = (props: Props) => {
         <EuiButton
           className={styles.btn}
           size="s"
-          onClick={(e: React.MouseEvent) => socialCloudHandlerClick(
-            e,
-            {
+          onClick={(e: React.MouseEvent) =>
+            socialCloudHandlerClick(e, {
               source,
-              action: OAuthSocialAction.SignIn
-            }
-          )}
+              action: OAuthSocialAction.SignIn,
+            })
+          }
           data-testid="cloud-sign-in-btn"
         >
           <EuiImage className={styles.logo} src={RedisLogo} alt="" />

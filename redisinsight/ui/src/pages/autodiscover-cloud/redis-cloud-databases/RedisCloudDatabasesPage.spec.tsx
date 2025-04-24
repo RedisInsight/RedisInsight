@@ -14,9 +14,23 @@ jest.mock('./RedisCloudDatabases', () => ({
 
 const mockRedisCloudDatabases = (props: RedisCloudDatabasesProps) => (
   <div>
-    <button type="button" onClick={() => props.onClose()} data-testid="close-btn">onClose</button>
-    <button type="button" onClick={() => props.onBack()} data-testid="back-btn">onBack</button>
-    <button type="button" onClick={() => props.onSubmit([])} data-testid="submit-btn">onSubmit</button>
+    <button
+      type="button"
+      onClick={() => props.onClose()}
+      data-testid="close-btn"
+    >
+      onClose
+    </button>
+    <button type="button" onClick={() => props.onBack()} data-testid="back-btn">
+      onBack
+    </button>
+    <button
+      type="button"
+      onClick={() => props.onSubmit([])}
+      data-testid="submit-btn"
+    >
+      onSubmit
+    </button>
     <div className="itemList">
       <EuiInMemoryTable
         isSelectable

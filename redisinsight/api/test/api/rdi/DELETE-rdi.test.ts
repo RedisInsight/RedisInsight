@@ -1,10 +1,6 @@
-import {
-  describe, expect, deps, getMainCheckFn,
-} from '../deps';
+import { describe, expect, deps, getMainCheckFn } from '../deps';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const testRdiId = 'someTestId';
 const testRdiId2 = 'someTestId_2';

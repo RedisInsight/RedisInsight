@@ -29,14 +29,18 @@ const ConsentsSettingsPopup = () => {
   const { theme } = useContext(ThemeContext)
 
   const handleSubmitted = () => {
-    if (server && server.buildType === BuildType.RedisStack && server?.fixedDatabaseId) {
+    if (
+      server &&
+      server.buildType === BuildType.RedisStack &&
+      server?.fixedDatabaseId
+    ) {
       history.push(Pages.browser(server.fixedDatabaseId))
     }
   }
 
   useEffect(() => {
     sendEventTelemetry({
-      event: TelemetryEvent.CONSENT_MENU_VIEWED
+      event: TelemetryEvent.CONSENT_MENU_VIEWED,
     })
   }, [])
 
@@ -44,17 +48,21 @@ const ConsentsSettingsPopup = () => {
     <EuiOverlayMask
       className={cx(
         styles.overlay,
-        theme === Theme.Dark
-          ? styles.overlay_dark
-          : styles.overlay_light
+        theme === Theme.Dark ? styles.overlay_dark : styles.overlay_light,
       )}
     >
-      <EuiModal className={styles.consentsPopup} onClose={() => {}} data-testid="consents-settings-popup">
+      <EuiModal
+        className={styles.consentsPopup}
+        onClose={() => {}}
+        data-testid="consents-settings-popup"
+      >
         <EuiModalHeader className={styles.modalHeader}>
           <EuiFlexGroup justifyContent="spaceBetween">
             <EuiFlexItem grow={false}>
               <EuiTitle size="s">
-                <h3 className={styles.consentsPopupTitle}>EULA and Privacy Settings</h3>
+                <h3 className={styles.consentsPopupTitle}>
+                  EULA and Privacy Settings
+                </h3>
               </EuiTitle>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>

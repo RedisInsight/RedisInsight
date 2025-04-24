@@ -7,7 +7,7 @@ import { RedisString } from 'src/common/constants';
 export class ConsumerDto {
   @ApiProperty({
     type: String,
-    description: 'The consumer\'s name',
+    description: "The consumer's name",
     example: 'consumer-2',
   })
   @RedisStringType()
@@ -15,15 +15,17 @@ export class ConsumerDto {
 
   @ApiProperty({
     type: Number,
-    description: 'The number of pending messages for the client, '
-      + 'which are messages that were delivered but are yet to be acknowledged',
+    description:
+      'The number of pending messages for the client, ' +
+      'which are messages that were delivered but are yet to be acknowledged',
     example: 2,
   })
   pending: number = 0;
 
   @ApiProperty({
     type: Number,
-    description: 'The number of milliseconds that have passed since the consumer last interacted with the server',
+    description:
+      'The number of milliseconds that have passed since the consumer last interacted with the server',
     example: 22442,
   })
   idle: number = 0;

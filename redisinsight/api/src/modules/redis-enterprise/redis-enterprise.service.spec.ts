@@ -3,7 +3,9 @@ import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import axios from 'axios';
 import { RedisErrorCodes } from 'src/constants';
 import {
-  mockDatabaseService, mockRedisEnterpriseAnalytics, mockSessionMetadata,
+  mockDatabaseService,
+  mockRedisEnterpriseAnalytics,
+  mockSessionMetadata,
 } from 'src/__mocks__';
 import {
   IRedisEnterpriseDatabase,
@@ -149,9 +151,7 @@ describe('RedisEnterpriseService', () => {
       ],
     }).compile();
 
-    service = await module.get<RedisEnterpriseService>(
-      RedisEnterpriseService,
-    );
+    service = await module.get<RedisEnterpriseService>(RedisEnterpriseService);
     parseClusterDbsResponse = jest.spyOn(service, 'parseClusterDbsResponse');
   });
 
@@ -177,9 +177,9 @@ describe('RedisEnterpriseService', () => {
       };
       mockedAxios.get.mockRejectedValue(apiResponse);
 
-      await expect(service.getDatabases(mockSessionMetadata, mockGetDatabasesDto)).rejects.toThrow(
-        ForbiddenException,
-      );
+      await expect(
+        service.getDatabases(mockSessionMetadata, mockGetDatabasesDto),
+      ).rejects.toThrow(ForbiddenException);
     });
     it('connection refused', async () => {
       const apiResponse = {
@@ -188,14 +188,15 @@ describe('RedisEnterpriseService', () => {
       };
       mockedAxios.get.mockRejectedValue(apiResponse);
 
-      await expect(service.getDatabases(mockSessionMetadata, mockGetDatabasesDto)).rejects.toThrow(
-        BadRequestException,
-      );
+      await expect(
+        service.getDatabases(mockSessionMetadata, mockGetDatabasesDto),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 
   describe('getDatabaseExternalEndpoint', () => {
-    const externalEndpoint: IRedisEnterpriseEndpoint = mockREClusterDatabaseEndpoint;
+    const externalEndpoint: IRedisEnterpriseEndpoint =
+      mockREClusterDatabaseEndpoint;
     const internalEndpoint: IRedisEnterpriseEndpoint = {
       ...mockREClusterDatabaseEndpoint,
       addr_type: 'internal',
@@ -223,7 +224,9 @@ describe('RedisEnterpriseService', () => {
         data_persistence: RedisEnterpriseDatabasePersistence.Aof,
         aof_policy: RedisEnterpriseDatabaseAofPolicy.AofEveryOneSecond,
       });
-      expect(result).toEqual(RedisEnterprisePersistencePolicy.AofEveryOneSecond);
+      expect(result).toEqual(
+        RedisEnterprisePersistencePolicy.AofEveryOneSecond,
+      );
     });
     it('should return AofEveryWrite', async () => {
       const result = service.getDatabasePersistencePolicy({
@@ -239,7 +242,9 @@ describe('RedisEnterpriseService', () => {
         data_persistence: RedisEnterpriseDatabasePersistence.Snapshot,
         snapshot_policy: [{ secs: 3600 }],
       });
-      expect(result).toEqual(RedisEnterprisePersistencePolicy.SnapshotEveryOneHour);
+      expect(result).toEqual(
+        RedisEnterprisePersistencePolicy.SnapshotEveryOneHour,
+      );
     });
     it('should return SnapshotEverySixHours', async () => {
       const result = service.getDatabasePersistencePolicy({
@@ -247,7 +252,9 @@ describe('RedisEnterpriseService', () => {
         data_persistence: RedisEnterpriseDatabasePersistence.Snapshot,
         snapshot_policy: [{ secs: 21600 }],
       });
-      expect(result).toEqual(RedisEnterprisePersistencePolicy.SnapshotEverySixHours);
+      expect(result).toEqual(
+        RedisEnterprisePersistencePolicy.SnapshotEverySixHours,
+      );
     });
     it('should return SnapshotEveryTwelveHours', async () => {
       const result = service.getDatabasePersistencePolicy({
@@ -255,7 +262,9 @@ describe('RedisEnterpriseService', () => {
         data_persistence: RedisEnterpriseDatabasePersistence.Snapshot,
         snapshot_policy: [{ secs: 43200 }],
       });
-      expect(result).toEqual(RedisEnterprisePersistencePolicy.SnapshotEveryTwelveHours);
+      expect(result).toEqual(
+        RedisEnterprisePersistencePolicy.SnapshotEveryTwelveHours,
+      );
     });
     it('should return None', async () => {
       const result = service.getDatabasePersistencePolicy({

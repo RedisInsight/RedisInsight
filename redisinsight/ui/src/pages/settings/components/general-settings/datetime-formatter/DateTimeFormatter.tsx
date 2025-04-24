@@ -19,11 +19,13 @@ const DateTimeFormatter = () => {
   const config = useSelector(userSettingsConfigSelector)
 
   useEffect(() => {
-    setPreview(formatTimestamp(
-      new Date(),
-      config?.dateFormat || DATETIME_FORMATTER_DEFAULT,
-      config?.timezone || TimezoneOption.Local
-    ))
+    setPreview(
+      formatTimestamp(
+        new Date(),
+        config?.dateFormat || DATETIME_FORMATTER_DEFAULT,
+        config?.timezone || TimezoneOption.Local,
+      ),
+    )
   }, [config?.dateFormat, config?.timezone])
 
   return (
@@ -38,7 +40,9 @@ const DateTimeFormatter = () => {
       <EuiSpacer size="m" />
       <DatetimeForm onFormatChange={(newPreview) => setPreview(newPreview)} />
       <EuiSpacer size="m" />
-      <EuiText className={styles.dateTimeSubtitle} color="subdued">Specifies the time zone to be used in Redis Insight:</EuiText>
+      <EuiText className={styles.dateTimeSubtitle} color="subdued">
+        Specifies the time zone to be used in Redis Insight:
+      </EuiText>
       <EuiSpacer size="s" />
       <div>
         <EuiFlexGroup alignItems="center">
@@ -47,8 +51,12 @@ const DateTimeFormatter = () => {
           </EuiFlexItem>
           <EuiFlexItem grow={2}>
             <div className={styles.previewContainer}>
-              <EuiText className={styles.dateTimeSubtitle} color="subdued">Preview:</EuiText>
-              <EuiText className={styles.preview} data-testid="data-preview">{preview}</EuiText>
+              <EuiText className={styles.dateTimeSubtitle} color="subdued">
+                Preview:
+              </EuiText>
+              <EuiText className={styles.preview} data-testid="data-preview">
+                {preview}
+              </EuiText>
             </div>
           </EuiFlexItem>
         </EuiFlexGroup>

@@ -51,12 +51,12 @@ class Point {
   y: number
 
   constructor(_x: number, _y: number) {
-    this.x = _x;
-    this.y = _y;
+    this.x = _x
+    this.y = _y
   }
 
   toString(): string {
-    return  `${this.x} ${this.y}`
+    return `${this.x} ${this.y}`
   }
 }
 
@@ -81,20 +81,20 @@ function LoopArrow(
   const shaftRadius = shaftWidth / 2
   this.shaftLength = loopRadius * 3 + shaftWidth
 
-  const normalPoint = function (sweep: number, radius: number, displacement: number) {
+  const normalPoint = function (
+    sweep: number,
+    radius: number,
+    displacement: number,
+  ) {
     const localLoopRadius = radius * Math.tan(spread / 2)
     const cy = radius / Math.cos(spread / 2)
     return new Point(
       (localLoopRadius + displacement) * Math.sin(sweep),
-      cy + (localLoopRadius + displacement) * Math.cos(sweep)
+      cy + (localLoopRadius + displacement) * Math.cos(sweep),
     )
   }
 
-  this.midShaftPoint = normalPoint(
-    0,
-    r3,
-    shaftRadius + captionHeight / 2 + 2
-  )
+  this.midShaftPoint = normalPoint(0, r3, shaftRadius + captionHeight / 2 + 2)
   const startPoint = (radius: number, displacement: number) =>
     normalPoint((Math.PI + spread) / 2, radius, displacement)
   const endPoint = (radius: number, displacement: number) =>
@@ -104,40 +104,40 @@ function LoopArrow(
     const inner = loopRadius - shaftRadius
     const outer = loopRadius + shaftRadius
     return [
-      "M",
+      'M',
       startPoint(r1, shaftRadius),
-      "L",
+      'L',
       startPoint(r3, shaftRadius),
-      "A",
+      'A',
       outer,
       outer,
       0,
       1,
       1,
       endPoint(r3, shaftRadius),
-      "L",
+      'L',
       endPoint(r2, shaftRadius),
-      "L",
+      'L',
       endPoint(r2, -headWidth / 2),
-      "L",
+      'L',
       endPoint(r1, 0),
-      "L",
+      'L',
       endPoint(r2, headWidth / 2),
-      "L",
+      'L',
       endPoint(r2, -shaftRadius),
-      "L",
+      'L',
       endPoint(r3, -shaftRadius),
-      "A",
+      'A',
       inner,
       inner,
       0,
       1,
       0,
       startPoint(r3, -shaftRadius),
-      "L",
+      'L',
       startPoint(r1, -shaftRadius),
-      "Z",
-    ].join(" ")
+      'Z',
+    ].join(' ')
   }
 
   this.overlay = function (minWidth: number) {
@@ -145,37 +145,36 @@ function LoopArrow(
     const inner = loopRadius - displacement
     const outer = loopRadius + displacement
     return [
-      "M",
+      'M',
       startPoint(r1, displacement),
-      "L",
+      'L',
       startPoint(r3, displacement),
-      "A",
+      'A',
       outer,
       outer,
       0,
       1,
       1,
       endPoint(r3, displacement),
-      "L",
+      'L',
       endPoint(r2, displacement),
-      "L",
+      'L',
       endPoint(r2, -displacement),
-      "L",
+      'L',
       endPoint(r3, -displacement),
-      "A",
+      'A',
       inner,
       inner,
       0,
       1,
       0,
       startPoint(r3, -displacement),
-      "L",
+      'L',
       startPoint(r1, -displacement),
-      "Z",
-    ].join(" ")
+      'Z',
+    ].join(' ')
   }
 }
-
 
 function StraightArrow(
   startRadius: number,
@@ -184,7 +183,7 @@ function StraightArrow(
   shaftWidth: number,
   headWidth: number,
   headHeight: number,
-  captionLayout: string
+  captionLayout: string,
 ) {
   this.length
   this.midShaftPoint
@@ -210,91 +209,92 @@ function StraightArrow(
   // for shortCaptionLength we use textBoundingBox = text.node().getComputedTextLength(),
   this.outline = function (shortCaptionLength: number) {
     if (captionLayout === EDGE_CAPTION_EXTERNAL) {
-      const startBreak = startArrow + (this.shaftLength - shortCaptionLength) / 2
+      const startBreak =
+        startArrow + (this.shaftLength - shortCaptionLength) / 2
       const endBreak = endShaft - (this.shaftLength - shortCaptionLength) / 2
 
       return [
-        "M",
+        'M',
         startArrow,
         shaftRadius,
-        "L",
+        'L',
         startBreak,
         shaftRadius,
-        "L",
+        'L',
         startBreak,
         -shaftRadius,
-        "L",
+        'L',
         startArrow,
         -shaftRadius,
-        "Z",
-        "M",
+        'Z',
+        'M',
         endBreak,
         shaftRadius,
-        "L",
+        'L',
         endShaft,
         shaftRadius,
-        "L",
+        'L',
         endShaft,
         headRadius,
-        "L",
+        'L',
         endArrow,
         0,
-        "L",
+        'L',
         endShaft,
         -headRadius,
-        "L",
+        'L',
         endShaft,
         -shaftRadius,
-        "L",
+        'L',
         endBreak,
         -shaftRadius,
-        "Z",
-      ].join(" ")
+        'Z',
+      ].join(' ')
     } else {
       return [
-        "M",
+        'M',
         startArrow,
         shaftRadius,
-        "L",
+        'L',
         endShaft,
         shaftRadius,
-        "L",
+        'L',
         endShaft,
         headRadius,
-        "L",
+        'L',
         endArrow,
         0,
-        "L",
+        'L',
         endShaft,
         -headRadius,
-        "L",
+        'L',
         endShaft,
         -shaftRadius,
-        "L",
+        'L',
         startArrow,
         -shaftRadius,
-        "Z",
-      ].join(" ")
+        'Z',
+      ].join(' ')
     }
   }
 
   this.overlay = function (minWidth: number) {
     const radius = Math.max(minWidth / 2, shaftRadius)
     return [
-      "M",
+      'M',
       startArrow,
       radius,
-      "L",
+      'L',
       endArrow,
       radius,
-      "L",
+      'L',
       endArrow,
       -radius,
-      "L",
+      'L',
       startArrow,
       -radius,
-      "Z",
-    ].join(" ")
+      'Z',
+    ].join(' ')
   }
 }
 
@@ -306,7 +306,7 @@ function ArcArrow(
   arrowWidth: number,
   headWidth: number,
   headLength: number,
-  captionLayout: string
+  captionLayout: string,
 ) {
   this.deflection = _deflection
   const square = (l: number) => l * l
@@ -346,7 +346,7 @@ function ArcArrow(
     startAttach,
     endRadius + headLength,
     endCentre,
-    -1
+    -1,
   )
 
   const g1 = -startAttach.x / startAttach.y
@@ -359,7 +359,7 @@ function ArcArrow(
   const cy = g1 * cx + c1
 
   const arcRadius = Math.sqrt(
-    square(cx - startAttach.x) + square(cy - startAttach.y)
+    square(cx - startAttach.x) + square(cy - startAttach.y),
   )
   const startAngle = Math.atan2(startAttach.x - cx, cy - startAttach.y)
   const endAngle = Math.atan2(endAttach.x - cx, cy - endAttach.y)
@@ -406,8 +406,7 @@ function ArcArrow(
   })
 
   const endNormal = function (dc: number) {
-    const dx =
-      (dc < 0 ? -1 : 1) * Math.sqrt(square(dc) / (1 + square(1 / g2)))
+    const dx = (dc < 0 ? -1 : 1) * Math.sqrt(square(dc) / (1 + square(1 / g2)))
     const dy = dx / g2
     return {
       x: endAttach.x + dx,
@@ -434,14 +433,14 @@ function ArcArrow(
   this.outline = function (shortCaptionLength: number) {
     if (startAngle > endAngle) {
       return [
-        "M",
+        'M',
         coord(endTangent(-headRadius)),
-        "L",
+        'L',
         coord(endNormal(headLength)),
-        "L",
+        'L',
         coord(endTangent(headRadius)),
-        "Z",
-      ].join(" ")
+        'Z',
+      ].join(' ')
     }
 
     if (captionLayout === EDGE_CAPTION_EXTERNAL) {
@@ -454,117 +453,116 @@ function ArcArrow(
       const endBreak = midShaftAngle + captionSweep / 2
 
       return [
-        "M",
+        'M',
         coord(startTangent(shaftRadius)),
-        "L",
+        'L',
         coord(startTangent(-shaftRadius)),
-        "A",
+        'A',
         arcRadius - shaftRadius,
         arcRadius - shaftRadius,
         0,
         0,
         positiveSweep,
         coord(angleTangent(startBreak, -shaftRadius)),
-        "L",
+        'L',
         coord(angleTangent(startBreak, shaftRadius)),
-        "A",
+        'A',
         arcRadius + shaftRadius,
         arcRadius + shaftRadius,
         0,
         0,
         negativeSweep,
         coord(startTangent(shaftRadius)),
-        "Z",
-        "M",
+        'Z',
+        'M',
         coord(angleTangent(endBreak, shaftRadius)),
-        "L",
+        'L',
         coord(angleTangent(endBreak, -shaftRadius)),
-        "A",
+        'A',
         arcRadius - shaftRadius,
         arcRadius - shaftRadius,
         0,
         0,
         positiveSweep,
         coord(endTangent(-shaftRadius)),
-        "L",
+        'L',
         coord(endTangent(-headRadius)),
-        "L",
+        'L',
         coord(endNormal(headLength)),
-        "L",
+        'L',
         coord(endTangent(headRadius)),
-        "L",
+        'L',
         coord(endTangent(shaftRadius)),
-        "A",
+        'A',
         arcRadius + shaftRadius,
         arcRadius + shaftRadius,
         0,
         0,
         negativeSweep,
         coord(angleTangent(endBreak, shaftRadius)),
-      ].join(" ")
+      ].join(' ')
     } else {
       return [
-        "M",
+        'M',
         coord(startTangent(shaftRadius)),
-        "L",
+        'L',
         coord(startTangent(-shaftRadius)),
-        "A",
+        'A',
         arcRadius - shaftRadius,
         arcRadius - shaftRadius,
         0,
         0,
         positiveSweep,
         coord(endTangent(-shaftRadius)),
-        "L",
+        'L',
         coord(endTangent(-headRadius)),
-        "L",
+        'L',
         coord(endNormal(headLength)),
-        "L",
+        'L',
         coord(endTangent(headRadius)),
-        "L",
+        'L',
         coord(endTangent(shaftRadius)),
-        "A",
+        'A',
         arcRadius + shaftRadius,
         arcRadius + shaftRadius,
         0,
         0,
         negativeSweep,
         coord(startTangent(shaftRadius)),
-      ].join(" ")
+      ].join(' ')
     }
   }
 
   this.overlay = function (minWidth: number) {
     const radius = Math.max(minWidth / 2, shaftRadius)
     return [
-      "M",
+      'M',
       coord(startTangent(radius)),
-      "L",
+      'L',
       coord(startTangent(-radius)),
-      "A",
+      'A',
       arcRadius - radius,
       arcRadius - radius,
       0,
       0,
       positiveSweep,
       coord(endTangent(-radius)),
-      "L",
+      'L',
       coord(endOverlayCorner(-radius, headLength)),
-      "L",
+      'L',
       coord(endOverlayCorner(radius, headLength)),
-      "L",
+      'L',
       coord(endTangent(radius)),
-      "A",
+      'A',
       arcRadius + radius,
       arcRadius + radius,
       0,
       0,
       negativeSweep,
       coord(startTangent(radius)),
-    ].join(" ")
+    ].join(' ')
   }
 }
-
 
 interface INode extends d3.SimulationNodeDatum {
   id: string
@@ -574,10 +572,10 @@ interface INode extends d3.SimulationNodeDatum {
   angleX: number
   angleY: number
   links: string[]
-  targetLabels: {[label: string]: number}
+  targetLabels: { [label: string]: number }
 }
 
-interface IRelationship extends d3.SimulationLinkDatum<INode>{
+interface IRelationship extends d3.SimulationLinkDatum<INode> {
   id: string
   properties: { [key: string]: string | number | object }
   type: string
@@ -605,10 +603,10 @@ interface IGraph {
 }
 
 interface IZoomFuncs {
-  zoomIn: () => d3.Transition < SVGSVGElement, unknown, null, undefined >,
-  zoomOut: () => d3.Transition < SVGSVGElement, unknown, null, undefined >,
-  resetZoom: () => d3.Transition < SVGSVGElement, unknown, null, undefined >,
-  center: () => d3.Transition < SVGSVGElement, unknown, null, undefined >,
+  zoomIn: () => d3.Transition<SVGSVGElement, unknown, null, undefined>
+  zoomOut: () => d3.Transition<SVGSVGElement, unknown, null, undefined>
+  resetZoom: () => d3.Transition<SVGSVGElement, unknown, null, undefined>
+  center: () => d3.Transition<SVGSVGElement, unknown, null, undefined>
 }
 
 export interface IGraphD3 {
@@ -626,10 +624,10 @@ export interface IGraphD3 {
 function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   let info: any
   let nodes: INode[]
-  let shouldShowAutomaticEdges = false;
+  let shouldShowAutomaticEdges = false
   let relationship: d3.Selection<SVGGElement, IRelationship, SVGGElement, any>
-  let labelCounter = 0;
-  let labels: { [key: string]: number } = { }
+  let labelCounter = 0
+  let labels: { [key: string]: number } = {}
   let relationshipOutline
   let relationshipOverlay
   let relationshipText
@@ -637,8 +635,18 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   let selector: HTMLDivElement
   let simulation: d3.Simulation<any, any>
   let svg: d3.Selection<any, unknown, null, undefined>
-  let svgNodes: d3.Selection<d3.BaseType | SVGPathElement, any, SVGGElement, unknown>
-  let svgRelationships: d3.Selection<d3.BaseType | SVGGElement, any, SVGGElement, unknown>
+  let svgNodes: d3.Selection<
+    d3.BaseType | SVGPathElement,
+    any,
+    SVGGElement,
+    unknown
+  >
+  let svgRelationships: d3.Selection<
+    d3.BaseType | SVGGElement,
+    any,
+    SVGGElement,
+    unknown
+  >
   let svgScale: number
   let svgTranslate: number[]
   let node: any
@@ -660,53 +668,66 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   }
 
   function appendGraph(container: d3.Selection<any, unknown, null, undefined>) {
-    let mainSvg = container.append('svg')
-    .attr('width', '100%')
-    .attr('height', height)
-    .attr('class', 'graphd3-graph')
-    .call(options.graphZoom.on('zoom', (event) => {
-      let scale = event.transform.k
-      const translate = [event.transform.x, event.transform.y]
-      if (svgTranslate) {
-        translate[0] += svgTranslate[0]
-        translate[1] += svgTranslate[1]
-      }
-      if (svgScale) {
-        scale *= svgScale
-      }
-
-      let node = svg.selectAll('.node')
-      let textSize = nominalTextSize
-      if (nominalTextSize * scale > maxTextSize) textSize = maxTextSize / scale
-      appendTextToNode(node, textSize)
-      let text = node.selectAll('.text')
-      text.attr("font-size", (textSize - 3) + "px")
-      svg.attr('transform', `translate(${translate[0]}, ${translate[1]}) scale(${scale})`)
-    }))
-    .on('dblclick.zoom', null)
-      svg = mainSvg.append('g')
+    let mainSvg = container
+      .append('svg')
       .attr('width', '100%')
-      .attr('height', '100%')
+      .attr('height', height)
+      .attr('class', 'graphd3-graph')
+      .call(
+        options.graphZoom.on('zoom', (event) => {
+          let scale = event.transform.k
+          const translate = [event.transform.x, event.transform.y]
+          if (svgTranslate) {
+            translate[0] += svgTranslate[0]
+            translate[1] += svgTranslate[1]
+          }
+          if (svgScale) {
+            scale *= svgScale
+          }
+
+          let node = svg.selectAll('.node')
+          let textSize = nominalTextSize
+          if (nominalTextSize * scale > maxTextSize)
+            textSize = maxTextSize / scale
+          appendTextToNode(node, textSize)
+          let text = node.selectAll('.text')
+          text.attr('font-size', textSize - 3 + 'px')
+          svg.attr(
+            'transform',
+            `translate(${translate[0]}, ${translate[1]}) scale(${scale})`,
+          )
+        }),
+      )
+      .on('dblclick.zoom', null)
+    svg = mainSvg.append('g').attr('width', '100%').attr('height', '100%')
 
     zoomFuncs = {
       zoomIn: () => mainSvg.transition().call(zoom.scaleBy, ZOOM_PROPS.ZOOM_IN),
-      zoomOut: () => mainSvg.transition().call(zoom.scaleBy, ZOOM_PROPS.ZOOM_OUT),
-      resetZoom: () => mainSvg.transition().call(zoom.scaleTo, ZOOM_PROPS.ZOOM_RESET),
-      center: () => mainSvg.transition().call(zoom.translateTo, ...ZOOM_PROPS.CAMERA_CENTER(mainSvg.node().getBoundingClientRect().width, mainSvg.node().getBoundingClientRect().height)),
+      zoomOut: () =>
+        mainSvg.transition().call(zoom.scaleBy, ZOOM_PROPS.ZOOM_OUT),
+      resetZoom: () =>
+        mainSvg.transition().call(zoom.scaleTo, ZOOM_PROPS.ZOOM_RESET),
+      center: () =>
+        mainSvg
+          .transition()
+          .call(
+            zoom.translateTo,
+            ...ZOOM_PROPS.CAMERA_CENTER(
+              mainSvg.node().getBoundingClientRect().width,
+              mainSvg.node().getBoundingClientRect().height,
+            ),
+          ),
     }
 
-    svgRelationships = svg.append('g')
-      .attr('class', 'relationships')
+    svgRelationships = svg.append('g').attr('class', 'relationships')
 
-    svgNodes = svg.append('g')
-      .attr('class', 'nodes')
+    svgNodes = svg.append('g').attr('class', 'nodes')
 
     coreSvg = mainSvg
   }
 
   function appendInfoPanel(container) {
-    return container.append('div')
-      .attr('class', 'd3-info')
+    return container.append('div').attr('class', 'd3-info')
   }
 
   function appendInfoElement(className, nodeData) {
@@ -714,14 +735,15 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     let property
 
     if (nodeData.labels) {
-      [property] = nodeData.labels
+      ;[property] = nodeData.labels
       colorNode = nodeData.color
     } else {
       colorNode = '#808080'
       property = nodeData.type
     }
 
-    info.append('span')
+    info
+      .append('span')
       .attr('class', className)
       .html(`<strong>${property}</strong>`)
       .style('background-color', colorNode)
@@ -730,7 +752,9 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   }
 
   function appendInfoElementProperty(cls, property, value) {
-    info.append('span').attr('class', cls)
+    info
+      .append('span')
+      .attr('class', cls)
       .html(`<strong>${property}</strong> ${value}`)
   }
 
@@ -742,7 +766,6 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
 
     // Add a ring to specify that the node was selected
     d3.select(ele).attr('class', 'node selected')
-
   }
 
   function dragEnded(event, d) {
@@ -761,8 +784,8 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     // Don't move other nodes on drag of one node.
     svg.selectAll('.node').each((n: any) => {
       if (d.id !== n.id) {
-        n.fx = n.x;
-        n.fy = n.y;
+        n.fx = n.x
+        n.fy = n.y
       }
     })
   }
@@ -784,7 +807,6 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     if (info) {
       updateInfo(d)
     }
-
   }
 
   function clearInfo() {
@@ -803,12 +825,17 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     appendInfoElementProperty('property', '&lt;id&gt;', d.id)
 
     Object.keys(d.properties).forEach((property) => {
-      appendInfoElementProperty('property', property, JSON.stringify(d.properties[property]))
+      appendInfoElementProperty(
+        'property',
+        property,
+        JSON.stringify(d.properties[property]),
+      )
     })
   }
 
   function appendNode() {
-    return node.enter()
+    return node
+      .enter()
       .append('g')
       .attr('class', (d) => {
         const label = d.labels?.length ? d.labels[0] : ''
@@ -819,7 +846,10 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
           for (let i = 0; i < options.highlight.length; i += 1) {
             highlight = options.highlight[i]
 
-            if (label === highlight.class && d.properties[highlight.property] === highlight.value) {
+            if (
+              label === highlight.class &&
+              d.properties[highlight.property] === highlight.value
+            ) {
               classes += ' node-highlighted'
               break
             }
@@ -849,7 +879,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
           options.onNodeDoubleClick(this, d, event)
         }
 
-        [...new Set(nodes.map(n => n.labels[0]))].forEach(l => {
+        ;[...new Set(nodes.map((n) => n.labels[0]))].forEach((l) => {
           if (labels[l] === undefined) {
             labels[l] = labelCounter
             labelCounter += 1
@@ -857,15 +887,20 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
         })
 
         // Pulse on double click
-        Utils.pulse(d3.select(event.currentTarget).select('.outline'));
+        Utils.pulse(d3.select(event.currentTarget).select('.outline'))
 
         // Calculating the next positio of the node takes some times
         // so start transition only after the calculation. So delay
         // starting the transition by some milliseconds.
-        setTimeout(() => d3.select('.graphd3-graph')
-                           .transition()
-                           .duration(500)
-                           .call(zoom.translateTo as any, d.x, d.y), 10)
+        setTimeout(
+          () =>
+            d3
+              .select('.graphd3-graph')
+              .transition()
+              .duration(500)
+              .call(zoom.translateTo as any, d.x, d.y),
+          10,
+        )
       })
       .on('mouseenter', function onNodeMouseEnter(event, d) {
         if (typeof options.onNodeMouseEnter === 'function') {
@@ -881,25 +916,39 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
           options.onNodeMouseLeave(this, d, event)
         }
       })
-      .call(d3.drag()
-        .on('start', dragStarted)
-        .on('drag', dragged)
-        .on('end', dragEnded))
+      .call(
+        d3
+          .drag()
+          .on('start', dragStarted)
+          .on('drag', dragged)
+          .on('end', dragEnded),
+      )
   }
 
   function appendRingToNode(svgNode) {
-    return svgNode.append('circle')
-    .attr('class', 'ring')
-    .style('stroke', (d) => labelColors(d.labels?.length ? d.labels[0] : '').borderColor)
-    .attr('r', options.nodeRadius * 1.16)
+    return svgNode
+      .append('circle')
+      .attr('class', 'ring')
+      .style(
+        'stroke',
+        (d) => labelColors(d.labels?.length ? d.labels[0] : '').borderColor,
+      )
+      .attr('r', options.nodeRadius * 1.16)
   }
 
   function appendOutlineToNode(svgNode) {
-    return svgNode.append('circle')
+    return svgNode
+      .append('circle')
       .attr('class', 'outline')
       .attr('r', options.nodeRadius)
-      .style('fill', (d) => labelColors(d.labels?.length ? d.labels[0] : '').color)
-      .style('stroke', (d) => labelColors(d.labels?.length ? d.labels[0] : '').borderColor)
+      .style(
+        'fill',
+        (d) => labelColors(d.labels?.length ? d.labels[0] : '').color,
+      )
+      .style(
+        'stroke',
+        (d) => labelColors(d.labels?.length ? d.labels[0] : '').borderColor,
+      )
   }
 
   function appendNodeInfo(svgNode) {
@@ -907,7 +956,8 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
       return
     }
 
-    const g = svgNode.append('g')
+    const g = svgNode
+      .append('g')
       .attr('class', 'info')
       .attr('transform', 'translate(9, -28)')
       .on('click', function onNodeInfoClick(event, d) {
@@ -938,7 +988,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
 
   function appendTextToNode(svgNode, textSize = null) {
     svgNode
-      .selectAll("text")
+      .selectAll('text')
       .data((d) => {
         let label: string
         if (typeof options.onLabelNode === 'function') {
@@ -948,19 +998,22 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
         }
         label ||= ''
         if (textSize !== null) {
-          let maxLength = (maxTextSize - textSize) + 15
-          label = label.length > maxLength ? Utils.truncateText(label, maxLength) : label
+          let maxLength = maxTextSize - textSize + 15
+          label =
+            label.length > maxLength
+              ? Utils.truncateText(label, maxLength)
+              : label
         }
         let wrappedLabel = Utils.wrapText(label, 7)
-        return wrappedLabel.split('\n').map(k => ({
-            text: k,
-            actual: wrappedLabel,
-            d,
+        return wrappedLabel.split('\n').map((k) => ({
+          text: k,
+          actual: wrappedLabel,
+          d,
         }))
       })
-      .join("text")
+      .join('text')
       .text((d) => d.text)
-      .attr("y", (d, i) => {
+      .attr('y', (d, i) => {
         const calculatePosition = (l: number) => {
           if (l == 1) return 0
           else {
@@ -977,8 +1030,11 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
         return r[i]
       })
       .attr('class', 'text')
-      .attr('font-size', () => nominalTextSize + "px")
-      .attr('fill', ({d}) => labelColors(d.labels?.length ? d.labels[0] : '').textColor)
+      .attr('font-size', () => nominalTextSize + 'px')
+      .attr(
+        'fill',
+        ({ d }) => labelColors(d.labels?.length ? d.labels[0] : '').textColor,
+      )
       .attr('pointer-events', 'none')
       .attr('text-anchor', 'middle')
       .attr('dy', () => options.nodeRadius / ((options.nodeRadius * 25) / 100))
@@ -1002,9 +1058,10 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   }
 
   function appendRelationship() {
-    return relationship.enter()
+    return relationship
+      .enter()
       .append('g')
-      .attr('class', r => `relationship relationship-${r.id}`)
+      .attr('class', (r) => `relationship relationship-${r.id}`)
       .on('dblclick', function onRelationshipDoubleClick(event, d) {
         if (typeof options.onRelationshipDoubleClick === 'function') {
           options.onRelationshipDoubleClick(this, d, event)
@@ -1018,21 +1075,24 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   }
 
   function appendOutlineToRelationship(r) {
-    return r.append('path')
+    return r
+      .append('path')
       .attr('class', 'outline')
-      .attr('fill', d => edgeColors(d.type).color)
+      .attr('fill', (d) => edgeColors(d.type).color)
   }
 
   function appendOverlayToRelationship(r) {
-    return r.append('path')
-    .attr('class', 'overlay')
-    .style('fill', (d) => edgeColors(d.type).color)
+    return r
+      .append('path')
+      .attr('class', 'overlay')
+      .style('fill', (d) => edgeColors(d.type).color)
   }
 
   function appendTextToRelationship(r) {
-    return r.append('text')
+    return r
+      .append('text')
       .attr('class', 'text')
-      .attr('fill', d => edgeColors(d.type).color)
+      .attr('fill', (d) => edgeColors(d.type).color)
       .attr('font-size', '12px')
       .attr('pointer-events', 'none')
       .attr('text-anchor', 'middle')
@@ -1058,8 +1118,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   function updateNodes(n: INode) {
     Array.prototype.push.apply(nodes, n)
 
-    node = svgNodes.selectAll('.node')
-    .data(nodes, (d: INode) => d.id)
+    node = svgNodes.selectAll('.node').data(nodes, (d: INode) => d.id)
 
     const nodeEnter = appendNodeToGraph()
     node = nodeEnter.merge(node)
@@ -1070,7 +1129,12 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     let a = svgRelationships.selectAll('.relationship')
     relationship = svgRelationships
       .selectAll('.relationship')
-      .data(relationships, (d: IRelationship) => d.id) as d3.Selection<SVGGElement, IRelationship, SVGGElement, any>
+      .data(relationships, (d: IRelationship) => d.id) as d3.Selection<
+      SVGGElement,
+      IRelationship,
+      SVGGElement,
+      any
+    >
 
     const relationshipEnter = appendRelationshipToGraph()
 
@@ -1086,20 +1150,22 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   }
 
   function updateNodesAndRelationships(n, r) {
+    let nodeIds = nodes.map((n) => n.id)
+    n = n.filter((k) => !nodeIds.includes(k.id))
 
-    let nodeIds = nodes.map(n => n.id)
-    n = n.filter(k => !nodeIds.includes(k.id))
-
-    let edgeIds = relationships.map(e => e.id)
+    let edgeIds = relationships.map((e) => e.id)
     const previousEdges = [...r]
-    r = r.filter(k => !edgeIds.includes(k.id))
+    r = r.filter((k) => !edgeIds.includes(k.id))
 
     if (relationship !== undefined) {
-      relationship.each(r => {
+      relationship.each((r) => {
         // If an edge is being fetchedAutomatically and is now added
         // in new data, mark fetchedAutomatically to false.
-        if (r.fetchedAutomatically && previousEdges.map(k => k.id).includes(r.id)) {
-          r.fetchedAutomatically = false;
+        if (
+          r.fetchedAutomatically &&
+          previousEdges.map((k) => k.id).includes(r.id)
+        ) {
+          r.fetchedAutomatically = false
         }
       })
     }
@@ -1108,7 +1174,10 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     updateNodes(n)
 
     simulation.nodes(nodes)
-    simulation.force('link', d3.forceLink(relationships).id((d: IRelationship) => d.id))
+    simulation.force(
+      'link',
+      d3.forceLink(relationships).id((d: IRelationship) => d.id),
+    )
 
     // Every time the function is run, do check whether automatically fetched edges must be rendered.
     d3.selectAll('.relationship').each((r: IRelationship) => {
@@ -1132,7 +1201,9 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
 
             graph.nodes.push({
               ...nodeData,
-              color: options.nodeOutlineFillColor ? options.nodeOutlineFillColor : randomColor,
+              color: options.nodeOutlineFillColor
+                ? options.nodeOutlineFillColor
+                : randomColor,
             })
           }
         })
@@ -1194,7 +1265,9 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   }
 
   function rotation(source, target) {
-    return (Math.atan2(target.y - source.y, target.x - source.x) * 180) / Math.PI
+    return (
+      (Math.atan2(target.y - source.y, target.x - source.x) * 180) / Math.PI
+    )
   }
 
   function size() {
@@ -1216,13 +1289,18 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
       // FIXME:
 
       let rel = d3.select(this),
-          outline = rel.select(".outline") as unknown as d3.Selection<d3.BaseType, IRelationship, null, undefined>,
-          text = rel.select(".text"),
-          textPadding = 8,
-          textLength = text.node().getComputedTextLength(),
-          captionLength = textLength > 0 ? textLength + textPadding : 0
+        outline = rel.select('.outline') as unknown as d3.Selection<
+          d3.BaseType,
+          IRelationship,
+          null,
+          undefined
+        >,
+        text = rel.select('.text'),
+        textPadding = 8,
+        textLength = text.node().getComputedTextLength(),
+        captionLength = textLength > 0 ? textLength + textPadding : 0
 
-      outline.attr("d", (d) => {
+      outline.attr('d', (d) => {
         if (captionLength > d.arrow.shaftLength) {
           captionLength = d.arrow.shaftLength
         }
@@ -1232,13 +1310,13 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   }
 
   function tickRelationshipsOverlays() {
-    relationshipOverlay.attr("d", (d) => {
+    relationshipOverlay.attr('d', (d) => {
       return d.arrow.overlay(options.arrowSize)
     })
   }
 
   function tickRelationshipsTexts() {
-    relationshipText.attr("transform", (rel) => {
+    relationshipText.attr('transform', (rel) => {
       if (rel.naturalAngle < 90 || rel.naturalAngle > 270) {
         return `rotate(180 ${rel.arrow.midShaftPoint.x} ${rel.arrow.midShaftPoint.y})`
       } else {
@@ -1246,11 +1324,11 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
       }
     })
 
-    relationshipText.attr("x", (rel) => rel.arrow.midShaftPoint.x)
+    relationshipText.attr('x', (rel) => rel.arrow.midShaftPoint.x)
     relationshipText.attr(
-      "y",
+      'y',
       //TODO: Make the fontsize and padding dynamic
-      (rel) => rel.arrow.midShaftPoint.y + 8.5 / 2 - 1
+      (rel) => rel.arrow.midShaftPoint.y + 8.5 / 2 - 1,
     )
   }
 
@@ -1262,7 +1340,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     if (relationship) {
       layoutRelationships()
 
-      relationship.attr("transform", (d) => {
+      relationship.attr('transform', (d) => {
         return `translate(${d.source.x} ${d.source.y}) rotate(${
           d.naturalAngle + 180
         })`
@@ -1281,7 +1359,6 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
   }
 
   function tick() {
-
     simulation.tick(1)
     tickNodes()
     tickRelationships()
@@ -1307,28 +1384,52 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     }
 
     svgScale = 0.85 / Math.max(width / fullWidth, height / fullHeight)
-    svgTranslate = [fullWidth / 2 - svgScale * midX, fullHeight / 2 - svgScale * midY]
+    svgTranslate = [
+      fullWidth / 2 - svgScale * midX,
+      fullHeight / 2 - svgScale * midY,
+    ]
 
-    svg.attr('transform', `translate(${svgTranslate[0]}, ${svgTranslate[1]}) scale(${svgScale})`)
+    svg.attr(
+      'transform',
+      `translate(${svgTranslate[0]}, ${svgTranslate[1]}) scale(${svgScale})`,
+    )
   }
 
   function initSimulation() {
     const spreadFactor = 1.25
-    return d3.forceSimulation()
-             .force('link', d3.forceLink().id((d: IRelationship) => d.id).distance(70))
-             .force('charge', d3.forceManyBody().strength((d, i) => i ? -5000 : 500))
-             .force("y", d3.forceY(svg.node().parentElement.parentElement.clientHeight / 2))
-             .force('center', d3.forceCenter(svg.node().parentElement.parentElement.clientWidth / 2,
-                                             svg.node().parentElement.parentElement.clientHeight / 2))
-             .on('tick', () => {
-               tick()
-             })
-             .on('end', () => {
-               if (options.zoomFit && !justLoaded) {
-                 justLoaded = true
-                 zoomFit()
-               }
-             })
+    return d3
+      .forceSimulation()
+      .force(
+        'link',
+        d3
+          .forceLink()
+          .id((d: IRelationship) => d.id)
+          .distance(70),
+      )
+      .force(
+        'charge',
+        d3.forceManyBody().strength((d, i) => (i ? -5000 : 500)),
+      )
+      .force(
+        'y',
+        d3.forceY(svg.node().parentElement.parentElement.clientHeight / 2),
+      )
+      .force(
+        'center',
+        d3.forceCenter(
+          svg.node().parentElement.parentElement.clientWidth / 2,
+          svg.node().parentElement.parentElement.clientHeight / 2,
+        ),
+      )
+      .on('tick', () => {
+        tick()
+      })
+      .on('end', () => {
+        if (options.zoomFit && !justLoaded) {
+          justLoaded = true
+          zoomFit()
+        }
+      })
   }
 
   function init() {
@@ -1356,21 +1457,32 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
       console.error('Error: graphData is empty!')
     }
 
-    [...new Set(nodes.map(n => n.labels[0]))].forEach(l => {
+    ;[...new Set(nodes.map((n) => n.labels[0]))].forEach((l) => {
       if (labels[l] === undefined) {
         labels[l] = labelCounter
         labelCounter += 1
       }
-    });
+    })
 
     simulation
-      .force("x", d3.forceX(d => d.angleX || 0))
-      .force("y", d3.forceY(d => d.angleY || 0))
-      .force('center', d3.forceCenter(svg.node().parentElement.parentElement.clientWidth / 2,
-                                      svg.node().parentElement.parentElement.clientHeight / 2))
+      .force(
+        'x',
+        d3.forceX((d) => d.angleX || 0),
+      )
+      .force(
+        'y',
+        d3.forceY((d) => d.angleY || 0),
+      )
+      .force(
+        'center',
+        d3.forceCenter(
+          svg.node().parentElement.parentElement.clientWidth / 2,
+          svg.node().parentElement.parentElement.clientHeight / 2,
+        ),
+      )
       .force('centerX', d3.forceX(0).strength(0.03))
       .force('centerX', d3.forceX(0).strength(0.03))
-    }
+  }
 
   init()
 
@@ -1390,7 +1502,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
       this.relationships = []
     }
 
-    isLoop () : boolean{
+    isLoop(): boolean {
       return this.nodeA.id === this.nodeB.id
     }
 
@@ -1440,7 +1552,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
                   shaftWidth,
                   headWidth,
                   headHeight,
-                  relationship.captionHeight || 11
+                  relationship.captionHeight || 11,
                 )
               } else {
                 if (i === middleRelationshipIndex) {
@@ -1451,7 +1563,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
                     shaftWidth,
                     headWidth,
                     headHeight,
-                    relationship.captionLayout || EDGE_CAPTION_EXTERNAL
+                    relationship.captionLayout || EDGE_CAPTION_EXTERNAL,
                   )
                 } else {
                   let deflection =
@@ -1469,12 +1581,12 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
                     shaftWidth,
                     headWidth,
                     headHeight,
-                    relationship.captionLayout || EDGE_CAPTION_EXTERNAL
+                    relationship.captionLayout || EDGE_CAPTION_EXTERNAL,
                   )
                 }
               }
             }
-          })()
+          })(),
         )
       }
       return result
@@ -1488,18 +1600,18 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     nodes.forEach((node) => {
       if (node.id == id) match = node
     })
-    return match;
+    return match
   }
 
-
   function mapData(d: IGraph) {
-    d.relationships.map(r => {
+    d.relationships.map((r) => {
       let source = findNode(r.startNode, d.nodes)
-      let target = findNode(r.endNode, d.nodes);
+      let target = findNode(r.endNode, d.nodes)
 
-      source.links = source.links ? Array.from(new Set([...source.links, target.labels[0]])) : [target.labels[0]];
-
-      (r.source = source),
+      source.links = source.links
+        ? Array.from(new Set([...source.links, target.labels[0]]))
+        : [target.labels[0]]
+      ;(r.source = source),
         (r.target = target),
         (r.naturalAngle = 0),
         (r.isLoop = function () {
@@ -1508,36 +1620,36 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
       return r
     })
 
-    nodes.map(n => {
+    nodes.map((n) => {
       if (n.links !== undefined) {
         let labels = {}
         n.links.forEach((l, i) => {
-          labels[l] = i;
-        });
+          labels[l] = i
+        })
 
         const equalAngles = 360 / Object.keys(labels).length
         let angleIterator = 0
-        Object.keys(labels).map(l => {
-          labels[l] = angleIterator;
-          angleIterator += equalAngles;
-        });
+        Object.keys(labels).map((l) => {
+          labels[l] = angleIterator
+          angleIterator += equalAngles
+        })
 
-        n.targetLabels = labels;
+        n.targetLabels = labels
       }
     })
 
-    d.relationships.map(r => {
+    d.relationships.map((r) => {
       const radius = 1300
       const onlyOne = Object.keys(r.source.targetLabels).length === 1
 
-      const degree = Math.PI * 2 * r.source.targetLabels[r.target.labels[0]] / 360;
+      const degree =
+        (Math.PI * 2 * r.source.targetLabels[r.target.labels[0]]) / 360
       const angleX = onlyOne ? 0 : radius * Math.sin(degree)
       const angleY = onlyOne ? 0 : radius * Math.cos(degree)
 
-      r.target.angleX = angleX;
-      r.target.angleY = angleY;
+      r.target.angleX = angleX
+      r.target.angleY = angleY
     })
-
   }
 
   function groupedRelationships(): NodePair[] {
@@ -1546,7 +1658,10 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     } = {}
     for (const relationship of Array.from(relationships)) {
       let nodePair = new NodePair(relationship.source, relationship.target)
-      nodePair = groups[nodePair.toString()] != null ? groups[nodePair.toString()] : nodePair
+      nodePair =
+        groups[nodePair.toString()] != null
+          ? groups[nodePair.toString()]
+          : nodePair
       nodePair.relationships.push(relationship)
       groups[nodePair.toString()] = nodePair
     }
@@ -1581,7 +1696,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
                 result1.push((relationship.centreDistance = centreDistance))
               }
               return result1
-            })()
+            })(),
           )
         } else {
           result.push(undefined)
@@ -1591,7 +1706,10 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     })()
   }
 
-  function distributeAnglesForLoopArrows(nodePairs: NodePair[], relationships: IRelationship[]) {
+  function distributeAnglesForLoopArrows(
+    nodePairs: NodePair[],
+    relationships: IRelationship[],
+  ) {
     return (() => {
       const result = []
       for (let nodePair of Array.from(nodePairs)) {
@@ -1627,19 +1745,19 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
             }
             separation =
               (biggestGap.end - biggestGap.start) /
-              (nodePair.relationships.length + 1);
+              (nodePair.relationships.length + 1)
             result.push(
               (() => {
                 const result1 = []
                 for (i = 0; i < nodePair.relationships.length; i++) {
-                  const relationship = nodePair.relationships[i];
+                  const relationship = nodePair.relationships[i]
                   result1.push(
                     (relationship.naturalAngle =
-                      (biggestGap.start + (i + 1) * separation - 90) % 360)
+                      (biggestGap.start + (i + 1) * separation - 90) % 360),
                   )
                 }
                 return result1
-              })()
+              })(),
             )
           } else {
             separation = 360 / nodePair.relationships.length
@@ -1652,7 +1770,7 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
                   result2.push((relationship.naturalAngle = i * separation))
                 }
                 return result2
-              })()
+              })(),
             )
           }
         } else {
@@ -1663,26 +1781,42 @@ function GraphD3(_selector: HTMLDivElement, _options: any): IGraphD3 {
     })()
   }
 
-
   function resize() {
-    const isFullScreen = parent.document.body.getElementsByClassName('fullscreen').length > 0
+    const isFullScreen =
+      parent.document.body.getElementsByClassName('fullscreen').length > 0
     if (isFullScreen) {
-      coreSvg.attr("height", parent.document.body.offsetHeight - 50)
-      coreSvg.transition().call(zoom.translateTo, ...ZOOM_PROPS.CAMERA_CENTER(coreSvg.node().getBoundingClientRect().width, coreSvg.node().getBoundingClientRect().height - 300))
+      coreSvg.attr('height', parent.document.body.offsetHeight - 50)
+      coreSvg
+        .transition()
+        .call(
+          zoom.translateTo,
+          ...ZOOM_PROPS.CAMERA_CENTER(
+            coreSvg.node().getBoundingClientRect().width,
+            coreSvg.node().getBoundingClientRect().height - 300,
+          ),
+        )
     } else {
-      coreSvg.attr("height", height)
-      coreSvg.transition().call(zoom.translateTo, ...ZOOM_PROPS.CAMERA_CENTER(coreSvg.node().getBoundingClientRect().width, coreSvg.node().getBoundingClientRect().height))
+      coreSvg.attr('height', height)
+      coreSvg
+        .transition()
+        .call(
+          zoom.translateTo,
+          ...ZOOM_PROPS.CAMERA_CENTER(
+            coreSvg.node().getBoundingClientRect().width,
+            coreSvg.node().getBoundingClientRect().height,
+          ),
+        )
     }
     simulation.restart()
   }
 
-  d3.select(window).on("resize", resize)
+  d3.select(window).on('resize', resize)
 
   resize()
 
   function toggleShowAutomaticEdges() {
     // Simply re-run the function. `updateNodesAndRelationships` internally checks for `shouldShowAutomaticEdges` prop to render edges that were fetched automatically.
-    shouldShowAutomaticEdges = !shouldShowAutomaticEdges;
+    shouldShowAutomaticEdges = !shouldShowAutomaticEdges
     updateNodesAndRelationships([], [])
     simulation.restart()
   }

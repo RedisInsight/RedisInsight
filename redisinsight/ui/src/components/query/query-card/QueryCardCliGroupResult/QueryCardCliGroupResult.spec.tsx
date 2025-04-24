@@ -8,18 +8,31 @@ const mockedProps = mock<Props>()
 
 describe('QueryCardCliGroupResult', () => {
   it('should render', () => {
-    const mockResult = [{
-      response: [{
-        response: 'response',
-        status: 'success'
-      }],
-      status: 'success'
-    }]
-    expect(render(<QueryCardCliGroupResult {...instance(mockedProps)} result={mockResult} />)).toBeTruthy()
+    const mockResult = [
+      {
+        response: [
+          {
+            response: 'response',
+            status: 'success',
+          },
+        ],
+        status: 'success',
+      },
+    ]
+    expect(
+      render(
+        <QueryCardCliGroupResult
+          {...instance(mockedProps)}
+          result={mockResult}
+        />,
+      ),
+    ).toBeTruthy()
   })
 
   it('Should render result when result is undefined', () => {
-    expect(render(<QueryCardCliGroupResult {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<QueryCardCliGroupResult {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 
   it('should render error when command is psubscribe', () => {
@@ -30,18 +43,20 @@ describe('QueryCardCliGroupResult', () => {
             id: 'id',
             command: 'psubscribe',
             response: 'response',
-            status: CommandExecutionStatus.Success
-          }
-        ]
-      }
+            status: CommandExecutionStatus.Success,
+          },
+        ],
+      },
     ]
     const { container } = render(
       <QueryCardCliGroupResult
         {...instance(mockedProps)}
         result={mockResult}
-      />
+      />,
     )
-    const errorBtn = container.querySelector('[data-test-subj="pubsub-page-btn"]')
+    const errorBtn = container.querySelector(
+      '[data-test-subj="pubsub-page-btn"]',
+    )
 
     expect(errorBtn).toBeInTheDocument()
   })
@@ -54,18 +69,20 @@ describe('QueryCardCliGroupResult', () => {
             id: 'id',
             command: 'psubscribe',
             response: null,
-            status: CommandExecutionStatus.Success
-          }
-        ]
-      }
+            status: CommandExecutionStatus.Success,
+          },
+        ],
+      },
     ]
     const { container } = render(
       <QueryCardCliGroupResult
         {...instance(mockedProps)}
         result={mockResult}
-      />
+      />,
     )
-    const errorBtn = container.querySelector('[data-test-subj="pubsub-page-btn"]')
+    const errorBtn = container.querySelector(
+      '[data-test-subj="pubsub-page-btn"]',
+    )
 
     expect(errorBtn).not.toBeInTheDocument()
     expect(screen.getByText('(nil)')).toBeInTheDocument()

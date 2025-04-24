@@ -4,11 +4,7 @@ import ClickableAppendInfo from './ClickableAppendInfo'
 
 describe('ClickableAppendInfo', () => {
   it('should render', () => {
-    expect(
-      render(
-        <ClickableAppendInfo />
-      )
-    ).toBeTruthy()
+    expect(render(<ClickableAppendInfo />)).toBeTruthy()
   })
 
   it('should open popover on click', async () => {

@@ -1,22 +1,34 @@
-import { describe, it, deps, validateApiCall, before, expect, requirements, getMainCheckFn } from '../deps';
+import {
+  describe,
+  it,
+  deps,
+  validateApiCall,
+  before,
+  expect,
+  requirements,
+  getMainCheckFn,
+} from '../deps';
 import { Joi } from '../../helpers/test';
 const { localDb, request, server, constants, rte } = deps;
 
 const endpoint = (id = constants.TEST_INSTANCE_ID) =>
   request(server).get(`/${constants.API.DATABASES}/${id}/overview`);
 
-const responseSchema = Joi.object().keys({
-  version: Joi.string().required(),
-  serverName: Joi.string().allow(null),
-  totalKeys: Joi.number().integer().allow(null),
-  totalKeysPerDb: Joi.object().allow(null),
-  usedMemory: Joi.number().integer().allow(null),
-  connectedClients: Joi.number().allow(null),
-  opsPerSecond: Joi.number().allow(null),
-  networkInKbps: Joi.number().allow(null),
-  networkOutKbps: Joi.number().integer().allow(null),
-  cpuUsagePercentage: Joi.number().allow(null),
-}).required().strict();
+const responseSchema = Joi.object()
+  .keys({
+    version: Joi.string().required(),
+    serverName: Joi.string().allow(null),
+    totalKeys: Joi.number().integer().allow(null),
+    totalKeysPerDb: Joi.object().allow(null),
+    usedMemory: Joi.number().integer().allow(null),
+    connectedClients: Joi.number().allow(null),
+    opsPerSecond: Joi.number().allow(null),
+    networkInKbps: Joi.number().allow(null),
+    networkOutKbps: Joi.number().integer().allow(null),
+    cpuUsagePercentage: Joi.number().allow(null),
+  })
+  .required()
+  .strict();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -27,9 +39,9 @@ describe(`GET /${constants.API.DATABASES}/:id/overview`, () => {
     {
       name: 'Should get database overview',
       responseSchema,
-      checkFn: ({body}) => {
+      checkFn: ({ body }) => {
         expect(body.version).to.eql(rte.env.version);
-      }
+      },
     },
     {
       endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
@@ -37,7 +49,7 @@ describe(`GET /${constants.API.DATABASES}/:id/overview`, () => {
       statusCode: 503,
       responseBody: {
         statusCode: 503,
-        error: 'Service Unavailable'
+        error: 'Service Unavailable',
       },
     },
     {
@@ -59,18 +71,18 @@ describe(`GET /${constants.API.DATABASES}/:id/overview`, () => {
       {
         name: 'Should get database overview except CPU',
         responseSchema,
-        checkFn: ({body}) => {
+        checkFn: ({ body }) => {
           expect(body.version).to.eql(rte.env.version);
-          expect(body.cpuUsagePercentage).to.eql(undefined)
-          expect(body.totalKeys).to.not.eql(undefined)
-          expect(body.totalKeysPerDb).to.eql(undefined)
-          expect(body.connectedClients).to.not.eql(undefined)
-          expect(body.opsPerSecond).to.not.eql(undefined)
-          expect(body.networkInKbps).to.not.eql(undefined)
-          expect(body.networkOutKbps).to.not.eql(undefined)
-          expect(body.usedMemory).to.not.eql(undefined)
-        }
+          expect(body.cpuUsagePercentage).to.eql(undefined);
+          expect(body.totalKeys).to.not.eql(undefined);
+          expect(body.totalKeysPerDb).to.eql(undefined);
+          expect(body.connectedClients).to.not.eql(undefined);
+          expect(body.opsPerSecond).to.not.eql(undefined);
+          expect(body.networkInKbps).to.not.eql(undefined);
+          expect(body.networkOutKbps).to.not.eql(undefined);
+          expect(body.usedMemory).to.not.eql(undefined);
+        },
       },
     ].map(mainCheckFn);
-  })
+  });
 });

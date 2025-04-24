@@ -9,7 +9,9 @@ describe('Empty', () => {
   test('renders empty pipeline message', () => {
     render(<Empty rdiInstanceId="123" />)
     expect(screen.getByText('No pipeline deployed yet')).toBeInTheDocument()
-    expect(screen.getByText('Create your first pipeline to get started!')).toBeInTheDocument()
+    expect(
+      screen.getByText('Create your first pipeline to get started!'),
+    ).toBeInTheDocument()
   })
 
   test('navigates to pipeline config page when "Add Pipeline" button is clicked', () => {
@@ -17,7 +19,7 @@ describe('Empty', () => {
     render(
       <Router history={history}>
         <Empty rdiInstanceId="123" />
-      </Router>
+      </Router>,
     )
 
     const addPipelineButton = screen.getByTestId('add-pipeline-btn')

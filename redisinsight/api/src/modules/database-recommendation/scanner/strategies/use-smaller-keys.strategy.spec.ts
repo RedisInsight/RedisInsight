@@ -9,11 +9,15 @@ describe('UseSmallerKeysStrategy', () => {
 
   describe('isRecommendationReached', () => {
     it('should return false when database total less than 1_000_000', async () => {
-      expect(await strategy.isRecommendationReached(1)).toEqual({ isReached: false });
+      expect(await strategy.isRecommendationReached(1)).toEqual({
+        isReached: false,
+      });
     });
 
     it('should return false when database total more than 1_000_000', async () => {
-      expect(await strategy.isRecommendationReached(1_000_001)).toEqual({ isReached: true });
+      expect(await strategy.isRecommendationReached(1_000_001)).toEqual({
+        isReached: true,
+      });
     });
   });
 });

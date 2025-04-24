@@ -38,21 +38,21 @@ enum BrowserStorageItem {
   capability = 'capability',
   aiChatSession = 'aiChatSession',
   selectedAiChat = 'selectedAiChat',
-  generalChatAgreements = 'generalChatAgreements'
+  generalChatAgreements = 'generalChatAgreements',
 }
 
 export default BrowserStorageItem
 
 export enum ConfigDBStorageItem {
   slowLogDurationUnit = 'slowLogDurationUnit',
-  notShowConfirmationRunTutorial = 'notShowConfirmationRunTutorial'
+  notShowConfirmationRunTutorial = 'notShowConfirmationRunTutorial',
 }
 
 export enum CapabilityStorageItem {
   source = 'source',
-  tutorialPopoverShown = 'tutorialPopoverShown'
+  tutorialPopoverShown = 'tutorialPopoverShown',
 }
 
 export enum AppStorageItem {
-  returnUrl = 'returnUrl'
+  returnUrl = 'returnUrl',
 }

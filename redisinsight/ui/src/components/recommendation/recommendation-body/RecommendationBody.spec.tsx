@@ -17,11 +17,19 @@ const mockTelemetryName = 'name'
 
 describe('RecommendationBody', () => {
   it('should render', () => {
-    expect(render(<RecommendationBody {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<RecommendationBody {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 
   it('should render element', () => {
-    render(<RecommendationBody {...instance(mockedProps)} elements={mockContent} telemetryName={mockTelemetryName} />)
+    render(
+      <RecommendationBody
+        {...instance(mockedProps)}
+        elements={mockContent}
+        telemetryName={mockTelemetryName}
+      />,
+    )
 
     expect(screen.getByText('unknown')).toBeInTheDocument()
   })

@@ -3,12 +3,10 @@ import {
   ConnectedSocket,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer, WsException,
+  WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
-import {
-  Body,
-  Logger, ValidationPipe,
-} from '@nestjs/common';
+import { Body, Logger, ValidationPipe } from '@nestjs/common';
 import config, { Config } from 'src/utils/config';
 import { CloudJobEvents } from 'src/modules/cloud/common/constants';
 import { CloudJobService } from 'src/modules/cloud/job/cloud-job.service';
@@ -24,40 +22,43 @@ const SOCKETS_CONFIG = config.get('sockets') as Config['sockets'];
 @WebSocketGateway({
   path: SOCKETS_CONFIG.path,
   cors: SOCKETS_CONFIG.cors.enabled
-    ? { origin: SOCKETS_CONFIG.cors.origin, credentials: SOCKETS_CONFIG.cors.credentials } : false,
+    ? {
+        origin: SOCKETS_CONFIG.cors.origin,
+        credentials: SOCKETS_CONFIG.cors.credentials,
+      }
+    : false,
 })
 export class CloudJobGateway {
   @WebSocketServer() wss: Server;
 
   private readonly validator = new Validator();
 
-  private exceptionFactory = (new ValidationPipe()).createExceptionFactory();
+  private exceptionFactory = new ValidationPipe().createExceptionFactory();
 
   private logger: Logger = new Logger('CloudJobGateway');
 
-  constructor(
-    private readonly cloudJobService: CloudJobService,
-  ) {}
+  constructor(private readonly cloudJobService: CloudJobService) {}
 
   @SubscribeMessage(CloudJobEvents.Monitor)
   async monitor(
     @WSSessionMetadata() sessionMetadata: SessionMetadata,
-      @ConnectedSocket() client: Socket,
-      @Body() data: MonitorCloudJobDto,
+    @ConnectedSocket() client: Socket,
+    @Body() data: MonitorCloudJobDto,
   ): Promise<CloudJobInfo> {
     try {
       const dto = plainToInstance(MonitorCloudJobDto, data);
 
-      const errors = await this.validator.validate(
-        dto,
-        { whitelist: true },
-      );
+      const errors = await this.validator.validate(dto, { whitelist: true });
 
       if (errors?.length) {
         throw this.exceptionFactory(errors);
       }
 
-      return await this.cloudJobService.monitorJob(sessionMetadata, dto, client);
+      return await this.cloudJobService.monitorJob(
+        sessionMetadata,
+        dto,
+        client,
+      );
     } catch (error) {
       this.logger.error('Unable to add listener', error);
       throw new WsException(error);

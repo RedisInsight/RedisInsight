@@ -1,11 +1,6 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import {
-  cleanup,
-  fireEvent,
-  mockedStore,
-  render,
-} from 'uiSrc/utils/test-utils'
+import { cleanup, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { KeysStoreData } from 'uiSrc/slices/interfaces/keys'
 import { setBrowserTreeNodesOpen } from 'uiSrc/slices/app/context'
 import { stringToBuffer } from 'uiSrc/utils'
@@ -50,7 +45,7 @@ const propsMock = {
     scanned: 5,
     shardsMeta: {},
     previousResultCount: 1,
-    lastRefreshTime: 3
+    lastRefreshTime: 3,
   } as KeysStoreData,
   loading: false,
   deleting: false,
@@ -66,49 +61,57 @@ const folderFullName = 'car:'
 const leaf1FullName = 'car:110'
 const leaf2FullName = 'car:210'
 
-const mockWebWorkerResult = [{
-  children: [{
+const mockWebWorkerResult = [
+  {
+    children: [
+      {
+        children: [],
+        fullName: leaf1FullName,
+        id: '0.0',
+        keyApproximate: 0.01,
+        keyCount: 1,
+        name: '110',
+        type: KeyTypes.String,
+        isLeaf: true,
+        nameBuffer: stringToBuffer(leaf1FullName),
+      },
+      {
+        children: [],
+        fullName: leaf2FullName,
+        id: '0.1',
+        keyApproximate: 0.01,
+        keyCount: 1,
+        name: '110',
+        type: KeyTypes.Hash,
+        isLeaf: true,
+        nameBuffer: stringToBuffer(leaf2FullName),
+      },
+    ],
+    fullName: folderFullName,
+    id: '0',
+    keyApproximate: 47.18,
+    keyCount: 4718,
+    name: 'car',
+  },
+  {
     children: [],
-    fullName: leaf1FullName,
-    id: '0.0',
+    fullName: leafRootFullName,
+    id: '1',
     keyApproximate: 0.01,
     keyCount: 1,
-    name: '110',
-    type: KeyTypes.String,
+    type: KeyTypes.Stream,
     isLeaf: true,
-    nameBuffer: stringToBuffer(leaf1FullName),
-  }, {
-    children: [],
-    fullName: leaf2FullName,
-    id: '0.1',
-    keyApproximate: 0.01,
-    keyCount: 1,
-    name: '110',
-    type: KeyTypes.Hash,
-    isLeaf: true,
-    nameBuffer: stringToBuffer(leaf2FullName),
-  }],
-  fullName: folderFullName,
-  id: '0',
-  keyApproximate: 47.18,
-  keyCount: 4718,
-  name: 'car',
-},
-{
-  children: [],
-  fullName: leafRootFullName,
-  id: '1',
-  keyApproximate: 0.01,
-  keyCount: 1,
-  type: KeyTypes.Stream,
-  isLeaf: true,
-  name: 'test',
-  nameBuffer: stringToBuffer(leafRootFullName),
-}]
+    name: 'test',
+    nameBuffer: stringToBuffer(leafRootFullName),
+  },
+]
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
-  useDisposableWebworker: () => ({ result: mockWebWorkerResult, run: jest.fn() }),
+  useDisposableWebworker: () => ({
+    result: mockWebWorkerResult,
+    run: jest.fn(),
+  }),
 }))
 
 jest.mock('uiSrc/slices/browser/keys', () => ({
@@ -128,7 +131,9 @@ describe('KeyTree', () => {
 
   it('"setBrowserTreeNodesOpen" to be called after click on folder', () => {
     const onSelectedKeyMock = jest.fn()
-    const { getByTestId } = render(<KeyTree {...propsMock} selectKey={onSelectedKeyMock} />)
+    const { getByTestId } = render(
+      <KeyTree {...propsMock} selectKey={onSelectedKeyMock} />,
+    )
 
     // set open state
     fireEvent.click(getByTestId(`node-item_${folderFullName}`))
@@ -142,7 +147,9 @@ describe('KeyTree', () => {
 
   it('"selectKey" to be called after click on leaf', async () => {
     const onSelectedKeyMock = jest.fn()
-    const { getByTestId } = render(<KeyTree {...propsMock} selectKey={onSelectedKeyMock} />)
+    const { getByTestId } = render(
+      <KeyTree {...propsMock} selectKey={onSelectedKeyMock} />,
+    )
 
     // open parent folder
     fireEvent.click(getByTestId(`node-item_${folderFullName}`))
@@ -157,9 +164,11 @@ describe('KeyTree', () => {
     const selectedKeyDataSelectorMock = jest.fn().mockReturnValue({
       name: stringToBuffer(leaf2FullName),
       nameString: leaf2FullName,
-    });
+    })
 
-    (selectedKeyDataSelector as jest.Mock).mockImplementation(selectedKeyDataSelectorMock)
+    ;(selectedKeyDataSelector as jest.Mock).mockImplementation(
+      selectedKeyDataSelectorMock,
+    )
 
     const { getByTestId } = render(<KeyTree {...propsMock} />)
 

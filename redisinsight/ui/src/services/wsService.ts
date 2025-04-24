@@ -6,17 +6,24 @@ import { getConfig } from 'uiSrc/config'
 const riConfig = getConfig()
 
 export type WsParams = {
-  forceNew?: boolean;
-  token?: string;
-  reconnection?: boolean;
-  query?: Record<string, any>;
-  extraHeaders?: Record<string, any>;
-  path?: string;
+  forceNew?: boolean
+  token?: string
+  reconnection?: boolean
+  query?: Record<string, any>
+  extraHeaders?: Record<string, any>
+  path?: string
 }
 
 export function wsService(
   wsUrl: string,
-  { forceNew = true, token, reconnection, query, extraHeaders, path = getProxyPath() }: WsParams,
+  {
+    forceNew = true,
+    token,
+    reconnection,
+    query,
+    extraHeaders,
+    path = getProxyPath(),
+  }: WsParams,
   passTokenViaHeaders: boolean = true,
 ) {
   const tokenObj = { [CustomHeaders.CsrfToken.toLowerCase()]: token }

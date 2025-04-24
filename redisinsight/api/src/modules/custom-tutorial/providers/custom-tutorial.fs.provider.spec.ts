@@ -2,14 +2,20 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockCustomTutorial,
   mockCustomTutorialAdmZipEntry,
-  mockCustomTutorialMacosxAdmZipEntry, mockCustomTutorialsHttpLink, mockCustomTutorialsHttpLink2,
+  mockCustomTutorialMacosxAdmZipEntry,
+  mockCustomTutorialsHttpLink,
+  mockCustomTutorialsHttpLink2,
   mockCustomTutorialTmpPath,
-  mockCustomTutorialZipFile, mockCustomTutorialZipFileAxiosResponse,
+  mockCustomTutorialZipFile,
+  mockCustomTutorialZipFileAxiosResponse,
 } from 'src/__mocks__';
 import * as fs from 'fs-extra';
 import axios from 'axios';
 import { CustomTutorialFsProvider } from 'src/modules/custom-tutorial/providers/custom-tutorial.fs.provider';
-import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import AdmZip from 'adm-zip';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import config from 'src/utils/config';
@@ -37,13 +43,13 @@ describe('CustomTutorialFsProvider', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     jest.mock('fs-extra', () => mFs);
-    jest.mock('adm-zip', () => jest.fn().mockImplementation(() => mockedAdmZip));
+    jest.mock('adm-zip', () =>
+      jest.fn().mockImplementation(() => mockedAdmZip),
+    );
     jest.mock('axios', () => mockedAxios);
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        CustomTutorialFsProvider,
-      ],
+      providers: [CustomTutorialFsProvider],
     }).compile();
 
     service = await module.get(CustomTutorialFsProvider);
@@ -53,48 +59,62 @@ describe('CustomTutorialFsProvider', () => {
     let prepareTmpFolderSpy;
 
     beforeEach(() => {
-      mockedAxios.get.mockResolvedValueOnce(mockCustomTutorialZipFileAxiosResponse);
+      mockedAxios.get.mockResolvedValueOnce(
+        mockCustomTutorialZipFileAxiosResponse,
+      );
       mockedAdmZip.getEntries.mockReturnValue([]);
       mFs.ensureDir.mockImplementationOnce(() => Promise.resolve());
       mFs.remove.mockImplementationOnce(() => Promise.resolve());
       mFs.readdir.mockResolvedValue([]);
-      prepareTmpFolderSpy = jest.spyOn(CustomTutorialFsProvider, 'prepareTmpFolder');
+      prepareTmpFolderSpy = jest.spyOn(
+        CustomTutorialFsProvider,
+        'prepareTmpFolder',
+      );
       prepareTmpFolderSpy.mockResolvedValueOnce(mockCustomTutorialTmpPath);
     });
 
     describe('unzipFromMemoryStoredFile', () => {
       it('should unzip data', async () => {
-        const result = await service.unzipFromMemoryStoredFile(mockCustomTutorialZipFile);
+        const result = await service.unzipFromMemoryStoredFile(
+          mockCustomTutorialZipFile,
+        );
         expect(result).toEqual(mockCustomTutorialTmpPath);
         expect(mFs.copy).not.toHaveBeenCalled();
       });
       it('should unzip data into just generated tmp folder', async () => {
-        mFs.lstat.mockResolvedValueOnce(({ isDirectory: () => true }) as Stats);
+        mFs.lstat.mockResolvedValueOnce({ isDirectory: () => true } as Stats);
         mFs.readdir.mockResolvedValue(['singleFolder'] as unknown as Dirent[]);
 
         prepareTmpFolderSpy.mockRestore();
-        const result = await service.unzipFromMemoryStoredFile(mockCustomTutorialZipFile);
-        expect(result).toContain(`${PATH_CONFIG.tmpDir}/RedisInsight/custom-tutorials`);
+        const result = await service.unzipFromMemoryStoredFile(
+          mockCustomTutorialZipFile,
+        );
+        expect(result).toContain(
+          `${PATH_CONFIG.tmpDir}/RedisInsight/custom-tutorials`,
+        );
         expect(mFs.copy).toHaveBeenCalled();
       });
     });
 
     describe('unzipFromExternalLink', () => {
-      it.each([
-        mockCustomTutorialsHttpLink,
-        mockCustomTutorialsHttpLink2,
-      ])('should unzip data from external link', async (url) => {
-        const result = await service.unzipFromExternalLink(url);
-        expect(result).toEqual(mockCustomTutorialTmpPath);
-      });
+      it.each([mockCustomTutorialsHttpLink, mockCustomTutorialsHttpLink2])(
+        'should unzip data from external link',
+        async (url) => {
+          const result = await service.unzipFromExternalLink(url);
+          expect(result).toEqual(mockCustomTutorialTmpPath);
+        },
+      );
 
       it.each([
         'http://hithub.com',
         'http://raw.githubusercontent.com',
         'http://raw.amy.other.com',
       ])('should unzip data from external link', async (url) => {
-        await expect(service.unzipFromExternalLink(url))
-          .rejects.toThrow(new BadRequestException(ERROR_MESSAGES.CUSTOM_TUTORIAL_UNSUPPORTED_ORIGIN));
+        await expect(service.unzipFromExternalLink(url)).rejects.toThrow(
+          new BadRequestException(
+            ERROR_MESSAGES.CUSTOM_TUTORIAL_UNSUPPORTED_ORIGIN,
+          ),
+        );
       });
 
       it('should throw InternalServerError when incorrect external link provided', async () => {
@@ -112,7 +132,9 @@ describe('CustomTutorialFsProvider', () => {
           fail();
         } catch (e) {
           expect(e).toBeInstanceOf(InternalServerErrorException);
-          expect(e.message).toEqual(ERROR_MESSAGES.CUSTOM_TUTORIAL_UNABLE_TO_FETCH_FROM_EXTERNAL);
+          expect(e.message).toEqual(
+            ERROR_MESSAGES.CUSTOM_TUTORIAL_UNABLE_TO_FETCH_FROM_EXTERNAL,
+          );
         }
       });
     });
@@ -141,7 +163,9 @@ describe('CustomTutorialFsProvider', () => {
         mockCustomTutorialAdmZipEntry,
         mockCustomTutorialMacosxAdmZipEntry,
       ]);
-      mockedAdmZip.extractEntryTo.mockImplementationOnce(() => { throw new Error('Unable to extract file'); });
+      mockedAdmZip.extractEntryTo.mockImplementationOnce(() => {
+        throw new Error('Unable to extract file');
+      });
 
       try {
         await service.unzipToTmpFolder(mockedAdmZip);
@@ -180,7 +204,9 @@ describe('CustomTutorialFsProvider', () => {
         true,
       );
 
-      expect(mFs.pathExists).toHaveBeenCalledWith(mockCustomTutorial.absolutePath);
+      expect(mFs.pathExists).toHaveBeenCalledWith(
+        mockCustomTutorial.absolutePath,
+      );
       expect(mFs.remove).not.toHaveBeenCalled();
       expect(mFs.move).toHaveBeenCalledWith(
         mockCustomTutorialTmpPath,
@@ -199,7 +225,9 @@ describe('CustomTutorialFsProvider', () => {
         true,
       );
 
-      expect(mFs.pathExists).toHaveBeenCalledWith(mockCustomTutorial.absolutePath);
+      expect(mFs.pathExists).toHaveBeenCalledWith(
+        mockCustomTutorial.absolutePath,
+      );
       expect(mFs.remove).toHaveBeenCalledWith(mockCustomTutorial.absolutePath);
       expect(mFs.move).toHaveBeenCalledWith(
         mockCustomTutorialTmpPath,
@@ -210,7 +238,9 @@ describe('CustomTutorialFsProvider', () => {
     it('should throw InternalServerError', async () => {
       mFs.pathExists.mockImplementationOnce(() => Promise.resolve(true));
       mFs.remove.mockImplementationOnce(() => Promise.resolve());
-      mFs.move.mockImplementationOnce(() => Promise.reject(new Error('dest folder exists')));
+      mFs.move.mockImplementationOnce(() =>
+        Promise.reject(new Error('dest folder exists')),
+      );
 
       try {
         await service.moveFolder(

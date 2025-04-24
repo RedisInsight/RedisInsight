@@ -36,7 +36,7 @@ jest.mock('uiSrc/slices/app/notifications', () => ({
   notificationCenterSelector: jest.fn().mockReturnValue({
     isCenterOpen: true,
     notifications: notificationsMock,
-  })
+  }),
 }))
 
 let store: typeof mockedStore
@@ -54,7 +54,9 @@ describe('NotificationCenter', () => {
   it('should render notifications', async () => {
     render(<NotificationCenter />)
 
-    expect(screen.getAllByTestId(/notification-item-/)).toHaveLength(notificationsMock.length)
+    expect(screen.getAllByTestId(/notification-item-/)).toHaveLength(
+      notificationsMock.length,
+    )
   })
 
   it('should dispatch get notification', async () => {
@@ -67,15 +69,17 @@ describe('NotificationCenter', () => {
   it('should render proper unread notifications', async () => {
     render(<NotificationCenter />)
 
-    expect(screen.getAllByTestId(/notification-item-unread/))
-      .toHaveLength(notificationsMock.filter((n) => !n.read).length)
+    expect(screen.getAllByTestId(/notification-item-unread/)).toHaveLength(
+      notificationsMock.filter((n) => !n.read).length,
+    )
   })
 
   it('should render proper read notifications', async () => {
     render(<NotificationCenter />)
 
-    expect(screen.getAllByTestId(/notification-item-read/))
-      .toHaveLength(notificationsMock.filter((n) => n.read).length)
+    expect(screen.getAllByTestId(/notification-item-read/)).toHaveLength(
+      notificationsMock.filter((n) => n.read).length,
+    )
   })
 
   it('should render proper notification content', async () => {
@@ -83,14 +87,18 @@ describe('NotificationCenter', () => {
 
     notificationsMock.forEach((notification) => {
       const notificationContainer = screen.getByTestId(
-        new RegExp(`notification-item-(.*)_${notification.timestamp}`)
+        new RegExp(`notification-item-(.*)_${notification.timestamp}`),
       )
 
-      expect(within(notificationContainer).getByTestId('notification-title'))
-        .toHaveTextContent(notification.title)
+      expect(
+        within(notificationContainer).getByTestId('notification-title'),
+      ).toHaveTextContent(notification.title)
 
-      expect(within(notificationContainer).getByTestId('notification-date'))
-        .toHaveTextContent(format(notification.timestamp * 1000, NOTIFICATION_DATE_FORMAT))
+      expect(
+        within(notificationContainer).getByTestId('notification-date'),
+      ).toHaveTextContent(
+        format(notification.timestamp * 1000, NOTIFICATION_DATE_FORMAT),
+      )
     })
   })
 })

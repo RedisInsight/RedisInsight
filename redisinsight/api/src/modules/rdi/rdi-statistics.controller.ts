@@ -18,9 +18,7 @@ import { RdiStatisticsService } from 'src/modules/rdi/rdi-statistics.service';
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('rdi/:id/statistics')
 export class RdiStatisticsController {
-  constructor(
-    private readonly rdiStatisticsService: RdiStatisticsService,
-  ) {}
+  constructor(private readonly rdiStatisticsService: RdiStatisticsService) {}
 
   @Get('/')
   @ApiEndpoint({
@@ -30,7 +28,7 @@ export class RdiStatisticsController {
   @ApiQuery({ name: 'sections', required: false, type: String })
   async getStatistics(
     @RequestRdiClientMetadata() rdiClientMetadata: RdiClientMetadata,
-      @Query('sections') sections?: string,
+    @Query('sections') sections?: string,
   ): Promise<RdiStatisticsResult> {
     return this.rdiStatisticsService.getStatistics(rdiClientMetadata, sections);
   }

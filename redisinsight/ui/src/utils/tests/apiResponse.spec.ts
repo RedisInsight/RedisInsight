@@ -4,21 +4,34 @@ import {
   getApiErrorCode,
   getApiErrorMessage,
   getAxiosError,
-  parseCustomError
+  parseCustomError,
 } from 'uiSrc/utils'
 import { EnhancedAxiosError } from 'uiSrc/slices/interfaces'
 
 const error = { response: { data: { message: 'error' } } } as AxiosError
-const errors = { response: { data: { message: ['error1', 'error2'] } } } as AxiosError
+const errors = {
+  response: { data: { message: ['error1', 'error2'] } },
+} as AxiosError
 
-const customError1: EnhancedAxiosError = { response: { data: { message: 'error' }, status: 500 } }
-const customError2: EnhancedAxiosError = { response: { data: { message: 'error', errorCode: 11_002 }, status: 402 } }
-const customError3: EnhancedAxiosError = { response: { data: { message: 'error', error: 'UnexpectedError' }, status: 503 } }
+const customError1: EnhancedAxiosError = {
+  response: { data: { message: 'error' }, status: 500 },
+}
+const customError2: EnhancedAxiosError = {
+  response: { data: { message: 'error', errorCode: 11_002 }, status: 402 },
+}
+const customError3: EnhancedAxiosError = {
+  response: {
+    data: { message: 'error', error: 'UnexpectedError' },
+    status: 503,
+  },
+}
 
 describe('getAxiosError', () => {
   it('should return proper error', () => {
     expect(getAxiosError(customError1)).toEqual(customError1)
-    expect(getAxiosError(customError2)).toEqual(parseCustomError(customError2.response?.data))
+    expect(getAxiosError(customError2)).toEqual(
+      parseCustomError(customError2.response?.data),
+    )
     expect(getAxiosError(customError3)).toEqual(customError3)
   })
 })

@@ -9,8 +9,19 @@ import {
 import { listDataSelector } from 'uiSrc/slices/browser/list'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { anyToBuffer } from 'uiSrc/utils'
-import { act, cleanup, fireEvent, mockedStore, render, screen, waitForEuiToolTipVisible } from 'uiSrc/utils/test-utils'
-import { GZIP_COMPRESSED_VALUE_1, DECOMPRESSED_VALUE_STR_1 } from 'uiSrc/utils/tests/decompressors'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+  waitForEuiToolTipVisible,
+} from 'uiSrc/utils/test-utils'
+import {
+  GZIP_COMPRESSED_VALUE_1,
+  DECOMPRESSED_VALUE_STR_1,
+} from 'uiSrc/utils/tests/decompressors'
 import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
 import { MOCK_TRUNCATED_BUFFER_VALUE } from 'uiSrc/mocks/data/bigString'
 import { ListDetailsTable, Props } from './ListDetailsTable'
@@ -24,7 +35,9 @@ const elements = [
 ]
 
 jest.mock('uiSrc/slices/browser/list', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/browser/list').initialState
+  const defaultState = jest.requireActual(
+    'uiSrc/slices/browser/list',
+  ).initialState
   return {
     listSelector: jest.fn().mockReturnValue(defaultState),
     updateListValueStateSelector: jest
@@ -65,7 +78,7 @@ describe('ListDetailsTable', () => {
   it('should render rows properly', () => {
     const { container } = render(<ListDetailsTable {...mockedProps} />)
     const rows = container.querySelectorAll(
-      '.ReactVirtualized__Table__row[role="row"]'
+      '.ReactVirtualized__Table__row[role="row"]',
     )
     expect(rows).toHaveLength(elements.length)
   })
@@ -111,44 +124,45 @@ describe('ListDetailsTable', () => {
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
-      setSelectedKeyRefreshDisabled(true)
+      setSelectedKeyRefreshDisabled(true),
     ])
   })
 
   describe('decompressed  data', () => {
     it('should render decompressed GZIP data = "1"', () => {
-      const defaultState = jest.requireActual('uiSrc/slices/browser/list').initialState
+      const defaultState = jest.requireActual(
+        'uiSrc/slices/browser/list',
+      ).initialState
       const listDataSelectorMock = jest.fn().mockReturnValue({
         ...defaultState,
         key: '123zxczxczxc',
-        elements: [
-          { element: anyToBuffer(GZIP_COMPRESSED_VALUE_1), index: 0 },
-        ]
-      });
-      (listDataSelector as jest.Mock).mockImplementation(listDataSelectorMock)
+        elements: [{ element: anyToBuffer(GZIP_COMPRESSED_VALUE_1), index: 0 }],
+      })
+      ;(listDataSelector as jest.Mock).mockImplementation(listDataSelectorMock)
 
-      render(<ListDetailsTable {...(mockedProps)} />)
+      render(<ListDetailsTable {...mockedProps} />)
       const elementEl = screen.getByTestId('list_content-value-0')
 
       expect(elementEl).toHaveTextContent(DECOMPRESSED_VALUE_STR_1)
     })
 
     it('edit button should be disabled if data was compressed', async () => {
-      const defaultState = jest.requireActual('uiSrc/slices/browser/list').initialState
+      const defaultState = jest.requireActual(
+        'uiSrc/slices/browser/list',
+      ).initialState
       const listDataSelectorMock = jest.fn().mockReturnValueOnce({
         ...defaultState,
         key: '123zxczxczxc',
-        elements: [
-          { element: anyToBuffer(GZIP_COMPRESSED_VALUE_1), index: 0 },
-        ]
-      });
-      (listDataSelector as jest.Mock).mockImplementationOnce(listDataSelectorMock);
-
-      (connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
+        elements: [{ element: anyToBuffer(GZIP_COMPRESSED_VALUE_1), index: 0 }],
+      })
+      ;(listDataSelector as jest.Mock).mockImplementationOnce(
+        listDataSelectorMock,
+      )
+      ;(connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
         compressor: KeyValueCompressor.GZIP,
       }))
 
-      const { queryByTestId } = render(<ListDetailsTable {...(mockedProps)} />)
+      const { queryByTestId } = render(<ListDetailsTable {...mockedProps} />)
       act(() => {
         fireEvent.mouseEnter(screen.getByTestId('list_content-value-0'))
       })
@@ -163,26 +177,28 @@ describe('ListDetailsTable', () => {
       await waitForEuiToolTipVisible()
 
       expect(editBtn).toBeDisabled()
-      expect(screen.getByTestId('list_edit-tooltip-0')).toHaveTextContent(TEXT_DISABLED_COMPRESSED_VALUE)
+      expect(screen.getByTestId('list_edit-tooltip-0')).toHaveTextContent(
+        TEXT_DISABLED_COMPRESSED_VALUE,
+      )
       expect(queryByTestId('list_value-editor-0')).not.toBeInTheDocument()
     })
   })
 
   describe('truncated values', () => {
     beforeEach(() => {
-      const defaultState = jest.requireActual('uiSrc/slices/browser/list').initialState
+      const defaultState = jest.requireActual(
+        'uiSrc/slices/browser/list',
+      ).initialState
       const listDataSelectorMock = jest.fn().mockReturnValue({
         ...defaultState,
         key: '123zxczxczxc',
-        elements: [
-          { element: MOCK_TRUNCATED_BUFFER_VALUE, index: 0 },
-        ]
-      });
-      (listDataSelector as jest.Mock).mockImplementation(listDataSelectorMock)
+        elements: [{ element: MOCK_TRUNCATED_BUFFER_VALUE, index: 0 }],
+      })
+      ;(listDataSelector as jest.Mock).mockImplementation(listDataSelectorMock)
     })
 
     it('edit button should be disabled if data was truncated', async () => {
-      const { queryByTestId } = render(<ListDetailsTable {...(mockedProps)} />)
+      const { queryByTestId } = render(<ListDetailsTable {...mockedProps} />)
       act(() => {
         fireEvent.mouseEnter(screen.getByTestId('list_content-value-0'))
       })
@@ -195,7 +211,9 @@ describe('ListDetailsTable', () => {
       await waitForEuiToolTipVisible()
 
       expect(editBtn).toBeDisabled()
-      expect(screen.getByTestId('list_edit-tooltip-0')).toHaveTextContent(TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA)
+      expect(screen.getByTestId('list_edit-tooltip-0')).toHaveTextContent(
+        TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA,
+      )
 
       fireEvent.click(editBtn)
       expect(queryByTestId('list_value-editor-0')).not.toBeInTheDocument()

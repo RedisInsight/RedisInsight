@@ -3,17 +3,23 @@ import axios from 'axios';
 import {
   mockConstantsProvider,
   mockControlGroup,
-  mockControlNumber, mockFeatureAnalytics,
+  mockControlNumber,
+  mockFeatureAnalytics,
   mockFeaturesConfig,
   mockFeaturesConfigJson,
-  mockFeaturesConfigRepository, mockSessionMetadata,
+  mockFeaturesConfigRepository,
+  mockSessionMetadata,
   MockType,
 } from 'src/__mocks__';
 import { FeaturesConfigRepository } from 'src/modules/feature/repositories/features-config.repository';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { plainToInstance } from 'class-transformer';
 import { FeaturesConfigData } from 'src/modules/feature/model/features-config';
-import { FeatureConfigConfigDestination, FeatureServerEvents, KnownFeatures } from 'src/modules/feature/constants';
+import {
+  FeatureConfigConfigDestination,
+  FeatureServerEvents,
+  KnownFeatures,
+} from 'src/modules/feature/constants';
 import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 import { UnableToFetchRemoteConfigException } from 'src/modules/feature/exceptions';
 import { LocalFeaturesConfigService } from 'src/modules/feature/local.features-config.service';
@@ -76,15 +82,23 @@ describe('LocalFeaturesConfigService', () => {
     it('should return remote config', async () => {
       const result = await service['getNewConfig'](mockSessionMetadata);
 
-      expect(result).toEqual({ data: mockFeaturesConfigJson, type: FeatureConfigConfigDestination.Remote });
-      expect(analytics.sendFeatureFlagInvalidRemoteConfig).not.toHaveBeenCalled();
+      expect(result).toEqual({
+        data: mockFeaturesConfigJson,
+        type: FeatureConfigConfigDestination.Remote,
+      });
+      expect(
+        analytics.sendFeatureFlagInvalidRemoteConfig,
+      ).not.toHaveBeenCalled();
     });
     it('should return default config when unable to fetch remote config', async () => {
       mockedAxios.get.mockRejectedValueOnce(new Error('404 not found'));
 
       const result = await service['getNewConfig'](mockSessionMetadata);
 
-      expect(result).toEqual({ data: defaultConfig, type: FeatureConfigConfigDestination.Default });
+      expect(result).toEqual({
+        data: defaultConfig,
+        type: FeatureConfigConfigDestination.Default,
+      });
       expect(analytics.sendFeatureFlagInvalidRemoteConfig).toHaveBeenCalledWith(
         mockSessionMetadata,
         {
@@ -102,7 +116,9 @@ describe('LocalFeaturesConfigService', () => {
           ...mockFeaturesConfigJson,
           features: {
             [KnownFeatures.InsightsRecommendations]: {
-              ...mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations],
+              ...mockFeaturesConfigJson.features[
+                KnownFeatures.InsightsRecommendations
+              ],
               flag: 'not boolean flag',
             },
           },
@@ -111,7 +127,10 @@ describe('LocalFeaturesConfigService', () => {
 
       const result = await service['getNewConfig'](mockSessionMetadata);
 
-      expect(result).toEqual({ data: defaultConfig, type: FeatureConfigConfigDestination.Default });
+      expect(result).toEqual({
+        data: defaultConfig,
+        type: FeatureConfigConfigDestination.Default,
+      });
       expect(analytics.sendFeatureFlagInvalidRemoteConfig).toHaveBeenCalledWith(
         mockSessionMetadata,
         {
@@ -130,8 +149,13 @@ describe('LocalFeaturesConfigService', () => {
 
       const result = await service['getNewConfig'](mockSessionMetadata);
 
-      expect(result).toEqual({ data: defaultConfig, type: FeatureConfigConfigDestination.Default });
-      expect(analytics.sendFeatureFlagInvalidRemoteConfig).not.toHaveBeenCalled();
+      expect(result).toEqual({
+        data: defaultConfig,
+        type: FeatureConfigConfigDestination.Default,
+      });
+      expect(
+        analytics.sendFeatureFlagInvalidRemoteConfig,
+      ).not.toHaveBeenCalled();
     });
   });
 
@@ -144,8 +168,13 @@ describe('LocalFeaturesConfigService', () => {
 
       await service['sync'](mockSessionMetadata);
 
-      expect(repository.update).toHaveBeenCalledWith(mockSessionMetadata, mockFeaturesConfigJson);
-      expect(eventEmitter.emit).toHaveBeenCalledWith(FeatureServerEvents.FeaturesRecalculate);
+      expect(repository.update).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockFeaturesConfigJson,
+      );
+      expect(eventEmitter.emit).toHaveBeenCalledWith(
+        FeatureServerEvents.FeaturesRecalculate,
+      );
       expect(analytics.sendFeatureFlagConfigUpdated).toHaveBeenCalledWith(
         mockSessionMetadata,
         {
@@ -164,8 +193,13 @@ describe('LocalFeaturesConfigService', () => {
 
       await service['sync'](mockSessionMetadata);
 
-      expect(repository.update).toHaveBeenCalledWith(mockSessionMetadata, mockFeaturesConfigJson);
-      expect(eventEmitter.emit).not.toHaveBeenCalledWith(FeatureServerEvents.FeaturesRecalculate);
+      expect(repository.update).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockFeaturesConfigJson,
+      );
+      expect(eventEmitter.emit).not.toHaveBeenCalledWith(
+        FeatureServerEvents.FeaturesRecalculate,
+      );
       expect(analytics.sendFeatureFlagConfigUpdated).not.toHaveBeenCalled();
     });
   });

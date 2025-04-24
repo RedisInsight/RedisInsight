@@ -5,9 +5,10 @@ import config, { Config } from 'src/utils/config';
 
 const mockServerConfig = config.get('server') as Config['server'];
 
-jest.mock('src/utils/config', jest.fn(
-  () => jest.requireActual('src/utils/config') as object,
-));
+jest.mock(
+  'src/utils/config',
+  jest.fn(() => jest.requireActual('src/utils/config') as object),
+);
 
 describe('DatabaseManagementGuard', () => {
   let guard: DatabaseManagementGuard;
@@ -31,6 +32,8 @@ describe('DatabaseManagementGuard', () => {
   it('should throw an error when database management is disabled', () => {
     mockServerConfig.databaseManagement = false;
 
-    expect(guard.canActivate).toThrowError(new ForbiddenException('Database connection management is disabled.'));
+    expect(guard.canActivate).toThrowError(
+      new ForbiddenException('Database connection management is disabled.'),
+    );
   });
 });

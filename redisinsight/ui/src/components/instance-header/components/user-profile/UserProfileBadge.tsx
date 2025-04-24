@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiIcon, EuiLink, EuiLoadingSpinner, EuiPopover, EuiText } from '@elastic/eui'
+import {
+  EuiIcon,
+  EuiLink,
+  EuiLoadingSpinner,
+  EuiPopover,
+  EuiText,
+} from '@elastic/eui'
 import cx from 'classnames'
 import { useHistory } from 'react-router-dom'
-import {
-  logoutUserAction,
-} from 'uiSrc/slices/oauth/cloud'
+import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud.svg?react'
 
 import { buildRedisInsightUrl, getUtmExternalLink } from 'uiSrc/utils/links'
@@ -14,7 +18,10 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { getTruncatedName, Nullable } from 'uiSrc/utils'
-import { fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import {
+  fetchSubscriptionsRedisCloud,
+  setSSOFlow,
+} from 'uiSrc/slices/instances/cloud'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
@@ -23,12 +30,12 @@ import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import styles from './styles.module.scss'
 
 export interface UserProfileBadgeProps {
-  "data-testid"?: string;
-  error: Nullable<string>;
-  data: Nullable<CloudUser>;
-  handleClickSelectAccount?: (id: number) => void;
-  handleClickCloudAccount?: () => void;
-  selectingAccountId?: number;
+  'data-testid'?: string
+  error: Nullable<string>
+  data: Nullable<CloudUser>
+  handleClickSelectAccount?: (id: number) => void
+  handleClickCloudAccount?: () => void
+  selectingAccountId?: number
 }
 
 const riConfig = getConfig()
@@ -62,39 +69,41 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
 
     setIsImportLoading(true)
     dispatch(setSSOFlow(OAuthSocialAction.Import))
-    dispatch(fetchSubscriptionsRedisCloud(
-      null,
-      true,
-      () => {
-        history.push(Pages.redisCloudSubscriptions)
-        setIsImportLoading(false)
-      },
-      () => setIsImportLoading(false)
-    ))
+    dispatch(
+      fetchSubscriptionsRedisCloud(
+        null,
+        true,
+        () => {
+          history.push(Pages.redisCloudSubscriptions)
+          setIsImportLoading(false)
+        },
+        () => setIsImportLoading(false),
+      ),
+    )
 
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_IMPORT_DATABASES_SUBMITTED,
       eventData: {
-        source: OAuthSocialSource.UserProfile
-      }
+        source: OAuthSocialSource.UserProfile,
+      },
     })
   }
 
   const handleClickLogout = () => {
     setIsProfileOpen(false)
-    dispatch(logoutUserAction(
-      () => {
+    dispatch(
+      logoutUserAction(() => {
         sendEventTelemetry({
-          event: TelemetryEvent.CLOUD_SIGN_OUT_CLICKED
+          event: TelemetryEvent.CLOUD_SIGN_OUT_CLICKED,
         })
-      }
-    ))
+      }),
+    )
   }
 
   const handleToggleProfile = () => {
     if (!isProfileOpen) {
       sendEventTelemetry({
-        event: TelemetryEvent.CLOUD_PROFILE_OPENED
+        event: TelemetryEvent.CLOUD_PROFILE_OPENED,
       })
     }
     setIsProfileOpen((v) => !v)
@@ -111,7 +120,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
         isOpen={isProfileOpen}
         closePopover={() => setIsProfileOpen(false)}
         panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
-        button={(
+        button={
           <div
             role="presentation"
             onClick={handleToggleProfile}
@@ -120,37 +129,64 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
           >
             {getTruncatedName(name) || 'R'}
           </div>
-        )}
+        }
       >
-        <div className={styles.popoverOptions} data-testid="user-profile-popover-content">
+        <div
+          className={styles.popoverOptions}
+          data-testid="user-profile-popover-content"
+        >
           <div className={styles.option}>
             <FeatureFlagComponent
               name={FeatureFlags.envDependent}
-              otherwise={<EuiText className={styles.optionTitle} data-testid="profile-title">Account</EuiText>}
+              otherwise={
+                <EuiText
+                  className={styles.optionTitle}
+                  data-testid="profile-title"
+                >
+                  Account
+                </EuiText>
+              }
             >
-              <EuiText className={styles.optionTitle} data-testid="profile-title">Redis Cloud account</EuiText>
+              <EuiText
+                className={styles.optionTitle}
+                data-testid="profile-title"
+              >
+                Redis Cloud account
+              </EuiText>
             </FeatureFlagComponent>
-            <div className={styles.accounts} data-testid="user-profile-popover-accounts">
+            <div
+              className={styles.accounts}
+              data-testid="user-profile-popover-accounts"
+            >
               {accounts?.map(({ name, id }) => (
                 <div
                   role="presentation"
                   key={id}
-                  className={cx(
-                    styles.account,
-                    {
-                      [styles.isCurrent]: id === currentAccountId,
-                      [styles.isSelected]: id === currentAccountId && accounts?.length > 1,
-                      [styles.isDisabled]: selectingAccountId,
-                    }
-                  )}
+                  className={cx(styles.account, {
+                    [styles.isCurrent]: id === currentAccountId,
+                    [styles.isSelected]:
+                      id === currentAccountId && accounts?.length > 1,
+                    [styles.isDisabled]: selectingAccountId,
+                  })}
                   onClick={() => handleClickSelectAccount?.(id)}
                   data-testid={`profile-account-${id}${id === currentAccountId ? '-selected' : ''}`}
                 >
                   <EuiText className={styles.accountNameId}>
                     <span className={styles.accountName}>{name}</span> #{id}
                   </EuiText>
-                  {id === currentAccountId && (<EuiIcon type="check" data-testid={`user-profile-selected-account-${id}`} />)}
-                  {id === selectingAccountId && (<EuiLoadingSpinner className={styles.loadingSpinner} size="m" data-testid={`user-profile-selecting-account-${id}`} />)}
+                  {id === currentAccountId && (
+                    <EuiIcon
+                      type="check"
+                      data-testid={`user-profile-selected-account-${id}`}
+                    />
+                  )}
+                  {id === selectingAccountId && (
+                    <EuiLoadingSpinner
+                      className={styles.loadingSpinner}
+                      size="m"
+                      data-testid={`user-profile-selecting-account-${id}`}
+                    />
+                  )}
                 </div>
               ))}
             </div>
@@ -186,11 +222,15 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
           >
             <div
               role="presentation"
-              className={cx(styles.option, styles.clickableOption, { [styles.isDisabled]: isImportLoading })}
+              className={cx(styles.option, styles.clickableOption, {
+                [styles.isDisabled]: isImportLoading,
+              })}
               onClick={handleClickImport}
               data-testid="profile-import-cloud-databases"
             >
-              <EuiText className={styles.optionTitle}>Import Cloud databases</EuiText>
+              <EuiText className={styles.optionTitle}>
+                Import Cloud databases
+              </EuiText>
               {isImportLoading ? (
                 <EuiLoadingSpinner className={styles.loadingSpinner} size="m" />
               ) : (
@@ -201,7 +241,9 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
               external={false}
               target="_blank"
               className={cx(styles.option, styles.clickableOption)}
-              href={getUtmExternalLink(EXTERNAL_LINKS.cloudConsole, { campaign: 'cloud_account' })}
+              href={getUtmExternalLink(EXTERNAL_LINKS.cloudConsole, {
+                campaign: 'cloud_account',
+              })}
               onClick={handleClickCloudAccount}
               data-testid="cloud-console-link"
             >
@@ -214,7 +256,12 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                   {name}
                 </EuiText>
               </div>
-              <EuiIcon type={CloudIcon} style={{ fill: 'none' }} viewBox="-1 0 30 20" strokeWidth={1.8} />
+              <EuiIcon
+                type={CloudIcon}
+                style={{ fill: 'none' }}
+                viewBox="-1 0 30 20"
+                strokeWidth={1.8}
+              />
             </EuiLink>
             <div
               role="presentation"

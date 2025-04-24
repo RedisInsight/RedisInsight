@@ -6,7 +6,7 @@ import OAuthSignInButton from 'uiSrc/components/oauth/oauth-sign-in-button'
 import {
   activateAccount,
   oauthCloudUserSelector,
-  setInitialLoadingState
+  setInitialLoadingState,
 } from 'uiSrc/slices/oauth/cloud'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -61,23 +61,25 @@ const OAuthUserProfile = (props: Props) => {
     if (selectingAccountId) return
 
     setSelectingAccountId(id)
-    dispatch(activateAccount(
-      `${id}`,
-      () => {
-        setSelectingAccountId(undefined)
-        sendEventTelemetry({
-          event: TelemetryEvent.CLOUD_ACCOUNT_SWITCHED
-        })
-      },
-      () => {
-        setSelectingAccountId(undefined)
-      }
-    ))
+    dispatch(
+      activateAccount(
+        `${id}`,
+        () => {
+          setSelectingAccountId(undefined)
+          sendEventTelemetry({
+            event: TelemetryEvent.CLOUD_ACCOUNT_SWITCHED,
+          })
+        },
+        () => {
+          setSelectingAccountId(undefined)
+        },
+      ),
+    )
   }
 
   const handleClickCloudAccount = () => {
     sendEventTelemetry({
-      event: TelemetryEvent.CLOUD_CONSOLE_CLICKED
+      event: TelemetryEvent.CLOUD_CONSOLE_CLICKED,
     })
   }
 

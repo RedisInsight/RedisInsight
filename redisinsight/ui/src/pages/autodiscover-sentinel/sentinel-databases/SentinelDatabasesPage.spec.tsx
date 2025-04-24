@@ -8,19 +8,21 @@ import { Props as SentinelDatabasesProps } from './components/SentinelDatabases/
 
 jest.mock('uiSrc/slices/instances/sentinel', () => ({
   sentinelSelector: jest.fn().mockReturnValue({
-    data: [{
-      status: 'success',
-      name: 'mymaster',
-      host: 'localhost',
-      port: 6379,
-      alias: 'alias',
-      numberOfSlaves: 0,
-    }]
+    data: [
+      {
+        status: 'success',
+        name: 'mymaster',
+        host: 'localhost',
+        port: 6379,
+        alias: 'alias',
+        numberOfSlaves: 0,
+      },
+    ],
   }),
   createMastersSentinelAction: () => jest.fn(),
   resetLoadedSentinel: () => jest.fn,
   updateMastersSentinel: () => jest.fn(),
-  resetDataSentinel: jest.fn
+  resetDataSentinel: jest.fn,
 }))
 
 jest.mock('./components', () => ({
@@ -31,9 +33,23 @@ jest.mock('./components', () => ({
 
 const mockSentinelDatabases = (props: SentinelDatabasesProps) => (
   <div>
-    <button type="button" onClick={() => props.onClose()} data-testid="close-btn">onClose</button>
-    <button type="button" onClick={() => props.onBack()} data-testid="back-btn">onBack</button>
-    <button type="button" onClick={() => props.onSubmit([])} data-testid="submit-btn">onSubmit</button>
+    <button
+      type="button"
+      onClick={() => props.onClose()}
+      data-testid="close-btn"
+    >
+      onClose
+    </button>
+    <button type="button" onClick={() => props.onBack()} data-testid="back-btn">
+      onBack
+    </button>
+    <button
+      type="button"
+      onClick={() => props.onSubmit([])}
+      data-testid="submit-btn"
+    >
+      onSubmit
+    </button>
     <div className="itemList databaseList sentinelDatabaseList">
       <EuiInMemoryTable
         isSelectable

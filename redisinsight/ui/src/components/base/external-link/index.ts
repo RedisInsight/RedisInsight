@@ -1,3 +1,3 @@
-import ExternalLink from './ExternalLink'
+import { ExternalLink } from './ExternalLink'
 
-export default ExternalLink
+export { ExternalLink }

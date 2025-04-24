@@ -1,5 +1,4 @@
-import ExternalLink from './external-link'
+import { ExternalLink } from './external-link'
 import { HorizontalRule } from './layout'
 
-export { ExternalLink }
-export { HorizontalRule }
+export { ExternalLink, HorizontalRule }

@@ -14,5 +14,6 @@ describe('HorizontalRule', () => {
     const { container } = render(<HorizontalRule size="half" margin="xs" />)
     expect(container).toBeTruthy()
     expect(container.firstChild).toHaveStyle('width: 50%')
+    expect(container.firstChild).toHaveStyle('margin-inline: auto')
   })
 })

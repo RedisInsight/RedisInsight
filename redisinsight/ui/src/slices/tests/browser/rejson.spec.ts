@@ -7,6 +7,7 @@ import {
   mockedStore,
   mockStore,
 } from 'uiSrc/utils/test-utils'
+import { EditorType } from 'uiSrc/slices/interfaces'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { GetRejsonRlResponseDto } from 'apiSrc/modules/browser/rejson-rl/dto'
 import reducer, {
@@ -29,6 +30,7 @@ import reducer, {
   setReJSONDataAction,
   appendReJSONArrayItemAction,
   removeReJSONKeyAction,
+  setEditorType,
 } from '../../browser/rejson'
 import {
   addErrorNotification,
@@ -405,6 +407,7 @@ describe('rejson slice', () => {
         const expectedActions = [
           loadRejsonBranch(),
           loadRejsonBranchSuccess(responsePayload.data),
+          setEditorType(EditorType.Default), // and always set editor type to default
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -432,6 +435,7 @@ describe('rejson slice', () => {
           loadRejsonBranch(),
           loadRejsonBranchFailure(responsePayload.response.data.message),
           addErrorNotification(responsePayload as AxiosError),
+          setEditorType(EditorType.Default), // and always set editor type to default
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

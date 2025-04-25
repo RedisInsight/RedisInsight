@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { EuiProgress } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
-import { rejsonDataSelector, rejsonSelector } from 'uiSrc/slices/browser/rejson'
+import {
+  fetchReJSON,
+  rejsonDataSelector,
+  rejsonSelector,
+} from 'uiSrc/slices/browser/rejson'
 import {
   selectedKeyDataSelector,
   keysSelector,
@@ -32,6 +36,8 @@ export interface Props extends KeyDetailsHeaderProps {}
 const RejsonDetailsWrapper = (props: Props) => {
   const { loading, editorType } = useSelector(rejsonSelector)
   const { data, downloaded, type, path } = useSelector(rejsonDataSelector)
+  const dispatch = useDispatch()
+
   const {
     name: selectedKey,
     nameString,
@@ -43,10 +49,22 @@ const RejsonDetailsWrapper = (props: Props) => {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
 
   const updatedData = parseJsonData(data)
+  const prevEditorTypeRef = useRef(editorType)
 
   useEffect(() => {
     setExpandedRows(new Set())
   }, [nameString])
+
+  // TODO: the whole workflow should be refactored
+  useEffect(() => {
+    if (!selectedKey) return
+
+    if (prevEditorTypeRef.current !== editorType) {
+      prevEditorTypeRef.current = editorType
+
+      dispatch(fetchReJSON(selectedKey))
+    }
+  }, [editorType, selectedKey, dispatch])
 
   const reportJSONKeyCollapsed = (level: number) => {
     sendEventTelemetry({

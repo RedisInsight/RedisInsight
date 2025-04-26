@@ -8,7 +8,7 @@ import {
   SingleLineBackground,
 } from './loading-content.styles'
 
-export const LoadingContent = ({
+const LoadingContent = ({
   className,
   lines = 3,
   ...rest
@@ -32,3 +32,5 @@ export const LoadingContent = ({
     </StyledLoadingContent>
   )
 }
+
+export default LoadingContent

@@ -43,6 +43,11 @@ export const SingleLineBackground = styled.span`
   display: block;
   width: 220%;
   height: 100%;
-  background: linear-gradient(137deg, #f5f7fa 45%, #e5e9f0 50%, #f5f7fa 55%);
+  background: linear-gradient(
+    137deg,
+    var(--loadingContentColor) 45%,
+    var(--loadingContentLightestShade) 50%,
+    var(--loadingContentColor) 55%
+  );
   animation: ${loadingAnimation} 1.5s ease-in-out infinite;
 `

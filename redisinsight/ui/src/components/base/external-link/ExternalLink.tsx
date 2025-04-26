@@ -11,7 +11,7 @@ export type Props = EuiLinkProps & {
   iconSize?: IconSize
 }
 
-export const ExternalLink = (props: Props) => {
+const ExternalLink = (props: Props) => {
   const { iconPosition = 'right', iconSize = 'm', children, ...rest } = props
 
   const ArrowIcon = () => (
@@ -26,3 +26,5 @@ export const ExternalLink = (props: Props) => {
     </EuiLink>
   )
 }
+
+export default ExternalLink

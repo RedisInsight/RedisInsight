@@ -1,7 +1,8 @@
 import React from 'react'
-import { EuiLoadingContent, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiText, EuiToolTip } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import { Maybe, formatLongName, replaceSpaces } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
@@ -15,7 +16,7 @@ const KeyRowName = (props: Props) => {
 
   if (isUndefined(shortName)) {
     return (
-      <EuiLoadingContent
+      <LoadingContent
         lines={1}
         className={styles.keyInfoLoading}
         data-testid="name-loading"

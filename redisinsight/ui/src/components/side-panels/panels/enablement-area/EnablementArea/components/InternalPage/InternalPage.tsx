@@ -3,7 +3,6 @@ import {
   EuiFlyoutHeader,
   EuiText,
   EuiButtonEmpty,
-  EuiLoadingContent,
   EuiPopover,
 } from '@elastic/eui'
 import JsxParser from 'react-jsx-parser'
@@ -12,7 +11,7 @@ import { debounce } from 'lodash'
 import { useLocation, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-import { ExternalLink, HorizontalRule } from 'uiSrc/components'
+import { ExternalLink, HorizontalRule, LoadingContent } from 'uiSrc/components'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import {
   sendEventTelemetry,
@@ -223,7 +222,7 @@ const InternalPage = (props: Props) => {
         data-testid="enablement-area__page"
       >
         {isLoading && (
-          <EuiLoadingContent
+          <LoadingContent
             data-testid="enablement-area__page-loader"
             lines={3}
           />

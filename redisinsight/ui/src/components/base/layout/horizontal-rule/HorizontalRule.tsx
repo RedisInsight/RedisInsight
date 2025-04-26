@@ -6,7 +6,7 @@ import {
   StyledHorizontalRule,
 } from './horizontal-rule.styles'
 
-export const HorizontalRule = ({
+const HorizontalRule = ({
   className,
   size = 'full',
   margin = 'l',
@@ -23,3 +23,5 @@ export const HorizontalRule = ({
     />
   )
 }
+
+export default HorizontalRule

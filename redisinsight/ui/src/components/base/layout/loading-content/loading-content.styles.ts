@@ -7,13 +7,6 @@ export interface LoadingContentProps extends HTMLAttributes<HTMLDivElement> {
   lines?: LineRange
 }
 
-const euiSize = '16px' // Replace with your actual EUI sizing token
-const euiSizeS = '8px'
-const euiBorderRadius = '4px'
-const euiGradientStartStop = '#f5f7fa'
-const euiGradientMiddle = '#e5e9f0'
-const euiAnimSlightResistance = 'ease-in-out'
-
 const loadingAnimation = keyframes`
   0% {
     transform: translateX(-53%);
@@ -36,9 +29,9 @@ export const SingleLine = styled.span.attrs(() => ({}))<
 >`
   display: block;
   width: 100%;
-  height: ${euiSize};
-  margin-bottom: ${euiSizeS};
-  border-radius: ${euiBorderRadius};
+  height: var(--size-base);
+  margin-bottom: var(--size-s);
+  border-radius: var(--size-xs);
   overflow: hidden;
 
   &:last-child:not(:only-child) {
@@ -50,12 +43,6 @@ export const SingleLineBackground = styled.span`
   display: block;
   width: 220%;
   height: 100%;
-  background: linear-gradient(
-    137deg,
-    ${euiGradientStartStop} 45%,
-    ${euiGradientMiddle} 50%,
-    ${euiGradientStartStop} 55%
-  );
-
-  animation: ${loadingAnimation} 1.5s ${euiAnimSlightResistance} infinite;
+  background: linear-gradient(137deg, #f5f7fa 45%, #e5e9f0 50%, #f5f7fa 55%);
+  animation: ${loadingAnimation} 1.5s ease-in-out infinite;
 `

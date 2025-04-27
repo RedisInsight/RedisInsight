@@ -22,7 +22,7 @@ const LoadingContent = ({
         <SingleLine key={i}>
           <SingleLineBackground />
         </SingleLine>
-      </>
+      </>,
     )
   }
 

@@ -89,7 +89,6 @@ export class Database {
   })
   @Expose()
   @IsString({ always: true })
-  @IsNotEmpty()
   @IsOptional()
   username?: string;
 
@@ -101,7 +100,6 @@ export class Database {
   })
   @Expose()
   @IsString({ always: true })
-  @IsNotEmpty()
   @IsOptional()
   password?: string;
 

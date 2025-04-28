@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
 import {
   EuiIcon,
-  EuiOutsideClickDetector,
   EuiSuperSelect,
   EuiSuperSelectOption,
   EuiText,
@@ -12,6 +11,7 @@ import { useSelector } from 'react-redux'
 import { GROUP_TYPES_DISPLAY } from 'uiSrc/constants'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 
 import styles from './styles.module.scss'
 
@@ -70,7 +70,7 @@ const CHSearchFilter = ({ submitFilter, isLoading }: Props) => {
   }
 
   return (
-    <EuiOutsideClickDetector onOutsideClick={() => setIsSelectOpen(false)}>
+    <OutsideClickDetector onOutsideClick={() => setIsSelectOpen(false)}>
       <div className={cx(styles.container)}>
         {!typeSelected && (
           <div
@@ -97,7 +97,7 @@ const CHSearchFilter = ({ submitFilter, isLoading }: Props) => {
           data-testid="select-filter-group-type"
         />
       </div>
-    </EuiOutsideClickDetector>
+    </OutsideClickDetector>
   )
 }
 

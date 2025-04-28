@@ -1,7 +1,6 @@
 import {
   EuiButtonEmpty,
   EuiButtonIcon,
-  EuiOutsideClickDetector,
   EuiSuperSelect,
   EuiSuperSelectOption,
   EuiToolTip,
@@ -39,6 +38,7 @@ import {
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import styles from './styles.module.scss'
 
 export const CREATE = 'create'
@@ -163,7 +163,7 @@ const RediSearchIndexesList = (props: Props) => {
   }
 
   return (
-    <EuiOutsideClickDetector onOutsideClick={() => setIsSelectOpen(false)}>
+    <OutsideClickDetector onOutsideClick={() => setIsSelectOpen(false)}>
       <div className={cx(styles.container)}>
         <div className={styles.select}>
           <EuiSuperSelect
@@ -201,7 +201,7 @@ const RediSearchIndexesList = (props: Props) => {
           </EuiToolTip>
         </div>
       </div>
-    </EuiOutsideClickDetector>
+    </OutsideClickDetector>
   )
 }
 

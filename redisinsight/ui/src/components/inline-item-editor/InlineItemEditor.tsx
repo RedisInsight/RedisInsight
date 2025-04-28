@@ -2,20 +2,20 @@ import React, { ChangeEvent, Ref, useEffect, useRef, useState } from 'react'
 import { capitalize } from 'lodash'
 import cx from 'classnames'
 import {
+  EuiButton,
   EuiButtonIcon,
   EuiFieldText,
   EuiFlexItem,
-  EuiForm,
-  EuiOutsideClickDetector,
   EuiFocusTrap,
-  EuiWindowEvent,
-  EuiToolTip,
+  EuiForm,
   EuiPopover,
-  EuiButton,
   EuiText,
+  EuiToolTip,
+  EuiWindowEvent,
   keys,
 } from '@elastic/eui'
 import { IconSize } from '@elastic/eui/src/components/icon/icon'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import styles from './styles.module.scss'
 
 type Positions = 'top' | 'bottom' | 'left' | 'right' | 'inside'
@@ -197,7 +197,7 @@ const InlineItemEditor = (props: Props) => {
       {viewChildrenMode ? (
         children
       ) : (
-        <EuiOutsideClickDetector onOutsideClick={handleClickOutside}>
+        <OutsideClickDetector onOutsideClick={handleClickOutside}>
           <div ref={containerEl} className={styles.container}>
             <EuiWindowEvent event="keydown" handler={handleOnEsc} />
             <EuiFocusTrap disabled={disableFocusTrap}>
@@ -301,7 +301,7 @@ const InlineItemEditor = (props: Props) => {
               </EuiForm>
             </EuiFocusTrap>
           </div>
-        </EuiOutsideClickDetector>
+        </OutsideClickDetector>
       )}
     </>
   )

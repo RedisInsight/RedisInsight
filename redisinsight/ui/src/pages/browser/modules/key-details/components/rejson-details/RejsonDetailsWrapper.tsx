@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiProgress } from '@elastic/eui'
 import { isUndefined } from 'lodash'
@@ -49,7 +49,6 @@ const RejsonDetailsWrapper = (props: Props) => {
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
 
   const updatedData = parseJsonData(data)
-  const prevEditorTypeRef = useRef(editorType)
 
   useEffect(() => {
     setExpandedRows(new Set())
@@ -61,11 +60,7 @@ const RejsonDetailsWrapper = (props: Props) => {
   useEffect(() => {
     if (!selectedKey) return
 
-    if (prevEditorTypeRef.current !== editorType) {
-      prevEditorTypeRef.current = editorType
-
-      dispatch(fetchReJSON(selectedKey))
-    }
+    dispatch(fetchReJSON(selectedKey))
   }, [editorType, selectedKey, dispatch])
 
   const reportJSONKeyCollapsed = (level: number) => {

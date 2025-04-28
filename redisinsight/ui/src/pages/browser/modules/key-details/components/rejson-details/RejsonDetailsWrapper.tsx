@@ -60,6 +60,11 @@ const RejsonDetailsWrapper = (props: Props) => {
   useEffect(() => {
     if (!selectedKey) return
 
+    // Not including `loading` in deps is intentional
+    // This check avoids double fetching of data
+    // which happens when new key is selected for example.
+    if (loading) return
+
     dispatch(fetchReJSON(selectedKey))
   }, [editorType, selectedKey, dispatch])
 

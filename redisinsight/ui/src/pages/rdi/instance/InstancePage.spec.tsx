@@ -91,7 +91,7 @@ describe('InstancePage', () => {
     ;(appContextSelector as jest.Mock).mockReturnValue({
       contextRdiInstanceId: '',
     })
-    await act(() => {
+    act(() => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
@@ -144,7 +144,7 @@ describe('InstancePage', () => {
       contextRdiInstanceId: 'prevId',
     })
 
-    await act(() => {
+    act(() => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
@@ -183,7 +183,7 @@ describe('InstancePage', () => {
       .fn()
       .mockReturnValue({ pathname: Pages.rdiPipeline(RDI_INSTANCE_ID_MOCK) })
 
-    await act(() => {
+    act(() => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
@@ -191,7 +191,7 @@ describe('InstancePage', () => {
       )
     })
 
-    expect(pushMock).toBeCalledWith(
+    expect(pushMock).toHaveBeenCalledWith(
       Pages.rdiPipelineManagement(RDI_INSTANCE_ID_MOCK),
     )
   })
@@ -212,7 +212,7 @@ describe('InstancePage', () => {
       .fn()
       .mockReturnValue({ pathname: Pages.rdiPipeline(RDI_INSTANCE_ID_MOCK) })
 
-    await act(() => {
+    act(() => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
@@ -220,6 +220,8 @@ describe('InstancePage', () => {
       )
     })
 
-    expect(pushMock).toBeCalledWith(Pages.rdiStatistics(RDI_INSTANCE_ID_MOCK))
+    expect(pushMock).toHaveBeenCalledWith(
+      Pages.rdiStatistics(RDI_INSTANCE_ID_MOCK),
+    )
   })
 })

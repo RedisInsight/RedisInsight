@@ -41,11 +41,7 @@ import {
   addMessageNotification,
   removeInfiniteNotification,
 } from '../app/notifications'
-import {
-  Instance,
-  InitialStateInstances,
-  ConnectionType,
-} from '../interfaces'
+import { Instance, InitialStateInstances, ConnectionType } from '../interfaces'
 
 const HIDE_CREATING_DB_DELAY_MS = 500
 

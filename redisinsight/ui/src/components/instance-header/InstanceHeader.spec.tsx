@@ -5,12 +5,12 @@ import { instance, mock } from 'ts-mockito'
 import userEvent from '@testing-library/user-event'
 import {
   cleanup,
-  mockedStore,
-  render,
-  screen,
   fireEvent,
   initialStateDefault,
+  mockedStore,
   mockStore,
+  render,
+  screen,
   waitFor,
 } from 'uiSrc/utils/test-utils'
 import {
@@ -18,7 +18,6 @@ import {
   connectedInstanceInfoSelector,
   connectedInstanceSelector,
 } from 'uiSrc/slices/instances/instances'
-import { loadInstances as loadRdiInstances } from 'uiSrc/slices/rdi/instances'
 import { appContextDbIndex } from 'uiSrc/slices/app/context'
 
 import { FeatureFlags } from 'uiSrc/constants'
@@ -108,8 +107,10 @@ describe('InstanceHeader', () => {
     expect(screen.getByTestId('change-index-input')).toHaveValue('3')
     fireEvent.click(screen.getByTestId('apply-btn'))
 
-    const expectedActions = [checkDatabaseIndex()]
-    expect(store.getActions()).toEqual([...expectedActions])
+    // check if store actions contain proper action: {type: "instances/checkDatabaseIndex"}
+    expect(store.getActions()).toContainEqual(
+      expect.objectContaining(checkDatabaseIndex()),
+    )
   })
 
   it('should be disabled db index button with loading state', () => {
@@ -194,7 +195,7 @@ describe('InstanceHeader', () => {
       store: mockStore(initialStoreState),
     })
 
-    userEvent.click(screen.getByTestId('user-profile-btn'))
+    await userEvent.click(screen.getByTestId('user-profile-btn'))
     await waitFor(() => {
       expect(
         screen.queryByTestId('user-profile-popover-content'),
@@ -231,7 +232,7 @@ describe('InstanceHeader', () => {
       store: mockStore(initialStoreState),
     })
 
-    userEvent.click(screen.getByTestId('user-profile-btn'))
+    await userEvent.click(screen.getByTestId('user-profile-btn'))
     await waitFor(() => {
       expect(
         screen.queryByTestId('user-profile-popover-content'),

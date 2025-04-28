@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
 
+import { isNumber } from 'lodash'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import {
@@ -35,6 +36,8 @@ import {
   addMessageNotification,
 } from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
+
+const JSON_LENGTH_TO_FORCE_RETRIEVE = 200
 
 export const initialState: InitialStateRejson = {
   loading: false,
@@ -146,7 +149,7 @@ export let sourceRejson: Nullable<CancelTokenSource> = null
 export function fetchReJSON(
   key: RedisResponseBuffer,
   path = '$',
-  _length?: number,
+  length?: number,
   resetData?: boolean,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
@@ -161,6 +164,11 @@ export function fetchReJSON(
       const state = stateInit()
       const { editorType } = state.browser.rejson
       const { encoding } = state.app.info
+
+      const shouldForceRetrieve =
+        editorType === EditorType.Text ||
+        (isNumber(length) && length > JSON_LENGTH_TO_FORCE_RETRIEVE)
+
       const { data, status } = await apiService.post<GetRejsonRlResponseDto>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -169,7 +177,7 @@ export function fetchReJSON(
         {
           keyName: key,
           path,
-          forceRetrieve: editorType === EditorType.Text,
+          forceRetrieve: shouldForceRetrieve,
           encoding,
         },
         { cancelToken: sourceRejson.token },

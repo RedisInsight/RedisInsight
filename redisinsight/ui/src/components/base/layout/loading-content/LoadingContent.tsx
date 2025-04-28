@@ -18,11 +18,9 @@ const LoadingContent = ({
 
   for (let i = 0; i < lines; i++) {
     lineElements.push(
-      <>
-        <SingleLine key={i}>
-          <SingleLineBackground />
-        </SingleLine>
-      </>,
+      <SingleLine key={i}>
+        <SingleLineBackground />
+      </SingleLine>,
     )
   }
 

@@ -17,14 +17,14 @@ const loadingAnimation = keyframes`
   }
 `
 
-export const StyledLoadingContent = styled.span.attrs(() => ({}))<
+export const StyledLoadingContent = styled.span<
   React.HtmlHTMLAttributes<HTMLSpanElement>
 >`
   display: block;
   width: 100%;
 `
 
-export const SingleLine = styled.span.attrs(() => ({}))<
+export const SingleLine = styled.span<
   React.HtmlHTMLAttributes<HTMLSpanElement>
 >`
   display: block;

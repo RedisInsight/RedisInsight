@@ -1,17 +1,9 @@
-import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import { ReactNode } from 'react'
 import { BaseObserver } from '../observer'
 
-export interface ResizeObserverProps {
-  /**
-   * ReactNode to render as this component's content
-   */
+interface ResizeObserverProps {
   children: (ref: (e: HTMLElement | null) => void) => ReactNode
   onResize: (dimensions: { height: number; width: number }) => void
-}
-
-interface Dimensions {
-  width: number
-  height: number
 }
 
 const hasResizeObserver =
@@ -25,9 +17,6 @@ export class ResizeObserver extends BaseObserver<ResizeObserverProps> {
   }
 
   onResize: ResizeObserverCallback = () => {
-    // `entry.contentRect` provides incomplete `height` and `width` data.
-    // Use `getBoundingClientRect` to account for padding and border.
-    // https://developer.mozilla.org/en-US/docs/Web/API/DOMRectReadOnly
     if (!this.childNode) return
     const { height, width } = this.childNode.getBoundingClientRect()
     // Check for actual resize event
@@ -60,60 +49,4 @@ const makeResizeObserver = (
     observer.observe(node)
   }
   return observer
-}
-
-export const useResizeObserver = (
-  container: Element | null,
-  dimension?: Dimensions | 'width' | 'height',
-) => {
-  const [size, setSize] = useState({ width: 0, height: 0 })
-
-  // _currentDimensions and _setSize are used to only store the
-  // new state (and trigger a re-render) when the new dimensions actually differ
-  const currentDimensions = useRef(size)
-  const setSizeCallback = useCallback(
-    (dimensions: Dimensions) => {
-      const doesWidthMatter = dimension !== 'height'
-      const doesHeightMatter = dimension !== 'width'
-      if (
-        (doesWidthMatter &&
-          currentDimensions.current.width !== dimensions.width) ||
-        (doesHeightMatter &&
-          currentDimensions.current.height !== dimensions.height)
-      ) {
-        currentDimensions.current = dimensions
-        setSize(dimensions)
-      }
-    },
-    [dimension],
-  )
-
-  useEffect(() => {
-    if (container != null) {
-      // ResizeObserver's first call to the observation callback is scheduled in the future
-      // so find the container's initial dimensions now
-      const boundingRect = container.getBoundingClientRect()
-      setSizeCallback({
-        width: boundingRect.width,
-        height: boundingRect.height,
-      })
-
-      const observer = makeResizeObserver(container, () => {
-        // `entry.contentRect` provides incomplete `height` and `width` data.
-        // Use `getBoundingClientRect` to account for padding and border.
-        // https://developer.mozilla.org/en-US/docs/Web/API/DOMRectReadOnly
-        const { height, width } = container.getBoundingClientRect()
-        setSizeCallback({
-          width,
-          height,
-        })
-      })
-
-      return () => observer && observer.disconnect()
-    }
-
-    setSizeCallback({ width: 0, height: 0 })
-  }, [container, setSizeCallback])
-
-  return size
 }

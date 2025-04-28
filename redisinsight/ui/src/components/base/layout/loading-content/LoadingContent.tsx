@@ -31,4 +31,4 @@ const LoadingContent = ({
   )
 }
 
-export default LoadingContent
+export default memo(LoadingContent)

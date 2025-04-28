@@ -9,6 +9,11 @@ export interface ResizeObserverProps {
   onResize: (dimensions: { height: number; width: number }) => void
 }
 
+interface Dimensions {
+  width: number
+  height: number
+}
+
 const hasResizeObserver =
   typeof window !== 'undefined' && typeof window.ResizeObserver !== 'undefined'
 export class ResizeObserver extends BaseObserver<ResizeObserverProps> {
@@ -59,25 +64,25 @@ const makeResizeObserver = (
 
 export const useResizeObserver = (
   container: Element | null,
-  dimension?: 'width' | 'height',
+  dimension?: Dimensions | 'width' | 'height',
 ) => {
-  const [size, _setSize] = useState({ width: 0, height: 0 })
+  const [size, setSize] = useState({ width: 0, height: 0 })
 
   // _currentDimensions and _setSize are used to only store the
   // new state (and trigger a re-render) when the new dimensions actually differ
-  const _currentDimensions = useRef(size)
-  const setSize = useCallback(
-    (dimensions) => {
+  const currentDimensions = useRef(size)
+  const setSizeCallback = useCallback(
+    (dimensions: Dimensions) => {
       const doesWidthMatter = dimension !== 'height'
       const doesHeightMatter = dimension !== 'width'
       if (
         (doesWidthMatter &&
-          _currentDimensions.current.width !== dimensions.width) ||
+          currentDimensions.current.width !== dimensions.width) ||
         (doesHeightMatter &&
-          _currentDimensions.current.height !== dimensions.height)
+          currentDimensions.current.height !== dimensions.height)
       ) {
-        _currentDimensions.current = dimensions
-        _setSize(dimensions)
+        currentDimensions.current = dimensions
+        setSize(dimensions)
       }
     },
     [dimension],
@@ -88,7 +93,7 @@ export const useResizeObserver = (
       // ResizeObserver's first call to the observation callback is scheduled in the future
       // so find the container's initial dimensions now
       const boundingRect = container.getBoundingClientRect()
-      setSize({
+      setSizeCallback({
         width: boundingRect.width,
         height: boundingRect.height,
       })
@@ -98,7 +103,7 @@ export const useResizeObserver = (
         // Use `getBoundingClientRect` to account for padding and border.
         // https://developer.mozilla.org/en-US/docs/Web/API/DOMRectReadOnly
         const { height, width } = container.getBoundingClientRect()
-        setSize({
+        setSizeCallback({
           width,
           height,
         })
@@ -107,8 +112,8 @@ export const useResizeObserver = (
       return () => observer && observer.disconnect()
     }
 
-    setSize({ width: 0, height: 0 })
-  }, [container, setSize])
+    setSizeCallback({ width: 0, height: 0 })
+  }, [container, setSizeCallback])
 
   return size
 }

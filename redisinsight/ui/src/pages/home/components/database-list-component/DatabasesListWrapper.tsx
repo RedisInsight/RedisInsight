@@ -5,7 +5,6 @@ import {
   EuiIcon,
   EuiLink,
   EuiPopover,
-  EuiResizeObserver,
   EuiTableFieldDataColumnType,
   EuiText,
   EuiTextColor,
@@ -77,6 +76,7 @@ import {
   replaceSpaces,
 } from 'uiSrc/utils'
 
+import { ResizeObserver } from 'uiSrc/components/base/utils'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -131,7 +131,7 @@ const DatabasesListWrapper = (props: Props) => {
   const [, forceRerender] = useState({})
   const sortingRef = useRef<PropertySort>(
     localStorageService.get(BrowserStorageItem.instancesSorting) ??
-      DEFAULT_SORT,
+    DEFAULT_SORT,
   )
 
   const deletingIdRef = useRef('')
@@ -300,6 +300,7 @@ const DatabasesListWrapper = (props: Props) => {
   }
 
   const onResize = ({ width: innerWidth }: { width: number }) => {
+    console.log('onResize', innerWidth)
     setWidth(innerWidth)
   }
 
@@ -680,7 +681,7 @@ const DatabasesListWrapper = (props: Props) => {
   )
 
   return (
-    <EuiResizeObserver onResize={onResize}>
+    <ResizeObserver onResize={onResize}>
       {(resizeRef) => (
         <div className={styles.container} ref={resizeRef}>
           <ItemList<Instance>
@@ -701,7 +702,7 @@ const DatabasesListWrapper = (props: Props) => {
           />
         </div>
       )}
-    </EuiResizeObserver>
+    </ResizeObserver>
   )
 }
 

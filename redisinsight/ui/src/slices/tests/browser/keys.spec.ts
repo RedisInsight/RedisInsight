@@ -33,6 +33,8 @@ import {
 } from 'uiSrc/slices/app/context'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import { rootReducer } from 'uiSrc/slices/store'
+import { setEditorType } from 'uiSrc/slices/browser/rejson'
+import { EditorType } from 'uiSrc/slices/interfaces'
 import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/hash/dto'
 import {
   CreateListWithExpireDto,
@@ -1374,6 +1376,29 @@ describe('keys slice', () => {
           setBrowserSelectedKey(null),
         ]
         expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should set default JSON editor', async () => {
+        // Arrange
+        const data = {
+          name: stringToBuffer('rejson'),
+          type: KeyTypes.ReJSON,
+          ttl: -1,
+          size: 10,
+        }
+        const responsePayload = { data, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchKeyInfo(data.name))
+
+        // Assert
+        expect(store.getActions()).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining(setEditorType(EditorType.Default)),
+          ]),
+        )
       })
     })
 

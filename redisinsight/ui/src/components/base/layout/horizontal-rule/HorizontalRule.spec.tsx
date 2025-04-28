@@ -1,7 +1,6 @@
 import React from 'react'
 import { render } from '@testing-library/react'
-
-import { HorizontalRule } from '.'
+import HorizontalRule from './HorizontalRule'
 
 describe('HorizontalRule', () => {
   it('should render with default props', () => {

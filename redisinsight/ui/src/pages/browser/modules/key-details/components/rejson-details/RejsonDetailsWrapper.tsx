@@ -56,6 +56,8 @@ const RejsonDetailsWrapper = (props: Props) => {
   }, [nameString])
 
   // TODO: the whole workflow should be refactored
+  // in a way that this component will not be responsible for fetching data
+  // based on the editor type
   useEffect(() => {
     if (!selectedKey) return
 

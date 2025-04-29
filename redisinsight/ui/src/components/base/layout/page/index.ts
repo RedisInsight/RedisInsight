@@ -1,5 +1,6 @@
-import PageHeader from 'uiSrc/components/base/layout/page/PageHeader'
-import Page, { PageContentBody } from './Page'
+import Page from './Page'
 import PageBody from './PageBody'
+import PageHeader from './PageHeader'
+import PageContentBody from './PageContentBody'
 
 export { Page, PageBody, PageHeader, PageContentBody }

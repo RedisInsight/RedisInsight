@@ -7,7 +7,7 @@ import {
   StyledPageHeader,
 } from './page-heading.styles'
 
-export const PageHeader = ({
+const PageHeader = ({
   className,
   style,
   restrictWidth,

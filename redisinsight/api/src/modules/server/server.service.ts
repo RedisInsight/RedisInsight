@@ -16,17 +16,20 @@ export abstract class ServerService {
 
   protected sessionId: number = new Date().getTime();
 
-  static getAppType(buildType: string): AppType {
+  static getSupportedAppType(): AppType {
     if (SERVER_CONFIG.appType) {
       const predefinedAppType = SERVER_CONFIG.appType.toUpperCase();
       const enumValues = Object.values(AppType);
-      const appType = enumValues.find(
-        (value) => value === predefinedAppType,
-      );
 
-      if (appType) {
-        return appType;
-      }
+      return enumValues.find((value) => value === predefinedAppType);
+    }
+  }
+
+  static getAppType(buildType: string): AppType {
+    const appType = ServerService.getSupportedAppType();
+
+    if (appType) {
+      return appType;
     }
 
     switch (buildType) {

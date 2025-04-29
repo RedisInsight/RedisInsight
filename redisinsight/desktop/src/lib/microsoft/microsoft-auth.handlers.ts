@@ -1,7 +1,6 @@
 import { ipcMain, WebContents } from 'electron'
 import log from 'electron-log'
 import open from 'open'
-import { UrlWithParsedQuery } from 'url'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 
 import { IpcOnEvent, IpcInvokeEvent } from 'uiSrc/electron/constants'
@@ -16,6 +15,11 @@ export const getMicrosoftTokenCallbackFunction = (webContents: WebContents) => (
   webContents.focus()
 }
 
+export const getMicrosoftTokenEditCallbackFunction = (webContents: WebContents) => (response: any) => {
+  webContents.send(IpcOnEvent.microsoftAuthEditCallback, response)
+  webContents.focus()
+}
+
 export const initMicrosoftAuthHandlers = () => {
   ipcMain.handle(IpcInvokeEvent.microsoftAuth, async (event, options) => {
     try {
@@ -25,6 +29,7 @@ export const initMicrosoftAuthHandlers = () => {
           ...options,
           strategy: AuthProviderType.Microsoft,
           callback: getMicrosoftTokenCallbackFunction(event?.sender as WebContents),
+          databaseId: options.data?.databaseId
         }
       })
 
@@ -46,16 +51,35 @@ export const initMicrosoftAuthHandlers = () => {
       }
     }
   })
-}
 
-export const microsoftAuthCallback = async (url: UrlWithParsedQuery) => {
-  try {
-    const result = await authStrategy.handleCallback(url.query)
-    if (result.status === 'failed') {
+  ipcMain.handle(IpcInvokeEvent.microsoftAuthEdit, async (event, options) => {
+    try {
+      await authStrategy.initialize()
+      const { url } = await authStrategy.getAuthUrl({
+        authOptions: {
+          ...options,
+          strategy: AuthProviderType.Microsoft,
+          callback: getMicrosoftTokenEditCallbackFunction(event?.sender as WebContents),
+          databaseId: options.data?.databaseId
+        }
+      })
+
+      await open(url)
+
+      return {
+        status: 'success'
+      }
+    } catch (e) {
+      log.error(wrapErrorMessageSensitiveData(e as Error))
       const [currentWindow] = getWindows().values()
-      currentWindow?.webContents.send(IpcOnEvent.microsoftAuthCallback, result)
+      currentWindow?.webContents.send(IpcOnEvent.microsoftAuthEditCallback, {
+        status: 'failed',
+        error: e
+      })
+      return {
+        status: 'failed',
+        error: e
+      }
     }
-  } catch (e) {
-    log.error(wrapErrorMessageSensitiveData(e as Error))
-  }
+  })
 }

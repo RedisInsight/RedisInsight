@@ -41,6 +41,7 @@ const AddConnection = (props: Props) => {
             formik={formik}
             onHostNamePaste={onHostNamePaste}
             showFields={{ host: true, alias: true, port: true, timeout: true }}
+            provider={formik.values.provider}
           />
           <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
           <DbIndex

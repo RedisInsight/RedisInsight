@@ -42,6 +42,7 @@ export interface WindowApp {
   sendWindowId: any
   cloudOauthCallback: any
   microsoftAuthCallback: any
+  microsoftAuthEditCallback: any
   deepLinkAction: any
   updateAvailable: any
   ipc: IPCHandler

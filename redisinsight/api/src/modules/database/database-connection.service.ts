@@ -10,6 +10,7 @@ import { DatabaseClientFactory } from 'src/modules/database/providers/database.c
 import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
+import { MicrosoftAuthService } from 'src/modules/auth/microsoft-auth/microsoft-azure-auth.service';
 
 @Injectable()
 export class DatabaseConnectionService {
@@ -21,7 +22,8 @@ export class DatabaseConnectionService {
     private readonly repository: DatabaseRepository,
     private readonly analytics: DatabaseAnalytics,
     private readonly featureService: FeatureService,
-    private recommendationService: DatabaseRecommendationService,
+    private readonly recommendationService: DatabaseRecommendationService,
+    private readonly microsoftAuthService: MicrosoftAuthService,
   ) {}
 
   /**
@@ -52,6 +54,19 @@ export class DatabaseConnectionService {
 
     await this.repository.update(clientMetadata.sessionMetadata, clientMetadata.databaseId, toUpdate);
 
+    // Get the database to check if it's an Azure database
+    const database = await this.repository.get(clientMetadata.sessionMetadata, clientMetadata.databaseId);
+
+    // TODO: Update once the flow has been fixed on MS's side to filter the old Redis Caches and check for AMRs
+    const isAzureDatabase = database?.provider === 'AZURE' ||
+                            (database?.cloudDetails && database?.cloudDetails.hasOwnProperty('provider') &&
+                            database?.cloudDetails['provider'] === 'AZURE');
+
+
+    // Only associate Microsoft auth account with Azure databases
+    if (isAzureDatabase) {
+      await this.microsoftAuthService.associateAccountWithDatabase(clientMetadata.databaseId);
+    }
     const generalInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client);
 
     this.recommendationService.checkMulti(

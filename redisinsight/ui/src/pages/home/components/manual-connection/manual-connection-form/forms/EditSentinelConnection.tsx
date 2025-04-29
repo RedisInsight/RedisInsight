@@ -51,6 +51,7 @@ const EditSentinelConnection = (props: Props) => {
         formik={formik}
         showFields={{ host: true, port: true, alias: false, timeout: false }}
         onHostNamePaste={onHostNamePaste}
+        provider={formik.values.provider}
       />
       <Divider colorVariable="separatorColor" variant="fullWidth" className="form__divider" />
       <DbIndex
@@ -94,6 +95,7 @@ const EditSentinelConnection = (props: Props) => {
         formik={formik}
         showFields={{ host: false, port: true, alias: false, timeout: false }}
         onHostNamePaste={onHostNamePaste}
+        provider={formik.values.provider}
       />
     </>
   )

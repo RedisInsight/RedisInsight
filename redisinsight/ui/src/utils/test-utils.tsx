@@ -94,6 +94,7 @@ const initialStateDefault: RootState = {
     cloud: cloneDeep(initialStateCloud),
     sentinel: cloneDeep(initialStateSentinel),
     azure: cloneDeep(initialStateAzure),
+    microsoftAuthSession: { loading: false, error: '', data: {} },
   },
   browser: {
     keys: cloneDeep(initialStateKeys),

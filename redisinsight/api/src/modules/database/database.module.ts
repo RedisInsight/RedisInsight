@@ -16,6 +16,7 @@ import { StackDatabasesRepository } from 'src/modules/database/repositories/stac
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { DatabaseInfoProvider } from './providers/database-info.provider';
 import { ConnectionMiddleware } from './middleware/connection.middleware';
+import { MicrosoftAuthModule } from 'src/modules/auth/microsoft-auth/microsoft-azure-auth.module';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
@@ -28,6 +29,9 @@ export class DatabaseModule {
   ) {
     return {
       module: DatabaseModule,
+      imports: [
+        MicrosoftAuthModule,
+      ],
       controllers: [
         DatabaseController,
         DatabaseInfoController,

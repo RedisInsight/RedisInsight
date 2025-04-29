@@ -1,8 +1,8 @@
 import { Instance } from 'uiSrc/slices/interfaces'
 import { ADD_NEW_CA_CERT, NO_CA_CERT } from 'uiSrc/pages/home/constants'
 
-export interface DbConnectionInfo extends Instance {
-  id?: string
+export interface DbConnectionInfo extends Omit<Instance, 'id' | 'port' | 'password' | 'timeout'> {
+  id: string
   port: string
   tlsClientAuthRequired?: boolean
   certificates?: { id: number; name: string }[]
@@ -33,6 +33,7 @@ export interface DbConnectionInfo extends Instance {
   sshPassword?: string | true
   sshPrivateKey?: string | true
   sshPassphrase?: string | true
+  microsoftAccount?: string
 }
 
 export interface ISubmitButton {

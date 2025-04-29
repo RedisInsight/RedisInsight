@@ -1,4 +1,4 @@
-import { OAuthStrategy } from 'uiSrc/slices/interfaces'
+import { OAuthStrategy, OAuthSocialAction } from 'uiSrc/slices/interfaces'
 import { IpcInvokeEvent } from '../constants'
 
 export const ipcAuth = async (strategy: OAuthStrategy, action: string, data?: {}) => {
@@ -9,8 +9,11 @@ export const ipcAuth = async (strategy: OAuthStrategy, action: string, data?: {}
 }
 
 export const ipcAuthMicrosoft = async (strategy: OAuthStrategy, action: string, data?: {}) => {
+  const event = action === OAuthSocialAction.EditDatabase
+    ? IpcInvokeEvent.microsoftAuthEdit
+    : IpcInvokeEvent.microsoftAuth
   await window.app?.ipc?.invoke?.(
-    IpcInvokeEvent.microsoftAuth,
+    event,
     { strategy, action, data }
   )
 }

@@ -37,6 +37,7 @@ import XFrameOptionsMiddleware from './middleware/x-frame-options.middleware';
 import { routes } from './app.routes';
 import { RedisConnectionMiddleware, redisConnectionControllers } from './middleware/redis-connection';
 import { AzureModule } from './modules/azure/azure.module'
+import { MicrosoftAuthModule } from './modules/auth/microsoft-auth/microsoft-azure-auth.module';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 const PATH_CONFIG = config.get('dir_path') as Config['dir_path'];
@@ -75,6 +76,7 @@ const STATICS_CONFIG = config.get('statics') as Config['statics'];
     }),
     InitModule.register([AutodiscoveryModule, AnalyticsModule]),
     AzureModule,
+    MicrosoftAuthModule,
   ],
   controllers: [],
   providers: [],

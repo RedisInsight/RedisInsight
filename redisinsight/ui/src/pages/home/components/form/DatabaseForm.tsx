@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react'
+import React, { ChangeEvent, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { FormikProps } from 'formik'
 
@@ -9,7 +9,11 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiFormRow, EuiIcon,
-  EuiToolTip
+  EuiToolTip,
+  EuiButton,
+  EuiText,
+  EuiSpacer,
+  EuiButtonEmpty
 } from '@elastic/eui'
 import { BuildType } from 'uiSrc/constants/env'
 import { SECURITY_FIELD } from 'uiSrc/constants'
@@ -24,6 +28,10 @@ import {
   validateTimeoutNumber,
 } from 'uiSrc/utils'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
+import { useMicrosoftAuth } from 'uiSrc/hooks/useMicrosoftAuth'
+import AzureIcon from 'uiSrc/assets/img/azure.svg?react'
+
+import styles from './styles.module.scss'
 
 interface IShowFields {
   alias: boolean
@@ -38,6 +46,112 @@ export interface Props {
   showFields: IShowFields
   autoFocus?: boolean
   readyOnlyFields?: string[]
+  provider?: string
+}
+
+// Component to display Azure auth information
+const AzureAuthInfo = ({ formik }: { formik: FormikProps<DbConnectionInfo> }) => {
+  const [authStatus, signIn, signOut, retry] = useMicrosoftAuth(formik.values.id)
+
+  useEffect(() => {
+    if (authStatus.isAuthenticated && authStatus.userEmail) {
+      formik.setFieldValue('microsoftAccount', authStatus.userEmail)
+    }
+  }, [authStatus.isAuthenticated, authStatus.userEmail])
+
+  if (authStatus.isLoading) {
+    return (
+      <>
+        <EuiFlexGroup alignItems="center" gutterSize="s">
+          <EuiFlexItem>
+            <EuiText size="s">
+              <p>Checking Microsoft authentication status...</p>
+            </EuiText>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiSpacer size="s" />
+      </>
+    )
+  }
+
+  if (authStatus.error) {
+    return (
+      <>
+        <EuiFlexGroup direction="column" gutterSize="xs">
+          <EuiFlexItem>
+            <EuiText size="s" color="danger">
+              <p>
+                <EuiIcon type="alert" color="danger" /> Authentication error: {authStatus.error}
+              </p>
+            </EuiText>
+          </EuiFlexItem>
+          <EuiFlexItem>
+            <EuiFlexGroup>
+              <EuiFlexItem grow={false}>
+                <EuiButton
+                  size="s"
+                  onClick={retry}
+                  iconType="refresh"
+                  data-testid="azure-retry"
+                >
+                  Try Again
+                </EuiButton>
+              </EuiFlexItem>
+              <EuiFlexItem grow={false}>
+                <EuiButton
+                  size="s"
+                  onClick={signIn}
+                  iconType="user"
+                  data-testid="azure-sign-in"
+                >
+                  Sign in with Microsoft
+                </EuiButton>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+        <EuiSpacer size="s" />
+      </>
+    )
+  }
+
+  return (
+    <>
+      <EuiFlexGroup alignItems="center">
+        <EuiFlexItem grow={false}>
+          <EuiText size="s">
+            {authStatus.isAuthenticated ? (
+              <>Azure account: <strong>{authStatus.userEmail || authStatus.displayName}</strong></>
+            ) : (
+              <>Sign in with your Microsoft account*</>
+            )}
+          </EuiText>
+        </EuiFlexItem>
+        <EuiFlexItem grow={false}>
+          {authStatus.isAuthenticated ? (
+            <EuiButtonEmpty
+              size="xs"
+              onClick={signOut}
+              data-testid="azure-sign-out"
+            >
+              Sign out
+            </EuiButtonEmpty>
+          ) : (
+            <EuiButton
+              color="secondary"
+              onClick={signIn}
+              data-testid="azure-sign-in"
+              className={styles.typeBtn}
+            >
+              <AzureIcon className={styles.btnIcon} />
+              Azure Managed Redis
+            </EuiButton>
+          )}
+        </EuiFlexItem>
+      </EuiFlexGroup>
+      <EuiSpacer size="s" />
+    </>
+  )
 }
 
 const DatabaseForm = (props: Props) => {
@@ -46,7 +160,8 @@ const DatabaseForm = (props: Props) => {
     onHostNamePaste,
     autoFocus = false,
     showFields,
-    readyOnlyFields = []
+    readyOnlyFields = [],
+    provider = ''
   } = props
 
   const { server } = useSelector(appInfoSelector)
@@ -89,9 +204,12 @@ const DatabaseForm = (props: Props) => {
 
   const isShowPort = server?.buildType !== BuildType.RedisStack && showFields.port
   const isFieldDisabled = (name: string) => readyOnlyFields.includes(name)
+  const isAzureProvider = provider.includes('AZURE_CACHE')
 
   return (
     <>
+      {isAzureProvider && <AzureAuthInfo formik={formik} />}
+
       {showFields.alias && (
         <EuiFlexGroup responsive={false}>
           <EuiFlexItem>
@@ -133,7 +251,11 @@ const DatabaseForm = (props: Props) => {
                       validateField(e.target.value.trim())
                     )
                   }}
-                  onPaste={(event: React.ClipboardEvent<HTMLInputElement>) => handlePasteHostName(onHostNamePaste, event)}
+                  onPaste={(event: React.ClipboardEvent<HTMLInputElement> & {
+                    originalEvent: {
+                      clipboardData: DataTransfer | null;
+                    };
+                  }) => handlePasteHostName(onHostNamePaste, event)}
                   onFocus={selectOnFocus}
                   append={<AppendHostName />}
                   disabled={isFieldDisabled('host')}
@@ -170,51 +292,53 @@ const DatabaseForm = (props: Props) => {
         </EuiFlexGroup>
       )}
 
-      <EuiFlexGroup responsive={false}>
-        <EuiFlexItem grow={1}>
-          <EuiFormRow label="Username">
-            <EuiFieldText
-              name="username"
-              id="username"
-              data-testid="username"
-              fullWidth
-              maxLength={200}
-              placeholder="Enter Username"
-              value={formik.values.username ?? ''}
-              onChange={formik.handleChange}
-              disabled={isFieldDisabled('username')}
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
+      {!isAzureProvider && (
+        <EuiFlexGroup responsive={false}>
+          <EuiFlexItem grow={1}>
+            <EuiFormRow label="Username">
+              <EuiFieldText
+                name="username"
+                id="username"
+                data-testid="username"
+                fullWidth
+                maxLength={200}
+                placeholder="Enter Username"
+                value={formik.values.username ?? ''}
+                onChange={formik.handleChange}
+                disabled={isFieldDisabled('username')}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
 
-        <EuiFlexItem grow={1}>
-          <EuiFormRow label="Password">
-            <EuiFieldPassword
-              type="password"
-              name="password"
-              id="password"
-              data-testid="password"
-              fullWidth
-              className="passwordField"
-              maxLength={10_000}
-              placeholder="Enter Password"
-              value={formik.values.password === true ? SECURITY_FIELD : formik.values.password ?? ''}
-              onChange={formik.handleChange}
-              onFocus={() => {
-                if (formik.values.password === true) {
-                  formik.setFieldValue(
-                    'password',
-                    '',
-                  )
-                }
-              }}
-              dualToggleProps={{ color: 'text' }}
-              autoComplete="new-password"
-              disabled={isFieldDisabled('password')}
-            />
-          </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+          <EuiFlexItem grow={1}>
+            <EuiFormRow label="Password">
+              <EuiFieldPassword
+                type="password"
+                name="password"
+                id="password"
+                data-testid="password3"
+                fullWidth
+                className="passwordField"
+                maxLength={10_000}
+                placeholder="Enter Password"
+                value={formik.values.password === true ? SECURITY_FIELD : formik.values.password ?? ''}
+                onChange={formik.handleChange}
+                onFocus={() => {
+                  if (formik.values.password === true) {
+                    formik.setFieldValue(
+                      'password',
+                      '',
+                    )
+                  }
+                }}
+                dualToggleProps={{ color: 'text' }}
+                autoComplete="new-password"
+                disabled={isFieldDisabled('password')}
+              />
+            </EuiFormRow>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      )}
 
       {showFields.timeout && (
         <EuiFlexGroup>

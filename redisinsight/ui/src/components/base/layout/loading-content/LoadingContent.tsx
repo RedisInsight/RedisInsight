@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React from 'react'
 import classNames from 'classnames'
 
 import {
@@ -31,4 +31,4 @@ const LoadingContent = ({
   )
 }
 
-export default memo(LoadingContent)
+export default LoadingContent

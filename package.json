@@ -98,7 +98,6 @@
     "styled-components": "^5",
     "@elastic/eui/**/prismjs": "~1.30.0",
     "vite/esbuild": "^0.25.0",
-    "styled-components": "^5",
     "react-router-dom/react-router/path-to-regexp": "^1.9.0"
   },
   "devDependencies": {
@@ -275,6 +274,7 @@
     "react": "^18.2.0",
     "react-contenteditable": "^3.3.5",
     "react-dom": "^18.2.0",
+    "react-focus-on": "^3.9.4",
     "react-hotkeys-hook": "^3.3.1",
     "react-jsx-parser": "^1.28.4",
     "react-monaco-editor": "^0.55.0",

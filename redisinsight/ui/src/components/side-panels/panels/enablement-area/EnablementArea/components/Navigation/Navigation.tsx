@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiListGroup } from '@elastic/eui'
 import { isArray } from 'lodash'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { Group as ListGroup } from 'uiSrc/components/base/layout/list'
 import {
   EnablementAreaComponent,
   IEnablementAreaItem,
@@ -241,7 +241,7 @@ const Navigation = (props: Props) => {
     ))
 
   return (
-    <EuiListGroup
+    <ListGroup
       maxWidth="false"
       data-testid="enablementArea-treeView"
       flush
@@ -255,7 +255,7 @@ const Navigation = (props: Props) => {
           getManifestItems(customTutorials),
           PATHS.customTutorials,
         )}
-    </EuiListGroup>
+    </ListGroup>
   )
 }
 

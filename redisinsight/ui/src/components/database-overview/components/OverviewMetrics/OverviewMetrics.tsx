@@ -1,5 +1,10 @@
-import React, { ReactNode } from 'react'
-import { EuiLoadingSpinner } from '@elastic/eui'
+import React, { FunctionComponent, ReactNode } from 'react'
+import {
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiIcon,
+  EuiLoadingSpinner,
+} from '@elastic/eui'
 import { isArray, isUndefined, toNumber } from 'lodash'
 
 import {
@@ -12,20 +17,20 @@ import {
 import { Theme } from 'uiSrc/constants'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import {
+  InputDarkIcon,
+  InputLightIcon,
   KeyDarkIcon,
   KeyLightIcon,
-  MemoryDarkIcon,
-  MemoryLightIcon,
   MeasureDarkIcon,
   MeasureLightIcon,
+  MemoryDarkIcon,
+  MemoryLightIcon,
+  OutputDarkIcon,
+  OutputLightIcon,
   TimeDarkIcon,
   TimeLightIcon,
   UserDarkIcon,
   UserLightIcon,
-  InputLightIcon,
-  OutputLightIcon,
-  InputDarkIcon,
-  OutputDarkIcon,
 } from 'uiSrc/components/database-overview/components/icons'
 
 import styles from './styles.module.scss'
@@ -62,78 +67,63 @@ export interface IMetric {
   title: string
   tooltip: {
     title?: string
-    icon: Nullable<string>
+    icon: Nullable<string> | FunctionComponent
     content: ReactNode | string
   }
   loading?: boolean
   groupId?: string
-  icon?: Nullable<string>
+  icon?: Nullable<string> | FunctionComponent
   className?: string
   children?: Array<IMetric>
 }
 
-export const getOverviewMetrics = ({
-  theme,
-  items,
-  db = 0,
-}: Props): Array<IMetric> => {
-  const {
-    usedMemory,
-    usedMemoryPercent,
-    totalKeys,
-    connectedClients,
-    cpuUsagePercentage,
-    opsPerSecond,
-    networkInKbps,
-    networkOutKbps,
-    totalKeysPerDb = {},
-    cloudDetails,
-  } = items
-
-  const availableItems: Array<IMetric> = []
-
-  // CPU
-  if (!isUndefined(cpuUsagePercentage)) {
-    availableItems.push({
-      id: 'overview-cpu',
+function getCpuUsage(cpuUsagePercentage: number | null, theme: string) {
+  return {
+    id: 'overview-cpu',
+    title: 'CPU',
+    value: cpuUsagePercentage,
+    loading: cpuUsagePercentage === null,
+    unavailableText: 'CPU is not available',
+    tooltip: {
       title: 'CPU',
-      value: cpuUsagePercentage,
-      loading: cpuUsagePercentage === null,
-      unavailableText: 'CPU is not available',
-      tooltip: {
-        title: 'CPU',
-        icon: theme === Theme.Dark ? TimeDarkIcon : TimeLightIcon,
-        content:
-          cpuUsagePercentage === null ? (
-            'Calculating in progress'
-          ) : (
-            <>
-              <b>{truncatePercentage(cpuUsagePercentage, 4)}</b>
-              &nbsp;%
-            </>
-          ),
-      },
-      className: styles.cpuWrapper,
-      icon:
-        cpuUsagePercentage !== null
-          ? theme === Theme.Dark
-            ? TimeDarkIcon
-            : TimeLightIcon
-          : null,
+      icon: theme === Theme.Dark ? TimeDarkIcon : TimeLightIcon,
       content:
         cpuUsagePercentage === null ? (
-          <>
-            <div className={styles.calculationWrapper}>
-              <EuiLoadingSpinner className={styles.spinner} size="m" />
-              <span className={styles.calculation}>Calculating...</span>
-            </div>
-          </>
+          'Calculating in progress'
         ) : (
-          `${truncatePercentage(cpuUsagePercentage, 2)} %`
+          <>
+            <b>{truncatePercentage(cpuUsagePercentage, 4)}</b>
+            &nbsp;%
+          </>
         ),
-    })
+    },
+    className: styles.cpuWrapper,
+    icon:
+      cpuUsagePercentage !== null
+        ? theme === Theme.Dark
+          ? TimeDarkIcon
+          : TimeLightIcon
+        : null,
+    content:
+      cpuUsagePercentage === null ? (
+        <>
+          <div className={styles.calculationWrapper}>
+            <EuiLoadingSpinner className={styles.spinner} size="m" />
+            <span className={styles.calculation}>Calculating...</span>
+          </div>
+        </>
+      ) : (
+        `${truncatePercentage(cpuUsagePercentage, 2)} %`
+      ),
   }
+}
 
+function getOpsPerSecondItem(
+  theme: string,
+  opsPerSecond: number,
+  networkInKbps: number,
+  networkOutKbps: number,
+) {
   // Ops per second with tooltip
   const opsPerSecItem: any = {
     id: 'overview-commands-sec',
@@ -149,20 +139,23 @@ export const getOverviewMetrics = ({
     className: styles.opsPerSecItem,
   }
 
-  let [networkIn, networkInUnit] = formatBytes(
-    networkInKbps * 1000,
+  // let [networkIn, networkInUnit] = formatBytes(
+  const networkInBytes = formatBytes((networkInKbps ?? 0) * 1000, 3, true, 1000)
+  const networkIn = networkInBytes[0]
+  const networkInUnit = networkInBytes[1]
+    ? `${networkInBytes[1].toString().toLowerCase()}/s`
+    : ''
+  // let [networkOut, networkOutUnit] = formatBytes(
+  const networkOutBytes = formatBytes(
+    (networkOutKbps ?? 0) * 1000,
     3,
     true,
     1000,
   )
-  networkInUnit = networkInUnit ? `${networkInUnit.toLowerCase()}/s` : ''
-  let [networkOut, networkOutUnit] = formatBytes(
-    networkOutKbps * 1000,
-    3,
-    true,
-    1000,
-  )
-  networkOutUnit = networkOutUnit ? `${networkOutUnit.toLowerCase()}/s` : ''
+  const networkOutUnit = networkOutBytes[1]
+    ? `${networkOutBytes[1].toString().toLowerCase()}/s`
+    : ''
+  const networkOut = networkOutBytes[0]
 
   const networkInItem = {
     id: 'network-input',
@@ -228,20 +221,19 @@ export const getOverviewMetrics = ({
       networkOutItem,
     ]
   }
+  return opsPerSecItem
+}
 
-  opsPerSecond !== undefined && availableItems.push(opsPerSecItem)
-
-  // Used memory
-  const planMemoryLimit = cloudDetails?.planMemoryLimit
-  const memoryUsed = formatBytes(usedMemory || 0, 0)
+function getUsedMemoryItem(
+  theme: string,
+  usedMemory: number,
+  planMemoryLimit: number,
+  usedMemoryPercent: number,
+  memoryLimitMeasurementUnit = 'MB',
+) {
+  const memoryUsed = formatBytes(usedMemory, 0)
   const planMemory = planMemoryLimit
-    ? formatBytes(
-        toBytes(
-          planMemoryLimit,
-          cloudDetails?.memoryLimitMeasurementUnit || 'MB',
-        ) || 0,
-        1,
-      )
+    ? formatBytes(toBytes(planMemoryLimit, memoryLimitMeasurementUnit) || 0, 1)
     : ''
 
   const memoryContent = planMemoryLimit ? (
@@ -256,31 +248,36 @@ export const getOverviewMetrics = ({
     : ''
 
   const formattedUsedMemoryTooltip = formatBytes(usedMemory || 0, 3, true)
-  usedMemory !== undefined &&
-    availableItems.push({
-      id: 'overview-total-memory',
-      value: usedMemory,
-      unavailableText: 'Total Memory is not available',
+  return {
+    id: 'overview-total-memory',
+    value: usedMemory,
+    unavailableText: 'Total Memory is not available',
+    title: 'Total Memory',
+    tooltip: {
       title: 'Total Memory',
-      tooltip: {
-        title: 'Total Memory',
-        icon: theme === Theme.Dark ? MemoryDarkIcon : MemoryLightIcon,
-        content: isArray(formattedUsedMemoryTooltip) ? (
-          <>
-            <b>{formattedUsedMemoryTooltip[0]}</b>
-            &nbsp;
-            {formattedUsedMemoryTooltip[1]}
-            {memoryUsedTooltip}
-          </>
-        ) : (
-          `${formattedUsedMemoryTooltip}${memoryUsedTooltip}`
-        ),
-      },
       icon: theme === Theme.Dark ? MemoryDarkIcon : MemoryLightIcon,
-      content: memoryContent,
-    })
+      content: isArray(formattedUsedMemoryTooltip) ? (
+        <>
+          <b>{formattedUsedMemoryTooltip[0]}</b>
+          &nbsp;
+          {formattedUsedMemoryTooltip[1]}
+          {memoryUsedTooltip}
+        </>
+      ) : (
+        `${formattedUsedMemoryTooltip}${memoryUsedTooltip}`
+      ),
+    },
+    icon: theme === Theme.Dark ? MemoryDarkIcon : MemoryLightIcon,
+    content: memoryContent,
+  }
+}
 
-  // Total keys
+function getTotalKeysItem(
+  theme: string,
+  totalKeys = 0,
+  db = 0,
+  dbKeysCount?: number,
+) {
   const totalKeysItem: any = {
     id: 'overview-total-keys',
     value: totalKeys,
@@ -288,15 +285,14 @@ export const getOverviewMetrics = ({
     title: 'Total Keys',
     tooltip: {
       title: 'Total Keys',
-      content: <b>{numberWithSpaces(totalKeys || 0)}</b>,
+      content: <b>{numberWithSpaces(totalKeys)}</b>,
       icon: theme === Theme.Dark ? KeyDarkIcon : KeyLightIcon,
     },
     icon: theme === Theme.Dark ? KeyDarkIcon : KeyLightIcon,
-    content: truncateNumberToRange(totalKeys || 0),
+    content: truncateNumberToRange(totalKeys),
   }
 
   // keys in the logical database
-  const dbKeysCount = totalKeysPerDb?.[`db${db || 0}`]
   if (!isUndefined(dbKeysCount) && dbKeysCount < toNumber(totalKeys)) {
     totalKeysItem.children = [
       {
@@ -306,9 +302,9 @@ export const getOverviewMetrics = ({
         title: 'Total Keys',
         tooltip: {
           title: 'Total Keys',
-          content: <b>{numberWithSpaces(totalKeys || 0)}</b>,
+          content: <b>{numberWithSpaces(totalKeys)}</b>,
         },
-        content: <b>{numberWithSpaces(totalKeys || 0)}</b>,
+        content: <b>{numberWithSpaces(totalKeys)}</b>,
       },
       {
         id: 'overview-db-total-keys',
@@ -316,7 +312,12 @@ export const getOverviewMetrics = ({
         value: dbKeysCount,
         content: (
           <>
-            <span style={{ fontWeight: 200, paddingRight: 1 }}>
+            <span
+              style={{
+                fontWeight: 200,
+                paddingRight: 1,
+              }}
+            >
               db{db || 0}:
             </span>
             <b>{numberWithSpaces(dbKeysCount || 0)}</b>
@@ -325,29 +326,136 @@ export const getOverviewMetrics = ({
       },
     ]
   }
+  return totalKeysItem
+}
 
-  totalKeys !== undefined && availableItems.push(totalKeysItem)
+const getConnectedClient = (connectedClients: number = 0) =>
+  Number.isInteger(connectedClients)
+    ? connectedClients
+    : `~${Math.round(connectedClients)}`
 
-  const getConnectedClient = (connectedClients: number = 0) =>
-    Number.isInteger(connectedClients)
-      ? connectedClients
-      : `~${Math.round(connectedClients)}`
+function getConnectedClientItem(theme: string, connectedClients = 0) {
+  const connectedClientsCount = getConnectedClient(connectedClients)
+  const icon = theme === Theme.Dark ? UserDarkIcon : UserLightIcon
+  return {
+    id: 'overview-connected-clients',
+    value: connectedClients,
+    unavailableText: 'Connected Clients are not available',
+    title: 'Connected Clients',
+    tooltip: {
+      title: 'Connected Clients',
+      content: <b>{connectedClientsCount}</b>,
+      icon,
+    },
+    icon,
+    content: connectedClientsCount,
+  }
+}
+
+export const getOverviewMetrics = ({
+  theme,
+  items,
+  db = 0,
+}: Props): Array<IMetric> => {
+  const {
+    usedMemory,
+    usedMemoryPercent,
+    totalKeys,
+    connectedClients,
+    cpuUsagePercentage,
+    opsPerSecond,
+    networkInKbps,
+    networkOutKbps,
+    totalKeysPerDb = {},
+    cloudDetails,
+  } = items
+
+  const availableItems: Array<IMetric> = []
+
+  // CPU
+  if (!isUndefined(cpuUsagePercentage)) {
+    availableItems.push(getCpuUsage(cpuUsagePercentage, theme))
+  }
+
+  if (!isUndefined(opsPerSecond)) {
+    availableItems.push(
+      getOpsPerSecondItem(
+        theme,
+        opsPerSecond ?? 0,
+        networkInKbps ?? 0,
+        networkOutKbps ?? 0,
+      ),
+    )
+  }
+
+  // Used memory
+  if (!isUndefined(usedMemory)) {
+    availableItems.push(
+      getUsedMemoryItem(
+        theme,
+        usedMemory ?? 0,
+        cloudDetails?.planMemoryLimit ?? 0,
+        usedMemoryPercent ?? 0,
+        cloudDetails?.memoryLimitMeasurementUnit,
+      ),
+    )
+  }
+
+  // Total keys
+  const totalKeysItem = getTotalKeysItem(
+    theme,
+    totalKeys ?? 0,
+    db,
+    totalKeysPerDb?.[`db${db || 0}`],
+  )
+
+  if (!isUndefined(totalKeys)) {
+    availableItems.push(totalKeysItem)
+  }
 
   // Connected clients
-  connectedClients !== undefined &&
-    availableItems.push({
-      id: 'overview-connected-clients',
-      value: connectedClients,
-      unavailableText: 'Connected Clients are not available',
-      title: 'Connected Clients',
-      tooltip: {
-        title: 'Connected Clients',
-        content: <b>{getConnectedClient(connectedClients ?? 0)}</b>,
-        icon: theme === Theme.Dark ? UserDarkIcon : UserLightIcon,
-      },
-      icon: theme === Theme.Dark ? UserDarkIcon : UserLightIcon,
-      content: getConnectedClient(connectedClients ?? 0),
-    })
+  if (!isUndefined(connectedClients)) {
+    availableItems.push(getConnectedClientItem(theme, connectedClients ?? 0))
+  }
 
   return availableItems
+}
+
+export const getTooltipContent = (metric: IMetric) => {
+  if (!metric.children?.length) {
+    return (
+      <>
+        <span>{metric.tooltip.content}</span>
+        &nbsp;
+        <span>{metric.tooltip.title}</span>
+      </>
+    )
+  }
+  return metric.children
+    .filter((item) => item.value !== undefined)
+    .map((tooltipItem) => (
+      <EuiFlexGroup
+        className={styles.commandsPerSecTip}
+        key={tooltipItem.id}
+        gutterSize="none"
+        responsive={false}
+        alignItems="center"
+      >
+        {tooltipItem.icon && (
+          <EuiFlexItem grow={false}>
+            <EuiIcon
+              className={styles.moreInfoOverviewIcon}
+              size="m"
+              type={tooltipItem.icon}
+            />
+          </EuiFlexItem>
+        )}
+        <EuiFlexItem className={styles.moreInfoOverviewContent} grow={false}>
+          {tooltipItem.content}
+        </EuiFlexItem>
+        <EuiFlexItem className={styles.moreInfoOverviewTitle} grow={false}>
+          {tooltipItem.title}
+        </EuiFlexItem>
+      </EuiFlexGroup>
+    ))
 }

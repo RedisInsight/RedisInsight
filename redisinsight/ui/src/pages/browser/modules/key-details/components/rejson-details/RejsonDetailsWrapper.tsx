@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { EuiProgress } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
-import { rejsonDataSelector, rejsonSelector } from 'uiSrc/slices/browser/rejson'
+import {
+  fetchReJSON,
+  rejsonDataSelector,
+  rejsonSelector,
+} from 'uiSrc/slices/browser/rejson'
 import {
   selectedKeyDataSelector,
   keysSelector,
@@ -32,6 +36,8 @@ export interface Props extends KeyDetailsHeaderProps {}
 const RejsonDetailsWrapper = (props: Props) => {
   const { loading, editorType } = useSelector(rejsonSelector)
   const { data, downloaded, type, path } = useSelector(rejsonDataSelector)
+  const dispatch = useDispatch()
+
   const {
     name: selectedKey,
     nameString,
@@ -47,6 +53,20 @@ const RejsonDetailsWrapper = (props: Props) => {
   useEffect(() => {
     setExpandedRows(new Set())
   }, [nameString])
+
+  // TODO: the whole workflow should be refactored
+  // in a way that this component will not be responsible for fetching data
+  // based on the editor type
+  useEffect(() => {
+    if (!selectedKey) return
+
+    // Not including `loading` in deps is intentional
+    // This check avoids double fetching of data
+    // which happens when new key is selected for example.
+    if (loading) return
+
+    dispatch(fetchReJSON(selectedKey))
+  }, [editorType, selectedKey, dispatch])
 
   const reportJSONKeyCollapsed = (level: number) => {
     sendEventTelemetry({

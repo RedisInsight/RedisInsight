@@ -162,7 +162,13 @@ export function fetchReJSON(
       sourceRejson = CancelToken.source()
 
       const state = stateInit()
+      const { editorType } = state.browser.rejson
       const { encoding } = state.app.info
+
+      const shouldForceRetrieve =
+        editorType === EditorType.Text ||
+        (isNumber(length) && length > JSON_LENGTH_TO_FORCE_RETRIEVE)
+
       const { data, status } = await apiService.post<GetRejsonRlResponseDto>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -171,8 +177,7 @@ export function fetchReJSON(
         {
           keyName: key,
           path,
-          forceRetrieve:
-            isNumber(length) && length > JSON_LENGTH_TO_FORCE_RETRIEVE,
+          forceRetrieve: shouldForceRetrieve,
           encoding,
         },
         { cancelToken: sourceRejson.token },
@@ -189,7 +194,6 @@ export function fetchReJSON(
         dispatch(addErrorNotification(error))
       }
     }
-    dispatch(setEditorType(EditorType.Default))
   }
 }
 

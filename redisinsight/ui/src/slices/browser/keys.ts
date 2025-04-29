@@ -62,7 +62,7 @@ import {
   refreshZsetMembersAction,
 } from './zset'
 import { fetchSetMembers, refreshSetMembersAction } from './set'
-import { fetchReJSON } from './rejson'
+import { fetchReJSON, setEditorType } from './rejson'
 import {
   setHashInitialState,
   fetchHashFields,
@@ -102,7 +102,7 @@ import {
 } from '../interfaces/keys'
 import { AppDispatch, RootState } from '../store'
 import { StreamViewType } from '../interfaces/stream'
-import { RedisResponseBuffer, RedisString } from '../interfaces'
+import { EditorType, RedisResponseBuffer, RedisString } from '../interfaces'
 
 const defaultViewFormat = KeyValueFormat.Unicode
 
@@ -807,6 +807,7 @@ export function fetchKeyInfo(
       }
       if (data.type === KeyTypes.ReJSON) {
         dispatch<any>(fetchReJSON(key, '$', data.length, resetData))
+        dispatch<any>(setEditorType(EditorType.Default))
       }
       if (data.type === KeyTypes.Stream) {
         const { viewType } = state.browser.stream

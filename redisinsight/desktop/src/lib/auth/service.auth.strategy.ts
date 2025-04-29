@@ -1,4 +1,5 @@
 import log from 'electron-log'
+import { LocalConstantsProvider } from 'apiSrc/modules/constants/providers/local.constants.provider'
 import { AuthStrategy } from './auth.interface'
 import { CloudAuthService } from '../../../../api/dist/src/modules/cloud/auth/cloud-auth.service'
 import { CloudAuthModule } from '../../../../api/dist/src/modules/cloud/auth/cloud-auth.module'
@@ -18,11 +19,13 @@ export class ServiceAuthStrategy implements AuthStrategy {
 
   private beApp: any
 
-  private constructor() { }
+  private constructor(
+    private readonly constantsProvider: LocalConstantsProvider,
+  ) { }
 
   public static getInstance(beApp?: any): ServiceAuthStrategy {
     if (!ServiceAuthStrategy.instance) {
-      ServiceAuthStrategy.instance = new ServiceAuthStrategy()
+      ServiceAuthStrategy.instance = new ServiceAuthStrategy(new LocalConstantsProvider())
     }
     if (beApp) {
       ServiceAuthStrategy.instance.beApp = beApp
@@ -62,11 +65,7 @@ export class ServiceAuthStrategy implements AuthStrategy {
     this.lastAuthType = options.authOptions?.strategy
     log.info('[Service Auth] Getting auth URL', options.authOptions?.strategy === AuthProviderType.Microsoft, options)
 
-    // Create a default session metadata if not provided
-    const sessionMetadata = options.sessionMetadata || {
-      sessionId: 'default',
-      userId: 'default'
-    }
+    const sessionMetadata = options.sessionMetadata || this.constantsProvider.getSystemSessionMetadata()
 
     const url = await this.getAuthService().getAuthorizationUrl(sessionMetadata, options.authOptions)
     log.info('[Service Auth] Auth URL obtained')

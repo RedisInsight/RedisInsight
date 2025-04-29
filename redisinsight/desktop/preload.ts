@@ -25,6 +25,9 @@ contextBridge.exposeInMainWorld('app', {
   microsoftAuthCallback: ((connected: any) => {
     ipcRenderer.on(IpcOnEvent.microsoftAuthCallback, connected)
   }),
+  microsoftAuthEditCallback: ((connected: any) => {
+    ipcRenderer.on(IpcOnEvent.microsoftAuthEditCallback, connected)
+  }),
   deepLinkAction: ((parsedDeepLink: any) => {
     ipcRenderer.on(IpcOnEvent.deepLinkAction, parsedDeepLink)
   }),

@@ -74,14 +74,21 @@ export class ServiceAuthStrategy implements AuthStrategy {
   }
 
   async handleCallback(query: any): Promise<any> {
-    log.info('[Service Auth] Handling callback')
     if (this.getAuthService().isRequestInProgress(query)) {
-      log.info('[Service Auth] Request already in progress, skipping')
-      return { status: 'succeed' }
+      return {
+        status: 'succeed',
+        action: query.action,
+        databaseId: query.databaseId,
+        options: query
+      }
     }
     const result = await this.getAuthService().handleCallback(query)
-    log.info('[Service Auth] Callback handled', result)
-    return result
+    return {
+      ...result,
+      action: query.action,
+      databaseId: query.databaseId,
+      options: query
+    }
   }
 
   async shutdown(): Promise<void> {

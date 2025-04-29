@@ -8,6 +8,8 @@ import clientCertsReducer from './instances/clientCerts'
 import clusterReducer from './instances/cluster'
 import cloudReducer from './instances/cloud'
 import sentinelReducer from './instances/sentinel'
+import azureReducer from './instances/microsoftAzure'
+import microsoftAuthSessionReducer from './instances/microsoftAuthSession'
 import keysReducer from './browser/keys'
 import stringReducer from './browser/string'
 import zsetReducer from './browser/zset'
@@ -54,7 +56,6 @@ import rdiDryRunJobReducer from './rdi/dryRun'
 import rdiTestConnectionsReducer from './rdi/testConnections'
 import rdiStatisticsReducer from './rdi/statistics'
 import aiAssistantReducer from './panels/aiAssistant'
-import azureReducer from './instances/microsoftAzure'
 
 const riConfig = getConfig()
 
@@ -82,6 +83,7 @@ export const rootReducer = combineReducers({
     cloud: cloudReducer,
     sentinel: sentinelReducer,
     azure: azureReducer,
+    microsoftAuthSession: microsoftAuthSessionReducer,
   }),
   browser: combineReducers({
     keys: keysReducer,

@@ -54,6 +54,7 @@ const EditConnection = (props: Props) => {
             }}
             autoFocus={!isCloneMode && isEditMode}
             onHostNamePaste={onHostNamePaste}
+            provider={formik.values.provider}
           />
           {isCloneMode && (
             <>

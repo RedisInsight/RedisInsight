@@ -196,4 +196,8 @@
   margin-bottom: 24px;
   display: flex;
   flex-direction: column;
+
+  .euiFlexGroup--gutterLarge {
+    margin: 0 !important;
+  }
 }

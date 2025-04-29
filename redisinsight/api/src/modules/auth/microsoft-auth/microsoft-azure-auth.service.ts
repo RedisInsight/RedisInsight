@@ -20,6 +20,7 @@ interface MicrosoftAuthOptions {
     callback: (result: MicrosoftCredentials) => Promise<void> | void;
     state: string;
     client_info?: string;
+    databaseId?: string;
 }
 
 interface MicrosoftAuthQuery {
@@ -31,6 +32,7 @@ interface MicrosoftCredentials {
     status: CloudAuthStatus;
     username: string;
     password: string;
+    databaseId: string;
 }
 
 interface EntraIdAuthProvider {
@@ -52,12 +54,13 @@ export class MicrosoftAuthService implements OnModuleInit {
 
     private authRequests: Map<string, any> = new Map();
     private inProgressRequests: Map<string, any> = new Map();
-    private activeCredentialsProvider: EntraidCredentialsProvider | null = null;
+    private activeCredentialsProviders: Map<string, EntraidCredentialsProvider> = new Map();
     private entraIdProvider: EntraIdAuthProvider;
     private msalClient: PublicClientApplication;
     private scopes: string[];
 
     private persistencePlugin: SQLitePersistencePlugin;
+    private currentActiveAccount: AccountInfo | null = null;
 
     constructor(
         private readonly msAuthRepository: MicrosoftAuthRepository,
@@ -67,7 +70,8 @@ export class MicrosoftAuthService implements OnModuleInit {
             'openid',
             'email',
             'profile',
-            'https://management.azure.com/user_impersonation'
+            'https://management.azure.com/user_impersonation',
+            // 'https://redis.azure.com'
         ];
 
         this.persistencePlugin = new SQLitePersistencePlugin(this.msAuthRepository);
@@ -86,9 +90,10 @@ export class MicrosoftAuthService implements OnModuleInit {
             redirectUri: idpConfig.redirectUri,
             tokenManagerConfig: {
                 ...DEFAULT_TOKEN_MANAGER_CONFIG,
-                expirationRefreshRatio: 0.00000001
+                expirationRefreshRatio: 0.8
             },
             authorityConfig: { type: 'custom', authorityUrl: idpConfig.authority },
+            // authorityConfig: { type: 'multi-tenant', tenantId: '562f7bf2-f594-47bf-8ac3-a06514b5d434' },
             scopes: this.scopes,
         });
 
@@ -105,7 +110,10 @@ export class MicrosoftAuthService implements OnModuleInit {
 
                         });
 
-                        this.updateAccountInfo(authResult.account);
+                        const state = Object.keys(this.inProgressRequests)[0];
+                        const databaseId = this.inProgressRequests.get(state)?.options?.databaseId || SQLitePersistencePlugin.DEFAULT_ID;
+                        this.updateAccountInfo(authResult.account, databaseId);
+                        this.currentActiveAccount = authResult.account;
 
                         return authResult;
                     }
@@ -119,13 +127,10 @@ export class MicrosoftAuthService implements OnModuleInit {
 
     async onModuleInit() {
         this.logger.log('Microsoft Auth Service initializing...');
-        // This will most likely need to be updated to an actual rest api call, similar to how the cloud service checks auth.
         try {
             try {
-                const authData = await this.msAuthRepository.get();
+                const authData = await this.msAuthRepository.get(SQLitePersistencePlugin.DEFAULT_ID);
                 if (!authData) {
-                    this.logger.log('[Init] No valid database entry found, creating an empty one');
-
                     await this.msAuthRepository.save({
                         id: SQLitePersistencePlugin.DEFAULT_ID,
                         tokenCache: null,
@@ -142,28 +147,7 @@ export class MicrosoftAuthService implements OnModuleInit {
                 this.logger.error('Error checking/initializing auth repository:', repoError);
             }
 
-            const restored = await this.restoreActiveAccount();
 
-            if (restored) {
-                const token = await this.getAccessToken();
-                if (token) {
-                    try {
-                        // TODO: Remove this test method call. this is used for quick validation of the token during dev. It should NOT be used in prod
-                        const subscriptions = await this.getSubscriptions();
-                        this.logger.log(`[Init] Successfully retrieved ${subscriptions.length} subscriptions`);
-
-                        subscriptions?.forEach((sub, index) => {
-                            this.logger.log(`[Init] Subscription #${index + 1}: ${sub.displayName || 'Unnamed'} (${sub.subscriptionId})`);
-                        });
-                    } catch (subscriptionError) {
-                        this.logger.error('[Init] Error retrieving subscriptions:', subscriptionError);
-                    }
-                } else {
-                    this.logger.warn('[Init] Access token could not be retrieved during initialization');
-                }
-            } else {
-                this.logger.log('[Init] No Microsoft account to restore during initialization');
-            }
         } catch (error) {
             this.logger.error('[Init] Error during Microsoft Auth Service initialization:', error);
         }
@@ -174,103 +158,111 @@ export class MicrosoftAuthService implements OnModuleInit {
     /**
      * Update account information in our storage
      * @param account The account information from MSAL
+     * @param databaseId The database ID to associate with this account
      * @private
      */
-    private async updateAccountInfo(account: AccountInfo): Promise<void> {
+    private async updateAccountInfo(account: AccountInfo, databaseId: string = SQLitePersistencePlugin.DEFAULT_ID): Promise<void> {
         try {
             let existingData: MicrosoftAuthSessionData | null = null;
             try {
-                existingData = await this.msAuthRepository.get();
+                existingData = await this.msAuthRepository.get(databaseId);
             } catch (getError) {
-                this.logger.warn(`[Account] Failed to get existing account data: ${getError.message}. Will create new entry.`);
+                this.logger.warn(`[Account] Failed to get existing account data for database ${databaseId}: ${getError.message}. Will create new entry.`);
+            }
+
+            let tokenCache = existingData?.tokenCache;
+            if (!tokenCache && databaseId !== SQLitePersistencePlugin.DEFAULT_ID) {
+                try {
+                    const defaultData = await this.msAuthRepository.get(SQLitePersistencePlugin.DEFAULT_ID);
+                    tokenCache = defaultData?.tokenCache;
+                } catch (defaultError) {
+                    this.logger.warn(`[Account] Failed to get default account data for token cache: ${defaultError.message}`);
+                }
             }
 
             // Update or create auth data
             const updatedData: Partial<MicrosoftAuthSessionData> = {
-                id: SQLitePersistencePlugin.DEFAULT_ID,
-                // TODO: update with the dbId at some point - the request is to keep details per DB.
+                id: databaseId,
                 username: account.username,
                 accountId: account.homeAccountId,
                 tenantId: account.tenantId,
                 displayName: account.name,
                 lastUpdated: Date.now(),
-                // Preserve token cache if it exists
-                tokenCache: existingData?.tokenCache || null
+                // Use the token cache we found (either from the specific database entry,
+                // the default entry, or null if neither exists)
+                tokenCache: tokenCache || null
             };
 
             try {
                 await this.msAuthRepository.save(updatedData);
-                this.logger.log(`[Account] Updated account info in database: ${account.username}`);
             } catch (saveError) {
-                this.logger.error(`[Account] Failed to save account info: ${saveError.message}`);
+                this.logger.error(`[Account] Failed to save account info for database ${databaseId}: ${saveError.message}`);
 
                 // Try once more after ensuring table exists again
                 try {
                     await this.msAuthRepository.save(updatedData);
-                    this.logger.log(`[Account] Retry successful - Updated account info in database: ${account.username}`);
+                    this.logger.log(`[Account] Retry successful - Updated account info in database for ${databaseId}: ${account.username}`);
                 } catch (retryError) {
-                    this.logger.error(`[Account] Retry failed - Could not save account info: ${retryError.message}`);
+                    this.logger.error(`[Account] Retry failed - Could not save account info for database ${databaseId}: ${retryError.message}`);
                     throw retryError;
                 }
             }
         } catch (error) {
-            this.logger.error(`[Account] Error updating account info:`, error);
+            this.logger.error(`[Account] Error updating account info for database ${databaseId}:`, error);
         }
     }
 
-    /**
-     * Restore active account and credentials provider from the database
-     * @private
-     */
-    private async restoreActiveAccount(): Promise<boolean> {
+    private async restoreActiveAccount(databaseId: string = SQLitePersistencePlugin.DEFAULT_ID): Promise<boolean> {
         try {
-            this.logger.log(`[Token Restoration] Starting account restoration`);
+            this.logger.log(`[Token Restoration] Starting account restoration for database ${databaseId}`);
 
-            // Get accounts from the token cache
-            // The token cache should already be loaded from the database by the persistence plugin
             const accounts = await this.msalClient.getTokenCache().getAllAccounts();
 
             if (accounts.length === 0) {
-                this.logger.warn('[Token Restoration] No accounts found in token cache');
+                this.logger.warn(`[Token Restoration] No accounts found in token cache for database ${databaseId}`);
                 return false;
             }
 
             this.logger.log(`[Token Restoration] Found ${accounts.length} accounts in token cache`);
 
-            // Log details of all found accounts (for debugging)
             accounts.forEach((acc, index) => {
                 this.logger.log(`[Token Restoration] Account #${index + 1}: Username: ${acc.username}, ID: ${acc.homeAccountId}, Tenant: ${acc.tenantId}`);
             });
 
-            // Use the first account for now
-            // (in future we could store a preferred account ID in the database)
-            const selectedAccount = accounts[0];
+            const savedAuthData = await this.msAuthRepository.get(databaseId);
+
+            let selectedAccount: AccountInfo | undefined;
+
+            if (savedAuthData?.accountId) {
+                selectedAccount = accounts.find(acc => acc.homeAccountId === savedAuthData.accountId);
+
+                if (!selectedAccount) {
+                    selectedAccount = accounts[0];
+                }
+            } else {
+                selectedAccount = accounts[0];
+            }
 
             if (selectedAccount) {
-                // Recreate credentials provider with the selected account
-                this.logger.log(`[Token Restoration] Recreating credentials provider with account: ${selectedAccount.username}`);
-                this.recreateCredentialsProvider(selectedAccount);
+                this.recreateCredentialsProvider(selectedAccount, databaseId);
 
-                // Test if the token is valid
                 try {
-                    this.logger.log(`[Token Restoration] Testing token acquisition`);
                     const authResult = await this.msalClient.acquireTokenSilent({
                         account: selectedAccount,
                         scopes: this.scopes,
                         forceRefresh: false
                     });
 
-                    this.logger.log(`[Token Restoration] Token acquired successfully, expires: ${new Date(authResult.expiresOn).toISOString()}`);
                     return true;
                 } catch (tokenError) {
-                    this.logger.warn(`[Token Restoration] Token acquisition test failed, but continuing with account restoration`, tokenError);
-                    return true; // Still return true as we have an account, even if token acquisition failed
+                    this.logger.warn(`[Token Restoration] Token acquisition test failed for database ${databaseId}, but continuing with account restoration`, tokenError);
+                    return true;
                 }
             }
 
             return false;
         } catch (error) {
-            this.logger.error('[Token Restoration] Error restoring active account:', error);
+            this.logger.error(`[Token Restoration] Error restoring active account for database ${databaseId}:`, error);
             return false;
         }
     }
@@ -282,7 +274,7 @@ export class MicrosoftAuthService implements OnModuleInit {
         const pkceCodes = await this.entraIdProvider.getPKCECodes();
         const authUrl = await this.entraIdProvider.getAuthCodeUrl({
             challenge: pkceCodes.challenge,
-            challengeMethod: pkceCodes.challengeMethod
+            challengeMethod: pkceCodes.challengeMethod,
         });
 
         const authRequest = {
@@ -290,7 +282,8 @@ export class MicrosoftAuthService implements OnModuleInit {
             options,
             pkceCodes,
             callback: options?.callback,
-            action: options?.action
+            action: options?.action,
+            databaseId: options?.databaseId
         };
 
         this.authRequests.clear();
@@ -301,56 +294,55 @@ export class MicrosoftAuthService implements OnModuleInit {
     async handleCallback(query: MicrosoftAuthQuery): Promise<MicrosoftCredentials> {
         let result: MicrosoftCredentials;
         let authRequest: any;
+        let databaseId: string;
+
         try {
-            if (!this.authRequests.has(query?.state)) {
+            if (!this.authRequests.has(query.state)) {
                 this.logger.log(
-                    `${query?.state ? 'Auth Request matching query state not found' : 'Query state field is empty'}`,
+                    `${query.state ? 'Auth Request matching query state not found' : 'Query state field is empty'}`,
                 );
                 throw new Error('Unknown authorization request');
             }
 
             authRequest = this.authRequests.get(query.state);
+            databaseId = authRequest.databaseId || SQLitePersistencePlugin.DEFAULT_ID;
+
             this.authRequests.delete(query.state);
             this.inProgressRequests.set(query.state, authRequest);
 
-            // Create identity provider that handles both initial acquisition and refreshes
             const idp = new MSALIdentityProvider(
                 async () => {
-                    // Try getting accounts first to see if we need to do a refresh
                     const accounts = await this.msalClient.getTokenCache().getAllAccounts();
 
                     if (accounts.length > 0) {
-                        // If we have accounts, this is likely a refresh
-                        this.logger.log('[Token] Found accounts in cache, checking for correct account to use');
+                        this.logger.log(`[Token] Found accounts in cache for database ${databaseId}, checking for correct account to use`);
 
-                        // Get saved account details
-                        const savedAuthData = await this.msAuthRepository.get();
-                        let accountToUse = accounts[0]; // Default fallback
+                        const savedAuthData = await this.msAuthRepository.get(databaseId);
+                        let accountToUse = accounts[0];
 
                         if (savedAuthData?.accountId) {
-                            // Find the specific account that matches our saved account ID
                             const foundAccount = accounts.find(acc =>
                                 acc.homeAccountId === savedAuthData.accountId);
-                            console.log('foundAccount', foundAccount);
                             if (foundAccount) {
-                                this.logger.log(`[Token] Found matching account: ${foundAccount.username}`);
                                 accountToUse = foundAccount;
                             } else {
-                                this.logger.warn(`[Token] Saved account ID ${savedAuthData.accountId} not found in cache`);
+                                this.logger.warn(`[Token] Saved account ID ${savedAuthData.accountId} for database ${databaseId} not found in cache`);
                             }
                         } else {
-                            this.logger.warn('[Token] No saved account ID found, using first account as fallback');
+                            this.logger.warn(`[Token] No saved account ID found for database ${databaseId}, using first account as fallback`);
                         }
 
-                        this.logger.log(`[Token] Using silent token acquisition for refresh with account: ${accountToUse.username}`);
-                        return this.msalClient.acquireTokenSilent({
+                        const authResult = await this.msalClient.acquireTokenSilent({
                             account: accountToUse,
                             scopes: this.scopes,
                             forceRefresh: true
                         });
+
+                        this.updateAccountInfo(authResult.account, databaseId);
+
+                        return authResult;
                     } else {
-                        // Initial token acquisition using authorization code
-                        this.logger.log('[Token] Using initial token acquisition with code');
+                        this.logger.log(`[Token] Using initial token acquisition with code for database ${databaseId}`);
                         const authResult = await this.msalClient.acquireTokenByCode({
                             code: query.code as string,
                             codeVerifier: authRequest.pkceCodes.verifier,
@@ -358,8 +350,7 @@ export class MicrosoftAuthService implements OnModuleInit {
                             redirectUri: idpConfig.redirectUri,
                         });
 
-                        // Store the account info for future refreshes
-                        this.updateAccountInfo(authResult.account);
+                        this.updateAccountInfo(authResult.account, databaseId);
 
                         return authResult;
                     }
@@ -367,14 +358,16 @@ export class MicrosoftAuthService implements OnModuleInit {
             );
 
             const tm = new TokenManager(idp, DEFAULT_TOKEN_MANAGER_CONFIG);
-            this.activeCredentialsProvider = new EntraidCredentialsProvider(tm, idp, {});
+            const credentialsProvider = new EntraidCredentialsProvider(tm, idp, {});
 
-            const [credentials] = await this.activeCredentialsProvider.subscribe({
+            this.activeCredentialsProviders.set(databaseId, credentialsProvider);
+
+            const [credentials] = await credentialsProvider.subscribe({
                 onNext: async (token) => {
-                    this.logger.log('Token acquired', token);
+                    this.logger.log(`Token acquired for database ${databaseId}`, token);
                 },
                 onError: (error) => {
-                    this.logger.error('Token acquisition failed:', error);
+                    this.logger.error(`Token acquisition failed for database ${databaseId}:`, error);
                 }
             });
 
@@ -387,13 +380,15 @@ export class MicrosoftAuthService implements OnModuleInit {
                 status: CloudAuthStatus.Succeed,
                 username: credentials.username,
                 password: credentials.password,
+                databaseId: databaseId
             };
         } catch (e) {
-            this.logger.error('Microsoft auth callback failed', e);
+            this.logger.error(`Microsoft auth callback failed for database ${databaseId}`, e);
             result = {
                 status: CloudAuthStatus.Failed,
                 username: '',
                 password: '',
+                databaseId: databaseId
             };
         }
 
@@ -420,103 +415,79 @@ export class MicrosoftAuthService implements OnModuleInit {
         this.inProgressRequests.delete(query?.state);
     }
 
-    async getSession(): Promise<AuthenticationResult | null> {
+    async getSession(databaseId: string = SQLitePersistencePlugin.DEFAULT_ID): Promise<AuthenticationResult | null> {
         try {
-            this.logger.log(`[Session] Attempting to get session`);
 
-            // If no active provider, try to restore it
-            if (!this.activeCredentialsProvider) {
-                this.logger.log(`[Session] No active credentials provider, attempting to restore account`);
-                const restored = await this.restoreActiveAccount();
+            if (!this.activeCredentialsProviders.has(databaseId)) {
+                const restored = await this.restoreActiveAccount(databaseId);
                 if (!restored) {
-                    this.logger.warn(`[Session] Could not restore active account`);
+                    this.logger.warn(`[Session] Could not restore active account for database ${databaseId}`);
                     return null;
                 }
-                this.logger.log(`[Session] Successfully restored active account`);
-            } else {
-                this.logger.log(`[Session] Using existing credentials provider`);
             }
 
-            // Get the latest credentials from the provider
-            this.logger.log(`[Session] Requesting current token from credentials provider`);
-            const credentials: Token<AuthenticationResult> | null = await this.activeCredentialsProvider.tokenManager.getCurrentToken();
+            const credentialsProvider = this.activeCredentialsProviders.get(databaseId);
+            const credentials: Token<AuthenticationResult> | null = await credentialsProvider.tokenManager.getCurrentToken();
 
             if (credentials) {
-                this.logger.log(`[Session] Credentials successfully obtained from token manager, expires: ${new Date(credentials.value.expiresOn).toISOString()}`);
                 return credentials.value;
             }
 
-            // If token manager returned null, try direct MSAL client approach as fallback
-            this.logger.log(`[Session] No credentials from token manager, falling back to direct MSAL client approach`);
 
-            // Get accounts from MSAL
             const accounts = await this.msalClient.getTokenCache().getAllAccounts();
             if (accounts.length === 0) {
-                this.logger.warn(`[Session] No accounts found in token cache during fallback`);
+                this.logger.warn(`[Session] No accounts found in token cache during fallback for database ${databaseId}`);
                 return null;
             }
 
-            // TODO: update to use the correct account. This is for POC level testing only
-            const selectedAccount = accounts[0];
-            this.logger.log(`[Session] Using account for fallback token acquisition: ${selectedAccount.username}`);
+            const savedAuthData = await this.msAuthRepository.get(databaseId);
+            const foundAccount = accounts.find(acc => acc.homeAccountId === savedAuthData.accountId);
 
             try {
                 const authResult = await this.msalClient.acquireTokenSilent({
-                    account: selectedAccount,
+                    account: foundAccount,
                     scopes: this.scopes,
                     forceRefresh: false
                 });
 
                 if (authResult) {
-                    this.logger.log(`[Session] Fallback token acquisition successful, expires: ${new Date(authResult.expiresOn).toISOString()}`);
 
-                    // Update our credentials provider with the fresh account
-                    this.recreateCredentialsProvider(selectedAccount);
+                    this.recreateCredentialsProvider(foundAccount, databaseId);
 
                     return authResult;
                 }
             } catch (tokenError) {
-                this.logger.error(`[Session] Fallback token acquisition failed:`, tokenError);
+                this.logger.error(`[Session] Fallback token acquisition failed for database ${databaseId}:`, tokenError);
             }
 
-            this.logger.warn(`[Session] No credentials available after fallback attempts`);
+            this.logger.warn(`[Session] No credentials available after fallback attempts for database ${databaseId}`);
             return null;
         } catch (e) {
-            this.logger.error(`[Session] Failed to get Microsoft session`, e);
+            this.logger.error(`[Session] Failed to get Microsoft session for database ${databaseId}`, e);
             return null;
         }
     }
 
-    async getAccessToken(): Promise<string | null> {
+    async getAccessToken(databaseId: string = SQLitePersistencePlugin.DEFAULT_ID): Promise<string | null> {
         try {
-            this.logger.log(`[Token] Attempting to get access token`);
-            const session = await this.getSession();
+            const session = await this.getSession(databaseId);
 
             if (session?.accessToken) {
-                // Log token details (not the actual token for security)
                 const tokenLength = session.accessToken.length;
                 const tokenPrefix = session.accessToken.substring(0, 5);
                 const tokenSuffix = session.accessToken.substring(tokenLength - 5);
-                this.logger.log(`[Token] Access token retrieved, length: ${tokenLength}, prefix: ${tokenPrefix}..., suffix: ...${tokenSuffix}`);
-                this.logger.log(`[Token] Token expires on: ${new Date(session.expiresOn).toISOString()}`);
                 return session.accessToken;
             } else {
-                this.logger.warn(`[Token] No access token available in session`);
+                this.logger.warn(`[Token] No access token available in session for database ${databaseId}`);
                 return null;
             }
         } catch (e) {
-            this.logger.error(`[Token] Failed to get access token`, e);
+            this.logger.error(`[Token] Failed to get access token for database ${databaseId}`, e);
             return null;
         }
     }
 
-    /**
-     * Recreate the credentials provider for the given account
-     * @param account MSAL account
-     * @private
-     */
-    private recreateCredentialsProvider(account: AccountInfo): void {
-        // Create a new credentials provider using the saved account
+    private recreateCredentialsProvider(account: AccountInfo, databaseId: string = SQLitePersistencePlugin.DEFAULT_ID): void {
         const idp = new MSALIdentityProvider(
             async () => {
                 return this.msalClient.acquireTokenSilent({
@@ -528,26 +499,19 @@ export class MicrosoftAuthService implements OnModuleInit {
         );
 
         const tm = new TokenManager(idp, DEFAULT_TOKEN_MANAGER_CONFIG);
-        this.activeCredentialsProvider = new EntraidCredentialsProvider(tm, idp, {});
+        const credentialsProvider = new EntraidCredentialsProvider(tm, idp, {});
+
+        this.activeCredentialsProviders.set(databaseId, credentialsProvider);
     }
 
-
-    /**
-     * Tests the access token by attempting to retrieve Azure subscriptions
-     * @returns An array of subscription objects or null if unsuccessful
-     */
-    async getSubscriptions(): Promise<any[] | null> {
+    async getSubscriptions(databaseId: string = SQLitePersistencePlugin.DEFAULT_ID): Promise<any[] | null> {
         try {
-            this.logger.log('[Subscriptions] Attempting to retrieve Azure subscriptions');
-
-            // Get the access token
-            const token = await this.getAccessToken();
+            const token = await this.getAccessToken(databaseId);
             if (!token) {
-                this.logger.warn('[Subscriptions] No access token available to retrieve subscriptions');
+                this.logger.warn(`[Subscriptions] No access token available to retrieve subscriptions for database ${databaseId}`);
                 return null;
             }
 
-            // Make a request to the Azure Management API
             const response = await fetch('https://management.azure.com/subscriptions?api-version=2020-01-01', {
                 method: 'GET',
                 headers: {
@@ -558,24 +522,73 @@ export class MicrosoftAuthService implements OnModuleInit {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                this.logger.error(`[Subscriptions] Failed to retrieve subscriptions: ${response.status} ${response.statusText}`);
-                this.logger.error(`[Subscriptions] Error details: ${errorText}`);
+                this.logger.error(`[Subscriptions] Failed to retrieve subscriptions for database ${databaseId}: ${response.status} ${response.statusText}`);
                 return null;
             }
 
             const data = await response.json();
             if (data && Array.isArray(data.value)) {
-                this.logger.log(`[Subscriptions] Successfully retrieved ${data.value.length} subscriptions`);
-                console.log(data.value);
                 return data.value;
             } else {
-                this.logger.warn('[Subscriptions] Received unexpected response format from Azure API');
-                this.logger.log(`[Subscriptions] Response: ${JSON.stringify(data)}`);
+                this.logger.warn(`[Subscriptions] Received unexpected response format from Azure API for database ${databaseId}`);
                 return null;
             }
         } catch (error) {
-            this.logger.error('[Subscriptions] Error retrieving subscriptions:', error);
+            this.logger.error(`[Subscriptions] Error retrieving subscriptions for database ${databaseId}:`, error);
             return null;
+        }
+    }
+
+    async associateAccountWithDatabase(databaseId: string): Promise<boolean> {
+        try {
+            if (this.currentActiveAccount) {
+                await this.updateAccountInfo(this.currentActiveAccount, databaseId);
+                return true;
+            }
+
+            const accounts = await this.msalClient.getTokenCache().getAllAccounts();
+            if (accounts.length === 0) {
+                this.logger.warn(`[Database Association] No accounts found in token cache for database ${databaseId}`);
+                return false;
+            }
+
+            let existingData: MicrosoftAuthSessionData | null = null;
+            try {
+                existingData = await this.msAuthRepository.get(databaseId);
+            } catch (getError) {
+                this.logger.warn(`[Database Association] No existing account data for database ${databaseId}`);
+            }
+
+            let selectedAccount: AccountInfo | null = null;
+            if (existingData?.accountId) {
+                selectedAccount = accounts.find(acc => acc.homeAccountId === existingData.accountId) || null;
+            }
+
+            if (!selectedAccount && accounts.length > 0) {
+                selectedAccount = accounts[0];
+            }
+
+            if (selectedAccount) {
+                await this.updateAccountInfo(selectedAccount, databaseId);
+                this.recreateCredentialsProvider(selectedAccount, databaseId);
+                this.currentActiveAccount = selectedAccount;
+                return true;
+            }
+
+            this.logger.warn(`[Database Association] No suitable account found to associate with database ${databaseId}`);
+            return false;
+        } catch (error) {
+            this.logger.error(`[Database Association] Error associating account with database ${databaseId}:`, error);
+            return false;
+        }
+    }
+
+    async deleteSession(databaseId: string): Promise<void> {
+        try {
+            await this.msAuthRepository.delete(databaseId);
+        } catch (error) {
+            this.logger.error(`Failed to delete Microsoft auth session for database ${databaseId}:`, error);
+            throw error;
         }
     }
 }

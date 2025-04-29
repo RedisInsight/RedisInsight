@@ -16,6 +16,7 @@ import { migrateHomeFolder, removeOldFolders } from 'src/init-helper';
 import { LogFileProvider } from 'src/modules/profiler/providers/log-file.provider';
 import { WindowsAuthAdapter } from 'src/modules/auth/window-auth/adapters/window-auth.adapter';
 import { AppLogger } from 'src/common/logger/app-logger';
+import { BuildType } from './modules/server/models/server';
 import { CloudAuthModule } from 'src/modules/cloud/auth/cloud-auth.module';
 import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
 import { AppModule } from './app.module';
@@ -63,7 +64,7 @@ export default async function bootstrap(apiPort?: number): Promise<IApp> {
   app.enableCors();
 
   if (
-    (process.env.RI_BUILD_TYPE || '').toLowerCase() !== 'electron' ||
+    process.env.RI_BUILD_TYPE !== BuildType.Electron ||
     process.env.NODE_ENV === 'development'
   ) {
     let prefix = serverConfig.globalPrefix;

@@ -8,6 +8,7 @@ import {
 } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import {
   Maybe,
   truncateNumberToDuration,
@@ -28,7 +29,7 @@ const KeyRowTTL = (props: Props) => {
 
   if (isUndefined(ttl)) {
     return (
-      <EuiLoadingContent
+      <LoadingContent
         lines={1}
         className={cx(styles.keyInfoLoading, styles.keyTTL)}
         data-testid={`ttl-loading_${nameString}`}

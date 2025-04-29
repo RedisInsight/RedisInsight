@@ -2,7 +2,6 @@ import {
   EuiBasicTableColumn,
   EuiIcon,
   EuiInMemoryTable,
-  EuiLoadingContent,
   EuiToolTip,
   PropertySort,
 } from '@elastic/eui'
@@ -10,6 +9,8 @@ import { IconType } from '@elastic/eui/src/components/icon/icon'
 import cx from 'classnames'
 import { map } from 'lodash'
 import React, { useState } from 'react'
+
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import {
   InputIconSvg,
   KeyIconSvg,
@@ -217,7 +218,7 @@ const ClusterNodesTable = ({
           className={styles.loading}
           data-testid="primary-nodes-table-loading"
         >
-          <EuiLoadingContent lines={4} />
+          <LoadingContent lines={4} />
         </div>
       )}
       {nodes && (

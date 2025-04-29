@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
   EuiLink,
-  EuiLoadingContent,
   EuiText,
   EuiIcon,
   EuiToolTip,
@@ -38,7 +37,7 @@ import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import GithubSVG from 'uiSrc/assets/img/github.svg?react'
-import { FeatureFlagComponent } from 'uiSrc/components'
+import { FeatureFlagComponent, LoadingContent } from 'uiSrc/components'
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import PopoverRunAnalyze from './components/popover-run-analyze'
@@ -209,7 +208,7 @@ const LiveTimeRecommendations = () => {
       </div>
       <div className={styles.body}>
         {loading ? (
-          <EuiLoadingContent className={styles.loading} lines={4} />
+          <LoadingContent className={styles.loading} lines={4} />
         ) : (
           renderBody()
         )}

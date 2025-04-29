@@ -90,3 +90,4 @@ jobs:
       RI_UPGRADES_LINK: ${{ secrets.RI_UPGRADES_LINK }}
       RI_FEATURES_CLOUD_ADS_DEFAULT_FLAG: ${{ inputs.enterprise == false }}
       RI_DISABLE_AUTO_UPGRADE: ${{ inputs.enterprise }}
+      RI_APP_TYPE: ${{ inputs.enterprise && 'ELECTRON_ENTERPRISE' || 'ELECTRON' }}

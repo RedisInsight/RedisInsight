@@ -46,37 +46,28 @@ describe('DatabaseOverview', () => {
   })
 
   it('should render with metrics', () => {
-    const { container, queryByRole } = render(<DatabaseOverview />, {
+    const { queryByRole, queryByTestId } = render(<DatabaseOverview />, {
       store: mockedStore,
     })
 
-    expect(
-      container.querySelector('[data-test-subj="overview-cpu"]'),
-    ).toBeInTheDocument()
-    expect(
-      container.querySelector('[data-test-subj="overview-commands-sec"]'),
-    ).toBeInTheDocument()
-    expect(
-      container.querySelector('[data-test-subj="overview-total-memory"]'),
-    ).toHaveTextContent('45 MB')
-    expect(
-      container.querySelector('[data-test-subj="overview-total-keys"]'),
-    ).toBeInTheDocument()
-    expect(
-      container.querySelector('[data-test-subj="overview-connected-clients"]'),
-    ).toBeInTheDocument()
+    expect(queryByTestId('overview-cpu')).toBeInTheDocument()
+    expect(queryByTestId('overview-commands-sec')).toBeInTheDocument()
+    expect(queryByTestId('overview-total-memory')).toHaveTextContent('45 MB')
+    expect(queryByTestId('overview-total-keys')).toBeInTheDocument()
+    expect(queryByTestId('overview-connected-clients')).toBeInTheDocument()
+    expect(queryByTestId('upgrade-ri-db-button')).not.toBeInTheDocument()
     expect(
       queryByRole('button', { name: 'Upgrade plan' }),
     ).not.toBeInTheDocument()
   })
 
   it('should render auto-refresh component', () => {
-    const { container } = render(<DatabaseOverview />, { store: mockedStore })
+    const { queryByTestId } = render(<DatabaseOverview />, {
+      store: mockedStore,
+    })
 
     expect(
-      container.querySelector(
-        '[data-testid="auto-refresh-overview-auto-refresh-container"]',
-      ),
+      queryByTestId('auto-refresh-overview-auto-refresh-container'),
     ).toBeInTheDocument()
   })
 
@@ -97,13 +88,11 @@ describe('DatabaseOverview', () => {
     )
     mockedStore = mockStore(state)
 
-    const { container, queryByRole } = render(<DatabaseOverview />, {
+    const { queryByTestId, queryByRole } = render(<DatabaseOverview />, {
       store: mockedStore,
     })
 
-    expect(
-      container.querySelector('[data-test-subj="overview-total-memory"]'),
-    ).toHaveTextContent('45 MB / 75 MB (60.3%)')
+    expect(queryByTestId('overview-total-memory')).toHaveTextContent('45 MB / 75 MB (60.3%)')
     expect(queryByRole('button', { name: 'Upgrade plan' })).toBeInTheDocument()
   })
 
@@ -124,13 +113,11 @@ describe('DatabaseOverview', () => {
     )
     mockedStore = mockStore(state)
 
-    const { container, queryByRole } = render(<DatabaseOverview />, {
+    const { queryByTestId, queryByRole } = render(<DatabaseOverview />, {
       store: mockedStore,
     })
 
-    expect(
-      container.querySelector('[data-test-subj="overview-total-memory"]'),
-    ).toHaveTextContent('45 MB / 75 MB (60.3%)')
+    expect(queryByTestId('overview-total-memory')).toHaveTextContent('45 MB / 75 MB (60.3%)')
     expect(
       queryByRole('button', { name: 'Upgrade plan' }),
     ).not.toBeInTheDocument()
@@ -159,13 +146,11 @@ describe('DatabaseOverview', () => {
     )
     mockedStore = mockStore(state)
 
-    const { container, queryByRole } = render(<DatabaseOverview />, {
+    const { queryByTestId, queryByRole } = render(<DatabaseOverview />, {
       store: mockedStore,
     })
 
-    expect(
-      container.querySelector('[data-test-subj="overview-total-memory"]'),
-    ).toHaveTextContent('45 MB / 75 MB (60.3%)')
+    expect(queryByTestId('overview-total-memory')).toHaveTextContent('45 MB / 75 MB (60.3%)')
     const upgradeBtn = queryByRole('button', { name: 'Upgrade plan' })
     expect(upgradeBtn).toBeInTheDocument()
 

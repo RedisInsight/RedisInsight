@@ -117,6 +117,7 @@ const DatabaseOverview = () => {
               )}
               {metrics?.map((overviewItem) => (
                 <MetricItem
+                  key={overviewItem.id}
                   {...overviewItem}
                   tooltipContent={getTooltipContent(overviewItem)}
                 />

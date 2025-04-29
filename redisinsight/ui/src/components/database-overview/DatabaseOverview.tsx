@@ -1,39 +1,23 @@
-import React, { useContext, useState, useMemo, useEffect } from 'react'
+import React from 'react'
 import cx from 'classnames'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon } from '@elastic/eui'
 import { getConfig } from 'uiSrc/config'
 
 import {
-  DATABASE_OVERVIEW_REFRESH_INTERVAL,
   DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL,
+  DATABASE_OVERVIEW_REFRESH_INTERVAL,
 } from 'uiSrc/constants/browser'
-import {
-  connectedInstanceOverviewSelector,
-  connectedInstanceSelector,
-  getDatabaseConfigInfoAction,
-} from 'uiSrc/slices/instances/instances'
-import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { toBytes, truncatePercentage } from 'uiSrc/utils'
-import {
-  appConnectivityError,
-  setConnectivityError,
-} from 'uiSrc/slices/app/connectivity'
 import WarningIcon from 'uiSrc/assets/img/warning.svg?react'
-import { getOverviewMetrics, IMetric } from './components/OverviewMetrics'
+import MetricItem, {
+  OverviewItem,
+} from 'uiSrc/components/database-overview/components/OverviewMetrics/MetricItem'
+import { useDatabaseOverview } from 'uiSrc/components/database-overview/hooks/useDatabaseOverview'
 
+import { IMetric } from 'uiSrc/components/database-overview/components/OverviewMetrics'
 import AutoRefresh from '../auto-refresh'
 import styles from './styles.module.scss'
 
 const riConfig = getConfig()
-
 const getTooltipContent = (metric: IMetric) => {
   if (!metric.children?.length) {
     return (
@@ -74,66 +58,18 @@ const getTooltipContent = (metric: IMetric) => {
 }
 
 const DatabaseOverview = () => {
-  const { theme } = useContext(ThemeContext)
-  const dispatch = useDispatch()
-  const [lastRefreshTime, setLastRefreshTime] = useState<number | null>(null)
-  const { id: connectedInstanceId = '', db } = useSelector(
-    connectedInstanceSelector,
-  )
-  const connectivityError = useSelector(appConnectivityError)
-
-  const overview = useSelector(connectedInstanceOverviewSelector)
   const {
-    usedMemory,
-    cloudDetails: {
-      subscriptionType,
-      subscriptionId,
-      planMemoryLimit,
-      memoryLimitMeasurementUnit,
-      isBdbPackages,
-    } = {},
-  } = overview
-  const loadData = () => {
-    if (connectedInstanceId && !connectivityError) {
-      dispatch(getDatabaseConfigInfoAction(connectedInstanceId))
-      setLastRefreshTime(Date.now())
-    }
-  }
-  useEffect(() => {
-    if (!connectivityError) {
-      loadData()
-    }
-  }, [connectivityError])
-
-  const handleEnableAutoRefresh = (
-    enableAutoRefresh: boolean,
-    refreshRate: string,
-  ) => {
-    sendEventTelemetry({
-      event: enableAutoRefresh
-        ? TelemetryEvent.OVERVIEW_AUTO_REFRESH_ENABLED
-        : TelemetryEvent.OVERVIEW_AUTO_REFRESH_DISABLED,
-      eventData: {
-        databaseId: connectedInstanceId,
-        refreshRate: +refreshRate,
-      },
-    })
-  }
-
-  const usedMemoryPercent = planMemoryLimit
-    ? parseFloat(
-        `${truncatePercentage(((usedMemory || 0) / toBytes(planMemoryLimit, memoryLimitMeasurementUnit || 'MB')) * 100, 1)}`,
-      )
-    : undefined
-
-  const metrics = useMemo(() => {
-    const overviewItems = {
-      ...overview,
-      usedMemoryPercent,
-    }
-    return getOverviewMetrics({ theme, items: overviewItems, db })
-  }, [theme, overview, db, usedMemoryPercent])
-
+    connectivityError,
+    metrics,
+    subscriptionId,
+    subscriptionType,
+    usedMemoryPercent,
+    isBdbPackages,
+    lastRefreshTime,
+    handleEnableAutoRefresh,
+    handleRefreshClick,
+    handleRefresh,
+  } = useDatabaseOverview()
   return (
     <EuiFlexGroup
       className={styles.container}
@@ -148,36 +84,18 @@ const DatabaseOverview = () => {
           alignItems="center"
         >
           {connectivityError && (
-            <EuiFlexItem
-              key="connectivityError"
-              className={styles.overviewItem}
-              data-test-subj="connectivityError"
-              grow={false}
-            >
-              <EuiToolTip
-                position="bottom"
-                className={styles.tooltip}
-                content={connectivityError}
-              >
-                <EuiFlexGroup
-                  gutterSize="none"
-                  responsive={false}
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  <EuiFlexItem grow={false}>
-                    <EuiIcon size="m" type={WarningIcon} />
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-              </EuiToolTip>
-            </EuiFlexItem>
+            <MetricItem
+              id="connectivityError"
+              tooltipContent={connectivityError}
+              content={<EuiIcon size="m" type={WarningIcon} />}
+            />
           )}
           {metrics?.length! > 0 && (
             <>
               {subscriptionId && subscriptionType === 'fixed' && (
-                <EuiFlexItem
-                  className={cx(styles.overviewItem, styles.upgradeBtnItem)}
-                  grow={false}
+                <OverviewItem
+                  id="upgrade-ri-db-button"
+                  className={styles.upgradeBtnItem}
                   style={{ borderRight: 'none' }}
                 >
                   <EuiButton
@@ -195,52 +113,18 @@ const DatabaseOverview = () => {
                   >
                     Upgrade plan
                   </EuiButton>
-                </EuiFlexItem>
+                </OverviewItem>
               )}
               {metrics?.map((overviewItem) => (
-                <EuiFlexItem
-                  className={cx(
-                    styles.overviewItem,
-                    overviewItem.className ?? '',
-                  )}
-                  key={overviewItem.id}
-                  data-test-subj={overviewItem.id}
-                  grow={false}
-                >
-                  <EuiToolTip
-                    position="bottom"
-                    className={styles.tooltip}
-                    content={getTooltipContent(overviewItem)}
-                  >
-                    <EuiFlexGroup
-                      gutterSize="none"
-                      responsive={false}
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      {overviewItem.icon && (
-                        <EuiFlexItem grow={false} className={styles.icon}>
-                          <EuiIcon
-                            size="m"
-                            type={overviewItem.icon}
-                            className={styles.icon}
-                          />
-                        </EuiFlexItem>
-                      )}
-                      <EuiFlexItem
-                        grow={false}
-                        className={styles.overviewItemContent}
-                      >
-                        {overviewItem.content}
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  </EuiToolTip>
-                </EuiFlexItem>
+                <MetricItem
+                  {...overviewItem}
+                  tooltipContent={getTooltipContent(overviewItem)}
+                />
               ))}
-              <EuiFlexItem
-                className={cx(styles.overviewItem, styles.autoRefresh)}
-                grow={false}
+              <OverviewItem
+                className={styles.autoRefresh}
                 data-testid="overview-auto-refresh"
+                id="overview-auto-refresh"
               >
                 <EuiFlexItem
                   grow={false}
@@ -260,14 +144,12 @@ const DatabaseOverview = () => {
                     minimumRefreshRate={parseInt(
                       DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL,
                     )}
-                    onRefresh={loadData}
-                    onRefreshClicked={() =>
-                      dispatch(setConnectivityError(null))
-                    }
+                    onRefresh={handleRefresh}
+                    onRefreshClicked={handleRefreshClick}
                     onEnableAutoRefresh={handleEnableAutoRefresh}
                   />
                 </EuiFlexItem>
-              </EuiFlexItem>
+              </OverviewItem>
             </>
           )}
         </EuiFlexGroup>

@@ -1,10 +1,5 @@
 import React, { FunctionComponent, ReactNode } from 'react'
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
-  EuiLoadingSpinner,
-} from '@elastic/eui'
+import { EuiLoadingSpinner } from '@elastic/eui'
 import { isArray, isUndefined, toNumber } from 'lodash'
 
 import {
@@ -419,43 +414,4 @@ export const getOverviewMetrics = ({
   }
 
   return availableItems
-}
-
-export const getTooltipContent = (metric: IMetric) => {
-  if (!metric.children?.length) {
-    return (
-      <>
-        <span>{metric.tooltip.content}</span>
-        &nbsp;
-        <span>{metric.tooltip.title}</span>
-      </>
-    )
-  }
-  return metric.children
-    .filter((item) => item.value !== undefined)
-    .map((tooltipItem) => (
-      <EuiFlexGroup
-        className={styles.commandsPerSecTip}
-        key={tooltipItem.id}
-        gutterSize="none"
-        responsive={false}
-        alignItems="center"
-      >
-        {tooltipItem.icon && (
-          <EuiFlexItem grow={false}>
-            <EuiIcon
-              className={styles.moreInfoOverviewIcon}
-              size="m"
-              type={tooltipItem.icon}
-            />
-          </EuiFlexItem>
-        )}
-        <EuiFlexItem className={styles.moreInfoOverviewContent} grow={false}>
-          {tooltipItem.content}
-        </EuiFlexItem>
-        <EuiFlexItem className={styles.moreInfoOverviewTitle} grow={false}>
-          {tooltipItem.title}
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    ))
 }

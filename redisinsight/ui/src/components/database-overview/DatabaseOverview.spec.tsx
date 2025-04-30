@@ -1,6 +1,4 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import {
   KeyLightIcon,
   MeasureLightIcon,
@@ -9,6 +7,7 @@ import {
   UserLightIcon,
 } from 'uiSrc/components/database-overview/components/icons'
 import { truncateNumberToRange } from 'uiSrc/utils'
+import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import DatabaseOverview from './DatabaseOverview'
 import { useDatabaseOverview } from './hooks/useDatabaseOverview'
 import { IMetric } from './components/OverviewMetrics'
@@ -31,6 +30,185 @@ jest.mock('uiSrc/config', () => ({
     }
   }),
 }))
+
+// Create a default mock implementation for the hook
+const defaultMockHook = () => ({
+  metrics: mockMetrics,
+  connectivityError: null,
+  lastRefreshTime: Date.now(),
+  subscriptionType: undefined,
+  subscriptionId: undefined,
+  isBdbPackages: undefined,
+  usedMemoryPercent: undefined,
+  handleEnableAutoRefresh: jest.fn(),
+  handleRefresh: jest.fn(),
+  handleRefreshClick: jest.fn(),
+})
+
+describe('DatabaseOverview', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+    // Set the default mock implementation
+    ;(useDatabaseOverview as jest.Mock).mockReturnValue(defaultMockHook())
+  })
+
+  it('should render with metrics', () => {
+    const { getByTestId, queryByRole } = render(<DatabaseOverview />)
+
+    expect(getByTestId('overview-cpu')).toBeInTheDocument()
+    expect(getByTestId('overview-commands-sec')).toBeInTheDocument()
+    expect(getByTestId('overview-total-memory')).toHaveTextContent(
+      '13 / 30 (43%)',
+    )
+    expect(getByTestId('overview-total-keys')).toBeInTheDocument()
+    expect(getByTestId('overview-connected-clients')).toBeInTheDocument()
+    expect(screen.queryByTestId('upgrade-ri-db-button')).not.toBeInTheDocument()
+    expect(
+      queryByRole('button', { name: 'Upgrade plan' }),
+    ).not.toBeInTheDocument()
+    expect(
+      getByTestId('auto-refresh-overview-auto-refresh-container'),
+    ).toBeInTheDocument()
+  })
+
+  it('should show upgrade button and memory usage percentage if cloud plan limit is present', () => {
+    // Mock the hook with subscription data
+    const mockWithSubscription = {
+      ...defaultMockHook(),
+      metrics: mockMetrics.map((m) => {
+        if (m.id === 'overview-total-memory') {
+          return {
+            ...m,
+            content: (
+              <span>
+                45 MB / <strong>75 MB</strong> (60.3%)
+              </span>
+            ),
+          }
+        }
+        return m
+      }),
+      subscriptionType: 'fixed',
+      subscriptionId: 123,
+      usedMemoryPercent: 60.3,
+    }
+    ;(useDatabaseOverview as jest.Mock).mockReturnValue(mockWithSubscription)
+
+    const { getByTestId, getByRole } = render(<DatabaseOverview />)
+
+    expect(getByTestId('overview-total-memory')).toHaveTextContent(
+      '45 MB / 75 MB (60.3%)',
+    )
+    expect(getByRole('button', { name: 'Upgrade plan' })).toBeInTheDocument()
+  })
+
+  it('should not show upgrade button for flexible subscriptions', () => {
+    // Mock the hook with flexible subscription data
+    const mockWithFlexibleSubscription = {
+      ...defaultMockHook(),
+      metrics: mockMetrics.map((m) => {
+        if (m.id === 'overview-total-memory') {
+          return {
+            ...m,
+            content: (
+              <span>
+                45 MB / <strong>75 MB</strong> (60.3%)
+              </span>
+            ),
+          }
+        }
+        return m
+      }),
+      subscriptionType: 'flexible',
+      subscriptionId: 123,
+      usedMemoryPercent: 60.3,
+    }
+    ;(useDatabaseOverview as jest.Mock).mockReturnValue(
+      mockWithFlexibleSubscription,
+    )
+
+    const { getByTestId, queryByRole } = render(<DatabaseOverview />)
+
+    expect(getByTestId('overview-total-memory')).toHaveTextContent(
+      '45 MB / 75 MB (60.3%)',
+    )
+    expect(
+      queryByRole('button', { name: 'Upgrade plan' }),
+    ).not.toBeInTheDocument()
+  })
+
+  test.each([
+    ['https://redis.cloud.io/#/subscription/123/change-plan', false],
+    ['https://redis.cloud.io/#/databases/upgrade/123', true],
+  ])('should redirect to %s when isBdbPackages = %s', (url, isBdbPackages) => {
+    const openSpy = jest.spyOn(window, 'open').mockImplementation(() => null)
+
+    // Mock the hook with subscription data and isBdbPackages flag
+    const mockWithBdbPackages = {
+      ...defaultMockHook(),
+      metrics: mockMetrics.map((m) => {
+        if (m.id === 'overview-total-memory') {
+          return {
+            ...m,
+            content: (
+              <span>
+                45 MB / <strong>75 MB</strong> (60.3%)
+              </span>
+            ),
+          }
+        }
+        return m
+      }),
+      subscriptionType: 'fixed',
+      subscriptionId: 123,
+      isBdbPackages,
+      usedMemoryPercent: 60.3,
+    }
+    ;(useDatabaseOverview as jest.Mock).mockReturnValue(mockWithBdbPackages)
+
+    const { getByTestId, getByRole } = render(<DatabaseOverview />)
+
+    expect(getByTestId('overview-total-memory')).toHaveTextContent(
+      '45 MB / 75 MB (60.3%)',
+    )
+    const upgradeBtn = getByRole('button', { name: 'Upgrade plan' })
+    expect(upgradeBtn).toBeInTheDocument()
+
+    fireEvent.click(upgradeBtn)
+    expect(openSpy).toHaveBeenCalledTimes(1)
+    expect(openSpy).toHaveBeenCalledWith(url, '_blank')
+  })
+
+  it('should show connectivity error when present', () => {
+    // Mock the hook with connectivity error
+    const mockWithError = {
+      ...defaultMockHook(),
+      connectivityError: 'Connection error',
+    }
+    ;(useDatabaseOverview as jest.Mock).mockReturnValue(mockWithError)
+
+    const { getByTestId } = render(<DatabaseOverview />)
+
+    // Check that the warning icon is displayed
+    expect(getByTestId('connectivityError')).toBeInTheDocument()
+  })
+
+  it('should call handleRefresh when auto-refresh is triggered', () => {
+    const mockHandleRefresh = jest.fn()
+    ;(useDatabaseOverview as jest.Mock).mockReturnValue({
+      ...defaultMockHook(),
+      handleRefresh: mockHandleRefresh,
+    })
+
+    const { getByTestId } = render(<DatabaseOverview />)
+
+    // Find and click the refresh button
+    const refreshButton = getByTestId('auto-refresh-overview-refresh-btn')
+    fireEvent.click(refreshButton)
+
+    expect(mockHandleRefresh).toHaveBeenCalled()
+  })
+})
 
 // Create mock metrics for testing
 const mockMetrics: IMetric[] = [
@@ -152,183 +330,3 @@ const mockMetrics: IMetric[] = [
     ],
   },
 ]
-
-// Create a default mock implementation for the hook
-const defaultMockHook = {
-  metrics: mockMetrics,
-  connectivityError: null,
-  lastRefreshTime: Date.now(),
-  subscriptionType: undefined,
-  subscriptionId: undefined,
-  isBdbPackages: undefined,
-  usedMemoryPercent: undefined,
-  handleEnableAutoRefresh: jest.fn(),
-  handleRefresh: jest.fn(),
-  handleRefreshClick: jest.fn(),
-}
-
-describe('DatabaseOverview', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-    // Set the default mock implementation
-    ;(useDatabaseOverview as jest.Mock).mockReturnValue(defaultMockHook)
-  })
-
-  it('should render with metrics', () => {
-    render(<DatabaseOverview />)
-
-    expect(screen.getByTestId('overview-cpu')).toBeInTheDocument()
-    expect(screen.getByTestId('overview-commands-sec')).toBeInTheDocument()
-    expect(screen.getByTestId('overview-total-memory')).toHaveTextContent(
-      '45 MB',
-    )
-    expect(screen.getByTestId('overview-total-keys')).toBeInTheDocument()
-    expect(screen.getByTestId('overview-connected-clients')).toBeInTheDocument()
-    expect(screen.queryByTestId('upgrade-ri-db-button')).not.toBeInTheDocument()
-    expect(
-      screen.queryByRole('button', { name: 'Upgrade plan' }),
-    ).not.toBeInTheDocument()
-  })
-
-  it('should render auto-refresh component', () => {
-    render(<DatabaseOverview />)
-
-    expect(
-      screen.getByTestId('auto-refresh-overview-auto-refresh-container'),
-    ).toBeInTheDocument()
-  })
-
-  it('should show upgrade button and memory usage percentage if cloud plan limit is present', () => {
-    // Mock the hook with subscription data
-    const mockWithSubscription = {
-      ...defaultMockHook,
-      metrics: mockMetrics.map((m) => {
-        if (m.id === 'overview-total-memory') {
-          return {
-            ...m,
-            value: '45 MB / 75 MB (60.3%)',
-            tooltip: {
-              ...m.tooltip,
-              content: '45 MB / 75 MB (60.3%)',
-            },
-          }
-        }
-        return m
-      }),
-      subscriptionType: 'fixed',
-      subscriptionId: 123,
-      usedMemoryPercent: 60.3,
-    }
-    ;(useDatabaseOverview as jest.Mock).mockReturnValue(mockWithSubscription)
-
-    const { getByTestId, getByRole } = render(<DatabaseOverview />)
-
-    expect(getByTestId('overview-total-memory')).toHaveTextContent(
-      '45 MB / 75 MB (60.3%)',
-    )
-    expect(getByRole('button', { name: 'Upgrade plan' })).toBeInTheDocument()
-  })
-
-  it('should not show upgrade button for flexible subscriptions', () => {
-    // Mock the hook with flexible subscription data
-    const mockWithFlexibleSubscription = {
-      ...defaultMockHook,
-      metrics: [
-        ...mockMetrics.slice(0, 1),
-        {
-          id: 'memory',
-          title: 'Memory',
-          value: '45 MB / 75 MB (60.3%)',
-          tooltip: { content: '45 MB / 75 MB (60.3%)', title: 'Used Memory' },
-        },
-        ...mockMetrics.slice(2),
-      ],
-      subscriptionType: 'flexible',
-      subscriptionId: 123,
-      usedMemoryPercent: 60.3,
-    }
-    ;(useDatabaseOverview as jest.Mock).mockReturnValue(
-      mockWithFlexibleSubscription,
-    )
-
-    render(<DatabaseOverview />)
-
-    expect(screen.getByTestId('overview-total-memory')).toHaveTextContent(
-      '45 MB / 75 MB (60.3%)',
-    )
-    expect(
-      screen.queryByRole('button', { name: 'Upgrade plan' }),
-    ).not.toBeInTheDocument()
-  })
-
-  test.each([
-    ['https://redis.cloud.io/#/subscription/123/change-plan', false],
-    ['https://redis.cloud.io/#/databases/upgrade/123', true],
-  ])('should redirect to %s when isBdbPackages = %s', (url, isBdbPackages) => {
-    const openSpy = jest.spyOn(window, 'open').mockImplementation(() => null)
-
-    // Mock the hook with subscription data and isBdbPackages flag
-    const mockWithBdbPackages = {
-      ...defaultMockHook,
-      metrics: [
-        ...mockMetrics.slice(0, 1),
-        {
-          id: 'memory',
-          title: 'Memory',
-          value: '45 MB / 75 MB (60.3%)',
-          tooltip: { content: '45 MB / 75 MB (60.3%)', title: 'Used Memory' },
-        },
-        ...mockMetrics.slice(2),
-      ],
-      subscriptionType: 'fixed',
-      subscriptionId: 123,
-      isBdbPackages,
-      usedMemoryPercent: 60.3,
-    }
-    ;(useDatabaseOverview as jest.Mock).mockReturnValue(mockWithBdbPackages)
-
-    render(<DatabaseOverview />)
-
-    expect(screen.getByTestId('overview-total-memory')).toHaveTextContent(
-      '45 MB / 75 MB (60.3%)',
-    )
-    const upgradeBtn = screen.getByRole('button', { name: 'Upgrade plan' })
-    expect(upgradeBtn).toBeInTheDocument()
-
-    userEvent.click(upgradeBtn)
-    expect(openSpy).toHaveBeenCalledTimes(1)
-    expect(openSpy).toHaveBeenCalledWith(url, '_blank')
-  })
-
-  it('should show connectivity error when present', () => {
-    // Mock the hook with connectivity error
-    const mockWithError = {
-      ...defaultMockHook,
-      connectivityError: 'Connection error',
-    }
-    ;(useDatabaseOverview as jest.Mock).mockReturnValue(mockWithError)
-
-    render(<DatabaseOverview />)
-
-    // Check that the warning icon is displayed
-    expect(screen.getByTestId('connectivityError')).toBeInTheDocument()
-  })
-
-  it('should call handleRefresh when auto-refresh is triggered', () => {
-    const mockHandleRefresh = jest.fn()
-    ;(useDatabaseOverview as jest.Mock).mockReturnValue({
-      ...defaultMockHook,
-      handleRefresh: mockHandleRefresh,
-    })
-
-    render(<DatabaseOverview />)
-
-    // Find and click the refresh button
-    const refreshButton = screen.getByTestId(
-      'auto-refresh-overview-refresh-button',
-    )
-    userEvent.click(refreshButton)
-
-    expect(mockHandleRefresh).toHaveBeenCalled()
-  })
-})

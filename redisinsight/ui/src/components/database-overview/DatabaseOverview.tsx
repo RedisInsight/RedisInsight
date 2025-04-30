@@ -126,9 +126,9 @@ const getTooltipContent = (metric: IMetric) => {
   if (!metric.children?.length) {
     return (
       <>
-        <span>{metric.tooltip.content}</span>
+        <span>{metric.tooltip?.content}</span>
         &nbsp;
-        <span>{metric.tooltip.title}</span>
+        <span>{metric.tooltip?.title}</span>
       </>
     )
   }

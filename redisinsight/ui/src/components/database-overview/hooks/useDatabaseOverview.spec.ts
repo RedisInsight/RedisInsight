@@ -60,19 +60,30 @@ set(initialState, 'connections.instances.connectedInstance', {
 })
 
 let mockedStore: ReturnType<typeof mockStore>
+// Set up fake timers
+jest.useFakeTimers()
+let mockDate: Date
+type HookReturnType = ReturnType<typeof useDatabaseOverview>
+
+const helper = (store: typeof mockedStore) => {
+  const { result } = renderHook(() => useDatabaseOverview(), {
+    store,
+  })
+
+  return result.current as HookReturnType
+}
 
 describe('useDatabaseOverview', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockedStore = mockStore(initialState)
+
+    mockDate = new Date('2024-11-22T12:00:00Z')
+    jest.setSystemTime(mockDate)
   })
 
   it('should return metrics and other data', () => {
-    const { result } = renderHook(() => useDatabaseOverview(), {
-      store: mockedStore,
-    })
-
-    const data = result.current as ReturnType<typeof useDatabaseOverview>
+    const data = helper(mockedStore)
     expect(data.metrics).toEqual([
       { id: 'cpu', title: 'CPU' },
       { id: 'memory', title: 'Memory' },
@@ -89,13 +100,9 @@ describe('useDatabaseOverview', () => {
     expect(typeof data.handleEnableAutoRefresh).toBe('function')
   })
 
-  it('should dispatch getDatabaseConfigInfoAction on mount', () => {
-    renderHook(() => useDatabaseOverview(), {
-      store: mockedStore,
-    })
-
-    const actions = mockedStore.getActions()
-    expect(actions).toContainEqual(getDatabaseConfigInfo())
+  it('should set lastRefreshTime to current timestamp on mount', () => {
+    const data = helper(mockedStore)
+    expect(data.lastRefreshTime).toBe(mockDate.getTime())
   })
 
   it('should not dispatch getDatabaseConfigInfoAction when connectivity error exists', () => {
@@ -128,26 +135,20 @@ describe('useDatabaseOverview', () => {
     )
     mockedStore = mockStore(stateWithCloudDetails)
 
-    const { result } = renderHook(() => useDatabaseOverview(), {
-      store: mockedStore,
-    })
+    const data = helper(mockedStore)
 
     // 45.2 MB / 75 MB ≈ 60.3%
-    const data = result.current as ReturnType<typeof useDatabaseOverview>
     expect(data.usedMemoryPercent).toBeCloseTo(60.3, 1)
     expect(data.subscriptionType).toBe('fixed')
     expect(data.subscriptionId).toBe(456)
   })
 
   it('should handle refresh correctly', () => {
-    const { result } = renderHook(() => useDatabaseOverview(), {
-      store: mockedStore,
-    })
+    const data = helper(mockedStore)
 
     // Clear previous actions
     mockedStore.clearActions()
 
-    const data = result.current as ReturnType<typeof useDatabaseOverview>
     act(() => {
       data.handleRefresh()
     })
@@ -157,14 +158,10 @@ describe('useDatabaseOverview', () => {
   })
 
   it('should handle refresh click correctly', () => {
-    const { result } = renderHook(() => useDatabaseOverview(), {
-      store: mockedStore,
-    })
-
     // Clear previous actions
     mockedStore.clearActions()
 
-    const data = result.current as ReturnType<typeof useDatabaseOverview>
+    const data = helper(mockedStore)
     act(() => {
       data.handleRefreshClick()
     })
@@ -174,10 +171,7 @@ describe('useDatabaseOverview', () => {
   })
 
   it('should send telemetry event when auto-refresh is enabled', () => {
-    const { result } = renderHook(() => useDatabaseOverview(), {
-      store: mockedStore,
-    })
-    const data = result.current as ReturnType<typeof useDatabaseOverview>
+    const data = helper(mockedStore)
     act(() => {
       data.handleEnableAutoRefresh(true, '30')
     })
@@ -192,10 +186,7 @@ describe('useDatabaseOverview', () => {
   })
 
   it('should send telemetry event when auto-refresh is disabled', () => {
-    const { result } = renderHook(() => useDatabaseOverview(), {
-      store: mockedStore,
-    })
-    const data = result.current as ReturnType<typeof useDatabaseOverview>
+    const data = helper(mockedStore)
     act(() => {
       data.handleEnableAutoRefresh(false, '30')
     })
@@ -222,10 +213,7 @@ describe('useDatabaseOverview', () => {
       },
     )
     mockedStore = mockStore(stateWithFlexibleSubscription)
-    const { result } = renderHook(() => useDatabaseOverview(), {
-      store: mockedStore,
-    })
-    const data = result.current as ReturnType<typeof useDatabaseOverview>
+    const data = helper(mockedStore)
 
     expect(data.subscriptionType).toBe('flexible')
   })
@@ -244,10 +232,7 @@ describe('useDatabaseOverview', () => {
       },
     )
     mockedStore = mockStore(stateWithBdbPackages)
-    const { result } = renderHook(() => useDatabaseOverview(), {
-      store: mockedStore,
-    })
-    const data = result.current as ReturnType<typeof useDatabaseOverview>
+    const data = helper(mockedStore)
 
     expect(data.isBdbPackages).toBe(true)
   })

@@ -58,11 +58,11 @@ export interface IMetric {
   id: string
   content: ReactNode
   value: any
-  unavailableText: string
+  unavailableText?: string
   title: string
-  tooltip: {
+  tooltip?: {
     title?: string
-    icon: Nullable<string> | FunctionComponent
+    icon?: Nullable<string> | FunctionComponent
     content: ReactNode | string
   }
   loading?: boolean

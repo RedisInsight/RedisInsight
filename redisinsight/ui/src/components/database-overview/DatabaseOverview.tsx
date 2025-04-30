@@ -18,44 +18,6 @@ import AutoRefresh from '../auto-refresh'
 import styles from './styles.module.scss'
 
 const riConfig = getConfig()
-const getTooltipContent = (metric: IMetric) => {
-  if (!metric.children?.length) {
-    return (
-      <>
-        <span>{metric.tooltip.content}</span>
-        &nbsp;
-        <span>{metric.tooltip.title}</span>
-      </>
-    )
-  }
-  return metric.children
-    .filter((item) => item.value !== undefined)
-    .map((tooltipItem) => (
-      <EuiFlexGroup
-        className={styles.commandsPerSecTip}
-        key={tooltipItem.id}
-        gutterSize="none"
-        responsive={false}
-        alignItems="center"
-      >
-        {tooltipItem.icon && (
-          <EuiFlexItem grow={false}>
-            <EuiIcon
-              className={styles.moreInfoOverviewIcon}
-              size="m"
-              type={tooltipItem.icon}
-            />
-          </EuiFlexItem>
-        )}
-        <EuiFlexItem className={styles.moreInfoOverviewContent} grow={false}>
-          {tooltipItem.content}
-        </EuiFlexItem>
-        <EuiFlexItem className={styles.moreInfoOverviewTitle} grow={false}>
-          {tooltipItem.title}
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    ))
-}
 
 const DatabaseOverview = () => {
   const {
@@ -70,6 +32,7 @@ const DatabaseOverview = () => {
     handleRefreshClick,
     handleRefresh,
   } = useDatabaseOverview()
+
   return (
     <EuiFlexGroup
       className={styles.container}
@@ -157,6 +120,45 @@ const DatabaseOverview = () => {
       </EuiFlexItem>
     </EuiFlexGroup>
   )
+}
+
+const getTooltipContent = (metric: IMetric) => {
+  if (!metric.children?.length) {
+    return (
+      <>
+        <span>{metric.tooltip.content}</span>
+        &nbsp;
+        <span>{metric.tooltip.title}</span>
+      </>
+    )
+  }
+  return metric.children
+    .filter((item) => item.value !== undefined)
+    .map((tooltipItem) => (
+      <EuiFlexGroup
+        className={styles.commandsPerSecTip}
+        key={tooltipItem.id}
+        gutterSize="none"
+        responsive={false}
+        alignItems="center"
+      >
+        {tooltipItem.icon && (
+          <EuiFlexItem grow={false}>
+            <EuiIcon
+              className={styles.moreInfoOverviewIcon}
+              size="m"
+              type={tooltipItem.icon}
+            />
+          </EuiFlexItem>
+        )}
+        <EuiFlexItem className={styles.moreInfoOverviewContent} grow={false}>
+          {tooltipItem.content}
+        </EuiFlexItem>
+        <EuiFlexItem className={styles.moreInfoOverviewTitle} grow={false}>
+          {tooltipItem.title}
+        </EuiFlexItem>
+      </EuiFlexGroup>
+    ))
 }
 
 export default DatabaseOverview

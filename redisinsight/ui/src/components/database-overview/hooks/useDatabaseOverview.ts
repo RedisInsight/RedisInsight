@@ -47,15 +47,17 @@ export const useDatabaseOverview = () => {
       isBdbPackages,
     } = {},
   } = overview
+
   const loadData = () => {
     if (connectedInstanceId && !connectivityError) {
       dispatch(getDatabaseConfigInfoAction(connectedInstanceId))
       setLastRefreshTime(Date.now())
     }
   }
+
   useEffect(() => {
     if (!connectivityError) {
-      loadData()
+      setLastRefreshTime(Date.now())
     }
   }, [connectivityError])
 
@@ -73,6 +75,13 @@ export const useDatabaseOverview = () => {
       },
     })
 
+  const handleRefresh = () => {
+    loadData()
+  }
+  const handleRefreshClick = () => {
+    // clear error, if connectivity is broken, the interceptor will set it again
+    dispatch(setConnectivityError(null))
+  }
   const usedMemoryPercent = getUsedMemoryPercent(
     planMemoryLimit,
     usedMemory,
@@ -91,22 +100,15 @@ export const useDatabaseOverview = () => {
     })
   }, [theme, overview, db, usedMemoryPercent])
 
-  const handleRefresh = () => {
-    loadData()
-  }
-  const handleRefreshClick = () => {
-    dispatch(setConnectivityError(null))
-  }
-
   return {
     metrics,
     connectivityError,
     lastRefreshTime,
-    handleEnableAutoRefresh,
     subscriptionType,
     subscriptionId,
     isBdbPackages,
     usedMemoryPercent,
+    handleEnableAutoRefresh,
     handleRefresh,
     handleRefreshClick,
   }

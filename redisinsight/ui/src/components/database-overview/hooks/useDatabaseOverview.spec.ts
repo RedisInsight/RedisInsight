@@ -12,11 +12,8 @@ import { useDatabaseOverview } from './useDatabaseOverview'
 
 // Mock the telemetry function
 jest.mock('uiSrc/telemetry', () => ({
+  ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
-  TelemetryEvent: {
-    OVERVIEW_AUTO_REFRESH_ENABLED: 'overview_auto_refresh_enabled',
-    OVERVIEW_AUTO_REFRESH_DISABLED: 'overview_auto_refresh_disabled',
-  },
 }))
 
 // Mock the getOverviewMetrics function

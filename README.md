@@ -41,8 +41,10 @@ This repository includes the code for Redis Insight. Check out the [blogpost](ht
 
 ### Installable
 
-Available to download for free from [here](https://redis.io/insight/#insight-form).
-Redis Insight is also available on Microsoft Store, Apple Store, Snapcraft, Flathub and [Docker](https://hub.docker.com/r/redis/redisinsight).
+Redis Insight is available as a free download [redis.io](https://redis.io/insight/#insight-form).
+You can also find it on the Microsoft Store, Apple App Store, Snapcraft, Flathub, and as a [Docker image](https://hub.docker.com/r/redis/redisinsight).
+
+Additionally, you can use [Redis for VS Code](https://github.com/RedisInsight/Redis-for-VS-Code), our official Visual Studio Code extension.
 
 ### Build
 

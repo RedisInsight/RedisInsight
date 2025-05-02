@@ -81,6 +81,10 @@ describe('useDatabaseOverview', () => {
     mockDate = new Date('2024-11-22T12:00:00Z')
     jest.setSystemTime(mockDate)
   })
+  
+  afterEach(() => {
+    jest.useRealTimers()
+  })
 
   it('should return metrics and other data', () => {
     const data = helper(mockedStore)

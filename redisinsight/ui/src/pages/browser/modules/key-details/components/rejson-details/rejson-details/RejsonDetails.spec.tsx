@@ -3,6 +3,7 @@ import { instance, mock } from 'ts-mockito'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import { BaseProps } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
 import { stringToBuffer } from 'uiSrc/utils'
+import * as appFeaturesSlice from 'uiSrc/slices/app/features'
 import RejsonDetails from './RejsonDetails'
 
 const mockedProps = mock<BaseProps>()
@@ -37,6 +38,16 @@ const mockedJSONBoolean = true
 const mockedJSONNumber = 123123
 const mockedSelectedKey = stringToBuffer('key')
 
+const mockEnvDependentFeatureFlag = (value = true) => {
+  jest
+    .spyOn(appFeaturesSlice, 'appFeatureFlagsFeaturesSelector')
+    .mockReturnValue({
+      envDependent: {
+        flag: value,
+      },
+    })
+}
+
 describe('RejsonDetails', () => {
   it('should render', () => {
     expect(
@@ -47,6 +58,42 @@ describe('RejsonDetails', () => {
         />,
       ),
     ).toBeTruthy()
+  })
+
+  it('should render switch editor button ENABLED when envDependent flag is enabled', () => {
+    mockEnvDependentFeatureFlag()
+
+    render(
+      <RejsonDetails
+        {...instance(mockedProps)}
+        data={mockedJSONObject}
+        dataType="object"
+        parentPath="$"
+        selectedKey={mockedSelectedKey}
+        isDownloaded={false}
+      />,
+    )
+
+    const button = screen.getByRole('button', { name: /change editor type/i })
+    expect(button).toBeEnabled()
+  })
+
+  it('should render switch editor button DISABLED when envDependent flag is enabled', () => {
+    mockEnvDependentFeatureFlag(false)
+
+    render(
+      <RejsonDetails
+        {...instance(mockedProps)}
+        data={mockedJSONObject}
+        dataType="object"
+        parentPath="$"
+        selectedKey={mockedSelectedKey}
+        isDownloaded={false}
+      />,
+    )
+
+    const button = screen.getByRole('button', { name: /change editor type/i })
+    expect(button).not.toBeEnabled()
   })
 
   describe('should render JSON object', () => {

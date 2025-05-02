@@ -57,8 +57,6 @@ set(initialState, 'connections.instances.connectedInstance', {
 })
 
 let mockedStore: ReturnType<typeof mockStore>
-// Set up fake timers
-jest.useFakeTimers()
 let mockDate: Date
 type HookReturnType = ReturnType<typeof useDatabaseOverview>
 
@@ -75,10 +73,12 @@ describe('useDatabaseOverview', () => {
     jest.clearAllMocks()
     mockedStore = mockStore(initialState)
 
+    // Set up fake timers
+    jest.useFakeTimers()
     mockDate = new Date('2024-11-22T12:00:00Z')
     jest.setSystemTime(mockDate)
   })
-  
+
   afterEach(() => {
     jest.useRealTimers()
   })

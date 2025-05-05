@@ -1,5 +1,6 @@
 import thunk from 'redux-thunk'
 import configureStore from 'redux-mock-store'
+import { EditorType } from 'uiSrc/slices/interfaces'
 
 const mockStore = configureStore([thunk])
 
@@ -20,7 +21,6 @@ describe('setReJSONDataAction', () => {
         ...actual,
         sendEventTelemetry: sendEventTelemetryMock,
         getBasedOnViewTypeEvent: jest.fn(() => 'mocked_event'),
-        getJsonPathLevel: jest.fn(() => 42),
       }
     })
 
@@ -66,8 +66,44 @@ describe('setReJSONDataAction', () => {
       event: 'mocked_event',
       eventData: {
         databaseId: 'instance-id',
-        keyLevel: 42,
+        keyLevel: 'root',
       },
     })
+  })
+
+  it('should set entireKey: true when editor is Text', async () => {
+    store = mockStore({
+      ...store.getState(),
+      browser: {
+        ...store.getState().browser,
+        rejson: { editorType: EditorType.Text },
+      },
+    })
+
+    await store.dispatch(setReJSONDataAction('key', '$', '{}', true, 100))
+
+    expect(sendEventTelemetryMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventData: expect.objectContaining({
+          keyLevel: 'entireKey',
+        }),
+      }),
+    )
+  })
+
+  it('should compute keyLevel from nested path', async () => {
+    const nestedPath = '$.foo.bar[1].nested.key'
+
+    await store.dispatch(
+      setReJSONDataAction('key', nestedPath, '{}', true, 100),
+    )
+
+    expect(sendEventTelemetryMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventData: expect.objectContaining({
+          keyLevel: 'root',
+        }),
+      }),
+    )
   })
 })

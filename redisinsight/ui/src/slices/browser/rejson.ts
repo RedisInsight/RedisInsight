@@ -37,6 +37,7 @@ import {
 import { AppDispatch, RootState } from '../store'
 
 export const JSON_LENGTH_TO_FORCE_RETRIEVE = 200
+const TELEMETRY_KEY_LEVEL_WHOLE_KEY = 'entireKey'
 
 export const initialState: InitialStateRejson = {
   loading: false,
@@ -230,6 +231,11 @@ export function setReJSONDataAction(
 
       if (isStatusSuccessful(status)) {
         try {
+          const { editorType } = state.browser.rejson
+          const keyLevel =
+            editorType === EditorType.Text
+              ? TELEMETRY_KEY_LEVEL_WHOLE_KEY
+              : getJsonPathLevel(path)
           sendEventTelemetry({
             event: getBasedOnViewTypeEvent(
               state.browser.keys?.viewType,
@@ -242,7 +248,7 @@ export function setReJSONDataAction(
             ),
             eventData: {
               databaseId: state.connections.instances?.connectedInstance?.id,
-              keyLevel: getJsonPathLevel(path),
+              keyLevel,
             },
           })
         } catch (error) {

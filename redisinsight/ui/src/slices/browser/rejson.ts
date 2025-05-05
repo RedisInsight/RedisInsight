@@ -19,7 +19,6 @@ import {
 } from 'uiSrc/utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { parseJsonData } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/utils'
-
 import {
   GetRejsonRlResponseDto,
   RemoveRejsonRlResponse,
@@ -216,6 +215,7 @@ export function setReJSONDataAction(
 
     try {
       const state = stateInit()
+
       const { status } = await apiService.patch<GetRejsonRlResponseDto>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -233,12 +233,12 @@ export function setReJSONDataAction(
           sendEventTelemetry({
             event: getBasedOnViewTypeEvent(
               state.browser.keys?.viewType,
-              TelemetryEvent[
-                `BROWSER_JSON_PROPERTY_${isEditMode ? 'EDITED' : 'ADDED'}`
-              ],
-              TelemetryEvent[
-                `TREE_VIEW_JSON_PROPERTY_${isEditMode ? 'EDITED' : 'ADDED'}`
-              ],
+              isEditMode
+                ? TelemetryEvent.BROWSER_JSON_PROPERTY_EDITED
+                : TelemetryEvent.BROWSER_JSON_PROPERTY_ADDED,
+              isEditMode
+                ? TelemetryEvent.TREE_VIEW_JSON_PROPERTY_EDITED
+                : TelemetryEvent.TREE_VIEW_JSON_PROPERTY_ADDED,
             ),
             eventData: {
               databaseId: state.connections.instances?.connectedInstance?.id,

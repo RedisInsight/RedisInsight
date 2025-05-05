@@ -3,6 +3,8 @@ import {
   calculateRedisHitRatio,
   catchAclError,
   convertIntToSemanticVersion,
+  getRangeForNumber,
+  TOTAL_KEYS_BREAKPOINTS,
 } from 'src/utils';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 import { REDIS_MODULES_COMMANDS, SUPPORTED_REDIS_MODULES } from 'src/constants';
@@ -162,11 +164,23 @@ export class DatabaseInfoProvider {
       const statsInfo = info['stats'];
       const replicationInfo = info['replication'];
       const databases = await this.getDatabasesCount(client, keyspaceInfo);
+      /*
+redis_version
+uptime_in_days
+used_memory
+connected_clients
+maxmemory_policy
+instantaneous_ops_per_sec
+instantaneous_input_kbps:
+instantaneous_output_kbps
+Number of keys (grouped and actual value) - the same as for CONFIG_DATABASES_DATABASE_ADDED
+       */
+      const totalKeys = this.getRedisNodeTotalKeysCount(keyspaceInfo);
       return {
         version: serverInfo?.redis_version,
         databases,
         role: get(replicationInfo, 'role') || undefined,
-        totalKeys: this.getRedisNodeTotalKeysCount(keyspaceInfo),
+        totalKeys,
         usedMemory: parseInt(get(memoryInfo, 'used_memory'), 10) || undefined,
         connectedClients:
           parseInt(get(clientsInfo, 'connected_clients'), 10) || undefined,
@@ -177,6 +191,21 @@ export class DatabaseInfoProvider {
           parseInt(get(memoryInfo, 'number_of_cached_scripts'), 10) ||
           undefined,
         server: serverInfo,
+        stats: {
+          instantaneous_ops_per_sec:
+            get(statsInfo, 'instantaneous_ops_per_sec') || undefined,
+          instantaneous_input_kbps:
+            get(statsInfo, 'instantaneous_input_kbps') || undefined,
+          instantaneous_output_kbps:
+            get(statsInfo, 'instantaneous_output_kbps') || undefined,
+          uptime_in_days: get(serverInfo, 'uptime_in_days') || undefined,
+          maxmemory_policy:
+            parseInt(get(memoryInfo, 'maxmemory_policy'), 10) || undefined,
+          numberOfKeysRange: getRangeForNumber(
+            totalKeys,
+            TOTAL_KEYS_BREAKPOINTS,
+          ),
+        },
       };
     } catch (error) {
       throw catchAclError(error);

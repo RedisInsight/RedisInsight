@@ -23,6 +23,12 @@ export class RedisNodeInfoResponse {
   server?: any;
 
   @ApiPropertyOptional({
+    description: 'Various Redis stats',
+    type: Object,
+  })
+  stats?: any;
+
+  @ApiPropertyOptional({
     description: 'The number of Redis databases',
     type: Number,
     default: 16,

@@ -91,13 +91,13 @@ describe('InstancePage', () => {
     ;(appContextSelector as jest.Mock).mockReturnValue({
       contextRdiInstanceId: '',
     })
-    await act(() => {
+    await act(() =>
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
         </BrowserRouter>,
-      )
-    })
+      ),
+    )
 
     const resetContextActions = [
       resetKeys(),
@@ -144,13 +144,13 @@ describe('InstancePage', () => {
       contextRdiInstanceId: 'prevId',
     })
 
-    await act(() => {
+    await act(() =>
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
         </BrowserRouter>,
-      )
-    })
+      ),
+    )
 
     const expectedActions = [
       setConfigValidationErrors(['Error: unknown error']),
@@ -183,15 +183,15 @@ describe('InstancePage', () => {
       .fn()
       .mockReturnValue({ pathname: Pages.rdiPipeline(RDI_INSTANCE_ID_MOCK) })
 
-    await act(() => {
+    await act(() =>
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
         </BrowserRouter>,
-      )
-    })
+      ),
+    )
 
-    expect(pushMock).toBeCalledWith(
+    expect(pushMock).toHaveBeenCalledWith(
       Pages.rdiPipelineManagement(RDI_INSTANCE_ID_MOCK),
     )
   })
@@ -212,14 +212,16 @@ describe('InstancePage', () => {
       .fn()
       .mockReturnValue({ pathname: Pages.rdiPipeline(RDI_INSTANCE_ID_MOCK) })
 
-    await act(() => {
+    await act(() =>
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
         </BrowserRouter>,
-      )
-    })
+      ),
+    )
 
-    expect(pushMock).toBeCalledWith(Pages.rdiStatistics(RDI_INSTANCE_ID_MOCK))
+    expect(pushMock).toHaveBeenCalledWith(
+      Pages.rdiStatistics(RDI_INSTANCE_ID_MOCK),
+    )
   })
 })

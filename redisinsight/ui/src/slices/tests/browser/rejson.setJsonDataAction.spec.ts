@@ -4,6 +4,27 @@ import { EditorType } from 'uiSrc/slices/interfaces'
 
 const mockStore = configureStore([thunk])
 
+const originalConsoleError = console.error
+
+// Suppress Redux warnings about missing reducers
+beforeAll(() => {
+  console.error = (...args: any[]) => {
+    const message = args[0]
+    if (
+      typeof message === 'string' &&
+      message.includes('No reducer provided for key')
+    ) {
+      return
+    }
+
+    originalConsoleError(...args)
+  }
+})
+
+afterAll(() => {
+  console.error = originalConsoleError
+})
+
 describe('setReJSONDataAction', () => {
   let store: any
   let sendEventTelemetryMock: jest.Mock
@@ -66,7 +87,7 @@ describe('setReJSONDataAction', () => {
       event: 'mocked_event',
       eventData: {
         databaseId: 'instance-id',
-        keyLevel: 'root',
+        keyLevel: 0,
       },
     })
   })
@@ -92,7 +113,7 @@ describe('setReJSONDataAction', () => {
   })
 
   it('should compute keyLevel from nested path', async () => {
-    const nestedPath = '$.foo.bar[1].nested.key'
+    const nestedPath = '$.foo.bar[1].nested.key' // 5 levels of nesting
 
     await store.dispatch(
       setReJSONDataAction('key', nestedPath, '{}', true, 100),
@@ -101,7 +122,7 @@ describe('setReJSONDataAction', () => {
     expect(sendEventTelemetryMock).toHaveBeenCalledWith(
       expect.objectContaining({
         eventData: expect.objectContaining({
-          keyLevel: 'root',
+          keyLevel: 5,
         }),
       }),
     )

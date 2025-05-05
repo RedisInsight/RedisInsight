@@ -1,4 +1,6 @@
 import { ComponentType, CSSProperties, HTMLAttributes, ReactNode } from 'react'
+import styled from 'styled-components'
+
 import { ResizablePanelProps } from './resizable-panel.styles'
 import { ResizableButtonProps } from './resizable-button.styles'
 
@@ -23,3 +25,5 @@ export interface ResizableContainerProps
   onPanelWidthChange?: (newSizes: { [key: string]: number }) => void
   style?: CSSProperties
 }
+
+export const StyledResizableContainer = styled.div<ResizableContainerProps>``

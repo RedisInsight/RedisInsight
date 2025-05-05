@@ -9,8 +9,7 @@ import {
   render,
   screen,
 } from 'uiSrc/utils/test-utils'
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { apiService } from 'uiSrc/services'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
 import InstancesList, { InstancesListProps } from './InstancesList'
 import { InstancesTabs } from '../../InstancesNavigationPopover'
@@ -120,15 +119,8 @@ describe('InstancesList', () => {
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-    jest
-      .spyOn(apiService, 'get')
-      .mockImplementation(
-        jest
-          .fn()
-          .mockResolvedValue({ data: { version: '7.4.0' }, status: 200 }),
-      )
 
-    render(
+    const { getByTestId } = render(
       <InstancesList
         {...instance(mockedProps)}
         selectedTab={InstancesTabs.Databases}
@@ -136,10 +128,8 @@ describe('InstancesList', () => {
       />,
     )
 
-    const listItem = screen.getByTestId(`instance-item-${mockDbs[1].id}`)
-    await act(() => {
-      fireEvent.click(listItem)
-    })
+    const listItem = getByTestId(`instance-item-${mockDbs[1].id}`)
+    await act(() => fireEvent.click(listItem))
 
     expect(sendEventTelemetry).toHaveBeenCalledWith({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,

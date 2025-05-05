@@ -14,7 +14,6 @@ export async function getInstanceInfo(id: string) {
   const { data, status } = await apiService.get<RedisNodeInfoResponse>(
     `${endpoint}/${id}/info`,
   )
-
   return isStatusSuccessful(status) ? data : null
 }
 export async function getInstanceOverview(id: string) {

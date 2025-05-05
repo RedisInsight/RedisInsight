@@ -1,4 +1,5 @@
 import { CSSProperties, HTMLAttributes, ReactNode } from 'react'
+import styled from 'styled-components'
 
 export const PADDING_SIZES = ['none', 'xs', 's', 'm', 'l', 'xl'] as const
 export type PaddingSize = (typeof PADDING_SIZES)[number]
@@ -50,3 +51,5 @@ export interface ResizablePanelProps {
    */
   wrapperProps?: HTMLAttributes<HTMLDivElement>
 }
+
+export const StyledResizablePanel = styled.div<ResizablePanelProps>``

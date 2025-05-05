@@ -164,17 +164,6 @@ export class DatabaseInfoProvider {
       const statsInfo = info['stats'];
       const replicationInfo = info['replication'];
       const databases = await this.getDatabasesCount(client, keyspaceInfo);
-      /*
-redis_version
-uptime_in_days
-used_memory
-connected_clients
-maxmemory_policy
-instantaneous_ops_per_sec
-instantaneous_input_kbps:
-instantaneous_output_kbps
-Number of keys (grouped and actual value) - the same as for CONFIG_DATABASES_DATABASE_ADDED
-       */
       const totalKeys = this.getRedisNodeTotalKeysCount(keyspaceInfo);
       return {
         version: serverInfo?.redis_version,
@@ -199,8 +188,7 @@ Number of keys (grouped and actual value) - the same as for CONFIG_DATABASES_DAT
           instantaneous_output_kbps:
             get(statsInfo, 'instantaneous_output_kbps') || undefined,
           uptime_in_days: get(serverInfo, 'uptime_in_days') || undefined,
-          maxmemory_policy:
-            parseInt(get(memoryInfo, 'maxmemory_policy'), 10) || undefined,
+          maxmemory_policy: get(memoryInfo, 'maxmemory_policy') || undefined,
           numberOfKeysRange: getRangeForNumber(
             totalKeys,
             TOTAL_KEYS_BREAKPOINTS,

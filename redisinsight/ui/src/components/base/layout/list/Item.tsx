@@ -118,7 +118,6 @@ const Item = ({
       $isActive={isActive}
       $isDisabled={isDisabled}
       $color={color}
-      onClick={onClick}
       className={cx(ListClassNames.listItem, className, {
         [ListClassNames.listItemActive]: isActive,
         [ListClassNames.listItemDisabled]: isDisabled,

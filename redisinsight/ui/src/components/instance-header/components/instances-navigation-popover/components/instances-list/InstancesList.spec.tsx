@@ -9,7 +9,8 @@ import {
   render,
   screen,
 } from 'uiSrc/utils/test-utils'
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
 import InstancesList, { InstancesListProps } from './InstancesList'
 import { InstancesTabs } from '../../InstancesNavigationPopover'
 
@@ -22,25 +23,39 @@ beforeEach(() => {
   store.clearActions()
 })
 
-const mockRdis = [
+const mockRdis: RdiInstance[] = [
   {
     id: 'rdiDB_1',
     name: 'RdiDB_1',
+    loading: false,
+    error: '',
+    url: '',
   },
   {
     id: 'rdiDB_2',
     name: 'RdiDB_2',
+    loading: false,
+    error: '',
+    url: '',
   },
 ]
 
-const mockDbs = [
+const mockDbs: Instance[] = [
   {
     id: 'db_1',
     name: 'DB_1',
+    host: 'localhost',
+    port: 6379,
+    modules: [],
+    version: '7.0.0',
   },
   {
     id: 'db_2',
     name: 'DB_2',
+    host: 'localhost',
+    port: 6379,
+    modules: [],
+    version: '7.0.0',
   },
 ]
 
@@ -85,7 +100,7 @@ describe('InstancesList', () => {
       />,
     )
 
-    expect(screen.getByText(mockDbs[0].name)).toBeInTheDocument()
+    expect(screen.getByText(mockDbs[0].name!)).toBeInTheDocument()
   })
 
   it('should render rdi instances when selected tab is rdi', () => {
@@ -99,13 +114,13 @@ describe('InstancesList', () => {
     expect(screen.getByText(mockRdis[0].name)).toBeInTheDocument()
   })
 
-  it('should send event telemetry', () => {
+  it('should send event telemetry', async () => {
     const sendEventTelemetryMock = jest.fn()
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
 
-    render(
+    const { getByTestId } = render(
       <InstancesList
         {...instance(mockedProps)}
         selectedTab={InstancesTabs.Databases}
@@ -113,12 +128,10 @@ describe('InstancesList', () => {
       />,
     )
 
-    const listItem = screen.getByTestId(`instance-item-${mockDbs[1].id}`)
-    act(() => {
-      fireEvent.click(listItem)
-    })
+    const listItem = getByTestId(`instance-item-${mockDbs[1].id}`)
+    await act(() => fireEvent.click(listItem))
 
-    expect(sendEventTelemetry).toBeCalledWith({
+    expect(sendEventTelemetry).toHaveBeenCalledWith({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: expect.any(Object),
     })

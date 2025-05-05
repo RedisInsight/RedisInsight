@@ -23,6 +23,7 @@ import { CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { MOCK_ADDITIONAL_INFO } from 'uiSrc/mocks/data/instances'
 import DatabasesListWrapper, { Props } from './DatabasesListWrapper'
 
 const mockedProps = mock<Props>()
@@ -208,26 +209,22 @@ describe('DatabasesListWrapper', () => {
 
   it('should call proper telemetry on open database', async () => {
     const sendEventTelemetryMock = jest.fn()
-
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-    render(
+    const { getByTestId } = render(
       <DatabasesListWrapper
         {...instance(mockedProps)}
         instances={mockInstances}
       />,
     )
 
-    await act(() => {
+    await act(() =>
       fireEvent.click(
-        screen.getByTestId(
-          'instance-name-e37cc441-a4f2-402c-8bdb-fc2413cbbaff',
-        ),
-      )
-    })
-
-    expect(sendEventTelemetry).toBeCalledWith({
+        getByTestId('instance-name-e37cc441-a4f2-402c-8bdb-fc2413cbbaff'),
+      ),
+    )
+    expect(sendEventTelemetry).toHaveBeenCalledWith({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
         databaseId: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff',
@@ -255,6 +252,7 @@ describe('DatabasesListWrapper', () => {
           loaded: false,
         },
         customModules: [],
+        ...MOCK_ADDITIONAL_INFO,
       },
     })
     ;(sendEventTelemetry as jest.Mock).mockRestore()

@@ -1,16 +1,15 @@
 import React from 'react'
-import {
-  EuiButton,
-  EuiButtonEmpty,
-  EuiButtonIcon,
-  EuiPopover,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiPopover, EuiText, EuiToolTip } from '@elastic/eui'
 
+import { DeleteIcon } from 'uiSrc/components/base/icons'
 import { RedisString } from 'uiSrc/slices/interfaces'
 import { isTruncatedString } from 'uiSrc/utils'
 import { TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA } from 'uiSrc/constants'
+import {
+  DestructiveButton,
+  EmptyButton,
+  IconButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -63,26 +62,23 @@ const PopoverDelete = (props: Props) => {
   }
 
   const deleteButton = buttonLabel ? (
-    <EuiButtonEmpty
-      iconType="trash"
+    <EmptyButton
+      icon={DeleteIcon}
       aria-label="Remove field"
-      color="primary"
       disabled={isDisabled || updateLoading}
       onClick={isDisabled ? () => {} : onButtonClick}
       data-testid={testid ? `${testid}-icon` : 'remove-icon'}
-      isDisabled={isDisabled}
     >
       {buttonLabel}
-    </EuiButtonEmpty>
+    </EmptyButton>
   ) : (
-    <EuiButtonIcon
-      iconType="trash"
+    <IconButton
+      size="M"
+      icon={DeleteIcon}
       aria-label="Remove field"
-      color="primary"
       disabled={isDisabled || updateLoading}
       onClick={isDisabled ? () => {} : onButtonClick}
       data-testid={testid ? `${testid}-icon` : 'remove-icon'}
-      isDisabled={isDisabled}
     />
   )
 
@@ -119,16 +115,13 @@ const PopoverDelete = (props: Props) => {
           {appendInfo}
         </EuiText>
         <div className={styles.popoverFooter}>
-          <EuiButton
-            fill
-            size="s"
-            color="warning"
-            iconType="trash"
+          <DestructiveButton
+            icon={DeleteIcon}
             onClick={() => handleDeleteItem(itemRaw || item)}
             data-testid={testid || 'remove'}
           >
             Remove
-          </EuiButton>
+          </DestructiveButton>
         </div>
       </div>
     </EuiPopover>

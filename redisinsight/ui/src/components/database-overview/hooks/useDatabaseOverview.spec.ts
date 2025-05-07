@@ -60,7 +60,7 @@ let mockedStore: ReturnType<typeof mockStore>
 let mockDate: Date
 type HookReturnType = ReturnType<typeof useDatabaseOverview>
 
-const helper = (store: typeof mockedStore) => {
+const renderHelper = (store: typeof mockedStore) => {
   const { result } = renderHook(() => useDatabaseOverview(), {
     store,
   })
@@ -84,7 +84,7 @@ describe('useDatabaseOverview', () => {
   })
 
   it('should return metrics and other data', () => {
-    const data = helper(mockedStore)
+    const data = renderHelper(mockedStore)
     expect(data.metrics).toEqual([
       { id: 'cpu', title: 'CPU' },
       { id: 'memory', title: 'Memory' },
@@ -102,7 +102,7 @@ describe('useDatabaseOverview', () => {
   })
 
   it('should set lastRefreshTime to current timestamp on mount', () => {
-    const data = helper(mockedStore)
+    const data = renderHelper(mockedStore)
     expect(data.lastRefreshTime).toBe(mockDate.getTime())
   })
 
@@ -136,7 +136,7 @@ describe('useDatabaseOverview', () => {
     )
     mockedStore = mockStore(stateWithCloudDetails)
 
-    const data = helper(mockedStore)
+    const data = renderHelper(mockedStore)
 
     // 45.2 MB / 75 MB ≈ 60.3%
     expect(data.usedMemoryPercent).toBeCloseTo(60.3, 1)
@@ -145,7 +145,7 @@ describe('useDatabaseOverview', () => {
   })
 
   it('should handle refresh correctly', () => {
-    const data = helper(mockedStore)
+    const data = renderHelper(mockedStore)
 
     // Clear previous actions
     mockedStore.clearActions()
@@ -162,7 +162,7 @@ describe('useDatabaseOverview', () => {
     // Clear previous actions
     mockedStore.clearActions()
 
-    const data = helper(mockedStore)
+    const data = renderHelper(mockedStore)
     act(() => {
       data.handleRefreshClick()
     })
@@ -172,7 +172,7 @@ describe('useDatabaseOverview', () => {
   })
 
   it('should send telemetry event when auto-refresh is enabled', () => {
-    const data = helper(mockedStore)
+    const data = renderHelper(mockedStore)
     act(() => {
       data.handleEnableAutoRefresh(true, '30')
     })
@@ -187,7 +187,7 @@ describe('useDatabaseOverview', () => {
   })
 
   it('should send telemetry event when auto-refresh is disabled', () => {
-    const data = helper(mockedStore)
+    const data = renderHelper(mockedStore)
     act(() => {
       data.handleEnableAutoRefresh(false, '30')
     })
@@ -214,7 +214,7 @@ describe('useDatabaseOverview', () => {
       },
     )
     mockedStore = mockStore(stateWithFlexibleSubscription)
-    const data = helper(mockedStore)
+    const data = renderHelper(mockedStore)
 
     expect(data.subscriptionType).toBe('flexible')
   })
@@ -233,7 +233,7 @@ describe('useDatabaseOverview', () => {
       },
     )
     mockedStore = mockStore(stateWithBdbPackages)
-    const data = helper(mockedStore)
+    const data = renderHelper(mockedStore)
 
     expect(data.isBdbPackages).toBe(true)
   })

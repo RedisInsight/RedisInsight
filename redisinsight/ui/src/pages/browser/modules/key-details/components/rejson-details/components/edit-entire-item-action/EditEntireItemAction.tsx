@@ -1,6 +1,5 @@
 import React, { ChangeEvent, useState } from 'react'
 import {
-  EuiButtonIcon,
   EuiFlexItem,
   EuiFocusTrap,
   EuiForm,
@@ -10,9 +9,11 @@ import {
 } from '@elastic/eui'
 import cx from 'classnames'
 
+import { CancelSlimIcon, CheckThinIcon } from 'uiSrc/components/base/icons'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { isValidJSON } from '../../utils'
 import { JSONErrors } from '../../constants'
 
@@ -74,18 +75,15 @@ const EditEntireItemAction = (props: Props) => {
                   />
                 </EuiFlexItem>
                 <div className={cx(styles.controls, styles.controlsBottom)}>
-                  <EuiButtonIcon
-                    iconSize="m"
-                    iconType="cross"
-                    color="primary"
+                  <IconButton
+                    icon={CancelSlimIcon}
                     aria-label="Cancel add"
                     className={styles.declineBtn}
                     onClick={onCancel}
                     data-testid="cancel-edit-btn"
                   />
-                  <EuiButtonIcon
-                    iconSize="m"
-                    iconType="check"
+                  <IconButton
+                    icon={CheckThinIcon}
                     color="primary"
                     type="submit"
                     aria-label="Apply"

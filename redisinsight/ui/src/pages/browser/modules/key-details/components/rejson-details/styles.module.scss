@@ -86,6 +86,7 @@
   z-index: 2;
   display: flex;
   align-items: center;
+  justify-content: center;gap:12px;
   box-shadow: 0 3px 3px var(--controlsBoxShadowColor);
 
   &.controls {

@@ -1,13 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import {
-  EuiButton,
-  EuiTextColor,
-  EuiForm,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiPanel,
-} from '@elastic/eui'
+import { EuiFlexGroup, EuiFlexItem, EuiForm, EuiPanel } from '@elastic/eui'
 import { addStreamKey } from 'uiSrc/slices/browser/keys'
 import {
   entryIdRegex,
@@ -17,6 +10,10 @@ import {
 } from 'uiSrc/utils'
 import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { StreamEntryFields } from 'uiSrc/pages/browser/modules/key-details/components/stream-details/add-stream-entity'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { CreateStreamDto } from 'apiSrc/modules/browser/stream/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 
@@ -104,9 +101,9 @@ const AddKeyStream = (props: Props) => {
         setFields={setFields}
         setEntryID={setEntryID}
       />
-      <EuiButton type="submit" fill style={{ display: 'none' }}>
+      <PrimaryButton type="submit" style={{ display: 'none' }}>
         Submit
-      </EuiButton>
+      </PrimaryButton>
       <AddKeyFooter>
         <EuiPanel
           color="transparent"
@@ -118,28 +115,24 @@ const AddKeyStream = (props: Props) => {
           <EuiFlexGroup justifyContent="flexEnd">
             <EuiFlexItem grow={false}>
               <div>
-                <EuiButton
-                  color="secondary"
+                <SecondaryButton
                   onClick={() => onCancel(true)}
                   className="btn-cancel btn-back"
                 >
-                  <EuiTextColor>Cancel</EuiTextColor>
-                </EuiButton>
+                  Cancel
+                </SecondaryButton>
               </div>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
               <div>
-                <EuiButton
-                  fill
-                  size="m"
-                  color="secondary"
+                <PrimaryButton
                   className="btn-add"
                   onClick={submitData}
                   disabled={!isFormValid}
                   data-testid="add-key-hash-btn"
                 >
                   Add Key
-                </EuiButton>
+                </PrimaryButton>
               </div>
             </EuiFlexItem>
           </EuiFlexGroup>

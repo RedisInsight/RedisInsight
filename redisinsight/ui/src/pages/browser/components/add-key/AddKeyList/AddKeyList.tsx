@@ -1,19 +1,25 @@
-import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react'
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-  EuiButton,
-  EuiTextColor,
-  EuiForm,
+  EuiFieldText,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiForm,
   EuiPanel,
-  EuiFieldText,
   EuiSuperSelect,
 } from '@elastic/eui'
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
+import {
+  optionsDestinations,
+  TAIL_DESTINATION,
+} from 'uiSrc/pages/browser/modules/key-details/components/list-details/add-list-elements/AddListElements'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import {
   CreateListWithExpireDto,
   ListElementDestination,
@@ -22,10 +28,6 @@ import {
 import { AddListFormConfig as config } from '../constants/fields-config'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import AddMultipleFields from '../../add-multiple-fields'
-import {
-  optionsDestinations,
-  TAIL_DESTINATION,
-} from 'uiSrc/pages/browser/modules/key-details/components/list-details/add-list-elements/AddListElements'
 
 export interface Props {
   keyName: string
@@ -118,9 +120,9 @@ const AddKeyList = (props: Props) => {
           />
         )}
       </AddMultipleFields>
-      <EuiButton type="submit" fill style={{ display: 'none' }}>
+      <PrimaryButton type="submit" style={{ display: 'none' }}>
         Submit
-      </EuiButton>
+      </PrimaryButton>
       <AddKeyFooter>
         <EuiPanel
           style={{ border: 'none' }}
@@ -130,27 +132,23 @@ const AddKeyList = (props: Props) => {
         >
           <EuiFlexGroup justifyContent="flexEnd">
             <EuiFlexItem grow={false}>
-              <EuiButton
-                color="secondary"
+              <SecondaryButton
                 onClick={() => onCancel(true)}
                 className="btn-cancel btn-back"
               >
-                <EuiTextColor>Cancel</EuiTextColor>
-              </EuiButton>
+                Cancel
+              </SecondaryButton>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiButton
-                fill
-                size="m"
-                color="secondary"
+              <PrimaryButton
                 className="btn-add"
-                isLoading={loading}
+                loading={loading}
                 onClick={submitData}
                 disabled={!isFormValid || loading}
                 data-testid="add-key-list-btn"
               >
                 Add Key
-              </EuiButton>
+              </PrimaryButton>
             </EuiFlexItem>
           </EuiFlexGroup>
         </EuiPanel>

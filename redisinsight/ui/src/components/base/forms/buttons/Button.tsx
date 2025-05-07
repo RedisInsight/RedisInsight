@@ -12,15 +12,16 @@ export const BaseButton = ({
   icon,
   iconSide = 'left',
   loading,
+  size = 'small',
   ...props
 }: BaseButtonProps) => (
-  <Button {...props} disabled={props.disabled || loading}>
+  <Button {...props} size={size} disabled={props.disabled || loading}>
     <ButtonIcon
       side="left"
       icon={icon}
       iconSide={iconSide}
       loading={loading}
-      size={props.size}
+      size={size}
     />
     {children}
     <ButtonIcon
@@ -28,7 +29,7 @@ export const BaseButton = ({
       icon={icon}
       iconSide={iconSide}
       loading={loading}
-      size={props.size}
+      size={size}
     />
   </Button>
 )

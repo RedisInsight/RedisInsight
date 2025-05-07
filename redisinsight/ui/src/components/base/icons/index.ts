@@ -8,3 +8,5 @@ export { RawMode } from './RawMode'
 export { RedisLogo } from './RedisLogo'
 export { Trigger } from './Trigger'
 export { UserInCircle } from './UserInCircle'
+
+export * from '@redislabsdev/redis-ui-icons'

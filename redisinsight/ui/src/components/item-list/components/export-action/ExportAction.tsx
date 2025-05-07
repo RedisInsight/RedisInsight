@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import {
-  EuiButton,
   EuiCheckbox,
   EuiFlexGroup,
   EuiFlexItem,
@@ -11,6 +10,8 @@ import {
 } from '@elastic/eui'
 import { formatLongName } from 'uiSrc/utils'
 
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { ExportIcon } from 'uiSrc/components/base/icons'
 import styles from '../styles.module.scss'
 
 export interface Props<T> {
@@ -27,17 +28,15 @@ const ExportAction = <T extends { id: string; name?: string }>(
   const [withSecrets, setWithSecrets] = useState(true)
 
   const exportBtn = (
-    <EuiButton
+    <PrimaryButton
       onClick={() => setIsPopoverOpen((prevState) => !prevState)}
-      fill
-      color="secondary"
-      size="s"
-      iconType="exportAction"
+      size="small"
+      icon={ExportIcon}
       className={styles.actionBtn}
       data-testid="export-btn"
     >
       Export
-    </EuiButton>
+    </PrimaryButton>
   )
 
   return (
@@ -81,11 +80,9 @@ const ExportAction = <T extends { id: string; name?: string }>(
         />
       </EuiFormRow>
       <div className={styles.popoverFooter}>
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
-          iconType="exportAction"
+        <PrimaryButton
+          size="small"
+          icon={ExportIcon}
           onClick={() => {
             setIsPopoverOpen(false)
             onExport(selection, withSecrets)
@@ -93,7 +90,7 @@ const ExportAction = <T extends { id: string; name?: string }>(
           data-testid="export-selected-dbs"
         >
           Export
-        </EuiButton>
+        </PrimaryButton>
       </div>
     </EuiPopover>
   )

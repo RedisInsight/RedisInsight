@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import {
-  EuiButton,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
@@ -9,6 +8,11 @@ import {
 } from '@elastic/eui'
 import { formatLongName } from 'uiSrc/utils'
 
+import {
+  DestructiveButton,
+  PrimaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { DeleteIcon } from 'uiSrc/components/base/icons'
 import styles from '../styles.module.scss'
 
 export interface Props<T> {
@@ -32,17 +36,15 @@ const DeleteAction = <T extends { id: string; name?: string }>(
   }
 
   const deleteBtn = (
-    <EuiButton
+    <PrimaryButton
+      size="small"
       onClick={onButtonClick}
-      fill
-      color="secondary"
-      size="s"
-      iconType="trash"
+      icon={DeleteIcon}
       className={styles.actionBtn}
       data-testid="delete-btn"
     >
       Delete
-    </EuiButton>
+    </PrimaryButton>
   )
 
   return (
@@ -76,11 +78,8 @@ const DeleteAction = <T extends { id: string; name?: string }>(
         ))}
       </div>
       <div className={styles.popoverFooter}>
-        <EuiButton
-          fill
-          size="s"
-          color="warning"
-          iconType="trash"
+        <DestructiveButton
+          icon={DeleteIcon}
           onClick={() => {
             closePopover()
             onDelete()
@@ -89,7 +88,7 @@ const DeleteAction = <T extends { id: string; name?: string }>(
           data-testid="delete-selected-dbs"
         >
           Delete
-        </EuiButton>
+        </DestructiveButton>
       </div>
     </EuiPopover>
   )

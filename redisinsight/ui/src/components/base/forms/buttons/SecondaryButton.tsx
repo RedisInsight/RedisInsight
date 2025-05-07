@@ -6,7 +6,7 @@ import {
 import { BaseButton } from 'uiSrc/components/base/forms/buttons/Button'
 
 export const SecondaryButton = ({
-  filled,
+  filled = false,
   inverted,
   ...props
 }: SecondaryButtonProps) => {

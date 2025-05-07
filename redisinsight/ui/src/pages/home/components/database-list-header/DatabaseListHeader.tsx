@@ -13,11 +13,11 @@ import cx from 'classnames'
 
 import ColumnsIcon from 'uiSrc/assets/img/icons/columns.svg?react'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { instancesSelector, setShownColumns } from 'uiSrc/slices/instances/instances'
 import {
-  OAuthSocialAction,
-  OAuthSocialSource,
-} from 'uiSrc/slices/interfaces'
+  instancesSelector,
+  setShownColumns,
+} from 'uiSrc/slices/instances/instances'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
 
 import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
@@ -28,7 +28,11 @@ import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { getContentByFeature } from 'uiSrc/utils/content'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { COLUMN_FIELD_NAME_MAP, DatabaseListColumn, FeatureFlags } from 'uiSrc/constants'
+import {
+  COLUMN_FIELD_NAME_MAP,
+  DatabaseListColumn,
+  FeatureFlags,
+} from 'uiSrc/constants'
 import SearchDatabasesList from '../search-databases-list'
 
 import styles from './styles.module.scss'
@@ -113,8 +117,8 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
       event: TelemetryEvent.DATABASE_LIST_COLUMNS_CLICKED,
       eventData: {
         shown,
-        hidden
-      }
+        hidden,
+      },
     })
   }
 
@@ -222,7 +226,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
                     anchorPosition="downLeft"
                     isOpen={columnsConfigShown}
                     closePopover={() => setColumnsConfigShown(false)}
-                    data-testid='columns-config-popover'
+                    data-testid="columns-config-popover"
                     button={
                       <EuiButton
                         size="m"

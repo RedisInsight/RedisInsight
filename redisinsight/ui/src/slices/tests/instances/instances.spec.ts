@@ -79,7 +79,6 @@ import {
   Instance,
 } from '../../interfaces'
 import { loadMastersSentinel } from '../../instances/sentinel'
-import { fetchTags } from 'uiSrc/slices/instances/tags'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),

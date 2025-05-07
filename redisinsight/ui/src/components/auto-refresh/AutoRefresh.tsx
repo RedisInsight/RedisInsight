@@ -136,7 +136,6 @@ const AutoRefresh = ({
   // refresh interval
   useEffect(() => {
     updateLastRefresh()
-
     if (enableAutoRefresh && !loading && !disabled) {
       intervalRefresh = setInterval(() => {
         if (document.hidden) return

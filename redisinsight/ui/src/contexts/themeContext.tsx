@@ -1,4 +1,13 @@
 import React from 'react'
+import { ThemeProvider as StyledThemeProvider } from 'styled-components'
+import {
+  theme as redisUiOldTheme,
+  themeLight,
+  themeDark,
+} from '@redislabsdev/redis-ui-styles'
+import '@redislabsdev/redis-ui-styles/normalized-styles.css'
+import '@redislabsdev/redis-ui-styles/fonts.css'
+
 import { ipcThemeChange } from 'uiSrc/electron/utils'
 import {
   BrowserStorageItem,
@@ -71,7 +80,12 @@ export class ThemeProvider extends React.Component<Props> {
   render() {
     const { children } = this.props
     const { theme, usingSystemTheme }: any = this.state
-
+    const uiTheme =
+      theme === Theme.Dark
+        ? themeDark
+        : theme === Theme.Light
+          ? themeLight
+          : redisUiOldTheme
     return (
       <ThemeContext.Provider
         value={{
@@ -80,7 +94,7 @@ export class ThemeProvider extends React.Component<Props> {
           changeTheme: this.changeTheme,
         }}
       >
-        {children}
+        <StyledThemeProvider theme={uiTheme}>{children}</StyledThemeProvider>
       </ThemeContext.Provider>
     )
   }

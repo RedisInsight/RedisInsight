@@ -1,10 +1,6 @@
 import React from 'react'
 import { MonochromeIconProps } from '@redislabsdev/redis-ui-icons'
 import { useTheme } from '@redislabsdev/redis-ui-styles'
-import RedisLogo from 'uiSrc/assets/img/logo_small.svg?react'
-import RawModeIcon from 'uiSrc/assets/img/icons/raw_mode.svg?react'
-import GithubIcon from 'uiSrc/assets/img/sidebar/github.svg?react'
-import CopilotIcon from 'uiSrc/assets/img/icons/copilot.svg?react'
 
 type BaseIconProps = MonochromeIconProps & {
   icon: React.ComponentType<any>
@@ -40,17 +36,3 @@ export const Icon = ({
 }
 
 export type IconProps = Omit<BaseIconProps, 'icon'>
-
-export const IconRedisLogo = (props: IconProps) => (
-  <Icon icon={RedisLogo} {...props} />
-)
-
-export const IconRawMode = (props: IconProps) => (
-  <Icon icon={RawModeIcon} {...props} />
-)
-export const IconGithub = (props: IconProps) => (
-  <Icon icon={GithubIcon} {...props} />
-)
-export const IconCopilot = (props: IconProps) => (
-  <Icon icon={CopilotIcon} {...props} />
-)

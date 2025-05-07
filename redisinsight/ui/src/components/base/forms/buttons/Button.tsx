@@ -41,7 +41,7 @@ export type ButtonIconProps = Pick<
   side: 'left' | 'right'
 }
 
-const ButtonIcon = ({
+export const ButtonIcon = ({
   side,
   icon,
   iconSide,

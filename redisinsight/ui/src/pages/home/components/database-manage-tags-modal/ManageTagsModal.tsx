@@ -1,14 +1,8 @@
 /* eslint-disable react/no-array-index-key */
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import {
-  EuiButton,
-  EuiIcon,
-  EuiSpacer,
-  EuiTitle,
-  EuiText,
-  EuiButtonEmpty,
-} from '@elastic/eui'
+import { EuiIcon, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { PlusIcon } from 'uiSrc/components/base/icons'
 import { ConnectionProvider, Instance } from 'uiSrc/slices/interfaces'
 import { FormDialog } from 'uiSrc/components'
 import WarningIcon from 'uiSrc/assets/img/warning.svg?react'
@@ -16,6 +10,11 @@ import WarningIcon from 'uiSrc/assets/img/warning.svg?react'
 import { updateInstanceAction } from 'uiSrc/slices/instances/instances'
 import { addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
+import {
+  PrimaryButton,
+  SecondaryButton,
+  EmptyButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { VALID_TAG_KEY_REGEX, VALID_TAG_VALUE_REGEX } from './constants'
 import { TagInputField } from './TagInputField'
 import { getInvalidTagErrors } from './utils'
@@ -128,19 +127,16 @@ export const ManageTagsModal = ({
             </div>
           )}
           <div className={styles.footer}>
-            <EuiButton onClick={onClose} size="s" data-testid="close-button">
+            <SecondaryButton onClick={onClose} data-testid="close-button">
               Close
-            </EuiButton>
-            <EuiButton
+            </SecondaryButton>
+            <PrimaryButton
               onClick={handleSave}
-              fill
-              size="s"
-              color="secondary"
-              isDisabled={isSaveButtonDisabled}
+              disabled={isSaveButtonDisabled}
               data-testid="save-tags-button"
             >
               Save tags
-            </EuiButton>
+            </PrimaryButton>
           </div>
         </>
       }
@@ -190,16 +186,15 @@ export const ManageTagsModal = ({
         </div>
       </div>
       <EuiSpacer size="s" />
-      <EuiButtonEmpty
-        iconType="plus"
+      <EmptyButton
+        icon={PlusIcon}
         onClick={handleAddTag}
-        size="s"
-        color="text"
+        size="small"
         className={styles.addTagButton}
         data-testid="add-tag-button"
       >
         Add additional tag
-      </EuiButtonEmpty>
+      </EmptyButton>
     </FormDialog>
   )
 }

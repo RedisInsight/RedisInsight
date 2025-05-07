@@ -1,7 +1,8 @@
 import React from 'react'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPanel } from '@elastic/eui'
+import { EuiFlexGroup, EuiFlexItem, EuiPanel } from '@elastic/eui'
 import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
 
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export type ConnectivityErrorProps = {
@@ -30,9 +31,7 @@ const ConnectivityError = ({
           </EuiFlexItem>
           {onRetry && (
             <EuiFlexItem grow={false}>
-              <EuiButton fill size="m" color="secondary" onClick={onRetry}>
-                Retry
-              </EuiButton>
+              <PrimaryButton onClick={onRetry}>Retry</PrimaryButton>
             </EuiFlexItem>
           )}
         </EuiFlexGroup>

@@ -1,16 +1,20 @@
 import React, { useRef } from 'react'
 
 import cx from 'classnames'
-import { EuiButton, EuiSpacer, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiSpacer, EuiText, EuiToolTip } from '@elastic/eui'
 import { ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
 import { KEYBOARD_SHORTCUTS } from 'uiSrc/constants'
 import { KeyboardShortcut } from 'uiSrc/components'
 import { isGroupMode } from 'uiSrc/utils'
 
-import GroupModeIcon from 'uiSrc/assets/img/icons/group_mode.svg?react'
-import RawModeIcon from 'uiSrc/assets/img/icons/raw_mode.svg?react'
+import {
+  GroupModeIcon,
+  PlayFilledIcon,
+  RawModeIcon,
+} from 'uiSrc/components/base/icons'
 
 import Divider from 'uiSrc/components/divider/Divider'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -59,12 +63,9 @@ const QueryActions = (props: Props) => {
           content="Enables the raw output mode"
           data-testid="change-mode-tooltip"
         >
-          <EuiButton
-            fill
-            size="s"
-            color="secondary"
+          <EmptyButton
             onClick={() => onChangeMode()}
-            iconType={RawModeIcon}
+            icon={RawModeIcon}
             disabled={isLoading}
             className={cx(styles.btn, styles.textBtn, {
               [styles.activeBtn]: activeMode === RunQueryMode.Raw,
@@ -72,7 +73,7 @@ const QueryActions = (props: Props) => {
             data-testid="btn-change-mode"
           >
             Raw mode
-          </EuiButton>
+          </EmptyButton>
         </EuiToolTip>
       )}
       {onChangeGroupMode && (
@@ -88,20 +89,17 @@ const QueryActions = (props: Props) => {
           }
           data-testid="group-results-tooltip"
         >
-          <EuiButton
-            fill
-            size="s"
-            color="secondary"
+          <EmptyButton
             onClick={() => onChangeGroupMode()}
             disabled={isLoading}
-            iconType={GroupModeIcon}
+            icon={GroupModeIcon}
             className={cx(styles.btn, styles.textBtn, {
               [styles.activeBtn]: isGroupMode(resultsMode),
             })}
             data-testid="btn-change-group-mode"
           >
             Group results
-          </EuiButton>
+          </EmptyButton>
         </EuiToolTip>
       )}
       <Divider
@@ -119,20 +117,20 @@ const QueryActions = (props: Props) => {
         }
         data-testid="run-query-tooltip"
       >
-        <EuiButton
+        <EmptyButton
           onClick={() => {
             onSubmit()
             setTimeout(() => runTooltipRef?.current?.hideToolTip?.(), 0)
           }}
-          isLoading={isLoading}
+          loading={isLoading}
           disabled={isLoading}
-          iconType="playFilled"
+          icon={PlayFilledIcon}
           className={cx(styles.btn, styles.submitButton)}
           aria-label="submit"
           data-testid="btn-submit"
         >
           Run
-        </EuiButton>
+        </EmptyButton>
       </EuiToolTip>
     </div>
   )

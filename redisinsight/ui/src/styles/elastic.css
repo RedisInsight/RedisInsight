@@ -558,7 +558,7 @@
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     font-kerning: normal;
-    font-size: 16px;
+    font-size: 62.5%;
     color: #343741;
     height: 100%;
     background-color: var(--euiPageBackgroundColor);

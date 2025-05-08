@@ -66,6 +66,7 @@
   margin-left: 25px;
   opacity: 0;
   height: 100% !important;
+  flex-shrink: 0;
   transition: opacity 250ms ease-in-out;
 }
 
@@ -77,7 +78,9 @@
   position: relative;
   display: flex;
   max-width: 100%;
-  float: left;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
 
   &:hover .copy-btn,
   &:hover .copy-near-btn {

@@ -2,7 +2,6 @@ import React, { useContext } from 'react'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
 import {
-  EuiButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
@@ -14,7 +13,11 @@ import {
 import { useParams } from 'react-router-dom'
 import { findIndex, isNumber } from 'lodash'
 
-import { DeleteIcon } from '@redislabsdev/redis-ui-icons'
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  DeleteIcon,
+} from '@redislabsdev/redis-ui-icons'
 import { CopyIcon, PlayIcon } from 'uiSrc/components/base/icons'
 import { Theme } from 'uiSrc/constants'
 import {
@@ -72,7 +75,6 @@ export interface Props {
   activeResultsMode?: ResultsMode
   summary?: ResultsSummary
   summaryText?: string
-  queryType: WBQueryType
   selectedValue: string
   loading?: boolean
   clearing?: boolean
@@ -337,16 +339,6 @@ const QueryCardHeader = (props: Props) => {
                 resultsMode={resultsMode}
               />
             </EuiTextColor>
-            <EuiButtonIcon
-              iconType="copy"
-              aria-label="Copy query"
-              className={cx('copy-btn', styles.copyBtn)}
-              disabled={emptyCommand}
-              onClick={(event: React.MouseEvent) =>
-                handleCopy(event, query || '')
-              }
-              data-testid="copy-command"
-            />
             <IconButton
               icon={CopyIcon}
               aria-label="Copy query"
@@ -499,8 +491,8 @@ const QueryCardHeader = (props: Props) => {
             {!isFullScreen && (
               <EuiFlexItem grow={false} className={styles.buttonIcon}>
                 {!isSilentModeWithoutError(resultsMode, summary?.fail) && (
-                  <EuiButtonIcon
-                    iconType={isOpen ? 'arrowUp' : 'arrowDown'}
+                  <IconButton
+                    icon={isOpen ? ChevronUpIcon : ChevronDownIcon}
                     aria-label="toggle collapse"
                   />
                 )}

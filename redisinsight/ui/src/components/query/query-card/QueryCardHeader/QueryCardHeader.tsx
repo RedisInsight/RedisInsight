@@ -14,6 +14,8 @@ import {
 import { useParams } from 'react-router-dom'
 import { findIndex, isNumber } from 'lodash'
 
+import { DeleteIcon } from '@redislabsdev/redis-ui-icons'
+import { CopyIcon, PlayIcon } from 'uiSrc/components/base/icons'
 import { Theme } from 'uiSrc/constants'
 import {
   getCommandNameFromQuery,
@@ -53,6 +55,7 @@ import ExecutionTimeIcon from 'uiSrc/assets/img/workbench/execution_time.svg?rea
 import GroupModeIcon from 'uiSrc/assets/img/icons/group_mode.svg?react'
 import SilentModeIcon from 'uiSrc/assets/img/icons/silent_mode.svg?react'
 
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import QueryCardTooltip from '../QueryCardTooltip'
 
 import styles from './styles.module.scss'
@@ -344,6 +347,16 @@ const QueryCardHeader = (props: Props) => {
               }
               data-testid="copy-command"
             />
+            <IconButton
+              icon={CopyIcon}
+              aria-label="Copy query"
+              className={cx('copy-btn', styles.copyBtn)}
+              disabled={emptyCommand}
+              onClick={(event: React.MouseEvent) =>
+                handleCopy(event, query || '')
+              }
+              data-testid="copy-command"
+            />
           </div>
         </EuiFlexItem>
         <EuiFlexItem className={styles.controls} grow={false}>
@@ -459,9 +472,9 @@ const QueryCardHeader = (props: Props) => {
               )}
             </EuiFlexItem>
             <EuiFlexItem grow={false} className={styles.buttonIcon}>
-              <EuiButtonIcon
+              <IconButton
                 disabled={loading || clearing}
-                iconType="trash"
+                icon={DeleteIcon}
                 aria-label="Delete command"
                 data-testid="delete-command"
                 onClick={handleQueryDelete}
@@ -473,9 +486,9 @@ const QueryCardHeader = (props: Props) => {
                 className={cx(styles.buttonIcon, styles.playIcon)}
               >
                 <EuiToolTip content="Run again" position="left">
-                  <EuiButtonIcon
+                  <IconButton
                     disabled={emptyCommand}
-                    iconType="play"
+                    icon={PlayIcon}
                     aria-label="Re-run command"
                     data-testid="re-run-command"
                     onClick={handleQueryReRun}

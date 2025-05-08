@@ -55,7 +55,6 @@ export class DatabaseConnectionService {
 
     if (!HostingProvider[provider]) {
       toUpdate.provider = await getHostingProvider(client, host);
-      console.log('provider after,', toUpdate.provider);
     }
 
     const connectionType = client?.getConnectionType();

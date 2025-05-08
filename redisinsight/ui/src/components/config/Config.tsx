@@ -6,6 +6,7 @@ import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
 import { BuildType } from 'uiSrc/constants/env'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import { localStorageService, setObjectStorage } from 'uiSrc/services'
+import { themeService } from '../../services'
 import {
   appFeatureFlagsFeaturesSelector,
   setFeaturesToHighlight,
@@ -103,6 +104,12 @@ const Config = () => {
   }, [id])
 
   useEffect(() => {
+    if (config) {
+      checkAndSetTheme()
+    }
+  }, [config])
+
+  useEffect(() => {
     if (config && spec && envDependentFeature?.flag) {
       checkSettingsToShowPopup()
     }
@@ -196,6 +203,12 @@ const Config = () => {
         isDifferentConsentsExists(specConsents, appliedConsents),
       ),
     )
+  }
+
+  const checkAndSetTheme = () => {
+    const theme = config?.theme
+    if (theme && localStorageService.get(BrowserStorageItem.theme) !== theme)
+      themeService.applyTheme(theme)
   }
 
   return null

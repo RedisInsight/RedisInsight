@@ -1,7 +1,7 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiLoadingContent } from '@elastic/eui'
 
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -22,7 +22,7 @@ const QueryCardCommonResult = (props: Props) => {
       )}
       {loading && (
         <div className={styles.loading}>
-          <EuiLoadingContent lines={1} />
+          <LoadingContent lines={1} />
         </div>
       )}
     </div>

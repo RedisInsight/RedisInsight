@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid'
 import {
   EuiFlexItem,
   EuiIcon,
-  EuiLoadingContent,
   EuiTextColor,
 } from '@elastic/eui'
 import { pluginApi } from 'uiSrc/services/PluginAPI'
@@ -16,6 +15,7 @@ import {
   formatToText,
   replaceEmptyValue,
 } from 'uiSrc/utils'
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import { Theme } from 'uiSrc/constants'
 import {
   CommandExecutionResult,
@@ -368,7 +368,7 @@ const QueryCardCliPlugin = (props: Props) => {
         )}
         {!isPluginLoaded && (
           <div>
-            <EuiLoadingContent lines={5} />
+            <LoadingContent lines={5} />
           </div>
         )}
       </div>

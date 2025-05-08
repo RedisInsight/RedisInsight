@@ -6,11 +6,11 @@ import {
   EuiBasicTableColumn,
   EuiIcon,
   EuiInMemoryTable,
-  EuiLoadingContent,
   EuiText,
   EuiTextColor,
 } from '@elastic/eui'
 
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import GroupBadge from '../GroupBadge'
 import { InfoAttributesBoolean } from '../../constants'
 
@@ -99,7 +99,7 @@ const TableInfoResult = React.memo((props: Props) => {
           </EuiText>
         </>
       ) : (
-        <EuiLoadingContent lines={2} />
+        <LoadingContent lines={2} />
       )}
     </div>
   )
@@ -112,7 +112,7 @@ const TableInfoResult = React.memo((props: Props) => {
           {`Number of terms: ${result?.num_terms || '0'}`}
         </EuiText>
       ) : (
-        <EuiLoadingContent lines={1} />
+        <LoadingContent lines={1} />
       )}
     </div>
   )

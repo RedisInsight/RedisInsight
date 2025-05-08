@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiButtonIcon } from '@elastic/eui'
 import cx from 'classnames'
+import { PlusIcon } from '@redislabsdev/redis-ui-icons'
 import {
   appendReJSONArrayItemAction,
   fetchVisualisationResults,
@@ -12,6 +13,7 @@ import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { FeatureFlags } from 'uiSrc/constants'
 
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { getBrackets, isRealArray, isRealObject, wrapPath } from '../utils'
 import { BaseProps, ObjectTypes } from '../interfaces'
 import RejsonDynamicTypes from '../rejson-dynamic-types'
@@ -142,8 +144,9 @@ const RejsonDetails = (props: BaseProps) => {
               )}
             </span>
             {!addRootKVPair && (
-              <EuiButtonIcon
-                iconType="plus"
+              <IconButton
+                icon={PlusIcon}
+                size="S"
                 className={styles.buttonStyle}
                 onClick={onClickSetRootKVPair}
                 aria-label="Add field"

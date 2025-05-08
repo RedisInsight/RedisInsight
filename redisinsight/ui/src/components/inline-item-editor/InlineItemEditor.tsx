@@ -3,7 +3,6 @@ import { capitalize } from 'lodash'
 import cx from 'classnames'
 import {
   EuiButton,
-  EuiButtonIcon,
   EuiFieldText,
   EuiFlexItem,
   EuiFocusTrap,
@@ -14,8 +13,9 @@ import {
   EuiWindowEvent,
   keys,
 } from '@elastic/eui'
-import { IconSize } from '@elastic/eui/src/components/icon/icon'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
+import { CancelSlimIcon, CheckThinIcon } from 'uiSrc/components/base/icons'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 type Positions = 'top' | 'bottom' | 'left' | 'right' | 'inside'
@@ -43,7 +43,7 @@ export interface Props {
     value: string,
   ) => { title: string; content: string | React.ReactNode } | undefined
   declineOnUnmount?: boolean
-  iconSize?: IconSize
+  iconSize?: 'S' | 'M' | 'L'
   viewChildrenMode?: boolean
   autoComplete?: string
   controlsClassName?: string
@@ -179,13 +179,13 @@ const InlineItemEditor = (props: Props) => {
       }
       data-testid="apply-tooltip"
     >
-      <EuiButtonIcon
-        iconSize={iconSize ?? 'l'}
-        iconType="check"
+      <IconButton
+        size={iconSize ?? 'M'}
+        icon={CheckThinIcon}
         color="primary"
         aria-label="Apply"
         className={cx(styles.btn, styles.applyBtn)}
-        isDisabled={isDisabledApply()}
+        disabled={isDisabledApply()}
         onClick={handleApplyClick}
         data-testid="apply-btn"
       />
@@ -242,14 +242,13 @@ const InlineItemEditor = (props: Props) => {
                     controlsClassName,
                   )}
                 >
-                  <EuiButtonIcon
-                    iconSize={iconSize ?? 'l'}
-                    iconType="cross"
-                    color="primary"
+                  <IconButton
+                    size={iconSize ?? 'M'}
+                    icon={CancelSlimIcon}
                     aria-label="Cancel editing"
                     className={cx(styles.btn, styles.declineBtn)}
                     onClick={onDecline}
-                    isDisabled={isLoading}
+                    disabled={isLoading}
                     data-testid="cancel-btn"
                   />
                   {!approveByValidation && ApplyBtn}

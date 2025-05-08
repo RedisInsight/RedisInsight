@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
 import {
-  EuiButtonIcon,
   EuiFieldText,
   EuiFlexItem,
   EuiFocusTrap,
@@ -16,6 +15,8 @@ import { checkExistingPath } from 'uiSrc/utils/rejson'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
+import { CancelSlimIcon, CheckThinIcon } from 'uiSrc/components/base/icons'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import ConfirmOverwrite from './ConfirmOverwrite'
 import { isValidJSON, isValidKey, parseJsonData, wrapPath } from '../../utils'
 import { JSONErrors } from '../../constants'
@@ -131,18 +132,18 @@ const AddItem = (props: Props) => {
                 onConfirm={confirmApply}
               >
                 <div className={cx(styles.controls)}>
-                  <EuiButtonIcon
-                    iconSize="m"
-                    iconType="cross"
+                  <IconButton
+                    size="M"
+                    icon={CancelSlimIcon}
                     color="primary"
                     aria-label="Cancel editing"
                     className={styles.declineBtn}
                     onClick={() => onCancel?.()}
                   />
 
-                  <EuiButtonIcon
-                    iconSize="m"
-                    iconType="check"
+                  <IconButton
+                    size="M"
+                    icon={CheckThinIcon}
                     color="primary"
                     type="submit"
                     aria-label="Apply"

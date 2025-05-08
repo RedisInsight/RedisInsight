@@ -1,4 +1,4 @@
-import { EuiButton, EuiLink, EuiSwitch, EuiTitle } from '@elastic/eui'
+import { EuiLink, EuiSwitch, EuiTitle } from '@elastic/eui'
 import { isNull } from 'lodash'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
@@ -15,6 +15,7 @@ import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { changeKeyViewType } from 'uiSrc/slices/browser/keys'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { Nullable } from 'uiSrc/utils'
+import { TextBtn } from 'uiSrc/pages/database-analysis/components/base/TextBtn'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import Table from './Table'
 import styles from './styles.module.scss'
@@ -98,32 +99,24 @@ const TopNamespace = (props: Props) => {
         <EuiTitle className="section-title">
           <h4>TOP NAMESPACES</h4>
         </EuiTitle>
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
+        <TextBtn
+          $active={tableView === TableView.MEMORY}
+          size="small"
           onClick={() => setTableView(TableView.MEMORY)}
           disabled={tableView === TableView.MEMORY}
-          className={cx(styles.textBtn, {
-            [styles.activeBtn]: tableView === TableView.MEMORY,
-          })}
           data-testid="btn-change-table-memory"
         >
           by Memory
-        </EuiButton>
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
+        </TextBtn>
+        <TextBtn
+          $active={tableView === TableView.KEYS}
+          size="small"
           onClick={() => setTableView(TableView.KEYS)}
           disabled={tableView === TableView.KEYS}
-          className={cx(styles.textBtn, {
-            [styles.activeBtn]: tableView === TableView.KEYS,
-          })}
           data-testid="btn-change-table-keys"
         >
           by Number of Keys
-        </EuiButton>
+        </TextBtn>
         {extrapolation !== DEFAULT_EXTRAPOLATION && (
           <EuiSwitch
             compressed

@@ -3,13 +3,7 @@
 import React, { FC, SVGProps, useCallback, useState } from 'react'
 
 import cx from 'classnames'
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiModal,
-  EuiModalBody,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiModal, EuiModalBody, EuiToolTip } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   FeatureFlagComponent,
@@ -22,7 +16,7 @@ import FilterKeyType from 'uiSrc/pages/browser/components/filter-key-type'
 import RediSearchIndexesList from 'uiSrc/pages/browser/components/redisearch-key-list'
 import SearchKeyList from 'uiSrc/pages/browser/components/search-key-list'
 
-import BulkActionsIcon from 'uiSrc/assets/img/icons/bulk_actions.svg?react'
+import { BulkActions as BulkActionsIcon } from 'uiSrc/components/base/icons'
 import VectorIcon from 'uiSrc/assets/img/icons/vector.svg?react'
 import RediSearchIcon from 'uiSrc/assets/img/modules/RedisSearchLight.svg?react'
 
@@ -44,6 +38,10 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { setBulkActionType } from 'uiSrc/slices/browser/bulkActions'
 
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 interface ISwitchType<T> {
@@ -189,30 +187,26 @@ const BrowserSearchPanel = (props: Props) => {
   )
 
   const AddKeyBtn = (
-    <EuiButton
-      fill
-      size="s"
-      color="secondary"
+    <PrimaryButton
       onClick={openAddKeyPanel}
       className={styles.addKey}
       data-testid="btn-add-key"
     >
       + <span className={styles.addKeyText}>Key</span>
-    </EuiButton>
+    </PrimaryButton>
   )
 
   const BulkActionsBtn = (
-    <EuiButton
-      size="s"
+    <SecondaryButton
       color="secondary"
-      iconType={BulkActionsIcon}
+      icon={BulkActionsIcon}
       onClick={openBulkActions}
       className={styles.bulkActions}
       data-testid="btn-bulk-actions"
       aria-label="bulk actions"
     >
       <span className={styles.bulkActionsText}>Bulk Actions</span>
-    </EuiButton>
+    </SecondaryButton>
   )
 
   const SearchModeSwitch = () => (
@@ -261,7 +255,7 @@ const BrowserSearchPanel = (props: Props) => {
         )}
         <SearchKeyList />
       </div>
-      <div style={{ flexShrink: 0 }}>
+      <div style={{ flexShrink: 0, marginLeft: 12 }}>
         <FeatureFlagComponent name={FeatureFlags.envDependent}>
           {BulkActionsBtn}
         </FeatureFlagComponent>

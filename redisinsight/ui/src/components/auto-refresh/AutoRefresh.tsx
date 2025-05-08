@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import {
-  EuiButtonIcon,
   EuiIcon,
   EuiPopover,
   EuiSwitch,
@@ -8,8 +7,7 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
-
-import { EuiButtonIconSizes } from '@elastic/eui/src/components/button/button_icon/button_icon'
+import { ChevronDownIcon, RefreshIcon } from 'uiSrc/components/base/icons'
 import {
   errorValidateRefreshRateNumber,
   MIN_REFRESH_RATE,
@@ -19,10 +17,11 @@ import {
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import {
-  getTextByRefreshTime,
   DEFAULT_REFRESH_RATE,
   DURATION_FIRST_REFRESH_TIME,
+  getTextByRefreshTime,
   MINUTE,
   NOW,
 } from './utils'
@@ -50,7 +49,7 @@ export interface Props {
   ) => void
   minimumRefreshRate?: number
   defaultRefreshRate?: string
-  iconSize?: EuiButtonIconSizes
+  iconSize?: 'S' | 'M' | 'L'
   disabled?: boolean
   disabledRefreshButtonMessage?: string
   enableAutoRefreshDefault?: boolean
@@ -71,7 +70,7 @@ const AutoRefresh = ({
   onRefreshClicked,
   onEnableAutoRefresh,
   onChangeAutoRefreshRate,
-  iconSize = 'm',
+  iconSize = 'M',
   disabled,
   disabledRefreshButtonMessage,
   minimumRefreshRate,
@@ -235,9 +234,9 @@ const AutoRefresh = ({
         content={disabled ? disabledRefreshButtonMessage : refreshMessage}
         data-testid={getDataTestid('refresh-tooltip')}
       >
-        <EuiButtonIcon
+        <IconButton
           size={iconSize}
-          iconType="refresh"
+          icon={RefreshIcon}
           disabled={loading || disabled}
           onClick={handleRefreshClick}
           onMouseEnter={updateLastRefresh}
@@ -257,9 +256,10 @@ const AutoRefresh = ({
         panelClassName={cx('popover-without-top-tail', styles.popoverWrapper)}
         closePopover={closePopover}
         button={
-          <EuiButtonIcon
+          <IconButton
             disabled={disabled}
-            iconType="arrowDown"
+            size="S"
+            icon={ChevronDownIcon}
             aria-label="Auto-refresh config popover"
             className={cx(styles.anchorBtn, {
               [styles.anchorBtnOpen]: isPopoverOpen,

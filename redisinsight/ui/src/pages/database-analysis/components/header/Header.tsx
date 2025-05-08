@@ -7,13 +7,13 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
-  EuiButton,
   EuiText,
   EuiHideFor,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
+import { CaretRightIcon } from 'uiSrc/components/base/icons'
 import { createNewAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { getApproximatePercentage } from 'uiSrc/utils/validations'
@@ -29,6 +29,7 @@ import {
 } from 'uiSrc/constants/recommendations'
 import { FormatedDate } from 'uiSrc/components'
 import { DEFAULT_DELIMITER } from 'uiSrc/constants'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analysis-progress'
 
@@ -162,19 +163,16 @@ const Header = (props: Props) => {
             responsive={false}
           >
             <EuiFlexItem>
-              <EuiButton
+              <PrimaryButton
                 aria-label="New reports"
-                fill
                 data-testid="start-database-analysis-btn"
-                color="secondary"
-                iconType="playFilled"
+                icon={CaretRightIcon}
                 iconSide="left"
                 disabled={analysisLoading}
                 onClick={handleClick}
-                size="s"
               >
                 New Report
-              </EuiButton>
+              </PrimaryButton>
             </EuiFlexItem>
             <EuiFlexItem style={{ paddingLeft: 6 }} grow={false}>
               <EuiToolTip

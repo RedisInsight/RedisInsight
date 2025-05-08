@@ -105,7 +105,7 @@ const RejsonScalar = (props: JSONScalarProps) => {
                     onDecline={onDeclineChanges}
                     onChange={() => setError('')}
                     onApply={(value) => onApplyValue(value)}
-                    iconSize="m"
+                    iconSize="M"
                   />
                   {!!error && (
                     <div className={cx(styles.errorMessage)}>

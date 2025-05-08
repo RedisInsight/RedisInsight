@@ -1,6 +1,5 @@
 import {
   EuiBasicTableColumn,
-  EuiButtonEmpty,
   EuiInMemoryTable,
   EuiTextColor,
   EuiToolTip,
@@ -44,6 +43,7 @@ import {
   truncateTTLToSeconds,
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import { TableTextBtn } from 'uiSrc/pages/database-analysis/components/base/TableTextBtn'
 import { Key } from 'apiSrc/modules/database-analysis/models/key'
 
 import styles from './styles.module.scss'
@@ -135,13 +135,12 @@ const Table = (props: Props) => {
               position="bottom"
               content={tooltipContent}
             >
-              <EuiButtonEmpty
-                className={styles.link}
+              <TableTextBtn
                 style={{ height: 'auto' }}
                 onClick={() => handleRedirect(name)}
               >
                 {cellContent}
-              </EuiButtonEmpty>
+              </TableTextBtn>
             </EuiToolTip>
           </div>
         )

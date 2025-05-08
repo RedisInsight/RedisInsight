@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiTitle } from '@elastic/eui'
+import { EuiTitle } from '@elastic/eui'
 import { TableView } from 'uiSrc/pages/database-analysis'
 import { Nullable } from 'uiSrc/utils'
 import { TableLoader } from 'uiSrc/pages/database-analysis/components'
+import { TextBtn } from 'uiSrc/pages/database-analysis/components/base/TextBtn'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import Table from './Table'
@@ -15,6 +16,7 @@ export interface Props {
   delimiter?: string
 }
 
+const MAX_TOP_KEYS = 15
 const TopKeys = ({ data, loading }: Props) => {
   const { topKeysLength = [], topKeysMemory = [], delimiter } = data || {}
   const [tableView, setTableView] = useState<TableView>(TableView.MEMORY)
@@ -32,37 +34,30 @@ const TopKeys = ({ data, loading }: Props) => {
       <div className="section-title-wrapper">
         <EuiTitle className="section-title">
           <h4 data-testid="top-keys-title">
-            {topKeysLength.length < 15 && topKeysMemory?.length < 15
+            {topKeysLength.length < MAX_TOP_KEYS &&
+            topKeysMemory?.length < MAX_TOP_KEYS
               ? 'TOP KEYS'
-              : 'TOP 15 KEYS'}
+              : `TOP ${MAX_TOP_KEYS} KEYS`}
           </h4>
         </EuiTitle>
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
+        <TextBtn
+          $active={tableView === TableView.MEMORY}
+          size="small"
           onClick={() => setTableView(TableView.MEMORY)}
           disabled={tableView === TableView.MEMORY}
-          className={cx(styles.textBtn, {
-            [styles.activeBtn]: tableView === TableView.MEMORY,
-          })}
           data-testid="btn-change-table-memory"
         >
           by Memory
-        </EuiButton>
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
+        </TextBtn>
+        <TextBtn
+          $active={tableView === TableView.KEYS}
+          size="small"
           onClick={() => setTableView(TableView.KEYS)}
           disabled={tableView === TableView.KEYS}
-          className={cx(styles.textBtn, {
-            [styles.activeBtn]: tableView === TableView.KEYS,
-          })}
           data-testid="btn-change-table-keys"
         >
           by Length
-        </EuiButton>
+        </TextBtn>
       </div>
       <div className="section-content">
         {tableView === TableView.MEMORY && (

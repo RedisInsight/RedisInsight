@@ -1,6 +1,4 @@
 import {
-  EuiButton,
-  EuiButtonIcon,
   EuiFlexGroup,
   EuiFlexItem,
   EuiIcon,
@@ -13,12 +11,19 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
+import { EraserIcon } from '@redislabsdev/redis-ui-icons'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { DurationUnits } from 'uiSrc/constants'
 import { slowLogSelector } from 'uiSrc/slices/analytics/slowlog'
 import { AutoRefresh } from 'uiSrc/components'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  DestructiveButton,
+  IconButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { SettingsIcon } from 'uiSrc/components/base/icons'
 import SlowLogConfig from '../SlowLogConfig'
 import styles from './styles.module.scss'
 
@@ -113,17 +118,15 @@ const Actions = (props: Props) => {
           </EuiText>
         </EuiText>
         <div className={styles.popoverFooter}>
-          <EuiButton
-            fill
-            size="s"
-            color="warning"
-            iconType="eraser"
+          <DestructiveButton
+            size="small"
+            icon={EraserIcon}
             onClick={() => handleClearClick()}
             className={styles.popoverDeleteBtn}
             data-testid="reset-confirm-btn"
           >
             Clear
-          </EuiButton>
+          </DestructiveButton>
         </div>
       </div>
     </div>
@@ -158,16 +161,15 @@ const Actions = (props: Props) => {
           closePopover={() => {}}
           panelClassName={cx('popover-without-top-tail', styles.configWrapper)}
           button={
-            <EuiButton
-              size="s"
-              iconType="gear"
-              color="secondary"
+            <SecondaryButton
+              size="small"
+              icon={SettingsIcon}
               aria-label="Configure"
               onClick={() => showConfigPopover()}
               data-testid="configure-btn"
             >
               Configure
-            </EuiButton>
+            </SecondaryButton>
           }
         >
           <SlowLogConfig
@@ -190,9 +192,8 @@ const Actions = (props: Props) => {
                 anchorClassName={styles.icon}
                 content="Clear Slow Log"
               >
-                <EuiButtonIcon
-                  iconType="eraser"
-                  color="primary"
+                <IconButton
+                  icon={EraserIcon}
                   aria-label="Clear Slow Log"
                   onClick={() => showClearPopover()}
                   data-testid="clear-btn"

@@ -3,12 +3,10 @@ import React, { useEffect, useState } from 'react'
 import {
   EuiBasicTableColumn,
   EuiInMemoryTable,
-  EuiButtonIcon,
-  EuiButtonEmpty,
   EuiToolTip,
   PropertySort,
 } from '@elastic/eui'
-import { useParams, useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 
@@ -23,12 +21,12 @@ import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { GroupBadge } from 'uiSrc/components'
 import { Pages } from 'uiSrc/constants'
 import {
-  setFilter,
-  setSearchMatch,
-  resetKeysData,
+  changeSearchMode,
   fetchKeys,
   keysSelector,
-  changeSearchMode,
+  resetKeysData,
+  setFilter,
+  setSearchMatch,
 } from 'uiSrc/slices/browser/keys'
 import {
   SCAN_COUNT_DEFAULT,
@@ -36,10 +34,13 @@ import {
 } from 'uiSrc/constants/api'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import {
-  setBrowserTreeDelimiter,
-  setBrowserKeyListDataLoaded,
   resetBrowserTree,
+  setBrowserKeyListDataLoaded,
+  setBrowserTreeDelimiter,
 } from 'uiSrc/slices/app/context'
+import { TableTextBtn } from 'uiSrc/pages/database-analysis/components/base/TableTextBtn'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { ChevronDownIcon, ChevronUpIcon } from 'uiSrc/components/base/icons'
 import { NspSummary } from 'apiSrc/modules/database-analysis/models/nsp-summary'
 import { NspTypeSummary } from 'apiSrc/modules/database-analysis/models/nsp-type-summary'
 
@@ -155,12 +156,12 @@ const NameSpacesTable = (props: Props) => {
                 position="bottom"
                 content={`${item.nsp}:*`}
               >
-                <EuiButtonEmpty
-                  className={cx(styles.link, styles.expanded)}
+                <TableTextBtn
+                  $expanded
                   onClick={() => handleRedirect(item.nsp as string, type.type)}
                 >
                   {`${item.nsp}${delimiter}*`}
-                </EuiButtonEmpty>
+                </TableTextBtn>
               </EuiToolTip>
             </div>
             <div className={styles.badgesContainer}>
@@ -209,12 +210,9 @@ const NameSpacesTable = (props: Props) => {
               position="bottom"
               content={tooltipContent}
             >
-              <EuiButtonEmpty
-                className={styles.link}
-                onClick={() => handleRedirect(nsp, filterType)}
-              >
+              <TableTextBtn onClick={() => handleRedirect(nsp, filterType)}>
                 {cellContent}
-              </EuiButtonEmpty>
+              </TableTextBtn>
             </EuiToolTip>
           </div>
         )
@@ -298,16 +296,17 @@ const NameSpacesTable = (props: Props) => {
         return (
           <>
             {types.length > 1 && (
-              <EuiButtonIcon
+              <IconButton
+                size="S"
                 style={{ marginRight: '6px' }}
                 onClick={() => toggleDetails(item)}
                 aria-label={
                   itemIdToExpandedRowMap[nsp as string] ? 'Collapse' : 'Expand'
                 }
-                iconType={
+                icon={
                   itemIdToExpandedRowMap[nsp as string]
-                    ? 'arrowUp'
-                    : 'arrowDown'
+                    ? ChevronUpIcon
+                    : ChevronDownIcon
                 }
                 data-testid={`expand-arrow-${nsp}`}
               />

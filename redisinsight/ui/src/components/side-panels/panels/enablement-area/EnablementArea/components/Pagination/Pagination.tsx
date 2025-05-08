@@ -1,16 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react'
 import {
-  EuiButton,
   EuiContextMenuPanel,
   EuiContextMenuItem,
   EuiPopover,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { isNil } from 'lodash'
+import { ChevronLeftIcon, ChevronRightIcon } from 'uiSrc/components/base/icons'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 
 import { Nullable } from 'uiSrc/utils'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -99,6 +100,7 @@ const Pagination = ({
     </EuiPopover>
   )
 
+  const size = compressed ? 'small' : 'medium'
   return (
     <div
       className={cx(styles.pagination, {
@@ -107,21 +109,19 @@ const Pagination = ({
     >
       <div>
         {activePage > 0 && (
-          <EuiButton
+          <PrimaryButton
             aria-label="Previous page"
-            fill
             data-testid="enablement-area__prev-page-btn"
-            color="secondary"
-            iconType="arrowLeft"
+            icon={ChevronLeftIcon}
             iconSide="left"
             onClick={() => handleOpenPage(activePage - 1)}
-            size={compressed ? 's' : 'm'}
+            size={size}
             className={cx(styles.prevPage, {
               [styles.prevPageCompressed]: compressed,
             })}
           >
             Back
-          </EuiButton>
+          </PrimaryButton>
         )}
       </div>
       <div>
@@ -129,21 +129,19 @@ const Pagination = ({
       </div>
       <div>
         {activePage < items.length - 1 && (
-          <EuiButton
+          <PrimaryButton
             aria-label="Next page"
-            fill
             data-testid="enablement-area__next-page-btn"
-            color="secondary"
-            iconType="arrowRight"
+            icon={ChevronRightIcon}
             iconSide="right"
             onClick={() => handleOpenPage(activePage + 1)}
             className={cx(styles.nextPage, {
               [styles.nextPageCompressed]: compressed,
             })}
-            size={compressed ? 's' : 'm'}
+            size={size}
           >
             Next
-          </EuiButton>
+          </PrimaryButton>
         )}
       </div>
     </div>

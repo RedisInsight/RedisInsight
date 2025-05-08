@@ -2,7 +2,6 @@ import React, { useMemo, useRef, useEffect, useState } from 'react'
 import {
   EuiFlyoutHeader,
   EuiText,
-  EuiButtonEmpty,
   EuiLoadingContent,
   EuiHorizontalRule,
   EuiPopover,
@@ -13,6 +12,7 @@ import { debounce } from 'lodash'
 import { useLocation, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
+import { ChevronLeftIcon } from 'uiSrc/components/base/icons'
 import { ExternalLink } from 'uiSrc/components'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import {
@@ -35,6 +35,7 @@ import {
   CloudLink,
   RedisInsightLink,
 } from 'uiSrc/components/markdown'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { getTutorialSection } from '../../utils'
 import { EmptyPrompt, Pagination, Code } from '..'
 
@@ -184,15 +185,16 @@ const InternalPage = (props: Props) => {
             panelPaddingSize="m"
             closePopover={() => setShowCapabilityPopover(false)}
             button={
-              <EuiButtonEmpty
-                data-testid="enablement-area__page-close"
-                iconType="arrowLeft"
-                onClick={onClose}
-                className={styles.backButton}
-                aria-label="Back"
-              >
-                {backTitle}
-              </EuiButtonEmpty>
+              <div className={styles.backButton}>
+                <EmptyButton
+                  data-testid="enablement-area__page-close"
+                  icon={ChevronLeftIcon}
+                  onClick={onClose}
+                  aria-label="Back"
+                >
+                  {backTitle}
+                </EmptyButton>
+              </div>
             }
           >
             <div data-testid="explore-capability-popover">

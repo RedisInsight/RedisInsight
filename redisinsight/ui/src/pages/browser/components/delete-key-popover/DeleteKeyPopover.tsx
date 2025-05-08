@@ -1,4 +1,10 @@
-import { EuiButton, EuiButtonIcon, EuiPopover, EuiSpacer, EuiText } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiButtonIcon,
+  EuiPopover,
+  EuiSpacer,
+  EuiText,
+} from '@elastic/eui'
 
 import React from 'react'
 
@@ -29,27 +35,26 @@ export const DeleteKeyPopover = ({
   onOpenPopover,
 }: DeleteProps) => (
   <EuiPopover
-    anchorClassName={cx(
-      'showOnHoverKey',
-      { show: deletePopoverId === rowId },
-    )}
+    anchorClassName={cx('showOnHoverKey', { show: deletePopoverId === rowId })}
     anchorPosition="leftUp"
     isOpen={deletePopoverId === rowId}
     closePopover={() => onOpenPopover(-1, type)}
     panelPaddingSize="l"
-    button={(
+    button={
       <EuiButtonIcon
         iconType="trash"
         onClick={() => onOpenPopover(rowId, type)}
         aria-label="Delete Key"
         data-testid={`delete-key-btn-${nameString}`}
       />
-    )}
+    }
     onClick={(e) => e.stopPropagation()}
   >
     <>
       <EuiText size="m">
-        <h4 style={{ wordBreak: 'break-all' }}><b>{formatLongName(nameString)}</b></h4>
+        <h4 style={{ wordBreak: 'break-all' }}>
+          <b>{formatLongName(nameString)}</b>
+        </h4>
         <EuiText size="s">will be deleted.</EuiText>
       </EuiText>
       <EuiSpacer size="m" />

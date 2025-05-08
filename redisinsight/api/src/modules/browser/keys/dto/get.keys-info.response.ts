@@ -17,8 +17,8 @@ export class GetKeyInfoResponse {
   @ApiProperty({
     type: Number,
     description:
-      'The remaining time to live of a key.'
-      + ' If the property has value of -1, then the key has no expiration time (no limit).',
+      'The remaining time to live of a key.' +
+      ' If the property has value of -1, then the key has no expiration time (no limit).',
   })
   ttl?: number;
 

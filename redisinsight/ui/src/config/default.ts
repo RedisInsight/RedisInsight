@@ -14,9 +14,10 @@ const booleanEnv = (envName: string, defaultValue: boolean): boolean => {
   return ['true', '1'].includes(value || '')
 }
 
-const apiUrl = process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY
-  ? 'https://localhost'
-  : 'http://localhost'
+const apiUrl =
+  process.env.RI_SERVER_TLS_CERT && process.env.RI_SERVER_TLS_KEY
+    ? 'https://localhost'
+    : 'http://localhost'
 
 export const defaultConfig = {
   api: {
@@ -33,8 +34,14 @@ export const defaultConfig = {
   database: {
     defaultConnectionTimeout: intEnv('RI_CONNECTIONS_TIMEOUT_DEFAULT', 30_000),
     defaultTimeoutToGetInfo: intEnv('RI_TIMEOUT_TO_GET_INFO', 5_000),
-    defaultTimeoutToGetRecommendations: intEnv('RI_TIMEOUT_TO_GET_RECOMMENDATIONS', 60_000),
-    shouldGetRecommendations: booleanEnv('RI_SHOULD_GET_RECOMMENDATIONS', false),
+    defaultTimeoutToGetRecommendations: intEnv(
+      'RI_TIMEOUT_TO_GET_RECOMMENDATIONS',
+      60_000,
+    ),
+    shouldGetRecommendations: booleanEnv(
+      'RI_SHOULD_GET_RECOMMENDATIONS',
+      false,
+    ),
   },
   app: {
     env: process.env.NODE_ENV,
@@ -43,19 +50,24 @@ export const defaultConfig = {
     unauthenticatedRedirect: process.env.RI_401_REDIRECT_URL ?? '',
     smConsoleRedirect: process.env.RI_SM_REDIRECT_URL ?? '',
     dbUpgradeRedirectBase: process.env.RI_DB_UPGRADE_REDIRECT_URL ?? '',
-    defaultTheme: process.env.RI_DEFAULT_THEME ?? 'DARK',
+    defaultTheme: process.env.RI_DEFAULT_THEME ?? 'SYSTEM',
     lazyLoad: booleanEnv('RI_ROUTES_LAZY_LOAD', false),
     routesExcludedByEnv: booleanEnv('RI_ROUTES_EXCLUDED_BY_ENV', false),
     returnUrlBase: process.env.RI_RETURN_URL_BASE,
     returnUrlLabel: process.env.RI_RETURN_URL_LABEL || 'Back',
     returnUrlTooltip: process.env.RI_RETURN_URL_TOOLTIP || 'Back',
     activityMonitorOrigin: process.env.RI_ACTIVITY_MONITOR_ORIGIN,
-    activityMonitorThrottleTimeout: intEnv('RI_ACTIVITY_MONITOR_THROTTLE_TIMEOUT', 30_000),
+    activityMonitorThrottleTimeout: intEnv(
+      'RI_ACTIVITY_MONITOR_THROTTLE_TIMEOUT',
+      30_000,
+    ),
     sessionTtlSeconds: intEnv('RI_SESSION_TTL_SECONDS', 30 * 60),
     localResourcesBaseUrl: process.env.RI_LOCAL_RESOURCES_BASE_URL,
     useLocalResources: booleanEnv('RI_USE_LOCAL_RESOURCES', false),
     indexedDbName: process.env.RI_INDEXED_DB_NAME || 'RI_LOCAL_STORAGE',
-    truncatedStringPrefix: process.env.RI_CLIENTS_TRUNCATED_STRING_PREFIX || '[Truncated due to length]',
+    truncatedStringPrefix:
+      process.env.RI_CLIENTS_TRUNCATED_STRING_PREFIX ||
+      '[Truncated due to length]',
   },
   workbench: {
     pipelineCountDefault: intEnv('PIPELINE_COUNT_DEFAULT', 5),
@@ -64,19 +76,30 @@ export const defaultConfig = {
   browser: {
     scanCountDefault: intEnv('RI_SCAN_COUNT_DEFAULT', 500),
     scanTreeCountDefault: intEnv('RI_SCAN_TREE_COUNT_DEFAULT', 10_000),
-    databaseOverviewRefreshInterval: intEnv('RI_DATABASE_OVERVIEW_REFRESH_INTERVAL', 5),
-    databaseOverviewMinimumRefreshInterval: intEnv('RI_DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL', 1),
+    databaseOverviewRefreshInterval: intEnv(
+      'RI_DATABASE_OVERVIEW_REFRESH_INTERVAL',
+      5,
+    ),
+    databaseOverviewMinimumRefreshInterval: intEnv(
+      'RI_DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL',
+      1,
+    ),
   },
   features: {
     envDependent: {
-      defaultFlag: booleanEnv('RI_FEATURES_ENV_DEPENDENT_DEFAULT_FLAG', true)
-    }
-  }
+      defaultFlag: booleanEnv('RI_FEATURES_ENV_DEPENDENT_DEFAULT_FLAG', true),
+    },
+    cloudAds: {
+      defaultFlag: booleanEnv('RI_FEATURES_CLOUD_ADS_DEFAULT_FLAG', true),
+    },
+  },
 }
 
 export type Config = typeof defaultConfig
 
-type DeepPartial<T> = T extends object ? {
-  [P in keyof T]?: DeepPartial<T[P]>;
-} : T
+type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>
+    }
+  : T
 export type PartialConfig = DeepPartial<Config>

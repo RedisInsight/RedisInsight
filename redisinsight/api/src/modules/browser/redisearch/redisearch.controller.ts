@@ -8,12 +8,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  ApiBody,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
 import { ApiQueryRedisStringEncoding } from 'src/common/decorators';
@@ -57,7 +52,7 @@ export class RedisearchController extends BrowserBaseController {
   @ApiBody({ type: CreateRedisearchIndexDto })
   async createIndex(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: CreateRedisearchIndexDto,
+    @Body() dto: CreateRedisearchIndexDto,
   ): Promise<void> {
     return await this.service.createIndex(clientMetadata, dto);
   }
@@ -70,7 +65,7 @@ export class RedisearchController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async search(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: SearchRedisearchDto,
+    @Body() dto: SearchRedisearchDto,
   ): Promise<GetKeysWithDetailsResponse> {
     return await this.service.search(clientMetadata, dto);
   }
@@ -81,7 +76,7 @@ export class RedisearchController extends BrowserBaseController {
   @ApiOkResponse({ type: IndexInfoDto })
   async info(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: IndexInfoRequestBodyDto,
+    @Body() dto: IndexInfoRequestBodyDto,
   ): Promise<IndexInfoDto> {
     return await this.service.getInfo(clientMetadata, dto);
   }

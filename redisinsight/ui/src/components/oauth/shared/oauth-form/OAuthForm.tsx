@@ -11,31 +11,30 @@ import { Props as OAuthSocialButtonsProps } from '../oauth-social-buttons/OAuthS
 
 export interface Props extends OAuthSocialButtonsProps {
   action: OAuthSocialAction
-  children: (
-    form: React.ReactNode,
-  ) => JSX.Element
+  children: (form: React.ReactNode) => JSX.Element
 }
 
-const OAuthForm = ({
-  children,
-  action,
-  onClick,
-  ...rest
-}: Props) => {
+const OAuthForm = ({ children, action, onClick, ...rest }: Props) => {
   const dispatch = useDispatch()
 
   const [authStrategy, setAuthStrategy] = useState('')
   const [disabled, setDisabled] = useState(false)
 
-  const initOAuthProcess = (strategy: OAuthStrategy, action: string, data?: {}) => {
+  const initOAuthProcess = (
+    strategy: OAuthStrategy,
+    action: string,
+    data?: {},
+  ) => {
     dispatch(signIn())
     ipcAuth(strategy, action, data)
   }
 
   const onSocialButtonClick = (authStrategy: OAuthStrategy) => {
     setDisabled(true)
-    setTimeout(() => { setDisabled(false) }, 1000)
-    dispatch(enableUserAnalyticsAction())
+    setTimeout(() => {
+      setDisabled(false)
+    }, 1000)
+    dispatch(enableUserAnalyticsAction(authStrategy))
     setAuthStrategy(authStrategy)
     onClick?.(authStrategy)
 
@@ -58,7 +57,7 @@ const OAuthForm = ({
       event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_CANCELED,
       eventData: {
         action,
-      }
+      },
     })
   }
 
@@ -67,7 +66,7 @@ const OAuthForm = ({
       event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_PROCEEDED,
       eventData: {
         action,
-      }
+      },
     })
     initOAuthProcess(OAuthStrategy.SSO, action, data)
   }
@@ -81,14 +80,12 @@ const OAuthForm = ({
     )
   }
 
-  return (
-    children(
-      <OAuthSocialButtons
-        onClick={onSocialButtonClick}
-        {...rest}
-        disabled={disabled}
-      />
-    )
+  return children(
+    <OAuthSocialButtons
+      onClick={onSocialButtonClick}
+      {...rest}
+      disabled={disabled}
+    />,
   )
 }
 

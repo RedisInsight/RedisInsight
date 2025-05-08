@@ -16,10 +16,12 @@ export class DatabaseSettingsModule {
     return {
       module: DatabaseSettingsModule,
       imports: [
-        RouterModule.register([{
-          path: route,
-          module: DatabaseSettingsModule,
-        }]),
+        RouterModule.register([
+          {
+            path: route,
+            module: DatabaseSettingsModule,
+          },
+        ]),
       ],
       controllers: [DatabaseSettingsController],
       providers: [

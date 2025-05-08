@@ -1,29 +1,42 @@
 import { ClientMetadata } from 'src/common/models';
-import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
+import {
+  RedisClient,
+  RedisClientConnectionType,
+} from 'src/modules/redis/client';
 import { RedisClientLib } from 'src/modules/redis/redis.client.factory';
 import { mockCommonClientMetadata } from 'src/__mocks__/common';
 import { BadRequestException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 
 export interface IRedisClientInstance {
-  id: string,
-  clientMetadata: ClientMetadata,
+  id: string;
+  clientMetadata: ClientMetadata;
   client: any;
   lastTimeUsed: number;
 }
 
-export const mockInvalidClientMetadataError = new BadRequestException(ERROR_MESSAGES.INVALID_CLIENT_METADATA);
-export const mockInvalidSessionMetadataError = new BadRequestException(ERROR_MESSAGES.INVALID_SESSION_METADATA);
+export const mockInvalidClientMetadataError = new BadRequestException(
+  ERROR_MESSAGES.INVALID_CLIENT_METADATA,
+);
+export const mockInvalidSessionMetadataError = new BadRequestException(
+  ERROR_MESSAGES.INVALID_SESSION_METADATA,
+);
 
 // todo: NEW. remove everything above
 export class MockRedisClient extends RedisClient {
-  constructor(clientMetadata: ClientMetadata, client: any = jest.fn(), options = {}) {
+  constructor(
+    clientMetadata: ClientMetadata,
+    client: any = jest.fn(),
+    options = {},
+  ) {
     super(clientMetadata, client, options);
   }
 
   public isConnected = jest.fn().mockReturnValue(true);
 
-  public getConnectionType = jest.fn().mockReturnValue(RedisClientConnectionType.STANDALONE);
+  public getConnectionType = jest
+    .fn()
+    .mockReturnValue(RedisClientConnectionType.STANDALONE);
 
   public nodes = jest.fn().mockResolvedValue([this]);
 
@@ -58,35 +71,48 @@ export class MockRedisClient extends RedisClient {
   public getCurrentDbIndex = jest.fn().mockResolvedValue(0);
 }
 
-export const mockStandaloneRedisClient = new MockRedisClient(mockCommonClientMetadata);
+export const mockStandaloneRedisClient = new MockRedisClient(
+  mockCommonClientMetadata,
+);
 
 export class MockClusterRedisClient extends MockRedisClient {
   constructor(clientMetadata: ClientMetadata, client: any = jest.fn()) {
     super(clientMetadata, client);
   }
 
-  public getConnectionType = jest.fn().mockReturnValue(RedisClientConnectionType.CLUSTER);
+  public getConnectionType = jest
+    .fn()
+    .mockReturnValue(RedisClientConnectionType.CLUSTER);
 
-  public nodes = jest.fn().mockResolvedValue([mockStandaloneRedisClient, mockStandaloneRedisClient]);
+  public nodes = jest
+    .fn()
+    .mockResolvedValue([mockStandaloneRedisClient, mockStandaloneRedisClient]);
 }
 
-export const mockClusterRedisClient = new MockClusterRedisClient(mockCommonClientMetadata);
+export const mockClusterRedisClient = new MockClusterRedisClient(
+  mockCommonClientMetadata,
+);
 
 export class MockSentinelRedisClient extends MockRedisClient {
   constructor(clientMetadata: ClientMetadata, client: any = jest.fn()) {
     super(clientMetadata, client);
   }
 
-  public getConnectionType = jest.fn().mockReturnValue(RedisClientConnectionType.SENTINEL);
+  public getConnectionType = jest
+    .fn()
+    .mockReturnValue(RedisClientConnectionType.SENTINEL);
 }
 
-export const mockSentinelRedisClient = new MockSentinelRedisClient(mockCommonClientMetadata);
+export const mockSentinelRedisClient = new MockSentinelRedisClient(
+  mockCommonClientMetadata,
+);
 
 export const generateMockRedisClient = (
   clientMetadata: Partial<ClientMetadata>,
   client = jest.fn(),
   options = {},
-): MockRedisClient => new MockRedisClient(clientMetadata as ClientMetadata, client, options);
+): MockRedisClient =>
+  new MockRedisClient(clientMetadata as ClientMetadata, client, options);
 
 export const mockRedisClientInstance: IRedisClientInstance = {
   id: RedisClient.generateId(mockCommonClientMetadata),
@@ -95,7 +121,9 @@ export const mockRedisClientInstance: IRedisClientInstance = {
   lastTimeUsed: 1619791508019,
 };
 
-export const generateMockRedisClientInstance = (clientMetadata: Partial<ClientMetadata>): IRedisClientInstance => ({
+export const generateMockRedisClientInstance = (
+  clientMetadata: Partial<ClientMetadata>,
+): IRedisClientInstance => ({
   id: RedisClient.generateId(clientMetadata as ClientMetadata),
   clientMetadata: clientMetadata as ClientMetadata,
   client: mockStandaloneRedisClient,
@@ -113,20 +141,32 @@ export const mockRedisClientStorage = jest.fn(() => ({
 
 export const mockIoRedisRedisConnectionStrategy = jest.fn(() => ({
   lib: RedisClientLib.IOREDIS,
-  createStandaloneClient: jest.fn().mockResolvedValue(mockStandaloneRedisClient),
+  createStandaloneClient: jest
+    .fn()
+    .mockResolvedValue(mockStandaloneRedisClient),
   createClusterClient: jest.fn().mockResolvedValue(mockClusterRedisClient),
   createSentinelClient: jest.fn().mockResolvedValue(mockSentinelRedisClient),
 }));
 
 export const mockNodeRedisConnectionStrategy = jest.fn(() => ({
   lib: RedisClientLib.NODE_REDIS,
-  createStandaloneClient: jest.fn().mockResolvedValue(mockStandaloneRedisClient),
+  createStandaloneClient: jest
+    .fn()
+    .mockResolvedValue(mockStandaloneRedisClient),
   createClusterClient: jest.fn().mockResolvedValue(mockClusterRedisClient),
   createSentinelClient: jest.fn().mockResolvedValue(mockSentinelRedisClient),
 }));
 
 export const mockRedisClientFactory = jest.fn(() => ({
-  getConnectionStrategy: jest.fn().mockReturnValue(mockIoRedisRedisConnectionStrategy()),
-  createClient: jest.fn().mockImplementation(async (clientMetadata: ClientMetadata) => Promise.resolve(new MockRedisClient(clientMetadata))),
-  createClientAutomatically: jest.fn().mockResolvedValue(mockStandaloneRedisClient),
+  getConnectionStrategy: jest
+    .fn()
+    .mockReturnValue(mockIoRedisRedisConnectionStrategy()),
+  createClient: jest
+    .fn()
+    .mockImplementation(async (clientMetadata: ClientMetadata) =>
+      Promise.resolve(new MockRedisClient(clientMetadata)),
+    ),
+  createClientAutomatically: jest
+    .fn()
+    .mockResolvedValue(mockStandaloneRedisClient),
 }));

@@ -5,6 +5,11 @@ import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 export const useIoConnection = (url: string, params: WsParams) => {
-  const { [FeatureFlags.envDependent]: envDependent } = useSelector(appFeatureFlagsFeaturesSelector)
-  return useCallback(() => wsService(url, params, envDependent?.flag), [url, params, envDependent])
+  const { [FeatureFlags.envDependent]: envDependent } = useSelector(
+    appFeatureFlagsFeaturesSelector,
+  )
+  return useCallback(
+    () => wsService(url, params, envDependent?.flag),
+    [url, params, envDependent],
+  )
 }

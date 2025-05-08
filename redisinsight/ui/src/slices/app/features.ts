@@ -16,7 +16,7 @@ export const initialState: StateAppFeatures = {
   highlighting: {
     version: '',
     features: [],
-    pages: {}
+    pages: {},
   },
   onboarding: {
     currentStep: 0,
@@ -27,34 +27,40 @@ export const initialState: StateAppFeatures = {
     loading: false,
     features: {
       [FeatureFlags.insightsRecommendations]: {
-        flag: false
+        flag: false,
       },
       [FeatureFlags.cloudSso]: {
-        flag: false
+        flag: false,
       },
       [FeatureFlags.cloudSsoRecommendedSettings]: {
-        flag: false
+        flag: false,
       },
       [FeatureFlags.documentationChat]: {
-        flag: false
+        flag: false,
       },
       [FeatureFlags.databaseChat]: {
-        flag: false
+        flag: false,
       },
       [FeatureFlags.hashFieldExpiration]: {
-        flag: false
+        flag: false,
       },
       [FeatureFlags.rdi]: {
-        flag: false
+        flag: false,
       },
       [FeatureFlags.enhancedCloudUI]: {
-        flag: false
+        flag: false,
+      },
+      [FeatureFlags.databaseManagement]: {
+        flag: true,
       },
       [FeatureFlags.envDependent]: {
-        flag: riConfig.features.envDependent.defaultFlag
-      }
-    }
-  }
+        flag: riConfig.features.envDependent.defaultFlag,
+      },
+      [FeatureFlags.cloudAds]: {
+        flag: riConfig.features.cloudAds.defaultFlag,
+      },
+    },
+  },
 }
 
 const appFeaturesSlice = createSlice({
@@ -62,12 +68,18 @@ const appFeaturesSlice = createSlice({
   initialState,
   reducers: {
     setFeaturesInitialState: () => initialState,
-    setFeaturesToHighlight: (state, { payload }: { payload: { version: string, features: string[] } }) => {
+    setFeaturesToHighlight: (
+      state,
+      { payload }: { payload: { version: string; features: string[] } },
+    ) => {
       state.highlighting.features = payload.features
       state.highlighting.version = payload.version
       state.highlighting.pages = getPagesForFeatures(payload.features)
     },
-    removeFeatureFromHighlighting: (state, { payload }: { payload: string }) => {
+    removeFeatureFromHighlighting: (
+      state,
+      { payload }: { payload: string },
+    ) => {
       remove(state.highlighting.features, (f) => f === payload)
 
       const pageName = BUILD_FEATURES[payload].page
@@ -76,10 +88,14 @@ const appFeaturesSlice = createSlice({
       }
 
       const { version, features } = state.highlighting
-      localStorageService.set(BrowserStorageItem.featuresHighlighting, { version, features })
+      localStorageService.set(BrowserStorageItem.featuresHighlighting, {
+        version,
+        features,
+      })
     },
     setOnboarding: (state, { payload }) => {
-      const enabledByEnv = state.featureFlags.features[FeatureFlags.envDependent]?.flag ?? true
+      const enabledByEnv =
+        state.featureFlags.features[FeatureFlags.envDependent]?.flag ?? true
       if (payload.currentStep > payload.totalSteps || !enabledByEnv) {
         state.onboarding.isActive = false
         localStorageService.set(BrowserStorageItem.onboardingStep, null)
@@ -89,7 +105,10 @@ const appFeaturesSlice = createSlice({
       state.onboarding.currentStep = payload.currentStep ?? 0
       state.onboarding.totalSteps = payload.totalSteps
       state.onboarding.isActive = true
-      localStorageService.set(BrowserStorageItem.onboardingStep, payload.currentStep ?? 0)
+      localStorageService.set(
+        BrowserStorageItem.onboardingStep,
+        payload.currentStep ?? 0,
+      )
     },
     skipOnboarding: (state) => {
       state.onboarding.isActive = false
@@ -104,7 +123,10 @@ const appFeaturesSlice = createSlice({
 
       localStorageService.set(BrowserStorageItem.onboardingStep, step)
     },
-    setOnboardNextStep: (state, { payload = 0 }: PayloadAction<Maybe<number>>) => {
+    setOnboardNextStep: (
+      state,
+      { payload = 0 }: PayloadAction<Maybe<number>>,
+    ) => {
       const { currentStep, isActive } = state.onboarding
       if (!isActive) return
 
@@ -125,10 +147,15 @@ const appFeaturesSlice = createSlice({
     getFeatureFlagsSuccess: (state, { payload }) => {
       state.featureFlags.loading = false
 
-      // make sure that feature was defined and enabled by default
+      // make sure certain features are defined and enabled by default
       if (!payload.features[FeatureFlags.envDependent]) {
         payload.features[FeatureFlags.envDependent] = {
-          flag: riConfig.features.envDependent.defaultFlag
+          flag: riConfig.features.envDependent.defaultFlag,
+        }
+      }
+      if (!payload.features[FeatureFlags.cloudAds]) {
+        payload.features[FeatureFlags.cloudAds] = {
+          flag: riConfig.features.cloudAds.defaultFlag,
         }
       }
 
@@ -137,7 +164,7 @@ const appFeaturesSlice = createSlice({
     getFeatureFlagsFailure: (state) => {
       state.featureFlags.loading = false
     },
-  }
+  },
 })
 
 export const {
@@ -150,20 +177,29 @@ export const {
   setOnboarding,
   getFeatureFlags,
   getFeatureFlagsSuccess,
-  getFeatureFlagsFailure
+  getFeatureFlagsFailure,
 } = appFeaturesSlice.actions
 
 export const appFeatureSelector = (state: RootState) => state.app.features
-export const appFeatureHighlightingSelector = (state: RootState) => state.app.features.highlighting
-export const appFeaturePagesHighlightingSelector = (state: RootState) => state.app.features.highlighting.pages
+export const appFeatureHighlightingSelector = (state: RootState) =>
+  state.app.features.highlighting
+export const appFeaturePagesHighlightingSelector = (state: RootState) =>
+  state.app.features.highlighting.pages
 
-export const appFeatureOnboardingSelector = (state: RootState) => state.app.features.onboarding
-export const appFeatureFlagsSelector = (state: RootState) => state.app.features.featureFlags
-export const appFeatureFlagsFeaturesSelector = (state: RootState) => state.app.features.featureFlags.features
+export const appFeatureOnboardingSelector = (state: RootState) =>
+  state.app.features.onboarding
+export const appFeatureFlagsSelector = (state: RootState) =>
+  state.app.features.featureFlags
+export const appFeatureFlagsFeaturesSelector = (state: RootState) =>
+  state.app.features.featureFlags.features
 
 export default appFeaturesSlice.reducer
 
-export function incrementOnboardStepAction(step: OnboardingSteps, skipCount = 0, onSuccess?: () => void) {
+export function incrementOnboardStepAction(
+  step: OnboardingSteps,
+  skipCount = 0,
+  onSuccess?: () => void,
+) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const { currentStep, isActive } = state.app.features.onboarding
@@ -176,15 +212,13 @@ export function incrementOnboardStepAction(step: OnboardingSteps, skipCount = 0,
 
 export function fetchFeatureFlags(
   onSuccessAction?: (data: any) => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(getFeatureFlags())
 
     try {
-      const { data, status } = await apiService.get(
-        ApiEndpoints.FEATURES
-      )
+      const { data, status } = await apiService.get(ApiEndpoints.FEATURES)
 
       if (isStatusSuccessful(status)) {
         dispatch(getFeatureFlagsSuccess(data))

@@ -1,4 +1,13 @@
-import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiTab, EuiTabs, EuiTitle, keys } from '@elastic/eui'
+import {
+  EuiButtonIcon,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiSpacer,
+  EuiTab,
+  EuiTabs,
+  EuiTitle,
+  keys,
+} from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, pick } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
@@ -12,11 +21,11 @@ import { BuildType } from 'uiSrc/constants/env'
 import { appRedirectionSelector } from 'uiSrc/slices/app/url-handling'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 
-import { fieldDisplayNames, SubmitBtnText, } from 'uiSrc/pages/home/constants'
+import { fieldDisplayNames, SubmitBtnText } from 'uiSrc/pages/home/constants'
 import { getFormErrors } from 'uiSrc/pages/home/utils'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
-import { DbInfo, } from 'uiSrc/pages/home/components/form'
-import { DbInfoSentinel, } from 'uiSrc/pages/home/components/form/sentinel'
+import { DbInfo } from 'uiSrc/pages/home/components/form'
+import { DbInfoSentinel } from 'uiSrc/pages/home/components/form/sentinel'
 import { caCertsSelector } from 'uiSrc/slices/instances/caCerts'
 import { clientCertsSelector } from 'uiSrc/slices/instances/clientCerts'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
@@ -85,9 +94,11 @@ const ManualConnectionForm = (props: Props) => {
   const { server } = useSelector(appInfoSelector)
 
   const [errors, setErrors] = useState<FormikErrors<DbConnectionInfo>>(
-    getInitFieldsDisplayNames({ host, port, name })
+    getInitFieldsDisplayNames({ host, port, name }),
   )
-  const [activeTab, setActiveTab] = useState<ManualFormTab>(ManualFormTab.General)
+  const [activeTab, setActiveTab] = useState<ManualFormTab>(
+    ManualFormTab.General,
+  )
 
   const { setModalHeader } = useModalHeader()
 
@@ -101,7 +112,11 @@ const ManualConnectionForm = (props: Props) => {
   const validate = (values: DbConnectionInfo) => {
     const errs = getFormErrors(values)
 
-    if (isCloneMode && connectionType === ConnectionType.Sentinel && !values.sentinelMasterName) {
+    if (
+      isCloneMode &&
+      connectionType === ConnectionType.Sentinel &&
+      !values.sentinelMasterName
+    ) {
       errs.sentinelMasterName = fieldDisplayNames.sentinelMasterName
     }
 
@@ -130,15 +145,17 @@ const ManualConnectionForm = (props: Props) => {
     }
   }
 
-  useEffect(() =>
-  // componentWillUnmount
-    () => {
-      setModalHeader(null)
-      if (isEditMode) {
-        dispatch(resetInstanceUpdateAction())
-      }
-    },
-  [])
+  useEffect(
+    () =>
+      // componentWillUnmount
+      () => {
+        setModalHeader(null)
+        if (isEditMode) {
+          dispatch(resetInstanceUpdateAction())
+        }
+      },
+    [],
+  )
 
   useEffect(() => {
     if (isCloneMode) {
@@ -154,21 +171,29 @@ const ManualConnectionForm = (props: Props) => {
             />
           </EuiFlexItem>
           <EuiFlexItem>
-            <EuiTitle size="s"><h4>Clone Database</h4></EuiTitle>
+            <EuiTitle size="s">
+              <h4>Clone Database</h4>
+            </EuiTitle>
           </EuiFlexItem>
-        </EuiFlexGroup>
+        </EuiFlexGroup>,
       )
       return
     }
 
     if (isEditMode) {
-      setModalHeader(<EuiTitle size="s"><h4>Edit Database</h4></EuiTitle>)
+      setModalHeader(
+        <EuiTitle size="s">
+          <h4>Edit Database</h4>
+        </EuiTitle>,
+      )
       return
     }
 
     setModalHeader(
-      <EuiTitle size="s"><h4>Connection Settings</h4></EuiTitle>,
-      true
+      <EuiTitle size="s">
+        <h4>Connection Settings</h4>
+      </EuiTitle>,
+      true,
     )
   }, [isEditMode, isCloneMode])
 
@@ -185,8 +210,8 @@ const ManualConnectionForm = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_CANCELLED,
       eventData: {
-        databaseId: id
-      }
+        databaseId: id,
+      },
     })
   }
 
@@ -209,7 +234,7 @@ const ManualConnectionForm = (props: Props) => {
         onClickSubmit={formik.submitForm}
         submitButtonText={submitButtonText}
       />,
-      footerEl
+      footerEl,
     )
   }
 
@@ -229,10 +254,16 @@ const ManualConnectionForm = (props: Props) => {
   )
 
   return (
-    <div className={styles.container} data-testid="add-db_manual" style={{ height: '100%' }}>
-      {isEditMode && !isCloneMode && server?.buildType !== BuildType.RedisStack && (
-        <CloneConnection id={id} setIsCloneMode={setIsCloneMode} />
-      )}
+    <div
+      className={styles.container}
+      data-testid="add-db_manual"
+      style={{ height: '100%' }}
+    >
+      {isEditMode &&
+        !isCloneMode &&
+        server?.buildType !== BuildType.RedisStack && (
+          <CloneConnection id={id} setIsCloneMode={setIsCloneMode} />
+        )}
       <div className={cx('getStartedForm', styles.content)} ref={formRef}>
         {!isEditMode && !isFromCloud && (
           <>
@@ -251,71 +282,73 @@ const ManualConnectionForm = (props: Props) => {
             </div>
           </>
         )}
-        {(isEditMode || isCloneMode || isFromCloud) && connectionType !== ConnectionType.Sentinel && (
-          <>
-            {!isCloneMode && (
-              <>
-                <DbInfo
-                  host={host}
-                  port={port}
-                  connectionType={connectionType}
-                  db={db}
-                  modules={modules}
-                  nameFromProvider={nameFromProvider}
-                  nodes={nodes}
+        {(isEditMode || isCloneMode || isFromCloud) &&
+          connectionType !== ConnectionType.Sentinel && (
+            <>
+              {!isCloneMode && (
+                <>
+                  <DbInfo
+                    host={host}
+                    port={port}
+                    connectionType={connectionType}
+                    db={db}
+                    modules={modules}
+                    nameFromProvider={nameFromProvider}
+                    nodes={nodes}
+                    isFromCloud={isFromCloud}
+                  />
+                  <EuiSpacer />
+                </>
+              )}
+              <Tabs />
+              <EuiSpacer />
+              <div className="eui-yScroll">
+                <EditConnection
+                  activeTab={activeTab}
+                  isCloneMode={isCloneMode}
+                  isEditMode={isEditMode}
                   isFromCloud={isFromCloud}
+                  formik={formik}
+                  onKeyDown={onKeyDown}
+                  onHostNamePaste={onHostNamePaste}
+                  certificates={certificates}
+                  caCertificates={caCertificates}
+                  buildType={buildType}
                 />
-                <EuiSpacer />
-              </>
-            )}
-            <Tabs />
-            <EuiSpacer />
-            <div className="eui-yScroll">
-              <EditConnection
-                activeTab={activeTab}
-                isCloneMode={isCloneMode}
-                isEditMode={isEditMode}
-                isFromCloud={isFromCloud}
-                formik={formik}
-                onKeyDown={onKeyDown}
-                onHostNamePaste={onHostNamePaste}
-                certificates={certificates}
-                caCertificates={caCertificates}
-                buildType={buildType}
-              />
-            </div>
-          </>
-        )}
-        {(isEditMode || isCloneMode) && connectionType === ConnectionType.Sentinel && (
-          <>
-            {!isCloneMode && (
-              <>
-                <DbInfoSentinel
-                  nameFromProvider={nameFromProvider}
-                  connectionType={connectionType}
-                  sentinelMaster={sentinelMaster}
-                  host={host}
-                  port={port}
+              </div>
+            </>
+          )}
+        {(isEditMode || isCloneMode) &&
+          connectionType === ConnectionType.Sentinel && (
+            <>
+              {!isCloneMode && (
+                <>
+                  <DbInfoSentinel
+                    nameFromProvider={nameFromProvider}
+                    connectionType={connectionType}
+                    sentinelMaster={sentinelMaster}
+                    host={host}
+                    port={port}
+                  />
+                  <EuiSpacer />
+                </>
+              )}
+              <Tabs />
+              <EuiSpacer />
+              <div className="eui-yScroll">
+                <EditSentinelConnection
+                  activeTab={activeTab}
+                  isCloneMode={isCloneMode}
+                  formik={formik}
+                  onKeyDown={onKeyDown}
+                  onHostNamePaste={onHostNamePaste}
+                  certificates={certificates}
+                  caCertificates={caCertificates}
+                  db={db}
                 />
-                <EuiSpacer />
-              </>
-            )}
-            <Tabs />
-            <EuiSpacer />
-            <div className="eui-yScroll">
-              <EditSentinelConnection
-                activeTab={activeTab}
-                isCloneMode={isCloneMode}
-                formik={formik}
-                onKeyDown={onKeyDown}
-                onHostNamePaste={onHostNamePaste}
-                certificates={certificates}
-                caCertificates={caCertificates}
-                db={db}
-              />
-            </div>
-          </>
-        )}
+              </div>
+            </>
+          )}
       </div>
       <Footer />
     </div>

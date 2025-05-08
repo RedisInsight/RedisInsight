@@ -1,5 +1,12 @@
 import React from 'react'
-import { EuiButton, EuiButtonIcon, EuiPopover, EuiText, EuiToolTip } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiButtonEmpty,
+  EuiButtonIcon,
+  EuiPopover,
+  EuiText,
+  EuiToolTip,
+} from '@elastic/eui'
 
 import { RedisString } from 'uiSrc/slices/interfaces'
 import { isTruncatedString } from 'uiSrc/utils'
@@ -20,6 +27,7 @@ export interface Props {
   handleButtonClick?: () => void
   appendInfo?: JSX.Element | string | null
   testid?: string
+  buttonLabel?: string
 }
 
 const PopoverDelete = (props: Props) => {
@@ -37,11 +45,14 @@ const PopoverDelete = (props: Props) => {
     handleButtonClick,
     appendInfo,
     testid = '',
+    buttonLabel,
   } = props
 
   const isDisabled = isTruncatedString(item)
 
-  const onButtonClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onButtonClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
     e.stopPropagation()
     if (item + suffix !== deleting) {
       showPopover(item)
@@ -51,7 +62,19 @@ const PopoverDelete = (props: Props) => {
     }
   }
 
-  const deleteButton = (
+  const deleteButton = buttonLabel ? (
+    <EuiButtonEmpty
+      iconType="trash"
+      aria-label="Remove field"
+      color="primary"
+      disabled={isDisabled || updateLoading}
+      onClick={isDisabled ? () => {} : onButtonClick}
+      data-testid={testid ? `${testid}-icon` : 'remove-icon'}
+      isDisabled={isDisabled}
+    >
+      {buttonLabel}
+    </EuiButtonEmpty>
+  ) : (
     <EuiButtonIcon
       iconType="trash"
       aria-label="Remove field"
@@ -92,9 +115,7 @@ const PopoverDelete = (props: Props) => {
               <b>{header}</b>
             </h4>
           )}
-          <EuiText size="s">
-            {text}
-          </EuiText>
+          <EuiText size="s">{text}</EuiText>
           {appendInfo}
         </EuiText>
         <div className={styles.popoverFooter}>

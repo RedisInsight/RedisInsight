@@ -6,7 +6,12 @@ import { NotFoundException } from '@nestjs/common';
 import { RdiClientMetadata } from 'src/modules/rdi/models';
 import { RdiClient } from 'src/modules/rdi/client/rdi.client';
 import {
-  MockType, generateMockRdiClient, mockRdi, mockRdiClientFactory, mockRdiClientStorage, mockRdiRepository,
+  MockType,
+  generateMockRdiClient,
+  mockRdi,
+  mockRdiClientFactory,
+  mockRdiClientStorage,
+  mockRdiRepository,
 } from 'src/__mocks__';
 import { RdiClientProvider } from './rdi.client.provider';
 
@@ -43,7 +48,10 @@ describe('RdiClientProvider', () => {
 
   describe('getOrCreate', () => {
     it('should return existing client if found', async () => {
-      const metadata: RdiClientMetadata = { id: '123', sessionMetadata: undefined };
+      const metadata: RdiClientMetadata = {
+        id: '123',
+        sessionMetadata: undefined,
+      };
       const client: RdiClient = generateMockRdiClient(metadata);
       rdiClientStorage.getByMetadata.mockResolvedValue(client);
       repository.update.mockResolvedValue(mockRdi);
@@ -57,7 +65,10 @@ describe('RdiClientProvider', () => {
     });
 
     it('should create and return new client if not found', async () => {
-      const metadata: RdiClientMetadata = { id: '124', sessionMetadata: undefined };
+      const metadata: RdiClientMetadata = {
+        id: '124',
+        sessionMetadata: undefined,
+      };
       const client: RdiClient = generateMockRdiClient(metadata);
       repository.get.mockResolvedValue(mockRdi);
       rdiClientFactory.createClient.mockResolvedValue(client);
@@ -66,7 +77,10 @@ describe('RdiClientProvider', () => {
       const result = await provider.getOrCreate(metadata);
 
       expect(repository.get).toHaveBeenCalledWith(metadata.id);
-      expect(rdiClientFactory.createClient).toHaveBeenCalledWith(metadata, mockRdi);
+      expect(rdiClientFactory.createClient).toHaveBeenCalledWith(
+        metadata,
+        mockRdi,
+      );
       expect(rdiClientStorage.set).toHaveBeenCalledWith(client);
       expect(result).toEqual(client);
     });
@@ -74,15 +88,23 @@ describe('RdiClientProvider', () => {
 
   describe('create', () => {
     it('should throw NotFoundException if RDI not found', async () => {
-      const metadata: RdiClientMetadata = { id: '123', sessionMetadata: undefined };
+      const metadata: RdiClientMetadata = {
+        id: '123',
+        sessionMetadata: undefined,
+      };
       repository.get.mockResolvedValue(null);
 
-      await expect(provider.create(metadata)).rejects.toThrowError(NotFoundException);
+      await expect(provider.create(metadata)).rejects.toThrowError(
+        NotFoundException,
+      );
       expect(repository.get).toHaveBeenCalledWith(metadata.id);
     });
 
     it('should create and return new client if RDI found', async () => {
-      const metadata: RdiClientMetadata = { id: '123', sessionMetadata: undefined };
+      const metadata: RdiClientMetadata = {
+        id: '123',
+        sessionMetadata: undefined,
+      };
       const client: RdiClient = generateMockRdiClient(metadata);
       repository.get.mockResolvedValue(mockRdi);
       rdiClientFactory.createClient.mockResolvedValue(client);
@@ -91,7 +113,10 @@ describe('RdiClientProvider', () => {
       const result = await provider.create(metadata);
 
       expect(repository.get).toHaveBeenCalledWith(metadata.id);
-      expect(rdiClientFactory.createClient).toHaveBeenCalledWith(metadata, mockRdi);
+      expect(rdiClientFactory.createClient).toHaveBeenCalledWith(
+        metadata,
+        mockRdi,
+      );
       expect(repository.update).toHaveBeenCalled();
       expect(result).toEqual(client);
     });
@@ -99,7 +124,10 @@ describe('RdiClientProvider', () => {
 
   describe('delete', () => {
     it('should delete client by metadata id', async () => {
-      const metadata: RdiClientMetadata = { id: '123', sessionMetadata: undefined };
+      const metadata: RdiClientMetadata = {
+        id: '123',
+        sessionMetadata: undefined,
+      };
       rdiClientStorage.delete.mockResolvedValue(1);
 
       const result = await provider.delete(metadata);
@@ -135,7 +163,10 @@ describe('RdiClientProvider', () => {
 
   describe('updateLastConnection', () => {
     it('should update rdi lastConnection', async () => {
-      const metadata: RdiClientMetadata = { id: '123', sessionMetadata: undefined };
+      const metadata: RdiClientMetadata = {
+        id: '123',
+        sessionMetadata: undefined,
+      };
       repository.update.mockResolvedValue(mockRdi);
 
       await provider['updateLastConnection'](metadata);

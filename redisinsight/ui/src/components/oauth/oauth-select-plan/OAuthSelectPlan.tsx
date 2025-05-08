@@ -39,15 +39,28 @@ const getProviderRegions = (regions: Region[], provider: OAuthProvider) =>
   (find(regions, { provider }) || {}).regions || []
 
 const OAuthSelectPlan = () => {
-  const { isOpenDialog, data: plansInit = [], loading } = useSelector(oauthCloudPlanSelector)
-  const { [FeatureFlags.cloudSso]: cloudSsoFeature = {} } = useSelector(appFeatureFlagsFeaturesSelector)
+  const {
+    isOpenDialog,
+    data: plansInit = [],
+    loading,
+  } = useSelector(oauthCloudPlanSelector)
+  const { [FeatureFlags.cloudSso]: cloudSsoFeature = {} } = useSelector(
+    appFeatureFlagsFeaturesSelector,
+  )
 
-  const rsRegions: Region[] = get(cloudSsoFeature, 'data.selectPlan.components.redisStackPreview', [])
+  const rsRegions: Region[] = get(
+    cloudSsoFeature,
+    'data.selectPlan.components.redisStackPreview',
+    [],
+  )
 
   const [plans, setPlans] = useState(plansInit || [])
   const [planIdSelected, setPlanIdSelected] = useState('')
-  const [providerSelected, setProviderSelected] = useState<OAuthProvider>(DEFAULT_PROVIDER)
-  const [rsProviderRegions, setRsProviderRegions] = useState(getProviderRegions(rsRegions, providerSelected))
+  const [providerSelected, setProviderSelected] =
+    useState<OAuthProvider>(DEFAULT_PROVIDER)
+  const [rsProviderRegions, setRsProviderRegions] = useState(
+    getProviderRegions(rsRegions, providerSelected),
+  )
 
   const dispatch = useDispatch()
 
@@ -60,12 +73,26 @@ const OAuthSelectPlan = () => {
       return
     }
 
-    const filteredPlans = filter(plansInit, { provider: providerSelected })
-      .sort((a, b) => (a?.details?.displayOrder || 0) - (b?.details?.displayOrder || 0))
+    const filteredPlans = filter(plansInit, {
+      provider: providerSelected,
+    }).sort(
+      (a, b) =>
+        (a?.details?.displayOrder || 0) - (b?.details?.displayOrder || 0),
+    )
 
-    const defaultPlan = filteredPlans.find(({ region = '' }) => DEFAULT_REGIONS.includes(region))
-    const rsPreviewPlan = filteredPlans.find(({ region = '' }) => rsProviderRegions?.includes(region))
-    const planId = (defaultPlan || rsPreviewPlan || first(filteredPlans) || {}).id?.toString() || ''
+    const defaultPlan = filteredPlans.find(({ region = '' }) =>
+      DEFAULT_REGIONS.includes(region),
+    )
+    const rsPreviewPlan = filteredPlans.find(({ region = '' }) =>
+      rsProviderRegions?.includes(region),
+    )
+    const planId =
+      (
+        defaultPlan ||
+        rsPreviewPlan ||
+        first(filteredPlans) ||
+        {}
+      ).id?.toString() || ''
 
     setPlans(filteredPlans)
     setPlanIdSelected(planId)
@@ -84,49 +111,67 @@ const OAuthSelectPlan = () => {
   if (!isOpenDialog) return null
 
   const getOptionDisplay = (item: CloudSubscriptionPlanResponse) => {
-    const { region = '', details: { countryName = '', cityName = '' }, provider } = item
-    const rsProviderRegions: string[] = find(rsRegions, { provider })?.regions || []
+    const {
+      region = '',
+      details: { countryName = '', cityName = '' },
+      provider,
+    } = item
+    const rsProviderRegions: string[] =
+      find(rsRegions, { provider })?.regions || []
 
     return (
       <EuiText color="subdued" size="s" data-testid={`option-${region}`}>
         {`${countryName} (${cityName})`}
         <EuiTextColor className={styles.regionName}>{region}</EuiTextColor>
         {rsProviderRegions?.includes(region) && (
-          <EuiTextColor className={styles.rspreview} data-testid={`rs-text-${region}`}>(Redis 7.2)</EuiTextColor>
+          <EuiTextColor
+            className={styles.rspreview}
+            data-testid={`rs-text-${region}`}
+          >
+            (Redis 7.2)
+          </EuiTextColor>
         )}
       </EuiText>
     )
   }
 
-  const regionOptions: EuiSuperSelectOption<string>[] = plans.map(
-    (item) => {
-      const { id, region = '' } = item
-      return {
-        value: `${id}`,
-        inputDisplay: getOptionDisplay(item),
-        dropdownDisplay: getOptionDisplay(item),
-        'data-test-subj': `oauth-region-${region}`,
-      }
+  const regionOptions: EuiSuperSelectOption<string>[] = plans.map((item) => {
+    const { id, region = '' } = item
+    return {
+      value: `${id}`,
+      inputDisplay: getOptionDisplay(item),
+      dropdownDisplay: getOptionDisplay(item),
+      'data-test-subj': `oauth-region-${region}`,
     }
-  )
+  })
 
   const onChangeRegion = (region: string) => {
     setPlanIdSelected(region)
   }
 
   const handleSubmit = () => {
-    dispatch(createFreeDbJob({
-      name: CloudJobName.CreateFreeSubscriptionAndDatabase,
-      resources: { planId: toNumber(planIdSelected) },
-      onSuccessAction: () => {
-        dispatch(setIsOpenSelectPlanDialog(false))
-        dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
-      }
-    }))
+    dispatch(
+      createFreeDbJob({
+        name: CloudJobName.CreateFreeSubscriptionAndDatabase,
+        resources: { planId: toNumber(planIdSelected) },
+        onSuccessAction: () => {
+          dispatch(setIsOpenSelectPlanDialog(false))
+          dispatch(
+            addInfiniteNotification(
+              INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials),
+            ),
+          )
+        },
+      }),
+    )
   }
 
   return (
-    <EuiModal className={styles.container} onClose={handleOnClose} data-testid="oauth-select-plan-dialog">
+    <EuiModal
+      className={styles.container}
+      onClose={handleOnClose}
+      data-testid="oauth-select-plan-dialog"
+    >
       <EuiModalBody className={styles.modalBody}>
         <section className={styles.content}>
           <EuiTitle size="s">
@@ -137,18 +182,23 @@ const OAuthSelectPlan = () => {
             your free trial Redis database. No credit card is required.
           </EuiText>
           <section className={styles.providers}>
-            { OAuthProviders.map(({ icon, id, label }) => (
+            {OAuthProviders.map(({ icon, id, label }) => (
               <div className={styles.provider} key={id}>
-                {id === providerSelected
-                  && <div className={cx(styles.providerActiveIcon)}><EuiIcon type="check" /></div>}
+                {id === providerSelected && (
+                  <div className={cx(styles.providerActiveIcon)}>
+                    <EuiIcon type="check" />
+                  </div>
+                )}
                 <EuiButton
                   iconType={icon}
                   onClick={() => setProviderSelected(id)}
-                  className={cx(styles.providerBtn, { [styles.activeProvider]: id === providerSelected })}
+                  className={cx(styles.providerBtn, {
+                    [styles.activeProvider]: id === providerSelected,
+                  })}
                 />
                 <EuiText className={styles.providerLabel}>{label}</EuiText>
               </div>
-            )) }
+            ))}
           </section>
           <section className={styles.region}>
             <EuiText className={styles.regionLabel}>Region</EuiText>
@@ -164,7 +214,10 @@ const OAuthSelectPlan = () => {
               data-testid="select-oauth-region"
             />
             {!regionOptions.length && (
-              <EuiText className={styles.selectDescription} data-testid="select-region-select-description">
+              <EuiText
+                className={styles.selectDescription}
+                data-testid="select-region-select-description"
+              >
                 No regions available, try another vendor.
               </EuiText>
             )}

@@ -9,14 +9,16 @@ import {
   EuiLoadingSpinner,
   EuiSpacer,
   EuiText,
-  EuiTextColor, EuiTitle, EuiToolTip
+  EuiTextColor,
+  EuiTitle,
+  EuiToolTip,
 } from '@elastic/eui'
 import ReactDOM from 'react-dom'
 import {
   fetchInstancesAction,
   importInstancesSelector,
   resetImportInstances,
-  uploadInstancesFile
+  uploadInstancesFile,
 } from 'uiSrc/slices/instances/instances'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -48,8 +50,10 @@ const ImportDatabase = (props: Props) => {
     setDomReady(true)
 
     setModalHeader(
-      <EuiTitle size="s"><h4>Import from file</h4></EuiTitle>,
-      true
+      <EuiTitle size="s">
+        <h4>Import from file</h4>
+      </EuiTitle>,
+      true,
     )
 
     return () => {
@@ -84,17 +88,16 @@ const ImportDatabase = (props: Props) => {
       const formData = new FormData()
       formData.append('file', files[0])
 
-      dispatch(uploadInstancesFile(
-        formData,
-        (data) => {
+      dispatch(
+        uploadInstancesFile(formData, (data) => {
           if (data?.success?.length || data?.partial?.length) {
             dispatch(fetchInstancesAction())
           }
-        }
-      ))
+        }),
+      )
 
       sendEventTelemetry({
-        event: TelemetryEvent.CONFIG_DATABASES_REDIS_IMPORT_SUBMITTED
+        event: TelemetryEvent.CONFIG_DATABASES_REDIS_IMPORT_SUBMITTED,
       })
     }
   }
@@ -116,7 +119,7 @@ const ImportDatabase = (props: Props) => {
             Retry
           </EuiButton>
         </div>,
-        footerEl
+        footerEl,
       )
     }
 
@@ -134,7 +137,7 @@ const ImportDatabase = (props: Props) => {
             Ok
           </EuiButton>
         </div>,
-        footerEl
+        footerEl,
       )
     }
 
@@ -169,7 +172,7 @@ const ImportDatabase = (props: Props) => {
           </EuiButton>
         </EuiToolTip>
       </div>,
-      footerEl
+      footerEl,
     )
   }
 
@@ -183,9 +186,9 @@ const ImportDatabase = (props: Props) => {
             {isShowForm && (
               <>
                 <EuiText color="subdued" size="s">
-                  Use a JSON file to import your database connections.
-                  Ensure that you only use files from trusted sources to
-                  prevent the risk of automatically executing malicious code.
+                  Use a JSON file to import your database connections. Ensure
+                  that you only use files from trusted sources to prevent the
+                  risk of automatically executing malicious code.
                 </EuiText>
                 <EuiSpacer />
                 <EuiFilePicker
@@ -199,14 +202,21 @@ const ImportDatabase = (props: Props) => {
                   aria-label="Select or drag and drop file"
                 />
                 {isInvalid && (
-                  <EuiTextColor color="danger" className={styles.errorFileMsg} data-testid="input-file-error-msg">
+                  <EuiTextColor
+                    color="danger"
+                    className={styles.errorFileMsg}
+                    data-testid="input-file-error-msg"
+                  >
                     {`File should not exceed ${MAX_MB_FILE} MB`}
                   </EuiTextColor>
                 )}
               </>
             )}
             {loading && (
-              <div className={styles.loading} data-testid="file-loading-indicator">
+              <div
+                className={styles.loading}
+                data-testid="file-loading-indicator"
+              >
                 <EuiLoadingSpinner size="xl" />
                 <EuiText color="subdued" style={{ marginTop: 12 }}>
                   Uploading...
@@ -215,7 +225,11 @@ const ImportDatabase = (props: Props) => {
             )}
             {error && (
               <div className={styles.result} data-testid="result-failed">
-                <EuiIcon type="crossInACircleFilled" size="xxl" color="danger" />
+                <EuiIcon
+                  type="crossInACircleFilled"
+                  size="xxl"
+                  color="danger"
+                />
                 <EuiText color="subdued" style={{ marginTop: 16 }}>
                   Failed to add database connections
                 </EuiText>
@@ -230,7 +244,11 @@ const ImportDatabase = (props: Props) => {
           )}
         </EuiFlexGroup>
         {data && (
-          <EuiFlexGroup justifyContent="center" gutterSize="none" responsive={false}>
+          <EuiFlexGroup
+            justifyContent="center"
+            gutterSize="none"
+            responsive={false}
+          >
             <EuiFlexItem style={{ maxWidth: '100%' }}>
               <ResultsLog data={data} />
             </EuiFlexItem>

@@ -3,8 +3,19 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints, SortOrder, KeyTypes } from 'uiSrc/constants'
-import { bufferToString, getApiErrorMessage, getUrl, isEqualBuffers, isStatusSuccessful, Maybe } from 'uiSrc/utils'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  bufferToString,
+  getApiErrorMessage,
+  getUrl,
+  isEqualBuffers,
+  isStatusSuccessful,
+  Maybe,
+} from 'uiSrc/utils'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import { StateZset } from 'uiSrc/slices/interfaces/zset'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
@@ -22,7 +33,10 @@ import {
   updateSelectedKeyRefreshTime,
 } from './keys'
 import { AppDispatch, RootState } from '../store'
-import { addErrorNotification, addMessageNotification } from '../app/notifications'
+import {
+  addErrorNotification,
+  addMessageNotification,
+} from '../app/notifications'
 import { RedisResponseBuffer } from '../interfaces'
 
 export const initialState: StateZset = {
@@ -55,7 +69,12 @@ const zsetSlice = createSlice({
       state.data.members = payload
     },
     // load ZSet members
-    loadZSetMembers: (state, { payload: [sortOrder, resetData = true] }: PayloadAction<[SortOrder, Maybe<boolean>]>) => {
+    loadZSetMembers: (
+      state,
+      {
+        payload: [sortOrder, resetData = true],
+      }: PayloadAction<[SortOrder, Maybe<boolean>]>,
+    ) => {
       state.loading = true
       state.searching = false
       state.error = ''
@@ -139,10 +158,14 @@ const zsetSlice = createSlice({
       state.loading = false
       state.error = payload
     },
-    removeMembersFromList: (state, { payload }: { payload: RedisResponseBuffer[] }) => {
+    removeMembersFromList: (
+      state,
+      { payload }: { payload: RedisResponseBuffer[] },
+    ) => {
       remove(
         state.data?.members,
-        (member) => payload.findIndex((item) => isEqualBuffers(item, member.name)) > -1
+        (member) =>
+          payload.findIndex((item) => isEqualBuffers(item, member.name)) > -1,
       )
 
       state.data = {
@@ -175,7 +198,9 @@ const zsetSlice = createSlice({
     },
     updateMembersInList: (state, { payload }: { payload: ZSetMemberDto[] }) => {
       const newMembersState = state.data.members.map((listItem) => {
-        const index = payload.findIndex((item) => isEqualBuffers(item.name, listItem.name))
+        const index = payload.findIndex((item) =>
+          isEqualBuffers(item.name, listItem.name),
+        )
         if (index > -1) {
           return payload[index]
         }
@@ -232,7 +257,7 @@ export function fetchZSetMembers(
   offset: number,
   count: number,
   sortOrder: SortOrder,
-  resetData?: boolean
+  resetData?: boolean,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadZSetMembers([sortOrder, resetData]))
@@ -243,7 +268,7 @@ export function fetchZSetMembers(
       const { data, status } = await apiService.post<GetZSetResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.ZSET_GET_MEMBERS
+          ApiEndpoints.ZSET_GET_MEMBERS,
         ),
         {
           keyName: key,
@@ -271,7 +296,7 @@ export function fetchMoreZSetMembers(
   key: RedisResponseBuffer,
   offset: number,
   count: number,
-  sortOrder: SortOrder
+  sortOrder: SortOrder,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(loadMoreZSetMembers())
@@ -282,7 +307,7 @@ export function fetchMoreZSetMembers(
       const { data, status } = await apiService.post<GetZSetResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.ZSET_GET_MEMBERS
+          ApiEndpoints.ZSET_GET_MEMBERS,
         ),
         {
           keyName: key,
@@ -307,7 +332,7 @@ export function fetchMoreZSetMembers(
 export function fetchAddZSetMembers(
   data: AddMembersToZSetDto,
   onSuccessAction?: () => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(updateScore())
@@ -317,7 +342,7 @@ export function fetchAddZSetMembers(
       const { status } = await apiService.put(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.ZSET
+          ApiEndpoints.ZSET,
         ),
         data,
         { params: { encoding } },
@@ -327,13 +352,13 @@ export function fetchAddZSetMembers(
           event: getBasedOnViewTypeEvent(
             state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED,
           ),
           eventData: {
             databaseId: state.connections.instances?.connectedInstance?.id,
             keyType: KeyTypes.ZSet,
             numberOfAdded: data.members.length,
-          }
+          },
         })
         onSuccessAction?.()
         dispatch(updateScoreSuccess())
@@ -361,15 +386,15 @@ export function deleteZSetMembers(
       const { status, data } = await apiService.delete(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.ZSET_MEMBERS
+          ApiEndpoints.ZSET_MEMBERS,
         ),
         {
           data: {
             keyName: key,
             members,
-            params: { encoding }
+            params: { encoding },
           },
-        }
+        },
       )
       if (isStatusSuccessful(status)) {
         const newTotalValue = state.browser.zset.data.total - data.affected
@@ -384,9 +409,9 @@ export function deleteZSetMembers(
               successMessages.REMOVED_KEY_VALUE(
                 key,
                 members.map((member) => bufferToString(member)).join(''),
-                'Member'
-              )
-            )
+                'Member',
+              ),
+            ),
           )
         } else {
           dispatch(deleteSelectedKeySuccess())
@@ -405,7 +430,7 @@ export function deleteZSetMembers(
 export function updateZSetMembers(
   data: AddMembersToZSetDto,
   onSuccessAction?: () => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(updateScore())
@@ -415,7 +440,7 @@ export function updateZSetMembers(
       const { status } = await apiService.put(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.ZSET
+          ApiEndpoints.ZSET,
         ),
         data,
         { params: { encoding } },
@@ -425,12 +450,12 @@ export function updateZSetMembers(
           event: getBasedOnViewTypeEvent(
             state.browser.keys?.viewType,
             TelemetryEvent.BROWSER_KEY_VALUE_EDITED,
-            TelemetryEvent.TREE_VIEW_KEY_VALUE_EDITED
+            TelemetryEvent.TREE_VIEW_KEY_VALUE_EDITED,
           ),
           eventData: {
             databaseId: state.connections.instances?.connectedInstance?.id,
             keyType: KeyTypes.ZSet,
-          }
+          },
         })
         onSuccessAction?.()
         dispatch(updateScoreSuccess())
@@ -461,7 +486,7 @@ export function fetchSearchZSetMembers(
       const { data, status } = await apiService.post<SearchZSetMembersResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.ZSET_MEMBERS_SEARCH
+          ApiEndpoints.ZSET_MEMBERS_SEARCH,
         ),
         {
           keyName: key,
@@ -489,7 +514,7 @@ export function fetchSearchMoreZSetMembers(
   key: RedisResponseBuffer,
   cursor: number,
   count: number,
-  match: string
+  match: string,
 ) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     dispatch(searchMoreZSetMembers(match))
@@ -499,7 +524,7 @@ export function fetchSearchMoreZSetMembers(
       const { data, status } = await apiService.post<SearchZSetMembersResponse>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.ZSET_MEMBERS_SEARCH
+          ApiEndpoints.ZSET_MEMBERS_SEARCH,
         ),
         {
           keyName: key,
@@ -521,7 +546,10 @@ export function fetchSearchMoreZSetMembers(
   }
 }
 
-export function refreshZsetMembersAction(key: RedisResponseBuffer, resetData?: boolean) {
+export function refreshZsetMembersAction(
+  key: RedisResponseBuffer,
+  resetData?: boolean,
+) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     const { searching } = state.browser.zset
@@ -531,22 +559,20 @@ export function refreshZsetMembersAction(key: RedisResponseBuffer, resetData?: b
       try {
         const state = stateInit()
         const { encoding } = state.app.info
-        const {
-          data,
-          status,
-        } = await apiService.post<SearchZSetMembersResponse>(
-          getUrl(
-            state.connections.instances.connectedInstance?.id,
-            ApiEndpoints.ZSET_MEMBERS_SEARCH
-          ),
-          {
-            keyName: key,
-            cursor: 0,
-            count: SCAN_COUNT_DEFAULT,
-            match,
-          },
-          { params: { encoding } },
-        )
+        const { data, status } =
+          await apiService.post<SearchZSetMembersResponse>(
+            getUrl(
+              state.connections.instances.connectedInstance?.id,
+              ApiEndpoints.ZSET_MEMBERS_SEARCH,
+            ),
+            {
+              keyName: key,
+              cursor: 0,
+              count: SCAN_COUNT_DEFAULT,
+              match,
+            },
+            { params: { encoding } },
+          )
 
         if (isStatusSuccessful(status)) {
           dispatch(searchZSetMembersSuccess(data))
@@ -567,7 +593,7 @@ export function refreshZsetMembersAction(key: RedisResponseBuffer, resetData?: b
       const { data, status } = await apiService.post(
         getUrl(
           state.connections.instances.connectedInstance?.id,
-          ApiEndpoints.ZSET_GET_MEMBERS
+          ApiEndpoints.ZSET_GET_MEMBERS,
         ),
         {
           keyName: key,

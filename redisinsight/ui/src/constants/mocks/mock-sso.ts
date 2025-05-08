@@ -14,8 +14,8 @@ export const MOCK_NO_TF_REGION = {
     countryName: 'Europe',
     cityName: 'Ireland',
     regionId: 4,
-    flag: 'ie'
-  }
+    flag: 'ie',
+  },
 }
 
 export const MOCK_RS_PREVIEW_REGION = {
@@ -34,8 +34,8 @@ export const MOCK_RS_PREVIEW_REGION = {
     countryName: 'US West',
     cityName: 'Oregon',
     regionId: 1,
-    flag: 'ie'
-  }
+    flag: 'ie',
+  },
 }
 
 export const MOCK_REGIONS = [
@@ -56,8 +56,8 @@ export const MOCK_REGIONS = [
       countryName: 'Asia Pacific',
       cityName: 'Singapore',
       regionId: 5,
-      flag: 'sg'
-    }
+      flag: 'sg',
+    },
   },
   {
     id: 12152,
@@ -75,8 +75,8 @@ export const MOCK_REGIONS = [
       countryName: 'East US',
       cityName: 'Virginia',
       regionId: 16,
-      flag: 'us'
-    }
+      flag: 'us',
+    },
   },
   {
     id: 12153,
@@ -94,9 +94,9 @@ export const MOCK_REGIONS = [
       countryName: 'North America',
       cityName: 'Iowa',
       regionId: 27,
-      flag: 'us'
-    }
-  }
+      flag: 'us',
+    },
+  },
 ]
 
 export const MOCK_CUSTOM_REGIONS = [
@@ -116,8 +116,8 @@ export const MOCK_CUSTOM_REGIONS = [
       countryName: 'Asia Pacific',
       cityName: 'Singapore',
       regionId: 11,
-      flag: 'sg'
-    }
+      flag: 'sg',
+    },
   },
   {
     id: 12152,
@@ -135,8 +135,8 @@ export const MOCK_CUSTOM_REGIONS = [
       countryName: 'East US',
       cityName: 'Virginia',
       regionId: 16,
-      flag: 'us'
-    }
+      flag: 'us',
+    },
   },
   {
     id: 12153,
@@ -154,7 +154,7 @@ export const MOCK_CUSTOM_REGIONS = [
       countryName: 'North America',
       cityName: 'Iowa',
       regionId: 27,
-      flag: 'us'
-    }
-  }
+      flag: 'us',
+    },
+  },
 ]

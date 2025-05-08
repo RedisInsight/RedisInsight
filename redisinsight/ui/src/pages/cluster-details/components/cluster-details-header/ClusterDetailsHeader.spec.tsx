@@ -27,10 +27,10 @@ describe('ClusterDetailsHeader', () => {
   })
 
   it('should render "EuiLoadingContent" until loading and no data', () => {
-    (clusterDetailsSelector as jest.Mock).mockImplementation(() => ({
+    ;(clusterDetailsSelector as jest.Mock).mockImplementation(() => ({
       data: null,
       loading: true,
-      error: ''
+      error: '',
     }))
 
     render(<ClusterDetailsHeader />)
@@ -38,10 +38,10 @@ describe('ClusterDetailsHeader', () => {
     expect(screen.getByTestId('cluster-details-loading')).toBeInTheDocument()
   })
   it('should render "cluster-details-content" after loading and with data', () => {
-    (clusterDetailsSelector as jest.Mock).mockImplementation(() => ({
+    ;(clusterDetailsSelector as jest.Mock).mockImplementation(() => ({
       data: { version: '111' },
       loading: false,
-      error: ''
+      error: '',
     }))
 
     const { queryByTestId } = render(<ClusterDetailsHeader />)
@@ -52,14 +52,13 @@ describe('ClusterDetailsHeader', () => {
   })
 
   it('huge username should be truncated', () => {
-    (clusterDetailsSelector as jest.Mock).mockImplementation(() => ({
+    ;(clusterDetailsSelector as jest.Mock).mockImplementation(() => ({
       data: { version: '111' },
       loading: false,
-      error: ''
-    }));
-
-    (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
-      username: Array.from({ length: 50 }).fill('test').join('')
+      error: '',
+    }))
+    ;(connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
+      username: Array.from({ length: 50 }).fill('test').join(''),
     }))
 
     const { queryByTestId } = render(<ClusterDetailsHeader />)
@@ -68,10 +67,10 @@ describe('ClusterDetailsHeader', () => {
   })
 
   it.skip('uptime should be with truncated to first unit', () => {
-    (clusterDetailsSelector as jest.Mock).mockImplementation(() => ({
+    ;(clusterDetailsSelector as jest.Mock).mockImplementation(() => ({
       data: { uptimeSec: 11111 },
       loading: false,
-      error: ''
+      error: '',
     }))
 
     const { queryByTestId } = render(<ClusterDetailsHeader />)

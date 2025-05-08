@@ -19,7 +19,7 @@ export const NEW_WINDOW_OFFSET = 24
 
 export enum WindowType {
   Splash = 'splash',
-  Main = 'main'
+  Main = 'main',
 }
 
 export interface ICreateWindow {
@@ -35,18 +35,19 @@ export const createWindow = async ({
   htmlFileName = '',
   windowType = WindowType.Main,
   id = uuidv4(),
-  options = {}
+  options = {},
 }: ICreateWindow) => {
   let x
   let y
   let { width, height } = options
 
   const currentWindow = BrowserWindow.getFocusedWindow()
-  const isNewMainWindow = currentWindow && currentWindow?.getTitle() !== config.splashWindow.title
+  const isNewMainWindow =
+    currentWindow && currentWindow?.getTitle() !== config.splashWindow.title
 
   if (isNewMainWindow) {
     const [currentWindowX, currentWindowY] = currentWindow.getPosition()
-    const [currentWindowWidth, currentWindowHeight] = currentWindow?.includeSize()
+    const [currentWindowWidth, currentWindowHeight] = currentWindow?.getSize()
     x = currentWindowX + NEW_WINDOW_OFFSET
     y = currentWindowY + NEW_WINDOW_OFFSET
     width = currentWindowWidth
@@ -61,8 +62,8 @@ export const createWindow = async ({
     height,
     webPreferences: {
       ...options.webPreferences,
-      preload: options.preloadPath
-    }
+      preload: options.preloadPath,
+    },
   })
 
   if (windowType !== WindowType.Main) {
@@ -79,7 +80,7 @@ export const createWindow = async ({
   }
 
   if (config.isDevelopment) {
-    newWindow.loadURL(`http://localhost:8080`)
+    newWindow.loadURL('http://localhost:8080')
   } else {
     newWindow.loadURL(resolveHtmlPath(htmlFileName, options?.parsedDeepLink))
   }
@@ -98,18 +99,20 @@ export const createWindow = async ({
 export const windowFactory = async (
   windowType: WindowType,
   prevWindow: BrowserWindow | null = null,
-  options?: { parsedDeepLink?: IParsedDeepLink }
+  options?: { parsedDeepLink?: IParsedDeepLink },
 ): Promise<BrowserWindow> => {
   switch (windowType) {
     case WindowType.Splash:
       return createWindow({
         prevWindow,
-        htmlFileName: config.isDevelopment ? '../../../splash.html' : 'splash.html',
+        htmlFileName: config.isDevelopment
+          ? '../../../splash.html'
+          : 'splash.html',
         windowType,
         options: {
           ...config.splashWindow,
-          preloadPath: config.preloadPath
-        }
+          preloadPath: config.preloadPath,
+        },
       })
     case WindowType.Main:
       return createWindow({
@@ -119,8 +122,8 @@ export const windowFactory = async (
         options: {
           ...options,
           ...config.mainWindow,
-          preloadPath: config.preloadPath
-        }
+          preloadPath: config.preloadPath,
+        },
       })
 
     default:

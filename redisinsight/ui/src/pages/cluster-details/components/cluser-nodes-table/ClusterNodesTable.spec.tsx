@@ -27,7 +27,7 @@ const mockNodes = [
     uptimeSec: 5614,
     version: '6.2.6',
     mode: 'cluster',
-    replicas: []
+    replicas: [],
   },
   {
     id: '2',
@@ -49,16 +49,14 @@ const mockNodes = [
     uptimeSec: 5609,
     version: '6.2.6',
     mode: 'cluster',
-    replicas: []
+    replicas: [],
   },
   {
     id: '3',
     host: '0.0.0.3',
     port: 6379,
     role: 'primary',
-    slots: [
-      '5461-10922'
-    ],
+    slots: ['5461-10922'],
     health: 'online',
     totalKeys: 10,
     usedMemory: 2886960,
@@ -73,25 +71,36 @@ const mockNodes = [
     uptimeSec: 5609,
     version: '6.2.6',
     mode: 'cluster',
-    replicas: []
-  }
-].map((d, index) => ({ ...d, letter: getLetterByIndex(index), index, color: [0, 0, 0] })) as ModifiedClusterNodes[]
+    replicas: [],
+  },
+].map((d, index) => ({
+  ...d,
+  letter: getLetterByIndex(index),
+  index,
+  color: [0, 0, 0],
+})) as ModifiedClusterNodes[]
 
 describe('ClusterNodesTable', () => {
   it('should render', () => {
-    expect(render(<ClusterNodesTable nodes={mockNodes} loading={false} />)).toBeTruthy()
+    expect(
+      render(<ClusterNodesTable nodes={mockNodes} loading={false} />),
+    ).toBeTruthy()
   })
 
   it('should render loading content', () => {
     render(<ClusterNodesTable nodes={null} loading />)
-    expect(screen.getByTestId('primary-nodes-table-loading')).toBeInTheDocument()
+    expect(
+      screen.getByTestId('primary-nodes-table-loading'),
+    ).toBeInTheDocument()
     expect(screen.queryByTestId('primary-nodes-table')).not.toBeInTheDocument()
   })
 
   it('should render table', () => {
     render(<ClusterNodesTable nodes={mockNodes} loading={false} />)
     expect(screen.getByTestId('primary-nodes-table')).toBeInTheDocument()
-    expect(screen.queryByTestId('primary-nodes-table-loading')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('primary-nodes-table-loading'),
+    ).not.toBeInTheDocument()
   })
 
   it('should render table with 3 items', () => {
@@ -101,18 +110,24 @@ describe('ClusterNodesTable', () => {
 
   it('should highlight max value for total keys', () => {
     render(<ClusterNodesTable nodes={mockNodes} loading={false} />)
-    expect(screen.getByTestId('totalKeys-value-max')).toHaveTextContent(mockNodes[2].totalKeys.toString())
+    expect(screen.getByTestId('totalKeys-value-max')).toHaveTextContent(
+      mockNodes[2].totalKeys.toString(),
+    )
   })
 
   it('should not highlight max value for opsPerSecond with equals values', () => {
     render(<ClusterNodesTable nodes={mockNodes} loading={false} />)
-    expect(screen.queryByTestId('opsPerSecond-value-max')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('opsPerSecond-value-max'),
+    ).not.toBeInTheDocument()
   })
 
   it('should render background color for each node', () => {
     render(<ClusterNodesTable nodes={mockNodes} loading={false} />)
     mockNodes.forEach(({ letter, color }) => {
-      expect(screen.getByTestId(`node-color-${letter}`)).toHaveStyle({ 'background-color': rgb(color) })
+      expect(screen.getByTestId(`node-color-${letter}`)).toHaveStyle({
+        'background-color': rgb(color),
+      })
     })
   })
 })

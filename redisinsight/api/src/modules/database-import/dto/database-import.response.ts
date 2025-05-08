@@ -28,7 +28,9 @@ export class DatabaseImportResult {
     type: String,
   })
   @Expose()
-  @Transform((value) => (isString(value) ? value : undefined), { toPlainOnly: true })
+  @Transform(({ value }) => (isString(value) ? value : undefined), {
+    toPlainOnly: true,
+  })
   host?: string;
 
   @ApiPropertyOptional({
@@ -36,7 +38,9 @@ export class DatabaseImportResult {
     type: Number,
   })
   @Expose()
-  @Transform((value) => (isNumber(value) ? value : undefined), { toPlainOnly: true })
+  @Transform(({ value }) => (isNumber(value) ? value : undefined), {
+    toPlainOnly: true,
+  })
   port?: number;
 
   @ApiPropertyOptional({
@@ -45,7 +49,7 @@ export class DatabaseImportResult {
   })
   @Expose()
   @Transform(
-    (e) => {
+    ({ value: e }) => {
       if (!e) {
         return undefined;
       }

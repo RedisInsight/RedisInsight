@@ -8,13 +8,16 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn
+  validateApiCall,
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).patch(`/${constants.API.DATABASES}/${instanceId}/streams/consumer-groups`);
+  request(server).patch(
+    `/${constants.API.DATABASES}/${instanceId}/streams/consumer-groups`,
+  );
 
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
@@ -50,14 +53,22 @@ describe('PATCH /databases/:instanceId/streams/consumer-groups', () => {
             lastDeliveredId: constants.TEST_STREAM_ID_2,
           },
           after: async () => {
-            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1], null);
+            const groups = await rte.data.sendCommand(
+              'xinfo',
+              ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1],
+              null,
+            );
             expect(groups).to.deep.eq([
               [
-                Buffer.from('name'), constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
-                Buffer.from('consumers'), 0,
-                Buffer.from('pending'), 0,
-                Buffer.from('last-delivered-id'), Buffer.from(constants.TEST_STREAM_ID_2),
-              ]
+                Buffer.from('name'),
+                constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+                Buffer.from('consumers'),
+                0,
+                Buffer.from('pending'),
+                0,
+                Buffer.from('last-delivered-id'),
+                Buffer.from(constants.TEST_STREAM_ID_2),
+              ],
             ]);
           },
         },
@@ -69,14 +80,22 @@ describe('PATCH /databases/:instanceId/streams/consumer-groups', () => {
             lastDeliveredId: constants.TEST_STREAM_ID_2,
           },
           after: async () => {
-            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1], null);
+            const groups = await rte.data.sendCommand(
+              'xinfo',
+              ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1],
+              null,
+            );
             expect(groups).to.deep.eq([
               [
-                Buffer.from('name'), constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
-                Buffer.from('consumers'), 0,
-                Buffer.from('pending'), 0,
-                Buffer.from('last-delivered-id'), Buffer.from(constants.TEST_STREAM_ID_2),
-              ]
+                Buffer.from('name'),
+                constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+                Buffer.from('consumers'),
+                0,
+                Buffer.from('pending'),
+                0,
+                Buffer.from('last-delivered-id'),
+                Buffer.from(constants.TEST_STREAM_ID_2),
+              ],
             ]);
           },
         },
@@ -93,16 +112,26 @@ describe('PATCH /databases/:instanceId/streams/consumer-groups', () => {
             lastDeliveredId: constants.TEST_STREAM_ID_2,
           },
           after: async () => {
-            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1], null);
+            const groups = await rte.data.sendCommand(
+              'xinfo',
+              ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1],
+              null,
+            );
             expect(groups).to.deep.eq([
               [
-                Buffer.from('name'), constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
-                Buffer.from('consumers'), 0,
-                Buffer.from('pending'), 0,
-                Buffer.from('last-delivered-id'), Buffer.from(constants.TEST_STREAM_ID_2),
-                Buffer.from('entries-read'), null,
-                Buffer.from('lag'), 1,
-              ]
+                Buffer.from('name'),
+                constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+                Buffer.from('consumers'),
+                0,
+                Buffer.from('pending'),
+                0,
+                Buffer.from('last-delivered-id'),
+                Buffer.from(constants.TEST_STREAM_ID_2),
+                Buffer.from('entries-read'),
+                null,
+                Buffer.from('lag'),
+                1,
+              ],
             ]);
           },
         },
@@ -114,16 +143,26 @@ describe('PATCH /databases/:instanceId/streams/consumer-groups', () => {
             lastDeliveredId: constants.TEST_STREAM_ID_2,
           },
           after: async () => {
-            const groups = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1], null);
+            const groups = await rte.data.sendCommand(
+              'xinfo',
+              ['groups', constants.TEST_STREAM_KEY_BIN_BUFFER_1],
+              null,
+            );
             expect(groups).to.deep.eq([
               [
-                Buffer.from('name'), constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
-                Buffer.from('consumers'), 0,
-                Buffer.from('pending'), 0,
-                Buffer.from('last-delivered-id'), Buffer.from(constants.TEST_STREAM_ID_2),
-                Buffer.from('entries-read'), null,
-                Buffer.from('lag'), 1,
-              ]
+                Buffer.from('name'),
+                constants.TEST_STREAM_GROUP_BIN_BUFFER_1,
+                Buffer.from('consumers'),
+                0,
+                Buffer.from('pending'),
+                0,
+                Buffer.from('last-delivered-id'),
+                Buffer.from(constants.TEST_STREAM_ID_2),
+                Buffer.from('entries-read'),
+                null,
+                Buffer.from('lag'),
+                1,
+              ],
             ]);
           },
         },
@@ -155,11 +194,17 @@ describe('PATCH /databases/:instanceId/streams/consumer-groups', () => {
             lastDeliveredId: constants.TEST_STREAM_ID_2,
           },
           before: async () => {
-            const [group] = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_1]);
+            const [group] = await rte.data.sendCommand('xinfo', [
+              'groups',
+              constants.TEST_STREAM_KEY_1,
+            ]);
             expect(group[7]).to.eq(constants.TEST_STREAM_ID_1);
           },
           after: async () => {
-            const [group] = await rte.data.sendCommand('xinfo', ['groups', constants.TEST_STREAM_KEY_1]);
+            const [group] = await rte.data.sendCommand('xinfo', [
+              'groups',
+              constants.TEST_STREAM_KEY_1,
+            ]);
             expect(group[7]).to.eq(constants.TEST_STREAM_ID_2);
           },
         },
@@ -242,7 +287,7 @@ describe('PATCH /databases/:instanceId/streams/consumer-groups', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
         {
           name: 'Should throw error if no permissions for "xgroup" command',
@@ -255,7 +300,7 @@ describe('PATCH /databases/:instanceId/streams/consumer-groups', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -xgroup')
+          before: () => rte.data.setAclUserRules('~* +@all -xgroup'),
         },
       ].map(mainCheckFn);
     });

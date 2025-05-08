@@ -1,1 +1,1 @@
-export const onlyText = jest.fn()
+export const onlyText = jest.fn();

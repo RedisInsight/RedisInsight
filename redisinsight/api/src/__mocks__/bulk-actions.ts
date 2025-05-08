@@ -1,4 +1,7 @@
-import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
+import {
+  BulkActionStatus,
+  BulkActionType,
+} from 'src/modules/bulk-actions/constants';
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
 import { BulkActionProgress } from 'src/modules/bulk-actions/models/bulk-action-progress';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
@@ -23,6 +26,7 @@ export const mockBulkActionOverview = {
     processed: 0,
     succeed: 0,
     errors: [],
+    keys: [],
   },
 };
 
@@ -58,14 +62,11 @@ const mockKeyBuffer = Buffer.from(mockKey);
 const mockRESPError = 'Reply Error: NOPERM for delete.';
 const mockRESPErrorBuffer = Buffer.from(mockRESPError);
 
-export const generateMockBulkActionErrors = (amount: number, raw = true): any => (
-  new Array(amount).fill(1)
-).map(
-  () => ({
+export const generateMockBulkActionErrors = (amount: number, raw = true): any =>
+  new Array(amount).fill(1).map(() => ({
     key: raw ? mockKeyBuffer : mockKey,
     error: raw ? mockRESPErrorBuffer : mockRESPError,
-  }),
-);
+  }));
 
 export const generateMockBulkActionProgress = () => {
   const progress = new BulkActionProgress();

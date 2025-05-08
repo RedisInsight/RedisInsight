@@ -1,9 +1,17 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { streamDataSelector, streamRangeSelector } from 'uiSrc/slices/browser/stream'
+import {
+  streamDataSelector,
+  streamRangeSelector,
+} from 'uiSrc/slices/browser/stream'
 import { anyToBuffer, bufferToString, stringToBuffer } from 'uiSrc/utils'
 import { render, screen } from 'uiSrc/utils/test-utils'
-import { GZIP_COMPRESSED_VALUE_1, GZIP_COMPRESSED_VALUE_2, DECOMPRESSED_VALUE_STR_1, DECOMPRESSED_VALUE_STR_2 } from 'uiSrc/utils/tests/decompressors'
+import {
+  GZIP_COMPRESSED_VALUE_1,
+  GZIP_COMPRESSED_VALUE_2,
+  DECOMPRESSED_VALUE_STR_1,
+  DECOMPRESSED_VALUE_STR_2,
+} from 'uiSrc/utils/tests/decompressors'
 import { StreamDetailsBody, Props } from './StreamDetailsBody'
 import { MAX_FORMAT_LENGTH_STREAM_TIMESTAMP } from '../constants'
 
@@ -18,11 +26,11 @@ jest.mock('uiSrc/slices/browser/stream', () => ({
     lastGeneratedId: '',
     firstEntry: {
       id: '',
-      fields: []
+      fields: [],
     },
     lastEntry: {
       id: '',
-      fields: []
+      fields: [],
     },
     lastRefreshTime: null,
   }),
@@ -38,20 +46,22 @@ const mockedEntryData = {
   lastRefreshTime: 1231231,
   firstEntry: {
     id: '1652942518810-0',
-    fields: [{ value: stringToBuffer('1'), name: stringToBuffer('2') }]
+    fields: [{ value: stringToBuffer('1'), name: stringToBuffer('2') }],
   },
   lastEntry: {
     id: '1652942518811-0',
-    fields: [{ value: stringToBuffer('1'), name: stringToBuffer('2') }]
+    fields: [{ value: stringToBuffer('1'), name: stringToBuffer('2') }],
   },
-  entries: [{
-    id: '1652942518810-0',
-    fields: [{ value: stringToBuffer('1'), name: stringToBuffer('2') }]
-  },
-  {
-    id: '1652942518811-0',
-    fields: [{ value: stringToBuffer('1'), name: stringToBuffer('2') }]
-  }]
+  entries: [
+    {
+      id: '1652942518810-0',
+      fields: [{ value: stringToBuffer('1'), name: stringToBuffer('2') }],
+    },
+    {
+      id: '1652942518811-0',
+      fields: [{ value: stringToBuffer('1'), name: stringToBuffer('2') }],
+    },
+  ],
 }
 
 const mockedRangeData = {
@@ -61,7 +71,9 @@ const mockedRangeData = {
 
 describe('StreamDetailsBody', () => {
   it('should render', () => {
-    expect(render(<StreamDetailsBody {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<StreamDetailsBody {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 
   it('should render Stream Data container', () => {
@@ -87,13 +99,10 @@ describe('StreamDetailsBody', () => {
   it(`should not render Range filter if id more than ${MAX_FORMAT_LENGTH_STREAM_TIMESTAMP}`, () => {
     const entryWithHugeId = {
       id: '3123123123123123123123-123123123',
-      fields: [{ value: stringToBuffer('1'), name: stringToBuffer('2') }]
+      fields: [{ value: stringToBuffer('1'), name: stringToBuffer('2') }],
     }
 
-    const mockedEntries = [
-      ...mockedEntryData.entries,
-      entryWithHugeId
-    ]
+    const mockedEntries = [...mockedEntryData.entries, entryWithHugeId]
 
     streamDataSelector.mockImplementation(() => ({
       ...mockedEntryData,
@@ -105,7 +114,9 @@ describe('StreamDetailsBody', () => {
       ...mockedRangeData,
     }))
 
-    const { queryByTestId } = render(<StreamDetailsBody {...instance(mockedProps)} />)
+    const { queryByTestId } = render(
+      <StreamDetailsBody {...instance(mockedProps)} />,
+    )
 
     expect(queryByTestId('range-bar')).not.toBeInTheDocument()
   })
@@ -115,22 +126,24 @@ describe('StreamDetailsBody', () => {
       const mockId = '1232-123123123'
       const entryWithCompressedGZIPData = {
         id: mockId,
-        fields: [{
-          name: anyToBuffer(GZIP_COMPRESSED_VALUE_1),
-          value: anyToBuffer(GZIP_COMPRESSED_VALUE_2),
-        }]
+        fields: [
+          {
+            name: anyToBuffer(GZIP_COMPRESSED_VALUE_1),
+            value: anyToBuffer(GZIP_COMPRESSED_VALUE_2),
+          },
+        ],
       }
 
       streamDataSelector.mockImplementation(() => ({
         ...mockedEntryData,
         firstEntry: entryWithCompressedGZIPData,
         lastEntry: entryWithCompressedGZIPData,
-        entries: [
-          entryWithCompressedGZIPData
-        ],
+        entries: [entryWithCompressedGZIPData],
       }))
 
-      const { queryAllByTestId } = render(<StreamDetailsBody {...instance(mockedProps)} />)
+      const { queryAllByTestId } = render(
+        <StreamDetailsBody {...instance(mockedProps)} />,
+      )
 
       const fieldNameEl = queryAllByTestId(/stream-field-name-/)?.[0]
       const entryFieldEl = queryAllByTestId(/stream-entry-field-/)?.[0]

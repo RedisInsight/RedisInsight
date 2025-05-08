@@ -14,15 +14,9 @@
     "skipLibCheck": true,
     "incremental": true,
     "paths": {
-      "src/*": [
-        "src/*"
-      ],
-      "apiSrc/*": [
-        "src/*"
-      ],
-      "tests/*": [
-        "__tests__/*"
-      ]
+      "src/*": ["src/*"],
+      "apiSrc/*": ["src/*"],
+      "tests/*": ["__tests__/*"]
     }
   }
 }

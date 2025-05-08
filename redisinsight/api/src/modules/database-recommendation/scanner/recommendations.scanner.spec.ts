@@ -2,7 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RecommendationScanner } from 'src/modules/database-recommendation/scanner/recommendations.scanner';
 import { RecommendationProvider } from 'src/modules/database-recommendation/scanner/recommendation.provider';
 import { FeatureService } from 'src/modules/feature/feature.service';
-import { mockFeatureService, mockSessionMetadata, MockType } from 'src/__mocks__';
+import {
+  mockFeatureService,
+  mockSessionMetadata,
+  MockType,
+} from 'src/__mocks__';
 import { KnownFeatures } from 'src/modules/feature/constants';
 
 const mockRecommendationStrategy = () => ({
@@ -37,7 +41,9 @@ describe('RecommendationScanner', () => {
     }).compile();
 
     service = module.get<RecommendationScanner>(RecommendationScanner);
-    recommendationProvider = module.get<RecommendationProvider>(RecommendationProvider);
+    recommendationProvider = module.get<RecommendationProvider>(
+      RecommendationProvider,
+    );
     featureService = module.get(FeatureService);
     recommendationStrategy = mockRecommendationStrategy();
     recommendationProvider.getStrategy.mockReturnValue(recommendationStrategy);
@@ -45,55 +51,57 @@ describe('RecommendationScanner', () => {
 
   describe('determineRecommendation', () => {
     it('should determine recommendation', async () => {
-      recommendationStrategy.isRecommendationReached.mockResolvedValue({ isReached: true });
+      recommendationStrategy.isRecommendationReached.mockResolvedValue({
+        isReached: true,
+      });
 
-      expect(await service.determineRecommendation(
-        mockSessionMetadata,
-        'name',
-        {
+      expect(
+        await service.determineRecommendation(mockSessionMetadata, 'name', {
           data: mockData,
-        },
-      )).toEqual({ name: 'name' });
-      expect(featureService.isFeatureEnabled)
-        .toHaveBeenCalledWith(mockSessionMetadata, KnownFeatures.InsightsRecommendations);
+        }),
+      ).toEqual({ name: 'name' });
+      expect(featureService.isFeatureEnabled).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        KnownFeatures.InsightsRecommendations,
+      );
     });
 
     it('should return null when feature disabled', async () => {
       featureService.isFeatureEnabled.mockResolvedValueOnce(false);
 
-      recommendationStrategy.isRecommendationReached.mockResolvedValue({ isReached: true });
+      recommendationStrategy.isRecommendationReached.mockResolvedValue({
+        isReached: true,
+      });
 
-      expect(await service.determineRecommendation(
-        mockSessionMetadata,
-        'name',
-        {
+      expect(
+        await service.determineRecommendation(mockSessionMetadata, 'name', {
           data: mockData,
-        },
-      )).toEqual(null);
+        }),
+      ).toEqual(null);
     });
 
     it('should return null when isRecommendationReached throw error', async () => {
-      recommendationStrategy.isRecommendationReached.mockRejectedValueOnce(new Error());
+      recommendationStrategy.isRecommendationReached.mockRejectedValueOnce(
+        new Error(),
+      );
 
-      expect(await service.determineRecommendation(
-        mockSessionMetadata,
-        'name',
-        {
+      expect(
+        await service.determineRecommendation(mockSessionMetadata, 'name', {
           data: mockData,
-        },
-      )).toEqual(null);
+        }),
+      ).toEqual(null);
     });
 
     it('should return null when isReached is false', async () => {
-      recommendationStrategy.isRecommendationReached.mockResolvedValue({ isReached: false });
+      recommendationStrategy.isRecommendationReached.mockResolvedValue({
+        isReached: false,
+      });
 
-      expect(await service.determineRecommendation(
-        mockSessionMetadata,
-        'name',
-        {
+      expect(
+        await service.determineRecommendation(mockSessionMetadata, 'name', {
           data: mockData,
-        },
-      )).toEqual(null);
+        }),
+      ).toEqual(null);
     });
   });
 });

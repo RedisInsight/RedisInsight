@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/quotes */
 import { randomBytes } from 'crypto';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { CommandParsingError, RedirectionParsingError } from 'src/modules/cli/constants/errors';
+import {
+  CommandParsingError,
+  RedirectionParsingError,
+} from 'src/modules/cli/constants/errors';
 import {
   mockRedisAskError,
   mockRedisMovedError,
@@ -69,7 +72,16 @@ describe('Cli helper', () => {
       },
       {
         input: `ACL SETUSER t on nopass ~'\\x00' &* +@all`,
-        output: ['ACL', 'SETUSER', 't', 'on', 'nopass', '~\\x00', '&*', '+@all'],
+        output: [
+          'ACL',
+          'SETUSER',
+          't',
+          'on',
+          'nopass',
+          '~\\x00',
+          '&*',
+          '+@all',
+        ],
       },
     ].forEach((tc) => {
       it(`should return ${JSON.stringify(tc.output)} for command ${tc.input}`, async () => {
@@ -218,18 +230,24 @@ describe('Cli helper', () => {
         ...mockRedisAskError,
         message: 'ASK 7008 redis.cloud.redislabs.com/test',
       };
-      expect(() => parseRedirectionError(redirectionError)).toThrow(RedirectionParsingError);
+      expect(() => parseRedirectionError(redirectionError)).toThrow(
+        RedirectionParsingError,
+      );
     });
     it('should throw exception for incorrect redirection message format', () => {
       const redirectionError = {
         ...mockRedisAskError,
         message: 'ASK redis.cloud.redislabs.com:17182 7008',
       };
-      expect(() => parseRedirectionError(redirectionError)).toThrow(RedirectionParsingError);
+      expect(() => parseRedirectionError(redirectionError)).toThrow(
+        RedirectionParsingError,
+      );
     });
     it('should throw exception', () => {
       const input: any = 'ASK redis.cloud.redislabs.com:17182 7008';
-      expect(() => parseRedirectionError(input)).toThrow(RedirectionParsingError);
+      expect(() => parseRedirectionError(input)).toThrow(
+        RedirectionParsingError,
+      );
     });
   });
 
@@ -274,7 +292,9 @@ describe('Cli helper', () => {
     ];
     tests.forEach((test) => {
       it(`should be output: ${JSON.stringify(test.output)} for input: ${JSON.stringify(test.input)} `, async () => {
-        expect(getRedisPipelineSummary(test.input.pipeline, test.input.limit)).toEqual(test.output);
+        expect(
+          getRedisPipelineSummary(test.input.pipeline, test.input.limit),
+        ).toEqual(test.output);
       });
     });
   });
@@ -287,25 +307,48 @@ describe('Cli helper', () => {
         unicode: 'simple',
       },
       {
-        buffer: Buffer.from([0x45, 0x75, 0x72, 0x6f, 0x20, 0x2d, 0x20, 0xe2, 0x82, 0xac]),
+        buffer: Buffer.from([
+          0x45, 0x75, 0x72, 0x6f, 0x20, 0x2d, 0x20, 0xe2, 0x82, 0xac,
+        ]),
         string: 'Euro - \\xe2\\x82\\xac',
         unicode: 'Euro - €',
       },
       {
         buffer: Buffer.from([
-          0xe2, 0x82, 0xac, // €
-          0x20, 0x21, 0x3d, 0x20, // _!=_
-          0x5c, 0x65, 0x32, // \e2
-          0x5c, 0x78, 0x7a, 0x73, // \xzs
-          0x5c, 0x30, 0x32, // \02
+          0xe2,
+          0x82,
+          0xac, // €
+          0x20,
+          0x21,
+          0x3d,
+          0x20, // _!=_
+          0x5c,
+          0x65,
+          0x32, // \e2
+          0x5c,
+          0x78,
+          0x7a,
+          0x73, // \xzs
+          0x5c,
+          0x30,
+          0x32, // \02
         ]),
         string: '\\xe2\\x82\\xac != \\\\e2\\\\xzs\\\\02',
         unicode: '€ != \\e2\\xzs\\02',
       },
       {
         buffer: Buffer.from([
-          0x02, 0x00, 0x00, 0x00, // special symbols
-          0x7a, 0x69, 0x70, 0x63, 0x6f, 0x64, 0x65, // zipcode
+          0x02,
+          0x00,
+          0x00,
+          0x00, // special symbols
+          0x7a,
+          0x69,
+          0x70,
+          0x63,
+          0x6f,
+          0x64,
+          0x65, // zipcode
         ]),
         string: '\\x02\\x00\\x00\\x00zipcode',
         unicode: '\x02\x00\x00\x00zipcode',
@@ -356,11 +399,20 @@ describe('Cli helper', () => {
       { input: Buffer.from('abc'), output: 'abc' },
       { input: Buffer.from('123'), output: '123' },
       { input: Buffer.from('ntoheuthao u2312'), output: 'ntoheuthao u2312' },
-      { input: Buffer.from('q;tkoeh uoaecr342 ""ueo!@#'), output: 'q;tkoeh uoaecr342 ""ueo!@#' },
-      { input: Buffer.from('\\x02\\x00\\x00\\x00zipcode'), output: '\\x02\\x00\\x00\\x00zipcode' },
-      { input: Buffer.from('€ != \\e2\\xzs\\02'), output: '€ != \\e2\\xzs\\02' },
+      {
+        input: Buffer.from('q;tkoeh uoaecr342 ""ueo!@#'),
+        output: 'q;tkoeh uoaecr342 ""ueo!@#',
+      },
+      {
+        input: Buffer.from('\\x02\\x00\\x00\\x00zipcode'),
+        output: '\\x02\\x00\\x00\\x00zipcode',
+      },
+      {
+        input: Buffer.from('€ != \\e2\\xzs\\02'),
+        output: '€ != \\e2\\xzs\\02',
+      },
     ];
-    tests.forEach(({input, output}) => {
+    tests.forEach(({ input, output }) => {
       it(`should be output: ${output} for input: ${input} `, async () => {
         const result = getUTF8FromRedisString(input);
 

@@ -1,7 +1,5 @@
 import { PageNames, Pages, IRoute } from 'uiSrc/constants'
-import {
-  BrowserPage, InstancePage,
-} from 'uiSrc/pages'
+import { BrowserPage, InstancePage } from 'uiSrc/pages'
 import WorkbenchPage from 'uiSrc/pages/workbench'
 import SlowLogPage from 'uiSrc/pages/slow-log'
 import PubSubPage from 'uiSrc/pages/pub-sub'

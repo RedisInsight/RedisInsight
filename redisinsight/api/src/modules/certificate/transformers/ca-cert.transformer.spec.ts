@@ -6,7 +6,9 @@ import { caCertTransformer } from './ca-cert.transformer';
 describe('caCertTransformer', () => {
   [
     {
-      input: { object: { caCert: { id: 'some-id-uuid' } } } as unknown as TypeHelpOptions,
+      input: {
+        object: { caCert: { id: 'some-id-uuid' } },
+      } as unknown as TypeHelpOptions,
       output: UseCaCertificateDto,
     },
     {
@@ -14,7 +16,9 @@ describe('caCertTransformer', () => {
       output: CreateCaCertificateDto,
     },
     {
-      input: { object: { caCert: { some: 'field' } } } as unknown as TypeHelpOptions,
+      input: {
+        object: { caCert: { some: 'field' } },
+      } as unknown as TypeHelpOptions,
       output: CreateCaCertificateDto,
     },
     {

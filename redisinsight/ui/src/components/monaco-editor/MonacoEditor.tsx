@@ -6,7 +6,10 @@ import { merge } from 'lodash'
 
 import { MonacoThemes, darkTheme, lightTheme } from 'uiSrc/constants/monaco'
 import { Nullable } from 'uiSrc/utils'
-import { IEditorMount, ISnippetController } from 'uiSrc/pages/workbench/interfaces'
+import {
+  IEditorMount,
+  ISnippetController,
+} from 'uiSrc/pages/workbench/interfaces'
 import { DSL, Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
@@ -16,15 +19,13 @@ import styles from './styles.module.scss'
 export interface CommonProps {
   value: string
   onChange?: (value: string) => void
-  onApply?: (
-    event: React.MouseEvent,
-    closeEditor: () => void
-  ) => void
+  onApply?: (event: React.MouseEvent, closeEditor: () => void) => void
   onDecline?: (event?: React.MouseEvent<HTMLElement>) => void
   disabled?: boolean
   readOnly?: boolean
   isEditable?: boolean
   wrapperClassName?: string
+  editorWrapperClassName?: string
   options?: monacoEditor.editor.IStandaloneEditorConstructionOptions
   dedicatedEditorOptions?: monacoEditor.editor.IStandaloneEditorConstructionOptions
   dedicatedEditorLanguages?: DSL[]
@@ -39,7 +40,10 @@ export interface CommonProps {
 }
 
 export interface Props extends CommonProps {
-  onEditorDidMount?: (editor: monacoEditor.editor.IStandaloneCodeEditor, monaco: typeof monacoEditor) => void
+  onEditorDidMount?: (
+    editor: monacoEditor.editor.IStandaloneCodeEditor,
+    monaco: typeof monacoEditor,
+  ) => void
   onEditorWillMount?: (monaco: typeof monacoEditor) => void
   className?: string
   language: string
@@ -58,6 +62,7 @@ const MonacoEditor = (props: Props) => {
     isEditable,
     language,
     wrapperClassName,
+    editorWrapperClassName,
     className,
     options = {},
     dedicatedEditorOptions = {},
@@ -68,7 +73,7 @@ const MonacoEditor = (props: Props) => {
     onOpenDedicatedEditor,
     onSubmitDedicatedEditor,
     onCloseDedicatedEditor,
-    'data-testid': dataTestId = 'monaco-editor'
+    'data-testid': dataTestId = 'monaco-editor',
   } = props
 
   let contribution: Nullable<ISnippetController> = null
@@ -79,15 +84,19 @@ const MonacoEditor = (props: Props) => {
 
   const { theme } = useContext(ThemeContext)
 
-  useEffect(() =>
-  // componentWillUnmount
-    () => {
-      contribution?.dispose?.()
-    },
-  [])
+  useEffect(
+    () =>
+      // componentWillUnmount
+      () => {
+        contribution?.dispose?.()
+      },
+    [],
+  )
 
   useEffect(() => {
-    monacoObjects.current?.editor.updateOptions({ readOnly: !isEditing && (disabled || readOnly) })
+    monacoObjects.current?.editor.updateOptions({
+      readOnly: !isEditing && (disabled || readOnly),
+    })
   }, [disabled, readOnly, isEditing])
 
   useEffect(() => {
@@ -105,7 +114,8 @@ const MonacoEditor = (props: Props) => {
 
     // hack for exit from snippet mode after click Enter until no answer from monaco authors
     // https://github.com/microsoft/monaco-editor/issues/2756
-    contribution = editor.getContribution<ISnippetController>('snippetController2')
+    contribution =
+      editor.getContribution<ISnippetController>('snippetController2')
 
     editor.onKeyDown(onKeyDownMonaco)
 
@@ -124,7 +134,10 @@ const MonacoEditor = (props: Props) => {
 
   const onKeyDownMonaco = (e: monacoEditor.IKeyboardEvent) => {
     // trigger parameter hints
-    if (e.keyCode === monacoEditor.KeyCode.Enter || e.keyCode === monacoEditor.KeyCode.Space) {
+    if (
+      e.keyCode === monacoEditor.KeyCode.Enter ||
+      e.keyCode === monacoEditor.KeyCode.Space
+    ) {
       onExitSnippetMode()
     }
   }
@@ -135,7 +148,9 @@ const MonacoEditor = (props: Props) => {
 
     if (contribution?.isInSnippet?.()) {
       const { lineNumber = 0, column = 0 } = editor?.getPosition() ?? {}
-      editor.setSelection(new monacoEditor.Selection(lineNumber, column, lineNumber, column))
+      editor.setSelection(
+        new monacoEditor.Selection(lineNumber, column, lineNumber, column),
+      )
       contribution?.cancel?.()
     }
   }
@@ -149,9 +164,13 @@ const MonacoEditor = (props: Props) => {
     editor.updateOptions({ readOnly: true })
   }
 
-  const triggerUpdateCursorPosition = (editor: monacoEditor.editor.IStandaloneCodeEditor) => {
+  const triggerUpdateCursorPosition = (
+    editor: monacoEditor.editor.IStandaloneCodeEditor,
+  ) => {
     const position = editor.getPosition()
-    editor.trigger('mouse', '_moveTo', { position: { lineNumber: 1, column: 1 } })
+    editor.trigger('mouse', '_moveTo', {
+      position: { lineNumber: 1, column: 1 },
+    })
     editor.trigger('mouse', '_moveTo', { position })
     editor.focus()
   }
@@ -173,8 +192,8 @@ const MonacoEditor = (props: Props) => {
           position?.lineNumber!,
           position?.column! + value.length,
         ),
-        text: value.replaceAll('\n', ' ')
-      }
+        text: value.replaceAll('\n', ' '),
+      },
     ])
     setIsDedicatedEditorOpen(false)
     triggerUpdateCursorPosition(editor)
@@ -196,26 +215,30 @@ const MonacoEditor = (props: Props) => {
     monacoEditor.editor.defineTheme(MonacoThemes.Light, lightTheme)
   }
 
-  const monacoOptions: monacoEditor.editor.IStandaloneEditorConstructionOptions = merge({
-    wordWrap: 'on',
-    automaticLayout: true,
-    formatOnPaste: false,
-    padding: { top: 10 },
-    suggest: {
-      preview: false,
-      showStatusBar: false,
-      showIcons: false,
-      showProperties: false,
-    },
-    quickSuggestions: false,
-    minimap: {
-      enabled: false,
-    },
-    overviewRulerLanes: 0,
-    hideCursorInOverviewRuler: true,
-    overviewRulerBorder: false,
-    lineNumbersMinChars: 4,
-  }, options)
+  const monacoOptions: monacoEditor.editor.IStandaloneEditorConstructionOptions =
+    merge(
+      {
+        wordWrap: 'on',
+        automaticLayout: true,
+        formatOnPaste: false,
+        padding: { top: 10 },
+        suggest: {
+          preview: false,
+          showStatusBar: false,
+          showIcons: false,
+          showProperties: false,
+        },
+        quickSuggestions: false,
+        minimap: {
+          enabled: false,
+        },
+        overviewRulerLanes: 0,
+        hideCursorInOverviewRuler: true,
+        overviewRulerBorder: false,
+        lineNumbersMinChars: 4,
+      },
+      options,
+    )
 
   const handleApply = (_value: string, event: React.MouseEvent) => {
     onApply?.(event, () => setIsEditing(false))
@@ -227,7 +250,12 @@ const MonacoEditor = (props: Props) => {
   }
 
   return (
-    <div className={cx(styles.wrapper, wrapperClassName, { disabled, [styles.isEditing]: isEditing && readOnly })}>
+    <div
+      className={cx(styles.wrapper, wrapperClassName, {
+        disabled,
+        [styles.isEditing]: isEditing && readOnly,
+      })}
+    >
       <InlineItemEditor
         onApply={handleApply}
         onDecline={handleDecline}
@@ -235,14 +263,20 @@ const MonacoEditor = (props: Props) => {
         declineOnUnmount={false}
         preventOutsideClick
       >
-        <div className="inlineMonacoEditor" data-testid={`wrapper-${dataTestId}`} ref={input}>
+        <div
+          className={cx('inlineMonacoEditor', editorWrapperClassName)}
+          data-testid={`wrapper-${dataTestId}`}
+          ref={input}
+        >
           <ReactMonacoEditor
             language={language}
             theme={theme === Theme.Dark ? 'dark' : 'light'}
             value={value ?? ''}
             onChange={onChange}
             options={monacoOptions}
-            className={cx(styles.editor, className, { readMode: !isEditing && readOnly })}
+            className={cx(styles.editor, className, {
+              readMode: !isEditing && readOnly,
+            })}
             editorDidMount={editorDidMount}
             editorWillMount={editorWillMount}
             data-testid={dataTestId}

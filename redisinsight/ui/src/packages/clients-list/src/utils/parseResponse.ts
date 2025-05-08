@@ -1,17 +1,21 @@
 import { Buffer } from 'buffer'
 
-export const parseClientListResponse = (response: string) => response.split(/\r?\n/).filter((r: string) => r).map((row: string) => {
-  const value = row.split(' ')
-  const obj: any = {}
-  value.forEach((v: string) => {
-    const pair = v.split('=')
-    // eslint-disable-next-line prefer-destructuring
-    obj[pair[0]] = pair[1]
-  })
-  return obj
-})
+export const parseClientListResponse = (response: string) =>
+  response
+    .split(/\r?\n/)
+    .filter((r: string) => r)
+    .map((row: string) => {
+      const value = row.split(' ')
+      const obj: any = {}
+      value.forEach((v: string) => {
+        const pair = v.split('=')
+        // eslint-disable-next-line prefer-destructuring
+        obj[pair[0]] = pair[1]
+      })
+      return obj
+    })
 
-export const parseJSONASCIIResponse = (response: string):string =>
+export const parseJSONASCIIResponse = (response: string): string =>
   getBufferFromSafeASCIIString(response).toString()
 
 export const getBufferFromSafeASCIIString = (str: string): Buffer => {

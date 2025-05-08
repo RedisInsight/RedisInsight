@@ -15,7 +15,7 @@ const label = 'btn'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
-  setDBConfigStorageField: jest.fn()
+  setDBConfigStorageField: jest.fn(),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -25,7 +25,13 @@ jest.mock('uiSrc/telemetry', () => ({
 
 describe('CodeButtonBlock', () => {
   it('should render', () => {
-    const component = render(<CodeButtonBlock {...instance(mockedProps)} label={label} content={simpleContent} />)
+    const component = render(
+      <CodeButtonBlock
+        {...instance(mockedProps)}
+        label={label}
+        content={simpleContent}
+      />,
+    )
     const { container } = component
 
     expect(component).toBeTruthy()
@@ -35,7 +41,14 @@ describe('CodeButtonBlock', () => {
 
   it('should call onClick function', () => {
     const onApply = jest.fn()
-    render(<CodeButtonBlock {...instance(mockedProps)} label={label} onApply={onApply} content={simpleContent} />)
+    render(
+      <CodeButtonBlock
+        {...instance(mockedProps)}
+        label={label}
+        onApply={onApply}
+        content={simpleContent}
+      />,
+    )
     fireEvent.click(screen.getByTestId(`run-btn-${label}`))
 
     expect(onApply).toBeCalled()
@@ -44,13 +57,15 @@ describe('CodeButtonBlock', () => {
   it('should call onCopy function', () => {
     const onCopy = jest.fn()
 
-    render(<CodeButtonBlock
-      {...instance(mockedProps)}
-      label={label}
-      onCopy={onCopy}
-      onApply={jest.fn()}
-      content={simpleContent}
-    />)
+    render(
+      <CodeButtonBlock
+        {...instance(mockedProps)}
+        label={label}
+        onCopy={onCopy}
+        onApply={jest.fn()}
+        content={simpleContent}
+      />,
+    )
     fireEvent.click(screen.getByTestId(`copy-btn-${label}`))
 
     expect(onCopy).toBeCalled()
@@ -66,7 +81,7 @@ describe('CodeButtonBlock', () => {
         onApply={onApply}
         params={{ pipeline: '10' }}
         content={simpleContent}
-      />
+      />,
     )
     fireEvent.click(screen.getByTestId(`run-btn-${label}`))
 
@@ -83,7 +98,7 @@ describe('CodeButtonBlock', () => {
         onApply={onApply}
         params={{ executable: 'false' }}
         content={simpleContent}
-      />
+      />,
     )
 
     expect(screen.queryByTestId(`run-btn-${label}`)).not.toBeInTheDocument()
@@ -98,13 +113,15 @@ describe('CodeButtonBlock', () => {
         params={{ run_confirmation: 'true' }}
         content={simpleContent}
         isShowConfirmation={false}
-      />
+      />,
     )
     await act(() => {
       fireEvent.click(screen.getByTestId(`run-btn-${label}`))
     })
 
-    expect(screen.queryByTestId('tutorial-popover-apply-run')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('tutorial-popover-apply-run'),
+    ).not.toBeInTheDocument()
   })
 
   it('should go to home page after click on change db', async () => {
@@ -120,7 +137,7 @@ describe('CodeButtonBlock', () => {
         onApply={onApply}
         params={{ run_confirmation: 'true' }}
         content={simpleContent}
-      />
+      />,
     )
     await act(() => {
       fireEvent.click(screen.getByTestId(`run-btn-${label}`))
@@ -141,7 +158,7 @@ describe('CodeButtonBlock', () => {
         onApply={onApply}
         params={{ run_confirmation: 'true' }}
         content={simpleContent}
-      />
+      />,
     )
 
     await act(() => {
@@ -156,12 +173,18 @@ describe('CodeButtonBlock', () => {
       fireEvent.click(screen.getByTestId('tutorial-popover-apply-run'))
     })
 
-    expect(setDBConfigStorageField).toBeCalledWith('instanceId', ConfigDBStorageItem.notShowConfirmationRunTutorial, true)
+    expect(setDBConfigStorageField).toBeCalledWith(
+      'instanceId',
+      ConfigDBStorageItem.notShowConfirmationRunTutorial,
+      true,
+    )
   })
 
   it('should call proper telemetry on click change db', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
     const onApply = jest.fn()
 
     render(
@@ -171,7 +194,7 @@ describe('CodeButtonBlock', () => {
         onApply={onApply}
         params={{ run_confirmation: 'true' }}
         content={simpleContent}
-      />
+      />,
     )
     await act(() => {
       fireEvent.click(screen.getByTestId(`run-btn-${label}`))
@@ -184,8 +207,8 @@ describe('CodeButtonBlock', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.EXPLORE_PANEL_DATABASE_CHANGE_CLICKED,
       eventData: {
-        databaseId: 'instanceId'
-      }
+        databaseId: 'instanceId',
+      },
     })
   })
 
@@ -199,7 +222,7 @@ describe('CodeButtonBlock', () => {
         onApply={onApply}
         params={{ run_confirmation: 'false' }}
         content="ft.info"
-      />
+      />,
     )
     await act(() => {
       fireEvent.click(screen.getByTestId(`run-btn-${label}`))
@@ -209,7 +232,9 @@ describe('CodeButtonBlock', () => {
   })
 
   it('should call not opened db popover without instanceId', async () => {
-    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: undefined })
+    reactRouterDom.useParams = jest
+      .fn()
+      .mockReturnValue({ instanceId: undefined })
     const onApply = jest.fn()
 
     render(
@@ -219,12 +244,14 @@ describe('CodeButtonBlock', () => {
         onApply={onApply}
         params={{ run_confirmation: 'false' }}
         content={simpleContent}
-      />
+      />,
     )
     await act(() => {
       fireEvent.click(screen.getByTestId(`run-btn-${label}`))
     })
 
-    expect(screen.getByTestId('database-not-opened-popover')).toBeInTheDocument()
+    expect(
+      screen.getByTestId('database-not-opened-popover'),
+    ).toBeInTheDocument()
   })
 })

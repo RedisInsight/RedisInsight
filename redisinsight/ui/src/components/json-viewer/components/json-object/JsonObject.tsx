@@ -3,7 +3,12 @@ import React, { Fragment } from 'react'
 import JsonPretty from 'uiSrc/components/json-viewer/components/json-pretty'
 import { IJsonObjectProps } from 'uiSrc/components/json-viewer/interfaces'
 
-const JsonObject = ({ data, space = 2, gap = 0, lastElement = true }: IJsonObjectProps) => {
+const JsonObject = ({
+  data,
+  space = 2,
+  gap = 0,
+  lastElement = true,
+}: IJsonObjectProps) => {
   const keys = Object.keys(data)
 
   return (
@@ -13,9 +18,7 @@ const JsonObject = ({ data, space = 2, gap = 0, lastElement = true }: IJsonObjec
       {keys.map((key, idx) => (
         <Fragment key={key}>
           {!!space && Array.from({ length: space + gap }, () => ' ')}
-          <span className="json-pretty__key">
-            {`"${key}"`}
-          </span>
+          <span className="json-pretty__key">{`"${key}"`}</span>
           {': '}
           <JsonPretty
             data={data[key]}

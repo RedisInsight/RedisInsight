@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import axios, { AxiosError } from 'axios'
-import { apiService, } from 'uiSrc/services'
+import { apiService } from 'uiSrc/services'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import {
   getApiErrorMessage,
@@ -9,13 +9,13 @@ import {
   isStatusSuccessful,
   Maybe,
   Nullable,
-  transformConnectionResults
+  transformConnectionResults,
 } from 'uiSrc/utils'
 import {
   EnhancedAxiosError,
   IStateRdiTestConnections,
   TestConnectionsResponse,
-  TransformResult
+  TransformResult,
 } from 'uiSrc/slices/interfaces'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { AppDispatch, RootState } from '../store'
@@ -35,12 +35,18 @@ const rdiTestConnectionsSlice = createSlice({
       state.loading = true
       state.results = null
     },
-    testConnectionsSuccess: (state, { payload }: PayloadAction<TransformResult>) => {
+    testConnectionsSuccess: (
+      state,
+      { payload }: PayloadAction<TransformResult>,
+    ) => {
       state.loading = false
       state.results = payload
       state.error = ''
     },
-    testConnectionsFailure: (state, { payload }: PayloadAction<Maybe<string>>) => {
+    testConnectionsFailure: (
+      state,
+      { payload }: PayloadAction<Maybe<string>>,
+    ) => {
       state.loading = false
       state.results = null
 
@@ -48,10 +54,11 @@ const rdiTestConnectionsSlice = createSlice({
         state.error = payload
       }
     },
-  }
+  },
 })
 
-export const rdiTestConnectionsSelector = (state: RootState) => state.rdi.testConnections
+export const rdiTestConnectionsSelector = (state: RootState) =>
+  state.rdi.testConnections
 
 export const {
   testConnections,
@@ -83,8 +90,8 @@ export function testConnectionsAction(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_TEST_CONNECTIONS),
         config,
         {
-          signal: testConnectionsController.signal
-        }
+          signal: testConnectionsController.signal,
+        },
       )
 
       testConnectionsController = null

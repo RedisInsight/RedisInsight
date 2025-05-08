@@ -3,7 +3,16 @@ import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
 import userEvent from '@testing-library/user-event'
-import { cleanup, mockedStore, render, screen, fireEvent, initialStateDefault, mockStore, waitFor } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  fireEvent,
+  initialStateDefault,
+  mockedStore,
+  mockStore,
+  render,
+  screen,
+  waitFor,
+} from 'uiSrc/utils/test-utils'
 import {
   checkDatabaseIndex,
   connectedInstanceInfoSelector,
@@ -40,14 +49,14 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
     username: 'username',
     id: 'instanceId',
     loading: false,
-  })
+  }),
 }))
 
 jest.mock('uiSrc/slices/app/context', () => ({
   ...jest.requireActual('uiSrc/slices/app/context'),
   appContextDbIndex: jest.fn().mockReturnValue({
     disabled: false,
-  })
+  }),
 }))
 
 jest.mock('react-router-dom', () => ({
@@ -63,7 +72,7 @@ describe('InstanceHeader', () => {
   })
 
   it('should render change index button with databases = 1', () => {
-    (connectedInstanceInfoSelector as jest.Mock).mockReturnValueOnce({
+    ;(connectedInstanceInfoSelector as jest.Mock).mockReturnValueOnce({
       databases: 1,
     })
 
@@ -91,22 +100,21 @@ describe('InstanceHeader', () => {
 
     fireEvent.click(screen.getByTestId('change-index-btn'))
 
-    fireEvent.change(
-      screen.getByTestId('change-index-input'),
-      { target: { value: 3 } }
-    )
+    fireEvent.change(screen.getByTestId('change-index-input'), {
+      target: { value: 3 },
+    })
 
     expect(screen.getByTestId('change-index-input')).toHaveValue('3')
     fireEvent.click(screen.getByTestId('apply-btn'))
 
-    const expectedActions = [
-      checkDatabaseIndex()
-    ]
-    expect(store.getActions()).toEqual([...expectedActions])
+    // check if store actions contain proper action: {type: "instances/checkDatabaseIndex"}
+    expect(store.getActions()).toContainEqual(
+      expect.objectContaining(checkDatabaseIndex()),
+    )
   })
 
   it('should be disabled db index button with loading state', () => {
-    (connectedInstanceSelector as jest.Mock).mockReturnValueOnce({
+    ;(connectedInstanceSelector as jest.Mock).mockReturnValueOnce({
       loading: true,
     })
 
@@ -116,7 +124,7 @@ describe('InstanceHeader', () => {
   })
 
   it('should be disabled db index button with disabled state', () => {
-    (appContextDbIndex as jest.Mock).mockReturnValueOnce({
+    ;(appContextDbIndex as jest.Mock).mockReturnValueOnce({
       disabled: true,
     })
 
@@ -141,26 +149,28 @@ describe('InstanceHeader', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: true }
+      { flag: true },
     )
 
     render(<InstanceHeader {...instance(mockedProps)} />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
     expect(screen.queryByTestId('my-redis-db-btn')).toBeInTheDocument()
-    expect(screen.queryByTestId('admin-console-breadcrumb-btn')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('admin-console-breadcrumb-btn'),
+    ).not.toBeInTheDocument()
   })
 
   it('should not show env dependent items button when feature flag is off', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: false }
+      { flag: false },
     )
     set(initialStoreState, 'user.cloudProfile', { data: {} })
 
     render(<InstanceHeader {...instance(mockedProps)} />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
 
     expect(screen.queryByTestId('my-redis-db-btn')).not.toBeInTheDocument()
@@ -170,57 +180,94 @@ describe('InstanceHeader', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: false }
+      { flag: false },
     )
-    set(initialStoreState, 'user.cloudProfile', { data: {
-      id: 123,
-      name: 'John Smith',
-      currentAccountId: '40',
-      accounts: [{ id: '40', name: 'Test account' }]
-    } })
+    set(initialStoreState, 'user.cloudProfile', {
+      data: {
+        id: 123,
+        name: 'John Smith',
+        currentAccountId: '40',
+        accounts: [{ id: '40', name: 'Test account' }],
+      },
+    })
 
     render(<InstanceHeader {...instance(mockedProps)} />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
 
-    userEvent.click(screen.getByTestId('user-profile-btn'))
+    await userEvent.click(screen.getByTestId('user-profile-btn'))
     await waitFor(() => {
-      expect(screen.queryByTestId('user-profile-popover-content')).toBeInTheDocument()
+      expect(
+        screen.queryByTestId('user-profile-popover-content'),
+      ).toBeInTheDocument()
     })
 
-    expect(screen.queryByTestId('user-profile-badge')).toBeInTheDocument()
-    expect(screen.queryByTestId('profile-import-cloud-databases')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('cloud-user-profile-badge')).toBeInTheDocument()
+    expect(
+      screen.queryByTestId('profile-import-cloud-databases'),
+    ).not.toBeInTheDocument()
     expect(screen.queryByTestId('profile-logout')).not.toBeInTheDocument()
     expect(screen.queryByTestId('cloud-admin-console-link')).toBeInTheDocument()
-    expect(screen.queryByTestId('profile-account-40-selected')).toHaveTextContent('Test account #40')
+    expect(
+      screen.queryByTestId('profile-account-40-selected'),
+    ).toHaveTextContent('Test account #40')
   })
 
   it('should show sso user profile if env dependant flag and cloud-sso features are on', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.cloudSso}`,
-      { flag: true }
+      { flag: true },
     )
-    set(initialStoreState, 'oauth.cloud.user', { data: {
-      id: 123,
-      name: 'John Smith',
-      currentAccountId: '40',
-      accounts: [{ id: '40', name: 'Test account' }]
-    } })
+    set(initialStoreState, 'oauth.cloud.user', {
+      data: {
+        id: 123,
+        name: 'John Smith',
+        currentAccountId: '40',
+        accounts: [{ id: '40', name: 'Test account' }],
+      },
+    })
 
     render(<InstanceHeader {...instance(mockedProps)} />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
 
-    userEvent.click(screen.getByTestId('user-profile-btn'))
+    await userEvent.click(screen.getByTestId('user-profile-btn'))
     await waitFor(() => {
-      expect(screen.queryByTestId('user-profile-popover-content')).toBeInTheDocument()
+      expect(
+        screen.queryByTestId('user-profile-popover-content'),
+      ).toBeInTheDocument()
     })
 
-    expect(screen.queryByTestId('user-profile-badge')).toBeInTheDocument()
-    expect(screen.queryByTestId('profile-import-cloud-databases')).toBeInTheDocument()
+    expect(screen.queryByTestId('oauth-user-profile-badge')).toBeInTheDocument()
+    expect(
+      screen.queryByTestId('profile-import-cloud-databases'),
+    ).toBeInTheDocument()
     expect(screen.queryByTestId('profile-logout')).toBeInTheDocument()
-    expect(screen.queryByTestId('cloud-admin-console-link')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('profile-account-40-selected')).toHaveTextContent('Test account #40')
+    expect(
+      screen.queryByTestId('cloud-admin-console-link'),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('profile-account-40-selected'),
+    ).toHaveTextContent('Test account #40')
+  })
+
+  it('should not show sso user profile if cloud ads feature is off', async () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.cloudAds}`,
+      { flag: false },
+    )
+
+    render(<InstanceHeader {...instance(mockedProps)} />, {
+      store: mockStore(initialStoreState),
+    })
+
+    expect(
+      screen.queryByTestId('oauth-user-profile-badge'),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('cloud-user-profile-badge'),
+    ).not.toBeInTheDocument()
   })
 })

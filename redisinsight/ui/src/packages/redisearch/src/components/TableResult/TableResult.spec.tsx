@@ -12,11 +12,21 @@ describe.skip('TableResult', () => {
 
   it('Result element should be "Not found." meanwhile result is [0]', async () => {
     const { queryByTestId, rerender } = render(
-      <TableResult {...instance(mockedProps)} result={null} query="ft.search" />
+      <TableResult
+        {...instance(mockedProps)}
+        result={null}
+        query="ft.search"
+      />,
     )
 
     await act(() => {
-      rerender(<TableResult {...instance(mockedProps)} result={[]} query="ft.search" />)
+      rerender(
+        <TableResult
+          {...instance(mockedProps)}
+          result={[]}
+          query="ft.search"
+        />,
+      )
     })
 
     const resultEl = queryByTestId(/query-table-no-results/)
@@ -37,12 +47,16 @@ describe.skip('TableResult', () => {
     ]
 
     const { queryByTestId, queryAllByTestId, rerender } = render(
-      <TableResult {...instance(mockedProps)} result={[]} query="ft.search" />
+      <TableResult {...instance(mockedProps)} result={[]} query="ft.search" />,
     )
 
     await act(() => {
       rerender(
-        <TableResult {...instance(mockedProps)} result={result} query="ft.search" />
+        <TableResult
+          {...instance(mockedProps)}
+          result={result}
+          query="ft.search"
+        />,
       )
     })
 

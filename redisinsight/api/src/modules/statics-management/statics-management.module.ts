@@ -79,42 +79,59 @@ export class StaticsManagementModule {
         }),
         ...(SERVER_CONFIG.staticContent
           ? [
-            ServeStaticModule.forRoot({
-              rootPath: join(__dirname, '..', '..', '..', '..', '..', 'ui', 'dist'),
-              exclude: ['/api/**', `${SERVER_CONFIG.customPluginsUri}/**`, `${SERVER_CONFIG.staticUri}/**`],
-              serveRoot: SERVER_CONFIG.proxyPath ? `/${SERVER_CONFIG.proxyPath}` : '',
-              serveStaticOptions: {
-                index: false,
-                setHeaders: setXFrameOptionsHeader,
-              },
-            }),
-          ]
+              ServeStaticModule.forRoot({
+                rootPath: join(
+                  __dirname,
+                  '..',
+                  '..',
+                  '..',
+                  '..',
+                  '..',
+                  'ui',
+                  'dist',
+                ),
+                exclude: [
+                  '/api/{*splat}',
+                  `${SERVER_CONFIG.customPluginsUri}/{*splat}`,
+                  `${SERVER_CONFIG.staticUri}/{*splat}`,
+                ],
+                serveRoot: SERVER_CONFIG.proxyPath
+                  ? `/${SERVER_CONFIG.proxyPath}`
+                  : '',
+                serveStaticOptions: {
+                  index: false,
+                  setHeaders: setXFrameOptionsHeader,
+                },
+              }),
+            ]
           : []),
       ],
       providers: [
         {
           provide: 'TutorialsProvider',
-          useFactory: () => new AutoUpdatedStaticsProvider({
-            name: 'TutorialsProvider',
-            destinationPath: PATH_CONFIG.tutorials,
-            defaultSourcePath: PATH_CONFIG.defaultTutorials,
-            autoUpdate,
-            initDefaults,
-            ...TUTORIALS_CONFIG,
-          }),
+          useFactory: () =>
+            new AutoUpdatedStaticsProvider({
+              name: 'TutorialsProvider',
+              destinationPath: PATH_CONFIG.tutorials,
+              defaultSourcePath: PATH_CONFIG.defaultTutorials,
+              autoUpdate,
+              initDefaults,
+              ...TUTORIALS_CONFIG,
+            }),
         },
         {
           provide: 'ContentProvider',
-          useFactory: () => new AutoUpdatedStaticsProvider({
-            name: 'ContentProvider',
-            destinationPath: PATH_CONFIG.content,
-            defaultSourcePath: PATH_CONFIG.defaultContent,
-            autoUpdate,
-            initDefaults,
-            ...CONTENT_CONFIG,
-          }),
+          useFactory: () =>
+            new AutoUpdatedStaticsProvider({
+              name: 'ContentProvider',
+              destinationPath: PATH_CONFIG.content,
+              defaultSourcePath: PATH_CONFIG.defaultContent,
+              autoUpdate,
+              initDefaults,
+              ...CONTENT_CONFIG,
+            }),
         },
       ],
-    }
+    };
   }
 }

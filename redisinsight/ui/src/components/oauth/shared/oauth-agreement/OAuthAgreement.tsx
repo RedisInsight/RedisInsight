@@ -5,7 +5,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
-import { setAgreement, oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
+import {
+  setAgreement,
+  oauthCloudPAgreementSelector,
+} from 'uiSrc/slices/oauth/cloud'
 
 import { enableUserAnalyticsAction } from 'uiSrc/slices/user/user-settings'
 import styles from './styles.module.scss'
@@ -22,7 +25,7 @@ const OAuthAgreement = (props: Props) => {
 
   const handleCheck = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      dispatch(enableUserAnalyticsAction())
+      dispatch(enableUserAnalyticsAction('oauth-agreement'))
     }
     dispatch(setAgreement(e.target.checked))
     localStorageService.set(BrowserStorageItem.OAuthAgreement, e.target.checked)
@@ -65,10 +68,12 @@ const OAuthAgreement = (props: Props) => {
           </EuiLink>
         </li>
         <li className={styles.listItem}>
-          that Redis Insight will generate Redis Cloud API account and user keys, and store them locally on your machine
+          that Redis Insight will generate Redis Cloud API account and user
+          keys, and store them locally on your machine
         </li>
         <li className={styles.listItem}>
-          that usage data will be enabled to help us understand and improve how Redis Insight features are used
+          that usage data will be enabled to help us understand and improve how
+          Redis Insight features are used
         </li>
       </ul>
     </div>

@@ -11,7 +11,8 @@ import {
   mockGetCloudSubscriptionDatabaseDtoFixed,
   mockCloudCapiDatabaseFixed,
   mockCreateFreeCloudDatabaseDto,
-  mockCloudCapiSubscriptionDatabasesFixed, mockCloudCapiSubscriptionDatabases,
+  mockCloudCapiSubscriptionDatabasesFixed,
+  mockCloudCapiSubscriptionDatabases,
 } from 'src/__mocks__';
 import { CloudCapiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
 import { CloudDatabaseCapiProvider } from 'src/modules/cloud/database/cloud-database.capi.provider';
@@ -26,9 +27,7 @@ describe('CloudDatabaseCapiProvider', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        CloudDatabaseCapiProvider,
-      ],
+      providers: [CloudDatabaseCapiProvider],
     }).compile();
 
     service = module.get(CloudDatabaseCapiProvider);
@@ -42,10 +41,12 @@ describe('CloudDatabaseCapiProvider', () => {
       };
       mockedAxios.get.mockResolvedValue(response);
 
-      expect(await service.getDatabase(
-        mockCloudCapiAuthDto,
-        mockGetCloudSubscriptionDatabaseDto,
-      )).toEqual(mockCloudCapiDatabase);
+      expect(
+        await service.getDatabase(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabaseDto,
+        ),
+      ).toEqual(mockCloudCapiDatabase);
       expect(mockedAxios.get).toHaveBeenCalledWith(
         `/subscriptions/${mockGetCloudSubscriptionDatabaseDto.subscriptionId}/databases/${mockGetCloudSubscriptionDatabaseDto.databaseId}`,
         mockCloudCapiHeaders,
@@ -58,10 +59,12 @@ describe('CloudDatabaseCapiProvider', () => {
       };
       mockedAxios.get.mockResolvedValue(response);
 
-      expect(await service.getDatabase(
-        mockCloudCapiAuthDto,
-        mockGetCloudSubscriptionDatabaseDtoFixed,
-      )).toEqual(mockCloudCapiDatabaseFixed);
+      expect(
+        await service.getDatabase(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabaseDtoFixed,
+        ),
+      ).toEqual(mockCloudCapiDatabaseFixed);
       expect(mockedAxios.get).toHaveBeenCalledWith(
         `/fixed/subscriptions/${mockGetCloudSubscriptionDatabaseDtoFixed.subscriptionId}/databases/${mockGetCloudSubscriptionDatabaseDtoFixed.databaseId}`,
         mockCloudCapiHeaders,
@@ -70,12 +73,12 @@ describe('CloudDatabaseCapiProvider', () => {
     it('throw CloudCapiUnauthorizedException exception', async () => {
       mockedAxios.get.mockRejectedValue(mockCapiUnauthorizedError);
 
-      await expect(service.getDatabase(
-        mockCloudCapiAuthDto,
-        mockGetCloudSubscriptionDatabaseDto,
-      )).rejects.toThrow(
-        CloudCapiUnauthorizedException,
-      );
+      await expect(
+        service.getDatabase(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabaseDto,
+        ),
+      ).rejects.toThrow(CloudCapiUnauthorizedException);
     });
   });
   describe('getDatabases', () => {
@@ -86,10 +89,12 @@ describe('CloudDatabaseCapiProvider', () => {
       };
       mockedAxios.get.mockResolvedValue(response);
 
-      expect(await service.getDatabases(
-        mockCloudCapiAuthDto,
-        mockGetCloudSubscriptionDatabaseDto,
-      )).toEqual(mockCloudCapiSubscriptionDatabases);
+      expect(
+        await service.getDatabases(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabaseDto,
+        ),
+      ).toEqual(mockCloudCapiSubscriptionDatabases);
       expect(mockedAxios.get).toHaveBeenCalledWith(
         `/subscriptions/${mockGetCloudSubscriptionDatabaseDto.subscriptionId}/databases`,
         mockCloudCapiHeaders,
@@ -102,10 +107,12 @@ describe('CloudDatabaseCapiProvider', () => {
       };
       mockedAxios.get.mockResolvedValue(response);
 
-      expect(await service.getDatabases(
-        mockCloudCapiAuthDto,
-        mockGetCloudSubscriptionDatabaseDtoFixed,
-      )).toEqual(mockCloudCapiSubscriptionDatabasesFixed);
+      expect(
+        await service.getDatabases(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabaseDtoFixed,
+        ),
+      ).toEqual(mockCloudCapiSubscriptionDatabasesFixed);
       expect(mockedAxios.get).toHaveBeenCalledWith(
         `/fixed/subscriptions/${mockGetCloudSubscriptionDatabaseDtoFixed.subscriptionId}/databases`,
         mockCloudCapiHeaders,
@@ -114,12 +121,12 @@ describe('CloudDatabaseCapiProvider', () => {
     it('throw CloudCapiUnauthorizedException exception', async () => {
       mockedAxios.get.mockRejectedValue(mockCapiUnauthorizedError);
 
-      await expect(service.getDatabases(
-        mockCloudCapiAuthDto,
-        mockGetCloudSubscriptionDatabaseDto,
-      )).rejects.toThrow(
-        CloudCapiUnauthorizedException,
-      );
+      await expect(
+        service.getDatabases(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabaseDto,
+        ),
+      ).rejects.toThrow(CloudCapiUnauthorizedException);
     });
   });
   describe('createFreeDatabase', () => {
@@ -130,27 +137,89 @@ describe('CloudDatabaseCapiProvider', () => {
       };
       mockedAxios.post.mockResolvedValue(response);
 
-      expect(await service.createFreeDatabase(
-        mockCloudCapiAuthDto,
-        mockCreateFreeCloudDatabaseDto,
-      )).toEqual(mockCloudTaskInit);
+      expect(
+        await service.createFreeDatabase(
+          mockCloudCapiAuthDto,
+          mockCreateFreeCloudDatabaseDto,
+        ),
+      ).toEqual(mockCloudTaskInit);
       expect(mockedAxios.post).toHaveBeenCalledWith(
         `/fixed/subscriptions/${mockGetCloudSubscriptionDatabaseDto.subscriptionId}/databases`,
-        pick(
-          mockCreateFreeCloudDatabaseDto,
-          ['name', 'protocol', 'replication', 'alerts', 'dataEvictionPolicy', 'dataPersistence', 'free'],
-        ),
+        pick(mockCreateFreeCloudDatabaseDto, [
+          'name',
+          'protocol',
+          'replication',
+          'alerts',
+          'dataEvictionPolicy',
+          'dataPersistence',
+          'free',
+        ]),
         mockCloudCapiHeaders,
       );
     });
     it('throw CloudCapiUnauthorizedException exception', async () => {
       mockedAxios.post.mockRejectedValue(mockCapiUnauthorizedError);
 
-      await expect(service.createFreeDatabase(
-        mockCloudCapiAuthDto,
-        mockCreateFreeCloudDatabaseDto,
-      )).rejects.toThrow(
-        CloudCapiUnauthorizedException,
+      await expect(
+        service.createFreeDatabase(
+          mockCloudCapiAuthDto,
+          mockCreateFreeCloudDatabaseDto,
+        ),
+      ).rejects.toThrow(CloudCapiUnauthorizedException);
+    });
+  });
+
+  describe('getDatabaseTags', () => {
+    const mockTags = [
+      {
+        key: 'tag1',
+        value: 'value1',
+      },
+      {
+        key: 'tag2',
+        value: 'value2',
+      },
+    ];
+
+    it('successfully get flexible cloud database tags', async () => {
+      const response = {
+        status: 200,
+        data: {
+          tags: mockTags,
+        },
+      };
+      mockedAxios.get.mockResolvedValue(response);
+
+      expect(
+        await service.getDatabaseTags(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabaseDto,
+        ),
+      ).toEqual(mockTags);
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        `/subscriptions/${mockGetCloudSubscriptionDatabaseDto.subscriptionId}/databases/${mockGetCloudSubscriptionDatabaseDto.databaseId}/tags`,
+        mockCloudCapiHeaders,
+      );
+    });
+
+    it('successfully get fixed cloud database tags', async () => {
+      const response = {
+        status: 200,
+        data: {
+          tags: mockTags,
+        },
+      };
+      mockedAxios.get.mockResolvedValue(response);
+
+      expect(
+        await service.getDatabaseTags(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabaseDtoFixed,
+        ),
+      ).toEqual(mockTags);
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        `/fixed/subscriptions/${mockGetCloudSubscriptionDatabaseDtoFixed.subscriptionId}/databases/${mockGetCloudSubscriptionDatabaseDtoFixed.databaseId}/tags`,
+        mockCloudCapiHeaders,
       );
     });
   });

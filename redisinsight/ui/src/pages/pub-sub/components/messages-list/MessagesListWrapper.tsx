@@ -17,14 +17,15 @@ const MessagesListWrapper = () => {
   const connectionType = useConnectionType()
   const { version } = useSelector(connectedInstanceOverviewSelector)
 
-  const [isSpublishNotSupported, setIsSpublishNotSupported] = useState<boolean>(true)
+  const [isSpublishNotSupported, setIsSpublishNotSupported] =
+    useState<boolean>(true)
 
   useEffect(() => {
     setIsSpublishNotSupported(
       isVersionHigherOrEquals(
         version,
-        CommandsVersions.SPUBLISH_NOT_SUPPORTED.since
-      )
+        CommandsVersions.SPUBLISH_NOT_SUPPORTED.since,
+      ),
     )
   }, [version])
 
@@ -40,18 +41,17 @@ const MessagesListWrapper = () => {
           <div className={styles.listContainer}>
             <AutoSizer>
               {({ width, height }) => (
-                <MessagesList
-                  items={messages}
-                  width={width}
-                  height={height}
-                />
+                <MessagesList items={messages} width={width} height={height} />
               )}
             </AutoSizer>
           </div>
         </div>
       )}
       {messages.length === 0 && !isSubscribed && (
-        <EmptyMessagesList isSpublishNotSupported={isSpublishNotSupported} connectionType={connectionType} />
+        <EmptyMessagesList
+          isSpublishNotSupported={isSpublishNotSupported}
+          connectionType={connectionType}
+        />
       )}
     </>
   )

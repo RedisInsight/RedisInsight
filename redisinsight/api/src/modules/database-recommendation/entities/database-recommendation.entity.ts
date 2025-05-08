@@ -1,5 +1,12 @@
 import {
-  Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, JoinColumn, Index, Unique,
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  Index,
+  Unique,
 } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { DataAsJsonString } from 'src/common/decorators';
@@ -17,13 +24,10 @@ export class DatabaseRecommendationEntity {
   @Expose()
   databaseId: string;
 
-  @ManyToOne(
-    () => DatabaseEntity,
-    {
-      nullable: false,
-      onDelete: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => DatabaseEntity, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'databaseId' })
   database: DatabaseEntity;
 

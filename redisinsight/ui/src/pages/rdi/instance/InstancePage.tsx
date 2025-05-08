@@ -13,12 +13,12 @@ import { IRoute, PageNames, Pages } from 'uiSrc/constants'
 import {
   fetchConnectedInstanceAction,
   fetchInstancesAction as fetchRdiInstancesAction,
-  instancesSelector as rdiInstancesSelector
+  instancesSelector as rdiInstancesSelector,
 } from 'uiSrc/slices/rdi/instances'
 import {
   resetConnectedInstance as resetConnectedDatabaseInstance,
   fetchInstancesAction,
-  instancesSelector as dbInstancesSelector
+  instancesSelector as dbInstancesSelector,
 } from 'uiSrc/slices/instances/instances'
 
 import { RdiInstancePageTemplate } from 'uiSrc/templates'
@@ -65,7 +65,10 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   useEffect(() => {
     // redirect only if there is no exact path
     if (pathname === Pages.rdiPipeline(rdiInstanceId)) {
-      if (lastPage === PageNames.rdiStatistics && contextRdiInstanceId === rdiInstanceId) {
+      if (
+        lastPage === PageNames.rdiStatistics &&
+        contextRdiInstanceId === rdiInstanceId
+      ) {
         history.push(Pages.rdiStatistics(rdiInstanceId))
         return
       }
@@ -74,7 +77,12 @@ const RdiInstancePage = ({ routes = [] }: Props) => {
   }, [])
 
   return (
-    <EuiFlexGroup className={styles.page} direction="column" gutterSize="none" responsive={false}>
+    <EuiFlexGroup
+      className={styles.page}
+      direction="column"
+      gutterSize="none"
+      responsive={false}
+    >
       <EuiFlexItem grow={false}>
         <RdiInstanceHeader />
       </EuiFlexItem>

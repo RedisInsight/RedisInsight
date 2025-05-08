@@ -25,13 +25,14 @@ const OAuthRecommendedSettings = (props: Props) => {
           data-testid="oauth-recommended-settings-checkbox"
         />
         <EuiToolTip
-          content={(
+          content={
             <>
-              The database will be automatically created using a pre-selected provider and region.
+              The database will be automatically created using a pre-selected
+              provider and region.
               <br />
               You can change it by signing in to Redis Cloud.
             </>
-          )}
+          }
           position="top"
           anchorClassName={styles.recommendedSettingsToolTip}
         >

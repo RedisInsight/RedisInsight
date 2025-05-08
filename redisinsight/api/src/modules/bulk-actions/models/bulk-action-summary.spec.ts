@@ -5,14 +5,11 @@ const mockKeyBuffer = Buffer.from(mockKey);
 const mockRESPError = 'Reply Error: NOPERM for delete.';
 const mockRESPErrorBuffer = Buffer.from(mockRESPError);
 
-const generateErrors = (amount: number): any => (
-  new Array(amount).fill(1)
-).map(
-  () => ({
+const generateErrors = (amount: number): any =>
+  new Array(amount).fill(1).map(() => ({
     key: mockKeyBuffer,
     error: mockRESPErrorBuffer,
-  }),
-);
+  }));
 
 describe('BulkActionSummary', () => {
   let summary: BulkActionSummary;
@@ -100,6 +97,7 @@ describe('BulkActionSummary', () => {
         succeed: 500,
         failed: 1000,
         errors: generateErrors(500),
+        keys: [],
       });
 
       expect(summary['processed']).toEqual(1500);

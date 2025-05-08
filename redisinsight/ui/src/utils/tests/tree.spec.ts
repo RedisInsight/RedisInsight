@@ -12,9 +12,11 @@ const getTreeLeafFieldTests: any[] = [
 ]
 
 describe('getTreeLeafField', () => {
-  it.each(getTreeLeafFieldTests)('for input: %s (reply), should be output: %s',
+  it.each(getTreeLeafFieldTests)(
+    'for input: %s (reply), should be output: %s',
     (reply, expected) => {
       const result = getTreeLeafField(reply)
       expect(result).toBe(expected)
-    })
+    },
+  )
 })

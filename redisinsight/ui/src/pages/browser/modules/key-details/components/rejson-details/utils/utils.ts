@@ -8,11 +8,14 @@ enum ClassNames {
   number = 'jsonNumber',
   object = 'jsonNull',
   boolean = 'jsonBoolean',
-  others = 'jsonNonStringPrimitive'
+  others = 'jsonNonStringPrimitive',
 }
 
 export function isScalar(x: JSONScalarValue) {
-  return ['string', 'number', 'boolean', 'bigint'].indexOf(typeof x) !== -1 || x === null
+  return (
+    ['string', 'number', 'boolean', 'bigint'].indexOf(typeof x) !== -1 ||
+    x === null
+  )
 }
 
 export const isValidJSON = (value: string): boolean => {
@@ -25,14 +28,17 @@ export const isValidJSON = (value: string): boolean => {
 }
 
 export const generatePath = (parentPath: string, keyName: string | number) => {
-  const currentPath = typeof keyName === 'number' ? `${keyName}` : `'${keyName}'`
+  const currentPath =
+    typeof keyName === 'number' ? `${keyName}` : `'${keyName}'`
   return parentPath ? `${parentPath}[${currentPath}]` : `[${currentPath}]`
 }
 
 export const wrapPath = (key: string, path: string = '') => {
   try {
     const unescapedKey = JSON.parse(key!)
-    return unescapedKey.includes('"') ? `${path}['${unescapedKey}']` : `${path}["${unescapedKey}"]`
+    return unescapedKey.includes('"')
+      ? `${path}['${unescapedKey}']`
+      : `${path}["${unescapedKey}"]`
   } catch {
     return null
   }
@@ -41,13 +47,17 @@ export const wrapPath = (key: string, path: string = '') => {
 export const getClassNameByValue = (value: any) => {
   const type = typeof value
   // @ts-ignore
-  const className = (type in ClassNames) ? ClassNames[type] : ClassNames.others
+  const className = type in ClassNames ? ClassNames[type] : ClassNames.others
   return styles[className]
 }
 
 export const isRealObject = (data: any, knownType?: string) => {
   if (knownType === ObjectTypes.Object) return true
-  return typeof data === ObjectTypes.Object && data !== null && !(data instanceof Array)
+  return (
+    typeof data === ObjectTypes.Object &&
+    data !== null &&
+    !(data instanceof Array)
+  )
 }
 
 export const isRealArray = (data: any, knownType?: string) => {
@@ -56,26 +66,33 @@ export const isRealArray = (data: any, knownType?: string) => {
   return isArray(data)
 }
 
-export const getBrackets = (type: string, position: 'start' | 'end' = 'start') => {
+export const getBrackets = (
+  type: string,
+  position: 'start' | 'end' = 'start',
+) => {
   if (type === ObjectTypes.Array) return position === 'start' ? '[' : ']'
   return position === 'start' ? '{' : '}'
 }
 
-export const isValidKey = (key: string): boolean => /^"([^"\\]|\\.)*"$/.test(key)
+export const isValidKey = (key: string): boolean =>
+  /^"([^"\\]|\\.)*"$/.test(key)
 
 const JSONParser = JSONBigInt({
   useNativeBigInt: true,
   strict: false,
   alwaysParseAsBig: false,
   protoAction: 'preserve',
-  constructorAction: 'preserve'
+  constructorAction: 'preserve',
 })
 
 const safeJSONParse = (value: string) => {
   // Pre-process the string to handle scientific notation
-  const preprocessed = value.replace(/-?\d+\.?\d*e[+-]?\d+/gi, (match) =>
-    // Wrap scientific notation numbers in quotes to prevent BigInt conversion
-    `"${match}"`)
+  const preprocessed = value.replace(
+    /-?\d+\.?\d*e[+-]?\d+/gi,
+    (match) =>
+      // Wrap scientific notation numbers in quotes to prevent BigInt conversion
+      `"${match}"`,
+  )
 
   return JSONParser.parse(preprocessed, (_key: string, value: any) => {
     // Convert quoted scientific notation back to numbers
@@ -149,7 +166,10 @@ export const parseJsonData = (data: any) => {
     if (data && Array.isArray(data)) {
       return data.map((item: { type?: string; value?: any }) => ({
         ...item,
-        value: item.type && item.value ? parseValue(item.value, item.type) : item.value
+        value:
+          item.type && item.value
+            ? parseValue(item.value, item.type)
+            : item.value,
       }))
     }
 
@@ -159,7 +179,9 @@ export const parseJsonData = (data: any) => {
   }
 }
 
-export const stringifyScalarValue = (value: string | number | boolean | bigint): string => {
+export const stringifyScalarValue = (
+  value: string | number | boolean | bigint,
+): string => {
   if (typeof value === 'bigint') {
     return value.toString()
   }

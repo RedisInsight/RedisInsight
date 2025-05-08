@@ -2,8 +2,8 @@ import React from 'react'
 import ChartResultView from './components/Chart/ChartResultView'
 
 interface Props {
-    command: string
-    result?: { response: any, status: string }[]
+  command: string
+  result?: { response: any; status: string }[]
 }
 
 enum TS_CMD_RANGE_PREFIX {
@@ -18,22 +18,28 @@ const App = (props: Props) => {
     return <div className="responseFail">{response}</div>
   }
 
-  if (status === 'success' && typeof(response) === 'string') {
+  if (status === 'success' && typeof response === 'string') {
     return <div className="responseFail">{response}</div>
   }
 
   function responseParser(command: string, data: any) {
-
     let [cmd, key, ..._] = command.split(' ')
 
-    if ([TS_CMD_RANGE_PREFIX.RANGE.toString(), TS_CMD_RANGE_PREFIX.REVRANGE.toString()].includes(cmd.toUpperCase())) {
-      return [{
-        key,
-        datapoints: data,
-      }]
+    if (
+      [
+        TS_CMD_RANGE_PREFIX.RANGE.toString(),
+        TS_CMD_RANGE_PREFIX.REVRANGE.toString(),
+      ].includes(cmd.toUpperCase())
+    ) {
+      return [
+        {
+          key,
+          datapoints: data,
+        },
+      ]
     }
 
-    return data.map(e => ({
+    return data.map((e) => ({
       key: e[0],
       labels: e[1],
       datapoints: e[2],

@@ -17,99 +17,103 @@ on:
         default: false
         type: boolean
 
+      enterprise:
+        description: Enterprise build
+        type: boolean
+
 jobs:
   build:
     name: Build docker
     runs-on: ubuntu-24.04
     environment: ${{ inputs.environment }}
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    # SSH Debug
-    - name: Enable SSH
-      uses: mxschmitt/action-tmate@v3
-      if: inputs.debug
-      with:
-        detached: true
+      # SSH Debug
+      - name: Enable SSH
+        uses: mxschmitt/action-tmate@v3
+        if: inputs.debug
+        with:
+          detached: true
 
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
-    - name: Install all libs and dependencies
-      uses: ./.github/actions/install-all-build-libs
-      with:
-        keytar-host-mirror: ${{ secrets.NPM_CONFIG_KEYTAR_BINARY_HOST_MIRROR }}
-        sqlite3-host-mirror: ${{ secrets.NPM_CONFIG_NODE_SQLITE3_BINARY_HOST_MIRROR }}
+      - name: Install all libs and dependencies
+        uses: ./.github/actions/install-all-build-libs
+        with:
+          keytar-host-mirror: ${{ secrets.NPM_CONFIG_KEYTAR_BINARY_HOST_MIRROR }}
+          sqlite3-host-mirror: ${{ secrets.NPM_CONFIG_NODE_SQLITE3_BINARY_HOST_MIRROR }}
 
-    - name: Build sources
-      run: ./.github/build/build.sh
+      - name: Build sources
+        run: ./.github/build/build.sh
 
-      # todo: matrix
-    - name: Build web archives for e2e tests
-      if: inputs.for_e2e_tests
-      run: |
-        unset npm_config_keytar_binary_host_mirror
-        unset npm_config_node_sqlite3_binary_host_mirror
-        # Docker sources
-        PLATFORM=linux ARCH=x64 LIBC=musl .github/build/build_modules.sh
+        # todo: matrix
+      - name: Build web archives for e2e tests
+        if: inputs.for_e2e_tests
+        run: |
+          unset npm_config_keytar_binary_host_mirror
+          unset npm_config_node_sqlite3_binary_host_mirror
+          # Docker sources
+          PLATFORM=linux ARCH=x64 LIBC=musl .github/build/build_modules.sh
 
-    - name: Build web archives
-      if: ${{ !inputs.for_e2e_tests }}
-      run: |
-        unset npm_config_keytar_binary_host_mirror
-        unset npm_config_node_sqlite3_binary_host_mirror
-        # Docker sources
-        PLATFORM=linux ARCH=x64 LIBC=musl .github/build/build_modules.sh
-        PLATFORM=linux ARCH=arm64 LIBC=musl .github/build/build_modules.sh
-        # Redis Stack + VSC Linux
-        PLATFORM=linux ARCH=x64 .github/build/build_modules.sh
-        PLATFORM=linux ARCH=arm64 .github/build/build_modules.sh
-        # VSC Darwin
-        PLATFORM=darwin ARCH=x64 .github/build/build_modules.sh
-        PLATFORM=darwin ARCH=arm64 .github/build/build_modules.sh
-        # VSC Windows
-        PLATFORM=win32 ARCH=x64 .github/build/build_modules.sh
+      - name: Build web archives
+        if: ${{ !inputs.for_e2e_tests }}
+        run: |
+          unset npm_config_keytar_binary_host_mirror
+          unset npm_config_node_sqlite3_binary_host_mirror
+          # Docker sources
+          PLATFORM=linux ARCH=x64 LIBC=musl .github/build/build_modules.sh
+          PLATFORM=linux ARCH=arm64 LIBC=musl .github/build/build_modules.sh
+          # Redis Stack + VSC Linux
+          PLATFORM=linux ARCH=x64 .github/build/build_modules.sh
+          PLATFORM=linux ARCH=arm64 .github/build/build_modules.sh
+          # VSC Darwin
+          PLATFORM=darwin ARCH=x64 .github/build/build_modules.sh
+          PLATFORM=darwin ARCH=arm64 .github/build/build_modules.sh
+          # VSC Windows
+          PLATFORM=win32 ARCH=x64 .github/build/build_modules.sh
 
-    - name: Build Docker (x64)
-      run: |
-        # Build alpine x64 image
-        docker buildx build \
-        -f .github/build/build.Dockerfile \
-        --platform linux/amd64 \
-        --build-arg DIST=release/web/Redis-Insight-web-linux-musl.x64.tar.gz \
-        --build-arg NODE_ENV="$ENV" \
-        --build-arg RI_SEGMENT_WRITE_KEY="$RI_SEGMENT_WRITE_KEY" \
-        -t redisinsight:amd64 \
-        .
+      - name: Build Docker (x64)
+        run: |
+          # Build alpine x64 image
+          docker buildx build \
+          -f .github/build/build.Dockerfile \
+          --platform linux/amd64 \
+          --build-arg DIST=release/web/Redis-Insight-web-linux-musl.x64.tar.gz \
+          --build-arg NODE_ENV="$ENV" \
+          --build-arg RI_SEGMENT_WRITE_KEY="$RI_SEGMENT_WRITE_KEY" \
+          -t redisinsight:amd64 \
+          .
 
-        mkdir -p release/docker
-        docker image save -o release/docker/docker-linux-alpine.amd64.tar redisinsight:amd64
+          mkdir -p release/docker
+          docker image save -o release/docker/docker-linux-alpine.amd64.tar redisinsight:amd64
 
-    - name: Build Docker (arm64)
-      if: ${{ !inputs.for_e2e_tests }}
-      run: |
-        # Build alpine arm64 image
-        docker buildx build \
-        -f .github/build/build.Dockerfile \
-        --platform linux/arm64 \
-        --build-arg DIST=release/web/Redis-Insight-web-linux-musl.arm64.tar.gz \
-        --build-arg NODE_ENV="$ENV" \
-        --build-arg RI_SEGMENT_WRITE_KEY="$RI_SEGMENT_WRITE_KEY" \
-        -t redisinsight:arm64 \
-        .
+      - name: Build Docker (arm64)
+        if: ${{ !inputs.for_e2e_tests }}
+        run: |
+          # Build alpine arm64 image
+          docker buildx build \
+          -f .github/build/build.Dockerfile \
+          --platform linux/arm64 \
+          --build-arg DIST=release/web/Redis-Insight-web-linux-musl.arm64.tar.gz \
+          --build-arg NODE_ENV="$ENV" \
+          --build-arg RI_SEGMENT_WRITE_KEY="$RI_SEGMENT_WRITE_KEY" \
+          -t redisinsight:arm64 \
+          .
 
-        mkdir -p release/docker
-        docker image save -o release/docker/docker-linux-alpine.arm64.tar redisinsight:arm64
+          mkdir -p release/docker
+          docker image save -o release/docker/docker-linux-alpine.arm64.tar redisinsight:arm64
 
-    - uses: actions/upload-artifact@v4
-      name: Upload docker builds
-      with:
-        if-no-files-found: warn
-        name: docker-builds
-        path: |
-          ./release/docker
-          ./release/web
-          ./release/web-mini
+      - uses: actions/upload-artifact@v4
+        name: Upload docker builds
+        with:
+          if-no-files-found: warn
+          name: docker-builds
+          path: |
+            ./release/docker
+            ./release/web
+            ./release/web-mini
 
     env:
       ENV: ${{ vars.ENV }}
@@ -130,5 +134,5 @@ jobs:
       RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
       RI_FEATURES_CONFIG_URL: ${{ secrets.RI_FEATURES_CONFIG_URL }}
       RI_UPGRADES_LINK: ${{ secrets.RI_UPGRADES_LINK }}
-
-
+      RI_FEATURES_CLOUD_ADS_DEFAULT_FLAG: ${{ inputs.enterprise == false }}
+      RI_DISABLE_AUTO_UPGRADE: ${{ inputs.enterprise }}

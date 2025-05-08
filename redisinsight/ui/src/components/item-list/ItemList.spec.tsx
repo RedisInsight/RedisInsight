@@ -6,7 +6,7 @@ import ItemList, { Props } from './ItemList'
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
-  sendEventTelemetry: jest.fn()
+  sendEventTelemetry: jest.fn(),
 }))
 
 const columnsMock: EuiTableFieldDataColumnType<Instance>[] = [
@@ -17,8 +17,8 @@ const columnsMock: EuiTableFieldDataColumnType<Instance>[] = [
     dataType: 'string',
     sortable: true,
     width: '170px',
-    truncateText: true
-  }
+    truncateText: true,
+  },
 ]
 
 const mockedProps: Props<Instance> = {
@@ -35,7 +35,7 @@ const mockedProps: Props<Instance> = {
       nameFromProvider: null,
       modules: [],
       version: null,
-      lastConnection: new Date('2021-04-22T09:03:56.917Z')
+      lastConnection: new Date('2021-04-22T09:03:56.917Z'),
     },
     {
       id: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4',
@@ -48,8 +48,8 @@ const mockedProps: Props<Instance> = {
       nameFromProvider: null,
       modules: [],
       version: null,
-      tls: true
-    }
+      tls: true,
+    },
   ],
   width: 0,
   editedInstance: null,
@@ -60,8 +60,8 @@ const mockedProps: Props<Instance> = {
   onTableChange: () => {},
   sort: {
     field: 'subscriptionId',
-    direction: 'asc'
-  }
+    direction: 'asc',
+  },
 }
 
 describe('ItemList', () => {
@@ -140,5 +140,49 @@ describe('ItemList', () => {
     })
 
     expect(screen.queryByText('Export')).not.toBeInTheDocument()
+  })
+
+  it('should add hideSelectableCheckboxes class when isSelectable = false', async () => {
+    const { container } = render(
+      <ItemList {...mockedProps} hideSelectableCheckboxes />,
+    )
+    const div = container.querySelector('.itemList')
+
+    expect(div).toHaveClass('hideSelectableCheckboxes')
+  })
+
+  it('should display propely configured shown columns and not display the hidden columns', async () => {
+    const partialColumnsMock: EuiTableFieldDataColumnType<Instance>[] = [
+      {
+        field: 'name',
+        className: 'column_name',
+        name: 'Database Alias',
+        dataType: 'string',
+        sortable: true,
+        width: '170px',
+        truncateText: true,
+      },
+      {
+        field: 'host',
+        className: 'column_host',
+        name: 'Host:Port',
+        dataType: 'string',
+        sortable: true,
+        width: '170px',
+        truncateText: true,
+      },
+    ]
+
+    render(<ItemList {...mockedProps} columns={partialColumnsMock} />)
+
+    const nameColumnHeader = screen.queryByTitle('Database Alias')
+    const hostColumnHeader = screen.queryByTitle('Host:Port')
+
+    const connectionTypeColumnHeader = screen.queryByTitle('Connection Type')
+
+    expect(nameColumnHeader).toBeInTheDocument()
+    expect(hostColumnHeader).toBeInTheDocument()
+
+    expect(connectionTypeColumnHeader).not.toBeInTheDocument()
   })
 })

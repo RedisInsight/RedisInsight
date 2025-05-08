@@ -7,7 +7,9 @@ import { ormModuleOptions } from '../config/ormconfig';
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormModuleOptions),
-    TypeOrmModule.forFeature(ormModuleOptions.entities as EntityClassOrSchema[]),
+    TypeOrmModule.forFeature(
+      ormModuleOptions.entities as EntityClassOrSchema[],
+    ),
   ],
   exports: [TypeOrmModule],
 })

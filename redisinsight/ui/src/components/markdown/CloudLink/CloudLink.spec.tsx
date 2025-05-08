@@ -12,6 +12,8 @@ describe('CloudLink', () => {
     const url = 'https://site.com'
     render(<CloudLink text="Link" url={url} />)
 
-    expect(screen.getByTestId('guide-free-database-link').getAttribute('href')).toBe(url)
+    expect(
+      screen.getByTestId('guide-free-database-link').getAttribute('href'),
+    ).toBe(url)
   })
 })

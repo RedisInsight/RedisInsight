@@ -8,24 +8,26 @@ import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel'
 const DEFAULT_NODE_ID = 'standalone'
 
 export const parseMastersSentinel = (
-  masters: SentinelMaster[]
-): ModifiedSentinelMaster[] => map(sortBy(masters, 'name'), (master, i) => ({
-  ...initialStateSentinelStatus,
-  ...master,
-  id: `${i + 1}`,
-  alias: '',
-  username: '',
-  password: '',
-}))
+  masters: SentinelMaster[],
+): ModifiedSentinelMaster[] =>
+  map(sortBy(masters, 'name'), (master, i) => ({
+    ...initialStateSentinelStatus,
+    ...master,
+    id: `${i + 1}`,
+    alias: '',
+    username: '',
+    password: '',
+  }))
 
 export const parseAddedMastersSentinel = (
   masters: ModifiedSentinelMaster[],
-  statuses: AddSentinelMasterResponse[]
-): ModifiedSentinelMaster[] => sortBy(masters, 'message').map((master) => ({
-  ...master,
-  ...find(statuses, (status) => master.name === status.name),
-  loading: false,
-}))
+  statuses: AddSentinelMasterResponse[],
+): ModifiedSentinelMaster[] =>
+  sortBy(masters, 'message').map((master) => ({
+    ...master,
+    ...find(statuses, (status) => master.name === status.name),
+    loading: false,
+  }))
 
 export const parseKeysListResponse = (prevShards = {}, data = []) => {
   const shards = { ...prevShards }
@@ -35,7 +37,7 @@ export const parseKeysListResponse = (prevShards = {}, data = []) => {
     total: 0,
     scanned: 0,
     keys: [],
-    shardsMeta: {}
+    shardsMeta: {},
   }
 
   data.forEach((node) => {
@@ -53,7 +55,10 @@ export const parseKeysListResponse = (prevShards = {}, data = []) => {
     })()
 
     // summarize shard values
-    if ((shard.scanned > shard.total || shard.cursor === 0) && !isNull(shard.total)) {
+    if (
+      (shard.scanned > shard.total || shard.cursor === 0) &&
+      !isNull(shard.total)
+    ) {
       shard.scanned = shard.total
     }
 

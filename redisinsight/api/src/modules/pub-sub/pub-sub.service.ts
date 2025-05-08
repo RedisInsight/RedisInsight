@@ -27,14 +27,25 @@ export class PubSubService {
    * @param userClient
    * @param dto
    */
-  async subscribe(sessionMetadata: SessionMetadata, userClient: UserClient, dto: SubscribeDto) {
+  async subscribe(
+    sessionMetadata: SessionMetadata,
+    userClient: UserClient,
+    dto: SubscribeDto,
+  ) {
     try {
       this.logger.debug('Subscribing to channels(s)', sessionMetadata);
 
-      const session = this.sessionProvider.getOrCreateUserSession(sessionMetadata, userClient);
-      await Promise.all(dto.subscriptions.map((subDto) => session.subscribe(
-        this.subscriptionProvider.createSubscription(userClient, subDto),
-      )));
+      const session = this.sessionProvider.getOrCreateUserSession(
+        sessionMetadata,
+        userClient,
+      );
+      await Promise.all(
+        dto.subscriptions.map((subDto) =>
+          session.subscribe(
+            this.subscriptionProvider.createSubscription(userClient, subDto),
+          ),
+        ),
+      );
       this.analyticsService.sendChannelSubscribeEvent(
         sessionMetadata,
         userClient.getDatabaseId(),
@@ -57,15 +68,29 @@ export class PubSubService {
    * @param userClient
    * @param dto
    */
-  async unsubscribe(sessionMetadata: SessionMetadata, userClient: UserClient, dto: SubscribeDto) {
+  async unsubscribe(
+    sessionMetadata: SessionMetadata,
+    userClient: UserClient,
+    dto: SubscribeDto,
+  ) {
     try {
       this.logger.debug('Unsubscribing from channels(s)', sessionMetadata);
 
-      const session = this.sessionProvider.getOrCreateUserSession(sessionMetadata, userClient);
-      await Promise.all(dto.subscriptions.map((subDto) => session.unsubscribe(
-        this.subscriptionProvider.createSubscription(userClient, subDto),
-      )));
-      this.analyticsService.sendChannelUnsubscribeEvent(sessionMetadata, userClient.getDatabaseId());
+      const session = this.sessionProvider.getOrCreateUserSession(
+        sessionMetadata,
+        userClient,
+      );
+      await Promise.all(
+        dto.subscriptions.map((subDto) =>
+          session.unsubscribe(
+            this.subscriptionProvider.createSubscription(userClient, subDto),
+          ),
+        ),
+      );
+      this.analyticsService.sendChannelUnsubscribeEvent(
+        sessionMetadata,
+        userClient.getDatabaseId(),
+      );
     } catch (e) {
       this.logger.error('Unable to unsubscribe', e, sessionMetadata);
 
@@ -82,11 +107,15 @@ export class PubSubService {
    * @param clientMetadata
    * @param dto
    */
-  async publish(clientMetadata: ClientMetadata, dto: PublishDto): Promise<PublishResponse> {
+  async publish(
+    clientMetadata: ClientMetadata,
+    dto: PublishDto,
+  ): Promise<PublishResponse> {
     try {
       this.logger.debug('Publishing message.', clientMetadata);
 
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       const affected = await client.publish(dto.channel, dto.message);
 

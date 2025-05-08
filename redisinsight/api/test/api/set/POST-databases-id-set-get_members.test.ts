@@ -8,22 +8,27 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn, _, JoiRedisString
+  validateApiCall,
+  getMainCheckFn,
+  _,
+  JoiRedisString,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/set/get-members`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/set/get-members`,
+  );
 
 // input data schema // todo: review BE for transform true -> 1
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
   cursor: Joi.number().integer().min(0).allow(true).required().messages({
-    'any.required': 'cursor should not be empty'
+    'any.required': 'cursor should not be empty',
   }),
   count: Joi.number().integer().min(1).allow(true, null).messages({
-    'any.required': 'count should not be empty'
+    'any.required': 'count should not be empty',
   }),
   match: Joi.string().allow(null),
 }).strict();
@@ -35,12 +40,14 @@ const validInputData = {
   match: constants.getRandomString(),
 };
 
-const responseSchema = Joi.object().keys({
-  keyName: JoiRedisString.required(),
-  total: Joi.number().integer().required(),
-  members: Joi.array().items(JoiRedisString),
-  nextCursor: Joi.number().integer().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    keyName: JoiRedisString.required(),
+    total: Joi.number().integer().required(),
+    members: Joi.array().items(JoiRedisString),
+    nextCursor: Joi.number().integer().required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -123,14 +130,14 @@ describe('POST /databases/:instanceId/set/get-members', () => {
             keyName: constants.TEST_SET_KEY_2,
             cursor: 0,
             count: 15,
-            match: 'member_9'
+            match: 'member_9',
           },
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.keyName).to.eql(constants.TEST_SET_KEY_2);
             expect(body.total).to.eql(100);
             expect(body.members.length).to.eql(1);
-          }
+          },
         },
         {
           name: 'Should not find any member',
@@ -138,14 +145,14 @@ describe('POST /databases/:instanceId/set/get-members', () => {
             keyName: constants.TEST_SET_KEY_2,
             cursor: 0,
             count: 15,
-            match: 'notExistin*'
+            match: 'notExistin*',
           },
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.keyName).to.eql(constants.TEST_SET_KEY_2);
             expect(body.total).to.eql(100);
             expect(body.members.length).to.eql(0);
-          }
+          },
         },
         {
           name: 'Should query 15 members',
@@ -160,7 +167,7 @@ describe('POST /databases/:instanceId/set/get-members', () => {
             expect(body.total).to.eql(100);
             expect(body.members.length).to.gte(15);
             expect(body.members.length).to.lt(100);
-          }
+          },
         },
         {
           name: 'Should query by * in the end',
@@ -168,14 +175,14 @@ describe('POST /databases/:instanceId/set/get-members', () => {
             keyName: constants.TEST_SET_KEY_2,
             cursor: 0,
             count: 15,
-            match: 'member_9*'
+            match: 'member_9*',
           },
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.keyName).to.eql(constants.TEST_SET_KEY_2);
             expect(body.total).to.eql(100);
             expect(body.members.length).to.eql(11);
-          }
+          },
         },
         {
           name: 'Should query by * in the beginning',
@@ -183,14 +190,14 @@ describe('POST /databases/:instanceId/set/get-members', () => {
             keyName: constants.TEST_SET_KEY_2,
             cursor: 0,
             count: 15,
-            match: '*ber_9'
+            match: '*ber_9',
           },
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.keyName).to.eql(constants.TEST_SET_KEY_2);
             expect(body.total).to.eql(100);
             expect(body.members.length).to.eql(1);
-          }
+          },
         },
         {
           name: 'Should query by * in the middle',
@@ -198,14 +205,14 @@ describe('POST /databases/:instanceId/set/get-members', () => {
             keyName: constants.TEST_SET_KEY_2,
             cursor: 0,
             count: 15,
-            match: 'membe*_9'
+            match: 'membe*_9',
           },
           responseSchema,
           checkFn: ({ body }) => {
             expect(body.keyName).to.eql(constants.TEST_SET_KEY_2);
             expect(body.total).to.eql(100);
             expect(body.members.length).to.eql(1);
-          }
+          },
         },
         {
           name: 'Should return NotFound error if key does not exists',
@@ -235,7 +242,12 @@ describe('POST /databases/:instanceId/set/get-members', () => {
           },
           after: async () => {
             // check that value was not overwritten
-            const scanResult = await rte.client.sscan(constants.TEST_SET_KEY_1, 0, 'count', 100);
+            const scanResult = await rte.client.sscan(
+              constants.TEST_SET_KEY_1,
+              0,
+              'count',
+              100,
+            );
             expect(scanResult[0]).to.eql('0'); // full scan completed
             expect(scanResult[1]).to.eql([constants.TEST_SET_MEMBER_1]);
           },
@@ -274,7 +286,7 @@ describe('POST /databases/:instanceId/set/get-members', () => {
             data: {
               keyName: constants.TEST_SET_HUGE_KEY,
               cursor: 0,
-              match: constants.TEST_SET_HUGE_ELEMENT
+              match: constants.TEST_SET_HUGE_ELEMENT,
             },
             responseSchema,
             responseBody: {
@@ -327,7 +339,7 @@ describe('POST /databases/:instanceId/set/get-members', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -scard')
+          before: () => rte.data.setAclUserRules('~* +@all -scard'),
         },
         {
           name: 'Should throw error if no permissions for "sismember" command',
@@ -342,7 +354,7 @@ describe('POST /databases/:instanceId/set/get-members', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -sismember')
+          before: () => rte.data.setAclUserRules('~* +@all -sismember'),
         },
         {
           name: 'Should throw error if no permissions for "sscan" command',
@@ -356,7 +368,7 @@ describe('POST /databases/:instanceId/set/get-members', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -sscan')
+          before: () => rte.data.setAclUserRules('~* +@all -sscan'),
         },
       ].map(mainCheckFn);
     });

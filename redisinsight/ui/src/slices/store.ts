@@ -55,6 +55,7 @@ import rdiTestConnectionsReducer from './rdi/testConnections'
 import rdiStatisticsReducer from './rdi/statistics'
 import aiAssistantReducer from './panels/aiAssistant'
 import appDbSettingsReducer from './app/db-settings'
+import tagsReducer from './instances/tags'
 
 const riConfig = getConfig()
 
@@ -82,6 +83,7 @@ export const rootReducer = combineReducers({
     cluster: clusterReducer,
     cloud: cloudReducer,
     sentinel: sentinelReducer,
+    tags: tagsReducer,
   }),
   browser: combineReducers({
     keys: keysReducer,
@@ -137,12 +139,13 @@ export const rootReducer = combineReducers({
     dryRun: rdiDryRunJobReducer,
     testConnections: rdiTestConnectionsReducer,
     statistics: rdiStatisticsReducer,
-  })
+  }),
 })
 
 const store = configureStore({
   reducer: rootReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false, }),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ serializableCheck: false }),
   devTools: riConfig.app.env !== 'production',
 })
 

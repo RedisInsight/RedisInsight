@@ -27,41 +27,64 @@ const instances: Array<Instance | RdiInstance> = [
 
 describe('filterAndSort', () => {
   it('should return an empty array if input array is empty', () => {
-    expect(filterAndSort([], 'test', { field: 'name', direction: 'asc' })).toEqual([])
+    expect(
+      filterAndSort([], 'test', { field: 'name', direction: 'asc' }),
+    ).toEqual([])
   })
 
   it('should filter instances by name', () => {
-    const result = filterAndSort(instances, 'instance2', { field: 'name', direction: 'asc' })
+    const result = filterAndSort(instances, 'instance2', {
+      field: 'name',
+      direction: 'asc',
+    })
     expect(result).toEqual([instances[1]])
   })
 
   it('should filter instances by db index', () => {
-    const result = filterAndSort(instances, '3', { field: 'name', direction: 'asc' })
+    const result = filterAndSort(instances, '3', {
+      field: 'name',
+      direction: 'asc',
+    })
     expect(result).toEqual([instances[2]])
   })
 
   it('should sort instances by lastConnection in ascending order', () => {
-    const result = filterAndSort(instances, '', { field: 'lastConnection', direction: 'asc' })
+    const result = filterAndSort(instances, '', {
+      field: 'lastConnection',
+      direction: 'asc',
+    })
     expect(result).toEqual([instances[2], instances[1], instances[0]])
   })
 
   it('should sort instances by lastConnection in descending order', () => {
-    const result = filterAndSort(instances, '', { field: 'lastConnection', direction: 'desc' })
+    const result = filterAndSort(instances, '', {
+      field: 'lastConnection',
+      direction: 'desc',
+    })
     expect(result).toEqual([instances[0], instances[1], instances[2]])
   })
 
   it('should sort instances by host in ascending order', () => {
-    const result = filterAndSort(instances, '', { field: 'host', direction: 'asc' })
+    const result = filterAndSort(instances, '', {
+      field: 'host',
+      direction: 'asc',
+    })
     expect(result).toEqual([instances[1], instances[2], instances[0]])
   })
 
   it('should sort instances by host in descending order', () => {
-    const result = filterAndSort(instances, '', { field: 'host', direction: 'desc' })
+    const result = filterAndSort(instances, '', {
+      field: 'host',
+      direction: 'desc',
+    })
     expect(result).toEqual([instances[0], instances[2], instances[1]])
   })
 
   it('should handle mixed filtering and sorting', () => {
-    const result = filterAndSort(instances, '2', { field: 'lastConnection', direction: 'asc' })
+    const result = filterAndSort(instances, '2', {
+      field: 'lastConnection',
+      direction: 'asc',
+    })
     expect(result).toEqual([instances[1], instances[0]])
   })
 })

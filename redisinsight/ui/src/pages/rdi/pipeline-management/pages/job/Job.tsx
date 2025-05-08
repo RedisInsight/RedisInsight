@@ -1,19 +1,37 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
+import {
+  EuiText,
+  EuiLink,
+  EuiButton,
+  EuiLoadingSpinner,
+  EuiToolTip,
+} from '@elastic/eui'
 import { get, throttle } from 'lodash'
 import cx from 'classnames'
 import { monaco as monacoEditor } from 'react-monaco-editor'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
-import { deleteChangedFile, fetchPipelineStrategies, rdiPipelineSelector, setChangedFile, setPipeline, setPipelineJobs } from 'uiSrc/slices/rdi/pipeline'
+import {
+  deleteChangedFile,
+  fetchPipelineStrategies,
+  rdiPipelineSelector,
+  setChangedFile,
+  setPipeline,
+  setPipelineJobs,
+} from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
 import DryRunJobPanel from 'uiSrc/pages/rdi/pipeline-management/components/jobs-panel'
 import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { DSL, KEYBOARD_SHORTCUTS } from 'uiSrc/constants'
-import { createAxiosError, isEqualPipelineFile, Maybe, yamlToJson } from 'uiSrc/utils'
+import {
+  createAxiosError,
+  isEqualPipelineFile,
+  Maybe,
+  yamlToJson,
+} from 'uiSrc/utils'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { KeyboardShortcut } from 'uiSrc/components'
 
@@ -33,7 +51,8 @@ const Job = (props: Props) => {
   const { name, value = '', deployedJobValue, jobIndex, rdiInstanceId } = props
 
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
-  const [shouldOpenDedicatedEditor, setShouldOpenDedicatedEditor] = useState<boolean>(false)
+  const [shouldOpenDedicatedEditor, setShouldOpenDedicatedEditor] =
+    useState<boolean>(false)
 
   const dispatch = useDispatch()
 
@@ -41,7 +60,8 @@ const Job = (props: Props) => {
   const deployedJobValueRef = useRef<Maybe<string>>(deployedJobValue)
   const jobNameRef = useRef<string>(name)
 
-  const { loading, schema, jobFunctions, jobs } = useSelector(rdiPipelineSelector)
+  const { loading, schema, jobFunctions, jobs } =
+    useSelector(rdiPipelineSelector)
 
   useEffect(() => {
     dispatch(fetchPipelineStrategies(rdiInstanceId))
@@ -65,9 +85,13 @@ const Job = (props: Props) => {
 
   const handleDryRunJob = () => {
     const JSONValue = yamlToJson(value, (msg) => {
-      dispatch(addErrorNotification(createAxiosError({
-        message: rdiErrorMessages.invalidStructure(name, msg)
-      })))
+      dispatch(
+        addErrorNotification(
+          createAxiosError({
+            message: rdiErrorMessages.invalidStructure(name, msg),
+          }),
+        ),
+      )
     })
     if (!JSONValue) {
       return
@@ -81,17 +105,25 @@ const Job = (props: Props) => {
     })
   }
 
-  const checkIsFileUpdated = useCallback(throttle((value) => {
-    if (!deployedJobValueRef.current) {
-      return
-    }
+  const checkIsFileUpdated = useCallback(
+    throttle((value) => {
+      if (!deployedJobValueRef.current) {
+        return
+      }
 
-    if (isEqualPipelineFile(value, deployedJobValueRef.current)) {
-      dispatch(deleteChangedFile(jobNameRef.current))
-      return
-    }
-    dispatch(setChangedFile({ name: jobNameRef.current, status: FileChangeType.Modified }))
-  }, 2000), [deployedJobValue, jobNameRef.current])
+      if (isEqualPipelineFile(value, deployedJobValueRef.current)) {
+        dispatch(deleteChangedFile(jobNameRef.current))
+        return
+      }
+      dispatch(
+        setChangedFile({
+          name: jobNameRef.current,
+          status: FileChangeType.Modified,
+        }),
+      )
+    }, 2000),
+    [deployedJobValue, jobNameRef.current],
+  )
 
   const handleChange = (value: string) => {
     const newJobs = jobs.map((job, index) => {
@@ -110,7 +142,7 @@ const Job = (props: Props) => {
       eventData: {
         rdiInstanceId,
         selectedLanguageSyntax: langId,
-      }
+      },
     })
   }
 
@@ -120,7 +152,7 @@ const Job = (props: Props) => {
       event: TelemetryEvent.RDI_DEDICATED_EDITOR_OPENED,
       eventData: {
         rdiInstanceId,
-      }
+      },
     })
   }
 
@@ -130,7 +162,7 @@ const Job = (props: Props) => {
       eventData: {
         rdiInstanceId,
         selectedLanguageSyntax: langId,
-      }
+      },
     })
   }
 
@@ -140,7 +172,7 @@ const Job = (props: Props) => {
       eventData: {
         rdiInstanceId,
         selectedLanguageSyntax: langId,
-      }
+      },
     })
   }
 
@@ -196,21 +228,23 @@ const Job = (props: Props) => {
             external={false}
             data-testid="rdi-pipeline-transformation-link"
             target="_blank"
-            href={getUtmExternalLink(
-              EXTERNAL_LINKS.rdiPipelineTransforms,
-              {
-                medium: UTM_MEDIUMS.Rdi,
-                campaign: 'job_file'
-              }
-            )}
+            href={getUtmExternalLink(EXTERNAL_LINKS.rdiPipelineTransforms, {
+              medium: UTM_MEDIUMS.Rdi,
+              campaign: 'job_file',
+            })}
           >
             map data
           </EuiLink>
           {' to Redis.'}
         </EuiText>
         {loading ? (
-          <div className={cx('rdi__editorWrapper', 'rdi__loading')} data-testid="rdi-job-loading">
-            <EuiText color="subdued" style={{ marginBottom: 12 }}>Loading data...</EuiText>
+          <div
+            className={cx('rdi__editorWrapper', 'rdi__loading')}
+            data-testid="rdi-job-loading"
+          >
+            <EuiText color="subdued" style={{ marginBottom: 12 }}>
+              Loading data...
+            </EuiText>
             <EuiLoadingSpinner color="secondary" size="l" />
           </div>
         ) : (
@@ -220,9 +254,11 @@ const Job = (props: Props) => {
             onChange={handleChange}
             disabled={loading}
             dedicatedEditorLanguages={[DSL.sqliteFunctions, DSL.jmespath]}
-            dedicatedEditorFunctions={jobFunctions as monacoEditor.languages.CompletionItem[]}
+            dedicatedEditorFunctions={
+              jobFunctions as monacoEditor.languages.CompletionItem[]
+            }
             dedicatedEditorOptions={{
-              suggest: { preview: false, showIcons: true, showStatusBar: true }
+              suggest: { preview: false, showIcons: true, showStatusBar: true },
             }}
             onChangeLanguage={handleChangeLanguage}
             wrapperClassName="rdi__editorWrapper"
@@ -255,7 +291,6 @@ const Job = (props: Props) => {
         />
       )}
     </>
-
   )
 }
 

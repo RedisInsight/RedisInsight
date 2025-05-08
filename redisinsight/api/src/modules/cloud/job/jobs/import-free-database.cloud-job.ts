@@ -14,6 +14,9 @@ import config from 'src/utils/config';
 import { CloudDatabaseAnalytics } from 'src/modules/cloud/database/cloud-database.analytics';
 import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.service';
 import { SessionMetadata } from 'src/common/models';
+import { KnownFeatures } from 'src/modules/feature/constants';
+import { FeatureService } from 'src/modules/feature/feature.service';
+import { CloudDatabaseImportForbiddenException } from 'src/modules/cloud/job/exceptions';
 
 const cloudConfig = config.get('cloud');
 
@@ -23,18 +26,19 @@ export class ImportFreeDatabaseCloudJob extends CloudJob {
   constructor(
     readonly options: CloudJobOptions,
     private readonly data: {
-      subscriptionId: number,
-      databaseId: number,
-      region: string,
-      provider: string,
+      subscriptionId: number;
+      databaseId: number;
+      region: string;
+      provider: string;
     },
     protected readonly dependencies: {
-      cloudDatabaseCapiService: CloudDatabaseCapiService,
-      cloudSubscriptionCapiService: CloudSubscriptionCapiService,
-      cloudTaskCapiService: CloudTaskCapiService,
-      cloudDatabaseAnalytics: CloudDatabaseAnalytics,
-      databaseService: DatabaseService,
-      cloudCapiKeyService: CloudCapiKeyService,
+      cloudDatabaseCapiService: CloudDatabaseCapiService;
+      cloudSubscriptionCapiService: CloudSubscriptionCapiService;
+      cloudTaskCapiService: CloudTaskCapiService;
+      cloudDatabaseAnalytics: CloudDatabaseAnalytics;
+      databaseService: DatabaseService;
+      cloudCapiKeyService: CloudCapiKeyService;
+      featureService: FeatureService;
     },
   ) {
     super(options);
@@ -66,11 +70,17 @@ export class ImportFreeDatabaseCloudJob extends CloudJob {
 
     this.checkSignal();
 
-    const {
-      publicEndpoint,
-      name,
-      password,
-    } = cloudDatabase;
+    const isDatabaseManagementEnabled =
+      await this.dependencies.featureService.isFeatureEnabled(
+        sessionMetadata,
+        KnownFeatures.DatabaseManagement,
+      );
+
+    if (!isDatabaseManagementEnabled) {
+      throw new CloudDatabaseImportForbiddenException();
+    }
+
+    const { publicEndpoint, name, password } = cloudDatabase;
 
     const [host, port] = publicEndpoint.split(':');
 

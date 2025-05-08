@@ -7,33 +7,44 @@ import {
   Instance,
   OAuthSocialAction,
   OAuthSocialSource,
-  RedisCloudSubscriptionType
+  RedisCloudSubscriptionType,
 } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 
 import { CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { setSocialDialogState } from 'uiSrc/slices/oauth/cloud'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import DatabasesListWrapper, { Props } from './DatabasesListWrapper'
 
 const mockedProps = mock<Props>()
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
-  sendEventTelemetry: jest.fn()
+  sendEventTelemetry: jest.fn(),
 }))
 
 jest.mock('file-saver', () => ({
-  saveAs: jest.fn()
+  saveAs: jest.fn(),
 }))
 
 jest.mock('uiSrc/slices/app/features', () => ({
   ...jest.requireActual('uiSrc/slices/app/features'),
   appFeatureFlagsFeaturesSelector: jest.fn().mockReturnValue({
     cloudSso: {
-      flag: true
-    }
+      flag: true,
+    },
+    databaseManagement: {
+      flag: true,
+    },
   }),
 }))
 
@@ -58,7 +69,7 @@ const mockInstances: Instance[] = [
     modules: [],
     version: null,
     lastConnection: new Date('2021-04-22T09:03:56.917Z'),
-    provider: 'provider'
+    provider: 'provider',
   },
   {
     id: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4',
@@ -74,9 +85,9 @@ const mockInstances: Instance[] = [
     version: null,
     cloudDetails: {
       cloudId: 1,
-      subscriptionType: RedisCloudSubscriptionType.Fixed
-    }
-  }
+      subscriptionType: RedisCloudSubscriptionType.Fixed,
+    },
+  },
 ]
 
 /**
@@ -86,74 +97,134 @@ const mockInstances: Instance[] = [
  */
 describe('DatabasesListWrapper', () => {
   it('should render', () => {
-    expect(render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)).toBeTruthy()
+    expect(
+      render(
+        <DatabasesListWrapper
+          {...instance(mockedProps)}
+          instances={mockInstances}
+        />,
+      ),
+    ).toBeTruthy()
   })
 
   it('should show indicator for a new connection', () => {
-    const { queryByTestId } = render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)
+    const { queryByTestId } = render(
+      <DatabasesListWrapper
+        {...instance(mockedProps)}
+        instances={mockInstances}
+      />,
+    )
 
-    const dbIdWithNewIndicator = mockInstances.find(({ new: newState }) => newState)?.id
-    const dbIdWithoutNewIndicator = mockInstances.find(({ new: newState }) => !newState)?.id
+    const dbIdWithNewIndicator = mockInstances.find(
+      ({ new: newState }) => newState,
+    )?.id
+    const dbIdWithoutNewIndicator = mockInstances.find(
+      ({ new: newState }) => !newState,
+    )?.id
 
-    expect(queryByTestId(`database-status-new-${dbIdWithNewIndicator}`)).toBeInTheDocument()
-    expect(queryByTestId(`database-status-new-${dbIdWithoutNewIndicator}`)).not.toBeInTheDocument()
+    expect(
+      queryByTestId(`database-status-new-${dbIdWithNewIndicator}`),
+    ).toBeInTheDocument()
+    expect(
+      queryByTestId(`database-status-new-${dbIdWithoutNewIndicator}`),
+    ).not.toBeInTheDocument()
   })
 
   it('should render create free cloud row', () => {
-    render(<DatabasesListWrapper
-      {...instance(mockedProps)}
-      instances={mockInstances}
-      predefinedInstances={[{ id: CREATE_CLOUD_DB_ID, name: 'Create free trial db' }] as Instance[]}
-    />)
+    render(
+      <DatabasesListWrapper
+        {...instance(mockedProps)}
+        instances={mockInstances}
+        predefinedInstances={
+          [
+            { id: CREATE_CLOUD_DB_ID, name: 'Create free trial db' },
+          ] as Instance[]
+        }
+      />,
+    )
 
-    expect(screen.getByTestId(`db-row_${CREATE_CLOUD_DB_ID}`)).toBeInTheDocument()
+    expect(
+      screen.getByTestId(`db-row_${CREATE_CLOUD_DB_ID}`),
+    ).toBeInTheDocument()
   })
 
   it('should call proper action on click cloud db', () => {
-    render(<DatabasesListWrapper
-      {...instance(mockedProps)}
-      instances={mockInstances}
-      predefinedInstances={[{ id: CREATE_CLOUD_DB_ID, name: 'Create free trial db' }] as Instance[]}
-    />)
+    render(
+      <DatabasesListWrapper
+        {...instance(mockedProps)}
+        instances={mockInstances}
+        predefinedInstances={
+          [
+            { id: CREATE_CLOUD_DB_ID, name: 'Create free trial db' },
+          ] as Instance[]
+        }
+      />,
+    )
 
     fireEvent.click(screen.getByTestId(`db-row_${CREATE_CLOUD_DB_ID}`))
 
     expect(store.getActions()).toEqual([
       setSSOFlow(OAuthSocialAction.Create),
-      setSocialDialogState(OAuthSocialSource.DatabaseConnectionList)
+      setSocialDialogState(OAuthSocialSource.DatabaseConnectionList),
     ])
   })
 
   it('should show link to cloud console', () => {
-    render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)
+    render(
+      <DatabasesListWrapper
+        {...instance(mockedProps)}
+        instances={mockInstances}
+      />,
+    )
 
-    expect(screen.queryByTestId(`cloud-link-${mockInstances[0].id}`)).not.toBeInTheDocument()
-    expect(screen.getByTestId(`cloud-link-${mockInstances[1].id}`)).toBeInTheDocument()
+    expect(
+      screen.queryByTestId(`cloud-link-${mockInstances[0].id}`),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByTestId(`cloud-link-${mockInstances[1].id}`),
+    ).toBeInTheDocument()
   })
 
   it('should call proper telemetry on click cloud console link', () => {
-    const sendEventTelemetryMock = jest.fn();
+    const sendEventTelemetryMock = jest.fn()
 
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    render(
+      <DatabasesListWrapper
+        {...instance(mockedProps)}
+        instances={mockInstances}
+      />,
+    )
 
     fireEvent.click(screen.getByTestId(`cloud-link-${mockInstances[1].id}`))
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.CLOUD_LINK_CLICKED
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      event: TelemetryEvent.CLOUD_LINK_CLICKED,
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry on open database', async () => {
-    const sendEventTelemetryMock = jest.fn();
+    const sendEventTelemetryMock = jest.fn()
 
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    render(
+      <DatabasesListWrapper
+        {...instance(mockedProps)}
+        instances={mockInstances}
+      />,
+    )
 
     await act(() => {
-      fireEvent.click(screen.getByTestId('instance-name-e37cc441-a4f2-402c-8bdb-fc2413cbbaff'))
+      fireEvent.click(
+        screen.getByTestId(
+          'instance-name-e37cc441-a4f2-402c-8bdb-fc2413cbbaff',
+        ),
+      )
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
@@ -163,70 +234,157 @@ describe('DatabasesListWrapper', () => {
         provider: 'provider',
         source: 'db_list',
         RediSearch: {
-          loaded: false
+          loaded: false,
         },
         RedisAI: {
-          loaded: false
+          loaded: false,
         },
         RedisBloom: {
-          loaded: false
+          loaded: false,
         },
         RedisGears: {
-          loaded: false
+          loaded: false,
         },
         RedisGraph: {
-          loaded: false
+          loaded: false,
         },
         RedisJSON: {
-          loaded: false
+          loaded: false,
         },
         RedisTimeSeries: {
-          loaded: false
+          loaded: false,
         },
-        customModules: []
-      }
-    });
+        customModules: [],
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
+  })
 
-    (sendEventTelemetry as jest.Mock).mockRestore()
+  it('should open controls popover when three dots clicked', async () => {
+    render(
+      <DatabasesListWrapper
+        {...instance(mockedProps)}
+        instances={mockInstances}
+        onEditInstance={() => {}}
+      />,
+    )
+
+    await act(() => {
+      fireEvent.click(
+        screen.getByTestId(
+          'controls-button-a0db1bc8-a353-4c43-a856-b72f4811d2d4',
+        ),
+      )
+    })
+
+    const controlsPopoverId = screen.getByTestId(
+      'controls-popover-a0db1bc8-a353-4c43-a856-b72f4811d2d4',
+    )
+    const editBtn = screen.getByTestId(
+      'edit-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4',
+    )
+    const deleteBtn = screen.getByTestId(
+      'delete-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4-icon',
+    )
+
+    expect(controlsPopoverId).toBeInTheDocument()
+    expect(editBtn).toBeInTheDocument()
+    expect(deleteBtn).toBeInTheDocument()
   })
 
   it('should call proper telemetry on delete database', async () => {
-    const sendEventTelemetryMock = jest.fn();
+    const sendEventTelemetryMock = jest.fn()
 
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} />)
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    render(
+      <DatabasesListWrapper
+        {...instance(mockedProps)}
+        instances={mockInstances}
+      />,
+    )
 
     await act(() => {
-      fireEvent.click(screen.getByTestId('delete-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4-icon'))
+      fireEvent.click(
+        screen.getByTestId(
+          'controls-button-a0db1bc8-a353-4c43-a856-b72f4811d2d4',
+        ),
+      )
+    })
+
+    await act(() => {
+      fireEvent.click(
+        screen.getByTestId(
+          'delete-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4-icon',
+        ),
+      )
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CONFIG_DATABASES_SINGLE_DATABASE_DELETE_CLICKED,
       eventData: {
-        databaseId: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4'
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        databaseId: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4',
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry on edit database', async () => {
-    const sendEventTelemetryMock = jest.fn();
+    const sendEventTelemetryMock = jest.fn()
 
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<DatabasesListWrapper {...instance(mockedProps)} instances={mockInstances} onEditInstance={() => {}} />)
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    render(
+      <DatabasesListWrapper
+        {...instance(mockedProps)}
+        instances={mockInstances}
+        onEditInstance={() => {}}
+      />,
+    )
 
     await act(() => {
-      fireEvent.click(screen.getByTestId('edit-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4'))
+      fireEvent.click(
+        screen.getByTestId(
+          'controls-button-a0db1bc8-a353-4c43-a856-b72f4811d2d4',
+        ),
+      )
+    })
+
+    await act(() => {
+      fireEvent.click(
+        screen.getByTestId(
+          'edit-instance-a0db1bc8-a353-4c43-a856-b72f4811d2d4',
+        ),
+      )
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CONFIG_DATABASES_DATABASE_EDIT_CLICKED,
       eventData: {
-        databaseId: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4'
-      }
-    });
+        databaseId: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4',
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
+  })
 
-    (sendEventTelemetry as jest.Mock).mockRestore()
+  it('should hide management buttons when databaseManagement feature flag is disabled', async () => {
+    ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValue({
+      databaseManagement: {
+        flag: false,
+      },
+    })
+
+    const { queryByTestId } = render(
+      <DatabasesListWrapper
+        {...instance(mockedProps)}
+        instances={mockInstances}
+      />,
+    )
+
+    expect(queryByTestId(/^edit-instance-/i)).not.toBeInTheDocument()
+    expect(queryByTestId(/^delete-instance-/i)).not.toBeInTheDocument()
+    expect(queryByTestId(/^manage-instance-tags-/i)).not.toBeInTheDocument()
   })
 })

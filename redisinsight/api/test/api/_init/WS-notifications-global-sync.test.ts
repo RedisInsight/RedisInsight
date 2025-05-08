@@ -1,8 +1,8 @@
-    import { describe, it, expect, _ } from '../deps';
+import { describe, it, expect, _ } from '../deps';
 import {
   createNotExistingNotifications,
   getRepository,
-  repositories
+  repositories,
 } from '../../helpers/local-db';
 import { Socket } from 'socket.io-client';
 import { getSocket } from '../../helpers/server';
@@ -20,13 +20,25 @@ describe('WS sync', () => {
   });
 
   it('Should sync notifications and remove not existing in json from local db', async () => {
-    const oldNotifications = await repo.createQueryBuilder().where({ type: 'global' }).getMany();
-    expect(_.find(oldNotifications, { timestamp: constants.TEST_NOTIFICATION_NE_1.timestamp }))
-      .to.not.eq(undefined);
-    expect(_.find(oldNotifications, { timestamp: constants.TEST_NOTIFICATION_NE_2.timestamp }))
-      .to.not.eq(undefined);
-    expect(_.find(oldNotifications, { timestamp: constants.TEST_NOTIFICATION_NE_3.timestamp }))
-      .to.not.eq(undefined);
+    const oldNotifications = await repo
+      .createQueryBuilder()
+      .where({ type: 'global' })
+      .getMany();
+    expect(
+      _.find(oldNotifications, {
+        timestamp: constants.TEST_NOTIFICATION_NE_1.timestamp,
+      }),
+    ).to.not.eq(undefined);
+    expect(
+      _.find(oldNotifications, {
+        timestamp: constants.TEST_NOTIFICATION_NE_2.timestamp,
+      }),
+    ).to.not.eq(undefined);
+    expect(
+      _.find(oldNotifications, {
+        timestamp: constants.TEST_NOTIFICATION_NE_3.timestamp,
+      }),
+    ).to.not.eq(undefined);
 
     // Initialize sync by connecting
     const client = await getClient();
@@ -40,12 +52,24 @@ describe('WS sync', () => {
     expect(notificationsAlert.notifications.length).to.eq(3);
     expect(notificationsAlert.totalUnread).to.eq(3);
 
-    const newNotifications = await repo.createQueryBuilder().where({ type: 'global' }).getMany();
-    expect(_.find(newNotifications, { timestamp: constants.TEST_NOTIFICATION_NE_1.timestamp }))
-      .to.eq(undefined);
-    expect(_.find(newNotifications, { timestamp: constants.TEST_NOTIFICATION_NE_2.timestamp }))
-      .to.eq(undefined);
-    expect(_.find(newNotifications, { timestamp: constants.TEST_NOTIFICATION_NE_3.timestamp }))
-      .to.eq(undefined);
+    const newNotifications = await repo
+      .createQueryBuilder()
+      .where({ type: 'global' })
+      .getMany();
+    expect(
+      _.find(newNotifications, {
+        timestamp: constants.TEST_NOTIFICATION_NE_1.timestamp,
+      }),
+    ).to.eq(undefined);
+    expect(
+      _.find(newNotifications, {
+        timestamp: constants.TEST_NOTIFICATION_NE_2.timestamp,
+      }),
+    ).to.eq(undefined);
+    expect(
+      _.find(newNotifications, {
+        timestamp: constants.TEST_NOTIFICATION_NE_3.timestamp,
+      }),
+    ).to.eq(undefined);
   });
 });

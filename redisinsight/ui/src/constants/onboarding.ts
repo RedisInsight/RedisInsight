@@ -16,7 +16,7 @@ enum OnboardingSteps {
   AnalyticsRecommendations,
   AnalyticsSlowLog,
   PubSubPage,
-  Finish
+  Finish,
 }
 
 enum OnboardingStepName {
@@ -41,7 +41,4 @@ enum OnboardingStepName {
   Finish = 'finish',
 }
 
-export {
-  OnboardingSteps,
-  OnboardingStepName,
-}
+export { OnboardingSteps, OnboardingStepName }

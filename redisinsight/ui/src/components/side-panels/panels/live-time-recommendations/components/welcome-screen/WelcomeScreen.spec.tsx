@@ -10,7 +10,8 @@ import {
   cleanup,
   render,
   waitForEuiPopoverVisible,
-  initialStateDefault, mockStore,
+  initialStateDefault,
+  mockStore,
 } from 'uiSrc/utils/test-utils'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { getDBAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -19,13 +20,15 @@ import WelcomeScreen from './WelcomeScreen'
 
 let store: typeof mockedStore
 
-const mockRecommendationsSelector = jest.requireActual('uiSrc/slices/recommendations/recommendations')
+const mockRecommendationsSelector = jest.requireActual(
+  'uiSrc/slices/recommendations/recommendations',
+)
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: 'instanceId',
-    provider: 'RE_CLOUD'
+    provider: 'RE_CLOUD',
   }),
 }))
 
@@ -73,20 +76,22 @@ describe('WelcomeScreen', () => {
     render(<WelcomeScreen />)
     const afterRenderActions = [...store.getActions()]
 
-    fireEvent.click(screen.getByTestId('insights-db-analysis-link'));
-
-    (async () => {
+    fireEvent.click(screen.getByTestId('insights-db-analysis-link'))
+    ;(async () => {
       await waitForEuiPopoverVisible()
     })()
 
     fireEvent.click(screen.getByTestId('approve-insights-db-analysis-btn'))
 
     const expectedActions = [getDBAnalysis()]
-    expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      ...expectedActions,
+    ])
   })
 
   it('should call telemetry INSIGHTS_RECOMMENDATION_DATABASE_ANALYSIS_CLICKED after click link btn', async () => {
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
         recommendations: [{ name: 'RTS' }],
@@ -104,45 +109,55 @@ describe('WelcomeScreen', () => {
       eventData: {
         databaseId: 'instanceId',
         total: 1,
-        provider: 'RE_CLOUD'
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        provider: 'RE_CLOUD',
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should not render part of content if no instanceId', () => {
-    reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: undefined })
+    reactRouterDom.useParams = jest
+      .fn()
+      .mockReturnValue({ instanceId: undefined })
     render(<WelcomeScreen />)
 
-    expect(screen.queryByTestId('insights-db-analysis-link')).not.toBeInTheDocument()
-    expect(screen.getByTestId('no-recommendations-analyse-text')).toHaveTextContent('Eager for tips? Connect to a database to get started.')
+    expect(
+      screen.queryByTestId('insights-db-analysis-link'),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByTestId('no-recommendations-analyse-text'),
+    ).toHaveTextContent('Eager for tips? Connect to a database to get started.')
   })
 
   it('should show feature dependent items when feature flag is on', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: true }
+      { flag: true },
     )
     reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: 1 })
 
     render(<WelcomeScreen />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
-    expect(screen.queryByTestId('insights-db-analysis-link')).toBeInTheDocument()
+    expect(
+      screen.queryByTestId('insights-db-analysis-link'),
+    ).toBeInTheDocument()
   })
 
   it('should hide feature dependent items when feature flag is off', async () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: false }
+      { flag: false },
     )
     reactRouterDom.useParams = jest.fn().mockReturnValue({ instanceId: 1 })
 
     render(<WelcomeScreen />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
-    expect(screen.queryByTestId('insights-db-analysis-link')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('insights-db-analysis-link'),
+    ).not.toBeInTheDocument()
   })
 })

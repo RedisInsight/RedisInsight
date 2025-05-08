@@ -4,7 +4,11 @@ import { useHistory } from 'react-router-dom'
 
 import { EuiTitle } from '@elastic/eui'
 import { Pages } from 'uiSrc/constants'
-import { cloudSelector, fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import {
+  cloudSelector,
+  fetchSubscriptionsRedisCloud,
+  setSSOFlow,
+} from 'uiSrc/slices/instances/cloud'
 import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -30,8 +34,10 @@ const CloudConnectionFormWrapper = ({ onClose }: Props) => {
 
   useEffect(() => {
     setModalHeader(
-      <EuiTitle size="s"><h4>Discover Cloud databases</h4></EuiTitle>,
-      true
+      <EuiTitle size="s">
+        <h4>Discover Cloud databases</h4>
+      </EuiTitle>,
+      true,
     )
 
     return () => {
@@ -42,7 +48,7 @@ const CloudConnectionFormWrapper = ({ onClose }: Props) => {
 
   const formSubmit = (credentials: ICloudConnectionSubmit) => {
     sendEventTelemetry({
-      event: TelemetryEvent.CONFIG_DATABASES_RE_CLOUD_AUTODISCOVERY_SUBMITTED
+      event: TelemetryEvent.CONFIG_DATABASES_RE_CLOUD_AUTODISCOVERY_SUBMITTED,
     })
     dispatch(setSSOFlow(undefined))
     dispatch(fetchSubscriptionsRedisCloud(credentials, false, onSuccess))

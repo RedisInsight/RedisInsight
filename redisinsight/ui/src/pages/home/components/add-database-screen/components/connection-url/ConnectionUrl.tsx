@@ -9,25 +9,35 @@ export interface Props {
 }
 
 const ConnectionUrl = ({ value, onChange }: Props) => (
-  <EuiFormRow label={(
-    <div className={styles.connectionUrlInfo}>
-      <div>Connection URL</div>
-      <EuiToolTip
-        title="The following connection URLs are supported:"
-        className="homePage_tooltip"
-        position="right"
-        content={(
-          <ul className="homePage_toolTipUl">
-            <li><span className="dot" />redis://[[username]:[password]]@host:port</li>
-            <li><span className="dot" />rediss://[[username]:[password]]@host:port</li>
-            <li><span className="dot" />host:port</li>
-          </ul>
-          )}
-      >
-        <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
-      </EuiToolTip>
-    </div>
-    )}
+  <EuiFormRow
+    label={
+      <div className={styles.connectionUrlInfo}>
+        <div>Connection URL</div>
+        <EuiToolTip
+          title="The following connection URLs are supported:"
+          className="homePage_tooltip"
+          position="right"
+          content={
+            <ul className="homePage_toolTipUl">
+              <li>
+                <span className="dot" />
+                redis://[[username]:[password]]@host:port
+              </li>
+              <li>
+                <span className="dot" />
+                rediss://[[username]:[password]]@host:port
+              </li>
+              <li>
+                <span className="dot" />
+                host:port
+              </li>
+            </ul>
+          }
+        >
+          <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+        </EuiToolTip>
+      </div>
+    }
   >
     <EuiTextArea
       name="connectionURL"

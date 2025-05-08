@@ -27,7 +27,11 @@ const UploadFile = (props: Props) => {
 
   return (
     <EuiButtonEmpty className={styles.emptyBtn}>
-      <label htmlFor={id} className={styles.uploadBtn} data-testid="upload-file-btn">
+      <label
+        htmlFor={id}
+        className={styles.uploadBtn}
+        data-testid="upload-file-btn"
+      >
         <EuiIcon className={styles.icon} type="folderOpen" />
         <EuiText className={styles.label}>Upload</EuiText>
         <input

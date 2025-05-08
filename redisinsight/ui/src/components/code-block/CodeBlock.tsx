@@ -16,7 +16,7 @@ const CodeBlock = (props: Props) => {
 
   const innerText = useMemo(
     () => innerTextString?.replace(/[\r\n?]{2}|\n\n/g, '\n') || '',
-    [innerTextString]
+    [innerTextString],
   )
 
   const handleCopyClick = () => {
@@ -25,7 +25,9 @@ const CodeBlock = (props: Props) => {
 
   return (
     <div className={cx(styles.wrapper, { [styles.isCopyable]: isCopyable })}>
-      <pre className={cx(styles.pre, className)} ref={innerTextRef} {...rest}>{children}</pre>
+      <pre className={cx(styles.pre, className)} ref={innerTextRef} {...rest}>
+        {children}
+      </pre>
       {isCopyable && (
         <EuiButtonIcon
           onClick={handleCopyClick}

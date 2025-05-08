@@ -1,17 +1,21 @@
 import {
   BadRequestException,
-  Injectable, Logger, NotFoundException, ValidationPipe,
+  Injectable,
+  Logger,
+  NotFoundException,
+  ValidationPipe,
 } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { CustomTutorialRepository } from 'src/modules/custom-tutorial/repositories/custom-tutorial.repository';
-import { CustomTutorial, CustomTutorialActions } from 'src/modules/custom-tutorial/models/custom-tutorial';
+import {
+  CustomTutorial,
+  CustomTutorialActions,
+} from 'src/modules/custom-tutorial/models/custom-tutorial';
 import { UploadCustomTutorialDto } from 'src/modules/custom-tutorial/dto/upload.custom-tutorial.dto';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { CustomTutorialFsProvider } from 'src/modules/custom-tutorial/providers/custom-tutorial.fs.provider';
-import {
-  CustomTutorialManifestProvider,
-} from 'src/modules/custom-tutorial/providers/custom-tutorial.manifest.provider';
+import { CustomTutorialManifestProvider } from 'src/modules/custom-tutorial/providers/custom-tutorial.manifest.provider';
 import {
   CustomTutorialManifestType,
   RootCustomTutorialManifest,
@@ -30,7 +34,7 @@ export class CustomTutorialService {
 
   private validator = new Validator();
 
-  private exceptionFactory = (new ValidationPipe()).createExceptionFactory();
+  private exceptionFactory = new ValidationPipe().createExceptionFactory();
 
   constructor(
     private readonly customTutorialRepository: CustomTutorialRepository,
@@ -40,9 +44,13 @@ export class CustomTutorialService {
   ) {}
 
   private async validateManifestJson(path: string): Promise<void> {
-    const manifest = await this.customTutorialManifestProvider.getOriginalManifestJson(path);
+    const manifest =
+      await this.customTutorialManifestProvider.getOriginalManifestJson(path);
 
-    if (!manifest && await this.customTutorialManifestProvider.isOriginalManifestExists(path)) {
+    if (
+      !manifest &&
+      (await this.customTutorialManifestProvider.isOriginalManifestExists(path))
+    ) {
       throw new BadRequestException('Unable to parse manifest.json file');
     }
 
@@ -52,7 +60,7 @@ export class CustomTutorialService {
       }
 
       const errors = await this.validator.validate(
-        plainToClass(RootCustomTutorialManifest, manifest),
+        plainToInstance(RootCustomTutorialManifest, manifest),
         { whitelist: true },
       );
 
@@ -63,7 +71,8 @@ export class CustomTutorialService {
   }
 
   private async determineTutorialName(path: string, link: string) {
-    const manifest = await this.customTutorialManifestProvider.getManifestJson(path);
+    const manifest =
+      await this.customTutorialManifestProvider.getManifestJson(path);
 
     if (!manifest?.label) {
       return parse(URL.parse(link).pathname).name;
@@ -86,37 +95,55 @@ export class CustomTutorialService {
       let tmpPath = '';
 
       if (dto.file) {
-        tmpPath = await this.customTutorialFsProvider.unzipFromMemoryStoredFile(dto.file);
+        tmpPath = await this.customTutorialFsProvider.unzipFromMemoryStoredFile(
+          dto.file,
+        );
       } else if (dto.link) {
-        tmpPath = await this.customTutorialFsProvider.unzipFromExternalLink(dto.link);
+        tmpPath = await this.customTutorialFsProvider.unzipFromExternalLink(
+          dto.link,
+        );
       } else {
-        throw new BadRequestException('File or external link should be provided');
+        throw new BadRequestException(
+          'File or external link should be provided',
+        );
       }
 
       await this.validateManifestJson(tmpPath);
 
       // create tutorial model
-      const model = plainToClass(CustomTutorial, {
+      const model = plainToInstance(CustomTutorial, {
         ...dto,
         id: uuidv4(),
       });
 
-      await this.customTutorialFsProvider.moveFolder(tmpPath, model.absolutePath);
-
-      model.name = await this.determineTutorialName(model.absolutePath, dto?.file?.originalName || dto.link);
-      const tutorial = await this.customTutorialRepository.create(model);
-
-      this.analytics.sendImportSucceeded(
-        sessionMetadata,
-        {
-          manifest: !!(await this.customTutorialManifestProvider.getOriginalManifestJson(tutorial.absolutePath)),
-        },
+      await this.customTutorialFsProvider.moveFolder(
+        tmpPath,
+        model.absolutePath,
       );
 
-      return await this.customTutorialManifestProvider.generateTutorialManifest(tutorial);
+      model.name = await this.determineTutorialName(
+        model.absolutePath,
+        dto?.file?.originalName || dto.link,
+      );
+      const tutorial = await this.customTutorialRepository.create(model);
+
+      this.analytics.sendImportSucceeded(sessionMetadata, {
+        manifest:
+          !!(await this.customTutorialManifestProvider.getOriginalManifestJson(
+            tutorial.absolutePath,
+          )),
+      });
+
+      return await this.customTutorialManifestProvider.generateTutorialManifest(
+        tutorial,
+      );
     } catch (e) {
       this.analytics.sendImportFailed(sessionMetadata, e);
-      this.logger.error('Unable to create custom tutorials', e, sessionMetadata);
+      this.logger.error(
+        'Unable to create custom tutorials',
+        e,
+        sessionMetadata,
+      );
       throw wrapHttpError(e);
     }
   }
@@ -131,11 +158,13 @@ export class CustomTutorialService {
     try {
       const tutorials = await this.customTutorialRepository.list();
 
-      const manifests = await Promise.all(
+      const manifests = (await Promise.all(
         tutorials.map(
-          this.customTutorialManifestProvider.generateTutorialManifest.bind(this.customTutorialManifestProvider),
+          this.customTutorialManifestProvider.generateTutorialManifest.bind(
+            this.customTutorialManifestProvider,
+          ),
         ),
-      ) as Record<string, any>[];
+      )) as Record<string, any>[];
 
       manifests.forEach((manifest) => {
         if (manifest) {
@@ -143,7 +172,10 @@ export class CustomTutorialService {
         }
       });
     } catch (e) {
-      this.logger.warn('Unable to generate entire custom tutorials manifest', e);
+      this.logger.warn(
+        'Unable to generate entire custom tutorials manifest',
+        e,
+      );
     }
 
     return {

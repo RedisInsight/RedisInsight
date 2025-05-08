@@ -5,14 +5,14 @@ import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import RedisInsightLink from './RedisInsightLink'
 
 jest.mock('uiSrc/utils/routing', () => ({
-  ...jest.requireActual('uiSrc/utils/routing')
+  ...jest.requireActual('uiSrc/utils/routing'),
 }))
 
 Object.defineProperty(window, 'location', {
   value: {
-    origin: 'http://localhost'
+    origin: 'http://localhost',
   },
-  writable: true
+  writable: true,
 })
 
 describe('RedisInsightLink', () => {

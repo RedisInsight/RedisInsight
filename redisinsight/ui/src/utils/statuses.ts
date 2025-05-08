@@ -13,5 +13,4 @@ export const isStatusClientError = (status: number) =>
 export const isStatusServerError = (status: number) =>
   status >= 500 && status < 600
 
-export const isStatusNotFoundError = (status: number) =>
-  status === 404
+export const isStatusNotFoundError = (status: number) => status === 404

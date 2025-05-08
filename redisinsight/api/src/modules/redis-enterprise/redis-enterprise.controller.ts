@@ -2,7 +2,8 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
-  Post, Res,
+  Post,
+  Res,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -18,8 +19,14 @@ import {
 import { Response } from 'express';
 import { ActionStatus, SessionMetadata } from 'src/common/models';
 import { BuildType } from 'src/modules/server/models/server';
-import { RequestSessionMetadata } from 'src/common/decorators';
-import { ClusterConnectionDetailsDto, RedisEnterpriseDatabase } from 'src/modules/redis-enterprise/dto/cluster.dto';
+import {
+  DatabaseManagement,
+  RequestSessionMetadata,
+} from 'src/common/decorators';
+import {
+  ClusterConnectionDetailsDto,
+  RedisEnterpriseDatabase,
+} from 'src/modules/redis-enterprise/dto/cluster.dto';
 
 @ApiTags('Redis Enterprise Cluster')
 @UsePipes(new ValidationPipe({ transform: true }))
@@ -45,7 +52,7 @@ export class RedisEnterpriseController {
   })
   async getDatabases(
     @Body() dto: ClusterConnectionDetailsDto,
-      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<RedisEnterpriseDatabase[]> {
     return await this.redisEnterpriseService.getDatabases(sessionMetadata, dto);
   }
@@ -65,19 +72,22 @@ export class RedisEnterpriseController {
     ],
   })
   @UsePipes(new ValidationPipe({ transform: true }))
+  @DatabaseManagement()
   async addRedisEnterpriseDatabases(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Body() dto: AddRedisEnterpriseDatabasesDto,
-      @Res() res: Response,
+    @Body() dto: AddRedisEnterpriseDatabasesDto,
+    @Res() res: Response,
   ): Promise<Response> {
     const { uids, ...connectionDetails } = dto;
-    const result = await this.redisEnterpriseService.addRedisEnterpriseDatabases(
-      sessionMetadata,
-      connectionDetails,
-      uids,
-    );
+    const result =
+      await this.redisEnterpriseService.addRedisEnterpriseDatabases(
+        sessionMetadata,
+        connectionDetails,
+        uids,
+      );
     const hasSuccessResult = result.some(
-      (addResponse: AddRedisEnterpriseDatabaseResponse) => addResponse.status === ActionStatus.Success,
+      (addResponse: AddRedisEnterpriseDatabaseResponse) =>
+        addResponse.status === ActionStatus.Success,
     );
     if (!hasSuccessResult) {
       return res.status(200).json(result);

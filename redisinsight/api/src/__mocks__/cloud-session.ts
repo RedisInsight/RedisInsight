@@ -34,15 +34,18 @@ export const mockCloudSession = {
     id: 'cloud_id_1',
     name: 'user name',
     currentAccountId: 'cloud_account_id_1',
-    accounts: [{
-      id: 'cloud_account_id_1',
-      name: 'cloud account 1',
-      active: false,
-    }, {
-      id: 'cloud_account_id_2',
-      name: 'cloud account 2',
-      active: false,
-    }],
+    accounts: [
+      {
+        id: 'cloud_account_id_1',
+        name: 'cloud account 1',
+        active: false,
+      },
+      {
+        id: 'cloud_account_id_2',
+        name: 'cloud account 2',
+        active: false,
+      },
+    ],
   },
 };
 

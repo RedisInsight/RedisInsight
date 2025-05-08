@@ -14,18 +14,20 @@ export const CONNECTIVITY_OPTIONS = [
     id: 'sentinel',
     title: 'Redis Sentinel',
     type: AddDbType.sentinel,
-    icon: (props: Record<string, any> = {}) => <ShieldIcon {...props} />
+    icon: (props: Record<string, any> = {}) => <ShieldIcon {...props} />,
   },
   {
     id: 'software',
     title: 'Redis Software',
     type: AddDbType.software,
-    icon: (props: Record<string, any> = {}) => <RedisSoftwareIcon {...props} />
+    icon: (props: Record<string, any> = {}) => <RedisSoftwareIcon {...props} />,
   },
   {
     id: 'import',
     title: 'Import from file',
     type: AddDbType.import,
-    icon: (props: Record<string, any> = {}) => <EuiIcon type="importAction" {...props} />
-  }
+    icon: (props: Record<string, any> = {}) => (
+      <EuiIcon type="importAction" {...props} />
+    ),
+  },
 ]

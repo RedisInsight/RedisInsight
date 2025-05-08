@@ -1,7 +1,8 @@
 import {
   Body,
   Controller,
-  Post, Res,
+  Post,
+  Res,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -19,7 +20,10 @@ import { RedisSentinelService } from 'src/modules/redis-sentinel/redis-sentinel.
 import { CreateSentinelDatabasesDto } from 'src/modules/redis-sentinel/dto/create.sentinel.databases.dto';
 import { CreateSentinelDatabaseResponse } from 'src/modules/redis-sentinel/dto/create.sentinel.database.response';
 import { BuildType } from 'src/modules/server/models/server';
-import { RequestSessionMetadata } from 'src/common/decorators';
+import {
+  DatabaseManagement,
+  RequestSessionMetadata,
+} from 'src/common/decorators';
 
 @ApiTags('Redis OSS Sentinel')
 @Controller('redis-sentinel')
@@ -31,9 +35,7 @@ import { RequestSessionMetadata } from 'src/common/decorators';
   }),
 )
 export class RedisSentinelController {
-  constructor(
-    private redisSentinelService: RedisSentinelService,
-  ) {}
+  constructor(private redisSentinelService: RedisSentinelService) {}
 
   @Post('get-databases')
   @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
@@ -50,9 +52,12 @@ export class RedisSentinelController {
   })
   async getMasters(
     @Body() dto: DiscoverSentinelMastersDto,
-      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<SentinelMaster[]> {
-    return await this.redisSentinelService.getSentinelMasters(sessionMetadata, dto as Database);
+    return await this.redisSentinelService.getSentinelMasters(
+      sessionMetadata,
+      dto as Database,
+    );
   }
 
   @UseInterceptors(new TimeoutInterceptor(ERROR_MESSAGES.CONNECTION_TIMEOUT))
@@ -71,14 +76,19 @@ export class RedisSentinelController {
     ],
   })
   @UsePipes(new ValidationPipe({ transform: true }))
+  @DatabaseManagement()
   async addSentinelMasters(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Body() dto: CreateSentinelDatabasesDto,
-      @Res() res: Response,
+    @Body() dto: CreateSentinelDatabasesDto,
+    @Res() res: Response,
   ): Promise<Response> {
-    const result = await this.redisSentinelService.createSentinelDatabases(sessionMetadata, dto);
+    const result = await this.redisSentinelService.createSentinelDatabases(
+      sessionMetadata,
+      dto,
+    );
     const hasSuccessResult = result.some(
-      (addResponse: CreateSentinelDatabaseResponse) => addResponse.status === ActionStatus.Success,
+      (addResponse: CreateSentinelDatabaseResponse) =>
+        addResponse.status === ActionStatus.Success,
     );
     if (!hasSuccessResult) {
       return res.status(200).json(result);

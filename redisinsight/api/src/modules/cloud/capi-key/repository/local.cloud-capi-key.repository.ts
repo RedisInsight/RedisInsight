@@ -17,7 +17,10 @@ export class LocalCloudCapiKeyRepository extends CloudCapiKeyRepository {
     private readonly encryptionService: EncryptionService,
   ) {
     super();
-    this.modelEncryptor = new ModelEncryptor(encryptionService, ['capiKey', 'capiSecret']);
+    this.modelEncryptor = new ModelEncryptor(encryptionService, [
+      'capiKey',
+      'capiSecret',
+    ]);
   }
 
   /**
@@ -29,17 +32,28 @@ export class LocalCloudCapiKeyRepository extends CloudCapiKeyRepository {
       return null;
     }
 
-    return classToClass(CloudCapiKey, await this.modelEncryptor.decryptEntity(entity, true));
+    return classToClass(
+      CloudCapiKey,
+      await this.modelEncryptor.decryptEntity(entity, true),
+    );
   }
 
   /**
    * @inheritDoc
    */
-  public async update(id: string, data: Partial<CloudCapiKey>): Promise<CloudCapiKey> {
-    const oldEntity = await this.modelEncryptor.decryptEntity((await this.repository.findOneBy({ id })), true);
+  public async update(
+    id: string,
+    data: Partial<CloudCapiKey>,
+  ): Promise<CloudCapiKey> {
+    const oldEntity = await this.modelEncryptor.decryptEntity(
+      await this.repository.findOneBy({ id }),
+      true,
+    );
     const newEntity = classToClass(CloudCapiKeyEntity, data);
 
-    const encrypted = await this.modelEncryptor.encryptEntity(this.repository.merge(oldEntity, newEntity));
+    const encrypted = await this.modelEncryptor.encryptEntity(
+      this.repository.merge(oldEntity, newEntity),
+    );
     await this.repository.save(encrypted);
 
     return this.get(id);
@@ -53,13 +67,20 @@ export class LocalCloudCapiKeyRepository extends CloudCapiKeyRepository {
     cloudUserId: number,
     cloudAccountId: number,
   ): Promise<CloudCapiKey> {
-    const entity = await this.repository.findOneBy({ userId, cloudUserId, cloudAccountId });
+    const entity = await this.repository.findOneBy({
+      userId,
+      cloudUserId,
+      cloudAccountId,
+    });
 
     if (!entity) {
       return null;
     }
 
-    return classToClass(CloudCapiKey, await this.modelEncryptor.decryptEntity(entity, true));
+    return classToClass(
+      CloudCapiKey,
+      await this.modelEncryptor.decryptEntity(entity, true),
+    );
   }
 
   /**
@@ -93,9 +114,7 @@ export class LocalCloudCapiKeyRepository extends CloudCapiKeyRepository {
   async list(userId: string): Promise<CloudCapiKey[]> {
     const entities = await this.repository
       .createQueryBuilder('k')
-      .select([
-        'k.id', 'k.name', 'k.valid', 'k.createdAt', 'k.lastUsed',
-      ])
+      .select(['k.id', 'k.name', 'k.valid', 'k.createdAt', 'k.lastUsed'])
       .where({ userId })
       .orderBy('k.createdAt', 'DESC')
       .getMany();

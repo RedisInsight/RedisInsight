@@ -1,6 +1,9 @@
 import { Nullable } from 'uiSrc/utils'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
-import { GetAgreementsSpecResponse, GetAppSettingsResponse } from 'apiSrc/modules/settings/dto/settings.dto'
+import {
+  GetAgreementsSpecResponse,
+  GetAppSettingsResponse,
+} from 'apiSrc/modules/settings/dto/settings.dto'
 
 export interface StateUserSettings {
   loading: boolean
@@ -14,7 +17,7 @@ export interface StateUserSettings {
 }
 
 export interface StateUserProfile {
-  loading: boolean;
-  error: string;
-  data?: CloudUser;
+  loading: boolean
+  error: string
+  data?: CloudUser
 }

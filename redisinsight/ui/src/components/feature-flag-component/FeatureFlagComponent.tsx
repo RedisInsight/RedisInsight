@@ -5,7 +5,7 @@ import { FeatureFlags } from 'uiSrc/constants/featureFlags'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 export interface Props {
-  name: FeatureFlags
+  name: FeatureFlags | FeatureFlags[]
   children?: JSX.Element | JSX.Element[]
   otherwise?: React.ReactElement
   enabledByDefault?: boolean
@@ -13,10 +13,15 @@ export interface Props {
 
 const FeatureFlagComponent = (props: Props) => {
   const { children, name, otherwise, enabledByDefault } = props
-  const { [name]: feature } = useSelector(appFeatureFlagsFeaturesSelector)
-  const { flag, variant } = feature ?? { flag: enabledByDefault }
+  const features = useSelector(appFeatureFlagsFeaturesSelector)
 
-  if (!flag) {
+  const nameArray = isArray(name) ? name : [name]
+  const matchingFeatures = nameArray.map(
+    (feature) => features?.[feature] || { flag: enabledByDefault },
+  )
+  const allFlagsEnabled = matchingFeatures.every((feature) => feature.flag)
+
+  if (!allFlagsEnabled) {
     return otherwise ?? null
   }
 
@@ -24,9 +29,13 @@ const FeatureFlagComponent = (props: Props) => {
     return null
   }
 
-  const cloneElement = (child: React.ReactElement) => React.cloneElement(child, { variant })
+  const cloneElement = (child: React.ReactElement) => React.cloneElement(child)
 
-  return isArray(children) ? <>{React.Children.map(children, cloneElement)}</> : cloneElement(children)
+  return isArray(children) ? (
+    <>{React.Children.map(children, cloneElement)}</>
+  ) : (
+    cloneElement(children)
+  )
 }
 
 export default FeatureFlagComponent

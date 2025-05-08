@@ -41,15 +41,15 @@ export interface Props {
 }
 
 interface ISubmitButton {
-  onClick: () => void;
-  submitIsDisabled: boolean;
+  onClick: () => void
+  submitIsDisabled: boolean
 }
 
 interface Values {
-  host: string;
-  port: string;
-  username: string;
-  password: string;
+  host: string
+  port: string
+  username: string
+  password: string
 }
 
 const fieldDisplayNames: Values = {
@@ -74,7 +74,7 @@ const ClusterConnectionForm = (props: Props) => {
   } = props
 
   const [errors, setErrors] = useState<FormikErrors<Values>>(
-    host || port || username || password ? {} : fieldDisplayNames
+    host || port || username || password ? {} : fieldDisplayNames,
   )
 
   const [initialValues, setInitialValues] = useState({
@@ -99,7 +99,7 @@ const ClusterConnectionForm = (props: Props) => {
 
     Object.entries(values).forEach(
       ([key, value]) =>
-        !value && Object.assign(errs, { [key]: fieldDisplayNames[key] })
+        !value && Object.assign(errs, { [key]: fieldDisplayNames[key] }),
     )
 
     setErrors(errs)
@@ -128,7 +128,7 @@ const ClusterConnectionForm = (props: Props) => {
 
   const AppendHostName = () => (
     <EuiToolTip
-      title={(
+      title={
         <div>
           <p>
             <b>Pasting a connection URL auto fills the database details.</b>
@@ -137,11 +137,11 @@ const ClusterConnectionForm = (props: Props) => {
             The following connection URLs are supported:
           </p>
         </div>
-      )}
+      }
       className="homePage_tooltip"
       anchorClassName="inputAppendIcon"
       position="right"
-      content={(
+      content={
         <ul className="homePage_toolTipUl">
           <li>
             <span className="dot" />
@@ -156,7 +156,7 @@ const ClusterConnectionForm = (props: Props) => {
             host:port
           </li>
         </ul>
-      )}
+      }
     >
       <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
     </EuiToolTip>
@@ -218,7 +218,7 @@ const ClusterConnectionForm = (props: Props) => {
             submitIsDisabled={!submitIsEnable()}
           />
         </div>,
-        footerEl
+        footerEl,
       )
     }
     return null
@@ -244,11 +244,12 @@ const ClusterConnectionForm = (props: Props) => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   formik.setFieldValue(
                     e.target.name,
-                    validateField(e.target.value.trim())
+                    validateField(e.target.value.trim()),
                   )
                 }}
                 onPaste={(event: React.ClipboardEvent<HTMLInputElement>) =>
-                  handlePasteHostName(onHostNamePaste, event)}
+                  handlePasteHostName(onHostNamePaste, event)
+                }
                 append={<AppendHostName />}
               />
             </EuiFormRow>
@@ -270,7 +271,7 @@ const ClusterConnectionForm = (props: Props) => {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   formik.setFieldValue(
                     e.target.name,
-                    validatePortNumber(e.target.value.trim())
+                    validatePortNumber(e.target.value.trim()),
                   )
                 }}
                 type="text"
@@ -283,9 +284,7 @@ const ClusterConnectionForm = (props: Props) => {
 
         <EuiFlexGroup>
           <EuiFlexItem>
-            <EuiFormRow
-              label="Admin Username*"
-            >
+            <EuiFormRow label="Admin Username*">
               <EuiFieldText
                 name="username"
                 id="username"

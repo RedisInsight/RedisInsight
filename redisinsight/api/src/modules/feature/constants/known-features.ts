@@ -1,5 +1,12 @@
-import { FeatureStorage, IFeatureFlag, KnownFeatures } from 'src/modules/feature/constants/index';
+import {
+  FeatureStorage,
+  IFeatureFlag,
+  KnownFeatures,
+} from 'src/modules/feature/constants/index';
 import { CloudSsoFeatureFlag } from 'src/modules/cloud/cloud-sso.feature.flag';
+import config, { Config } from 'src/utils/config';
+
+const SERVER_CONFIG = config.get('server') as Config['server'];
 
 export const knownFeatures: Record<KnownFeatures, IFeatureFlag> = {
   [KnownFeatures.InsightsRecommendations]: {
@@ -42,5 +49,13 @@ export const knownFeatures: Record<KnownFeatures, IFeatureFlag> = {
   [KnownFeatures.EnhancedCloudUI]: {
     name: KnownFeatures.EnhancedCloudUI,
     storage: FeatureStorage.Database,
+  },
+  [KnownFeatures.DatabaseManagement]: {
+    name: KnownFeatures.DatabaseManagement,
+    storage: FeatureStorage.Custom,
+    factory: () => ({
+      name: KnownFeatures.DatabaseManagement,
+      flag: SERVER_CONFIG.databaseManagement,
+    }),
   },
 };

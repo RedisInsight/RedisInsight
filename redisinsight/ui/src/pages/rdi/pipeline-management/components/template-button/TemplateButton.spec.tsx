@@ -2,7 +2,13 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
 
-import { fireEvent, render, cleanup, mockedStore, screen } from 'uiSrc/utils/test-utils'
+import {
+  fireEvent,
+  render,
+  cleanup,
+  mockedStore,
+  screen,
+} from 'uiSrc/utils/test-utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import { rdiPipelineStrategiesSelector } from 'uiSrc/slices/rdi/pipeline'
@@ -27,24 +33,26 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/pipeline'),
   rdiPipelineStrategiesSelector: jest.fn().mockReturnValue({
     loading: false,
-    data: [{
-      strategy: 'test'
-    }],
+    data: [
+      {
+        strategy: 'test',
+      },
+    ],
   }),
 }))
 
 describe('TemplateForm', () => {
   it('should render', () => {
-    expect(
-      render(<TemplateButton {...instance(mockedProps)} />)
-    ).toBeTruthy()
+    expect(render(<TemplateButton {...instance(mockedProps)} />)).toBeTruthy()
   })
 
   it('should be disabled if no templateOption', () => {
-    (rdiPipelineStrategiesSelector as jest.Mock).mockImplementationOnce(() => ({
-      loading: false,
-      data: []
-    }))
+    ;(rdiPipelineStrategiesSelector as jest.Mock).mockImplementationOnce(
+      () => ({
+        loading: false,
+        data: [],
+      }),
+    )
 
     render(<TemplateButton {...instance(mockedProps)} />)
 
@@ -52,8 +60,10 @@ describe('TemplateForm', () => {
   })
 
   it('should send telemetry on Click', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<TemplateButton {...instance(mockedProps)} />)
 
@@ -67,7 +77,7 @@ describe('TemplateForm', () => {
         id: 'rdiInstanceId',
         page: RdiPipelineTabs.Jobs,
         mode: 'test',
-      }
+      },
     })
   })
 })

@@ -9,11 +9,14 @@ export interface StateContentCreateRedis {
 export interface ContentFeatureCreateRedis {
   title: string
   description?: string
-  links: Record<string, {
-    altText: string
-    url: string
-    event?: string
-  }>
+  links: Record<
+    string,
+    {
+      altText: string
+      url: string
+      event?: string
+    }
+  >
   styles?: {
     [Theme.Dark]: Record<string, any>
     [Theme.Light]: Record<string, any>

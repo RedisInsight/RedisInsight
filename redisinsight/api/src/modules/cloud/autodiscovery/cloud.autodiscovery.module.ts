@@ -16,10 +16,7 @@ import { CloudCapiKeyModule } from 'src/modules/cloud/capi-key/cloud-capi-key.mo
     CloudUserModule,
     CloudCapiKeyModule,
   ],
-  controllers: [
-    CloudAutodiscoveryController,
-    MeCloudAutodiscoveryController,
-  ],
+  controllers: [CloudAutodiscoveryController, MeCloudAutodiscoveryController],
   providers: [
     CloudAutodiscoveryService,
     MeCloudAutodiscoveryService,

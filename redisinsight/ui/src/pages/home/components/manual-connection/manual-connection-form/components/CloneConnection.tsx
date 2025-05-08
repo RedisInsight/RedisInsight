@@ -15,14 +15,18 @@ const CloneConnection = (props: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_DATABASE_CLONE_REQUESTED,
       eventData: {
-        databaseId: id
-      }
+        databaseId: id,
+      },
     })
   }
 
   return (
     <>
-      <EuiFlexGroup responsive={false} justifyContent="flexEnd" style={{ flexGrow: 0 }}>
+      <EuiFlexGroup
+        responsive={false}
+        justifyContent="flexEnd"
+        style={{ flexGrow: 0 }}
+      >
         <EuiFlexItem grow={false}>
           <EuiButton
             size="s"

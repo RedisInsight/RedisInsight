@@ -20,6 +20,10 @@ on:
         default: false
         type: boolean
 
+      enterprise:
+        description: Enterprise build
+        type: boolean
+
 jobs:
   build:
     name: Build linux
@@ -27,73 +31,73 @@ jobs:
     environment: ${{ inputs.environment }}
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    # SSH Debug
-    - name: Enable SSH
-      uses: mxschmitt/action-tmate@v3
-      if: inputs.debug
-      with:
-        detached: true
+      # SSH Debug
+      - name: Enable SSH
+        uses: mxschmitt/action-tmate@v3
+        if: inputs.debug
+        with:
+          detached: true
 
-    - name: Install all libs and dependencies
-      uses: ./.github/actions/install-all-build-libs
-      with:
-        keytar-host-mirror: ${{ secrets.NPM_CONFIG_KEYTAR_BINARY_HOST_MIRROR }}
-        sqlite3-host-mirror: ${{ secrets.NPM_CONFIG_NODE_SQLITE3_BINARY_HOST_MIRROR }}
+      - name: Install all libs and dependencies
+        uses: ./.github/actions/install-all-build-libs
+        with:
+          keytar-host-mirror: ${{ secrets.NPM_CONFIG_KEYTAR_BINARY_HOST_MIRROR }}
+          sqlite3-host-mirror: ${{ secrets.NPM_CONFIG_NODE_SQLITE3_BINARY_HOST_MIRROR }}
 
-    # TODO: Is it needed?
-    # - run: |
-    #     mkdir electron
-    #     CURRENT_VERSION=$(jq -r ".version" redisinsight/package.json)
-    #     echo "Build version: $CURRENT_VERSION"
-    #     cp ./redisinsight/package.json ./electron/package.json
-    #     echo "$VERSION" > electron/version
-    #     exit 0
-    # - uses: actions/download-artifact@v4.1.0
-    #   with:
-    #     path: "."
-    # - run: cp ./electron/package.json ./redisinsight/
+      # TODO: Is it needed?
+      # - run: |
+      #     mkdir electron
+      #     CURRENT_VERSION=$(jq -r ".version" redisinsight/package.json)
+      #     echo "Build version: $CURRENT_VERSION"
+      #     cp ./redisinsight/package.json ./electron/package.json
+      #     echo "$VERSION" > electron/version
+      #     exit 0
+      # - uses: actions/download-artifact@v4.1.0
+      #   with:
+      #     path: "."
+      # - run: cp ./electron/package.json ./redisinsight/
 
-    - name: Install plugins dependencies and build plugins
-      run: yarn build:statics
+      - name: Install plugins dependencies and build plugins
+        run: yarn build:statics
 
-    - name: Build linux packages (production)
-      if: vars.ENV == 'production' && inputs.target == vars.ALL
-      run: yarn package:prod
+      - name: Build linux packages (production)
+        if: vars.ENV == 'production' && inputs.target == vars.ALL
+        run: yarn package:prod
 
-    - name: Build linux packages (staging)
-      if: (vars.ENV == 'staging' || vars.ENV == 'development') && inputs.target == vars.ALL
-      run: yarn package:stage
+      - name: Build linux packages (staging)
+        if: (vars.ENV == 'staging' || vars.ENV == 'development') && inputs.target == vars.ALL
+        run: yarn package:stage
 
-    - name: Build linux packages (custom)
-      if: inputs.target != vars.ALL
-      run: |
-        target=$(echo "${{inputs.target}}" | grep -oE 'build_linux_[^_ ]+' | sed 's/build_linux_//' | sort -u | paste -sd ' ' -)
+      - name: Build linux packages (custom)
+        if: inputs.target != vars.ALL
+        run: |
+          target=$(echo "${{inputs.target}}" | grep -oE 'build_linux_[^_ ]+' | sed 's/build_linux_//' | sort -u | paste -sd ' ' -)
 
-        if [ "${{ vars.ENV == 'production' }}" == "true" ]; then
-          yarn package:prod --linux $target
-        else
-          yarn package:stage --linux $target
-        fi
+          if [ "${{ vars.ENV == 'production' }}" == "true" ]; then
+            yarn package:prod --linux $target
+          else
+            yarn package:stage --linux $target
+          fi
 
-    - uses: actions/upload-artifact@v4
-      name: Upload vendor for plugins
-      with:
-        name: vendor-plugins
-        path: |
-          ./vendor
+      - uses: actions/upload-artifact@v4
+        name: Upload vendor for plugins
+        with:
+          name: vendor-plugins
+          path: |
+            ./vendor
 
-    - uses: actions/upload-artifact@v4
-      name: Upload linux builds
-      with:
-        name: linux-builds
-        path: |
-          ./release/latest-linux.yml
-          ./release/Redis-Insight*.AppImage
-          ./release/Redis-Insight*.deb
-          ./release/Redis-Insight*.rpm
-          ./release/Redis-Insight*.snap
+      - uses: actions/upload-artifact@v4
+        name: Upload linux builds
+        with:
+          name: linux-builds
+          path: |
+            ./release/latest-linux.yml
+            ./release/Redis-Insight*.AppImage
+            ./release/Redis-Insight*.deb
+            ./release/Redis-Insight*.rpm
+            ./release/Redis-Insight*.snap
 
     env:
       RI_AI_CONVAI_TOKEN: ${{ secrets.RI_AI_CONVAI_TOKEN }}
@@ -115,3 +119,6 @@ jobs:
       RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
       RI_FEATURES_CONFIG_URL: ${{ secrets.RI_FEATURES_CONFIG_URL }}
       RI_UPGRADES_LINK: ${{ secrets.RI_UPGRADES_LINK }}
+      RI_FEATURES_CLOUD_ADS_DEFAULT_FLAG: ${{ inputs.enterprise == false }}
+      RI_DISABLE_AUTO_UPGRADE: ${{ inputs.enterprise }}
+      RI_APP_TYPE: ${{ inputs.enterprise && 'ELECTRON_ENTERPRISE' || 'ELECTRON' }}

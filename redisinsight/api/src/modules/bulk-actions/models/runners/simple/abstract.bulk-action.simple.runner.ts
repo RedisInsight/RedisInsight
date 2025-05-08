@@ -1,6 +1,10 @@
 import { BulkActionStatus } from 'src/modules/bulk-actions/constants';
 import { AbstractBulkActionRunner } from 'src/modules/bulk-actions/models/runners/abstract.bulk-action.runner';
-import { RedisClient, RedisClientCommand, RedisClientCommandReply } from 'src/modules/redis/client';
+import {
+  RedisClient,
+  RedisClientCommand,
+  RedisClientCommandReply,
+} from 'src/modules/redis/client';
 import { getTotalKeys } from 'src/modules/redis/utils';
 
 export abstract class AbstractBulkActionSimpleRunner extends AbstractBulkActionRunner {
@@ -29,8 +33,8 @@ export abstract class AbstractBulkActionSimpleRunner extends AbstractBulkActionR
    */
   async run() {
     while (
-      this.progress.getCursor() > -1
-      && this.bulkAction.getStatus() === BulkActionStatus.Running
+      this.progress.getCursor() > -1 &&
+      this.bulkAction.getStatus() === BulkActionStatus.Running
     ) {
       await this.runIteration();
     }
@@ -60,9 +64,11 @@ export abstract class AbstractBulkActionSimpleRunner extends AbstractBulkActionR
       return [];
     }
     // @ts-ignore
-    const [cursorBuffer, keys] = await this.node.sendCommand(
-      ['scan', this.progress.getCursor(), ...this.bulkAction.getFilter().getScanArgsArray()],
-    );
+    const [cursorBuffer, keys] = await this.node.sendCommand([
+      'scan',
+      this.progress.getCursor(),
+      ...this.bulkAction.getFilter().getScanArgsArray(),
+    ]);
 
     const cursor = parseInt(cursorBuffer, 10);
     this.progress.setCursor(cursor);
@@ -75,8 +81,12 @@ export abstract class AbstractBulkActionSimpleRunner extends AbstractBulkActionR
    * @param keys
    * @param res
    */
-  processIterationResults(keys, res: [Error | null, RedisClientCommandReply][]) {
+  processIterationResults(
+    keys,
+    res: [Error | null, RedisClientCommandReply][],
+  ) {
     this.summary.addProcessed(res.length);
+    this.summary.addKeys(keys);
 
     const errors = [];
 

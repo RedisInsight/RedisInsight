@@ -1,7 +1,14 @@
 import { Database } from 'src/modules/database/models/database';
-import { mockCaCertificate, mockClientCertificate } from 'src/__mocks__/certificates';
+import {
+  mockCaCertificate,
+  mockClientCertificate,
+} from 'src/__mocks__/certificates';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
-import { Compressor, ConnectionType, DatabaseEntity } from 'src/modules/database/entities/database.entity';
+import {
+  Compressor,
+  ConnectionType,
+  DatabaseEntity,
+} from 'src/modules/database/entities/database.entity';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
 import { mockIORedisClient } from 'src/__mocks__/redis';
 import { mockSentinelMasterDto } from 'src/__mocks__/redis-sentinel';
@@ -15,9 +22,14 @@ import {
   mockSshOptionsPrivateKeyEntity,
 } from 'src/__mocks__/ssh';
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
-import { mockCloudDatabaseDetails, mockCloudDatabaseDetailsEntity } from 'src/__mocks__/cloud-database';
+import {
+  mockCloudDatabaseDetails,
+  mockCloudDatabaseDetailsEntity,
+} from 'src/__mocks__/cloud-database';
 import { mockRedisClientListResult } from 'src/__mocks__/database-info';
 import { DatabaseOverviewKeyspace } from 'src/modules/database/constants/overview';
+import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
+import { mockTags } from 'src/__mocks__/tags';
 
 export const mockDatabaseId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-db-id';
 
@@ -25,7 +37,8 @@ export const mockDatabasePasswordEncrypted = 'database.password_ENCRYPTED';
 
 export const mockDatabasePasswordPlain = 'some pass';
 
-export const mockDatabaseSentinelMasterPasswordEncrypted = 'database.sentinelMasterPassword_ENCRYPTED';
+export const mockDatabaseSentinelMasterPasswordEncrypted =
+  'database.sentinelMasterPassword_ENCRYPTED';
 
 export const mockDatabaseSentinelMasterPasswordPlain = 'some sentinel pass';
 
@@ -41,6 +54,12 @@ export const mockDatabase = Object.assign(new Database(), {
   new: false,
   compressor: Compressor.NONE,
   version: '7.0',
+});
+
+export const mockCreateDatabaseDto = Object.assign(new CreateDatabaseDto(), {
+  name: mockDatabase.name,
+  host: mockDatabase.host,
+  port: mockDatabase.port,
 });
 
 export const mockDatabaseModules = [
@@ -96,13 +115,16 @@ export const mockDatabaseEntity = Object.assign(new DatabaseEntity(), {
   encryption: null,
 });
 
-export const mockDatabaseEntityWithCloudDetails = Object.assign(new DatabaseEntity(), {
-  ...mockDatabaseEntity,
-  cloudDetails: Object.assign(new CloudDatabaseDetailsEntity(), {
-    id: 'some-uuid',
-    ...mockCloudDatabaseDetailsEntity,
-  }),
-});
+export const mockDatabaseEntityWithCloudDetails = Object.assign(
+  new DatabaseEntity(),
+  {
+    ...mockDatabaseEntity,
+    cloudDetails: Object.assign(new CloudDatabaseDetailsEntity(), {
+      id: 'some-uuid',
+      ...mockCloudDatabaseDetailsEntity,
+    }),
+  },
+);
 
 export const mockDatabaseWithSshBasic = Object.assign(new Database(), {
   ...mockDatabase,
@@ -110,11 +132,14 @@ export const mockDatabaseWithSshBasic = Object.assign(new Database(), {
   sshOptions: mockSshOptionsBasic,
 });
 
-export const mockDatabaseWithSshBasicEntity = Object.assign(new DatabaseEntity(), {
-  ...mockDatabaseWithSshBasic,
-  encryption: null,
-  sshOptions: mockSshOptionsBasicEntity,
-});
+export const mockDatabaseWithSshBasicEntity = Object.assign(
+  new DatabaseEntity(),
+  {
+    ...mockDatabaseWithSshBasic,
+    encryption: null,
+    sshOptions: mockSshOptionsBasicEntity,
+  },
+);
 
 export const mockDatabaseWithSshPrivateKey = Object.assign(new Database(), {
   ...mockDatabase,
@@ -122,10 +147,13 @@ export const mockDatabaseWithSshPrivateKey = Object.assign(new Database(), {
   sshOptions: mockSshOptionsPrivateKey,
 });
 
-export const mockDatabaseWithSshPrivateKeyEntity = Object.assign(new DatabaseEntity(), {
-  ...mockDatabaseWithSshPrivateKey,
-  sshOptions: mockSshOptionsPrivateKeyEntity,
-});
+export const mockDatabaseWithSshPrivateKeyEntity = Object.assign(
+  new DatabaseEntity(),
+  {
+    ...mockDatabaseWithSshPrivateKey,
+    sshOptions: mockSshOptionsPrivateKeyEntity,
+  },
+);
 
 export const mockDatabaseWithAuth = Object.assign(new Database(), {
   ...mockDatabase,
@@ -159,9 +187,22 @@ export const mockDatabaseWithTlsAuth = Object.assign(new Database(), {
   clientCert: mockClientCertificate,
 });
 
-export const mockDatabaseWithTlsAuthEntity = Object.assign(new DatabaseEntity(), {
-  ...mockDatabaseWithTlsEntity,
-  clientCert: mockClientCertificate, // !not client cert entity since it managed on own repository
+export const mockDatabaseWithTlsAuthEntity = Object.assign(
+  new DatabaseEntity(),
+  {
+    ...mockDatabaseWithTlsEntity,
+    clientCert: mockClientCertificate, // !not client cert entity since it managed on own repository
+  },
+);
+
+export const mockDatabaseWithTags = Object.assign(new Database(), {
+  ...mockDatabase,
+  tags: mockTags,
+});
+
+export const mockDatabaseWithTagsEntity = Object.assign(new DatabaseEntity(), {
+  ...mockDatabaseWithTags,
+  encryption: null,
 });
 
 export const mockSentinelMaster = Object.assign(new SentinelMaster(), {
@@ -177,14 +218,17 @@ export const mockSentinelDatabaseWithTlsAuth = Object.assign(new Database(), {
   nodes: mockSentinelMasterDto.nodes,
 });
 
-export const mockSentinelDatabaseWithTlsAuthEntity = Object.assign(new DatabaseEntity(), {
-  ...mockDatabaseWithTlsAuthEntity,
-  sentinelMasterName: mockSentinelMaster.name,
-  sentinelMasterUsername: mockSentinelMaster.username,
-  sentinelMasterPassword: mockDatabaseSentinelMasterPasswordEncrypted,
-  connectionType: ConnectionType.SENTINEL,
-  nodes: JSON.stringify(mockSentinelDatabaseWithTlsAuth.nodes),
-});
+export const mockSentinelDatabaseWithTlsAuthEntity = Object.assign(
+  new DatabaseEntity(),
+  {
+    ...mockDatabaseWithTlsAuthEntity,
+    sentinelMasterName: mockSentinelMaster.name,
+    sentinelMasterUsername: mockSentinelMaster.username,
+    sentinelMasterPassword: mockDatabaseSentinelMasterPasswordEncrypted,
+    connectionType: ConnectionType.SENTINEL,
+    nodes: JSON.stringify(mockSentinelDatabaseWithTlsAuth.nodes),
+  },
+);
 export const mockClusterNodes = [
   {
     host: '127.0.100.1',
@@ -202,11 +246,14 @@ export const mockClusterDatabaseWithTlsAuth = Object.assign(new Database(), {
   nodes: mockClusterNodes,
 });
 
-export const mockClusterDatabaseWithTlsAuthEntity = Object.assign(new DatabaseEntity(), {
-  ...mockDatabaseWithTlsAuthEntity,
-  connectionType: ConnectionType.CLUSTER,
-  nodes: JSON.stringify(mockClusterNodes),
-});
+export const mockClusterDatabaseWithTlsAuthEntity = Object.assign(
+  new DatabaseEntity(),
+  {
+    ...mockDatabaseWithTlsAuthEntity,
+    connectionType: ConnectionType.CLUSTER,
+    nodes: JSON.stringify(mockClusterNodes),
+  },
+);
 
 export const mockNewDatabase = Object.assign(new Database(), {
   ...mockDatabase,
@@ -227,7 +274,8 @@ export const mockDatabaseOverview: DatabaseOverview = {
   cpuUsagePercentage: null,
 };
 
-export const mockDatabaseOverviewCurrentKeyspace = DatabaseOverviewKeyspace.Current;
+export const mockDatabaseOverviewCurrentKeyspace =
+  DatabaseOverviewKeyspace.Current;
 
 export const mockRedisServerInfoDto = {
   redis_version: '7.0.5',
@@ -257,16 +305,23 @@ export const mockDatabaseRepository = jest.fn(() => ({
   create: jest.fn().mockResolvedValue(mockDatabase),
   update: jest.fn().mockResolvedValue(mockDatabase),
   delete: jest.fn(),
-  list: jest.fn().mockResolvedValue([
-    pick(mockDatabase, 'id', 'name'),
-    pick(mockDatabase, 'id', 'name'),
-  ]),
+  list: jest
+    .fn()
+    .mockResolvedValue([
+      pick(mockDatabase, 'id', 'name'),
+      pick(mockDatabase, 'id', 'name'),
+    ]),
   cleanupPreSetup: jest.fn().mockResolvedValue({ affected: 0 }),
 }));
 
 export const mockDatabaseService = jest.fn(() => ({
   get: jest.fn().mockResolvedValue(mockDatabase),
   create: jest.fn().mockResolvedValue(mockDatabase),
+  update: jest.fn().mockResolvedValue(mockDatabase),
+  clone: jest.fn().mockResolvedValue(mockDatabase),
+  testConnection: jest.fn().mockResolvedValue(undefined),
+  delete: jest.fn().mockResolvedValue(undefined),
+  bulkDelete: jest.fn().mockResolvedValue({ affected: 0 }),
   list: jest.fn(),
 }));
 
@@ -278,7 +333,9 @@ export const mockDatabaseConnectionService = jest.fn(() => ({
 export const mockDatabaseInfoProvider = jest.fn(() => ({
   determineDatabaseModules: jest.fn(),
   determineDatabaseServer: jest.fn(),
-  determineSentinelMasterGroups: jest.fn().mockReturnValue([mockSentinelMasterDto]),
+  determineSentinelMasterGroups: jest
+    .fn()
+    .mockReturnValue([mockSentinelMasterDto]),
   determineClusterNodes: jest.fn().mockResolvedValue(mockClusterNodes),
   getRedisGeneralInfo: jest.fn().mockResolvedValueOnce(mockRedisGeneralInfo),
   getRedisDBSize: jest.fn().mockResolvedValue(mockDBSize),
@@ -292,8 +349,12 @@ export const mockDatabaseOverviewProvider = jest.fn(() => ({
 export const mockDatabaseFactory = jest.fn(() => ({
   createDatabaseModel: jest.fn().mockResolvedValue(mockDatabase),
   createStandaloneDatabaseModel: jest.fn().mockResolvedValue(mockDatabase),
-  createClusterDatabaseModel: jest.fn().mockResolvedValue(mockClusterDatabaseWithTlsAuth),
-  createSentinelDatabaseModel: jest.fn().mockResolvedValue(mockSentinelDatabaseWithTlsAuth),
+  createClusterDatabaseModel: jest
+    .fn()
+    .mockResolvedValue(mockClusterDatabaseWithTlsAuth),
+  createSentinelDatabaseModel: jest
+    .fn()
+    .mockResolvedValue(mockSentinelDatabaseWithTlsAuth),
 }));
 
 export const mockDatabaseAnalytics = jest.fn(() => ({

@@ -4,10 +4,11 @@ import {
   EuiTableFieldDataColumnType,
   EuiTableSelectionType,
   PropertySort,
-  EuiBasicTableProps
+  EuiBasicTableProps,
 } from '@elastic/eui'
 import cx from 'classnames'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { DatabaseListColumn } from 'uiSrc/constants'
 import { Maybe } from 'uiSrc/utils'
 import { findColumn, getColumnWidth, hideColumn } from './utils'
 
@@ -18,7 +19,8 @@ import styles from './styles.module.scss'
 export interface Props<T> {
   width: number
   columns: EuiTableFieldDataColumnType<T>[]
-  columnsToHide?: string[]
+  shownColumns?: DatabaseListColumn[]
+  hiddenColsOnResize?: string[]
   onDelete: (ids: T[]) => void
   hideExport?: boolean
   onExport?: (ids: T[], withSecrets: boolean) => void
@@ -29,12 +31,14 @@ export interface Props<T> {
   data: T[]
   onTableChange: ({ sort, page }: Criteria<T>) => void
   sort: PropertySort
+  hideSelectableCheckboxes?: boolean
 }
 
 function ItemList<T extends { id: string; visible?: boolean }>({
   width,
-  columns: columnsProp,
-  columnsToHide = [],
+  columns: incomingColumns,
+  shownColumns,
+  hiddenColsOnResize = [],
   onDelete,
   hideExport = false,
   onExport,
@@ -44,9 +48,9 @@ function ItemList<T extends { id: string; visible?: boolean }>({
   loading,
   data: instances,
   onTableChange,
-  sort
+  sort,
+  hideSelectableCheckboxes,
 }: Props<T>) {
-  const [columns, setColumns] = useState<EuiTableFieldDataColumnType<T>[]>(columnsProp)
   const [selection, setSelection] = useState<T[]>([])
   const [message, setMessage] = useState<Maybe<string | JSX.Element>>(undefined)
 
@@ -56,20 +60,100 @@ function ItemList<T extends { id: string; visible?: boolean }>({
   const hiddenCols = useRef<Set<string>>(new Set([]))
   const lastHiddenColumn = useRef<EuiTableFieldDataColumnType<T>>()
 
-  useEffect(() => {
-    if (columnsToHide?.length && containerTableRef.current) {
+  const visibleColumns = useMemo(() => {
+    if (!incomingColumns?.length) return []
+    let filteredColumns = incomingColumns
+    if (shownColumns && shownColumns.length) {
+      filteredColumns = incomingColumns.filter((col) =>
+        shownColumns.includes(col.field as DatabaseListColumn),
+      )
+    }
+
+    const adjustColumns = (
+      cols: EuiTableFieldDataColumnType<T>[],
+      offsetWidth: number,
+    ): EuiTableFieldDataColumnType<T>[] => {
+      let sum = cols?.reduce(
+        (prev, next) => prev + getColumnWidth(next.width),
+        0,
+      )
+      const visibleColumnsLength = cols.length - hiddenCols.current.size
+
+      // hide columns
+      if (
+        sum > offsetWidth &&
+        hiddenColsOnResize.length + visibleColumnsLength
+      ) {
+        let resultsCol = [...cols]
+        while (sum > offsetWidth) {
+          const colToHide = hiddenColsOnResize[hiddenCols.current.size]
+          const initialCol = findColumn(filteredColumns, colToHide)
+          if (!initialCol) return resultsCol
+
+          sum -= getColumnWidth(initialCol?.width)
+          hiddenCols.current.add(colToHide)
+          lastHiddenColumn.current = initialCol
+          resultsCol = resultsCol.map((item) =>
+            item.field === colToHide ? hideColumn(item) : item,
+          )
+        }
+
+        return resultsCol
+      }
+
+      // show columns
+      if (filteredColumns.length > visibleColumnsLength) {
+        // early return to not calculate other columns
+        const lastHiddenColWidth = getColumnWidth(
+          lastHiddenColumn.current?.width,
+        )
+        if (sum + lastHiddenColWidth > offsetWidth) {
+          return cols
+        }
+
+        let resultsCol = [...cols]
+        Array.from(hiddenCols.current)
+          .reverse()
+          .forEach((hiddenCol) => {
+            const initialCol = findColumn(filteredColumns, hiddenCol)
+            if (!initialCol) return
+
+            const hiddenColWidth = getColumnWidth(initialCol.width)
+            if (hiddenColWidth + sum < offsetWidth) {
+              hiddenCols.current.delete(hiddenCol)
+              sum += hiddenColWidth
+              lastHiddenColumn.current = initialCol
+              resultsCol = resultsCol.map((item) =>
+                item.field === hiddenCol ? initialCol : item,
+              )
+            }
+          })
+
+        return resultsCol
+      }
+
+      return cols
+    }
+
+    if (hiddenColsOnResize?.length && containerTableRef.current) {
       const { offsetWidth } = containerTableRef.current
       const beforeAdjustHiddenCols = hiddenCols.current.size
       try {
-        const columnsResults = adjustColumns(columns, offsetWidth)
+        const currentColumns = filteredColumns.filter(
+          (fc) => !hiddenCols.current.has(fc.field.toString()),
+        )
+        const adjustedColumns = adjustColumns(currentColumns, offsetWidth)
         if (beforeAdjustHiddenCols !== hiddenCols.current.size) {
-          setColumns(columnsResults)
+          return adjustedColumns
         }
+        return currentColumns
       } catch (_) {
         // ignore
       }
     }
-  }, [width])
+
+    return filteredColumns
+  }, [incomingColumns, shownColumns, width, hiddenColsOnResize])
 
   useEffect(() => {
     if (loading) {
@@ -88,68 +172,17 @@ function ItemList<T extends { id: string; visible?: boolean }>({
         <div className={styles.noResults}>
           <div className={styles.tableMsgTitle}>No results found</div>
           <div>No results matched your search. Try reducing the criteria.</div>
-        </div>
+        </div>,
       )
     }
   }, [instances, loading])
 
-  const adjustColumns = (
-    cols: EuiTableFieldDataColumnType<T>[],
-    offsetWidth: number,
-  ): EuiTableFieldDataColumnType<T>[] => {
-    let sum = cols?.reduce((prev, next) => prev + getColumnWidth(next.width), 0)
-    const visibleColumnsLength = cols.length - hiddenCols.current.size
-
-    // hide columns
-    if (sum > offsetWidth && columnsToHide.length + visibleColumnsLength) {
-      let resultsCol = [...cols]
-      while (sum > offsetWidth) {
-        const colToHide = columnsToHide[hiddenCols.current.size]
-        const initialCol = findColumn(columnsProp, colToHide)
-        if (!initialCol) return resultsCol
-
-        sum -= getColumnWidth(initialCol?.width)
-        hiddenCols.current.add(colToHide)
-        lastHiddenColumn.current = initialCol
-        resultsCol = resultsCol.map((item) => (item.field === colToHide ? hideColumn(item) : item))
-      }
-
-      return resultsCol
-    }
-
-    // show columns
-    if (columnsProp.length > visibleColumnsLength) {
-      // early return to not calculate other columns
-      const lastHiddenColWidth = getColumnWidth(lastHiddenColumn.current?.width)
-      if (sum + lastHiddenColWidth > offsetWidth) {
-        return cols
-      }
-
-      let resultsCol = [...cols]
-      Array.from(hiddenCols.current).reverse().forEach((hiddenCol) => {
-        const initialCol = findColumn(columnsProp, hiddenCol)
-        if (!initialCol) return
-
-        const hiddenColWidth = getColumnWidth(initialCol.width)
-        if (hiddenColWidth + sum < offsetWidth) {
-          hiddenCols.current.delete(hiddenCol)
-          sum += hiddenColWidth
-          lastHiddenColumn.current = initialCol
-          resultsCol = resultsCol.map((item) => (item.field === hiddenCol ? initialCol : item))
-        }
-      })
-
-      return resultsCol
-    }
-
-    return cols
-  }
-
   const selectionValue: EuiTableSelectionType<T> = {
-    selectable: (item) => (getSelectableItems ? getSelectableItems?.(item) : true),
+    selectable: (item) =>
+      getSelectableItems ? getSelectableItems?.(item) : true,
     onSelectionChange: (selected: T[]) => {
       setSelection(selected)
-    }
+    },
   }
 
   const handleResetSelection = () => {
@@ -175,23 +208,23 @@ function ItemList<T extends { id: string; visible?: boolean }>({
   `
 
   return (
-    <div className="itemList" ref={containerTableRef}>
+    <div
+      className={`itemList ${hideSelectableCheckboxes ? 'hideSelectableCheckboxes' : ''}`}
+      ref={containerTableRef}
+    >
       <EuiInMemoryTable
         ref={tableRef}
         items={instances.filter(({ visible = true }) => visible)}
         itemId="id"
         loading={loading}
         message={message}
-        columns={columns ?? []}
+        columns={visibleColumns ?? []}
         rowProps={rowProps}
         sorting={{ sort }}
         selection={selectionValue}
         onWheel={onWheel}
         onTableChange={onTableChange}
-        className={cx(
-          'stickyHeader',
-          styles.table
-        )}
+        className={cx('stickyHeader', styles.table)}
         isSelectable
       />
 
@@ -200,12 +233,18 @@ function ItemList<T extends { id: string; visible?: boolean }>({
           selectionCount={selection.length}
           onCloseActionBar={handleResetSelection}
           actions={[
-            !hideExport ? <ExportAction<T> selection={selection} onExport={handleExport} subTitle={actionMsg('exported')} /> : null,
+            !hideExport ? (
+              <ExportAction<T>
+                selection={selection}
+                onExport={handleExport}
+                subTitle={actionMsg('exported')}
+              />
+            ) : null,
             <DeleteAction<T>
               selection={selection}
               onDelete={handleDelete}
               subTitle={actionMsg('deleted')}
-            />
+            />,
           ]}
           width={width}
         />

@@ -19,6 +19,7 @@ import { CloudCapiKeyService } from 'src/modules/cloud/capi-key/cloud-capi-key.s
 import { CloudSubscriptionApiService } from 'src/modules/cloud/subscription/cloud-subscription.api.service';
 import { BulkImportService } from 'src/modules/bulk-actions/bulk-import.service';
 import { DatabaseInfoService } from 'src/modules/database/database-info.service';
+import { FeatureService } from 'src/modules/feature/feature.service';
 
 @Injectable()
 export class CloudJobFactory {
@@ -32,16 +33,17 @@ export class CloudJobFactory {
     private readonly bulkImportService: BulkImportService,
     private readonly cloudCapiKeyService: CloudCapiKeyService,
     private readonly cloudSubscriptionApiService: CloudSubscriptionApiService,
+    private readonly featureService: FeatureService,
   ) {}
 
   async create(
     name: CloudJobName,
     data: any,
     options: {
-      sessionMetadata: SessionMetadata,
-      utm?: CloudRequestUtm,
-      capiCredentials?: CloudCapiAuthDto,
-      stateCallbacks?: ((self: CloudJob) => any)[],
+      sessionMetadata: SessionMetadata;
+      utm?: CloudRequestUtm;
+      capiCredentials?: CloudCapiAuthDto;
+      stateCallbacks?: ((self: CloudJob) => any)[];
     },
   ): Promise<CloudJob> {
     switch (name) {
@@ -62,6 +64,7 @@ export class CloudJobFactory {
             bulkImportService: this.bulkImportService,
             cloudCapiKeyService: this.cloudCapiKeyService,
             cloudSubscriptionApiService: this.cloudSubscriptionApiService,
+            featureService: this.featureService,
           },
         );
       case CloudJobName.CreateFreeDatabase:
@@ -80,6 +83,7 @@ export class CloudJobFactory {
             databaseInfoService: this.databaseInfoService,
             bulkImportService: this.bulkImportService,
             cloudCapiKeyService: this.cloudCapiKeyService,
+            featureService: this.featureService,
           },
         );
       case CloudJobName.ImportFreeDatabase:
@@ -96,6 +100,7 @@ export class CloudJobFactory {
             cloudDatabaseAnalytics: this.cloudDatabaseAnalytics,
             databaseService: this.databaseService,
             cloudCapiKeyService: this.cloudCapiKeyService,
+            featureService: this.featureService,
           },
         );
       default:

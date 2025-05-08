@@ -1,6 +1,12 @@
 import React from 'react'
 import { ipcThemeChange } from 'uiSrc/electron/utils'
-import { BrowserStorageItem, Theme, THEMES, THEME_MATCH_MEDIA_DARK, DEFAULT_THEME } from '../constants'
+import {
+  BrowserStorageItem,
+  Theme,
+  THEMES,
+  THEME_MATCH_MEDIA_DARK,
+  DEFAULT_THEME,
+} from '../constants'
 import { localStorageService, themeService } from '../services'
 
 interface Props {
@@ -10,8 +16,9 @@ interface Props {
 const THEME_NAMES = THEMES.map(({ value }) => value)
 
 export const defaultState = {
-  theme: DEFAULT_THEME || THEME_NAMES[1], // env configured theme or dark theme by default
-  usingSystemTheme: localStorageService.get(BrowserStorageItem.theme) === Theme.System,
+  theme: DEFAULT_THEME || Theme.System,
+  usingSystemTheme:
+    localStorageService.get(BrowserStorageItem.theme) === Theme.System,
   changeTheme: (themeValue: any) => {
     themeService.applyTheme(themeValue)
   },
@@ -24,9 +31,10 @@ export class ThemeProvider extends React.Component<Props> {
     super(props)
 
     const storedThemeValue = localStorageService.get(BrowserStorageItem.theme)
-    const theme = !storedThemeValue || !THEME_NAMES.includes(storedThemeValue)
-      ? defaultState.theme
-      : storedThemeValue
+    const theme =
+      !storedThemeValue || !THEME_NAMES.includes(storedThemeValue)
+        ? defaultState.theme
+        : storedThemeValue
     const usingSystemTheme = theme === Theme.System
 
     themeService.applyTheme(theme)
@@ -37,7 +45,10 @@ export class ThemeProvider extends React.Component<Props> {
     }
   }
 
-  getSystemTheme = () => (window.matchMedia?.(THEME_MATCH_MEDIA_DARK)?.matches ? Theme.Dark : Theme.Light)
+  getSystemTheme = () =>
+    window.matchMedia?.(THEME_MATCH_MEDIA_DARK)?.matches
+      ? Theme.Dark
+      : Theme.Light
 
   changeTheme = async (themeValue: any) => {
     let actualTheme = themeValue
@@ -49,9 +60,12 @@ export class ThemeProvider extends React.Component<Props> {
       actualTheme = this.getSystemTheme()
     }
 
-    this.setState({ theme: actualTheme, usingSystemTheme: themeValue === Theme.System }, () => {
-      themeService.applyTheme(themeValue)
-    })
+    this.setState(
+      { theme: actualTheme, usingSystemTheme: themeValue === Theme.System },
+      () => {
+        themeService.applyTheme(themeValue)
+      },
+    )
   }
 
   render() {

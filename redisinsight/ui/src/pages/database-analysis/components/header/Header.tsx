@@ -8,7 +8,8 @@ import {
   EuiFlexItem,
   EuiIcon,
   EuiButton,
-  EuiText, EuiHideFor
+  EuiText,
+  EuiHideFor,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -22,7 +23,10 @@ import { ConnectionType } from 'uiSrc/slices/interfaces'
 import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
 import { Nullable, comboBoxToArray, getDbIndex } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { ANALYZE_CLUSTER_TOOLTIP_MESSAGE, ANALYZE_TOOLTIP_MESSAGE } from 'uiSrc/constants/recommendations'
+import {
+  ANALYZE_CLUSTER_TOOLTIP_MESSAGE,
+  ANALYZE_TOOLTIP_MESSAGE,
+} from 'uiSrc/constants/recommendations'
 import { FormatedDate } from 'uiSrc/components'
 import { DEFAULT_DELIMITER } from 'uiSrc/constants'
 import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
@@ -44,14 +48,15 @@ const Header = (props: Props) => {
     selectedValue,
     onChangeSelectedAnalysis,
     progress = null,
-    analysisLoading
+    analysisLoading,
   } = props
 
   const { connectionType, provider } = useSelector(connectedInstanceSelector)
   const { instanceId } = useParams<{ instanceId: string }>()
   const dispatch = useDispatch()
 
-  const { treeViewDelimiter = [DEFAULT_DELIMITER] } = useSelector(appContextDbConfig)
+  const { treeViewDelimiter = [DEFAULT_DELIMITER] } =
+    useSelector(appContextDbConfig)
 
   const analysisOptions: EuiSuperSelectOption<any>[] = items.map((item) => {
     const { createdAt, id, db } = item
@@ -59,9 +64,7 @@ const Header = (props: Props) => {
       value: id,
       inputDisplay: (
         <>
-          <span>
-            {`${getDbIndex(db)} `}
-          </span>
+          <span>{`${getDbIndex(db)} `}</span>
           <FormatedDate date={createdAt || ''} />
         </>
       ),
@@ -75,7 +78,7 @@ const Header = (props: Props) => {
       eventData: {
         databaseId: instanceId,
         provider,
-      }
+      },
     })
     dispatch(createNewAnalysis(instanceId, comboBoxToArray(treeViewDelimiter)))
   }
@@ -92,10 +95,17 @@ const Header = (props: Props) => {
       >
         {!!items.length && (
           <EuiFlexItem grow={false}>
-            <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false} wrap>
+            <EuiFlexGroup
+              gutterSize="none"
+              alignItems="center"
+              responsive={false}
+              wrap
+            >
               <EuiHideFor sizes={['xs', 's']}>
                 <EuiFlexItem grow={false}>
-                  <EuiText className={styles.text} size="s">Report generated on:</EuiText>
+                  <EuiText className={styles.text} size="s">
+                    Report generated on:
+                  </EuiText>
                 </EuiFlexItem>
               </EuiHideFor>
               <EuiFlexItem>
@@ -112,21 +122,31 @@ const Header = (props: Props) => {
               {!!progress && (
                 <EuiFlexItem grow={false}>
                   <EuiText
-                    className={cx(styles.progress, styles.text, styles.progressContainer)}
+                    className={cx(
+                      styles.progress,
+                      styles.text,
+                      styles.progressContainer,
+                    )}
                     size="s"
                     data-testid="bulk-delete-summary"
                   >
                     <EuiText
-                      color={progress.total === progress.processed ? undefined : 'warning'}
+                      color={
+                        progress.total === progress.processed
+                          ? undefined
+                          : 'warning'
+                      }
                       className={cx(styles.progress, styles.text)}
                       size="s"
                       data-testid="analysis-progress"
                     >
                       {'Scanned '}
-                      {getApproximatePercentage(progress.total, progress.processed)}
+                      {getApproximatePercentage(
+                        progress.total,
+                        progress.processed,
+                      )}
                     </EuiText>
-                    {` (${numberWithSpaces(progress.processed)}`}
-                    /
+                    {` (${numberWithSpaces(progress.processed)}`}/
                     {numberWithSpaces(progress.total)}
                     {' keys) '}
                   </EuiText>
@@ -136,7 +156,11 @@ const Header = (props: Props) => {
           </EuiFlexItem>
         )}
         <EuiFlexItem grow={false}>
-          <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
+          <EuiFlexGroup
+            gutterSize="none"
+            alignItems="center"
+            responsive={false}
+          >
             <EuiFlexItem>
               <EuiButton
                 aria-label="New reports"

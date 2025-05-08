@@ -1,23 +1,19 @@
 import React, { ChangeEvent, useState, useEffect } from 'react'
 import cx from 'classnames'
-import {
-  EuiButtonIcon,
-  EuiFieldSearch,
-  keys,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiFieldSearch, keys } from '@elastic/eui'
 
 import { Maybe, Nullable } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
-  isOpen: boolean;
-  appliedValue: string;
-  initialValue?: string;
-  handleOpenState: (isOpen: boolean) => void;
-  fieldName: string;
-  prependSearchName: string;
-  onApply?: (value: string) => void;
-  searchValidation?: Maybe<(value: string) => string>;
+  isOpen: boolean
+  appliedValue: string
+  initialValue?: string
+  handleOpenState: (isOpen: boolean) => void
+  fieldName: string
+  prependSearchName: string
+  onApply?: (value: string) => void
+  searchValidation?: Maybe<(value: string) => string>
 }
 
 const TableColumnSearchTrigger = (props: Props) => {
@@ -28,7 +24,7 @@ const TableColumnSearchTrigger = (props: Props) => {
     appliedValue,
     initialValue = '',
     prependSearchName,
-    onApply = () => { },
+    onApply = () => {},
     searchValidation,
   } = props
   const [inputEl, setInputEl] = useState<Nullable<HTMLInputElement>>(null)
@@ -95,7 +91,8 @@ const TableColumnSearchTrigger = (props: Props) => {
           placeholder="Search"
           value={value || ''}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            handleChangeValue(e.target.value)}
+            handleChangeValue(e.target.value)
+          }
           data-testid="search"
         />
       </div>

@@ -1,5 +1,10 @@
 import {
-  Controller, Get, Query, UsePipes, ValidationPipe, Render,
+  Controller,
+  Get,
+  Query,
+  UsePipes,
+  ValidationPipe,
+  Render,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
@@ -9,9 +14,7 @@ import { CloudAuthService } from 'src/modules/cloud/auth/cloud-auth.service';
 @Controller('cloud')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class CloudAuthController {
-  constructor(
-    private readonly cloudAuthService: CloudAuthService,
-  ) {}
+  constructor(private readonly cloudAuthService: CloudAuthService) {}
 
   @Get('oauth/callback')
   @ApiEndpoint({

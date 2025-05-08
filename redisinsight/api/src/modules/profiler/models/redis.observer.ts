@@ -1,4 +1,8 @@
-import { ForbiddenException, Logger, ServiceUnavailableException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Logger,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { RedisErrorCodes } from 'src/constants';
 import { ProfilerClient } from 'src/modules/profiler/models/profiler.client';
 import { RedisObserverStatus } from 'src/modules/profiler/constants';
@@ -66,12 +70,18 @@ export class RedisObserver extends EventEmitter2 {
       this.profilerClientsListeners.set(profilerClient.id, []);
     }
 
-    const profilerListeners = this.profilerClientsListeners.get(profilerClient.id);
+    const profilerListeners = this.profilerClientsListeners.get(
+      profilerClient.id,
+    );
 
     this.shardsObservers.forEach((observer) => {
       const monitorListenerFn = (time, args, source, database) => {
         profilerClient.handleOnData({
-          time, args, database, source, shardOptions: observer.options,
+          time,
+          args,
+          database,
+          source,
+          shardOptions: observer.options,
         });
       };
       const endListenerFn = () => {
@@ -83,7 +93,9 @@ export class RedisObserver extends EventEmitter2 {
       observer.on('end', endListenerFn);
 
       profilerListeners.push(monitorListenerFn, endListenerFn);
-      this.logger.debug(`Subscribed to shard observer. Current listeners: ${observer.listenerCount('monitor')}`);
+      this.logger.debug(
+        `Subscribed to shard observer. Current listeners: ${observer.listenerCount('monitor')}`,
+      );
     });
     this.profilerClients.set(profilerClient.id, profilerClient);
 
@@ -93,10 +105,12 @@ export class RedisObserver extends EventEmitter2 {
 
   public removeShardsListeners(profilerClientId: string) {
     this.shardsObservers.forEach((observer) => {
-      (this.profilerClientsListeners.get(profilerClientId) || []).forEach((listener) => {
-        observer.removeListener('monitor', listener);
-        observer.removeListener('end', listener);
-      });
+      (this.profilerClientsListeners.get(profilerClientId) || []).forEach(
+        (listener) => {
+          observer.removeListener('monitor', listener);
+          observer.removeListener('end', listener);
+        },
+      );
 
       this.logger.debug(
         `Unsubscribed from from shard observer. Current listeners: ${observer.listenerCount('monitor')}`,
@@ -184,7 +198,9 @@ export class RedisObserver extends EventEmitter2 {
         throw new ForbiddenException(error.message);
       }
 
-      throw new ServiceUnavailableException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB);
+      throw new ServiceUnavailableException(
+        ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB,
+      );
     }
   }
 
@@ -192,7 +208,9 @@ export class RedisObserver extends EventEmitter2 {
    * Create and return shard observer using IORedis common client
    * @param redis
    */
-  static async createShardObserver(redis: RedisClient): Promise<IShardObserver> {
-    return await redis.monitor() as IShardObserver;
+  static async createShardObserver(
+    redis: RedisClient,
+  ): Promise<IShardObserver> {
+    return (await redis.monitor()) as IShardObserver;
   }
 }

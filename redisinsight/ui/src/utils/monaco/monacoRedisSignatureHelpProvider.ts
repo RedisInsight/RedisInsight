@@ -8,17 +8,22 @@ import { generateArgsNames } from 'uiSrc/utils/commands'
 export const getRedisSignatureHelpProvider = (
   commandsSpec: ICommands,
   commandsArray: string[],
-  isBlockedRef?: MutableRefObject<boolean>
+  isBlockedRef?: MutableRefObject<boolean>,
 ): monacoEditor.languages.SignatureHelpProvider =>
-// generate signature help provider
+  // generate signature help provider
   ({
     // signatureHelpTriggerCharacters: [' '],
     // signatureHelpRetriggerCharacters: [' '],
     provideSignatureHelp: (
-      model:monacoEditor.editor.IModel,
-      position:monacoEditor.Position,
+      model: monacoEditor.editor.IModel,
+      position: monacoEditor.Position,
     ) => {
-      const command = findCommandEarlier(model, position, commandsSpec, commandsArray)
+      const command = findCommandEarlier(
+        model,
+        position,
+        commandsSpec,
+        commandsArray,
+      )
 
       if (isNull(command) || isBlockedRef?.current) {
         return null
@@ -32,11 +37,13 @@ export const getRedisSignatureHelpProvider = (
         value: {
           activeParameter: 0,
           activeSignature: 0,
-          signatures: [{
-            label,
-            parameters: [{ label: `${command?.name}` }]
-          }]
-        }
+          signatures: [
+            {
+              label,
+              parameters: [{ label: `${command?.name}` }],
+            },
+          ],
+        },
       }
-    }
+    },
   })

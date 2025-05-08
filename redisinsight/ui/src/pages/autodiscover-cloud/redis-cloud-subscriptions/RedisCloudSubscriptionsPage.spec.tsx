@@ -7,8 +7,8 @@ import RedisCloudSubscriptionsPage from './RedisCloudSubscriptionsPage'
 jest.mock('uiSrc/slices/instances/cloud', () => ({
   ...jest.requireActual('uiSrc/slices/instances/cloud'),
   cloudSelector: jest.fn().mockReturnValue({
-    ...jest.requireActual('uiSrc/slices/instances/cloud').initialState
-  })
+    ...jest.requireActual('uiSrc/slices/instances/cloud').initialState,
+  }),
 }))
 
 /**
@@ -37,7 +37,7 @@ describe('RedisCloudSubscriptionsPage', () => {
           region: 'region',
           status: 'active',
         },
-      ]
+      ],
     })
     cloudSelector.mockImplementation(cloudSelectorMock)
     expect(render(<RedisCloudSubscriptionsPage />)).toBeTruthy()

@@ -7,6 +7,8 @@ const mockedProps = mock<Props>()
 
 describe('KeyDetailsHeaderTTL', () => {
   it('should render', () => {
-    expect(render(<KeyDetailsHeaderTTL {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<KeyDetailsHeaderTTL {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 })

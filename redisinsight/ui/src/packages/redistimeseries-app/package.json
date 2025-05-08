@@ -13,7 +13,6 @@
   "main": "./dist/index.js",
   "name": "redistimeseries",
   "version": "0.0.2",
-
   "scripts": {
     "dev": "vite -c ../vite.config.mjs"
   },
@@ -47,11 +46,10 @@
     "react-dom": "^17.0.2"
   },
   "resolutions": {
-    "@parcel/**/micromatch": "^4.0.8",
     "jest/**/micromatch": "^4.0.8",
-    "@parcel/**/braces": "^3.0.3",
     "trim": "0.0.3",
     "**/cross-spawn": "^7.0.5",
+    "@elastic/eui/**/prismjs": "~1.30.0",
     "**/semver": "^7.5.2"
   }
 }

@@ -4,15 +4,15 @@ import {
   EuiFlexItem,
   EuiFocusTrap,
   EuiForm,
-  EuiOutsideClickDetector,
   EuiTextArea,
   EuiWindowEvent,
-  keys
+  keys,
 } from '@elastic/eui'
 import cx from 'classnames'
 
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { isValidJSON } from '../../utils'
 import { JSONErrors } from '../../constants'
 
@@ -25,11 +25,7 @@ export interface Props {
 }
 
 const EditEntireItemAction = (props: Props) => {
-  const {
-    initialValue,
-    onCancel,
-    onSubmit
-  } = props
+  const { initialValue, onCancel, onSubmit } = props
   const [value, setValue] = useState<string>(initialValue)
   const [error, setError] = useState<Nullable<string>>(null)
 
@@ -54,7 +50,7 @@ const EditEntireItemAction = (props: Props) => {
   return (
     <div className={styles.row}>
       <div className={styles.fullWidthContainer}>
-        <EuiOutsideClickDetector onOutsideClick={() => onCancel?.()}>
+        <OutsideClickDetector onOutsideClick={() => onCancel?.()}>
           <div>
             <EuiWindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
             <EuiFocusTrap>
@@ -71,7 +67,9 @@ const EditEntireItemAction = (props: Props) => {
                     className={styles.fullWidthTextArea}
                     value={value}
                     placeholder="Enter JSON value"
-                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setValue(e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+                      setValue(e.target.value)
+                    }
                     data-testid="json-value"
                   />
                 </EuiFlexItem>
@@ -97,7 +95,12 @@ const EditEntireItemAction = (props: Props) => {
                 </div>
               </EuiForm>
               {error && (
-                <div className={cx(styles.errorMessage, styles.errorMessageForTextArea)}>
+                <div
+                  className={cx(
+                    styles.errorMessage,
+                    styles.errorMessageForTextArea,
+                  )}
+                >
                   <FieldMessage
                     scrollViewOnAppear
                     icon="alert"
@@ -109,7 +112,7 @@ const EditEntireItemAction = (props: Props) => {
               )}
             </EuiFocusTrap>
           </div>
-        </EuiOutsideClickDetector>
+        </OutsideClickDetector>
       </div>
     </div>
   )

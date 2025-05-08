@@ -36,9 +36,19 @@ export class LocalFeatureService extends FeatureService {
   /**
    * @inheritDoc
    */
-  async getByName(sessionMetadata: SessionMetadata, name: string): Promise<Feature> {
+  async getByName(
+    sessionMetadata: SessionMetadata,
+    name: string,
+  ): Promise<Feature> {
     try {
-      return await this.repository.get(sessionMetadata, name);
+      switch (knownFeatures[name]?.storage) {
+        case FeatureStorage.Database:
+          return await this.repository.get(sessionMetadata, name);
+        case FeatureStorage.Custom:
+          return knownFeatures[name].factory?.();
+        default:
+          return null;
+      }
     } catch (e) {
       return null;
     }
@@ -47,12 +57,21 @@ export class LocalFeatureService extends FeatureService {
   /**
    * @inheritDoc
    */
-  async isFeatureEnabled(sessionMetadata: SessionMetadata, name: string): Promise<boolean> {
+  async isFeatureEnabled(
+    sessionMetadata: SessionMetadata,
+    name: string,
+  ): Promise<boolean> {
     try {
-      // todo: add non-database features if needed
-      const model = await this.repository.get(sessionMetadata, name);
-
-      return model?.flag === true;
+      switch (knownFeatures[name]?.storage) {
+        case FeatureStorage.Database:
+          return (
+            (await this.repository.get(sessionMetadata, name))?.flag === true
+          );
+        case FeatureStorage.Custom:
+          return knownFeatures[name].factory?.()?.flag === true;
+        default:
+          return false;
+      }
     } catch (e) {
       return false;
     }
@@ -87,7 +106,7 @@ export class LocalFeatureService extends FeatureService {
           features[feature.name] = feature?.factory?.();
           break;
         default:
-          // do nothing
+        // do nothing
       }
     });
 
@@ -116,7 +135,8 @@ export class LocalFeatureService extends FeatureService {
       };
 
       const featuresFromDatabase = await this.repository.list(sessionMetadata);
-      const featuresConfig = await this.featuresConfigRepository.getOrCreate(sessionMetadata);
+      const featuresConfig =
+        await this.featuresConfigRepository.getOrCreate(sessionMetadata);
 
       this.logger.debug(
         'Recalculating features flags for new config',
@@ -147,11 +167,15 @@ export class LocalFeatureService extends FeatureService {
 
       // delete features
       await Promise.all(
-        actions.toDelete.map((feature) => this.repository.delete(sessionMetadata, feature.name)),
+        actions.toDelete.map((feature) =>
+          this.repository.delete(sessionMetadata, feature.name),
+        ),
       );
       // upsert modified features
       await Promise.all(
-        actions.toUpsert.map((feature) => this.repository.upsert(sessionMetadata, feature)),
+        actions.toUpsert.map((feature) =>
+          this.repository.upsert(sessionMetadata, feature),
+        ),
       );
 
       this.logger.debug(
@@ -163,20 +187,22 @@ export class LocalFeatureService extends FeatureService {
       this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculated, list);
 
       try {
-        this.analytics.sendFeatureFlagRecalculated(
-          sessionMetadata,
-          {
-            configVersion: (await this.featuresConfigRepository.getOrCreate(sessionMetadata))
-              ?.data?.version,
-            features: list.features,
-            force: await this.listOfForceFlags(),
-          },
-        );
+        this.analytics.sendFeatureFlagRecalculated(sessionMetadata, {
+          configVersion: (
+            await this.featuresConfigRepository.getOrCreate(sessionMetadata)
+          )?.data?.version,
+          features: list.features,
+          force: await this.listOfForceFlags(),
+        });
       } catch (e) {
         // ignore telemetry error
       }
     } catch (e) {
-      this.logger.error('Unable to recalculate features flags', e, sessionMetadata);
+      this.logger.error(
+        'Unable to recalculate features flags',
+        e,
+        sessionMetadata,
+      );
     }
   }
 

@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { classToClass } from 'src/utils';
@@ -32,10 +32,15 @@ export class LocalPluginStateRepository extends PluginStateRepository {
    * @param _
    * @param pluginState
    */
-  async upsert(_: SessionMetadata, pluginState: Partial<PluginState>): Promise<void> {
-    const entity = plainToClass(PluginStateEntity, pluginState);
+  async upsert(
+    _: SessionMetadata,
+    pluginState: Partial<PluginState>,
+  ): Promise<void> {
+    const entity = plainToInstance(PluginStateEntity, pluginState);
     try {
-      await this.repository.save(await this.modelEncryptor.encryptEntity(entity));
+      await this.repository.save(
+        await this.modelEncryptor.encryptEntity(entity),
+      );
     } catch (e) {
       if (e.code === 'SQLITE_CONSTRAINT') {
         throw new NotFoundException(ERROR_MESSAGES.COMMAND_EXECUTION_NOT_FOUND);
@@ -59,16 +64,28 @@ export class LocalPluginStateRepository extends PluginStateRepository {
   ): Promise<PluginState> {
     this.logger.debug('Getting plugin state', sessionMetadata);
 
-    const entity = await this.repository.findOneBy({ visualizationId, commandExecutionId });
+    const entity = await this.repository.findOneBy({
+      visualizationId,
+      commandExecutionId,
+    });
 
     if (!entity) {
-      this.logger.error(`Plugin state ${commandExecutionId}:${visualizationId} was not Found`, sessionMetadata);
+      this.logger.error(
+        `Plugin state ${commandExecutionId}:${visualizationId} was not Found`,
+        sessionMetadata,
+      );
       throw new NotFoundException(ERROR_MESSAGES.PLUGIN_STATE_NOT_FOUND);
     }
 
-    this.logger.debug(`Succeed to get plugin state ${commandExecutionId}:${visualizationId}`, sessionMetadata);
+    this.logger.debug(
+      `Succeed to get plugin state ${commandExecutionId}:${visualizationId}`,
+      sessionMetadata,
+    );
 
-    const decryptedEntity = await this.modelEncryptor.decryptEntity(entity, true);
+    const decryptedEntity = await this.modelEncryptor.decryptEntity(
+      entity,
+      true,
+    );
 
     return classToClass(PluginState, decryptedEntity);
   }

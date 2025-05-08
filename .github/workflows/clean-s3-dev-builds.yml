@@ -13,12 +13,11 @@ jobs:
   deleting:
     runs-on: ubuntu-latest
     steps:
-    - name: Deleting builds and test reports older than 7 days
-      continue-on-error: true
-      run: |
-        DATE=$(date +'%Y-%m-%d')
-        DATE_EPIRED=$(date -d "$DATE - 7 days" +'%Y-%m-%d')
+      - name: Deleting builds and test reports older than 7 days
+        continue-on-error: true
+        run: |
+          DATE=$(date +'%Y-%m-%d')
+          DATE_EPIRED=$(date -d "$DATE - 7 days" +'%Y-%m-%d')
 
-        aws s3 rm s3://${AWS_BUCKET_NAME_TEST}/public/dev-builds/${DATE_EPIRED} --recursive
-        aws s3 rm s3://${AWS_BUCKET_NAME_TEST}/public/test-reports/${DATE_EPIRED} --recursive
-
+          aws s3 rm s3://${AWS_BUCKET_NAME_TEST}/public/dev-builds/${DATE_EPIRED} --recursive
+          aws s3 rm s3://${AWS_BUCKET_NAME_TEST}/public/test-reports/${DATE_EPIRED} --recursive

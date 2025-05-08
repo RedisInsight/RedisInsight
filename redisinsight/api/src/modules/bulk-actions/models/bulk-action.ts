@@ -1,9 +1,15 @@
 import { debounce } from 'lodash';
-import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
+import {
+  BulkActionStatus,
+  BulkActionType,
+} from 'src/modules/bulk-actions/constants';
 import { BulkActionFilter } from 'src/modules/bulk-actions/models/bulk-action-filter';
 import { Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
-import { IBulkAction, IBulkActionRunner } from 'src/modules/bulk-actions/interfaces';
+import {
+  IBulkAction,
+  IBulkActionRunner,
+} from 'src/modules/bulk-actions/interfaces';
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
 import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 import { RedisClient, RedisClientNodeRole } from 'src/modules/redis/client';
@@ -32,7 +38,9 @@ export class BulkAction implements IBulkAction {
     private readonly socket: Socket,
     private readonly analytics: BulkActionsAnalytics,
   ) {
-    this.debounce = debounce(this.sendOverview.bind(this), 1000, { maxWait: 1000 });
+    this.debounce = debounce(this.sendOverview.bind(this), 1000, {
+      maxWait: 1000,
+    });
     this.status = BulkActionStatus.Initialized;
   }
 
@@ -43,15 +51,16 @@ export class BulkAction implements IBulkAction {
    */
   async prepare(redisClient: RedisClient, RunnerClassName) {
     if (this.status !== BulkActionStatus.Initialized) {
-      throw new Error(`Unable to prepare bulk action with "${this.status}" status`);
+      throw new Error(
+        `Unable to prepare bulk action with "${this.status}" status`,
+      );
     }
 
     this.status = BulkActionStatus.Preparing;
 
-    this.runners = (await redisClient.nodes(RedisClientNodeRole.PRIMARY)).map((node) => new RunnerClassName(
-      this,
-      node,
-    ));
+    this.runners = (await redisClient.nodes(RedisClientNodeRole.PRIMARY)).map(
+      (node) => new RunnerClassName(this, node),
+    );
 
     await Promise.all(this.runners.map((runner) => runner.prepareToStart()));
 
@@ -63,7 +72,9 @@ export class BulkAction implements IBulkAction {
    */
   async start() {
     if (this.status !== BulkActionStatus.Ready) {
-      throw new Error(`Unable to start bulk action with "${this.status}" status`);
+      throw new Error(
+        `Unable to start bulk action with "${this.status}" status`,
+      );
     }
 
     this.run().catch();
@@ -93,27 +104,37 @@ export class BulkAction implements IBulkAction {
    * Get overview for BulkAction with progress details and summary
    */
   getOverview(): IBulkActionOverview {
-    const progress = this.runners.map((runner) => runner.getProgress().getOverview())
-      .reduce((cur, prev) => ({
-        total: prev.total + cur.total,
-        scanned: prev.scanned + cur.scanned,
-      }), {
-        total: 0,
-        scanned: 0,
-      });
+    const progress = this.runners
+      .map((runner) => runner.getProgress().getOverview())
+      .reduce(
+        (cur, prev) => ({
+          total: prev.total + cur.total,
+          scanned: prev.scanned + cur.scanned,
+        }),
+        {
+          total: 0,
+          scanned: 0,
+        },
+      );
 
-    const summary = this.runners.map((runner) => runner.getSummary().getOverview())
-      .reduce((cur, prev) => ({
-        processed: prev.processed + cur.processed,
-        succeed: prev.succeed + cur.succeed,
-        failed: prev.failed + cur.failed,
-        errors: prev.errors.concat(cur.errors),
-      }), {
-        processed: 0,
-        succeed: 0,
-        failed: 0,
-        errors: [],
-      });
+    const summary = this.runners
+      .map((runner) => runner.getSummary().getOverview())
+      .reduce(
+        (cur, prev) => ({
+          processed: prev.processed + cur.processed,
+          succeed: prev.succeed + cur.succeed,
+          failed: prev.failed + cur.failed,
+          errors: prev.errors.concat(cur.errors),
+          keys: [...prev.keys, ...cur.keys],
+        }),
+        {
+          processed: 0,
+          succeed: 0,
+          failed: 0,
+          errors: [],
+          keys: [],
+        },
+      );
 
     summary.errors = summary.errors.slice(0, 500).map((error) => ({
       key: error.key.toString(),

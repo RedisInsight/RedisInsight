@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { EuiLoadingSpinner, } from '@elastic/eui'
+import { EuiLoadingSpinner } from '@elastic/eui'
 import cx from 'classnames'
 
 import { useDispatch } from 'react-redux'
@@ -11,7 +11,12 @@ import RejsonDynamicTypes from '../rejson-dynamic-types'
 import { JSONObjectProps, ObjectTypes, REJSONResponse } from '../interfaces'
 import { generatePath, getBrackets, wrapPath } from '../utils'
 
-import { AddItem, AddItemFieldAction, EditEntireItemAction, EditItemFieldAction } from '../components'
+import {
+  AddItem,
+  AddItemFieldAction,
+  EditEntireItemAction,
+  EditItemFieldAction,
+} from '../components'
 
 import styles from '../styles.module.scss'
 
@@ -35,10 +40,12 @@ const RejsonObject = (props: JSONObjectProps) => {
     handleAppendRejsonObjectItemAction,
     handleSetRejsonDataAction,
     path: currentFullPath,
-    value: currentValue
+    value: currentValue,
   } = props
 
-  const [path] = useState<string>(currentFullPath || generatePath(parentPath, keyName))
+  const [path] = useState<string>(
+    currentFullPath || generatePath(parentPath, keyName),
+  )
   const [value, setValue] = useState<any>(defaultValue)
   const [downloaded, setDownloaded] = useState<boolean>(isDownloaded)
   const [editEntireObject, setEditEntireObject] = useState<boolean>(false)
@@ -64,7 +71,13 @@ const RejsonObject = (props: JSONObjectProps) => {
     fetchObject()
   }, [])
 
-  const handleFormSubmit = ({ key, value }: { key?: string, value: string }) => {
+  const handleFormSubmit = ({
+    key,
+    value,
+  }: {
+    key?: string
+    value: string
+  }) => {
     setAddNewKeyValuePair(false)
 
     if (type === ObjectTypes.Array) {
@@ -86,15 +99,24 @@ const RejsonObject = (props: JSONObjectProps) => {
   const onClickEditEntireObject = () => {
     handleFetchVisualisationResults(path, true).then((data: REJSONResponse) => {
       if (isTruncatedString(data?.data)) {
-        return dispatch(addErrorNotification(AXIOS_ERROR_DISABLED_ACTION_WITH_TRUNCATED_DATA as AxiosError))
+        return dispatch(
+          addErrorNotification(
+            AXIOS_ERROR_DISABLED_ACTION_WITH_TRUNCATED_DATA as AxiosError,
+          ),
+        )
       }
 
       setEditEntireObject(true)
-      setValueOfEntireObject(typeof data.data === 'object' ? JSON.stringify(data.data, (_key, value) => (
-        typeof value === 'bigint'
-          ? value.toString()
-          : value
-      ), 4) : data.data)
+      setValueOfEntireObject(
+        typeof data.data === 'object'
+          ? JSON.stringify(
+              data.data,
+              (_key, value) =>
+                typeof value === 'bigint' ? value.toString() : value,
+              4,
+            )
+          : data.data,
+      )
     })
   }
 
@@ -139,7 +161,10 @@ const RejsonObject = (props: JSONObjectProps) => {
     <>
       <div className={styles.row} key={keyName + parentPath}>
         <div className={styles.rowContainer}>
-          <div className={styles.quotedKeyName} style={{ paddingLeft: `${leftPadding}em` }}>
+          <div
+            className={styles.quotedKeyName}
+            style={{ paddingLeft: `${leftPadding}em` }}
+          >
             <span
               className={cx(styles.quoted, styles.keyName)}
               onClick={() => onClickExpandCollapse(path)}
@@ -147,7 +172,9 @@ const RejsonObject = (props: JSONObjectProps) => {
             >
               {keyName}
             </span>
-            <div style={{ paddingLeft: '0.2em', display: 'inline-block' }}>:</div>
+            <div style={{ paddingLeft: '0.2em', display: 'inline-block' }}>
+              :
+            </div>
             {!isExpanded && !editEntireObject && (
               <div
                 className={styles.defaultFontExpandArray}
@@ -160,7 +187,11 @@ const RejsonObject = (props: JSONObjectProps) => {
                 {getBrackets(type, 'end')}
               </div>
             )}
-            {isExpanded && !editEntireObject && <span className={styles.defaultFontOpenIndex}>{getBrackets(type, 'start')}</span>}
+            {isExpanded && !editEntireObject && (
+              <span className={styles.defaultFontOpenIndex}>
+                {getBrackets(type, 'start')}
+              </span>
+            )}
           </div>
           {!editEntireObject && !loading && (
             <EditItemFieldAction
@@ -172,7 +203,10 @@ const RejsonObject = (props: JSONObjectProps) => {
             />
           )}
           {loading && (
-            <div className={styles.actionButtons} style={{ justifyContent: 'flex-end' }}>
+            <div
+              className={styles.actionButtons}
+              style={{ justifyContent: 'flex-end' }}
+            >
               <div className={styles.spinner}>
                 <EuiLoadingSpinner size="m" />
               </div>
@@ -198,7 +232,9 @@ const RejsonObject = (props: JSONObjectProps) => {
           onJsonKeyExpandAndCollapse={onJsonKeyExpandAndCollapse}
           handleSubmitUpdateValue={handleSubmitUpdateValue}
           handleFetchVisualisationResults={handleFetchVisualisationResults}
-          handleAppendRejsonObjectItemAction={handleAppendRejsonObjectItemAction}
+          handleAppendRejsonObjectItemAction={
+            handleAppendRejsonObjectItemAction
+          }
           handleSetRejsonDataAction={handleSetRejsonDataAction}
         />
       )}
@@ -208,6 +244,7 @@ const RejsonObject = (props: JSONObjectProps) => {
           onCancel={() => setAddNewKeyValuePair(false)}
           onSubmit={handleFormSubmit}
           leftPadding={leftPadding}
+          parentPath={path}
         />
       )}
       {isExpanded && !editEntireObject && (

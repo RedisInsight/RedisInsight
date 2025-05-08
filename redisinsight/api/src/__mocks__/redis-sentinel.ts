@@ -1,12 +1,11 @@
-import { SentinelMaster, SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel-master';
+import {
+  SentinelMaster,
+  SentinelMasterStatus,
+} from 'src/modules/redis-sentinel/models/sentinel-master';
 import { Endpoint } from 'src/common/models';
+import { CreateSentinelDatabasesDto } from 'src/modules/redis-sentinel/dto/create.sentinel.databases.dto';
 
-export const mockOtherSentinelsReply = [[
-  'ip',
-  '127.0.0.2',
-  'port',
-  '26379',
-]];
+export const mockOtherSentinelsReply = [['ip', '127.0.0.2', 'port', '26379']];
 
 export const mockOtherSentinelEndpoint: Endpoint = {
   host: '127.0.0.2',
@@ -27,7 +26,25 @@ export const mockSentinelMasterDto: SentinelMaster = {
   nodes: [mockOtherSentinelEndpoint],
 };
 
+export const mockCreateSentinelDatabasesDto = Object.assign(
+  new CreateSentinelDatabasesDto(),
+  {
+    ...mockOtherSentinelEndpoint,
+    masters: [
+      {
+        name: mockSentinelMasterDto.name,
+        alias: mockSentinelMasterDto.name,
+      },
+    ],
+  },
+);
+
 export const mockRedisSentinelAnalytics = jest.fn(() => ({
   sendGetSentinelMastersSucceedEvent: jest.fn(),
   sendGetSentinelMastersFailedEvent: jest.fn(),
+}));
+
+export const mockRedisSentinelService = jest.fn(() => ({
+  getSentinelMasters: jest.fn().mockResolvedValue([mockSentinelMasterDto]),
+  createSentinelDatabases: jest.fn().mockResolvedValue([]),
 }));

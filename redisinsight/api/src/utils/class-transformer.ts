@@ -1,8 +1,12 @@
-import { ClassTransformOptions, classToPlain, plainToClass } from 'class-transformer';
-import { ClassType } from 'class-transformer/ClassTransformer';
+import {
+  ClassTransformOptions,
+  instanceToPlain,
+  plainToInstance,
+} from 'class-transformer';
+import { ClassConstructor } from 'class-transformer/types/interfaces';
 
 export function classToClass<T, V>(
-  targetClass: ClassType<T>,
+  targetClass: ClassConstructor<T>,
   classInstance: V,
   options?: ClassTransformOptions,
 ): T {
@@ -16,7 +20,12 @@ export function classToClass<T, V>(
     ...options,
   };
 
-  return plainToClass(targetClass, classToPlain(classInstance, transformOptions), transformOptions);
+  return plainToInstance(
+    targetClass,
+    instanceToPlain(classInstance, transformOptions),
+    transformOptions,
+  );
 }
 
-export const cloneClassInstance = <V>(entity: V): V => classToClass(entity.constructor as ClassType<V>, entity);
+export const cloneClassInstance = <V>(entity: V): V =>
+  classToClass(entity.constructor as ClassConstructor<V>, entity);

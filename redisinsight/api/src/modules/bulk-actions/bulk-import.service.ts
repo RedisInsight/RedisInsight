@@ -1,7 +1,10 @@
 import { join } from 'path';
 import * as fs from 'fs-extra';
 import {
-  BadRequestException, Injectable, InternalServerErrorException, Logger,
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
 import { Readable } from 'stream';
 import * as readline from 'readline';
@@ -11,10 +14,17 @@ import { ClientMetadata } from 'src/common/models';
 import { splitCliCommandLine } from 'src/utils/cli-helper';
 import { BulkActionSummary } from 'src/modules/bulk-actions/models/bulk-action-summary';
 import { IBulkActionOverview } from 'src/modules/bulk-actions/interfaces/bulk-action-overview.interface';
-import { BulkActionStatus, BulkActionType } from 'src/modules/bulk-actions/constants';
+import {
+  BulkActionStatus,
+  BulkActionType,
+} from 'src/modules/bulk-actions/constants';
 import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
 import { UploadImportFileByPathDto } from 'src/modules/bulk-actions/dto/upload-import-file-by-path.dto';
-import { RedisClient, RedisClientCommand, RedisClientConnectionType } from 'src/modules/redis/client';
+import {
+  RedisClient,
+  RedisClientCommand,
+  RedisClientConnectionType,
+} from 'src/modules/redis/client';
 import config, { Config } from 'src/utils/config';
 import * as CombinedStream from 'combined-stream';
 import { DatabaseService } from 'src/modules/database/database.service';
@@ -34,28 +44,35 @@ export class BulkImportService {
     private readonly analytics: BulkActionsAnalytics,
   ) {}
 
-  private async executeBatch(client: RedisClient, batch: RedisClientCommand[]): Promise<BulkActionSummary> {
+  private async executeBatch(
+    client: RedisClient,
+    batch: RedisClientCommand[],
+  ): Promise<BulkActionSummary> {
     const result = new BulkActionSummary();
     result.addProcessed(batch.length);
 
     try {
       if (client.getConnectionType() === RedisClientConnectionType.CLUSTER) {
-        await Promise.all(batch.map(async (command) => {
-          try {
-            await client.call(command);
-            result.addSuccess(1);
-          } catch (e) {
-            result.addFailed(1);
-          }
-        }));
+        await Promise.all(
+          batch.map(async (command) => {
+            try {
+              await client.call(command);
+              result.addSuccess(1);
+            } catch (e) {
+              result.addFailed(1);
+            }
+          }),
+        );
       } else {
-        (await client.sendPipeline(batch, { unknownCommands: true })).forEach(([err]) => {
-          if (err) {
-            result.addFailed(1);
-          } else {
-            result.addSuccess(1);
-          }
-        });
+        (await client.sendPipeline(batch, { unknownCommands: true })).forEach(
+          ([err]) => {
+            if (err) {
+              result.addFailed(1);
+            } else {
+              result.addSuccess(1);
+            }
+          },
+        );
       }
     } catch (e) {
       this.logger.error('Unable to execute batch of commands', e);
@@ -69,7 +86,10 @@ export class BulkImportService {
    * @param clientMetadata
    * @param fileStream
    */
-  public async import(clientMetadata: ClientMetadata, fileStream: Readable): Promise<IBulkActionOverview> {
+  public async import(
+    clientMetadata: ClientMetadata,
+    fileStream: Readable,
+  ): Promise<IBulkActionOverview> {
     const startTime = Date.now();
     const result: IBulkActionOverview = {
       id: 'empty',
@@ -80,6 +100,7 @@ export class BulkImportService {
         succeed: 0,
         failed: 0,
         errors: [],
+        keys: [],
       },
       progress: null,
       filter: null,
@@ -107,7 +128,7 @@ export class BulkImportService {
 
         for await (const line of rl) {
           try {
-            const command = splitCliCommandLine((line.trim()));
+            const command = splitCliCommandLine(line.trim());
             if (batch.length >= BATCH_LIMIT) {
               batchResults.push(await this.executeBatch(client, batch));
               batch = [];
@@ -122,7 +143,11 @@ export class BulkImportService {
       } catch (e) {
         result.summary.errors.push(e);
         result.status = BulkActionStatus.Failed;
-        this.analytics.sendActionFailed(clientMetadata.sessionMetadata, result, e);
+        this.analytics.sendActionFailed(
+          clientMetadata.sessionMetadata,
+          result,
+          e,
+        );
       }
 
       batchResults.push(await this.executeBatch(client, batch));
@@ -138,7 +163,10 @@ export class BulkImportService {
       result.summary.failed += parseErrors;
 
       if (result.status === BulkActionStatus.Completed) {
-        this.analytics.sendActionSucceed(clientMetadata.sessionMetadata, result);
+        this.analytics.sendActionSucceed(
+          clientMetadata.sessionMetadata,
+          result,
+        );
       }
 
       client.disconnect();
@@ -147,7 +175,11 @@ export class BulkImportService {
     } catch (e) {
       this.logger.error('Unable to process an import file', e, clientMetadata);
       const exception = wrapHttpError(e);
-      this.analytics.sendActionFailed(clientMetadata.sessionMetadata, result, exception);
+      this.analytics.sendActionFailed(
+        clientMetadata.sessionMetadata,
+        result,
+        exception,
+      );
       client?.disconnect();
       throw exception;
     }
@@ -174,13 +206,20 @@ export class BulkImportService {
 
       const path = join(PATH_CONFIG.homedir, trimmedPath);
 
-      if (!path.startsWith(PATH_CONFIG.homedir) || !await fs.pathExists(path)) {
+      if (
+        !path.startsWith(PATH_CONFIG.homedir) ||
+        !(await fs.pathExists(path))
+      ) {
         throw new BadRequestException('Data file was not found');
       }
 
       return this.import(clientMetadata, fs.createReadStream(path));
     } catch (e) {
-      this.logger.error('Unable to process an import file path from tutorial', e, clientMetadata);
+      this.logger.error(
+        'Unable to process an import file path from tutorial',
+        e,
+        clientMetadata,
+      );
       throw wrapHttpError(e);
     }
   }
@@ -193,33 +232,52 @@ export class BulkImportService {
     clientMetadata: ClientMetadata,
   ): Promise<IBulkActionOverview> {
     try {
-      const database = await this.databaseService.get(clientMetadata.sessionMetadata, clientMetadata.databaseId);
-      const databaseModules = database.modules?.map((module) => module.name.toLowerCase()) || [];
+      const database = await this.databaseService.get(
+        clientMetadata.sessionMetadata,
+        clientMetadata.databaseId,
+      );
+      const databaseModules =
+        database.modules?.map((module) => module.name.toLowerCase()) || [];
 
-      const manifest = JSON.parse(fs.readFileSync(join(PATH_CONFIG.dataDir, 'manifest.json')).toString());
+      const manifest = JSON.parse(
+        fs.readFileSync(join(PATH_CONFIG.dataDir, 'manifest.json')).toString(),
+      );
 
       const commandsStream = CombinedStream.create();
 
       manifest.files.forEach((file) => {
         if (file.modules) {
-          const hasModule = file.modules.find((module) => databaseModules.includes(module));
+          const hasModule = file.modules.find((module) =>
+            databaseModules.includes(module),
+          );
 
           if (!hasModule) {
             return;
           }
         }
-        commandsStream.append(fs.createReadStream(join(PATH_CONFIG.dataDir, file.path)));
+        commandsStream.append(
+          fs.createReadStream(join(PATH_CONFIG.dataDir, file.path)),
+        );
         commandsStream.append('\r\n');
       });
 
       const result = await this.import(clientMetadata, commandsStream);
 
-      this.analytics.sendImportSamplesUploaded(clientMetadata.sessionMetadata, result);
+      this.analytics.sendImportSamplesUploaded(
+        clientMetadata.sessionMetadata,
+        result,
+      );
 
       return result;
     } catch (e) {
-      this.logger.error('Unable to process an import file path from tutorial', e, clientMetadata);
-      throw new InternalServerErrorException(ERROR_MESSAGES.COMMON_DEFAULT_IMPORT_ERROR);
+      this.logger.error(
+        'Unable to process an import file path from tutorial',
+        e,
+        clientMetadata,
+      );
+      throw new InternalServerErrorException(
+        ERROR_MESSAGES.COMMON_DEFAULT_IMPORT_ERROR,
+      );
     }
   }
 }

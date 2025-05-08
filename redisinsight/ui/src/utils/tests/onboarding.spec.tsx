@@ -8,8 +8,8 @@ jest.mock('uiSrc/slices/app/features', () => ({
   appFeatureOnboardingSelector: jest.fn().mockReturnValue({
     currentStep: 1,
     isActive: true,
-    totalSteps: 10
-  })
+    totalSteps: 10,
+  }),
 }))
 
 describe('renderOnboardingTourWithChild', () => {
@@ -17,11 +17,14 @@ describe('renderOnboardingTourWithChild', () => {
     render(
       <div>
         {renderOnboardingTourWithChild(
-          (<span data-testid="span" />),
-          { options: ONBOARDING_FEATURES.BROWSER_PAGE, anchorPosition: 'downLeft' },
-          true
+          <span data-testid="span" />,
+          {
+            options: ONBOARDING_FEATURES.BROWSER_PAGE,
+            anchorPosition: 'downLeft',
+          },
+          true,
         )}
-      </div>
+      </div>,
     )
 
     expect(screen.getByTestId('span')).toBeInTheDocument()
@@ -32,11 +35,14 @@ describe('renderOnboardingTourWithChild', () => {
     render(
       <div>
         {renderOnboardingTourWithChild(
-          (<span data-testid="span" />),
-          { options: ONBOARDING_FEATURES.BROWSER_PAGE, anchorPosition: 'downLeft' },
-          false
+          <span data-testid="span" />,
+          {
+            options: ONBOARDING_FEATURES.BROWSER_PAGE,
+            anchorPosition: 'downLeft',
+          },
+          false,
         )}
-      </div>
+      </div>,
     )
 
     expect(screen.getByTestId('span')).toBeInTheDocument()

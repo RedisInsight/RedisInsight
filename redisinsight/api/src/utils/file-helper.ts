@@ -7,12 +7,9 @@ import { join } from 'path';
  * Download file
  */
 export const getFile = async (url: string): Promise<ArrayBuffer> => {
-  const { data } = await axios.get(
-    url,
-    {
-      responseType: 'arraybuffer',
-    },
-  );
+  const { data } = await axios.get(url, {
+    responseType: 'arraybuffer',
+  });
 
   return data;
 };
@@ -20,7 +17,10 @@ export const getFile = async (url: string): Promise<ArrayBuffer> => {
 /**
  * Purge folder and extract archive
  */
-export const updateFolderFromArchive = async (path: string, data: any): Promise<void> => {
+export const updateFolderFromArchive = async (
+  path: string,
+  data: any,
+): Promise<void> => {
   await fs.remove(path);
 
   await fs.ensureDir(path);
@@ -32,7 +32,11 @@ export const updateFolderFromArchive = async (path: string, data: any): Promise<
 /**
  * Exract file in folder
  */
-export const updateFile = async (path: string, fileName: string, data: any): Promise<void> => {
+export const updateFile = async (
+  path: string,
+  fileName: string,
+  data: any,
+): Promise<void> => {
   await fs.ensureDir(path);
 
   const buildInfoPath = join(path, fileName);

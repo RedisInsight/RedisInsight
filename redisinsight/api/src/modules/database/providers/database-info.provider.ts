@@ -10,26 +10,39 @@ import { get, isNil } from 'lodash';
 import { RedisDatabaseInfoResponse } from 'src/modules/database/dto/redis-info.dto';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
-import { convertArrayReplyToObject, convertMultilineReplyToObject } from 'src/modules/redis/utils';
-import { RedisClient, RedisClientConnectionType } from 'src/modules/redis/client';
+import {
+  convertArrayReplyToObject,
+  convertMultilineReplyToObject,
+} from 'src/modules/redis/utils';
+import {
+  RedisClient,
+  RedisClientConnectionType,
+} from 'src/modules/redis/client';
 import { SessionMetadata } from 'src/common/models';
 
 @Injectable()
 export class DatabaseInfoProvider {
-  constructor(
-    private readonly featureService: FeatureService,
-  ) {}
+  constructor(private readonly featureService: FeatureService) {}
 
-  public async filterRawModules(sessionMetadata: SessionMetadata, modules: any[]): Promise<any[]> {
+  public async filterRawModules(
+    sessionMetadata: SessionMetadata,
+    modules: any[],
+  ): Promise<any[]> {
     let filteredModules = modules;
 
     try {
-      const filterModules = await this.featureService.getByName(sessionMetadata, KnownFeatures.RedisModuleFilter);
+      const filterModules = await this.featureService.getByName(
+        sessionMetadata,
+        KnownFeatures.RedisModuleFilter,
+      );
 
       if (filterModules?.flag && filterModules.data?.hideByName?.length) {
         filteredModules = modules.filter(({ name }) => {
-          const match = filterModules.data.hideByName.find((filter) => filter.expression
-            && (new RegExp(filter.expression, filter.options)).test(name));
+          const match = filterModules.data.hideByName.find(
+            (filter) =>
+              filter.expression &&
+              new RegExp(filter.expression, filter.options).test(name),
+          );
 
           return !match;
         });
@@ -46,12 +59,13 @@ export class DatabaseInfoProvider {
    * In case when "module" command is not available use "command info" approach
    * @param client
    */
-  public async determineDatabaseModules(client: RedisClient): Promise<AdditionalRedisModule[]> {
+  public async determineDatabaseModules(
+    client: RedisClient,
+  ): Promise<AdditionalRedisModule[]> {
     try {
-      const reply = await client.call(
-        ['module', 'list'],
-        { replyEncoding: 'utf8' },
-      ) as string[][];
+      const reply = (await client.call(['module', 'list'], {
+        replyEncoding: 'utf8',
+      })) as string[][];
       const modules = await this.filterRawModules(
         client.clientMetadata.sessionMetadata,
         reply.map((module: any[]) => convertArrayReplyToObject(module)),
@@ -88,30 +102,39 @@ export class DatabaseInfoProvider {
    * @param client
    * @private
    */
-  public async determineDatabaseModulesUsingInfo(client: RedisClient): Promise<AdditionalRedisModule[]> {
+  public async determineDatabaseModulesUsingInfo(
+    client: RedisClient,
+  ): Promise<AdditionalRedisModule[]> {
     const modules: AdditionalRedisModule[] = [];
-    await Promise.all(Array.from(REDIS_MODULES_COMMANDS, async ([moduleName, commands]) => {
-      try {
-        let commandsInfo = await client.call(
-          ['command', 'info', ...commands],
-          { replyEncoding: 'utf8' },
-        ) as string[];
-        commandsInfo = commandsInfo.filter((info) => !isNil(info));
-        if (commandsInfo.length) {
-          modules.push({ name: moduleName });
+    await Promise.all(
+      Array.from(REDIS_MODULES_COMMANDS, async ([moduleName, commands]) => {
+        try {
+          let commandsInfo = (await client.call(
+            ['command', 'info', ...commands],
+            { replyEncoding: 'utf8' },
+          )) as string[];
+          commandsInfo = commandsInfo.filter((info) => !isNil(info));
+          if (commandsInfo.length) {
+            modules.push({ name: moduleName });
+          }
+        } catch (e) {
+          // continue regardless of error
         }
-      } catch (e) {
-        // continue regardless of error
-      }
-    }));
+      }),
+    );
 
-    return await this.filterRawModules(client.clientMetadata.sessionMetadata, modules);
+    return await this.filterRawModules(
+      client.clientMetadata.sessionMetadata,
+      modules,
+    );
   }
 
   public async getRedisDBSize(client: RedisClient): Promise<number> {
     if (client.getConnectionType() === RedisClientConnectionType.CLUSTER) {
       const nodesResult: number[] = await Promise.all(
-        (await client.nodes()).map(async (node) => this.getRedisNodeDBSize(node)),
+        (await client.nodes()).map(async (node) =>
+          this.getRedisNodeDBSize(node),
+        ),
       );
       return nodesResult.reduce((ac, cur) => ac + cur, 0);
     }
@@ -150,7 +173,9 @@ export class DatabaseInfoProvider {
         uptimeInSeconds:
           parseInt(get(serverInfo, 'uptime_in_seconds'), 10) || undefined,
         hitRatio: this.getRedisHitRatio(statsInfo),
-        cashedScripts: parseInt(get(memoryInfo, 'number_of_cached_scripts'), 10) || undefined,
+        cashedScripts:
+          parseInt(get(memoryInfo, 'number_of_cached_scripts'), 10) ||
+          undefined,
         server: serverInfo,
       };
     } catch (error) {
@@ -162,7 +187,9 @@ export class DatabaseInfoProvider {
     client: RedisClient,
   ): Promise<RedisDatabaseInfoResponse> {
     const nodesResult: RedisDatabaseInfoResponse[] = await Promise.all(
-      (await client.nodes()).map(async (node) => this.getRedisNodeGeneralInfo(node)),
+      (await client.nodes()).map(async (node) =>
+        this.getRedisNodeGeneralInfo(node),
+      ),
     );
     return nodesResult.reduce((prev, cur) => ({
       version: cur.version,
@@ -172,12 +199,14 @@ export class DatabaseInfoProvider {
     }));
   }
 
-  public async getDatabasesCount(client: RedisClient, keyspaceInfo?: object): Promise<number> {
+  public async getDatabasesCount(
+    client: RedisClient,
+    keyspaceInfo?: object,
+  ): Promise<number> {
     try {
-      const reply = await client.call(
-        ['config', 'get', 'databases'],
-        { replyEncoding: 'utf8' },
-      ) as string;
+      const reply = (await client.call(['config', 'get', 'databases'], {
+        replyEncoding: 'utf8',
+      })) as string;
       return reply.length ? parseInt(reply[1], 10) : 1;
     } catch (e) {
       return this.getDatabaseCountFromKeyspace(keyspaceInfo);
@@ -186,10 +215,9 @@ export class DatabaseInfoProvider {
 
   public async getClientListInfo(client: RedisClient): Promise<any[]> {
     try {
-      const clientListResponse = await client.call(
-        ['client', 'list'],
-        { replyEncoding: 'utf8' },
-      ) as string;
+      const clientListResponse = (await client.call(['client', 'list'], {
+        replyEncoding: 'utf8',
+      })) as string;
 
       return clientListResponse
         .split(/\r?\n/)
@@ -246,9 +274,9 @@ export class DatabaseInfoProvider {
 
   private async getRedisNodeDBSize(client: RedisClient): Promise<number> {
     try {
-      const total = await client.sendCommand(['dbsize'], {
+      const total = (await client.sendCommand(['dbsize'], {
         replyEncoding: 'utf8',
-      }) as string;
+      })) as string;
       return parseInt(total, 10);
     } catch (e) {
       throw catchAclError(e);

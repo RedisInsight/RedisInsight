@@ -191,11 +191,10 @@ describe('Validations utils', () => {
       ['my [new] {cert}', 'my [new] cert'],
       ['MY-0123456789_cert', 'MY-0123456789_cert'],
       ['my-ффффффф[new]_фффф{cert}', 'my-[new]_cert'],
-    ])('for input: %s (input), should be output: %s',
-      (input, expected) => {
-        const result = validateCertName(input)
-        expect(result).toBe(expected)
-      })
+    ])('for input: %s (input), should be output: %s', (input, expected) => {
+      const result = validateCertName(input)
+      expect(result).toBe(expected)
+    })
   })
 
   describe('validateRefreshRateNumber', () => {
@@ -212,12 +211,10 @@ describe('Validations utils', () => {
       [text10, '348.3'],
       [text12, '32'],
       [text13, '5'],
-
-    ])('for input: %s (input), should be output: %s',
-      (input, expected) => {
-        const result = validateRefreshRateNumber(input)
-        expect(result).toBe(expected)
-      })
+    ])('for input: %s (input), should be output: %s', (input, expected) => {
+      const result = validateRefreshRateNumber(input)
+      expect(result).toBe(expected)
+    })
   })
 
   describe('errorValidateRefreshRateNumber', () => {
@@ -234,12 +231,10 @@ describe('Validations utils', () => {
       [validateRefreshRateNumber(text10), false],
       [validateRefreshRateNumber(text12), false],
       [validateRefreshRateNumber(text13), false],
-
-    ])('for input: %s (input), should be output: %s',
-      (input, expected) => {
-        const result = errorValidateRefreshRateNumber(input)
-        expect(result).toBe(expected)
-      })
+    ])('for input: %s (input), should be output: %s', (input, expected) => {
+      const result = errorValidateRefreshRateNumber(input)
+      expect(result).toBe(expected)
+    })
   })
 
   describe('errorValidateNegativeInteger', () => {
@@ -256,12 +251,10 @@ describe('Validations utils', () => {
       [validateRefreshRateNumber(text10), true],
       [validateRefreshRateNumber(text12), false],
       [validateRefreshRateNumber(text13), false],
-
-    ])('for input: %s (input), should be output: %s',
-      (input, expected) => {
-        const result = errorValidateNegativeInteger(input)
-        expect(result).toBe(expected)
-      })
+    ])('for input: %s (input), should be output: %s', (input, expected) => {
+      const result = errorValidateNegativeInteger(input)
+      expect(result).toBe(expected)
+    })
   })
 
   describe('validateConsumerGroupId', () => {
@@ -270,11 +263,10 @@ describe('Validations utils', () => {
       ['123-1', '123-1'],
       ['$', '$'],
       ['11.zx-1', '11-1'],
-    ])('for input: %s (input), should be output: %s',
-      (input, expected) => {
-        const result = validateConsumerGroupId(input)
-        expect(result).toBe(expected)
-      })
+    ])('for input: %s (input), should be output: %s', (input, expected) => {
+      const result = validateConsumerGroupId(input)
+      expect(result).toBe(expected)
+    })
   })
 
   describe('validateNumber', () => {
@@ -287,11 +279,10 @@ describe('Validations utils', () => {
       ['euiejk', ''],
       ['0', '0'],
       ['31231231231', '31231231231'],
-    ])('for input: %s (input), should be output: %s',
-      (input, expected) => {
-        const result = validateNumber(input)
-        expect(result).toBe(expected)
-      })
+    ])('for input: %s (input), should be output: %s', (input, expected) => {
+      const result = validateNumber(input)
+      expect(result).toBe(expected)
+    })
   })
 
   describe('validateTimeoutNumber', () => {
@@ -304,11 +295,10 @@ describe('Validations utils', () => {
       ['euiejk', ''],
       ['0', ''],
       ['1000001', '1000000'],
-    ])('for input: %s (input), should be output: %s',
-      (input, expected) => {
-        const result = validateTimeoutNumber(input)
-        expect(result).toBe(expected)
-      })
+    ])('for input: %s (input), should be output: %s', (input, expected) => {
+      const result = validateTimeoutNumber(input)
+      expect(result).toBe(expected)
+    })
   })
 
   describe('checkTimestamp', () => {

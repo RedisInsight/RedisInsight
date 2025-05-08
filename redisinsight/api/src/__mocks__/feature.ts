@@ -1,7 +1,9 @@
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
 import {
   FeatureConfig,
-  FeatureConfigFilter, FeatureConfigFilterAnd, FeatureConfigFilterOr,
+  FeatureConfigFilter,
+  FeatureConfigFilterAnd,
+  FeatureConfigFilterOr,
   FeaturesConfig,
   FeaturesConfigData,
 } from 'src/modules/feature/model/features-config';
@@ -82,60 +84,79 @@ export const mockFeaturesConfigJsonComplex = {
 
 export const mockFeaturesConfigData = Object.assign(new FeaturesConfigData(), {
   ...mockFeaturesConfigJson,
-  features: new Map(Object.entries({
-    [KnownFeatures.InsightsRecommendations]: Object.assign(new FeatureConfig(), {
-      ...mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations],
-      filters: [
-        Object.assign(new FeatureConfigFilter(), {
-          ...mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations].filters[0],
-        }),
-      ],
-    }),
-  })),
-});
-
-export const mockFeaturesConfigDataComplex = Object.assign(new FeaturesConfigData(), {
-  ...mockFeaturesConfigJson,
-  features: new Map(Object.entries({
-    [KnownFeatures.InsightsRecommendations]: Object.assign(new FeatureConfig(), {
-      ...mockFeaturesConfigJson.features[KnownFeatures.InsightsRecommendations],
-      filters: [
-        Object.assign(new FeatureConfigFilterOr(), {
-          or: [
+  features: new Map(
+    Object.entries({
+      [KnownFeatures.InsightsRecommendations]: Object.assign(
+        new FeatureConfig(),
+        {
+          ...mockFeaturesConfigJson.features[
+            KnownFeatures.InsightsRecommendations
+          ],
+          filters: [
             Object.assign(new FeatureConfigFilter(), {
-              name: 'settings.testValue',
-              value: 'test',
-              cond: 'eq',
-            }),
-            Object.assign(new FeatureConfigFilterAnd(), {
-              and: [
-                Object.assign(new FeatureConfigFilter(), {
-                  name: 'agreements.analytics',
-                  value: true,
-                  cond: 'eq',
-                }),
-                Object.assign(new FeatureConfigFilterOr(), {
-                  or: [
-                    Object.assign(new FeatureConfigFilter(), {
-                      name: 'settings.scanThreshold',
-                      value: mockAppSettings.scanThreshold,
-                      cond: 'eq',
-                    }),
-                    Object.assign(new FeatureConfigFilter(), {
-                      name: 'settings.batchSize',
-                      value: mockAppSettings.batchSize,
-                      cond: 'eq',
-                    }),
-                  ],
-                }),
-              ],
+              ...mockFeaturesConfigJson.features[
+                KnownFeatures.InsightsRecommendations
+              ].filters[0],
             }),
           ],
-        }),
-      ],
+        },
+      ),
     }),
-  })),
+  ),
 });
+
+export const mockFeaturesConfigDataComplex = Object.assign(
+  new FeaturesConfigData(),
+  {
+    ...mockFeaturesConfigJson,
+    features: new Map(
+      Object.entries({
+        [KnownFeatures.InsightsRecommendations]: Object.assign(
+          new FeatureConfig(),
+          {
+            ...mockFeaturesConfigJson.features[
+              KnownFeatures.InsightsRecommendations
+            ],
+            filters: [
+              Object.assign(new FeatureConfigFilterOr(), {
+                or: [
+                  Object.assign(new FeatureConfigFilter(), {
+                    name: 'settings.testValue',
+                    value: 'test',
+                    cond: 'eq',
+                  }),
+                  Object.assign(new FeatureConfigFilterAnd(), {
+                    and: [
+                      Object.assign(new FeatureConfigFilter(), {
+                        name: 'agreements.analytics',
+                        value: true,
+                        cond: 'eq',
+                      }),
+                      Object.assign(new FeatureConfigFilterOr(), {
+                        or: [
+                          Object.assign(new FeatureConfigFilter(), {
+                            name: 'settings.scanThreshold',
+                            value: mockAppSettings.scanThreshold,
+                            cond: 'eq',
+                          }),
+                          Object.assign(new FeatureConfigFilter(), {
+                            name: 'settings.batchSize',
+                            value: mockAppSettings.batchSize,
+                            cond: 'eq',
+                          }),
+                        ],
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          },
+        ),
+      }),
+    ),
+  },
+);
 
 export const mockFeaturesConfig = Object.assign(new FeaturesConfig(), {
   controlNumber: mockControlNumber,
@@ -147,15 +168,21 @@ export const mockFeaturesConfigComplex = Object.assign(new FeaturesConfig(), {
   data: mockFeaturesConfigDataComplex,
 });
 
-export const mockFeaturesConfigEntity = Object.assign(new FeaturesConfigEntity(), {
-  ...classToClass(FeaturesConfigEntity, mockFeaturesConfig),
-  id: mockFeaturesConfigId,
-});
+export const mockFeaturesConfigEntity = Object.assign(
+  new FeaturesConfigEntity(),
+  {
+    ...classToClass(FeaturesConfigEntity, mockFeaturesConfig),
+    id: mockFeaturesConfigId,
+  },
+);
 
-export const mockFeaturesConfigEntityComplex = Object.assign(new FeaturesConfigEntity(), {
-  ...classToClass(FeaturesConfigEntity, mockFeaturesConfigComplex),
-  id: mockFeaturesConfigId,
-});
+export const mockFeaturesConfigEntityComplex = Object.assign(
+  new FeaturesConfigEntity(),
+  {
+    ...classToClass(FeaturesConfigEntity, mockFeaturesConfigComplex),
+    id: mockFeaturesConfigId,
+  },
+);
 
 export const mockFeature = Object.assign(new Feature(), {
   name: KnownFeatures.InsightsRecommendations,
@@ -182,6 +209,11 @@ export const mockFeatureSso = Object.assign(new Feature(), {
       },
     },
   },
+});
+
+export const mockFeatureDatabaseManagement = Object.assign(new Feature(), {
+  name: KnownFeatures.DatabaseManagement,
+  flag: true,
 });
 
 export const mockFeatureRedisClient = Object.assign(new Feature(), {
@@ -247,6 +279,8 @@ export const mockInsightsRecommendationsFlagStrategy = {
 };
 
 export const mockFeatureFlagProvider = jest.fn(() => ({
-  getStrategy: jest.fn().mockResolvedValue(mockInsightsRecommendationsFlagStrategy),
+  getStrategy: jest
+    .fn()
+    .mockResolvedValue(mockInsightsRecommendationsFlagStrategy),
   calculate: jest.fn().mockResolvedValue(mockFeature),
 }));

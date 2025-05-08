@@ -6,12 +6,20 @@ import DeleteAction from './DeleteAction'
 
 describe('DeleteAction', () => {
   it('should render', () => {
-    expect(render(<DeleteAction subTitle="" selection={[]} onDelete={jest.fn()} />)).toBeTruthy()
+    expect(
+      render(<DeleteAction subTitle="" selection={[]} onDelete={jest.fn()} />),
+    ).toBeTruthy()
   })
 
   it('should display instances that are going to be deleted', () => {
     const onDelete = jest.fn()
-    render(<DeleteAction subTitle="" selection={INSTANCES_MOCK} onDelete={onDelete} />)
+    render(
+      <DeleteAction
+        subTitle=""
+        selection={INSTANCES_MOCK}
+        onDelete={onDelete}
+      />,
+    )
 
     fireEvent.click(screen.getByTestId('delete-btn'))
 

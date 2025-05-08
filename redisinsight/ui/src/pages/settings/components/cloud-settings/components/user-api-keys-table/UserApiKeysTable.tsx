@@ -1,9 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import {
   EuiBasicTableColumn,
-  EuiButton,
-  EuiButtonEmpty,
-  EuiButtonIcon,
   EuiIcon,
   EuiInMemoryTable,
   EuiLink,
@@ -30,6 +27,12 @@ import { removeCapiKeyAction } from 'uiSrc/slices/oauth/cloud'
 
 import CloudStars from 'uiSrc/assets/img/oauth/stars.svg?react'
 
+import {
+  EmptyButton,
+  IconButton,
+  PrimaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -164,8 +167,8 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
             content="Copy API Key Name"
             anchorClassName={styles.copyBtnAnchor}
           >
-            <EuiButtonIcon
-              iconType="copy"
+            <IconButton
+              icon={CopyIcon}
               aria-label="Copy API key"
               onClick={() => handleCopy(name || '')}
               style={{ marginRight: 4 }}
@@ -231,8 +234,8 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
           <div className={styles.actions}>
             <OAuthSsoHandlerDialog>
               {(socialCloudHandlerClick) => (
-                <EuiButtonEmpty
-                  size="s"
+                <EmptyButton
+                  size="small"
                   color="ghost"
                   className={styles.autodiscoverBtn}
                   onClick={(e: React.MouseEvent) =>
@@ -244,15 +247,13 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
                   data-testid="autodiscover-btn"
                 >
                   Autodiscover
-                </EuiButtonEmpty>
+                </EmptyButton>
               )}
             </OAuthSsoHandlerDialog>
             <OAuthSsoHandlerDialog>
               {(ssoCloudHandlerClick) => (
-                <EuiButton
-                  fill
-                  size="s"
-                  color="secondary"
+                <PrimaryButton
+                  size="small"
                   onClick={(e: React.MouseEvent) =>
                     ssoCloudHandlerClick(e, {
                       source: OAuthSocialSource.SettingsPage,
@@ -262,7 +263,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
                   data-testid="create-cloud-db-btn"
                 >
                   Create Redis Cloud database
-                </EuiButton>
+                </PrimaryButton>
               )}
             </OAuthSsoHandlerDialog>
           </div>

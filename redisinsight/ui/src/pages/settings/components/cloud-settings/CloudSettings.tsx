@@ -7,17 +7,21 @@ import {
   EuiSpacer,
   EuiText,
   EuiTitle,
-  EuiButton,
   EuiPopover,
 } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
+import { DeleteIcon } from 'uiSrc/components/base/icons'
 import {
   getCapiKeysAction,
   oauthCapiKeysSelector,
   removeAllCapiKeysAction,
 } from 'uiSrc/slices/oauth/cloud'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  DestructiveButton,
+  PrimaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import UserApiKeysTable from './components/user-api-keys-table'
 
 import styles from './styles.module.scss'
@@ -83,16 +87,14 @@ const CloudSettings = () => {
             panelPaddingSize="l"
             panelClassName={styles.deletePopover}
             button={
-              <EuiButton
-                fill
-                size="s"
-                color="secondary"
+              <PrimaryButton
+                size="small"
                 onClick={handleClickDelete}
                 disabled={loading || !data?.length}
                 data-testid="delete-key-btn"
               >
                 Remove all API keys
-              </EuiButton>
+              </PrimaryButton>
             }
           >
             <div className={styles.popoverDeleteContainer}>
@@ -112,17 +114,15 @@ const CloudSettings = () => {
               </EuiText>
               <EuiSpacer />
               <div className={styles.popoverFooter}>
-                <EuiButton
-                  fill
-                  size="s"
-                  color="warning"
-                  iconType="trash"
+                <DestructiveButton
+                  size="small"
+                  icon={DeleteIcon}
                   onClick={handleDeleteAllKeys}
                   className={styles.popoverDeleteBtn}
                   data-testid="delete-key-confirm-btn"
                 >
                   Remove all API keys
-                </EuiButton>
+                </DestructiveButton>
               </div>
             </div>
           </EuiPopover>

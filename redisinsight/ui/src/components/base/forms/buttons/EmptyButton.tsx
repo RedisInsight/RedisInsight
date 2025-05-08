@@ -19,7 +19,7 @@ export const EmptyButton = ({
 }: ButtonProps) => (
   <TextButton {...rest}>
     <ButtonIcon
-      side="left"
+      buttonSide="left"
       icon={icon}
       iconSide={iconSide}
       loading={loading}
@@ -27,7 +27,7 @@ export const EmptyButton = ({
     />
     {children}
     <ButtonIcon
-      side="right"
+      buttonSide="right"
       icon={icon}
       iconSide={iconSide}
       loading={loading}

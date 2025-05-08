@@ -1,23 +1,19 @@
 import { Button } from '@redislabsdev/redis-ui-components'
 import React from 'react'
-import { LoaderLargeIcon } from '@redislabsdev/redis-ui-icons/multicolor'
-import {
-  BaseButtonProps,
-  IconContainer,
-  IconSizes,
-} from 'uiSrc/components/base/forms/buttons/button.styles'
+import { LoaderLargeIcon } from 'uiSrc/components/base/icons'
+import { BaseButtonProps } from 'uiSrc/components/base/forms/buttons/button.styles'
 
 export const BaseButton = ({
   children,
   icon,
   iconSide = 'left',
   loading,
-  size = 'small',
+  size = 'medium',
   ...props
 }: BaseButtonProps) => (
   <Button {...props} size={size} disabled={props.disabled || loading}>
     <ButtonIcon
-      side="left"
+      buttonSide="left"
       icon={icon}
       iconSide={iconSide}
       loading={loading}
@@ -25,7 +21,7 @@ export const BaseButton = ({
     />
     {children}
     <ButtonIcon
-      side="right"
+      buttonSide="right"
       icon={icon}
       iconSide={iconSide}
       loading={loading}
@@ -36,19 +32,26 @@ export const BaseButton = ({
 
 export type ButtonIconProps = Pick<
   BaseButtonProps,
-  'icon' | 'iconSide' | 'loading' | 'size'
+  'icon' | 'iconSide' | 'loading'
 > & {
-  side: 'left' | 'right'
+  buttonSide: 'left' | 'right'
+  size?: 'small' | 'large' | 'medium'
+}
+export const IconSizes = {
+  small: '16px',
+  medium: '20px',
+  large: '24px',
 }
 
 export const ButtonIcon = ({
-  side,
+  buttonSide,
   icon,
   iconSide,
   loading,
-  size = 'medium',
+  size,
 }: ButtonIconProps) => {
-  if (iconSide !== side) {
+  // if iconSide is not the same as side of the button, don't render
+  if (iconSide !== buttonSide) {
     return null
   }
   let renderIcon = icon
@@ -58,9 +61,15 @@ export const ButtonIcon = ({
   if (!renderIcon) {
     return null
   }
+  let iconSize: string | undefined
+  if (size) {
+    iconSize = IconSizes[size]
+  }
   return (
-    <IconContainer left={side === 'left'} right={side === 'right'}>
-      <Button.Icon icon={renderIcon} customSize={IconSizes[size] || '16px'} />
-    </IconContainer>
+    <Button.Icon
+      title={`button-icon ${iconSide}`}
+      icon={renderIcon}
+      customSize={iconSize}
+    />
   )
 }

@@ -10,3 +10,4 @@ export { Trigger } from './Trigger'
 export { UserInCircle } from './UserInCircle'
 
 export * from '@redislabsdev/redis-ui-icons'
+export { LoaderLargeIcon } from '@redislabsdev/redis-ui-icons/multicolor'

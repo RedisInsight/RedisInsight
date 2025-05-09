@@ -233,9 +233,8 @@ const parseCustomErrorTests = [
             target="_blank"
             rel="noreferrer"
           >
-            {'
             Cloud console
-         '} </a>
+          </a>
           for connection details.
         </>
       ),

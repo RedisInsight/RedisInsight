@@ -48,7 +48,7 @@ export class DatabaseConnectionService {
       version: await this.databaseInfoProvider.determineDatabaseServer(client),
     };
 
-    let { host, provider } = await this.repository.get(
+    const { host, provider } = await this.repository.get(
       clientMetadata.sessionMetadata,
       clientMetadata.databaseId,
     );

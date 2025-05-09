@@ -1,4 +1,4 @@
-import { EuiPage, EuiPageBody, EuiPanel } from '@elastic/eui'
+import { EuiPanel } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -56,6 +56,7 @@ import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
+import { Page, PageBody } from 'uiSrc/components/base/layout/page'
 import DatabasesList from './components/database-list-component'
 import DatabaseListHeader from './components/database-list-header'
 import EmptyMessage from './components/empty-message/EmptyMessage'
@@ -248,8 +249,8 @@ const HomePage = () => {
   return (
     <HomePageTemplate>
       <div className={styles.pageWrapper}>
-        <EuiPage className={styles.page}>
-          <EuiPageBody component="div">
+        <Page className={styles.page}>
+          <PageBody component="div">
             <DatabaseListHeader
               key="instance-controls"
               onAddInstance={handleAddInstance}
@@ -294,8 +295,8 @@ const HomePage = () => {
                 />
               )}
             </div>
-          </EuiPageBody>
-        </EuiPage>
+          </PageBody>
+        </Page>
       </div>
     </HomePageTemplate>
   )

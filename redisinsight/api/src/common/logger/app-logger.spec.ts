@@ -71,11 +71,7 @@ describe('AppLogger', () => {
         message: 'Test message',
         context: null,
         data: [error2],
-        error: {
-          message: error1.message,
-          response: undefined,
-          stack: error1.stack,
-        },
+        error: error1,
       });
     },
   );
@@ -95,14 +91,7 @@ describe('AppLogger', () => {
         message: 'Test message',
         context: null,
         data: undefined,
-        error: {
-          message: error1.message,
-          response: {
-            status: 500,
-            data: 'Internal server error',
-          },
-          stack: error1.stack,
-        },
+        error: error1,
       });
     },
   );
@@ -181,11 +170,7 @@ describe('AppLogger', () => {
         },
         sessionMetadata: clientMetadata.sessionMetadata,
         data: [{ foo: 'bar' }],
-        error: {
-          message: error.message,
-          stack: error.stack,
-          response: undefined,
-        },
+        error,
       });
       expect(optionalParams).toEqual(optionalParamsOriginal);
     },

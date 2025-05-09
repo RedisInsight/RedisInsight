@@ -5,7 +5,7 @@ import { parseCustomError, getRdiValidationMessage, Maybe } from 'uiSrc/utils'
 import { CustomError } from 'uiSrc/slices/interfaces'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { Spacer } from 'uiSrc/components/base/layout/Spacer'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
 const responseData = { response: { data: {}, status: 500 } }
 

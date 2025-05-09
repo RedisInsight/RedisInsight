@@ -115,7 +115,7 @@ describe('DatabaseConnectionService', () => {
 
     it('should recalculate provider if not available in the list of providers', async () => {
       const testHost = 'localhost';
-      repository.get = jest.fn().mockResolvedValue({
+      repository.get.mockResolvedValue({
         host: testHost,
         provider: 'not-in-providers-enum',
       });

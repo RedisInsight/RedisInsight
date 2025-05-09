@@ -9,7 +9,6 @@ import {
   EuiToolTip,
   EuiPopover,
   EuiText,
-  EuiToolTip,
   keys,
 } from '@elastic/eui'
 import { IconSize } from '@elastic/eui/src/components/icon/icon'
@@ -209,9 +208,9 @@ const InlineItemEditor = (props: Props) => {
                 className="relative"
                 onSubmit={(e: unknown) =>
                   handleFormSubmit(e as React.MouseEvent<HTMLElement>)
-              }
+                }
               >
-                <FlexItem grow inline>
+                <FlexItem grow>
                   {children || (
                     <>
                       <EuiFieldText

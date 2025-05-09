@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { EuiButton } from '@elastic/eui'
-import { useSelector } from 'react-redux'
+import { EuiButton, EuiCheckbox, EuiPopover } from '@elastic/eui'
+import { useSelector, useDispatch } from 'react-redux'
 import { isEmpty } from 'lodash'
 import cx from 'classnames'
 
 import ColumnsIcon from 'uiSrc/assets/img/icons/columns.svg?react'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { instancesSelector, setShownColumns } from 'uiSrc/slices/instances/instances'
 import {
-  OAuthSocialAction,
-  OAuthSocialSource,
-} from 'uiSrc/slices/interfaces'
+  instancesSelector,
+  setShownColumns,
+} from 'uiSrc/slices/instances/instances'
+import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
 
 import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
@@ -21,7 +21,11 @@ import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { getContentByFeature } from 'uiSrc/utils/content'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { COLUMN_FIELD_NAME_MAP, DatabaseListColumn, FeatureFlags } from 'uiSrc/constants'
+import {
+  COLUMN_FIELD_NAME_MAP,
+  DatabaseListColumn,
+  FeatureFlags,
+} from 'uiSrc/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import SearchDatabasesList from '../search-databases-list'
@@ -108,8 +112,8 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
       event: TelemetryEvent.DATABASE_LIST_COLUMNS_CLICKED,
       eventData: {
         shown,
-        hidden
-      }
+        hidden,
+      },
     })
   }
 
@@ -213,7 +217,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
                     anchorPosition="downLeft"
                     isOpen={columnsConfigShown}
                     closePopover={() => setColumnsConfigShown(false)}
-                    data-testid='columns-config-popover'
+                    data-testid="columns-config-popover"
                     button={
                       <EuiButton
                         size="m"

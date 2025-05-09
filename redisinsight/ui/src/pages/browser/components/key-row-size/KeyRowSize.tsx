@@ -1,8 +1,9 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiLoadingContent, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiText, EuiToolTip } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import { Maybe, formatBytes } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
@@ -18,7 +19,7 @@ const KeyRowSize = (props: Props) => {
 
   if (isUndefined(size)) {
     return (
-      <EuiLoadingContent
+      <LoadingContent
         lines={1}
         className={cx(styles.keyInfoLoading, styles.keySize)}
         data-testid={`size-loading_${nameString}`}

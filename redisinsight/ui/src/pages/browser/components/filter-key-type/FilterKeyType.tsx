@@ -2,7 +2,6 @@ import {
   EuiHealth,
   EuiModal,
   EuiModalBody,
-  EuiOutsideClickDetector,
   EuiSuperSelect,
   EuiSuperSelectOption,
 } from '@elastic/eui'
@@ -29,6 +28,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { AdditionalRedisModule } from 'uiSrc/slices/interfaces'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { FILTER_KEY_TYPE_OPTIONS } from './constants'
 
 import styles from './styles.module.scss'
@@ -138,7 +138,7 @@ const FilterKeyType = ({ modules }: Props) => {
   }
 
   return (
-    <EuiOutsideClickDetector
+    <OutsideClickDetector
       onOutsideClick={() => isVersionSupported && setIsSelectOpen(false)}
     >
       <div
@@ -177,7 +177,7 @@ const FilterKeyType = ({ modules }: Props) => {
           data-testid="select-filter-key-type"
         />
       </div>
-    </EuiOutsideClickDetector>
+    </OutsideClickDetector>
   )
 }
 

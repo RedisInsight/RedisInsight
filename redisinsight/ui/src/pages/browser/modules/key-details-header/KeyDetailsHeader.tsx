@@ -1,10 +1,10 @@
-import { EuiButtonIcon, EuiLoadingContent, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 import React, { ReactElement } from 'react'
 import { isUndefined } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
-import { AutoRefresh, FullScreen, GroupBadge } from 'uiSrc/components'
+import { GroupBadge, AutoRefresh, FullScreen, LoadingContent } from 'uiSrc/components'
 import { HIDE_LAST_REFRESH } from 'uiSrc/constants'
 import {
   deleteSelectedKeyAction,
@@ -125,7 +125,7 @@ const KeyDetailsHeader = ({
     >
       {loading ? (
         <div>
-          <EuiLoadingContent lines={2} />
+          <LoadingContent lines={2} />
         </div>
       ) : (
         <AutoSizer disableHeight>

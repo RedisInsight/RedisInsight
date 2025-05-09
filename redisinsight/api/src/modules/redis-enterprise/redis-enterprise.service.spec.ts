@@ -127,6 +127,7 @@ const mockREClusterDatabase: IRedisEnterpriseDatabase = {
   dns_address_master: '',
   import_progress: 0.0,
   endpoints: [mockREClusterDatabaseEndpoint],
+  tags: [],
 };
 const mockREClusterDbsResponse: IRedisEnterpriseDatabase[] = [
   mockREClusterDatabase,

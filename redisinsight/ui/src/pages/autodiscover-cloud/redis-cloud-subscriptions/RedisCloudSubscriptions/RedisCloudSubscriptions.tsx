@@ -11,7 +11,6 @@ import {
   EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
-  EuiLoadingContent,
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -22,6 +21,7 @@ import {
   RedisCloudSubscriptionStatus,
 } from 'uiSrc/slices/interfaces'
 import { Maybe, Nullable } from 'uiSrc/utils'
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
@@ -228,25 +228,25 @@ const RedisCloudSubscriptions = ({
       <span className={styles.account_item}>
         <span className={styles.account_item_title}>Account ID:&nbsp;</span>
         <span color="subdued" data-testid="account-id">
-          {account?.accountId ?? <EuiLoadingContent lines={1} />}
+          {account?.accountId ?? <LoadingContent lines={1} />}
         </span>
       </span>
       <span className={styles.account_item}>
         <span className={styles.account_item_title}>Name:&nbsp;</span>
         <span color="subdued" data-testid="account-name">
-          {account?.accountName ?? <EuiLoadingContent lines={1} />}
+          {account?.accountName ?? <LoadingContent lines={1} />}
         </span>
       </span>
       <span className={styles.account_item}>
         <span className={styles.account_item_title}>Owner Name:&nbsp;</span>
         <span color="subdued" data-testid="account-owner-name">
-          {account?.ownerName ?? <EuiLoadingContent lines={1} />}
+          {account?.ownerName ?? <LoadingContent lines={1} />}
         </span>
       </span>
       <span className={styles.account_item}>
         <span className={styles.account_item_title}>Owner Email:&nbsp;</span>
         <span color="subdued" data-testid="account-owner-email">
-          {account?.ownerEmail ?? <EuiLoadingContent lines={1} />}
+          {account?.ownerEmail ?? <LoadingContent lines={1} />}
         </span>
       </span>
     </>

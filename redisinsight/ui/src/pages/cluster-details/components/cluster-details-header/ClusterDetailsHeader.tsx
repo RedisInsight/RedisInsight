@@ -1,9 +1,10 @@
-import { EuiLoadingContent, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiText, EuiToolTip } from '@elastic/eui'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
 import { capitalize } from 'lodash'
 
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import {
   truncateNumberToFirstUnit,
   formatLongName,
@@ -93,7 +94,7 @@ const ClusterDetailsHeader = () => {
 
       {loading && !data && (
         <div className={styles.loading} data-testid="cluster-details-loading">
-          <EuiLoadingContent lines={2} />
+          <LoadingContent lines={2} />
         </div>
       )}
       {data && (

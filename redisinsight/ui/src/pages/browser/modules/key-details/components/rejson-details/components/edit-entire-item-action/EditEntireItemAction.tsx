@@ -2,7 +2,6 @@ import React, { ChangeEvent, useState } from 'react'
 import {
   EuiButtonIcon,
   EuiForm,
-  EuiOutsideClickDetector,
   EuiTextArea,
   keys,
 } from '@elastic/eui'
@@ -13,6 +12,7 @@ import { Nullable } from 'uiSrc/utils'
 import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { isValidJSON } from '../../utils'
 import { JSONErrors } from '../../constants'
 
@@ -50,7 +50,7 @@ const EditEntireItemAction = (props: Props) => {
   return (
     <div className={styles.row}>
       <div className={styles.fullWidthContainer}>
-        <EuiOutsideClickDetector onOutsideClick={() => onCancel?.()}>
+        <OutsideClickDetector onOutsideClick={() => onCancel?.()}>
           <div>
             <WindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
             <FocusTrap>
@@ -112,7 +112,7 @@ const EditEntireItemAction = (props: Props) => {
               )}
             </FocusTrap>
           </div>
-        </EuiOutsideClickDetector>
+        </OutsideClickDetector>
       </div>
     </div>
   )

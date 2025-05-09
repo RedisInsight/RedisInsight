@@ -2,7 +2,6 @@ import {
   EuiButton,
   EuiCheckbox,
   EuiIcon,
-  EuiOutsideClickDetector,
   EuiPopover,
   EuiText,
   EuiTitle,
@@ -27,6 +26,7 @@ import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -103,7 +103,7 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
   }
 
   return (
-    <EuiOutsideClickDetector onOutsideClick={handleClosePopover}>
+    <OutsideClickDetector onOutsideClick={handleClosePopover}>
       <EuiPopover
         closePopover={handleClosePopover}
         ownFocus
@@ -183,7 +183,7 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
           </FlexItem>
         </Row>
       </EuiPopover>
-    </EuiOutsideClickDetector>
+    </OutsideClickDetector>
   )
 }
 

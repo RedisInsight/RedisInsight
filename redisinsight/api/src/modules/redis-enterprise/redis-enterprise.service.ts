@@ -97,6 +97,7 @@ export class RedisEnterpriseService {
         crdt,
         tls_mode,
         crdt_replica_id,
+        tags,
       } = database;
       // Get all external endpoint, ignore others
       const externalEndpoint = this.getDatabaseExternalEndpoint(database);
@@ -136,6 +137,7 @@ export class RedisEnterpriseService {
             isReplicaSource: !!this.findReplicasForDatabase(databases, database)
               .length,
           },
+          tags,
         }),
       );
     });
@@ -224,7 +226,7 @@ export class RedisEnterpriseService {
             };
           }
           try {
-            const { port, name, dnsName, password } = database;
+            const { port, name, dnsName, password, tags } = database;
             const host =
               connectionDetails.host === 'localhost' ? 'localhost' : dnsName;
             delete database.password;
@@ -235,6 +237,7 @@ export class RedisEnterpriseService {
               nameFromProvider: name,
               password,
               provider: HostingProvider.RE_CLUSTER,
+              tags,
             });
             return {
               uid,

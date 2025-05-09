@@ -7,6 +7,7 @@ enum ApiErrors {
   KeytarDecryption = 'KeytarDecryptionError',
   ClientNotFound = 'ClientNotFoundError',
   RedisearchIndexNotFound = 'no such index',
+  ConnectionLost = 'The connection to the server has been lost.',
 }
 
 export const ApiEncryptionErrors: string[] = [

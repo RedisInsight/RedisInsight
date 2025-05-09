@@ -242,13 +242,13 @@ const waitForEuiToolTipHidden = async () => {
   })
 }
 
-const waitForEuiPopoverVisible = async () => {
+const waitForEuiPopoverVisible = async (timeout = 500) => {
   await waitFor(
     () => {
       const tooltip = document.querySelector('.euiPopover__panel-isOpen')
       expect(tooltip).toBeInTheDocument()
     },
-    { timeout: 200 }, // Account for long delay on popover
+    { timeout }, // Account for long delay on popover
   )
 }
 

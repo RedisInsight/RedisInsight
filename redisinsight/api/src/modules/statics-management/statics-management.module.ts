@@ -91,9 +91,9 @@ export class StaticsManagementModule {
                   'dist',
                 ),
                 exclude: [
-                  '/api/**',
-                  `${SERVER_CONFIG.customPluginsUri}/**`,
-                  `${SERVER_CONFIG.staticUri}/**`,
+                  '/api/{*splat}',
+                  `${SERVER_CONFIG.customPluginsUri}/{*splat}`,
+                  `${SERVER_CONFIG.staticUri}/{*splat}`,
                 ],
                 serveRoot: SERVER_CONFIG.proxyPath
                   ? `/${SERVER_CONFIG.proxyPath}`

@@ -3,7 +3,7 @@ import React from 'react'
 import reactRouterDom, { BrowserRouter } from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
 
-import { cleanup, mockedStore, render, act } from 'uiSrc/utils/test-utils'
+import { act, cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { resetKeys, resetPatternKeysData } from 'uiSrc/slices/browser/keys'
 import { setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
@@ -32,8 +32,8 @@ import {
   resetConnectedInstance as resetConnectedDatabaseInstance,
 } from 'uiSrc/slices/instances/instances'
 import {
-  setConnectedInstance,
   loadInstances as loadRdiInstances,
+  setConnectedInstance,
 } from 'uiSrc/slices/rdi/instances'
 import { PageNames, Pages } from 'uiSrc/constants'
 import {
@@ -91,7 +91,7 @@ describe('InstancePage', () => {
     ;(appContextSelector as jest.Mock).mockReturnValue({
       contextRdiInstanceId: '',
     })
-    await act(() => {
+    await act(async () => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
@@ -144,7 +144,8 @@ describe('InstancePage', () => {
       contextRdiInstanceId: 'prevId',
     })
 
-    await act(() => {
+    // this MUST be awaited, in order for all effects to happen and all actions to be dispatched
+    await act(async () => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
@@ -183,7 +184,7 @@ describe('InstancePage', () => {
       .fn()
       .mockReturnValue({ pathname: Pages.rdiPipeline(RDI_INSTANCE_ID_MOCK) })
 
-    await act(() => {
+    act(() => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
@@ -191,7 +192,7 @@ describe('InstancePage', () => {
       )
     })
 
-    expect(pushMock).toBeCalledWith(
+    expect(pushMock).toHaveBeenCalledWith(
       Pages.rdiPipelineManagement(RDI_INSTANCE_ID_MOCK),
     )
   })
@@ -212,7 +213,7 @@ describe('InstancePage', () => {
       .fn()
       .mockReturnValue({ pathname: Pages.rdiPipeline(RDI_INSTANCE_ID_MOCK) })
 
-    await act(() => {
+    act(() => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
@@ -220,6 +221,8 @@ describe('InstancePage', () => {
       )
     })
 
-    expect(pushMock).toBeCalledWith(Pages.rdiStatistics(RDI_INSTANCE_ID_MOCK))
+    expect(pushMock).toHaveBeenCalledWith(
+      Pages.rdiStatistics(RDI_INSTANCE_ID_MOCK),
+    )
   })
 })

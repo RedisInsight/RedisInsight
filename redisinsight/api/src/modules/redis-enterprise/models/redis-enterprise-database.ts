@@ -7,6 +7,11 @@ export enum RedisEnterprisePersistencePolicy {
   None = 'none',
 }
 
+type IRedisEnterpriseDatabaseTag = {
+  key: string;
+  value: string;
+}
+
 export interface IRedisEnterpriseDatabase {
   gradual_src_mode: string;
   group_uid: number;
@@ -95,6 +100,7 @@ export interface IRedisEnterpriseDatabase {
   ssl: boolean;
   dns_address_master: string;
   import_progress: any;
+  tags: IRedisEnterpriseDatabaseTag[];
 }
 
 export interface IRedisEnterpriseModule {

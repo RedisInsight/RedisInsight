@@ -18,8 +18,8 @@ export const INSTANCES_MOCK: Instance[] = [
     connectionType: ConnectionType.Standalone,
     nameFromProvider: null,
     modules: [],
-    uoeu: 123,
     lastConnection: new Date('2021-04-22T09:03:56.917Z'),
+    version: null,
   },
   {
     id: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4',
@@ -48,6 +48,7 @@ export const INSTANCES_MOCK: Instance[] = [
     nameFromProvider: null,
     lastConnection: new Date('2021-04-22T18:40:44.031Z'),
     modules: [],
+    version: null,
     endpoints: [
       {
         host: 'localhost',
@@ -66,7 +67,7 @@ export const INSTANCES_MOCK: Instance[] = [
 
 export const getDatabasesApiSpy = jest
   .fn()
-  .mockImplementation(async (req, res, ctx) =>
+  .mockImplementation(async (_req, res, ctx) =>
     res(ctx.status(200), ctx.json(INSTANCES_MOCK)),
   )
 
@@ -78,7 +79,7 @@ const handlers: RestHandler[] = [
   ),
   rest.post<ExportDatabase>(
     getMswURL(ApiEndpoints.DATABASES_EXPORT),
-    async (req, res, ctx) => res(ctx.status(200), ctx.json(INSTANCES_MOCK)),
+    async (_req, res, ctx) => res(ctx.status(200), ctx.json(INSTANCES_MOCK)),
   ),
   rest.get<DatabaseInstanceResponse>(
     getMswURL(getUrl(INSTANCE_ID_MOCK)),

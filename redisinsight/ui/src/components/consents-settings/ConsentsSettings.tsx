@@ -9,13 +9,13 @@ import {
   EuiTitle,
   EuiToolTip,
   EuiForm,
-  EuiHorizontalRule,
   EuiCallOut,
   EuiLink,
 } from '@elastic/eui'
 import { EuiSwitchEvent } from '@elastic/eui/src/components/form/switch'
 import cx from 'classnames'
 
+import { HorizontalRule } from 'uiSrc/components'
 import { compareConsents } from 'uiSrc/utils'
 import {
   updateUserConfigSettingsAction,
@@ -260,7 +260,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
                 </FlexItem>
               </Row>
             </FlexItem>
-            <EuiHorizontalRule
+            <HorizontalRule
               margin="l"
               className={cx({
                 [styles.pluginWarningHR]: !!requiredConsents.length,
@@ -309,7 +309,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
       </div>
       {requiredConsents.length ? (
         <>
-          <EuiHorizontalRule margin="l" className={styles.requiredHR} />
+          <HorizontalRule margin="l" className={styles.requiredHR} />
           <Spacer size="m" />
           <EuiText color="subdued" size="s" className={styles.smallText}>
             To use Redis Insight, please accept the terms and conditions:{' '}

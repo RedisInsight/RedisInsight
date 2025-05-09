@@ -1,10 +1,5 @@
 import React, { useState } from 'react'
-import {
-  EuiListGroup,
-  EuiListGroupItem,
-  EuiLoadingSpinner,
-  EuiText,
-} from '@elastic/eui'
+import { EuiLoadingSpinner, EuiText } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { checkConnectToRdiInstanceAction } from 'uiSrc/slices/rdi/instances'
@@ -20,6 +15,10 @@ import {
   sendEventTelemetry,
 } from 'uiSrc/telemetry'
 import { getDbIndex } from 'uiSrc/utils'
+import {
+  Group as ListGroup,
+  Item as ListGroupItem,
+} from 'uiSrc/components/base/layout/list'
 import { InstancesTabs } from '../../InstancesNavigationPopover'
 import styles from '../../styles.module.scss'
 
@@ -127,12 +126,13 @@ const InstancesList = ({
 
   return (
     <div className={styles.listContainer}>
-      <EuiListGroup flush maxWidth="none" gutterSize="none">
+      <ListGroup flush maxWidth="none" gap="none">
         {instances?.map((instance) => (
-          <EuiListGroupItem
+          <ListGroupItem
+            color="subdued"
             className={styles.item}
             isActive={isInstanceActive(instance.id)}
-            disabled={loading}
+            isDisabled={loading}
             key={instance.id}
             label={
               <EuiText style={{ display: 'flex', alignItems: 'center' }}>
@@ -149,7 +149,7 @@ const InstancesList = ({
             data-testid={`instance-item-${instance.id}`}
           />
         ))}
-      </EuiListGroup>
+      </ListGroup>
     </div>
   )
 }

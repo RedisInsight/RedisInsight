@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { v4 as uuidv4 } from 'uuid'
-import { EuiIcon, EuiLoadingContent, EuiTextColor } from '@elastic/eui'
+import { EuiIcon, EuiTextColor } from '@elastic/eui'
 import { pluginApi } from 'uiSrc/services/PluginAPI'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
@@ -11,6 +11,7 @@ import {
   formatToText,
   replaceEmptyValue,
 } from 'uiSrc/utils'
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import { Theme } from 'uiSrc/constants'
 import {
   CommandExecutionResult,
@@ -364,7 +365,7 @@ const QueryCardCliPlugin = (props: Props) => {
         )}
         {!isPluginLoaded && (
           <div>
-            <EuiLoadingContent lines={5} />
+            <LoadingContent lines={5} />
           </div>
         )}
       </div>

@@ -20,6 +20,7 @@ import {
 } from 'uiSrc/slices/interfaces/keys'
 import { BrowserColumns } from 'uiSrc/constants'
 
+import { setConnectivityError } from 'uiSrc/slices/app/connectivity'
 import KeysHeader from './KeysHeader'
 
 let store: typeof mockedStore
@@ -191,6 +192,7 @@ describe('KeysHeader', () => {
       keysSlice.resetKeyInfo(),
       setBrowserSelectedKey(null),
       setBrowserPatternKeyListDataLoaded(true),
+      setConnectivityError(null),
     ]
     expect(store.getActions()).toEqual(expectedActions)
   })

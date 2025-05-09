@@ -4,7 +4,6 @@ import {
   EuiButtonIcon,
   EuiFieldText,
   EuiForm,
-  EuiOutsideClickDetector,
   keys,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
@@ -16,6 +15,7 @@ import { Nullable } from 'uiSrc/utils'
 import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import ConfirmOverwrite from './ConfirmOverwrite'
 import { isValidJSON, isValidKey, parseJsonData, wrapPath } from '../../utils'
 import { JSONErrors } from '../../constants'
@@ -88,7 +88,7 @@ const AddItem = (props: Props) => {
         paddingLeft: `${leftPadding}em`,
       }}
     >
-      <EuiOutsideClickDetector onOutsideClick={() => {}}>
+      <OutsideClickDetector onOutsideClick={() => {}}>
         <div>
           <WindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
           <FocusTrap>
@@ -165,7 +165,7 @@ const AddItem = (props: Props) => {
             )}
           </FocusTrap>
         </div>
-      </EuiOutsideClickDetector>
+      </OutsideClickDetector>
     </div>
   )
 }

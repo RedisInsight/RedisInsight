@@ -29,12 +29,15 @@ import reducer, {
   setReJSONDataAction,
   appendReJSONArrayItemAction,
   removeReJSONKeyAction,
+  JSON_LENGTH_TO_FORCE_RETRIEVE,
 } from '../../browser/rejson'
 import {
   addErrorNotification,
   addMessageNotification,
 } from '../../app/notifications'
 import { refreshKeyInfo } from '../../browser/keys'
+import { EditorType } from 'uiSrc/slices/interfaces'
+import { stringToBuffer } from 'uiSrc/utils'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -434,6 +437,126 @@ describe('rejson slice', () => {
           addErrorNotification(responsePayload as AxiosError),
         ]
         expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should set forceRetrieve to true when editorType is Text and the JSON is big enough', async () => {
+        const key = stringToBuffer('key')
+        const path = '$'
+        const responsePayload = { data: {}, status: 200 }
+
+        const apiServicePostMock = jest.fn()
+        apiService.post = apiServicePostMock.mockResolvedValue(responsePayload)
+
+        const customState = {
+          ...store.getState(),
+          browser: {
+            ...store.getState().browser,
+            rejson: {
+              ...store.getState().browser.rejson,
+              editorType: EditorType.Text,
+            },
+          },
+        }
+
+        const storeWithCustomState = mockStore(customState)
+
+        const lengthAboveThreshold = JSON_LENGTH_TO_FORCE_RETRIEVE + 1
+        await storeWithCustomState.dispatch<any>(
+          fetchReJSON(key, path, lengthAboveThreshold),
+        )
+
+        const postPayload = apiServicePostMock.mock.calls[0][1]
+
+        expect(postPayload.forceRetrieve).toBe(true)
+      })
+
+      it('should set forceRetrieve to true when length is undefined and editorType is Default', async () => {
+        const key = stringToBuffer('key')
+        const path = '$'
+        const responsePayload = { data: {}, status: 200 }
+
+        const apiServicePostMock = jest.fn()
+        apiService.post = apiServicePostMock.mockResolvedValue(responsePayload)
+
+        const customState = {
+          ...store.getState(),
+          browser: {
+            ...store.getState().browser,
+            rejson: {
+              ...store.getState().browser.rejson,
+              editorType: EditorType.Default,
+            },
+          },
+        }
+
+        const storeWithCustomState = mockStore(customState)
+
+        await storeWithCustomState.dispatch<any>(fetchReJSON(key, path)) // no length
+
+        const postPayload = apiServicePostMock.mock.calls[0][1]
+        expect(postPayload.forceRetrieve).toBe(true)
+      })
+
+      it('should set forceRetrieve to true when length is below threshold and editorType is Default', async () => {
+        const key = stringToBuffer('key')
+        const path = '$'
+        const responsePayload = { data: {}, status: 200 }
+
+        const apiServicePostMock = jest.fn()
+        apiService.post = apiServicePostMock.mockResolvedValue(responsePayload)
+
+        const customState = {
+          ...store.getState(),
+          browser: {
+            ...store.getState().browser,
+            rejson: {
+              ...store.getState().browser.rejson,
+              editorType: EditorType.Default,
+            },
+          },
+        }
+
+        const storeWithCustomState = mockStore(customState)
+
+        const smallLength = 1
+        expect(smallLength).toBeLessThan(JSON_LENGTH_TO_FORCE_RETRIEVE)
+
+        await storeWithCustomState.dispatch<any>(
+          fetchReJSON(key, path, smallLength),
+        )
+
+        const postPayload = apiServicePostMock.mock.calls[0][1]
+        expect(postPayload.forceRetrieve).toBe(true)
+      })
+
+      it('should set forceRetrieve to false when length is above threshold and editorType is Default', async () => {
+        const key = stringToBuffer('key')
+        const path = '$'
+        const responsePayload = { data: {}, status: 200 }
+
+        const apiServicePostMock = jest.fn()
+        apiService.post = apiServicePostMock.mockResolvedValue(responsePayload)
+
+        const customState = {
+          ...store.getState(),
+          browser: {
+            ...store.getState().browser,
+            rejson: {
+              ...store.getState().browser.rejson,
+              editorType: EditorType.Default,
+            },
+          },
+        }
+
+        const storeWithCustomState = mockStore(customState)
+
+        const lengthAboveThreshold = JSON_LENGTH_TO_FORCE_RETRIEVE + 1
+        await storeWithCustomState.dispatch<any>(
+          fetchReJSON(key, path, lengthAboveThreshold),
+        )
+
+        const postPayload = apiServicePostMock.mock.calls[0][1]
+        expect(postPayload.forceRetrieve).toBe(false)
       })
     })
 

@@ -1,7 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDefined, IsInt, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsDefined,
+  IsInt,
+  IsNotEmpty,
+  IsString,
+} from 'class-validator';
 import { Exclude, Type } from 'class-transformer';
 import { RedisEnterpriseDatabaseStatus } from 'src/modules/redis-enterprise/models/redis-enterprise-database';
+import { NoDuplicatesByKey } from 'src/common/decorators';
+import { CreateTagDto } from 'src/modules/tag/dto';
 
 export class ClusterConnectionDetailsDto {
   @ApiProperty({
@@ -103,6 +111,18 @@ export class RedisEnterpriseDatabase {
     type: Object,
   })
   options: any;
+
+  @ApiProperty({
+    description: 'Tags associated with the database.',
+    type: CreateTagDto,
+    isArray: true,
+  })
+  @IsArray()
+  @NoDuplicatesByKey('key', {
+    message: 'Tags must not contain duplicates by key.',
+  })
+  @Type(() => CreateTagDto)
+  tags: CreateTagDto[];
 
   @Exclude()
   password: string | null;

@@ -37,7 +37,7 @@ import {
 } from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
 
-const JSON_LENGTH_TO_FORCE_RETRIEVE = 200
+export const JSON_LENGTH_TO_FORCE_RETRIEVE = 200
 
 export const initialState: InitialStateRejson = {
   loading: false,
@@ -162,7 +162,17 @@ export function fetchReJSON(
       sourceRejson = CancelToken.source()
 
       const state = stateInit()
+      const { editorType } = state.browser.rejson
       const { encoding } = state.app.info
+
+      // "Force retrieve" means fetching the entire JSON value without any optimization.
+      // Normally, the optimized approach retrieves only the necessary portion —
+      // typically just the top-level properties currently visible.
+      const shouldForceRetrieve =
+        editorType === EditorType.Text ||
+        !isNumber(length) ||
+        length <= JSON_LENGTH_TO_FORCE_RETRIEVE
+
       const { data, status } = await apiService.post<GetRejsonRlResponseDto>(
         getUrl(
           state.connections.instances.connectedInstance?.id,
@@ -171,8 +181,7 @@ export function fetchReJSON(
         {
           keyName: key,
           path,
-          forceRetrieve:
-            isNumber(length) && length > JSON_LENGTH_TO_FORCE_RETRIEVE,
+          forceRetrieve: shouldForceRetrieve,
           encoding,
         },
         { cancelToken: sourceRejson.token },

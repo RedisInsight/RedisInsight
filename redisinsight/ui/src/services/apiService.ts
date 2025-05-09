@@ -11,6 +11,7 @@ import { store } from 'uiSrc/slices/store'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
 import { setConnectivityError } from 'uiSrc/slices/app/connectivity'
 import { getConfig } from 'uiSrc/config'
+import ApiErrors from 'uiSrc/constants/apiErrors'
 
 const riConfig = getConfig()
 
@@ -96,9 +97,7 @@ export const connectivityErrorsInterceptor = (error: AxiosError) => {
     (responseData.code === 'serviceUnavailable' ||
       responseData.error === 'Service Unavailable')
   ) {
-    store?.dispatch<any>(
-      setConnectivityError('The connection to the server has been lost.'),
-    )
+    store?.dispatch<any>(setConnectivityError(ApiErrors.ConnectionLost))
   }
 
   return Promise.reject(error)

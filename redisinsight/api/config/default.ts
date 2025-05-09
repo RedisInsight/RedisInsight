@@ -104,6 +104,7 @@ export default {
       ? process.env.RI_AUTO_BOOTSTRAP === 'true'
       : true,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
+    appType: process.env.RI_APP_TYPE,
     appVersion: process.env.RI_APP_VERSION || '2.68.0',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],

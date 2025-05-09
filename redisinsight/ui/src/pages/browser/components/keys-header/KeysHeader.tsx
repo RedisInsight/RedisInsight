@@ -54,6 +54,7 @@ import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { BrowserColumns, KeyValueFormat } from 'uiSrc/constants'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { setConnectivityError } from 'uiSrc/slices/app/connectivity'
 import styles from './styles.module.scss'
 
 const HIDE_REFRESH_LABEL_WIDTH = 640
@@ -190,6 +191,7 @@ const KeysHeader = (props: Props) => {
           }
 
           dispatch(setBrowserKeyListDataLoaded(searchMode, true))
+          dispatch(setConnectivityError(null))
         },
         () => dispatch(setBrowserKeyListDataLoaded(searchMode, false)),
       ),

@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
+import { HostingProvider } from 'src/modules/database/entities/database.entity';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseRecommendationService } from 'src/modules/database-recommendation/database-recommendation.service';
 import { Database } from 'src/modules/database/models/database';
@@ -13,6 +14,7 @@ import {
 } from 'src/modules/redis/client';
 import { FeatureService } from 'src/modules/feature/feature.service';
 import { KnownFeatures } from 'src/modules/feature/constants';
+import { getHostingProvider } from 'src/utils/hosting-provider-helper';
 
 @Injectable()
 export class DatabaseConnectionService {
@@ -28,7 +30,8 @@ export class DatabaseConnectionService {
   ) {}
 
   /**
-   * Connects to database and updates modules list and last connected time
+   * Connects to database and updates modules list, last connected time
+   * and provider if not available in the list of providers
    * @param clientMetadata
    */
   async connect(clientMetadata: ClientMetadata): Promise<void> {
@@ -44,6 +47,15 @@ export class DatabaseConnectionService {
       modules: await this.databaseInfoProvider.determineDatabaseModules(client),
       version: await this.databaseInfoProvider.determineDatabaseServer(client),
     };
+
+    const { host, provider } = await this.repository.get(
+      clientMetadata.sessionMetadata,
+      clientMetadata.databaseId,
+    );
+
+    if (!HostingProvider[provider]) {
+      toUpdate.provider = await getHostingProvider(client, host);
+    }
 
     const connectionType = client?.getConnectionType();
     // Update cluster nodes db record

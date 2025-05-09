@@ -4,7 +4,6 @@
  */
 import isGlob from 'is-glob'
 import { cloneDeep, get } from 'lodash'
-import jsonpath from 'jsonpath'
 import { Maybe, isRedisearchAvailable } from 'uiSrc/utils'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
@@ -135,18 +134,17 @@ const getBasedOnViewTypeEvent = (
   }
 }
 
-const getJsonPathLevel = (path: string): string => {
+const getJsonPathLevel = (path: string): number => {
   try {
-    if (path === '$') {
-      return 'root'
-    }
-    const levelsLength = jsonpath.parse(
-      `$${path.startsWith('$') ? '.' : '..'}${path}`,
-    ).length
+    if (!path || path === '$') return 0
 
-    return levelsLength === 2 ? 'root' : `${levelsLength - 2}`
+    const stripped = path.startsWith('$.') ? path.slice(2) : path.slice(1)
+
+    const parts = stripped.split(/[.[\]]/).filter(Boolean)
+
+    return parts.length
   } catch (e) {
-    return 'root'
+    return 0
   }
 }
 

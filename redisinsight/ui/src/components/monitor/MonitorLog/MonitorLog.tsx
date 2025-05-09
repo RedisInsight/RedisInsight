@@ -1,10 +1,4 @@
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
-  EuiText,
-} from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiText } from '@elastic/eui'
 import { format, formatDuration, intervalToDuration } from 'date-fns'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -19,6 +13,7 @@ import { cutDurationText } from 'uiSrc/utils'
 import { downloadFile } from 'uiSrc/utils/dom/downloadFile'
 import { fetchMonitorLog } from 'uiSrc/slices/cli/cli-output'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 const PADDINGS_OUTSIDE = 12
@@ -92,14 +87,8 @@ const MonitorLog = () => {
               {duration}
               {width > SMALL_SCREEN_RESOLUTION && ' Running time'})
             </EuiText>
-            <EuiFlexGroup
-              className={styles.actions}
-              gutterSize="none"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              responsive={false}
-            >
-              <EuiFlexItem grow={false}>
+            <Row className={styles.actions} justify="between" align="center">
+              <FlexItem>
                 {isSaveToFile && (
                   <EuiButton
                     size="s"
@@ -114,8 +103,8 @@ const MonitorLog = () => {
                     Log
                   </EuiButton>
                 )}
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
+              </FlexItem>
+              <FlexItem>
                 <EuiButton
                   fill
                   size="s"
@@ -128,8 +117,8 @@ const MonitorLog = () => {
                   Reset
                   {width > SMALL_SCREEN_RESOLUTION && ' Profiler'}
                 </EuiButton>
-              </EuiFlexItem>
-            </EuiFlexGroup>
+              </FlexItem>
+            </Row>
           </div>
         )}
       </AutoSizer>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiButton, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiButton, EuiText, EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { find } from 'lodash'
@@ -23,6 +23,7 @@ import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -149,16 +150,16 @@ const OAuthAutodiscovery = (props: Props) => {
               Discover subscriptions and add your databases. A new Redis Cloud
               account will be created for you if you don’t have one.
             </EuiText>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             <CreateFreeDb />
-            <EuiSpacer size="xl" />
+            <Spacer size="xl" />
             <EuiText>Get started with</EuiText>
             <EuiTitle className={styles.title} size="l">
               <h3>Redis Cloud account</h3>
             </EuiTitle>
-            <EuiSpacer size="xl" />
+            <Spacer size="xl" />
             {form}
-            <EuiSpacer size="xxl" />
+            <Spacer size="xxl" />
             <div className={styles.containerAgreement}>
               <OAuthAgreement size="s" />
             </div>

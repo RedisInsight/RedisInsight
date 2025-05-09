@@ -2,8 +2,6 @@ import {
   EuiAccordion,
   EuiButton,
   EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiLoadingSpinner,
   EuiText,
@@ -30,6 +28,7 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { isEqualPipelineFile, Nullable } from 'uiSrc/utils'
 import statusErrorIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/status_error.svg?react'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -42,12 +41,12 @@ export interface IProps {
 const buildValidationMessage = (text: string) => ({
   title: '',
   content: (
-    <EuiFlexGroup alignItems="center" gutterSize="xs">
-      <EuiFlexItem grow={false}>
+    <Row align="center" gap="s">
+      <FlexItem>
         <EuiIcon type="iInCircle" />
-      </EuiFlexItem>
-      <EuiFlexItem>{text}</EuiFlexItem>
-    </EuiFlexGroup>
+      </FlexItem>
+      <FlexItem grow>{text}</FlexItem>
+    </Row>
   ),
 })
 
@@ -161,7 +160,7 @@ const JobsTree = (props: IProps) => {
 
   const jobName = (name: string, isValid: boolean = true) => (
     <>
-      <EuiFlexItem
+      <FlexItem
         grow
         onClick={() => onSelectedTab(name)}
         className={cx(styles.navItem, 'truncateText', { invalid: !isValid })}
@@ -176,9 +175,8 @@ const JobsTree = (props: IProps) => {
             data-testid="rdi-pipeline-nav__error"
           />
         )}
-      </EuiFlexItem>
-      <EuiFlexItem
-        grow={false}
+      </FlexItem>
+      <FlexItem
         className={styles.actions}
         data-testid={`rdi-nav-job-actions-${name}`}
       >
@@ -231,12 +229,13 @@ const JobsTree = (props: IProps) => {
             }
           />
         </EuiToolTip>
-      </EuiFlexItem>
+      </FlexItem>
     </>
   )
 
   const jobNameEditor = (name: string, idx?: number) => (
-    <EuiFlexItem
+    <FlexItem
+      grow
       className={styles.inputContainer}
       data-testid={`rdi-nav-job-edit-${name}`}
     >
@@ -258,7 +257,7 @@ const JobsTree = (props: IProps) => {
         viewChildrenMode={false}
         disableEmpty
       />
-    </EuiFlexItem>
+    </FlexItem>
   )
 
   const isJobValid = (jobName: string) =>
@@ -268,15 +267,13 @@ const JobsTree = (props: IProps) => {
 
   const renderJobsList = (jobs: IRdiPipelineJob[]) =>
     jobs.map(({ name }, idx) => (
-      <EuiFlexGroup
+      <Row
         key={name}
         className={cx(styles.fullWidth, styles.job, {
           [styles.active]: path === name,
         })}
-        responsive={false}
-        alignItems="center"
-        justifyContent="spaceBetween"
-        gutterSize="none"
+        align="center"
+        justify="between"
         data-testid={`job-file-${name}`}
       >
         <div className={styles.dotWrapper}>
@@ -294,46 +291,32 @@ const JobsTree = (props: IProps) => {
             </EuiToolTip>
           )}
         </div>
-        <EuiFlexGroup
-          className={styles.fullWidth}
-          alignItems="center"
-          gutterSize="none"
-        >
-          <EuiFlexItem grow={false}>
+        <Row className={styles.fullWidth} align="center">
+          <FlexItem>
             <EuiIcon
               type="document"
               className={styles.fileIcon}
               data-test-subj="jobs-folder-icon-close"
             />
-          </EuiFlexItem>
+          </FlexItem>
           {currentJobName === name
             ? jobNameEditor(name, idx)
             : jobName(name, isJobValid(name))}
-        </EuiFlexGroup>
-      </EuiFlexGroup>
+        </Row>
+      </Row>
     ))
 
   const folder = () => (
-    <EuiFlexGroup
-      className={styles.fullWidth}
-      responsive={false}
-      alignItems="center"
-      justifyContent="spaceBetween"
-      gutterSize="none"
-    >
-      <EuiFlexGroup
-        className={styles.fullWidth}
-        alignItems="center"
-        gutterSize="none"
-      >
-        <EuiFlexItem grow={false}>
+    <Row className={styles.fullWidth} align="center" justify="between">
+      <Row className={styles.fullWidth} align="center">
+        <FlexItem>
           <EuiIcon
             type={accordionState === 'open' ? 'folderOpen' : 'folderClosed'}
             className={styles.folderIcon}
             data-test-subj="jobs-folder-icon"
           />
-        </EuiFlexItem>
-        <EuiFlexItem grow className="truncateText">
+        </FlexItem>
+        <FlexItem grow className="truncateText">
           {'Jobs '}
           {!loading && (
             <EuiTextColor
@@ -350,9 +333,9 @@ const JobsTree = (props: IProps) => {
               className={styles.loader}
             />
           )}
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </EuiFlexGroup>
+        </FlexItem>
+      </Row>
+    </Row>
   )
 
   return (
@@ -390,29 +373,23 @@ const JobsTree = (props: IProps) => {
     >
       {/* // TODO confirm with RDI team and put sort in separate component */}
       {isNewJob && (
-        <EuiFlexGroup
+        <Row
           className={cx(styles.fullWidth, styles.job)}
-          responsive={false}
-          alignItems="center"
-          justifyContent="spaceBetween"
-          gutterSize="none"
+          align="center"
+          justify="between"
           data-testid="new-job-file"
         >
-          <EuiFlexGroup
-            className={styles.fullWidth}
-            alignItems="center"
-            gutterSize="none"
-          >
-            <EuiFlexItem grow={false}>
+          <Row className={styles.fullWidth} align="center">
+            <FlexItem>
               <EuiIcon
                 type="document"
                 className={styles.fileIcon}
                 data-test-subj="jobs-file-icon"
               />
-            </EuiFlexItem>
+            </FlexItem>
             {jobNameEditor('')}
-          </EuiFlexGroup>
-        </EuiFlexGroup>
+          </Row>
+        </Row>
       )}
       {renderJobsList(jobs ?? [])}
     </EuiAccordion>

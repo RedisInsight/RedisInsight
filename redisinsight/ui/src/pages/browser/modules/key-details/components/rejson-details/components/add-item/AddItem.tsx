@@ -3,10 +3,7 @@ import cx from 'classnames'
 import {
   EuiButtonIcon,
   EuiFieldText,
-  EuiFlexItem,
-  EuiFocusTrap,
   EuiForm,
-  EuiWindowEvent,
   keys,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
@@ -15,6 +12,9 @@ import { rejsonDataSelector } from 'uiSrc/slices/browser/rejson'
 import { checkExistingPath } from 'uiSrc/utils/rejson'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
+import { FlexItem } from 'uiSrc/components/base/layout/flex'
+import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
+import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import ConfirmOverwrite from './ConfirmOverwrite'
 import { isValidJSON, isValidKey, parseJsonData, wrapPath } from '../../utils'
@@ -90,8 +90,8 @@ const AddItem = (props: Props) => {
     >
       <OutsideClickDetector onOutsideClick={() => {}}>
         <div>
-          <EuiWindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
-          <EuiFocusTrap>
+          <WindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
+          <FocusTrap>
             <EuiForm
               component="form"
               className="relative"
@@ -100,7 +100,7 @@ const AddItem = (props: Props) => {
               noValidate
             >
               {isPair && (
-                <EuiFlexItem grow component="span">
+                <FlexItem grow inline>
                   <EuiFieldText
                     name="newRootKey"
                     value={key}
@@ -111,9 +111,9 @@ const AddItem = (props: Props) => {
                     }
                     data-testid="json-key"
                   />
-                </EuiFlexItem>
+                </FlexItem>
               )}
-              <EuiFlexItem grow component="span">
+              <FlexItem grow inline>
                 <EuiFieldText
                   name="newValue"
                   value={value}
@@ -124,7 +124,7 @@ const AddItem = (props: Props) => {
                   }
                   data-testid="json-value"
                 />
-              </EuiFlexItem>
+              </FlexItem>
               <ConfirmOverwrite
                 isOpen={isConfirmationVisible}
                 onCancel={() => setIsConfirmationVisible(false)}
@@ -163,7 +163,7 @@ const AddItem = (props: Props) => {
                 </FieldMessage>
               </div>
             )}
-          </EuiFocusTrap>
+          </FocusTrap>
         </div>
       </OutsideClickDetector>
     </div>

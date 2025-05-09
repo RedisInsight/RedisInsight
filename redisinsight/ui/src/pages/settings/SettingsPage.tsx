@@ -6,7 +6,6 @@ import {
   EuiForm,
   EuiFormRow,
   EuiLoadingSpinner,
-  EuiSpacer,
   EuiSuperSelect,
   EuiText,
   EuiTitle,
@@ -35,6 +34,7 @@ import {
 } from 'uiSrc/slices/user/user-settings'
 
 import Divider from 'uiSrc/components/divider/Divider'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
   Page,
   PageBody,
@@ -98,7 +98,7 @@ const SettingsPage = () => {
         <EuiTitle size="xs">
           <h4>Color Theme</h4>
         </EuiTitle>
-        <EuiSpacer size="m" />
+        <Spacer size="m" />
         <EuiFormRow label="Specifies the color theme to be used in Redis Insight:">
           <EuiSuperSelect
             options={options}
@@ -108,11 +108,11 @@ const SettingsPage = () => {
             data-test-subj="select-theme"
           />
         </EuiFormRow>
-        <EuiSpacer size="xl" />
+        <Spacer size="xl" />
       </EuiForm>
       <ConsentsNotifications />
       <Divider colorVariable="separatorColor" />
-      <EuiSpacer size="l" />
+      <Spacer />
       <DateTimeFormatter />
     </>
   )

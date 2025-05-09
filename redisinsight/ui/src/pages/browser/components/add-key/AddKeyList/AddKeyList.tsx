@@ -5,8 +5,6 @@ import {
   EuiButton,
   EuiTextColor,
   EuiForm,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiPanel,
   EuiFieldText,
   EuiSuperSelect,
@@ -14,6 +12,7 @@ import {
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import {
   CreateListWithExpireDto,
   ListElementDestination,
@@ -128,8 +127,8 @@ const AddKeyList = (props: Props) => {
           hasShadow={false}
           borderRadius="none"
         >
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <EuiButton
                 color="secondary"
                 onClick={() => onCancel(true)}
@@ -137,8 +136,8 @@ const AddKeyList = (props: Props) => {
               >
                 <EuiTextColor>Cancel</EuiTextColor>
               </EuiButton>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <EuiButton
                 fill
                 size="m"
@@ -151,8 +150,8 @@ const AddKeyList = (props: Props) => {
               >
                 Add Key
               </EuiButton>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

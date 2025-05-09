@@ -5,15 +5,11 @@ import { isEmpty } from 'lodash'
 import {
   EuiButton,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiForm,
   EuiFormRow,
   EuiRadioGroup,
-  EuiSpacer,
   EuiText,
   EuiToolTip,
-  EuiWindowEvent,
   keys,
 } from '@elastic/eui'
 
@@ -27,6 +23,9 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { OAuthAutodiscovery } from 'uiSrc/components/oauth/oauth-sso'
 import { MessageCloudApiKeys } from 'uiSrc/pages/home/components/form/Messages'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'
@@ -105,7 +104,7 @@ const CloudConnectionForm = (props: Props) => {
 
   const submitIsEnable = () => isEmpty(errors)
 
-  const onKeyDown = (event: any) => {
+  const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === keys.ENTER && submitIsEnable()) {
       formik.submitForm()
       event.stopPropagation()
@@ -179,11 +178,11 @@ const CloudConnectionForm = (props: Props) => {
   const CloudApiForm = (
     <div className={styles.cloudApi} data-testid="add-db_cloud-api">
       <MessageCloudApiKeys />
-      <EuiSpacer />
-      <EuiWindowEvent event="keydown" handler={onKeyDown} />
+      <Spacer />
+      <WindowEvent event="keydown" handler={onKeyDown} />
       <EuiForm component="form" onSubmit={formik.handleSubmit}>
-        <EuiFlexGroup>
-          <EuiFlexItem>
+        <Row responsive>
+          <FlexItem>
             <EuiFormRow label="API Account Key*">
               <EuiFieldText
                 name="accessKey"
@@ -201,10 +200,10 @@ const CloudConnectionForm = (props: Props) => {
                 }}
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <EuiFlexGroup>
-          <EuiFlexItem>
+          </FlexItem>
+        </Row>
+        <Row responsive>
+          <FlexItem grow>
             <EuiFormRow label="API User Key*">
               <EuiFieldText
                 name="secretKey"
@@ -222,8 +221,8 @@ const CloudConnectionForm = (props: Props) => {
                 }}
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
         <Footer />
       </EuiForm>
     </div>
@@ -232,13 +231,13 @@ const CloudConnectionForm = (props: Props) => {
   return (
     <div className="getStartedForm eui-yScroll">
       <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-        <EuiFlexGroup direction="column" gutterSize="s">
-          <EuiFlexItem>
+        <Col gap="s">
+          <FlexItem grow>
             <EuiText color="subdued" size="s">
               Connect with:
             </EuiText>
-          </EuiFlexItem>
-          <EuiFlexItem>
+          </FlexItem>
+          <FlexItem grow>
             <EuiRadioGroup
               options={options}
               idSelected={type}
@@ -246,9 +245,9 @@ const CloudConnectionForm = (props: Props) => {
               onChange={(id) => setType(id as CloudConnectionOptions)}
               data-testid="cloud-options"
             />
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <EuiSpacer size="s" />
+          </FlexItem>
+        </Col>
+        <Spacer size="s" />
       </FeatureFlagComponent>
       {type === CloudConnectionOptions.Account && (
         <OAuthAutodiscovery

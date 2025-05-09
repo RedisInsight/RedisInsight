@@ -11,8 +11,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
   EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiProgress,
   EuiText,
   EuiTextArea,
@@ -23,13 +21,13 @@ import {
   bufferToSerializedFormat,
   bufferToString,
   formattingBuffer,
-  isNonUnicodeFormatter,
   isEqualBuffers,
   isFormatEditable,
+  isFullStringLoaded,
+  isNonUnicodeFormatter,
+  isTruncatedString,
   stringToBuffer,
   stringToSerializedBufferFormat,
-  isFullStringLoaded,
-  isTruncatedString,
 } from 'uiSrc/utils'
 import {
   fetchDownloadStringValue,
@@ -47,14 +45,14 @@ import {
 } from 'uiSrc/slices/browser/keys'
 import {
   KeyTypes,
+  KeyValueFormat,
   ModulesKeyTypes,
+  STRING_MAX_LENGTH,
+  TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA,
   TEXT_DISABLED_COMPRESSED_VALUE,
   TEXT_FAILED_CONVENT_FORMATTER,
   TEXT_INVALID_VALUE,
   TEXT_UNPRINTABLE_CHARACTERS,
-  STRING_MAX_LENGTH,
-  KeyValueFormat,
-  TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA,
 } from 'uiSrc/constants'
 import { calculateTextareaLines } from 'uiSrc/utils/calculateTextareaLines'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
@@ -64,6 +62,7 @@ import { downloadFile } from 'uiSrc/utils/dom/downloadFile'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 const MIN_ROWS = 8
@@ -326,13 +325,8 @@ const StringDetailsValue = (props: Props) => {
 
       {length > MAX_LENGTH && (
         <div className="key-details-footer" key="key-details-footer">
-          <EuiFlexGroup
-            gutterSize="none"
-            justifyContent="spaceBetween"
-            alignItems="center"
-            responsive={false}
-          >
-            <EuiFlexItem grow={false}>
+          <Row justify="between" align="center">
+            <FlexItem>
               {!isFullStringLoaded(initialValue?.data?.length, length) && (
                 <EuiButton
                   className={styles.stringFooterBtn}
@@ -344,9 +338,9 @@ const StringDetailsValue = (props: Props) => {
                   Load all
                 </EuiButton>
               )}
-            </EuiFlexItem>
+            </FlexItem>
             {!isTruncatedValue && (
-              <EuiFlexItem grow={false}>
+              <FlexItem>
                 <EuiButton
                   className={styles.stringFooterBtn}
                   size="s"
@@ -359,9 +353,9 @@ const StringDetailsValue = (props: Props) => {
                 >
                   Download
                 </EuiButton>
-              </EuiFlexItem>
+              </FlexItem>
             )}
-          </EuiFlexGroup>
+          </Row>
         </div>
       )}
     </>

@@ -1,11 +1,7 @@
 import React, { useEffect, useMemo } from 'react'
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSpacer,
-  EuiTextColor,
-} from '@elastic/eui'
+import { EuiButton, EuiTextColor } from '@elastic/eui'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
 export interface Props {
   message: string
@@ -31,11 +27,9 @@ const RdiDeployErrorContent = (props: Props) => {
   return (
     <>
       <EuiTextColor color="ghost">
-        <EuiFlexGroup direction="column">
-          <EuiFlexItem grow={false}>
-            Review the error log for details.
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+        <Col>
+          <FlexItem>Review the error log for details.</FlexItem>
+          <FlexItem>
             <EuiButton
               fill
               size="s"
@@ -47,14 +41,14 @@ const RdiDeployErrorContent = (props: Props) => {
             >
               Download Error Log File
             </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Col>
       </EuiTextColor>
 
-      <EuiSpacer />
+      <Spacer />
       {/* // TODO remove display none when logs column will be available */}
-      <EuiFlexGroup style={{ display: 'none' }} justifyContent="flexEnd">
-        <EuiFlexItem grow={false}>
+      <Row style={{ display: 'none' }} justify="end">
+        <FlexItem>
           <EuiButton
             fill
             size="s"
@@ -65,8 +59,8 @@ const RdiDeployErrorContent = (props: Props) => {
           >
             Remove API key
           </EuiButton>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </>
   )
 }

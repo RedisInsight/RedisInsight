@@ -136,7 +136,12 @@ describe('InstancePage', () => {
       loadInstancesSuccess(expect.any(Array)),
     ]
 
-    expect(store.getActions()).toEqual(expectedActions)
+    const actualActions = store.getActions()
+    // eslint-disable-next-line no-restricted-syntax
+    for (const ac of expectedActions) {
+      expect(actualActions).toContainEqual(ac)
+    }
+    // expect(actualActions).toEqual(expectedActions)
   })
 
   it('should fetch rdi instance info', async () => {

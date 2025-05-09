@@ -1,6 +1,7 @@
 import React from 'react'
-import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
+import { EuiButtonIcon } from '@elastic/eui'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -17,25 +18,23 @@ const ActionBar = ({
   onCloseActionBar,
 }: Props) => (
   <div className={styles.inner}>
-    <EuiFlexGroup
-      justifyContent="center"
-      alignItems="center"
+    <Row
+      centered
       className={styles.container}
-      gutterSize="m"
-      responsive={false}
+      gap="l"
       style={{
         left: `calc(${width / 2}px - 156px)`,
       }}
     >
-      <EuiFlexItem grow={false} className={styles.text}>
+      <FlexItem className={styles.text}>
         {`You selected: ${selectionCount} items`}
-      </EuiFlexItem>
+      </FlexItem>
       {actions?.map((action, index) => (
-        <EuiFlexItem grow={false} className={styles.actions} key={index}>
+        <FlexItem className={styles.actions} key={index}>
           {action}
-        </EuiFlexItem>
+        </FlexItem>
       ))}
-      <EuiFlexItem grow={false} className={styles.cross}>
+      <FlexItem className={styles.cross}>
         <EuiButtonIcon
           iconType="cross"
           color="primary"
@@ -43,8 +42,8 @@ const ActionBar = ({
           onClick={() => onCloseActionBar()}
           data-testid="cancel-selecting"
         />
-      </EuiFlexItem>
-    </EuiFlexGroup>
+      </FlexItem>
+    </Row>
   </div>
 )
 

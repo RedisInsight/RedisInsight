@@ -5,8 +5,6 @@ import {
   EuiModalBody,
   EuiModalHeader,
   EuiIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiTitle,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
@@ -21,6 +19,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import Logo from 'uiSrc/assets/img/logo.svg'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from '../styles.module.scss'
 
 const ConsentsSettingsPopup = () => {
@@ -57,22 +56,22 @@ const ConsentsSettingsPopup = () => {
         data-testid="consents-settings-popup"
       >
         <EuiModalHeader className={styles.modalHeader}>
-          <EuiFlexGroup justifyContent="spaceBetween">
-            <EuiFlexItem grow={false}>
+          <Row justify="between">
+            <FlexItem>
               <EuiTitle size="s">
                 <h3 className={styles.consentsPopupTitle}>
                   EULA and Privacy Settings
                 </h3>
               </EuiTitle>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <EuiIcon
                 className={styles.redisIcon}
                 size="original"
                 type={Logo}
               />
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiModalHeader>
         <EuiModalBody className={styles.modalBody}>
           <ConsentsSettings onSubmitted={handleSubmitted} />

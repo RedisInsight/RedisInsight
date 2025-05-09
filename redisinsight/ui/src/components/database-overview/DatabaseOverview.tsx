@@ -1,12 +1,13 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiIcon } from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiToolTip } from '@elastic/eui'
 import { getConfig } from 'uiSrc/config'
 
 import {
   DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL,
   DATABASE_OVERVIEW_REFRESH_INTERVAL,
 } from 'uiSrc/constants/browser'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import WarningIcon from 'uiSrc/assets/img/warning.svg?react'
 import MetricItem, {
   OverviewItem,
@@ -34,18 +35,11 @@ const DatabaseOverview = () => {
   } = useDatabaseOverview()
 
   return (
-    <EuiFlexGroup
-      className={styles.container}
-      gutterSize="none"
-      responsive={false}
-    >
-      <EuiFlexItem key="overview">
-        <EuiFlexGroup
-          className={cx('flex-row', styles.itemContainer, styles.overview)}
-          gutterSize="none"
-          responsive={false}
-          alignItems="center"
-        >
+    <Row className={styles.container}>
+      <FlexItem grow key="overview">
+        <Row className={cx('flex-row', styles.itemContainer, styles.overview)}
+            align="center"
+          >
           {connectivityError && (
             <MetricItem
               id="connectivityError"
@@ -90,10 +84,7 @@ const DatabaseOverview = () => {
                 data-testid="overview-auto-refresh"
                 id="overview-auto-refresh"
               >
-                <EuiFlexItem
-                  grow={false}
-                  className={styles.overviewItemContent}
-                >
+                <FlexItem className={styles.overviewItemContent}>
                   <AutoRefresh
                     displayText={false}
                     displayLastRefresh={false}
@@ -112,13 +103,13 @@ const DatabaseOverview = () => {
                     onRefreshClicked={handleRefreshClick}
                     onEnableAutoRefresh={handleEnableAutoRefresh}
                   />
-                </EuiFlexItem>
+                </FlexItem>
               </OverviewItem>
             </>
           )}
-        </EuiFlexGroup>
-      </EuiFlexItem>
-    </EuiFlexGroup>
+        </Row>
+      </FlexItem>
+    </Row>
   )
 }
 
@@ -135,29 +126,27 @@ const getTooltipContent = (metric: IMetric) => {
   return metric.children
     .filter((item) => item.value !== undefined)
     .map((tooltipItem) => (
-      <EuiFlexGroup
+      <Row
         className={styles.commandsPerSecTip}
         key={tooltipItem.id}
-        gutterSize="none"
-        responsive={false}
-        alignItems="center"
+        align="center"
       >
         {tooltipItem.icon && (
-          <EuiFlexItem grow={false}>
+          <FlexItem>
             <EuiIcon
               className={styles.moreInfoOverviewIcon}
               size="m"
               type={tooltipItem.icon}
             />
-          </EuiFlexItem>
+          </FlexItem>
         )}
-        <EuiFlexItem className={styles.moreInfoOverviewContent} grow={false}>
+        <FlexItem className={styles.moreInfoOverviewContent}>
           {tooltipItem.content}
-        </EuiFlexItem>
-        <EuiFlexItem className={styles.moreInfoOverviewTitle} grow={false}>
+        </FlexItem>
+        <FlexItem className={styles.moreInfoOverviewTitle}>
           {tooltipItem.title}
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     ))
 }
 

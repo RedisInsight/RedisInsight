@@ -1,18 +1,12 @@
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiPanel,
-  EuiTextColor,
-} from '@elastic/eui'
+import { EuiButton, EuiPanel, EuiTextColor } from '@elastic/eui'
 import cx from 'classnames'
 import { toNumber } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { entryIdRegex, stringToBuffer } from 'uiSrc/utils'
 import {
-  selectedKeyDataSelector,
   keysSelector,
+  selectedKeyDataSelector,
 } from 'uiSrc/slices/browser/keys'
 import {
   addNewEntriesAction,
@@ -27,6 +21,7 @@ import {
   sendEventTelemetry,
   TelemetryEvent,
 } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { AddStreamEntriesDto } from 'apiSrc/modules/browser/stream/dto'
 
 import StreamEntryFields from './StreamEntryFields/StreamEntryFields'
@@ -161,8 +156,8 @@ const AddStreamEntries = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
-          <EuiFlexItem grow={false}>
+        <Row justify="end" gap="l">
+          <FlexItem>
             <div>
               <EuiButton
                 color="secondary"
@@ -172,8 +167,8 @@ const AddStreamEntries = (props: Props) => {
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <div>
               <EuiButton
                 fill
@@ -186,8 +181,8 @@ const AddStreamEntries = (props: Props) => {
                 Save
               </EuiButton>
             </div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiPanel>
     </>
   )

@@ -1,20 +1,19 @@
-import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react'
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
   EuiButton,
-  EuiFormRow,
-  EuiTextColor,
   EuiForm,
-  EuiFlexGroup,
-  EuiFlexItem,
+  EuiFormRow,
   EuiPanel,
   EuiTextArea,
+  EuiTextColor,
 } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 
 import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/browser/keys'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import { AddStringFormConfig as config } from '../constants/fields-config'
@@ -82,8 +81,8 @@ const AddKeyString = (props: Props) => {
           hasShadow={false}
           borderRadius="none"
         >
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <div>
                 <EuiButton
                   color="secondary"
@@ -93,8 +92,8 @@ const AddKeyString = (props: Props) => {
                   <EuiTextColor>Cancel</EuiTextColor>
                 </EuiButton>
               </div>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <div>
                 <EuiButton
                   fill
@@ -109,8 +108,8 @@ const AddKeyString = (props: Props) => {
                   Add Key
                 </EuiButton>
               </div>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

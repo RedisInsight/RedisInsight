@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSpacer,
-  EuiText,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiText, EuiTitle } from '@elastic/eui'
 import { formatTimestamp } from 'uiSrc/utils'
 import { DATETIME_FORMATTER_DEFAULT, TimezoneOption } from 'uiSrc/constants'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import TimezoneForm from './components/timezone-form/TimezoneForm'
 import DatetimeForm from './components/datetime-form/DatetimeForm'
 import styles from './styles.module.scss'
@@ -33,23 +29,23 @@ const DateTimeFormatter = () => {
       <EuiTitle size="xs">
         <h4>Date and Time Format</h4>
       </EuiTitle>
-      <EuiSpacer size="m" />
+      <Spacer size="m" />
       <EuiText color="subdued" className={styles.dateTimeSubtitle}>
         Specifies the date and time format to be used in Redis Insight:
       </EuiText>
-      <EuiSpacer size="m" />
+      <Spacer size="m" />
       <DatetimeForm onFormatChange={(newPreview) => setPreview(newPreview)} />
-      <EuiSpacer size="m" />
+      <Spacer size="m" />
       <EuiText className={styles.dateTimeSubtitle} color="subdued">
         Specifies the time zone to be used in Redis Insight:
       </EuiText>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <div>
-        <EuiFlexGroup alignItems="center">
-          <EuiFlexItem grow={1}>
+        <Row align="center" gap="m" responsive>
+          <FlexItem grow={1}>
             <TimezoneForm />
-          </EuiFlexItem>
-          <EuiFlexItem grow={2}>
+          </FlexItem>
+          <FlexItem grow={2}>
             <div className={styles.previewContainer}>
               <EuiText className={styles.dateTimeSubtitle} color="subdued">
                 Preview:
@@ -58,10 +54,10 @@ const DateTimeFormatter = () => {
                 {preview}
               </EuiText>
             </div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </div>
-      <EuiSpacer size="l" />
+      <Spacer />
     </>
   )
 }

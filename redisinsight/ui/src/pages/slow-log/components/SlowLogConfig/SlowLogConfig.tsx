@@ -4,7 +4,6 @@ import {
   EuiFieldText,
   EuiForm,
   EuiFormRow,
-  EuiSpacer,
   EuiSuperSelect,
   EuiText,
 } from '@elastic/eui'
@@ -31,6 +30,7 @@ import {
 import { errorValidateNegativeInteger, validateNumber } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { convertNumberByUnits } from '../../utils'
 import styles from './styles.module.scss'
 
@@ -120,7 +120,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
       <EuiText color="subdued" className={styles.clusterText}>
         Each node can have different Slow Log configuration in a clustered
         database.
-        <EuiSpacer size="s" />
+        <Spacer size="s" />
         {'Use '}
         <code>CONFIG SET slowlog-log-slower-than</code>
         {' or '}
@@ -128,7 +128,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
         {' for a specific node in redis-cli to configure it.'}
       </EuiText>
 
-      <EuiSpacer size="xs" />
+      <Spacer size="xs" />
       <EuiButton
         fill
         color="secondary"
@@ -235,7 +235,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
                 </div>
               </>
             </EuiFormRow>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
           </EuiForm>
 
           <div className={styles.footer}>

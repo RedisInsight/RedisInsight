@@ -4,8 +4,6 @@ import { useHistory, useParams } from 'react-router-dom'
 import {
   EuiButton,
   EuiText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiLink,
   EuiPanel,
   EuiAccordion,
@@ -43,6 +41,7 @@ import SnoozeIcon from 'uiSrc/assets/img/icons/snooze.svg?react'
 import StarsIcon from 'uiSrc/assets/img/icons/stars.svg?react'
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -197,19 +196,9 @@ const Recommendation = ({
     title: string,
     id: string,
   ) => (
-    <EuiFlexGroup
-      className={styles.fullWidth}
-      responsive={false}
-      alignItems="center"
-      justifyContent="spaceBetween"
-      gutterSize="none"
-    >
-      <EuiFlexGroup
-        className={styles.fullWidth}
-        alignItems="center"
-        gutterSize="none"
-      >
-        <EuiFlexItem grow={false}>
+    <Row className={styles.fullWidth} align="center" justify="between">
+      <Row className={styles.fullWidth} align="center">
+        <FlexItem>
           {redisStack && (
             <EuiLink
               external={false}
@@ -234,11 +223,11 @@ const Recommendation = ({
               </EuiToolTip>
             </EuiLink>
           )}
-        </EuiFlexItem>
-        <EuiFlexItem grow className="truncateText">
+        </FlexItem>
+        <FlexItem grow className="truncateText">
           {title}
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem>
           <EuiToolTip
             title="Snooze tip"
             content="This tip will be removed from the list and displayed again when relevant."
@@ -255,8 +244,8 @@ const Recommendation = ({
               data-testid={`${name}-delete-btn`}
             />
           </EuiToolTip>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem>
           <EuiToolTip
             title={`${hide ? 'Show' : 'Hide'} tip`}
             content={`${
@@ -277,9 +266,9 @@ const Recommendation = ({
               data-testid={`toggle-hide-${name}-btn`}
             />
           </EuiToolTip>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </EuiFlexGroup>
+        </FlexItem>
+      </Row>
+    </Row>
   )
 
   if (!(name in recommendationsContent)) {

@@ -1,4 +1,4 @@
-import { EuiFlexItem, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import React from 'react'
 import { useSelector } from 'react-redux'
 
@@ -12,6 +12,7 @@ import {
 } from 'uiSrc/slices/browser/keys'
 import { formatBytes } from 'uiSrc/utils'
 
+import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -27,7 +28,7 @@ const KeyDetailsHeaderSizeLength = ({ width }: Props) => {
   return (
     <>
       {size && (
-        <EuiFlexItem grow={false}>
+        <FlexItem>
           <EuiText
             grow
             color="subdued"
@@ -64,9 +65,9 @@ const KeyDetailsHeaderSizeLength = ({ width }: Props) => {
               </>
             </EuiToolTip>
           </EuiText>
-        </EuiFlexItem>
+        </FlexItem>
       )}
-      <EuiFlexItem grow={false}>
+      <FlexItem>
         <EuiText
           grow
           color="subdued"
@@ -78,7 +79,7 @@ const KeyDetailsHeaderSizeLength = ({ width }: Props) => {
           {': '}
           {length ?? '-'}
         </EuiText>
-      </EuiFlexItem>
+      </FlexItem>
     </>
   )
 }

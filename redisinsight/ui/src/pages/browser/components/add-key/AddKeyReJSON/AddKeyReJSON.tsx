@@ -6,8 +6,6 @@ import {
   EuiFormRow,
   EuiTextColor,
   EuiForm,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiPanel,
 } from '@elastic/eui'
 
@@ -17,6 +15,7 @@ import { addKeyStateSelector, addReJSONKey } from 'uiSrc/slices/browser/keys'
 import { MonacoJson } from 'uiSrc/components/monaco-editor'
 import UploadFile from 'uiSrc/components/upload-file'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/rejson-rl/dto'
 
 import { AddJSONFormConfig as config } from '../constants/fields-config'
@@ -89,15 +88,15 @@ const AddKeyReJSON = (props: Props) => {
             disabled={loading}
             data-testid="json-value"
           />
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <UploadFile
                 onClick={onClick}
                 onFileChange={setReJSONValue}
                 accept="application/json, text/plain"
               />
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </>
       </EuiFormRow>
 
@@ -112,8 +111,8 @@ const AddKeyReJSON = (props: Props) => {
           borderRadius="none"
           style={{ border: 'none' }}
         >
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <div>
                 <EuiButton
                   color="secondary"
@@ -123,8 +122,8 @@ const AddKeyReJSON = (props: Props) => {
                   <EuiTextColor>Cancel</EuiTextColor>
                 </EuiButton>
               </div>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <div>
                 <EuiButton
                   fill
@@ -139,8 +138,8 @@ const AddKeyReJSON = (props: Props) => {
                   Add Key
                 </EuiButton>
               </div>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

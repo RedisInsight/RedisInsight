@@ -1,11 +1,12 @@
 import React from 'react'
-import { EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiText, EuiTitle } from '@elastic/eui'
 import { ExternalLink, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -22,12 +23,12 @@ const DatabaseNotOpened = (props: Props) => {
         <EuiTitle size="xxs" className={styles.title}>
           <h5>Open a database</h5>
         </EuiTitle>
-        <EuiSpacer size="s" />
+        <Spacer size="s" />
         <>
           <EuiText color="subdued" size="s">
             Open your Redis database, or create a new database to get started.
           </EuiText>
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           <OAuthSsoHandlerDialog>
             {(ssoCloudHandlerClick) => (
               <ExternalLink
@@ -48,7 +49,7 @@ const DatabaseNotOpened = (props: Props) => {
               </ExternalLink>
             )}
           </OAuthSsoHandlerDialog>
-          <EuiSpacer size="xs" />
+          <Spacer size="xs" />
           <ExternalLink
             iconSize="s"
             href={getUtmExternalLink(EXTERNAL_LINKS.docker, {

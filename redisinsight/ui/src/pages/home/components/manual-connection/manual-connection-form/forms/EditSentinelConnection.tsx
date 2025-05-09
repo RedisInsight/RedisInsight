@@ -1,13 +1,5 @@
 import React from 'react'
-import {
-  EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiForm,
-  EuiFormRow,
-  EuiSpacer,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiFormRow, EuiTitle } from '@elastic/eui'
 import { FormikProps } from 'formik'
 import {
   PrimaryGroupSentinel,
@@ -21,6 +13,8 @@ import {
   TlsDetails,
 } from 'uiSrc/pages/home/components/form'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import DecompressionAndFormatters from './DecompressionAndFormatters'
 
 import { ManualFormTab } from '../constants'
@@ -59,7 +53,7 @@ const EditSentinelConnection = (props: Props) => {
       <EuiTitle size="xs">
         <span>Datababase</span>
       </EuiTitle>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <SentinelMasterDatabase
         formik={formik}
         db={db}
@@ -73,7 +67,7 @@ const EditSentinelConnection = (props: Props) => {
       <EuiTitle size="xs">
         <span>Sentinel</span>
       </EuiTitle>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <DatabaseForm
         formik={formik}
         showFields={{ host: true, port: true, alias: false, timeout: false }}
@@ -90,8 +84,8 @@ const EditSentinelConnection = (props: Props) => {
 
   const GeneralFormEditMode = (
     <>
-      <EuiFlexGroup responsive={false}>
-        <EuiFlexItem>
+      <Row gap="m">
+        <FlexItem grow>
           <EuiFormRow label="Database Alias*">
             <EuiFieldText
               fullWidth
@@ -105,9 +99,9 @@ const EditSentinelConnection = (props: Props) => {
               onChange={formik.handleChange}
             />
           </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiSpacer size="s" />
+        </FlexItem>
+      </Row>
+      <Spacer size="s" />
       <Divider
         colorVariable="separatorColor"
         variant="fullWidth"
@@ -116,7 +110,7 @@ const EditSentinelConnection = (props: Props) => {
       <EuiTitle size="xs">
         <span>Datababase</span>
       </EuiTitle>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <SentinelMasterDatabase
         formik={formik}
         db={db}
@@ -130,7 +124,7 @@ const EditSentinelConnection = (props: Props) => {
       <EuiTitle size="xs">
         <span>Sentinel</span>
       </EuiTitle>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <DatabaseForm
         formik={formik}
         showFields={{ host: false, port: true, alias: false, timeout: false }}

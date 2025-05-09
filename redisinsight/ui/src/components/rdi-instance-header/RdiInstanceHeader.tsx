@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiFlexGroup, EuiFlexItem, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiText, EuiToolTip } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
@@ -10,6 +10,7 @@ import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import InstancesNavigationPopover from '../instance-header/components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
@@ -30,13 +31,8 @@ const RdiInstanceHeader = () => {
   }
 
   return (
-    <EuiFlexGroup
-      className={styles.container}
-      gutterSize="none"
-      alignItems="center"
-      responsive={false}
-    >
-      <EuiFlexItem style={{ overflow: 'hidden' }}>
+    <Row className={styles.container} align="center">
+      <FlexItem style={{ overflow: 'hidden' }}>
         <div
           className={styles.breadcrumbsContainer}
           data-testid="breadcrumbs-container"
@@ -56,44 +52,39 @@ const RdiInstanceHeader = () => {
           </div>
           <div style={{ flex: 1, overflow: 'hidden' }}>
             <div style={{ maxWidth: '100%' }}>
-              <EuiFlexGroup
-                gutterSize="none"
-                alignItems="center"
-                responsive={false}
-              >
-                <EuiFlexItem grow={false}>
+              <Row align="center">
+                <FlexItem>
                   <EuiText className={styles.divider}>&#62;</EuiText>
-                </EuiFlexItem>
-                <EuiFlexItem style={{ overflow: 'hidden' }}>
+                </FlexItem>
+                <FlexItem grow style={{ overflow: 'hidden' }}>
                   <InstancesNavigationPopover name={name} />
-                </EuiFlexItem>
-              </EuiFlexGroup>
+                </FlexItem>
+              </Row>
             </div>
           </div>
         </div>
-      </EuiFlexItem>
+      </FlexItem>
 
       {isAnyChatAvailable && (
-        <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
+        <FlexItem style={{ marginRight: 12 }}>
           <CopilotTrigger />
-        </EuiFlexItem>
+        </FlexItem>
       )}
-      <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+      <FlexItem style={{ marginLeft: 12 }}>
         <InsightsTrigger />
-      </EuiFlexItem>
+      </FlexItem>
 
       <FeatureFlagComponent
         name={[FeatureFlags.cloudSso, FeatureFlags.cloudAds]}
       >
-        <EuiFlexItem
-          grow={false}
+        <FlexItem
           style={{ marginLeft: 16 }}
           data-testid="o-auth-user-profile-rdi"
         >
           <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
-        </EuiFlexItem>
+        </FlexItem>
       </FeatureFlagComponent>
-    </EuiFlexGroup>
+    </Row>
   )
 }
 

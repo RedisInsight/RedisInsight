@@ -4,12 +4,9 @@ import {
   EuiFieldNumber,
   EuiFieldPassword,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiRadioGroup,
   EuiRadioGroupOption,
-  EuiSpacer,
   EuiTextArea,
   htmlIdGenerator,
 } from '@elastic/eui'
@@ -27,6 +24,8 @@ import { SECURITY_FIELD } from 'uiSrc/constants'
 import { SshPassType } from 'uiSrc/pages/home/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -53,19 +52,15 @@ const SSHDetails = (props: Props) => {
 
   return (
     <>
-      <EuiFlexGroup
+      <Row
+        gap="m"
         className={cx(flexGroupClassName, {
           [styles.tlsContainer]: !flexGroupClassName,
           [styles.tlsSniOpened]: !!formik.values.ssh,
         })}
-        alignItems={!flexGroupClassName ? 'flexEnd' : undefined}
-        responsive={false}
+        align={!flexGroupClassName ? 'end' : undefined}
       >
-        <EuiFlexItem
-          style={{ width: '230px' }}
-          grow={false}
-          className={flexItemClassName}
-        >
+        <FlexItem style={{ width: '230px' }} className={flexItemClassName}>
           <EuiCheckbox
             id={`${htmlIdGenerator()()} ssh`}
             name="ssh"
@@ -74,13 +69,13 @@ const SSHDetails = (props: Props) => {
             onChange={formik.handleChange}
             data-testid="use-ssh"
           />
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
 
       {formik.values.ssh && (
         <>
-          <EuiFlexGroup className={flexGroupClassName}>
-            <EuiFlexItem className={cx(flexItemClassName)}>
+          <Row gap="m" responsive className={flexGroupClassName}>
+            <FlexItem grow className={cx(flexItemClassName)}>
               <EuiFormRow label="Host*">
                 <EuiFieldText
                   name="sshHost"
@@ -98,9 +93,9 @@ const SSHDetails = (props: Props) => {
                   }}
                 />
               </EuiFormRow>
-            </EuiFlexItem>
+            </FlexItem>
 
-            <EuiFlexItem className={flexItemClassName}>
+            <FlexItem grow className={flexItemClassName}>
               <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
                 <EuiFieldNumber
                   name="sshPort"
@@ -122,11 +117,11 @@ const SSHDetails = (props: Props) => {
                   max={MAX_PORT_NUMBER}
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
 
-          <EuiFlexGroup className={flexGroupClassName}>
-            <EuiFlexItem className={cx(flexItemClassName)}>
+          <Row gap="m" responsive className={flexGroupClassName}>
+            <FlexItem grow className={cx(flexItemClassName)}>
               <EuiFormRow label="Username*">
                 <EuiFieldText
                   name="sshUsername"
@@ -144,14 +139,15 @@ const SSHDetails = (props: Props) => {
                   }}
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
 
-          <EuiSpacer />
-          <EuiFlexGroup className={flexGroupClassName}>
-            <EuiFlexItem
+          <Spacer />
+          <Row gap="m" responsive className={flexGroupClassName}>
+            <FlexItem
+              grow
               className={cx(flexItemClassName, styles.sshPassTypeWrapper)}
-            >
+              >
               <EuiRadioGroup
                 id="sshPassType"
                 name="sshPassType"
@@ -161,12 +157,12 @@ const SSHDetails = (props: Props) => {
                 onChange={(id) => formik.setFieldValue('sshPassType', id)}
                 data-testid="ssh-pass-type"
               />
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
 
           {formik.values.sshPassType === SshPassType.Password && (
-            <EuiFlexGroup className={flexGroupClassName}>
-              <EuiFlexItem className={flexItemClassName}>
+            <Row gap="m" responsive className={flexGroupClassName}>
+              <FlexItem grow className={flexItemClassName}>
                 <EuiFormRow label="Password">
                   <EuiFieldPassword
                     type="password"
@@ -191,14 +187,14 @@ const SSHDetails = (props: Props) => {
                     autoComplete="new-password"
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
-            </EuiFlexGroup>
+              </FlexItem>
+            </Row>
           )}
 
           {formik.values.sshPassType === SshPassType.PrivateKey && (
             <>
-              <EuiFlexGroup className={flexGroupClassName}>
-                <EuiFlexItem className={flexItemClassName}>
+              <Row gap="m" responsive className={flexGroupClassName}>
+                <FlexItem grow className={flexItemClassName}>
                   <EuiFormRow label="Private Key*">
                     <EuiTextArea
                       name="sshPrivateKey"
@@ -224,10 +220,10 @@ const SSHDetails = (props: Props) => {
                       }}
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-              <EuiFlexGroup className={flexGroupClassName}>
-                <EuiFlexItem className={flexItemClassName}>
+                </FlexItem>
+              </Row>
+              <Row gap="m" responsive className={flexGroupClassName}>
+                <FlexItem grow className={flexItemClassName}>
                   <EuiFormRow label="Passphrase">
                     <EuiFieldPassword
                       type="password"
@@ -252,8 +248,8 @@ const SSHDetails = (props: Props) => {
                       autoComplete="new-password"
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
-              </EuiFlexGroup>
+                </FlexItem>
+              </Row>
             </>
           )}
         </>

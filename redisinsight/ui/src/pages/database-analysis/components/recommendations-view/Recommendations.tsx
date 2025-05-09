@@ -1,12 +1,10 @@
 import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams, useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
 import {
   EuiAccordion,
   EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiLink,
   EuiPanel,
@@ -16,12 +14,12 @@ import {
 
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
-  RecommendationBody,
+  FeatureFlagComponent,
   RecommendationBadges,
   RecommendationBadgesLegend,
-  RecommendationVoting,
+  RecommendationBody,
   RecommendationCopyComponent,
-  FeatureFlagComponent,
+  RecommendationVoting,
 } from 'uiSrc/components'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -37,6 +35,7 @@ import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommenda
 import { sortRecommendations } from 'uiSrc/utils/recommendation'
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { findTutorialPath } from 'uiSrc/utils'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
@@ -88,14 +87,9 @@ const Recommendations = () => {
     badges: string[],
     id: string,
   ) => (
-    <EuiFlexGroup
-      className={styles.accordionButton}
-      responsive={false}
-      alignItems="center"
-      justifyContent="spaceBetween"
-    >
-      <EuiFlexGroup alignItems="center">
-        <EuiFlexItem onClick={onRedisStackClick} grow={false}>
+    <Row className={styles.accordionButton} align="center" justify="between">
+      <Row align="center">
+        <FlexItem onClick={onRedisStackClick}>
           {redisStack && (
             <EuiLink
               external={false}
@@ -120,13 +114,13 @@ const Recommendations = () => {
               </EuiToolTip>
             </EuiLink>
           )}
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>{title}</EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem>{title}</FlexItem>
+      </Row>
+      <FlexItem>
         <RecommendationBadges badges={badges} />
-      </EuiFlexItem>
-    </EuiFlexGroup>
+      </FlexItem>
+    </Row>
   )
 
   if (loading) {

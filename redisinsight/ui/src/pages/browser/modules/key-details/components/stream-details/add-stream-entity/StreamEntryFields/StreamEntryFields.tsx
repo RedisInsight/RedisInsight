@@ -1,19 +1,13 @@
 import React, { ChangeEvent, useEffect, useRef } from 'react'
-import {
-  EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiFormRow,
-  EuiIcon,
-  EuiSpacer,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFieldText, EuiFormRow, EuiIcon, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { validateEntryId } from 'uiSrc/utils'
 import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-key/AddKeyStream/AddKeyStream'
 import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -134,7 +128,7 @@ const StreamEntryFields = (props: Props) => {
                   <>
                     ID must be a timestamp and sequence number greater than the
                     last ID.
-                    <EuiSpacer size="xs" />
+                    <Spacer size="xs" />
                     Otherwise, type * to auto-generate ID based on the database
                     current time.
                   </>
@@ -169,12 +163,8 @@ const StreamEntryFields = (props: Props) => {
             onClickAdd={addField}
           >
             {(item, index) => (
-              <EuiFlexGroup
-                gutterSize="none"
-                alignItems="center"
-                responsive={false}
-              >
-                <EuiFlexItem className={styles.fieldItemWrapper} grow>
+              <Row align="center">
+                <FlexItem className={styles.fieldItemWrapper} grow>
                   <EuiFormRow fullWidth>
                     <EuiFieldText
                       fullWidth
@@ -192,8 +182,8 @@ const StreamEntryFields = (props: Props) => {
                       data-testid="field-name"
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
-                <EuiFlexItem className={styles.valueItemWrapper} grow>
+                </FlexItem>
+                <FlexItem className={styles.valueItemWrapper} grow>
                   <EuiFormRow fullWidth>
                     <EuiFieldText
                       fullWidth
@@ -209,8 +199,8 @@ const StreamEntryFields = (props: Props) => {
                       data-testid="field-value"
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
-              </EuiFlexGroup>
+                </FlexItem>
+              </Row>
             )}
           </AddMultipleFields>
         </div>

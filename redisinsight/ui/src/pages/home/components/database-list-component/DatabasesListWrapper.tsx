@@ -1,6 +1,5 @@
 import {
   Criteria,
-  EuiButtonIcon,
   EuiIcon,
   EuiLink,
   EuiPopover,
@@ -31,7 +30,6 @@ import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight
 import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
 import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
 import CloudLinkIcon from 'uiSrc/assets/img/oauth/cloud_link.svg?react'
-import ThreeDots from 'uiSrc/assets/img/icons/three_dots.svg?react'
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
 import ItemList from 'uiSrc/components/item-list'
 import {
@@ -84,8 +82,8 @@ import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
 
 import { Tag } from 'uiSrc/slices/interfaces/tag'
 import { FeatureFlagComponent } from 'uiSrc/components'
-import { EditIcon } from 'uiSrc/components/base/icons'
-import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { EditIcon, CopyIcon, TagIcon } from 'uiSrc/components/base/icons'
+import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
 import DbStatus from '../db-status'
 
 import { TagsCell } from '../tags-cell/TagsCell'
@@ -350,12 +348,14 @@ const DatabasesListWrapper = (props: Props) => {
   })
 
   const controlsButton = (instanceId: string) => (
-    <EuiButtonIcon
-      iconType={ThreeDots}
+    <EmptyButton
+      size="medium"
       aria-label="Controls icon"
       data-testid={`controls-button-${instanceId}`}
       onClick={() => toggleControlsPopover(instanceId)}
-    />
+    >
+      <span style={{ fontWeight: 'bold' }}>⋮</span>
+    </EmptyButton>
   )
 
   const columns: EuiTableFieldDataColumnType<Instance>[] = useMemo(
@@ -455,8 +455,8 @@ const DatabasesListWrapper = (props: Props) => {
                 content="Copy"
                 anchorClassName="copyHostPortTooltip"
               >
-                <EuiButtonIcon
-                  iconType="copy"
+                <IconButton
+                  icon={CopyIcon}
                   aria-label="Copy host:port"
                   className="copyHostPortBtn"
                   onClick={() => handleCopy(text, id)}
@@ -585,8 +585,8 @@ const DatabasesListWrapper = (props: Props) => {
             <>
               {databaseManagementFeature?.flag && (
                 <EuiToolTip content="Manage Tags">
-                  <EuiButtonIcon
-                    iconType="tag"
+                  <IconButton
+                    icon={TagIcon}
                     className={styles.tagsButton}
                     aria-label="Manage Instance Tags"
                     data-testid={`manage-instance-tags-${instance.id}`}

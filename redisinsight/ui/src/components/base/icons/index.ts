@@ -12,6 +12,7 @@ export { RawMode as RawModeIcon } from './RawMode'
 export { RedisLogo } from './RedisLogo'
 export { ShrinkIcon } from './ShrinkIcon'
 export { Trigger } from './Trigger'
+export { ThreeDotsIcon } from './ThreeDotsIcon'
 export { UserInCircle } from './UserInCircle'
 
 export * from '@redislabsdev/redis-ui-icons'

@@ -112,7 +112,7 @@
   min-height: 25px;
   position: relative;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
 
   &:before {
     content: "";
@@ -240,6 +240,7 @@
   margin-left: 1em;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   min-width: 24px;
 }
 

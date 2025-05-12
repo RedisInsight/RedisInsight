@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiButtonIcon, EuiText, EuiToolTip, EuiIcon } from '@elastic/eui'
+import { EuiText, EuiIcon } from '@elastic/eui'
 
 import {
   toggleCli,
@@ -16,6 +16,7 @@ import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { WindowControlGroup } from 'uiSrc/components/base/shared/WindowControlGroup'
 import styles from './styles.module.scss'
 
 const CliHeader = () => {
@@ -73,42 +74,12 @@ const CliHeader = () => {
           </OnboardingTour>
         </FlexItem>
         <FlexItem grow />
-        <FlexItem grow={false}>
-          <EuiToolTip
-            content="Minimize"
-            position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
-          >
-            <EuiButtonIcon
-              iconType="minus"
-              color="primary"
-              id="hide-cli"
-              aria-label="hide cli"
-              data-testid="hide-cli"
-              className={styles.icon}
-              onClick={handleHideCli}
-            />
-          </EuiToolTip>
-        </FlexItem>
-        <FlexItem>
-          <EuiToolTip
-            content="Close"
-            position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
-          >
-            <EuiButtonIcon
-              iconType="cross"
-              color="primary"
-              id="close-cli"
-              aria-label="close cli"
-              data-testid="close-cli"
-              className={styles.icon}
-              onClick={handleCloseCli}
-            />
-          </EuiToolTip>
-        </FlexItem>
+        <WindowControlGroup
+          onClose={handleCloseCli}
+          onHide={handleHideCli}
+          id="cli"
+          label="cli"
+        />
       </Row>
     </div>
   )

@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { EuiText, EuiToolTip, EuiIcon } from '@elastic/eui'
+import { EuiText, EuiIcon } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   resetCliHelperSettings,
@@ -13,8 +13,7 @@ import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { IconButton } from 'uiSrc/components/base/forms/buttons'
-import { MinusIcon, CancelSlimIcon } from 'uiSrc/components/base/icons'
+import { WindowControlGroup } from 'uiSrc/components/base/shared/WindowControlGroup'
 import styles from './styles.module.scss'
 
 const CommandHelperHeader = () => {
@@ -56,42 +55,12 @@ const CommandHelperHeader = () => {
           </OnboardingTour>
         </FlexItem>
         <FlexItem grow />
-        <FlexItem>
-          <EuiToolTip
-            content="Minimize"
-            position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
-          >
-            <IconButton
-              size="S"
-              icon={MinusIcon}
-              id="hide-command-helper"
-              aria-label="hide command helper"
-              data-testid="hide-command-helper"
-              className={styles.icon}
-              onClick={handleHideHelper}
-            />
-          </EuiToolTip>
-        </FlexItem>
-        <FlexItem>
-          <EuiToolTip
-            content="Close"
-            position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
-          >
-            <IconButton
-              size="S"
-              icon={CancelSlimIcon}
-              id="close-command-helper"
-              aria-label="close command helper"
-              data-testid="close-command-helper"
-              className={styles.icon}
-              onClick={handleCloseHelper}
-            />
-          </EuiToolTip>
-        </FlexItem>
+        <WindowControlGroup
+          onClose={handleCloseHelper}
+          onHide={handleHideHelper}
+          id="command-helper"
+          label="Command Helper"
+        />
       </Row>
     </div>
   )

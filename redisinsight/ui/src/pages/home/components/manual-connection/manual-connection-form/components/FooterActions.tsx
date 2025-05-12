@@ -1,7 +1,6 @@
 import React from 'react'
-import { EuiButton, EuiButtonEmpty, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import { FormikErrors } from 'formik'
-import { isInvalid } from '@elastic/eui/src/components/color_picker/color_stops/utils'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { getSubmitButtonContent } from 'uiSrc/pages/home/utils'
 import { DbConnectionInfo, ISubmitButton } from 'uiSrc/pages/home/interfaces'

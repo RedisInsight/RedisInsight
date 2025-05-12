@@ -2,9 +2,7 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-  EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
+  EuiTextColor,
   EuiForm,
   EuiPanel,
   EuiSuperSelect,
@@ -12,6 +10,7 @@ import {
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import {
   optionsDestinations,
   TAIL_DESTINATION,
@@ -130,16 +129,16 @@ const AddKeyList = (props: Props) => {
           hasShadow={false}
           borderRadius="none"
         >
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <SecondaryButton
                 onClick={() => onCancel(true)}
                 className="btn-cancel btn-back"
               >
                 Cancel
               </SecondaryButton>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <PrimaryButton
                 className="btn-add"
                 loading={loading}
@@ -149,8 +148,8 @@ const AddKeyList = (props: Props) => {
               >
                 Add Key
               </PrimaryButton>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

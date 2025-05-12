@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import {
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiLink,
-  EuiSpacer,
   EuiText,
   EuiTitle,
   EuiPopover,
@@ -18,6 +15,8 @@ import {
   removeAllCapiKeysAction,
 } from 'uiSrc/slices/oauth/cloud'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
   DestructiveButton,
   PrimaryButton,
@@ -59,9 +58,9 @@ const CloudSettings = () => {
       <EuiTitle className={styles.title} size="xxs">
         <span>API user keys</span>
       </EuiTitle>
-      <EuiSpacer size="s" />
-      <EuiFlexGroup>
-        <EuiFlexItem>
+      <Spacer size="s" />
+      <Row gap="m" responsive>
+        <FlexItem grow>
           <EuiText size="s" className={styles.smallText} color="subdued">
             The list of API user keys that are stored locally in Redis Insight.{' '}
             <br />
@@ -77,8 +76,8 @@ const CloudSettings = () => {
             </EuiLink>
             {' and delete them manually.'}
           </EuiText>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem grow={false}>
           <EuiPopover
             anchorPosition="downCenter"
             ownFocus
@@ -112,7 +111,7 @@ const CloudSettings = () => {
                 </EuiLink>
                 {' and delete them manually.'}
               </EuiText>
-              <EuiSpacer />
+              <Spacer />
               <div className={styles.popoverFooter}>
                 <DestructiveButton
                   size="small"
@@ -126,9 +125,9 @@ const CloudSettings = () => {
               </div>
             </div>
           </EuiPopover>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiSpacer size="l" />
+        </FlexItem>
+      </Row>
+      <Spacer />
       <UserApiKeysTable items={data} loading={loading} />
     </div>
   )

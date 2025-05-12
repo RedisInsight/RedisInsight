@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiLoadingContent, keys } from '@elastic/eui'
+import { keys } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
 
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import {
   DEFAULT_TEXT_VIEW_TYPE,
   ProfileQueryType,
@@ -233,7 +234,7 @@ const QueryCard = (props: Props) => {
         {isOpen && (
           <>
             {React.isValidElement(commonError) &&
-            (!isGroupResults(resultsMode) || isNull(command)) ? (
+              (!isGroupResults(resultsMode) || isNull(command)) ? (
               <QueryCardCommonResult loading={loading} result={commonError} />
             ) : (
               <>
@@ -275,7 +276,7 @@ const QueryCard = (props: Props) => {
                               />
                             ) : (
                               <div className={styles.loading}>
-                                <EuiLoadingContent
+                                <LoadingContent
                                   lines={5}
                                   data-testid="loading-content"
                                 />

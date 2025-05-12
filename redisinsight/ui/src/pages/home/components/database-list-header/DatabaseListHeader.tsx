@@ -1,12 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  EuiButton,
-  EuiCheckbox,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiPopover,
-  EuiSpacer,
-} from '@elastic/eui'
+import { EuiButton, EuiCheckbox, EuiPopover } from '@elastic/eui'
 import { useSelector, useDispatch } from 'react-redux'
 import { isEmpty } from 'lodash'
 import cx from 'classnames'
@@ -33,6 +26,8 @@ import {
   DatabaseListColumn,
   FeatureFlags,
 } from 'uiSrc/constants'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import SearchDatabasesList from '../search-databases-list'
 
 import styles from './styles.module.scss'
@@ -188,39 +183,35 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
 
   return (
     <div className={styles.containerDl}>
-      <EuiFlexGroup
+      <Row
         className={styles.contentDL}
-        alignItems="center"
+        align="center"
         responsive={false}
-        gutterSize="s"
+        gap="s"
       >
-        <EuiFlexItem grow={false}>
+        <FlexItem>
           <FeatureFlagComponent name={FeatureFlags.databaseManagement}>
             <AddInstanceBtn />
           </FeatureFlagComponent>
-        </EuiFlexItem>
+        </FlexItem>
         {!loading && !isEmpty(data) && (
-          <EuiFlexItem grow={false} className={cx(styles.promo)}>
-            <EuiFlexGroup alignItems="center" gutterSize="s">
+          <FlexItem className={cx(styles.promo)}>
+            <Row align="center" gap="s">
               {promoData && (
                 <FeatureFlagComponent name={FeatureFlags.cloudAds}>
-                  <EuiFlexItem grow={false}>
+                  <FlexItem>
                     <CreateBtn content={promoData} />
-                  </EuiFlexItem>
+                  </FlexItem>
                 </FeatureFlagComponent>
               )}
-            </EuiFlexGroup>
-          </EuiFlexItem>
+            </Row>
+          </FlexItem>
         )}
         {instances.length > 0 && (
           <>
-            <EuiFlexItem>
-              <EuiFlexGroup
-                justifyContent="flexEnd"
-                alignItems="center"
-                gutterSize="s"
-              >
-                <EuiFlexItem grow={false} className={styles.columnsButtonItem}>
+            <FlexItem>
+              <Row justify="end" align="center" gap="s">
+                <FlexItem className={styles.columnsButtonItem}>
                   <EuiPopover
                     ownFocus={false}
                     anchorPosition="downLeft"
@@ -243,16 +234,16 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
                   >
                     {columnCheckboxes}
                   </EuiPopover>
-                </EuiFlexItem>
-                <EuiFlexItem grow={false}>
+                </FlexItem>
+                <FlexItem>
                   <SearchDatabasesList />
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiFlexItem>
+                </FlexItem>
+              </Row>
+            </FlexItem>
           </>
         )}
-      </EuiFlexGroup>
-      <EuiSpacer className={styles.spacerDl} />
+      </Row>
+      <Spacer className={styles.spacerDl} />
     </div>
   )
 }

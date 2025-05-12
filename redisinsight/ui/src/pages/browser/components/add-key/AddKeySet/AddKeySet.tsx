@@ -1,27 +1,26 @@
 import React, {
   ChangeEvent,
   FormEvent,
-  useState,
   useEffect,
   useRef,
+  useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiFieldText,
-  EuiFormRow,
   EuiForm,
-  EuiFlexGroup,
-  EuiFlexItem,
+  EuiFormRow,
   EuiPanel,
 } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
-import { addSetKey, addKeyStateSelector } from 'uiSrc/slices/browser/keys'
+import { addKeyStateSelector, addSetKey } from 'uiSrc/slices/browser/keys'
 
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
 
 import { INITIAL_SET_MEMBER_STATE, ISetMemberState } from './interfaces'
@@ -141,8 +140,8 @@ const AddKeySet = (props: Props) => {
         onClickAdd={addMember}
       >
         {(item, index) => (
-          <EuiFlexGroup gutterSize="none" alignItems="center">
-            <EuiFlexItem grow>
+          <Row align="center">
+            <FlexItem grow>
               <EuiFormRow fullWidth>
                 <EuiFieldText
                   fullWidth
@@ -160,8 +159,8 @@ const AddKeySet = (props: Props) => {
                   data-testid="member-name"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         )}
       </AddMultipleFields>
       <PrimaryButton type="submit" style={{ display: 'none' }}>
@@ -175,16 +174,16 @@ const AddKeySet = (props: Props) => {
           borderRadius="none"
           style={{ border: 'none' }}
         >
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <SecondaryButton
                 onClick={() => onCancel(true)}
                 className="btn-cancel btn-back"
               >
                 Cancel
               </SecondaryButton>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <PrimaryButton
                 className="btn-add"
                 loading={loading}
@@ -194,8 +193,8 @@ const AddKeySet = (props: Props) => {
               >
                 Add Key
               </PrimaryButton>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

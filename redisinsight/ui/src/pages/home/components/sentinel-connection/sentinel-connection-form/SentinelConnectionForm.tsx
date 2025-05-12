@@ -1,12 +1,4 @@
-import {
-  EuiButton,
-  EuiForm,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiToolTip,
-  keys,
-  EuiSpacer,
-} from '@elastic/eui'
+import { EuiButton, EuiForm, EuiToolTip, keys } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, pick } from 'lodash'
 import React, { useRef, useState } from 'react'
@@ -17,10 +9,11 @@ import { fieldDisplayNames } from 'uiSrc/pages/home/constants'
 import { getFormErrors, getSubmitButtonContent } from 'uiSrc/pages/home/utils'
 import { DbConnectionInfo, ISubmitButton } from 'uiSrc/pages/home/interfaces'
 import {
+  DatabaseForm,
   MessageSentinel,
   TlsDetails,
-  DatabaseForm,
 } from 'uiSrc/pages/home/components/form'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
 export interface Props {
   loading: boolean
@@ -162,7 +155,7 @@ const SentinelConnectionForm = (props: Props) => {
             }}
             onHostNamePaste={onHostNamePaste}
           />
-          <EuiSpacer />
+          <Spacer />
           <TlsDetails
             formik={formik}
             certificates={certificates}

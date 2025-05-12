@@ -25,6 +25,10 @@ import { DatabaseConnectionService } from 'src/modules/database/database-connect
 import { RECOMMENDATION_NAMES } from 'src/constants';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { FeatureService } from 'src/modules/feature/feature.service';
+import { getHostingProvider } from 'src/utils/hosting-provider-helper';
+import { HostingProvider } from 'src/modules/database/entities/database.entity';
+
+jest.mock('src/utils/hosting-provider-helper');
 
 describe('DatabaseConnectionService', () => {
   let service: DatabaseConnectionService;
@@ -32,6 +36,7 @@ describe('DatabaseConnectionService', () => {
   let recommendationService: MockType<DatabaseRecommendationService>;
   let databaseInfoProvider: MockType<DatabaseInfoProvider>;
   let featureService: MockType<FeatureService>;
+  let repository: MockType<DatabaseRepository>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -76,6 +81,7 @@ describe('DatabaseConnectionService', () => {
     recommendationService = module.get(DatabaseRecommendationService);
     databaseInfoProvider = module.get(DatabaseInfoProvider);
     featureService = module.get(FeatureService);
+    repository = module.get(DatabaseRepository);
 
     featureService.getByName.mockResolvedValue({
       flag: false,
@@ -104,6 +110,33 @@ describe('DatabaseConnectionService', () => {
           RECOMMENDATION_NAMES.BIG_AMOUNT_OF_CONNECTED_CLIENTS,
         ],
         mockRedisGeneralInfo,
+      );
+    });
+
+    it('should recalculate provider if not available in the list of providers', async () => {
+      const testHost = 'localhost';
+      repository.get.mockResolvedValue({
+        host: testHost,
+        provider: 'not-in-providers-enum',
+      });
+
+      (getHostingProvider as jest.Mock).mockResolvedValue(
+        HostingProvider.REDIS_STACK,
+      );
+
+      await service.connect(mockCommonClientMetadata);
+
+      expect(getHostingProvider).toHaveBeenCalledWith(
+        expect.any(Object),
+        testHost,
+      );
+
+      expect(repository.update).toHaveBeenCalledWith(
+        mockCommonClientMetadata.sessionMetadata,
+        mockCommonClientMetadata.databaseId,
+        expect.objectContaining({
+          provider: HostingProvider.REDIS_STACK,
+        }),
       );
     });
 

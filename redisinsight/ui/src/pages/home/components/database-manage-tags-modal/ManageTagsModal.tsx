@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useCallback, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { EuiIcon, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiIcon, EuiText, EuiTitle } from '@elastic/eui'
 import { PlusIcon } from 'uiSrc/components/base/icons'
 import { ConnectionProvider, Instance } from 'uiSrc/slices/interfaces'
 import { FormDialog } from 'uiSrc/components'
@@ -15,6 +15,7 @@ import {
   SecondaryButton,
   EmptyButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { VALID_TAG_KEY_REGEX, VALID_TAG_VALUE_REGEX } from './constants'
 import { TagInputField } from './TagInputField'
 import { getInvalidTagErrors } from './utils'
@@ -107,7 +108,7 @@ export const ManageTagsModal = ({
           <EuiTitle size="s">
             <h4>Manage tags for {instance.name}</h4>
           </EuiTitle>
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           <EuiText size="s" color="subdued">
             <p>
               Tags are key-value pairs that let you categorize your databases.
@@ -185,7 +186,7 @@ export const ManageTagsModal = ({
           })}
         </div>
       </div>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <EmptyButton
         icon={PlusIcon}
         onClick={handleAddTag}

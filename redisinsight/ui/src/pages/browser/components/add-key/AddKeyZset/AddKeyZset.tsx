@@ -9,10 +9,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
 import {
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiForm,
   EuiFormRow,
+  EuiForm,
   EuiPanel,
 } from '@elastic/eui'
 import { Maybe, stringToBuffer, validateScoreNumber } from 'uiSrc/utils'
@@ -29,6 +27,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/z-set/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import { AddZsetFormConfig as config } from '../constants/fields-config'
@@ -195,8 +194,8 @@ const AddKeyZset = (props: Props) => {
         onClickAdd={addMember}
       >
         {(item, index) => (
-          <EuiFlexGroup gutterSize="none" alignItems="center">
-            <EuiFlexItem grow>
+          <Row align="center">
+            <FlexItem grow>
               <EuiFormRow fullWidth>
                 <EuiFieldText
                   fullWidth
@@ -214,8 +213,8 @@ const AddKeyZset = (props: Props) => {
                   data-testid="member-name"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-            <EuiFlexItem grow>
+            </FlexItem>
+            <FlexItem grow>
               <EuiFormRow fullWidth>
                 <EuiFieldText
                   fullWidth
@@ -234,8 +233,8 @@ const AddKeyZset = (props: Props) => {
                   data-testid="member-score"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         )}
       </AddMultipleFields>
 
@@ -250,8 +249,8 @@ const AddKeyZset = (props: Props) => {
           borderRadius="none"
           style={{ border: 'none' }}
         >
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <div>
                 <SecondaryButton
                   onClick={() => onCancel(true)}
@@ -260,8 +259,8 @@ const AddKeyZset = (props: Props) => {
                   Cancel
                 </SecondaryButton>
               </div>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <div>
                 <PrimaryButton
                   className="btn-add"
@@ -273,8 +272,8 @@ const AddKeyZset = (props: Props) => {
                   Add Key
                 </PrimaryButton>
               </div>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

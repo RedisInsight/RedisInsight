@@ -1,6 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { EuiFlexGroup, EuiFlexItem, EuiForm, EuiPanel } from '@elastic/eui'
+import { EuiForm, EuiPanel } from '@elastic/eui'
 import { addStreamKey } from 'uiSrc/slices/browser/keys'
 import {
   entryIdRegex,
@@ -14,6 +14,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { CreateStreamDto } from 'apiSrc/modules/browser/stream/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 
@@ -112,8 +113,8 @@ const AddKeyStream = (props: Props) => {
           borderRadius="none"
           style={{ border: 'none' }}
         >
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <div>
                 <SecondaryButton
                   onClick={() => onCancel(true)}
@@ -122,8 +123,8 @@ const AddKeyStream = (props: Props) => {
                   Cancel
                 </SecondaryButton>
               </div>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <div>
                 <PrimaryButton
                   className="btn-add"
@@ -134,8 +135,8 @@ const AddKeyStream = (props: Props) => {
                   Add Key
                 </PrimaryButton>
               </div>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

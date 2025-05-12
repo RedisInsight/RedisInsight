@@ -4,11 +4,8 @@ import {
   EuiSuperSelect,
   EuiSuperSelectOption,
   EuiToolTip,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiText,
-  EuiHideFor,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -21,7 +18,7 @@ import { appContextDbConfig } from 'uiSrc/slices/app/context'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
-import { Nullable, comboBoxToArray, getDbIndex } from 'uiSrc/utils'
+import { comboBoxToArray, getDbIndex, Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   ANALYZE_CLUSTER_TOOLTIP_MESSAGE,
@@ -29,6 +26,8 @@ import {
 } from 'uiSrc/constants/recommendations'
 import { FormatedDate } from 'uiSrc/components'
 import { DEFAULT_DELIMITER } from 'uiSrc/constants'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { HideFor } from 'uiSrc/components/base/utils/ShowHide'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analysis-progress'
@@ -87,29 +86,22 @@ const Header = (props: Props) => {
   return (
     <div data-testid="db-analysis-header">
       <AnalyticsTabs />
-      <EuiFlexGroup
+      <Row
         className={styles.container}
-        gutterSize="none"
-        alignItems="center"
-        justifyContent={items.length ? 'spaceBetween' : 'flexEnd'}
-        responsive={false}
+        align="center"
+        justify={items.length ? 'between' : 'end'}
       >
         {!!items.length && (
-          <EuiFlexItem grow={false}>
-            <EuiFlexGroup
-              gutterSize="none"
-              alignItems="center"
-              responsive={false}
-              wrap
-            >
-              <EuiHideFor sizes={['xs', 's']}>
-                <EuiFlexItem grow={false}>
+          <FlexItem>
+            <Row align="center" wrap>
+              <HideFor sizes={['xs', 's']}>
+                <FlexItem>
                   <EuiText className={styles.text} size="s">
                     Report generated on:
                   </EuiText>
-                </EuiFlexItem>
-              </EuiHideFor>
-              <EuiFlexItem>
+                </FlexItem>
+              </HideFor>
+              <FlexItem grow>
                 <EuiSuperSelect
                   options={analysisOptions}
                   style={{ border: 'none !important' }}
@@ -119,9 +111,9 @@ const Header = (props: Props) => {
                   onChange={(value: string) => onChangeSelectedAnalysis(value)}
                   data-testid="select-report"
                 />
-              </EuiFlexItem>
+              </FlexItem>
               {!!progress && (
-                <EuiFlexItem grow={false}>
+                <FlexItem>
                   <EuiText
                     className={cx(
                       styles.progress,
@@ -151,18 +143,14 @@ const Header = (props: Props) => {
                     {numberWithSpaces(progress.total)}
                     {' keys) '}
                   </EuiText>
-                </EuiFlexItem>
+                </FlexItem>
               )}
-            </EuiFlexGroup>
-          </EuiFlexItem>
+            </Row>
+          </FlexItem>
         )}
-        <EuiFlexItem grow={false}>
-          <EuiFlexGroup
-            gutterSize="none"
-            alignItems="center"
-            responsive={false}
-          >
-            <EuiFlexItem>
+        <FlexItem>
+          <Row align="center">
+            <FlexItem grow>
               <PrimaryButton
                 aria-label="New reports"
                 data-testid="start-database-analysis-btn"
@@ -173,8 +161,8 @@ const Header = (props: Props) => {
               >
                 New Report
               </PrimaryButton>
-            </EuiFlexItem>
-            <EuiFlexItem style={{ paddingLeft: 6 }} grow={false}>
+            </FlexItem>
+            <FlexItem style={{ paddingLeft: 6 }}>
               <EuiToolTip
                 position="bottom"
                 anchorClassName={styles.tooltipAnchor}
@@ -194,10 +182,10 @@ const Header = (props: Props) => {
                   data-testid="db-new-reports-icon"
                 />
               </EuiToolTip>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+            </FlexItem>
+          </Row>
+        </FlexItem>
+      </Row>
     </div>
   )
 }

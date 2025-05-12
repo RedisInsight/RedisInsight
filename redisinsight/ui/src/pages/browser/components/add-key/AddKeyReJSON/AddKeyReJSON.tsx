@@ -2,12 +2,10 @@ import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiForm,
   EuiFormRow,
-  EuiPanel,
   EuiTextColor,
+  EuiForm,
+  EuiPanel,
 } from '@elastic/eui'
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
@@ -16,6 +14,7 @@ import { addKeyStateSelector, addReJSONKey } from 'uiSrc/slices/browser/keys'
 import { MonacoJson } from 'uiSrc/components/monaco-editor'
 import UploadFile from 'uiSrc/components/upload-file'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import {
   PrimaryButton,
   SecondaryButton,
@@ -92,15 +91,15 @@ const AddKeyReJSON = (props: Props) => {
             disabled={loading}
             data-testid="json-value"
           />
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <UploadFile
                 onClick={onClick}
                 onFileChange={setReJSONValue}
                 accept="application/json, text/plain"
               />
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </>
       </EuiFormRow>
 
@@ -115,8 +114,8 @@ const AddKeyReJSON = (props: Props) => {
           borderRadius="none"
           style={{ border: 'none' }}
         >
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <div>
                 <SecondaryButton
                   onClick={() => onCancel(true)}
@@ -125,8 +124,8 @@ const AddKeyReJSON = (props: Props) => {
                   <EuiTextColor>Cancel</EuiTextColor>
                 </SecondaryButton>
               </div>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <div>
                 <PrimaryButton
                   className="btn-add"
@@ -138,8 +137,8 @@ const AddKeyReJSON = (props: Props) => {
                   Add Key
                 </PrimaryButton>
               </div>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

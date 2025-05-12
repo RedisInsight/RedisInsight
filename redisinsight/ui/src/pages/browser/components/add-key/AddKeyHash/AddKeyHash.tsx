@@ -8,10 +8,9 @@ import React, {
 import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiForm,
   EuiFormRow,
+  EuiTextColor,
+  EuiForm,
   EuiPanel,
 } from '@elastic/eui'
 import { toNumber } from 'lodash'
@@ -28,6 +27,7 @@ import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
 import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import {
   PrimaryButton,
   SecondaryButton,
@@ -176,8 +176,8 @@ const AddKeyHash = (props: Props) => {
         onClickAdd={addField}
       >
         {(item, index) => (
-          <EuiFlexGroup gutterSize="none" alignItems="center">
-            <EuiFlexItem grow={2}>
+          <Row align="center">
+            <FlexItem grow={2}>
               <EuiFormRow fullWidth>
                 <EuiFieldText
                   fullWidth
@@ -195,8 +195,8 @@ const AddKeyHash = (props: Props) => {
                   data-testid="field-name"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-            <EuiFlexItem grow={2}>
+            </FlexItem>
+            <FlexItem grow={2}>
               <EuiFormRow fullWidth>
                 <EuiFieldText
                   fullWidth
@@ -211,9 +211,9 @@ const AddKeyHash = (props: Props) => {
                   data-testid="field-value"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
+            </FlexItem>
             {isTTLAvailable && (
-              <EuiFlexItem grow={1}>
+              <FlexItem grow={1}>
                 <EuiFormRow fullWidth>
                   <EuiFieldText
                     fullWidth
@@ -232,9 +232,9 @@ const AddKeyHash = (props: Props) => {
                     data-testid="hash-ttl"
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
+              </FlexItem>
             )}
-          </EuiFlexGroup>
+          </Row>
         )}
       </AddMultipleFields>
 
@@ -249,16 +249,16 @@ const AddKeyHash = (props: Props) => {
           borderRadius="none"
           style={{ border: 'none' }}
         >
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <SecondaryButton
                 onClick={() => onCancel(true)}
                 className="btn-cancel btn-back"
               >
                 Cancel
               </SecondaryButton>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <PrimaryButton
                 className="btn-add"
                 loading={loading}
@@ -268,8 +268,8 @@ const AddKeyHash = (props: Props) => {
               >
                 Add Key
               </PrimaryButton>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

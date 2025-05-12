@@ -7,8 +7,6 @@ import {
   EuiText,
   EuiIcon,
   EuiLink,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiPopover,
   EuiToolTip,
 } from '@elastic/eui'
@@ -25,6 +23,7 @@ import { Nullable } from 'uiSrc/utils'
 import PetardIcon from 'uiSrc/assets/img/icons/petard.svg?react'
 import GithubSVG from 'uiSrc/assets/img/icons/github-white.svg?react'
 
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { getVotedText, voteTooltip, iconType } from './utils'
 import styles from './styles.module.scss'
 
@@ -125,13 +124,13 @@ const VoteOption = (props: Props) => {
         className={styles.popoverWrapper}
         data-testid={`${name}-${voteOption}-popover`}
       >
-        <EuiFlexGroup gutterSize="none" direction="column" alignItems="flexEnd">
-          <EuiFlexItem grow={false}>
-            <EuiFlexGroup gutterSize="none">
-              <EuiFlexItem grow={false}>
+        <Col align="end">
+          <FlexItem>
+            <Row>
+              <FlexItem>
                 <EuiIcon type={PetardIcon} className={styles.petardIcon} />
-              </EuiFlexItem>
-              <EuiFlexItem>
+              </FlexItem>
+              <FlexItem grow>
                 <div>
                   <EuiText className={styles.text} data-testid="common-text">
                     Thank you for the feedback.
@@ -140,8 +139,8 @@ const VoteOption = (props: Props) => {
                     {getVotedText(voteOption)}
                   </EuiText>
                 </div>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
+              </FlexItem>
+              <FlexItem>
                 <EuiButtonIcon
                   iconType="cross"
                   color="primary"
@@ -151,10 +150,10 @@ const VoteOption = (props: Props) => {
                   className={styles.closeBtn}
                   onClick={() => setPopover('')}
                 />
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </EuiFlexItem>
-          <EuiFlexItem>
+              </FlexItem>
+            </Row>
+          </FlexItem>
+          <FlexItem grow>
             <EuiButton
               aria-label="recommendation feedback"
               fill
@@ -179,8 +178,8 @@ const VoteOption = (props: Props) => {
                 To Github
               </EuiLink>
             </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Col>
       </div>
     </EuiPopover>
   )

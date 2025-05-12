@@ -1,9 +1,6 @@
 import {
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiPopover,
-  EuiSpacer,
   EuiText,
   EuiToolTip,
 } from '@elastic/eui'
@@ -18,6 +15,8 @@ import { slowLogSelector } from 'uiSrc/slices/analytics/slowlog'
 import { AutoRefresh } from 'uiSrc/components'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
   DestructiveButton,
   IconButton,
@@ -133,13 +132,8 @@ const Actions = (props: Props) => {
   )
 
   return (
-    <EuiFlexGroup
-      className={styles.actions}
-      gutterSize="s"
-      alignItems="center"
-      responsive={false}
-    >
-      <EuiFlexItem grow={5} style={{ alignItems: 'flex-end' }}>
+    <Row className={styles.actions} gap="s" align="center">
+      <FlexItem grow={5} style={{ alignItems: 'flex-end' }}>
         <AutoRefresh
           postfix="slowlog"
           loading={loading}
@@ -151,8 +145,8 @@ const Actions = (props: Props) => {
           onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
           testid="slowlog"
         />
-      </EuiFlexItem>
-      <EuiFlexItem>
+      </FlexItem>
+      <FlexItem grow>
         <EuiPopover
           ownFocus
           anchorPosition="downRight"
@@ -177,9 +171,9 @@ const Actions = (props: Props) => {
             onRefresh={onRefresh}
           />
         </EuiPopover>
-      </EuiFlexItem>
+      </FlexItem>
       {!isEmptySlowLog && (
-        <EuiFlexItem>
+        <FlexItem grow>
           <EuiPopover
             anchorPosition="leftCenter"
             ownFocus
@@ -203,9 +197,9 @@ const Actions = (props: Props) => {
           >
             {ToolTipContent}
           </EuiPopover>
-        </EuiFlexItem>
+        </FlexItem>
       )}
-      <EuiFlexItem>
+      <FlexItem grow>
         <EuiToolTip
           title="Slow Log"
           position="bottom"
@@ -214,7 +208,7 @@ const Actions = (props: Props) => {
             <span data-testid="slowlog-tooltip-text">
               Slow Log is a list of slow operations for your Redis instance.
               These can be used to troubleshoot performance issues.
-              <EuiSpacer size="xs" />
+              <Spacer size="xs" />
               Each entry in the list displays the command, duration and
               timestamp. Any transaction that exceeds{' '}
               <b>slowlog-log-slower-than</b> {durationUnit} are recorded up to a
@@ -230,8 +224,8 @@ const Actions = (props: Props) => {
             data-testid="slow-log-tooltip-icon"
           />
         </EuiToolTip>
-      </EuiFlexItem>
-    </EuiFlexGroup>
+      </FlexItem>
+    </Row>
   )
 }
 

@@ -2,10 +2,8 @@ import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiForm,
   EuiFormRow,
+  EuiForm,
   EuiPanel,
   EuiTextArea,
 } from '@elastic/eui'
@@ -17,6 +15,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import { AddStringFormConfig as config } from '../constants/fields-config'
@@ -84,8 +83,8 @@ const AddKeyString = (props: Props) => {
           hasShadow={false}
           borderRadius="none"
         >
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <div>
                 <SecondaryButton
                   onClick={() => onCancel(true)}
@@ -94,8 +93,8 @@ const AddKeyString = (props: Props) => {
                   Cancel
                 </SecondaryButton>
               </div>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <div>
                 <PrimaryButton
                   className="btn-add"
@@ -107,8 +106,8 @@ const AddKeyString = (props: Props) => {
                   Add Key
                 </PrimaryButton>
               </div>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

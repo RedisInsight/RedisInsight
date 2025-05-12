@@ -2,8 +2,6 @@ import {
   EuiButton,
   EuiButtonIcon,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiText,
   EuiToolTip,
@@ -28,6 +26,7 @@ import NotSubscribedIconDark from 'uiSrc/assets/img/pub-sub/not-subscribed.svg'
 import NotSubscribedIconLight from 'uiSrc/assets/img/pub-sub/not-subscribed-lt.svg'
 
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import PatternsInfo from './components/patternsInfo'
 import ClickableAppendInfo from './components/clickable-append-info'
 import styles from './styles.module.scss'
@@ -76,22 +75,20 @@ const SubscriptionPanel = () => {
   const displayMessages = count !== 0 || isSubscribed
 
   return (
-    <EuiFlexGroup
+    <Row
       className={styles.container}
-      alignItems="center"
-      justifyContent="spaceBetween"
-      gutterSize="s"
-      responsive={false}
+      align="center"
+      justify="between" gap="s"
     >
-      <EuiFlexItem grow={false}>
-        <EuiFlexGroup alignItems="center" gutterSize="none" responsive={false}>
-          <EuiFlexItem grow={false} className={styles.iconSubscribe}>
+      <FlexItem>
+        <Row align="center">
+          <FlexItem className={styles.iconSubscribe}>
             <EuiIcon
               className={styles.iconUser}
               type={isSubscribed ? subscribedIcon : notSubscribedIcon}
             />
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiText
               color="subdued"
               size="s"
@@ -99,24 +96,24 @@ const SubscriptionPanel = () => {
             >
               You are {!isSubscribed && 'not'} subscribed
             </EuiText>
-          </EuiFlexItem>
+          </FlexItem>
           {isSubscribed && (
-            <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+            <FlexItem style={{ marginLeft: 12 }}>
               <PatternsInfo channels={channels} />
-            </EuiFlexItem>
+            </FlexItem>
           )}
           {displayMessages && (
-            <EuiFlexItem grow={false} style={{ marginLeft: 12 }}>
+            <FlexItem style={{ marginLeft: 12 }}>
               <EuiText color="subdued" size="s" data-testid="messages-count">
                 Messages: {count}
               </EuiText>
-            </EuiFlexItem>
+            </FlexItem>
           )}
-        </EuiFlexGroup>
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiFlexGroup alignItems="center" gutterSize="none" responsive={false}>
-          <EuiFlexItem grow={false} className={styles.channels}>
+        </Row>
+      </FlexItem>
+      <FlexItem>
+        <Row align="center">
+          <FlexItem className={styles.channels}>
             <EuiFieldText
               value={channels}
               disabled={isSubscribed}
@@ -128,8 +125,8 @@ const SubscriptionPanel = () => {
               data-testid="channels-input"
               append={<ClickableAppendInfo />}
             />
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiButton
               fill={!isSubscribed}
               size="s"
@@ -143,9 +140,9 @@ const SubscriptionPanel = () => {
             >
               {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
             </EuiButton>
-          </EuiFlexItem>
+          </FlexItem>
           {!!messages.length && (
-            <EuiFlexItem grow={false} style={{ marginLeft: 8 }}>
+            <FlexItem style={{ marginLeft: 8 }}>
               <EuiToolTip
                 content="Clear Messages"
                 anchorClassName={cx('inline-flex')}
@@ -157,11 +154,11 @@ const SubscriptionPanel = () => {
                   data-testid="clear-pubsub-btn"
                 />
               </EuiToolTip>
-            </EuiFlexItem>
+            </FlexItem>
           )}
-        </EuiFlexGroup>
-      </EuiFlexItem>
-    </EuiFlexGroup>
+        </Row>
+      </FlexItem>
+    </Row>
   )
 }
 

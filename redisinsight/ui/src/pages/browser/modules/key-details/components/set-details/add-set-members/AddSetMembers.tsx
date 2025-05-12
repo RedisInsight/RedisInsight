@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
   EuiTextColor,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiFieldText,
   EuiPanel,
@@ -35,6 +33,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -154,8 +153,8 @@ const AddSetMembers = (props: Props) => {
           onClickAdd={addMember}
         >
           {(item, index) => (
-            <EuiFlexGroup gutterSize="none" alignItems="center">
-              <EuiFlexItem grow>
+            <Row align="center">
+              <FlexItem grow>
                 <EuiFormRow fullWidth>
                   <EuiFieldText
                     fullWidth
@@ -173,8 +172,8 @@ const AddSetMembers = (props: Props) => {
                     data-testid="member-name"
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
-            </EuiFlexGroup>
+              </FlexItem>
+            </Row>
           )}
         </AddMultipleFields>
       </EuiPanel>
@@ -184,16 +183,16 @@ const AddSetMembers = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
-          <EuiFlexItem grow={false}>
+        <Row justify="end" gap="xl">
+          <FlexItem>
             <SecondaryButton
               onClick={() => closePanel(true)}
               data-testid="cancel-members-btn"
             >
               <EuiTextColor color="default">Cancel</EuiTextColor>
             </SecondaryButton>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <PrimaryButton
               disabled={loading}
               loading={loading}
@@ -202,8 +201,8 @@ const AddSetMembers = (props: Props) => {
             >
               Save
             </PrimaryButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiPanel>
     </>
   )

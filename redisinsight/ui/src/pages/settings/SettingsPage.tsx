@@ -1,19 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
 import cx from 'classnames'
 import {
+  EuiCallOut,
+  EuiCollapsibleNavGroup,
   EuiForm,
   EuiFormRow,
-  EuiSuperSelect,
-  EuiPage,
-  EuiPageBody,
-  EuiPageContentBody,
-  EuiTitle,
-  EuiPageHeader,
-  EuiCollapsibleNavGroup,
   EuiLoadingSpinner,
-  EuiSpacer,
+  EuiSuperSelect,
   EuiText,
-  EuiCallOut,
+  EuiTitle,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -39,10 +34,17 @@ import {
 } from 'uiSrc/slices/user/user-settings'
 
 import Divider from 'uiSrc/components/divider/Divider'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  Page,
+  PageBody,
+  PageHeader,
+  PageContentBody,
+} from 'uiSrc/components/base/layout/page'
 import {
   AdvancedSettings,
-  WorkbenchSettings,
   CloudSettings,
+  WorkbenchSettings,
 } from './components'
 import { DateTimeFormatter } from './components/general-settings'
 import styles from './styles.module.scss'
@@ -96,7 +98,7 @@ const SettingsPage = () => {
         <EuiTitle size="xs">
           <h4>Color Theme</h4>
         </EuiTitle>
-        <EuiSpacer size="m" />
+        <Spacer size="m" />
         <EuiFormRow label="Specifies the color theme to be used in Redis Insight:">
           <EuiSuperSelect
             options={options}
@@ -106,11 +108,11 @@ const SettingsPage = () => {
             data-test-subj="select-theme"
           />
         </EuiFormRow>
-        <EuiSpacer size="xl" />
+        <Spacer size="xl" />
       </EuiForm>
       <ConsentsNotifications />
       <Divider colorVariable="separatorColor" />
-      <EuiSpacer size="l" />
+      <Spacer />
       <DateTimeFormatter />
     </>
   )
@@ -166,14 +168,15 @@ const SettingsPage = () => {
   )
 
   return (
-    <EuiPage className={styles.container}>
-      <EuiPageBody component="div">
-        <EuiPageHeader>
+    <Page className={styles.container}>
+      <PageBody component="div">
+        <PageHeader>
           <EuiTitle size="l">
             <h1 className={styles.title}>Settings</h1>
           </EuiTitle>
-        </EuiPageHeader>
-        <EuiPageContentBody style={{ maxWidth: 792 }}>
+        </PageHeader>
+
+        <PageContentBody style={{ maxWidth: 792 }}>
           <EuiCollapsibleNavGroup
             isCollapsible
             className={styles.accordion}
@@ -221,9 +224,9 @@ const SettingsPage = () => {
           >
             {AdvancedSettingsGroup()}
           </EuiCollapsibleNavGroup>
-        </EuiPageContentBody>
-      </EuiPageBody>
-    </EuiPage>
+        </PageContentBody>
+      </PageBody>
+    </Page>
   )
 }
 

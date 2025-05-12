@@ -4,18 +4,20 @@ import cx from 'classnames'
 import {
   EuiButton,
   EuiFieldText,
-  EuiFlexItem,
-  EuiFocusTrap,
   EuiForm,
+  EuiToolTip,
   EuiPopover,
   EuiText,
-  EuiToolTip,
-  EuiWindowEvent,
   keys,
 } from '@elastic/eui'
+
+import { FlexItem } from 'uiSrc/components/base/layout/flex'
+import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
+import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { CancelSlimIcon, CheckThinIcon } from 'uiSrc/components/base/icons'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
+
 import styles from './styles.module.scss'
 
 type Positions = 'top' | 'bottom' | 'left' | 'right' | 'inside'
@@ -199,8 +201,8 @@ const InlineItemEditor = (props: Props) => {
       ) : (
         <OutsideClickDetector onOutsideClick={handleClickOutside}>
           <div ref={containerEl} className={styles.container}>
-            <EuiWindowEvent event="keydown" handler={handleOnEsc} />
-            <EuiFocusTrap disabled={disableFocusTrap}>
+            <WindowEvent event="keydown" handler={handleOnEsc} />
+            <FocusTrap disabled={disableFocusTrap}>
               <EuiForm
                 component={formComponentType}
                 className="relative"
@@ -208,7 +210,7 @@ const InlineItemEditor = (props: Props) => {
                   handleFormSubmit(e as React.MouseEvent<HTMLElement>)
                 }
               >
-                <EuiFlexItem grow component="span">
+                <FlexItem grow>
                   {children || (
                     <>
                       <EuiFieldText
@@ -232,7 +234,7 @@ const InlineItemEditor = (props: Props) => {
                       )}
                     </>
                   )}
-                </EuiFlexItem>
+                </FlexItem>
                 <div
                   className={cx(
                     'inlineItemEditor__controls',
@@ -298,7 +300,7 @@ const InlineItemEditor = (props: Props) => {
                   )}
                 </div>
               </EuiForm>
-            </EuiFocusTrap>
+            </FocusTrap>
           </div>
         </OutsideClickDetector>
       )}

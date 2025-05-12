@@ -1,8 +1,10 @@
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiSpacer } from '@elastic/eui'
+import { EuiButton } from '@elastic/eui'
 import React from 'react'
 import { useSelector } from 'react-redux'
 
 import { instancesSelector } from 'uiSrc/slices/rdi/instances'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import SearchRdiList from '../search/SearchRdiList'
 
 export interface Props {
@@ -14,13 +16,12 @@ const RdiHeader = ({ onRdiInstanceClick }: Props) => {
 
   return (
     <div className="containerDl">
-      <EuiFlexGroup
+      <Row
         className="contentDL"
-        alignItems="center"
-        responsive={false}
-        gutterSize="s"
+        align="center"
+        gap="s"
       >
-        <EuiFlexItem grow={false}>
+        <FlexItem>
           <EuiButton
             fill
             color="secondary"
@@ -29,14 +30,14 @@ const RdiHeader = ({ onRdiInstanceClick }: Props) => {
           >
             <span>+ Endpoint</span>
           </EuiButton>
-        </EuiFlexItem>
+        </FlexItem>
         {instances.length > 0 && (
-          <EuiFlexItem grow={false} className="searchContainer">
+          <FlexItem className="searchContainer">
             <SearchRdiList />
-          </EuiFlexItem>
+          </FlexItem>
         )}
-      </EuiFlexGroup>
-      <EuiSpacer className="spacerDl" />
+      </Row>
+      <Spacer className="spacerDl" />
     </div>
   )
 }

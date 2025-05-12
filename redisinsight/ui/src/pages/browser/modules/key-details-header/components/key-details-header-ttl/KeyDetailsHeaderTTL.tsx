@@ -1,10 +1,4 @@
-import {
-  EuiFieldText,
-  EuiFlexGrid,
-  EuiFlexItem,
-  EuiIcon,
-  EuiText,
-} from '@elastic/eui'
+import { EuiFieldText, EuiIcon, EuiText } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -18,6 +12,7 @@ import {
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { MAX_TTL_NUMBER, validateTTLNumber } from 'uiSrc/utils'
 
+import { FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -85,23 +80,23 @@ const KeyDetailsHeaderTTL = ({ onEditTTL }: Props) => {
     )
 
   return (
-    <EuiFlexItem
+    <FlexItem
       onMouseEnter={onMouseEnterTTL}
       onMouseLeave={onMouseLeaveTTL}
       onClick={onClickTTL}
-      grow={false}
       className={styles.flexItemTTL}
       data-testid="edit-ttl-btn"
     >
       <>
         {(ttlIsEditing || ttlIsHovering) && (
-          <EuiFlexGrid
+          <Grid
             columns={2}
             responsive={false}
-            gutterSize="none"
+            gap="none"
             className={styles.ttlGridComponent}
+            data-testid="edit-ttl-grid"
           >
-            <EuiFlexItem grow={false}>
+            <FlexItem>
               <EuiText
                 grow
                 color="subdued"
@@ -110,8 +105,8 @@ const KeyDetailsHeaderTTL = ({ onEditTTL }: Props) => {
               >
                 TTL:
               </EuiText>
-            </EuiFlexItem>
-            <EuiFlexItem grow component="span">
+            </FlexItem>
+            <FlexItem grow inline>
               <InlineItemEditor
                 onApply={() => applyEditTTL()}
                 onDecline={(event) => cancelEditTTl(event)}
@@ -140,8 +135,8 @@ const KeyDetailsHeaderTTL = ({ onEditTTL }: Props) => {
                   data-testid="edit-ttl-input"
                 />
               </InlineItemEditor>
-            </EuiFlexItem>
-          </EuiFlexGrid>
+            </FlexItem>
+          </Grid>
         )}
         <EuiText
           grow
@@ -158,7 +153,7 @@ const KeyDetailsHeaderTTL = ({ onEditTTL }: Props) => {
           </span>
         </EuiText>
       </>
-    </EuiFlexItem>
+    </FlexItem>
   )
 }
 

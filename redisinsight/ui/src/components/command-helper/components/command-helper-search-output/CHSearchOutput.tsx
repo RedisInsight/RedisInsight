@@ -1,13 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import {
-  EuiFlexItem,
-  EuiLink,
-  EuiText,
-  EuiFlexGroup,
-  EuiTextColor,
-} from '@elastic/eui'
+import { EuiLink, EuiText, EuiTextColor } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import { generateArgsNames } from 'uiSrc/utils'
@@ -15,6 +9,7 @@ import { setSearchedCommand } from 'uiSrc/slices/cli/cli-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -76,8 +71,8 @@ const CHSearchOutput = ({ searchedCommands }: Props) => {
       {searchedCommands.length > 0 && (
         <div style={{ width: '100%' }}>
           {searchedCommands.map((command: string) => (
-            <EuiFlexGroup gutterSize="s" key={command} responsive={false}>
-              <EuiFlexItem grow={false}>
+            <Row gap="m" key={command}>
+              <FlexItem style={{ flexShrink: 0 }}>
                 <EuiText key={command} size="s">
                   <EuiLink
                     color="text"
@@ -90,11 +85,11 @@ const CHSearchOutput = ({ searchedCommands }: Props) => {
                     {command}
                   </EuiLink>
                 </EuiText>
-              </EuiFlexItem>
-              <EuiFlexItem style={{ flexDirection: 'row', overflow: 'hidden' }}>
+              </FlexItem>
+              <FlexItem style={{ flexDirection: 'row', overflow: 'hidden' }}>
                 {renderDescription(command)}
-              </EuiFlexItem>
-            </EuiFlexGroup>
+              </FlexItem>
+            </Row>
           ))}
         </div>
       )}

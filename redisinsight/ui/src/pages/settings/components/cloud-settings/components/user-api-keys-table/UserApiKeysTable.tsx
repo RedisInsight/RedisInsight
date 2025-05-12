@@ -4,7 +4,6 @@ import {
   EuiIcon,
   EuiInMemoryTable,
   EuiLink,
-  EuiSpacer,
   EuiText,
   EuiTitle,
   EuiToolTip,
@@ -33,6 +32,7 @@ import {
   PrimaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -224,13 +224,13 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
               <span>The ultimate Redis starting point</span>
             </>
           </EuiTitle>
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           <EuiText size="s" className={styles.smallText} color="subdued">
             Cloud API keys will be created and stored when you connect to Redis
             Cloud to create a free trial Cloud database or autodiscover your
             Cloud database.
           </EuiText>
-          <EuiSpacer />
+          <Spacer />
           <div className={styles.actions}>
             <OAuthSsoHandlerDialog>
               {(socialCloudHandlerClick) => (
@@ -268,7 +268,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
             </OAuthSsoHandlerDialog>
           </div>
         </div>
-        <EuiSpacer />
+        <Spacer />
       </>
     )
   }

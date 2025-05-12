@@ -2,8 +2,6 @@ import React, { useContext } from 'react'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
 import {
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiSuperSelect,
   EuiSuperSelectOption,
@@ -13,12 +11,10 @@ import {
 import { useParams } from 'react-router-dom'
 import { findIndex, isNumber } from 'lodash'
 
-import {
+import { CopyIcon, PlayIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  DeleteIcon,
-} from '@redislabsdev/redis-ui-icons'
-import { CopyIcon, PlayIcon } from 'uiSrc/components/base/icons'
+  DeleteIcon, } from 'uiSrc/components/base/icons'
 import { Theme } from 'uiSrc/constants'
 import {
   getCommandNameFromQuery,
@@ -58,6 +54,7 @@ import ExecutionTimeIcon from 'uiSrc/assets/img/workbench/execution_time.svg?rea
 import GroupModeIcon from 'uiSrc/assets/img/icons/group_mode.svg?react'
 import SilentModeIcon from 'uiSrc/assets/img/icons/silent_mode.svg?react'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import QueryCardTooltip from '../QueryCardTooltip'
 
@@ -318,13 +315,8 @@ const QueryCardHeader = (props: Props) => {
       data-testid="query-card-open"
       role="button"
     >
-      <EuiFlexGroup
-        alignItems="center"
-        gutterSize="l"
-        responsive={false}
-        style={{ width: '100%' }}
-      >
-        <EuiFlexItem className={styles.titleWrapper} grow>
+      <Row align="center" gap="l" style={{ width: '100%' }}>
+        <FlexItem className={styles.titleWrapper} grow>
           <div className="copy-btn-wrapper">
             <EuiTextColor
               className={styles.title}
@@ -350,29 +342,27 @@ const QueryCardHeader = (props: Props) => {
               data-testid="copy-command"
             />
           </div>
-        </EuiFlexItem>
-        <EuiFlexItem className={styles.controls} grow={false}>
-          <EuiFlexGroup alignItems="center" gutterSize="m" responsive={false}>
-            <EuiFlexItem
+        </FlexItem>
+        <FlexItem className={styles.controls}>
+          <Row align="center" gap="m">
+            <FlexItem
               className={styles.time}
               data-testid="command-execution-date-time"
-              grow={false}
             >
               {!!createdAt && (
                 <EuiTextColor className={styles.timeText} component="div">
                   <FormatedDate date={createdAt} />
                 </EuiTextColor>
               )}
-            </EuiFlexItem>
-            <EuiFlexItem grow={false} className={styles.summaryTextWrapper}>
+            </FlexItem>
+            <FlexItem className={styles.summaryTextWrapper}>
               {!!message && !isOpen && (
                 <EuiTextColor className={styles.summaryText} component="div">
                   {truncateText(message, 13)}
                 </EuiTextColor>
               )}
-            </EuiFlexItem>
-            <EuiFlexItem
-              grow={false}
+            </FlexItem>
+            <FlexItem
               className={styles.executionTime}
               data-testid="command-execution-time"
             >
@@ -402,9 +392,8 @@ const QueryCardHeader = (props: Props) => {
                   </>
                 </EuiToolTip>
               )}
-            </EuiFlexItem>
-            <EuiFlexItem
-              grow={false}
+            </FlexItem>
+            <FlexItem
               className={cx(styles.buttonIcon, styles.viewTypeIcon)}
               onClick={onDropDownViewClick}
             >
@@ -430,9 +419,8 @@ const QueryCardHeader = (props: Props) => {
                   </div>
                 </div>
               )}
-            </EuiFlexItem>
-            <EuiFlexItem
-              grow={false}
+            </FlexItem>
+            <FlexItem
               className={cx(styles.buttonIcon, styles.viewTypeIcon)}
               onClick={onDropDownViewClick}
             >
@@ -450,9 +438,8 @@ const QueryCardHeader = (props: Props) => {
                   </div>
                 </div>
               )}
-            </EuiFlexItem>
-            <EuiFlexItem
-              grow={false}
+            </FlexItem>
+            <FlexItem
               className={styles.buttonIcon}
               onClick={onDropDownViewClick}
             >
@@ -462,8 +449,8 @@ const QueryCardHeader = (props: Props) => {
                   onToggleFullScreen={toggleFullScreen}
                 />
               )}
-            </EuiFlexItem>
-            <EuiFlexItem grow={false} className={styles.buttonIcon}>
+            </FlexItem>
+            <FlexItem className={styles.buttonIcon}>
               <IconButton
                 disabled={loading || clearing}
                 icon={DeleteIcon}
@@ -471,12 +458,9 @@ const QueryCardHeader = (props: Props) => {
                 data-testid="delete-command"
                 onClick={handleQueryDelete}
               />
-            </EuiFlexItem>
+            </FlexItem>
             {!isFullScreen && (
-              <EuiFlexItem
-                grow={false}
-                className={cx(styles.buttonIcon, styles.playIcon)}
-              >
+              <FlexItem className={cx(styles.buttonIcon, styles.playIcon)}>
                 <EuiToolTip content="Run again" position="left">
                   <IconButton
                     disabled={emptyCommand}
@@ -486,19 +470,19 @@ const QueryCardHeader = (props: Props) => {
                     onClick={handleQueryReRun}
                   />
                 </EuiToolTip>
-              </EuiFlexItem>
+              </FlexItem>
             )}
             {!isFullScreen && (
-              <EuiFlexItem grow={false} className={styles.buttonIcon}>
+              <FlexItem className={styles.buttonIcon}>
                 {!isSilentModeWithoutError(resultsMode, summary?.fail) && (
                   <IconButton
                     icon={isOpen ? ChevronUpIcon : ChevronDownIcon}
                     aria-label="toggle collapse"
                   />
                 )}
-              </EuiFlexItem>
+              </FlexItem>
             )}
-            <EuiFlexItem grow={false} className={styles.buttonIcon}>
+            <FlexItem className={styles.buttonIcon}>
               {(isRawMode(mode) || isGroupResults(resultsMode)) && (
                 <EuiToolTip
                   className={styles.tooltip}
@@ -541,10 +525,10 @@ const QueryCardHeader = (props: Props) => {
                   />
                 </EuiToolTip>
               )}
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+            </FlexItem>
+          </Row>
+        </FlexItem>
+      </Row>
     </div>
   )
 }

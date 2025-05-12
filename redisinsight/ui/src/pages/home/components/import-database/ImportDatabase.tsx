@@ -3,11 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiButton,
   EuiFilePicker,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiLoadingSpinner,
-  EuiSpacer,
   EuiText,
   EuiTextColor,
   EuiTitle,
@@ -24,6 +21,8 @@ import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { UploadWarning } from 'uiSrc/components'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import ResultsLog from './components/ResultsLog'
 
 import styles from './styles.module.scss'
@@ -181,8 +180,8 @@ const ImportDatabase = (props: Props) => {
   return (
     <>
       <div className={styles.formWrapper} data-testid="add-db_import">
-        <EuiFlexGroup gutterSize="none" responsive={false} direction="column">
-          <EuiFlexItem>
+        <Col>
+          <FlexItem grow>
             {isShowForm && (
               <>
                 <EuiText color="subdued" size="s">
@@ -190,7 +189,7 @@ const ImportDatabase = (props: Props) => {
                   that you only use files from trusted sources to prevent the
                   risk of automatically executing malicious code.
                 </EuiText>
-                <EuiSpacer />
+                <Spacer />
                 <EuiFilePicker
                   id="import-file-modal-filepicker"
                   initialPromptText="Select or drag and drop a file"
@@ -236,23 +235,19 @@ const ImportDatabase = (props: Props) => {
                 <EuiText color="subdued">{error}</EuiText>
               </div>
             )}
-          </EuiFlexItem>
+          </FlexItem>
           {isShowForm && (
-            <EuiFlexItem className={styles.uploadWarningContainer}>
+            <FlexItem grow className={styles.uploadWarningContainer}>
               <UploadWarning />
-            </EuiFlexItem>
+            </FlexItem>
           )}
-        </EuiFlexGroup>
+        </Col>
         {data && (
-          <EuiFlexGroup
-            justifyContent="center"
-            gutterSize="none"
-            responsive={false}
-          >
-            <EuiFlexItem style={{ maxWidth: '100%' }}>
+          <Row justify="center">
+            <FlexItem grow style={{ maxWidth: '100%' }}>
               <ResultsLog data={data} />
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         )}
       </div>
       <Footer />

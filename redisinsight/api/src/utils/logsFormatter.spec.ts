@@ -4,11 +4,11 @@ import { AxiosError, AxiosHeaders } from 'axios';
 import { mockSessionMetadata } from 'src/__mocks__';
 import { getOriginalErrorCause, sanitizeError, sanitizeErrors } from './logsFormatter';
 
-const error1 = new Error('Original error');
-error1['some'] = 'field';
-const error2 = new NotFoundException('Not found', { cause: error1 });
-const error3 = new BadRequestException('Bad req', { cause: error2 });
-const error4 = new CloudOauthMisconfigurationException('Misconfigured', { cause: error3 });
+const simpleError = new Error('Original error');
+simpleError['some'] = 'field';
+const errorWithCause = new NotFoundException('Not found', { cause: simpleError });
+const errorWithCauseDepth2 = new BadRequestException('Bad req', { cause: errorWithCause });
+const errorWithCauseDepth3 = new CloudOauthMisconfigurationException('Misconfigured', { cause: errorWithCauseDepth2 });
 const axiosError = new AxiosError(
   'Request failed with status code 404',
   'NOT_FOUND',
@@ -34,9 +34,9 @@ const axiosError = new AxiosError(
 
 const mockLogData: any = {
   sessionMetadata: mockSessionMetadata,
-  error: error4,
+  error: errorWithCauseDepth3,
   data: [
-    error3,
+    errorWithCauseDepth2,
     {
       any: [
         'other',
@@ -45,9 +45,9 @@ const mockLogData: any = {
           with: [
             'nested',
             'structure',
-            error2,
+            errorWithCause,
             {
-              error: error1,
+              error: simpleError,
             },
           ],
         },
@@ -60,11 +60,11 @@ mockLogData.data.push({ circular: mockLogData.data });
 describe('logsFormatter', () => {
   describe('getOriginalErrorCause', () => {
     it('should return last cause in the chain', () => {
-      expect(getOriginalErrorCause(error4)).toEqual(error1);
+      expect(getOriginalErrorCause(errorWithCauseDepth3)).toEqual(simpleError);
     });
 
     it('should return undefined if input is not an Error instance', () => {
-      expect(getOriginalErrorCause({ cause: error1 })).toEqual(undefined);
+      expect(getOriginalErrorCause({ cause: simpleError })).toEqual(undefined);
     });
 
     it('should not fail if input is not specified', () => {
@@ -74,40 +74,40 @@ describe('logsFormatter', () => {
 
   describe('sanitizeError', () => {
     it('should sanitize simple error and return only message', () => {
-      expect(sanitizeError(error1, { omitSensitiveData: true })).toEqual({
+      expect(sanitizeError(simpleError, { omitSensitiveData: true })).toEqual({
         type: 'Error',
-        message: error1.message,
+        message: simpleError.message,
       });
     });
 
     it('should sanitize simple error and return message (with stack)', () => {
-      expect(sanitizeError(error1)).toEqual({
+      expect(sanitizeError(simpleError)).toEqual({
         type: 'Error',
-        message: error1.message,
-        stack: error1.stack,
+        message: simpleError.message,
+        stack: simpleError.stack,
       });
     });
 
     it('should return sanitized object with a single original cause for nested errors', () => {
-      expect(sanitizeError(error4, { omitSensitiveData: true })).toEqual({
+      expect(sanitizeError(errorWithCauseDepth3, { omitSensitiveData: true })).toEqual({
         type: 'CloudOauthMisconfigurationException',
-        message: error4.message,
+        message: errorWithCauseDepth3.message,
         cause: {
           type: 'Error',
-          message: error1.message,
+          message: simpleError.message,
         },
       });
     });
 
     it('should return sanitized object with a single original cause for nested errors (with stack)', () => {
-      expect(sanitizeError(error4)).toEqual({
+      expect(sanitizeError(errorWithCauseDepth3)).toEqual({
         type: 'CloudOauthMisconfigurationException',
-        message: error4.message,
-        stack: error4.stack,
+        message: errorWithCauseDepth3.message,
+        stack: errorWithCauseDepth3.stack,
         cause: {
           type: 'Error',
-          message: error1.message,
-          stack: error1.stack,
+          message: simpleError.message,
+          stack: simpleError.stack,
         },
       });
     });

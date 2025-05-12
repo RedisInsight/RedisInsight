@@ -1,7 +1,6 @@
 import { AxiosError } from 'axios'
 import { capitalize, isEmpty, isString, isArray, set, isNumber } from 'lodash'
 import React from 'react'
-import { EuiSpacer } from '@elastic/eui'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 import { CustomError } from 'uiSrc/slices/interfaces'
@@ -10,6 +9,7 @@ import {
   UTM_CAMPAINGS,
   UTM_MEDIUMS,
 } from 'uiSrc/constants/links'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { getUtmExternalLink } from './links'
 
 export const getRdiValidationMessage = (
@@ -75,9 +75,9 @@ export const parseCustomError = (
         <>
           Authorization server encountered a misconfiguration error and was
           unable to complete your request.
-          <EuiSpacer size="xs" />
+          <Spacer size="xs" />
           Try again later.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -94,7 +94,7 @@ export const parseCustomError = (
       message = (
         <>
           Unknown authorization request.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -111,7 +111,7 @@ export const parseCustomError = (
       message = (
         <>
           An unexpected error occurred.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -132,9 +132,9 @@ export const parseCustomError = (
       message = (
         <>
           Your request resulted in an error.
-          <EuiSpacer size="xs" />
+          <Spacer size="xs" />
           Try again later.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -157,7 +157,7 @@ export const parseCustomError = (
       message = (
         <>
           Try restarting Redis Insight.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -175,9 +175,9 @@ export const parseCustomError = (
       message = (
         <>
           Resource requested could not be found.
-          <EuiSpacer size="xs" />
+          <Spacer size="xs" />
           Try again later.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -197,7 +197,7 @@ export const parseCustomError = (
       message = (
         <>
           Sign in again to continue working with Redis Cloud.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           If the issue persists,{' '}
           <a
             href={EXTERNAL_LINKS.githubIssues}
@@ -215,9 +215,9 @@ export const parseCustomError = (
       message = (
         <>
           Your Redis Cloud authorization failed.
-          <EuiSpacer size="xs" />
+          <Spacer size="xs" />
           Remove the invalid API key from Redis Insight and try again.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           Open the Settings page to manage Redis Cloud API keys.
         </>
       )
@@ -230,7 +230,7 @@ export const parseCustomError = (
       message = (
         <>
           You already have a free trial Redis Cloud database running.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           Check out your
           <a
             href={getUtmExternalLink(EXTERNAL_LINKS.cloudConsole, {
@@ -240,7 +240,7 @@ export const parseCustomError = (
             target="_blank"
             rel="noreferrer"
           >
-            {' Cloud console '}
+            Cloud console
           </a>
           for connection details.
         </>

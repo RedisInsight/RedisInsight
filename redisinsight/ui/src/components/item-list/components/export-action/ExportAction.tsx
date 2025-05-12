@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import {
   EuiButton,
   EuiCheckbox,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiIcon,
   EuiPopover,
@@ -11,6 +9,7 @@ import {
 } from '@elastic/eui'
 import { formatLongName } from 'uiSrc/utils'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from '../styles.module.scss'
 
 export interface Props<T> {
@@ -55,19 +54,14 @@ const ExportAction = <T extends { id: string; name?: string }>(
       </EuiText>
       <div className={styles.boxSection}>
         {selection.map((select) => (
-          <EuiFlexGroup
-            key={select.id}
-            gutterSize="s"
-            responsive={false}
-            className={styles.nameList}
-          >
-            <EuiFlexItem grow={false}>
+          <Row key={select.id} gap="s" className={styles.nameList}>
+            <FlexItem>
               <EuiIcon type="check" />
-            </EuiFlexItem>
-            <EuiFlexItem className={styles.nameListText}>
+            </FlexItem>
+            <FlexItem grow className={styles.nameListText}>
               <span>{formatLongName(select.name)}</span>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         ))}
       </div>
       <EuiFormRow style={{ marginTop: 16 }}>

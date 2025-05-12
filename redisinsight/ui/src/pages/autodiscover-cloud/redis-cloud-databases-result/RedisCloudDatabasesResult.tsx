@@ -9,8 +9,6 @@ import {
   EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
-  EuiFlexGroup,
-  EuiFlexItem,
 } from '@elastic/eui'
 import cx from 'classnames'
 import {
@@ -21,6 +19,7 @@ import { cloudSelector } from 'uiSrc/slices/instances/cloud'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
+import { Flex, FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -92,13 +91,13 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
         <EuiTitle size="s" className={styles.title} data-testid="title">
           <h1>Redis Enterprise Databases Added</h1>
         </EuiTitle>
-        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
-          <EuiFlexItem>
+        <Flex align="end" gap="s">
+          <FlexItem grow>
             <MessageBar opened={!!countSuccessAdded || !!countFailAdded}>
               <SummaryText />
             </MessageBar>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiFormRow className={styles.searchForm}>
               <EuiFieldSearch
                 placeholder="Search..."
@@ -109,8 +108,8 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
                 data-testid="search"
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Flex>
         <br />
         <div className="itemList databaseList cloudDatabaseListResult">
           <EuiInMemoryTable

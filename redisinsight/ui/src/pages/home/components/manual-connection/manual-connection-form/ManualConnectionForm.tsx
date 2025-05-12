@@ -1,13 +1,4 @@
-import {
-  EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSpacer,
-  EuiTab,
-  EuiTabs,
-  EuiTitle,
-  keys,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiTab, EuiTabs, EuiTitle, keys } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, pick } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
@@ -32,6 +23,8 @@ import { appInfoSelector } from 'uiSrc/slices/app/info'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { MANUAL_FORM_TABS, ManualFormTab } from './constants'
 import CloneConnection from './components/CloneConnection'
 import FooterActions from './components/FooterActions'
@@ -160,8 +153,8 @@ const ManualConnectionForm = (props: Props) => {
   useEffect(() => {
     if (isCloneMode) {
       setModalHeader(
-        <EuiFlexGroup responsive={false} alignItems="center" gutterSize="s">
-          <EuiFlexItem grow={false}>
+        <Row align="center" gap="s">
+          <FlexItem>
             <EuiButtonIcon
               onClick={handleClickBackClone}
               iconSize="m"
@@ -169,13 +162,13 @@ const ManualConnectionForm = (props: Props) => {
               aria-label="back"
               data-testid="back-btn"
             />
-          </EuiFlexItem>
-          <EuiFlexItem>
+          </FlexItem>
+          <FlexItem grow>
             <EuiTitle size="s">
               <h4>Clone Database</h4>
             </EuiTitle>
-          </EuiFlexItem>
-        </EuiFlexGroup>,
+          </FlexItem>
+        </Row>,
       )
       return
     }
@@ -268,7 +261,7 @@ const ManualConnectionForm = (props: Props) => {
         {!isEditMode && !isFromCloud && (
           <>
             <Tabs />
-            <EuiSpacer />
+            <Spacer />
             <div className="eui-yScroll">
               <AddConnection
                 activeTab={activeTab}
@@ -297,11 +290,11 @@ const ManualConnectionForm = (props: Props) => {
                     nodes={nodes}
                     isFromCloud={isFromCloud}
                   />
-                  <EuiSpacer />
+                  <Spacer />
                 </>
               )}
               <Tabs />
-              <EuiSpacer />
+              <Spacer />
               <div className="eui-yScroll">
                 <EditConnection
                   activeTab={activeTab}
@@ -330,11 +323,11 @@ const ManualConnectionForm = (props: Props) => {
                     host={host}
                     port={port}
                   />
-                  <EuiSpacer />
+                  <Spacer />
                 </>
               )}
               <Tabs />
-              <EuiSpacer />
+              <Spacer />
               <div className="eui-yScroll">
                 <EditSentinelConnection
                   activeTab={activeTab}

@@ -12,8 +12,6 @@ import {
   EuiFieldSearch,
   EuiFormRow,
   EuiToolTip,
-  EuiFlexGroup,
-  EuiFlexItem,
 } from '@elastic/eui'
 import cx from 'classnames'
 import {
@@ -28,6 +26,7 @@ import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -260,13 +259,13 @@ const RedisCloudSubscriptions = ({
           <h1>Redis Cloud Subscriptions</h1>
         </EuiTitle>
 
-        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
-          <EuiFlexItem>
+        <Row align="end" gap="s">
+          <FlexItem grow>
             <MessageBar opened={countStatusActive + countStatusFailed > 0}>
               <SummaryText />
             </MessageBar>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiFormRow className={styles.searchForm}>
               <EuiFieldSearch
                 placeholder="Search..."
@@ -277,8 +276,8 @@ const RedisCloudSubscriptions = ({
                 data-testid="search"
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
         <br />
 
         <div

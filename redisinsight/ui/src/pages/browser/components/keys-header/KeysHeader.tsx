@@ -4,8 +4,6 @@ import {
   EuiButton,
   EuiButtonIcon,
   EuiCheckbox,
-  EuiFlexItem,
-  EuiFlexGroup,
   EuiIcon,
   EuiPopover,
   EuiToolTip,
@@ -55,6 +53,7 @@ import { AutoRefresh, OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { BrowserColumns, KeyValueFormat } from 'uiSrc/constants'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { setConnectivityError } from 'uiSrc/slices/app/connectivity'
 import styles from './styles.module.scss'
 
@@ -383,8 +382,8 @@ const KeysHeader = (props: Props) => {
                       </EuiButton>
                     }
                   >
-                    <EuiFlexGroup alignItems="center" gutterSize="m">
-                      <EuiFlexItem>
+                    <Row align="center" gap="m">
+                      <FlexItem grow>
                         <EuiCheckbox
                           id="show-key-size"
                           name="show-key-size"
@@ -399,8 +398,8 @@ const KeysHeader = (props: Props) => {
                           data-testid="show-key-size"
                           className={styles.checkbox}
                         />
-                      </EuiFlexItem>
-                      <EuiFlexItem>
+                      </FlexItem>
+                      <FlexItem grow>
                         <EuiToolTip
                           content="Hide the key size to avoid performance issues when working with large keys."
                           position="top"
@@ -415,8 +414,8 @@ const KeysHeader = (props: Props) => {
                             data-testid="key-size-info-icon"
                           />
                         </EuiToolTip>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
+                      </FlexItem>
+                    </Row>
                     <EuiCheckbox
                       id="show-ttl"
                       name="show-ttl"

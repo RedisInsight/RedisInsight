@@ -1,7 +1,7 @@
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
 import React from 'react'
 
 import { IProcessingPerformance } from 'uiSrc/slices/interfaces'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
 import VerticalDivider from '../components/vertical-divider'
@@ -17,17 +17,15 @@ const InfoPanel = ({
   value: number
   suffix: string
 }) => (
-  <EuiFlexItem className={styles.infoPanel}>
-    <EuiFlexGroup>
-      <EuiFlexItem className={styles.infoLabel}>{label}</EuiFlexItem>
-      <EuiFlexItem className={styles.infoValue} grow={false}>
-        {value}
-      </EuiFlexItem>
-      <EuiFlexItem className={styles.infoSuffix} grow={false}>
-        {suffix}
-      </EuiFlexItem>
-    </EuiFlexGroup>
-  </EuiFlexItem>
+  <FlexItem grow className={styles.infoPanel}>
+    <Row gap="m" responsive>
+      <FlexItem grow className={styles.infoLabel}>
+        {label}
+      </FlexItem>
+      <FlexItem className={styles.infoValue}>{value}</FlexItem>
+      <FlexItem className={styles.infoSuffix}>{suffix}</FlexItem>
+    </Row>
+  </FlexItem>
 )
 
 interface Props {
@@ -64,9 +62,9 @@ const ProcessingPerformance = ({
       enableAutoRefreshDefault
     >
       <>
-        <EuiFlexGroup gutterSize="s">
-          <EuiFlexItem>
-            <EuiFlexGroup direction="column" gutterSize="s" responsive={false}>
+        <Row responsive gap="s">
+          <FlexItem grow>
+            <Col gap="s">
               <InfoPanel
                 label="Total batches"
                 value={totalBatches}
@@ -82,11 +80,11 @@ const ProcessingPerformance = ({
                 value={processTimeAvg}
                 suffix="ms"
               />
-            </EuiFlexGroup>
-          </EuiFlexItem>
+            </Col>
+          </FlexItem>
           <VerticalDivider />
-          <EuiFlexItem>
-            <EuiFlexGroup direction="column" gutterSize="s" responsive={false}>
+          <FlexItem grow>
+            <Col gap="s">
               <InfoPanel
                 label="ACK time average"
                 value={ackTimeAvg}
@@ -102,23 +100,19 @@ const ProcessingPerformance = ({
                 value={readTimeAvg}
                 suffix="ms"
               />
-            </EuiFlexGroup>
-          </EuiFlexItem>
+            </Col>
+          </FlexItem>
           <VerticalDivider />
-          <EuiFlexItem>
-            <EuiFlexGroup
-              gutterSize="s"
-              alignItems="flexStart"
-              responsive={false}
-            >
+          <FlexItem grow>
+            <Row gap="s" align="start">
               <InfoPanel
                 label="Total time average"
                 value={totalTimeAvg}
                 suffix="sec"
               />
-            </EuiFlexGroup>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+            </Row>
+          </FlexItem>
+        </Row>
       </>
     </Accordion>
   </Panel>

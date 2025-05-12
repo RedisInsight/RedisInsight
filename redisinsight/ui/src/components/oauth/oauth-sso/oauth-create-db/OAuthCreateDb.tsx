@@ -1,13 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSpacer,
-  EuiText,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiButton, EuiText, EuiTitle } from '@elastic/eui'
 import {
   createFreeDbJob,
   fetchPlans,
@@ -35,6 +28,8 @@ import {
 } from 'uiSrc/slices/instances/cloud'
 import { Nullable } from 'uiSrc/utils'
 import OAuthForm from 'uiSrc/components/oauth/shared/oauth-form'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
   OAuthAdvantages,
   OAuthAgreement,
@@ -116,11 +111,11 @@ const OAuthCreateDb = (props: Props) => {
 
   return (
     <div className={styles.container} data-testid="oauth-container-create-db">
-      <EuiFlexGroup gutterSize="none" responsive={false}>
-        <EuiFlexItem className={styles.advantagesContainer}>
+      <Row>
+        <FlexItem grow className={styles.advantagesContainer}>
           <OAuthAdvantages />
-        </EuiFlexItem>
-        <EuiFlexItem className={styles.socialContainer}>
+        </FlexItem>
+        <FlexItem grow className={styles.socialContainer}>
           {!data ? (
             <OAuthForm
               className={styles.socialButtons}
@@ -152,17 +147,17 @@ const OAuthCreateDb = (props: Props) => {
               <EuiTitle className={styles.title}>
                 <h2>Free trial Cloud database</h2>
               </EuiTitle>
-              <EuiSpacer size="xl" />
+              <Spacer size="xl" />
               <EuiText textAlign="center" color="subdued">
                 The database will be created automatically and can be changed
                 from Redis Cloud.
               </EuiText>
-              <EuiSpacer size="xl" />
+              <Spacer size="xl" />
               <OAuthRecommendedSettings
                 value={isRecommended}
                 onChange={handleChangeRecommendedSettings}
               />
-              <EuiSpacer />
+              <Spacer />
               <EuiButton
                 fill
                 color="secondary"
@@ -173,8 +168,8 @@ const OAuthCreateDb = (props: Props) => {
               </EuiButton>
             </>
           )}
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </div>
   )
 }

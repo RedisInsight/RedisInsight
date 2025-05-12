@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
@@ -37,6 +32,7 @@ import ImportDatabase from 'uiSrc/pages/home/components/import-database'
 import { FormDialog } from 'uiSrc/components'
 import { ModalHeaderProvider } from 'uiSrc/contexts/ModalTitleProvider'
 import ClusterConnectionFormWrapper from 'uiSrc/pages/home/components/cluster-connection'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -167,8 +163,8 @@ const DatabasePanelDialog = (props: Props) => {
   ) => {
     const header =
       withBack && content ? (
-        <EuiFlexGroup responsive={false} alignItems="center" gutterSize="s">
-          <EuiFlexItem grow={false}>
+        <Row align="center" gap="s">
+          <FlexItem>
             <EuiButtonIcon
               onClick={handleClickBack}
               iconSize="m"
@@ -176,9 +172,9 @@ const DatabasePanelDialog = (props: Props) => {
               aria-label="back"
               data-testid="back-btn"
             />
-          </EuiFlexItem>
-          <EuiFlexItem>{content}</EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+          <FlexItem grow>{content}</FlexItem>
+        </Row>
       ) : (
         content
       )

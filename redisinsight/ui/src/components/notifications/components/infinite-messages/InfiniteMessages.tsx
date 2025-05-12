@@ -1,12 +1,9 @@
 import React from 'react'
 import {
   EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiLink,
   EuiLoadingSpinner,
-  EuiSpacer,
   EuiText,
   EuiTitle,
 } from '@elastic/eui'
@@ -27,6 +24,8 @@ import {
   UTM_CAMPAINGS,
   UTM_MEDIUMS,
 } from 'uiSrc/constants/links'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export enum InfiniteMessagesIds {
@@ -50,25 +49,21 @@ export const INFINITE_MESSAGES = {
     id: InfiniteMessagesIds.oAuthProgress,
     Inner: (
       <div role="presentation" data-testid="authenticating-notification">
-        <EuiFlexGroup
-          justifyContent="flexEnd"
-          direction="row"
-          gutterSize="none"
-        >
-          <EuiFlexItem grow={false}>
+        <Row justify="end">
+          <FlexItem>
             <EuiLoadingSpinner
               className={cx('infiniteMessage__icon', styles.loading)}
             />
-          </EuiFlexItem>
-          <EuiFlexItem grow>
+          </FlexItem>
+          <FlexItem grow>
             <EuiTitle className="infiniteMessage__title">
               <span>Authenticating…</span>
             </EuiTitle>
             <EuiText size="xs">
               This may take several seconds, but it is totally worth it!
             </EuiText>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </div>
     ),
   }),
@@ -76,17 +71,13 @@ export const INFINITE_MESSAGES = {
     id: InfiniteMessagesIds.oAuthProgress,
     Inner: (
       <div role="presentation" data-testid="pending-create-db-notification">
-        <EuiFlexGroup
-          justifyContent="flexEnd"
-          direction="row"
-          gutterSize="none"
-        >
-          <EuiFlexItem grow={false}>
+        <Row justify="end">
+          <FlexItem grow={false}>
             <EuiLoadingSpinner
               className={cx('infiniteMessage__icon', styles.loading)}
             />
-          </EuiFlexItem>
-          <EuiFlexItem grow>
+          </FlexItem>
+          <FlexItem grow>
             <EuiTitle className="infiniteMessage__title">
               <span>
                 {(step === CloudJobStep.Credentials || !step) &&
@@ -102,13 +93,13 @@ export const INFINITE_MESSAGES = {
             <EuiText size="xs">
               This may take several minutes, but it is totally worth it!
             </EuiText>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             <EuiText size="xs">
               You can continue working in Redis Insight, and we will notify you
               once done.
             </EuiText>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </div>
     ),
   }),
@@ -139,88 +130,61 @@ export const INFINITE_MESSAGES = {
           }}
           data-testid="success-create-db-notification"
         >
-          <EuiFlexGroup
-            justifyContent="flexEnd"
-            direction="row"
-            gutterSize="none"
-          >
-            <EuiFlexItem className="infiniteMessage__icon" grow={false}>
+          <Row justify="end">
+            <FlexItem className="infiniteMessage__icon">
               <EuiIcon type={ChampagneIcon} size="original" />
-            </EuiFlexItem>
-            <EuiFlexItem grow>
+            </FlexItem>
+            <FlexItem grow>
               <EuiTitle className="infiniteMessage__title">
                 <span>Congratulations!</span>
               </EuiTitle>
               <EuiText size="xs">
                 {text}
-                <EuiSpacer size="s" />
+                <Spacer size="s" />
                 <b>Notice:</b> the database will be deleted after 15 days of
                 inactivity.
               </EuiText>
               {!!details && (
                 <>
-                  <EuiSpacer size="m" />
+                  <Spacer size="m" />
                   <Divider variant="fullWidth" />
-                  <EuiSpacer size="m" />
-                  <EuiFlexGroup
-                    className={styles.detailsRow}
-                    justifyContent="spaceBetween"
-                    gutterSize="none"
-                  >
-                    <EuiFlexItem grow={false}>
+                  <Spacer size="m" />
+                  <Row className={styles.detailsRow} justify="between">
+                    <FlexItem>
                       <EuiText size="xs">Plan</EuiText>
-                    </EuiFlexItem>
-                    <EuiFlexItem
-                      grow={false}
-                      data-testid="notification-details-plan"
-                    >
+                    </FlexItem>
+                    <FlexItem data-testid="notification-details-plan">
                       <EuiText size="xs">Free</EuiText>
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                  <EuiFlexGroup
-                    className={styles.detailsRow}
-                    justifyContent="spaceBetween"
-                    gutterSize="none"
-                  >
-                    <EuiFlexItem grow={false}>
+                    </FlexItem>
+                  </Row>
+                  <Row className={styles.detailsRow} justify="between">
+                    <FlexItem>
                       <EuiText size="xs">Cloud Vendor</EuiText>
-                    </EuiFlexItem>
-                    <EuiFlexItem
+                    </FlexItem>
+                    <FlexItem
                       className={styles.vendorLabel}
-                      grow={false}
                       data-testid="notification-details-vendor"
                     >
                       {!!vendor?.icon && <EuiIcon type={vendor?.icon} />}
                       <EuiText size="xs">{vendor?.label}</EuiText>
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
-                  <EuiFlexGroup
-                    className={styles.detailsRow}
-                    justifyContent="spaceBetween"
-                    gutterSize="none"
-                  >
-                    <EuiFlexItem grow={false}>
+                    </FlexItem>
+                  </Row>
+                  <Row className={styles.detailsRow} justify="between">
+                    <FlexItem>
                       <EuiText size="xs">Region</EuiText>
-                    </EuiFlexItem>
-                    <EuiFlexItem
-                      grow={false}
-                      data-testid="notification-details-region"
-                    >
+                    </FlexItem>
+                    <FlexItem data-testid="notification-details-region">
                       <EuiText size="xs">{details.region}</EuiText>
-                    </EuiFlexItem>
-                  </EuiFlexGroup>
+                    </FlexItem>
+                  </Row>
                 </>
               )}
-              <EuiSpacer size="m" />
-              <EuiFlexGroup
-                justifyContent="spaceBetween"
-                alignItems="center"
-                gutterSize="none"
-              >
-                <EuiFlexItem grow={false}>
+              <Spacer size="m" />
+              <Row justify="between" align="center">
+                <FlexItem>
                   <ExternalLink href={MANAGE_DB_LINK}>Manage DB</ExternalLink>
-                </EuiFlexItem>
-                <EuiFlexItem grow={false}>
+                </FlexItem>
+                <FlexItem>
                   <EuiButton
                     fill
                     size="s"
@@ -230,10 +194,10 @@ export const INFINITE_MESSAGES = {
                   >
                     Connect
                   </EuiButton>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+                </FlexItem>
+              </Row>
+            </FlexItem>
+          </Row>
         </div>
       ),
     }
@@ -257,9 +221,9 @@ export const INFINITE_MESSAGES = {
         <EuiText size="xs">
           Do you want to import your existing database into Redis Insight?
         </EuiText>
-        <EuiSpacer size="m" />
-        <EuiFlexGroup justifyContent="spaceBetween" gutterSize="none">
-          <EuiFlexItem grow={false}>
+        <Spacer size="m" />
+        <Row justify="between">
+          <FlexItem>
             <EuiButton
               fill
               size="s"
@@ -269,8 +233,8 @@ export const INFINITE_MESSAGES = {
             >
               Import
             </EuiButton>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiButton
               size="s"
               color="secondary"
@@ -280,8 +244,8 @@ export const INFINITE_MESSAGES = {
             >
               Cancel
             </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </div>
     ),
   }),
@@ -304,7 +268,7 @@ export const INFINITE_MESSAGES = {
         <EuiText size="xs">
           Adding your Redis Cloud database to Redis Insight is disabled due to a
           setting restricting database connection management.
-          <EuiSpacer size="m" />
+          <Spacer size="m" />
           Log in to{' '}
           <EuiLink
             target="_blank"
@@ -317,9 +281,9 @@ export const INFINITE_MESSAGES = {
           </EuiLink>{' '}
           to check your database.
         </EuiText>
-        <EuiSpacer size="m" />
-        <EuiFlexGroup justifyContent="flexEnd" gutterSize="none">
-          <EuiFlexItem grow={false}>
+        <Spacer size="m" />
+        <Row justify="end">
+          <FlexItem>
             <EuiButton
               fill
               size="s"
@@ -329,8 +293,8 @@ export const INFINITE_MESSAGES = {
             >
               Ok
             </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </div>
     ),
   }),
@@ -356,9 +320,9 @@ export const INFINITE_MESSAGES = {
           Do you want to create a free trial database in your existing
           subscription?
         </EuiText>
-        <EuiSpacer size="m" />
-        <EuiFlexGroup justifyContent="spaceBetween" gutterSize="none">
-          <EuiFlexItem grow={false}>
+        <Spacer size="m" />
+        <Row justify="between">
+          <FlexItem>
             <EuiButton
               fill
               size="s"
@@ -368,8 +332,8 @@ export const INFINITE_MESSAGES = {
             >
               Create
             </EuiButton>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiButton
               size="s"
               color="secondary"
@@ -379,8 +343,8 @@ export const INFINITE_MESSAGES = {
             >
               Cancel
             </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </div>
     ),
   }),
@@ -388,25 +352,21 @@ export const INFINITE_MESSAGES = {
     id: InfiniteMessagesIds.autoCreateDb,
     Inner: (
       <div role="presentation" data-testid="pending-create-db-notification">
-        <EuiFlexGroup
-          justifyContent="flexEnd"
-          direction="row"
-          gutterSize="none"
-        >
-          <EuiFlexItem grow={false}>
+        <Row justify="end">
+          <FlexItem>
             <EuiLoadingSpinner
               className={cx('infiniteMessage__icon', styles.loading)}
             />
-          </EuiFlexItem>
-          <EuiFlexItem grow>
+          </FlexItem>
+          <FlexItem grow>
             <EuiTitle className="infiniteMessage__title">
               <span>Connecting to your database</span>
             </EuiTitle>
             <EuiText size="xs">
               This may take several minutes, but it is totally worth it!
             </EuiText>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </div>
     ),
   }),
@@ -462,15 +422,11 @@ export const INFINITE_MESSAGES = {
         }}
         data-testid="success-deploy-pipeline-notification"
       >
-        <EuiFlexGroup
-          justifyContent="flexEnd"
-          direction="row"
-          gutterSize="none"
-        >
-          <EuiFlexItem className="infiniteMessage__icon" grow={false}>
+        <Row justify="end">
+          <FlexItem className="infiniteMessage__icon">
             <EuiIcon type={ChampagneIcon} size="original" />
-          </EuiFlexItem>
-          <EuiFlexItem grow>
+          </FlexItem>
+          <FlexItem grow>
             <EuiTitle className="infiniteMessage__title">
               <span>Congratulations!</span>
             </EuiTitle>
@@ -479,15 +435,10 @@ export const INFINITE_MESSAGES = {
               <br />
               Check out the pipeline statistics page.
             </EuiText>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             {/* // TODO remove display none when statistics page will be available */}
-            <EuiFlexGroup
-              style={{ display: 'none' }}
-              justifyContent="flexEnd"
-              alignItems="center"
-              gutterSize="none"
-            >
-              <EuiFlexItem grow={false}>
+            <Row style={{ display: 'none' }} justify="end" align="center">
+              <FlexItem>
                 <EuiButton
                   fill
                   size="s"
@@ -497,10 +448,10 @@ export const INFINITE_MESSAGES = {
                 >
                   Statistics
                 </EuiButton>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+              </FlexItem>
+            </Row>
+          </FlexItem>
+        </Row>
       </div>
     ),
   }),

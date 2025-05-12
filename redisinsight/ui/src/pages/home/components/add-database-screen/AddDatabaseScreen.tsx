@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiButton, EuiButtonEmpty, EuiForm, EuiToolTip } from '@elastic/eui'
+import { EuiForm, EuiToolTip } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
@@ -16,6 +16,12 @@ import {
 import { Pages } from 'uiSrc/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  EmptyButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
 import ConnectivityOptions from './components/connectivity-options'
 import ConnectionUrl from './components/connection-url'
 import { Values } from './constants'
@@ -112,7 +118,7 @@ const AddDatabaseScreen = (props: Props) => {
           </FlexItem>
         </Row>
 
-        <Row responsive justify="between">
+        <Row responsive justify="between" style={{ padding: 4 }}>
           <FlexItem>
             <EuiToolTip
               position="top"
@@ -125,30 +131,29 @@ const AddDatabaseScreen = (props: Props) => {
                 ) : null
               }
             >
-              <EuiButtonEmpty
-                size="s"
+              <EmptyButton
+                size="small"
                 className="empty-btn"
-                isDisabled={!!isInvalid}
-                iconType={isInvalid ? 'iInCircle' : undefined}
+                disabled={!!isInvalid}
+                icon={isInvalid ? InfoIcon : undefined}
                 onClick={handleTestConnection}
-                isLoading={isLoading}
+                loading={isLoading}
                 data-testid="btn-test-connection"
               >
                 Test Connection
-              </EuiButtonEmpty>
+              </EmptyButton>
             </EuiToolTip>
           </FlexItem>
           <FlexItem>
             <Row responsive gap="l">
               <FlexItem>
-                <EuiButton
-                  size="s"
-                  color="secondary"
+                <SecondaryButton
+                  size="small"
                   onClick={() => handleProceedForm(AddDbType.manual)}
                   data-testid="btn-connection-settings"
                 >
                   Connection Settings
-                </EuiButton>
+                </SecondaryButton>
               </FlexItem>
               <FlexItem>
                 <EuiToolTip
@@ -162,17 +167,15 @@ const AddDatabaseScreen = (props: Props) => {
                     ) : null
                   }
                 >
-                  <EuiButton
-                    fill
-                    size="s"
-                    color="secondary"
+                  <PrimaryButton
+                    size="small"
                     type="submit"
-                    isDisabled={!!isInvalid}
-                    iconType={isInvalid ? 'iInCircle' : undefined}
+                    disabled={!!isInvalid}
+                    icon={isInvalid ? InfoIcon : undefined}
                     data-testid="btn-submit"
                   >
                     Add Database
-                  </EuiButton>
+                  </PrimaryButton>
                 </EuiToolTip>
               </FlexItem>
             </Row>

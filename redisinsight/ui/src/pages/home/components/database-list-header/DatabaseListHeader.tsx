@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { EuiButton, EuiCheckbox, EuiPopover } from '@elastic/eui'
+import { EuiCheckbox, EuiPopover } from '@elastic/eui'
 import { useSelector, useDispatch } from 'react-redux'
 import { isEmpty } from 'lodash'
 import cx from 'classnames'
 
-import ColumnsIcon from 'uiSrc/assets/img/icons/columns.svg?react'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   instancesSelector,
@@ -28,6 +27,11 @@ import {
 } from 'uiSrc/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { ColumnsIcon } from 'uiSrc/components/base/icons'
 import SearchDatabasesList from '../search-databases-list'
 
 import styles from './styles.module.scss'
@@ -118,15 +122,13 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
   }
 
   const AddInstanceBtn = () => (
-    <EuiButton
-      fill
-      color="secondary"
+    <PrimaryButton
       onClick={handleOnAddDatabase}
       className={styles.addInstanceBtn}
       data-testid="add-redis-database-short"
     >
       <span>+ Add Redis database</span>
-    </EuiButton>
+    </PrimaryButton>
   )
 
   const CreateBtn = ({ content }: { content: ContentCreateRedis }) => {
@@ -219,17 +221,15 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
                     closePopover={() => setColumnsConfigShown(false)}
                     data-testid="columns-config-popover"
                     button={
-                      <EuiButton
-                        size="m"
-                        color="secondary"
-                        iconType={ColumnsIcon}
+                      <SecondaryButton
+                        icon={ColumnsIcon}
                         onClick={toggleColumnsConfigVisibility}
                         className={styles.columnsButton}
                         data-testid="btn-columns-config"
                         aria-label="columns"
                       >
                         <span>Columns</span>
-                      </EuiButton>
+                      </SecondaryButton>
                     }
                   >
                     {columnCheckboxes}

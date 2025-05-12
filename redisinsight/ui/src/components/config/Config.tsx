@@ -2,11 +2,15 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import { isNumber } from 'lodash'
-import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
+import { BrowserStorageItem, FeatureFlags, Theme } from "uiSrc/constants";
 import { BuildType } from 'uiSrc/constants/env'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
-import { localStorageService, setObjectStorage } from 'uiSrc/services'
-import { themeService } from '../../services'
+import {
+  localStorageService,
+  setObjectStorage,
+  themeService
+} from 'uiSrc/services'
+
 import {
   appFeatureFlagsFeaturesSelector,
   setFeaturesToHighlight,
@@ -208,7 +212,7 @@ const Config = () => {
   const checkAndSetTheme = () => {
     const theme = config?.theme
     if (theme && localStorageService.get(BrowserStorageItem.theme) !== theme)
-      themeService.applyTheme(theme)
+      themeService.applyTheme(theme as Theme)
   }
 
   return null

@@ -1,12 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
 import {
   EuiCallOut,
   EuiCollapsibleNavGroup,
-  EuiForm,
-  EuiFormRow,
   EuiLoadingSpinner,
-  EuiSuperSelect,
   EuiText,
   EuiTitle,
 } from '@elastic/eui'
@@ -21,16 +18,12 @@ import {
   FeatureFlagComponent,
 } from 'uiSrc/components'
 import {
-  sendEventTelemetry,
   sendPageViewTelemetry,
-  TelemetryEvent,
   TelemetryPageView,
 } from 'uiSrc/telemetry'
-import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
   fetchUserConfigSettings,
   fetchUserSettingsSpec,
-  updateUserConfigSettingsAction,
   userSettingsSelector
 } from 'uiSrc/slices/user/user-settings'
 
@@ -46,23 +39,18 @@ import {
   AdvancedSettings,
   CloudSettings,
   WorkbenchSettings,
+  ThemeSettings
 } from './components'
 import { DateTimeFormatter } from './components/general-settings'
 import styles from './styles.module.scss'
 
 const SettingsPage = () => {
   const [loading, setLoading] = useState(false)
-  const [themeValue, setThemeValue] = useState('')
   const { loading: settingsLoading } = useSelector(userSettingsSelector)
-  const { config } = useSelector(userSettingsSelector)
 
   const initialOpenSection = globalThis.location.hash || ''
 
   const dispatch = useDispatch()
-
-  const options = THEMES
-  const themeContext = useContext(ThemeContext)
-  let { theme, changeTheme } = themeContext
 
   useEffect(() => {
     // componentDidMount
@@ -76,47 +64,12 @@ const SettingsPage = () => {
     })
   }, [])
 
-  useEffect(() => {
-    if (config) {
-      setThemeValue(config.theme);
-      theme = config.theme;
-    }
-  }, [config])
-
   useDebouncedEffect(() => setLoading(settingsLoading), 100, [settingsLoading])
   setTitle('Settings')
 
-  const onChange = (value: string) => {
-    const previousValue = theme
-    changeTheme(value)
-    dispatch(updateUserConfigSettingsAction({theme: value}));
-    sendEventTelemetry({
-      event: TelemetryEvent.SETTINGS_COLOR_THEME_CHANGED,
-      eventData: {
-        previousColorTheme: previousValue,
-        currentColorTheme: value,
-      },
-    })
-  }
-
   const Appearance = () => (
     <>
-      <EuiForm component="form">
-        <EuiTitle size="xs">
-          <h4>Color Theme</h4>
-        </EuiTitle>
-        <Spacer size="m" />
-        <EuiFormRow label="Specifies the color theme to be used in Redis Insight:">
-          <EuiSuperSelect
-            options={options}
-            valueOfSelected={themeValue}
-            onChange={onChange}
-            style={{ marginTop: '12px' }}
-            data-test-subj="select-theme"
-          />
-        </EuiFormRow>
-        <Spacer size="xl" />
-      </EuiForm>
+      <ThemeSettings />
       <ConsentsNotifications />
       <Divider colorVariable="separatorColor" />
       <Spacer />

@@ -1,6 +1,5 @@
 import {
   Criteria,
-  EuiButtonEmpty,
   EuiButtonIcon,
   EuiIcon,
   EuiLink,
@@ -85,6 +84,8 @@ import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
 
 import { Tag } from 'uiSrc/slices/interfaces/tag'
 import { FeatureFlagComponent } from 'uiSrc/components'
+import { EditIcon } from 'uiSrc/components/base/icons'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import DbStatus from '../db-status'
 
 import { TagsCell } from '../tags-cell/TagsCell'
@@ -622,15 +623,15 @@ const DatabasesListWrapper = (props: Props) => {
                 >
                   <div className="controlsPopoverContent">
                     <div>
-                      <EuiButtonEmpty
-                        iconType="pencil"
+                      <EmptyButton
+                        icon={EditIcon}
                         className="editInstanceBtn"
                         aria-label="Edit instance"
-                        data-testid={`edit-instance-${instance.id}`}
                         onClick={() => handleClickEditInstance(instance)}
+                        data-testid={`edit-instance-${instance.id}`}
                       >
                         Edit database
-                      </EuiButtonEmpty>
+                      </EmptyButton>
                     </div>
                     <div>
                       <PopoverDelete

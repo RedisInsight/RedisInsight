@@ -1,12 +1,7 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import {
-  EuiFormRow,
-  EuiForm,
-  EuiPanel,
-  EuiTextArea,
-} from '@elastic/eui'
+import { EuiFormRow, EuiForm, EuiPanel, EuiTextArea } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 
 import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/browser/keys'
@@ -83,7 +78,7 @@ const AddKeyString = (props: Props) => {
           hasShadow={false}
           borderRadius="none"
         >
-          <Row justify="end">
+          <Row justify="end" gap="m">
             <FlexItem>
               <div>
                 <SecondaryButton

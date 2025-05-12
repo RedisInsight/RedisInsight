@@ -1,9 +1,14 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 
+import { DeleteIcon, PlusIcon } from 'uiSrc/components/base/icons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  ActionIconButton,
+  IconButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props<T> {
@@ -27,10 +32,9 @@ const AddMultipleFields = <T,>(props: Props<T>) => {
         <FlexItem grow>{child}</FlexItem>
         <FlexItem>
           <EuiToolTip content="Remove" position="left">
-            <EuiButtonIcon
-              iconType="trash"
-              isDisabled={isClearDisabled(item, index)}
-              color="primary"
+            <IconButton
+              icon={DeleteIcon}
+              disabled={isClearDisabled(item, index)}
               aria-label="Remove Item"
               onClick={() => onClickRemove(item, index)}
               data-testid="remove-item"
@@ -50,10 +54,9 @@ const AddMultipleFields = <T,>(props: Props<T>) => {
       <Row align="center" justify="end">
         <FlexItem>
           <EuiToolTip content="Add" position="left">
-            <EuiButtonIcon
-              className={styles.addBtn}
-              iconType="plus"
-              color="primary"
+            <ActionIconButton
+              variant="secondary"
+              icon={PlusIcon}
               aria-label="Add new item"
               onClick={onClickAdd}
               data-testid="add-item"

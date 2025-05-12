@@ -9,13 +9,7 @@ import React, {
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import {
-  EuiButton,
-  EuiProgress,
-  EuiText,
-  EuiTextArea,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@elastic/eui'
 
 import {
   bufferToSerializedFormat,
@@ -63,6 +57,8 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { DownloadIcon } from 'uiSrc/components/base/icons'
+import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 const MIN_ROWS = 8
@@ -221,7 +217,7 @@ const StringDetailsValue = (props: Props) => {
     })
   }
 
-  const handleDownloadString = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleDownloadString = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     dispatch(fetchDownloadStringValue(key, downloadFile))
     sendEventTelemetry({
@@ -328,31 +324,29 @@ const StringDetailsValue = (props: Props) => {
           <Row justify="between" align="center">
             <FlexItem>
               {!isFullStringLoaded(initialValue?.data?.length, length) && (
-                <EuiButton
+                <SecondaryButton
                   className={styles.stringFooterBtn}
-                  size="s"
-                  color="secondary"
+                  size="small"
                   data-testid="load-all-value-btn"
                   onClick={() => handleLoadAll(key, keyType)}
                 >
                   Load all
-                </EuiButton>
+                </SecondaryButton>
               )}
             </FlexItem>
             {!isTruncatedValue && (
               <FlexItem>
-                <EuiButton
+                <SecondaryButton
                   className={styles.stringFooterBtn}
-                  size="s"
-                  color="secondary"
-                  iconType="download"
+                  size="small"
+                  icon={DownloadIcon}
                   iconSide="right"
                   data-testid="download-all-value-btn"
                   onClick={handleDownloadString}
-                  isDisabled={isTruncatedValue}
+                  disabled={isTruncatedValue}
                 >
                   Download
-                </EuiButton>
+                </SecondaryButton>
               </FlexItem>
             )}
           </Row>

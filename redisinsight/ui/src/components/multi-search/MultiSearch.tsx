@@ -1,5 +1,4 @@
 import {
-  EuiButtonIcon,
   EuiFieldText,
   EuiIcon,
   EuiProgress,
@@ -8,10 +7,20 @@ import {
 } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+
 import { GroupBadge } from 'uiSrc/components'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { Nullable } from 'uiSrc/utils'
 
+import {
+  CancelSlimIcon,
+  SearchIcon,
+  SwitchIcon,
+} from 'uiSrc/components/base/icons'
+import {
+  ActionIconButton,
+  IconButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 interface MultiSearchSuggestion {
@@ -147,13 +156,11 @@ const MultiSearch = (props: Props) => {
   }
 
   const SubmitBtn = () => (
-    <EuiButtonIcon
-      iconType="search"
-      color="primary"
+    <IconButton
+      icon={SearchIcon}
       aria-label="Search"
       disabled={disableSubmit}
-      className={styles.searchButton}
-      iconSize="s"
+      size="S"
       onClick={handleSubmit}
       data-testid="search-btn"
     />
@@ -236,9 +243,9 @@ const MultiSearch = (props: Props) => {
                         >
                           {value}
                         </span>
-                        <EuiButtonIcon
+                        <IconButton
                           className={styles.suggestionRemoveBtn}
-                          iconType="cross"
+                          icon={CancelSlimIcon}
                           color="primary"
                           aria-label="Remove History Record"
                           onClick={(e: React.MouseEvent) => {
@@ -268,15 +275,14 @@ const MultiSearch = (props: Props) => {
           )}
           {(value || !!options.length) && (
             <EuiToolTip content="Reset Filters" position="bottom">
-              <EuiButtonIcon
-                display="empty"
-                iconType="cross"
-                color="primary"
-                size="xs"
+              <ActionIconButton
+                icon={CancelSlimIcon}
+                size="XS"
                 aria-label="Reset Filters"
                 onClick={onClear}
                 className={styles.clearButton}
                 data-testid="reset-filter-btn"
+                variant="secondary"
               />
             </EuiToolTip>
           )}
@@ -285,11 +291,9 @@ const MultiSearch = (props: Props) => {
               content={suggestions?.buttonTooltipTitle}
               position="bottom"
             >
-              <EuiButtonIcon
-                display="empty"
-                iconType="sortable"
-                color="primary"
-                size="xs"
+              <IconButton
+                icon={SwitchIcon}
+                size="S"
                 aria-label={suggestions?.buttonTooltipTitle}
                 onClick={() => {
                   setShowAutoSuggestions((v) => !v)

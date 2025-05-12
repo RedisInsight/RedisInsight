@@ -5,7 +5,6 @@ import { isEmpty, forEach } from 'lodash'
 import {
   EuiSwitch,
   EuiText,
-  EuiButton,
   EuiTitle,
   EuiToolTip,
   EuiForm,
@@ -24,6 +23,8 @@ import {
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
 import ConsentOption from './ConsentOption'
 
 import styles from './styles.module.scss'
@@ -354,18 +355,16 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
               ) : null
             }
           >
-            <EuiButton
-              fill
-              color="secondary"
+            <PrimaryButton
               className="btn-add"
               type="submit"
               onClick={() => {}}
               disabled={submitIsDisabled()}
-              iconType={submitIsDisabled() ? 'iInCircle' : undefined}
+              icon={submitIsDisabled() ? InfoIcon : undefined}
               data-testid="btn-submit"
             >
               Submit
-            </EuiButton>
+            </PrimaryButton>
           </EuiToolTip>
         </FlexItem>
       </Row>

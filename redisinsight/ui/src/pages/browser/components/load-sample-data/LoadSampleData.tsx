@@ -12,6 +12,7 @@ import {
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -52,17 +53,15 @@ const LoadSampleData = (props: Props) => {
       panelPaddingSize="none"
       anchorClassName={cx(styles.buttonWrapper, anchorClassName)}
       button={
-        <EuiButton
-          fill
-          color="secondary"
+        <PrimaryButton
           onClick={() => setIsConfirmationOpen(true)}
           className={styles.loadDataBtn}
-          isLoading={loading}
-          isDisabled={loading}
+          loading={loading}
+          disabled={loading}
           data-testid="load-sample-data-btn"
         >
           Load sample data
-        </EuiButton>
+        </PrimaryButton>
       }
     >
       <Row gap="m" responsive={false}>

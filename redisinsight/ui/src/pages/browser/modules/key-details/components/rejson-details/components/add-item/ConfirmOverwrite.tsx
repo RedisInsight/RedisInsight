@@ -1,7 +1,11 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiPopover, EuiText } from '@elastic/eui'
+import { EuiPopover, EuiText } from '@elastic/eui'
 
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from '../../styles.module.scss'
 
 interface ConfirmOverwriteProps {
@@ -35,26 +39,23 @@ const ConfirmOverwrite = ({
     </EuiText>
 
     <div className={styles.confirmDialogActions}>
-      <EuiButton
-        color="secondary"
+      <SecondaryButton
         aria-label="Cancel"
-        size="s"
+        size="small"
         onClick={onCancel}
         data-testid="cancel-confirmation-btn"
       >
         Cancel
-      </EuiButton>
+      </SecondaryButton>
 
-      <EuiButton
-        fill
-        color="secondary"
+      <PrimaryButton
         aria-label="Overwrite"
-        size="s"
+        size="small"
         onClick={onConfirm}
         data-testid="overwrite-btn"
       >
         Overwrite
-      </EuiButton>
+      </PrimaryButton>
     </div>
   </EuiPopover>
 )

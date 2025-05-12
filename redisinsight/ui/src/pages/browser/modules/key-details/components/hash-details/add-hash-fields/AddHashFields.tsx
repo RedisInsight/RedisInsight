@@ -1,13 +1,7 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import {
-  EuiButton,
-  EuiFieldText,
-  EuiFormRow,
-  EuiPanel,
-  EuiTextColor,
-} from '@elastic/eui'
+import { EuiFieldText, EuiFormRow, EuiPanel } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import {
   keysSelector,
@@ -33,6 +27,10 @@ import {
   INITIAL_HASH_FIELD_STATE,
 } from 'uiSrc/pages/browser/components/add-key/AddKeyHash/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import {
   AddFieldsToHashDto,
   HashFieldDto,
@@ -254,31 +252,27 @@ const AddHashFields = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <Row justify="end" gap="l">
+        <Row justify="end" gap="m">
           <FlexItem>
             <div>
-              <EuiButton
-                color="secondary"
+              <SecondaryButton
                 onClick={() => closePanel(true)}
                 data-testid="cancel-fields-btn"
               >
-                <EuiTextColor color="default">Cancel</EuiTextColor>
-              </EuiButton>
+                Cancel
+              </SecondaryButton>
             </div>
           </FlexItem>
           <FlexItem>
             <div>
-              <EuiButton
-                fill
-                size="m"
-                color="secondary"
+              <PrimaryButton
                 disabled={loading}
-                isLoading={loading}
+                loading={loading}
                 onClick={submitData}
                 data-testid="save-fields-btn"
               >
                 Save
-              </EuiButton>
+              </PrimaryButton>
             </div>
           </FlexItem>
         </Row>

@@ -1,11 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { ClientMetadata, SessionMetadata } from 'src/common/models';
-import { RecommendationEvents, RecommendationServerEvents } from 'src/modules/database-recommendation/constants';
 import {
-  DatabaseRecommendationsResponse,
-} from 'src/modules/database-recommendation/dto/database-recommendations.response';
+  RecommendationEvents,
+  RecommendationServerEvents,
+} from 'src/modules/database-recommendation/constants';
+import { DatabaseRecommendationsResponse } from 'src/modules/database-recommendation/dto/database-recommendations.response';
 import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
 import { DatabaseRecommendationRepository } from '../repositories/database-recommendation.repository';
 
@@ -19,32 +20,35 @@ export class DatabaseRecommendationEmitter {
   ) {}
 
   @OnEvent(RecommendationEvents.NewRecommendation)
-  async newRecommendation(
-    { sessionMetadata, recommendations }: {
-      sessionMetadata: SessionMetadata,
-      recommendations: DatabaseRecommendation[]
-    },
-  ) {
+  async newRecommendation({
+    sessionMetadata,
+    recommendations,
+  }: {
+    sessionMetadata: SessionMetadata;
+    recommendations: DatabaseRecommendation[];
+  }) {
     try {
       if (!recommendations?.length) {
         return;
       }
 
-      this.logger.debug(`${recommendations.length} new recommendation(s) to emit`);
+      this.logger.debug(
+        `${recommendations.length} new recommendation(s) to emit`,
+      );
 
-      const totalUnread = await this.databaseRecommendationRepository
-        .getTotalUnread(sessionMetadata, recommendations[0].databaseId);
+      const totalUnread =
+        await this.databaseRecommendationRepository.getTotalUnread(
+          sessionMetadata,
+          recommendations[0].databaseId,
+        );
 
       this.eventEmitter.emit(
         RecommendationServerEvents.Recommendation,
         sessionMetadata,
-        plainToClass(
-          DatabaseRecommendationsResponse,
-          {
-            totalUnread,
-            recommendations,
-          },
-        ),
+        plainToInstance(DatabaseRecommendationsResponse, {
+          totalUnread,
+          recommendations,
+        }),
       );
     } catch (e) {
       this.logger.error('Unable to prepare dto for recommendations', e);

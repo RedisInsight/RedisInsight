@@ -5,5 +5,5 @@ export interface IMonitorData {
   args: string[];
   source: string;
   database: number;
-  shardOptions: IORedis.RedisOptions
+  shardOptions: IORedis.RedisOptions;
 }

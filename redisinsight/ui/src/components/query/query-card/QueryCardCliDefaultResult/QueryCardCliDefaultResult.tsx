@@ -18,16 +18,18 @@ const QueryCardCliDefaultResult = (props: Props) => {
 
   return (
     <div
-      className={cx(
-        styles.container,
-        'query-card-output-response-success',
-        { fullscreen: isFullScreen },
-      )}
+      className={cx(styles.container, 'query-card-output-response-success', {
+        fullscreen: isFullScreen,
+      })}
       data-testid="query-cli-card-result"
     >
       <VirtualList
         items={items}
-        dynamicHeight={!isFullScreen ? { itemsCount: MIN_ROWS_COUNT, maxHeight: MAX_CARD_HEIGHT } : undefined}
+        dynamicHeight={
+          !isFullScreen
+            ? { itemsCount: MIN_ROWS_COUNT, maxHeight: MAX_CARD_HEIGHT }
+            : undefined
+        }
       />
     </div>
   )

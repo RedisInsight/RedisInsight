@@ -24,28 +24,43 @@ const cloudConfig = config.get('cloud');
 export class CloudSubscriptionCapiService {
   private logger = new Logger('CloudSubscriptionCapiService');
 
-  constructor(
-    private readonly capi: CloudSubscriptionCapiProvider,
-  ) {}
+  constructor(private readonly capi: CloudSubscriptionCapiProvider) {}
 
-  static findFreeSubscription(subscriptions: CloudSubscription[]): CloudSubscription {
+  static findFreeSubscription(
+    subscriptions: CloudSubscription[],
+  ): CloudSubscription {
     const freeSubscriptions = filter(subscriptions, { price: 0 });
 
-    return find(freeSubscriptions, { name: cloudConfig.freeSubscriptionName }) || freeSubscriptions[0];
+    return (
+      find(freeSubscriptions, { name: cloudConfig.freeSubscriptionName }) ||
+      freeSubscriptions[0]
+    );
   }
 
   static findFreePlan(plans: CloudSubscriptionPlan[]): CloudSubscriptionPlan {
     const freePlans = filter(plans, { price: 0 });
 
-    return find(freePlans, (plan) => plan.provider === CloudSubscriptionPlanProvider.AWS
-        && plan.region === cloudConfig.defaultPlanRegion
-        && (plan.name).toLowerCase().includes('standard'))
-      || find(freePlans, { provider: CloudSubscriptionPlanProvider.AWS, region: cloudConfig.defaultPlanRegion })
-      || find(freePlans, { provider: CloudSubscriptionPlanProvider.AWS })
-      || freePlans[0];
+    return (
+      find(
+        freePlans,
+        (plan) =>
+          plan.provider === CloudSubscriptionPlanProvider.AWS &&
+          plan.region === cloudConfig.defaultPlanRegion &&
+          plan.name.toLowerCase().includes('standard'),
+      ) ||
+      find(freePlans, {
+        provider: CloudSubscriptionPlanProvider.AWS,
+        region: cloudConfig.defaultPlanRegion,
+      }) ||
+      find(freePlans, { provider: CloudSubscriptionPlanProvider.AWS }) ||
+      freePlans[0]
+    );
   }
 
-  static findFreePlanById(plans: CloudSubscriptionPlan[], planId: number): CloudSubscriptionPlan {
+  static findFreePlanById(
+    plans: CloudSubscriptionPlan[],
+    planId: number,
+  ): CloudSubscriptionPlan {
     const freePlans = filter(plans, { price: 0 });
 
     return find(freePlans, { id: planId });
@@ -62,7 +77,10 @@ export class CloudSubscriptionCapiService {
   ): Promise<CloudSubscription[]> {
     this.logger.debug(`Getting cloud ${type} subscriptions.`);
     try {
-      const subscriptions = await this.capi.getSubscriptionsByType(authDto, type);
+      const subscriptions = await this.capi.getSubscriptionsByType(
+        authDto,
+        type,
+      );
 
       this.logger.debug(`Succeed to get cloud ${type} subscriptions.`);
 
@@ -86,7 +104,11 @@ export class CloudSubscriptionCapiService {
   ): Promise<CloudSubscription> {
     this.logger.debug(`Getting cloud ${type} subscription.`);
     try {
-      const subscription = await this.capi.getSubscriptionByType(authDto, id, type);
+      const subscription = await this.capi.getSubscriptionByType(
+        authDto,
+        id,
+        type,
+      );
 
       this.logger.debug(`Succeed to get cloud ${type} subscription.`);
 

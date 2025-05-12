@@ -40,8 +40,13 @@ describe('CloudSubscriptionApiProvider', () => {
       };
       mockedAxios.get.mockResolvedValue(response);
 
-      expect(await service.getCloudRegions(mockCloudSession)).toEqual(mockCloudApiCloudRegions);
-      expect(mockedAxios.get).toHaveBeenCalledWith('/plans/cloud_regions', mockCloudApiHeaders);
+      expect(await service.getCloudRegions(mockCloudSession)).toEqual(
+        mockCloudApiCloudRegions,
+      );
+      expect(mockedAxios.get).toHaveBeenCalledWith(
+        '/plans/cloud_regions',
+        mockCloudApiHeaders,
+      );
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
       mockedAxios.get.mockRejectedValue(mockCapiUnauthorizedError);

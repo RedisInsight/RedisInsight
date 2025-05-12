@@ -1,4 +1,7 @@
-import { CloudJobStatus, CloudJobStep } from 'src/modules/cloud/job/models/cloud-job-info';
+import {
+  CloudJobStatus,
+  CloudJobStep,
+} from 'src/modules/cloud/job/models/cloud-job-info';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudJobRunMode } from 'src/modules/cloud/job/models';
 import { CloudJob } from 'src/modules/cloud/job/jobs';

@@ -14,7 +14,7 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendEventTelemetry: jest.fn(),
-  sendPageViewTelemetry: jest.fn()
+  sendPageViewTelemetry: jest.fn(),
 }))
 
 /**
@@ -36,8 +36,8 @@ describe('PubSubPage', () => {
     expect(sendPageViewTelemetry).toBeCalledWith({
       name: TelemetryPageView.PUBSUB_PAGE,
       eventData: {
-        databaseId: 'instanceId'
-      }
+        databaseId: 'instanceId',
+      },
     })
   })
 })

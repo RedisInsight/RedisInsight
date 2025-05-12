@@ -5,7 +5,14 @@ import { instance, mock } from 'ts-mockito'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { changeKeyViewType } from 'uiSrc/slices/browser/keys'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
-import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 
 import TopNamespace, { Props } from './TopNamespace'
 
@@ -25,21 +32,27 @@ describe('TopNamespace', () => {
 
   it('should render nsp-table-keys when click "btn-change-table-keys" ', () => {
     const mockedData = {
-      topKeysNsp: [{
-        nsp: 'nsp_name',
-        memory: 1,
-        keys: 1,
-        types: [{ type: 'hash', memory: 1, keys: 1 }]
-      }],
-      topMemoryNsp: [{
-        nsp: 'nsp_name',
-        memory: 1,
-        keys: 1,
-        types: [{ type: 'hash', memory: 1, keys: 1 }]
-      }]
+      topKeysNsp: [
+        {
+          nsp: 'nsp_name',
+          memory: 1,
+          keys: 1,
+          types: [{ type: 'hash', memory: 1, keys: 1 }],
+        },
+      ],
+      topMemoryNsp: [
+        {
+          nsp: 'nsp_name',
+          memory: 1,
+          keys: 1,
+          types: [{ type: 'hash', memory: 1, keys: 1 }],
+        },
+      ],
     }
 
-    const { queryByTestId } = render(<TopNamespace {...instance(mockedProps)} data={mockedData} />)
+    const { queryByTestId } = render(
+      <TopNamespace {...instance(mockedProps)} data={mockedData} />,
+    )
 
     fireEvent.click(screen.getByTestId('btn-change-table-keys'))
 
@@ -51,21 +64,27 @@ describe('TopNamespace', () => {
 
   it('should render nsp-table-keys when click "btn-change-table-memory" and memory button should be disabled', () => {
     const mockedData = {
-      topKeysNsp: [{
-        nsp: 'nsp_name',
-        memory: 1,
-        keys: 1,
-        types: [{ type: 'hash', memory: 1, keys: 1 }]
-      }],
-      topMemoryNsp: [{
-        nsp: 'nsp_name',
-        memory: 1,
-        keys: 1,
-        types: [{ type: 'hash', memory: 1, keys: 1 }]
-      }]
+      topKeysNsp: [
+        {
+          nsp: 'nsp_name',
+          memory: 1,
+          keys: 1,
+          types: [{ type: 'hash', memory: 1, keys: 1 }],
+        },
+      ],
+      topMemoryNsp: [
+        {
+          nsp: 'nsp_name',
+          memory: 1,
+          keys: 1,
+          types: [{ type: 'hash', memory: 1, keys: 1 }],
+        },
+      ],
     }
 
-    const { queryByTestId } = render(<TopNamespace {...instance(mockedProps)} data={mockedData} />)
+    const { queryByTestId } = render(
+      <TopNamespace {...instance(mockedProps)} data={mockedData} />,
+    )
 
     // memory button is disabled by default
     fireEvent.click(screen.getByTestId('btn-change-table-keys'))
@@ -79,21 +98,27 @@ describe('TopNamespace', () => {
 
   it('should render nsp-table-keys by default" ', () => {
     const mockedData = {
-      topKeysNsp: [{
-        nsp: 'nsp_name',
-        memory: 1,
-        keys: 1,
-        types: [{ type: 'hash', memory: 1, keys: 1 }]
-      }],
-      topMemoryNsp: [{
-        nsp: 'nsp_name',
-        memory: 1,
-        keys: 1,
-        types: [{ type: 'hash', memory: 1, keys: 1 }]
-      }]
+      topKeysNsp: [
+        {
+          nsp: 'nsp_name',
+          memory: 1,
+          keys: 1,
+          types: [{ type: 'hash', memory: 1, keys: 1 }],
+        },
+      ],
+      topMemoryNsp: [
+        {
+          nsp: 'nsp_name',
+          memory: 1,
+          keys: 1,
+          types: [{ type: 'hash', memory: 1, keys: 1 }],
+        },
+      ],
     }
 
-    const { queryByTestId } = render(<TopNamespace {...instance(mockedProps)} data={mockedData} />)
+    const { queryByTestId } = render(
+      <TopNamespace {...instance(mockedProps)} data={mockedData} />,
+    )
 
     expect(queryByTestId('nsp-table-memory')).toBeInTheDocument()
     expect(queryByTestId('nsp-table-keys')).not.toBeInTheDocument()
@@ -104,9 +129,11 @@ describe('TopNamespace', () => {
   it('should not render tables when topMemoryNsp and topKeysNsp are empty array', () => {
     const mockedData = {
       topKeysNsp: [],
-      topMemoryNsp: []
+      topMemoryNsp: [],
     }
-    const { queryByTestId } = render(<TopNamespace {...instance(mockedProps)} data={mockedData} />)
+    const { queryByTestId } = render(
+      <TopNamespace {...instance(mockedProps)} data={mockedData} />,
+    )
 
     expect(queryByTestId('nsp-table-memory')).not.toBeInTheDocument()
     expect(queryByTestId('nsp-table-keys')).not.toBeInTheDocument()
@@ -119,19 +146,21 @@ describe('TopNamespace', () => {
           nsp: 'nsp_name',
           memory: 1,
           keys: 1,
-          types: [{ type: 'hash', memory: 1, keys: 1 }]
-        }
+          types: [{ type: 'hash', memory: 1, keys: 1 }],
+        },
       ],
       topMemoryNsp: [
         {
           nsp: 'nsp_name',
           memory: 1,
           keys: 1,
-          types: [{ type: 'hash', memory: 1, keys: 1 }]
-        }
-      ]
+          types: [{ type: 'hash', memory: 1, keys: 1 }],
+        },
+      ],
     }
-    const { queryByTestId } = render(<TopNamespace {...instance(mockedProps)} loading data={mockedData} />)
+    const { queryByTestId } = render(
+      <TopNamespace {...instance(mockedProps)} loading data={mockedData} />,
+    )
 
     expect(queryByTestId('nsp-table-memory')).not.toBeInTheDocument()
     expect(queryByTestId('nsp-table-keys')).not.toBeInTheDocument()
@@ -141,7 +170,7 @@ describe('TopNamespace', () => {
   it('should render message when no namespaces', () => {
     const mockedData = {
       topKeysNsp: [],
-      topMemoryNsp: []
+      topMemoryNsp: [],
     }
     render(<TopNamespace {...instance(mockedProps)} data={mockedData} />)
 
@@ -151,7 +180,7 @@ describe('TopNamespace', () => {
   it('should call proper actions and push history after click tree view link', async () => {
     const mockedData = {
       topKeysNsp: [],
-      topMemoryNsp: []
+      topMemoryNsp: [],
     }
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
@@ -162,7 +191,10 @@ describe('TopNamespace', () => {
       fireEvent.click(screen.getByTestId('tree-view-page-link'))
     })
 
-    const expectedActions = [resetBrowserTree(), changeKeyViewType(KeyViewType.Tree)]
+    const expectedActions = [
+      resetBrowserTree(),
+      changeKeyViewType(KeyViewType.Tree),
+    ]
 
     expect(store.getActions()).toEqual(expectedActions)
     expect(pushMock).toHaveBeenCalledTimes(1)

@@ -1,11 +1,13 @@
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  mockDatabase,
-} from 'src/__mocks__';
+import { mockDatabase } from 'src/__mocks__';
 import { BrowserHistoryMode } from 'src/common/constants';
 import { RedisDataType } from 'src/modules/browser/keys/dto';
-import { CreateBrowserHistoryDto, BrowserHistory, ScanFilter } from 'src/modules/browser/browser-history/dto';
+import {
+  CreateBrowserHistoryDto,
+  BrowserHistory,
+  ScanFilter,
+} from 'src/modules/browser/browser-history/dto';
 import { BrowserHistoryEntity } from 'src/modules/browser/browser-history/entities/browser-history.entity';
 
 export const mockBrowserHistoryService = () => ({
@@ -26,7 +28,7 @@ export const mockBrowserHistoryRepository = jest.fn(() => ({
 
 export const mockCreateBrowserHistoryDto: CreateBrowserHistoryDto = {
   mode: BrowserHistoryMode.Pattern,
-  filter: plainToClass(ScanFilter, {
+  filter: plainToInstance(ScanFilter, {
     type: RedisDataType.String,
     match: 'key*',
   }),

@@ -21,11 +21,11 @@ describe('RedisCloudPage', () => {
     expect(
       render(<RedisCloudPage {...instance(mockedProps)} />, {
         withRouter: true,
-      })
+      }),
     ).toBeTruthy()
 
     expect(
-      render(<RedisCloudPage routes={mockedRoutes} />, { withRouter: true })
+      render(<RedisCloudPage routes={mockedRoutes} />, { withRouter: true }),
     ).toBeTruthy()
   })
 })

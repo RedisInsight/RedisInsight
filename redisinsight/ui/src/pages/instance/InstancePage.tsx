@@ -7,15 +7,13 @@ import {
   fetchConnectedInstanceInfoAction,
   fetchInstancesAction,
   getDatabaseConfigInfoAction,
-  instancesSelector as dbInstancesSelector
+  instancesSelector as dbInstancesSelector,
 } from 'uiSrc/slices/instances/instances'
 import {
   fetchInstancesAction as fetchRdiInstancesAction,
-  instancesSelector as rdiInstancesSelector
+  instancesSelector as rdiInstancesSelector,
 } from 'uiSrc/slices/rdi/instances'
-import {
-  fetchRecommendationsAction,
-} from 'uiSrc/slices/recommendations/recommendations'
+import { fetchRecommendationsAction } from 'uiSrc/slices/recommendations/recommendations'
 import {
   appContextSelector,
   resetDatabaseContext,
@@ -35,15 +33,16 @@ import InstanceConnectionLost from './instanceConnectionLost'
 
 const riConfig = getConfig()
 
-const { shouldGetRecommendations,
-  defaultTimeoutToGetRecommendations } = riConfig.database
+const { shouldGetRecommendations, defaultTimeoutToGetRecommendations } =
+  riConfig.database
 
 export interface Props {
   routes: any[]
 }
 
 const InstancePage = ({ routes = [] }: Props) => {
-  const [isShouldChildrenRerender, setIsShouldChildrenRerender] = useState(false)
+  const [isShouldChildrenRerender, setIsShouldChildrenRerender] =
+    useState(false)
 
   const dispatch = useDispatch()
   const { pathname } = useLocation()
@@ -51,10 +50,14 @@ const InstancePage = ({ routes = [] }: Props) => {
   const { data: rdiInstances } = useSelector(rdiInstancesSelector)
   const { data: dbInstances } = useSelector(dbInstancesSelector)
 
-  const { instanceId: connectionInstanceId } = useParams<{ instanceId: string }>()
+  const { instanceId: connectionInstanceId } = useParams<{
+    instanceId: string
+  }>()
   const { contextInstanceId } = useSelector(appContextSelector)
   const connectivityError = useSelector(appConnectivityError)
-  const { [FeatureFlags.envDependent]: envDependent } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { [FeatureFlags.envDependent]: envDependent } = useSelector(
+    appFeatureFlagsFeaturesSelector,
+  )
 
   const lastPageRef = useRef<string>()
 
@@ -94,7 +97,13 @@ const InstancePage = ({ routes = [] }: Props) => {
     }
 
     dispatch(setAppContextConnectedInstanceId(connectionInstanceId))
-    dispatch(setDbConfig(localStorageService.get(BrowserStorageItem.dbConfig + connectionInstanceId)))
+    dispatch(
+      setDbConfig(
+        localStorageService.get(
+          BrowserStorageItem.dbConfig + connectionInstanceId,
+        ),
+      ),
+    )
 
     return () => {
       intervalId && clearInterval(intervalId)
@@ -118,11 +127,11 @@ const InstancePage = ({ routes = [] }: Props) => {
 
   return (
     <InstancePageTemplate>
-      {
-        !envDependent?.flag && connectivityError
-          ? <InstanceConnectionLost />
-          : <InstancePageRouter routes={routes} />
-      }
+      {!envDependent?.flag && connectivityError ? (
+        <InstanceConnectionLost />
+      ) : (
+        <InstancePageRouter routes={routes} />
+      )}
     </InstancePageTemplate>
   )
 }

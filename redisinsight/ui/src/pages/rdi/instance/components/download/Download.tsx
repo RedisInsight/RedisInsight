@@ -26,8 +26,8 @@ const Download = ({ dataTestid, onClose }: Props) => {
       event: TelemetryEvent.RDI_PIPELINE_DOWNLOAD_CLICKED,
       eventData: {
         id: rdiInstanceId,
-        jobsNumber: jobs?.length
-      }
+        jobsNumber: jobs?.length,
+      },
     })
 
     // zip config and job contents

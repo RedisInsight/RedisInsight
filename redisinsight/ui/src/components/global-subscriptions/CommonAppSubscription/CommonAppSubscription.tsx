@@ -2,7 +2,11 @@ import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Socket } from 'socket.io-client'
 
-import { CloudJobEvents, SocketEvent, SocketFeaturesEvent } from 'uiSrc/constants'
+import {
+  CloudJobEvents,
+  SocketEvent,
+  SocketFeaturesEvent,
+} from 'uiSrc/constants'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
 import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
@@ -25,7 +29,8 @@ const CommonAppSubscription = () => {
   const connectIo = useIoConnection(getSocketApiUrl(), {
     forceNew: false,
     token,
-    reconnection: true })
+    reconnection: true,
+  })
 
   const dispatch = useDispatch()
 
@@ -55,9 +60,10 @@ const CommonAppSubscription = () => {
       const jobName = data.name as unknown
 
       if (
-        jobName === CloudJobName.CreateFreeDatabase
-        || jobName === CloudJobName.CreateFreeSubscriptionAndDatabase
-        || jobName === CloudJobName.ImportFreeDatabase) {
+        jobName === CloudJobName.CreateFreeDatabase ||
+        jobName === CloudJobName.CreateFreeSubscriptionAndDatabase ||
+        jobName === CloudJobName.ImportFreeDatabase
+      ) {
         dispatch(setJob(data))
       }
     })
@@ -88,21 +94,21 @@ const CommonAppSubscription = () => {
 
     unSubscribeFromRecommendations()
 
-    socketRef.current?.on(RecommendationsSocketEvents.Recommendation, (data) => {
-      const databaseId = data.recommendations[0]?.databaseId as string
-      if (databaseId === instanceId) {
-        dispatch(addUnreadRecommendations(data))
-      }
-    })
+    socketRef.current?.on(
+      RecommendationsSocketEvents.Recommendation,
+      (data) => {
+        const databaseId = data.recommendations[0]?.databaseId as string
+        if (databaseId === instanceId) {
+          dispatch(addUnreadRecommendations(data))
+        }
+      },
+    )
   }, [instanceId])
 
   const emitCloudJobMonitor = (jobId: string) => {
     if (!jobId) return
 
-    socketRef.current?.emit(
-      CloudJobEvents.Monitor,
-      { jobId },
-    )
+    socketRef.current?.emit(CloudJobEvents.Monitor, { jobId })
   }
 
   return null

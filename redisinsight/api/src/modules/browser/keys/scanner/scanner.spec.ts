@@ -31,20 +31,28 @@ describe('Scanner Manager', () => {
     scanner = module.get<Scanner>(Scanner);
   });
   it('Should support Standalone strategy for standalone connection type', () => {
-    expect(scanner.getStrategy(ConnectionType.STANDALONE)).toEqual(ConnectionType.STANDALONE);
+    expect(scanner.getStrategy(ConnectionType.STANDALONE)).toEqual(
+      ConnectionType.STANDALONE,
+    );
   });
   it('Should support Standalone strategy for sentinel connection type', () => {
-    expect(scanner.getStrategy(ConnectionType.SENTINEL)).toEqual(ConnectionType.STANDALONE);
+    expect(scanner.getStrategy(ConnectionType.SENTINEL)).toEqual(
+      ConnectionType.STANDALONE,
+    );
   });
   it('Should support Cluster strategy for cluster connection type', () => {
-    expect(scanner.getStrategy(ConnectionType.CLUSTER)).toEqual(ConnectionType.CLUSTER);
+    expect(scanner.getStrategy(ConnectionType.CLUSTER)).toEqual(
+      ConnectionType.CLUSTER,
+    );
   });
   it('Should throw error if no strategy', () => {
     try {
       scanner.getStrategy(ConnectionType.NOT_CONNECTED);
       fail();
     } catch (e) {
-      expect(e.message).toEqual(`Unsupported scan strategy: ${ConnectionType.NOT_CONNECTED}`);
+      expect(e.message).toEqual(
+        `Unsupported scan strategy: ${ConnectionType.NOT_CONNECTED}`,
+      );
     }
   });
 });

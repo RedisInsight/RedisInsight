@@ -15,9 +15,7 @@ export class SettingsModule {
   ) {
     return {
       module: SettingsModule,
-      controllers: [
-        SettingsController,
-      ],
+      controllers: [SettingsController],
       providers: [
         SettingsService,
         SettingsAnalytics,
@@ -30,9 +28,7 @@ export class SettingsModule {
           useClass: agreementsRepository,
         },
       ],
-      exports: [
-        SettingsService,
-      ],
+      exports: [SettingsService],
     };
   }
 }

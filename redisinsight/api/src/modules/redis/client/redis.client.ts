@@ -23,25 +23,34 @@ export enum RedisClientNodeRole {
 }
 
 export interface IRedisClientCommandOptions {
-  firstKey?: RedisString,
-  readOnly?: boolean,
-  replyEncoding?: 'utf8' | null,
-  unknownCommands?: boolean,
+  firstKey?: RedisString;
+  readOnly?: boolean;
+  replyEncoding?: 'utf8' | null;
+  unknownCommands?: boolean;
 }
 
 export interface IRedisClientOptions {
-  host?: string,
-  port?: number,
-  natHost?: string,
-  natPort?: number,
-  tlsPort?: number,
-  connectTimeout?: number,
+  host?: string;
+  port?: number;
+  natHost?: string;
+  natPort?: number;
+  tlsPort?: number;
+  connectTimeout?: number;
 }
 
 export type RedisClientCommandArgument = RedisString | number;
 export type RedisClientCommandArguments = RedisClientCommandArgument[];
-export type RedisClientCommand = [cmd: string, ...args: RedisClientCommandArguments];
-export type RedisClientCommandReply = string | number | Buffer | null | undefined | Array<RedisClientCommandReply>;
+export type RedisClientCommand = [
+  cmd: string,
+  ...args: RedisClientCommandArguments,
+];
+export type RedisClientCommandReply =
+  | string
+  | number
+  | Buffer
+  | null
+  | undefined
+  | Array<RedisClientCommandReply>;
 
 export enum RedisFeature {
   HashFieldsExpiration = 'HashFieldsExpiration',
@@ -116,7 +125,10 @@ export abstract class RedisClient extends EventEmitter2 {
   ): Promise<Array<[Error | null, RedisClientCommandReply]>>;
    */
 
-  abstract call(command: RedisClientCommand, options?: IRedisClientCommandOptions): Promise<RedisClientCommandReply>;
+  abstract call(
+    command: RedisClientCommand,
+    options?: IRedisClientCommandOptions,
+  ): Promise<RedisClientCommandReply>;
 
   abstract monitor(): Promise<any>;
 
@@ -181,10 +193,11 @@ export abstract class RedisClient extends EventEmitter2 {
     let infoData: any; // TODO: we should ideally type this
 
     try {
-      infoData = convertRedisInfoReplyToObject(await this.call(
-        infoSection ? ['info', infoSection] : ['info'],
-        { replyEncoding: 'utf8' },
-      ) as string);
+      infoData = convertRedisInfoReplyToObject(
+        (await this.call(infoSection ? ['info', infoSection] : ['info'], {
+          replyEncoding: 'utf8',
+        })) as string,
+      );
       this._isInfoCommandDisabled = false;
     } catch (error) {
       this._isInfoCommandDisabled = true;
@@ -223,7 +236,9 @@ export abstract class RedisClient extends EventEmitter2 {
     const helloInfoResponse = convertArrayReplyToObject(helloResponse);
 
     if (helloInfoResponse.modules?.length) {
-      helloInfoResponse.modules = helloInfoResponse.modules.map(convertArrayReplyToObject);
+      helloInfoResponse.modules = helloInfoResponse.modules.map(
+        convertArrayReplyToObject,
+      );
     }
 
     return plainToClass(RedisDatabaseHelloResponse, helloInfoResponse);
@@ -241,7 +256,8 @@ export abstract class RedisClient extends EventEmitter2 {
       // since inside CLI itself users are able to "select" database manually
       // uniqueness will be guaranteed by ClientMetadata.uniqueId and each opened CLI terminal
       // will have own and a single client
-      db: clientMetadata.context === ClientContext.CLI ? null : clientMetadata.db,
+      db:
+        clientMetadata.context === ClientContext.CLI ? null : clientMetadata.db,
     };
   }
 
@@ -262,9 +278,6 @@ export abstract class RedisClient extends EventEmitter2 {
       cm.sessionMetadata?.uniqueId || empty,
     ].join(separator);
 
-    return [
-      id,
-      uId,
-    ].join(separator);
+    return [id, uId].join(separator);
   }
 }

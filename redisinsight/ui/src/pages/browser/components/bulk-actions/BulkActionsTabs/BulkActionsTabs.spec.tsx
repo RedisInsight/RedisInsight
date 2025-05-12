@@ -18,7 +18,7 @@ jest.mock('uiSrc/telemetry', () => ({
 jest.mock('uiSrc/slices/browser/bulkActions', () => ({
   ...jest.requireActual('uiSrc/slices/browser/bulkActions'),
   selectedBulkActionsSelector: jest.fn().mockReturnValue({
-    type: 'delete'
+    type: 'delete',
   }),
 }))
 
@@ -26,7 +26,7 @@ jest.mock('uiSrc/slices/browser/keys', () => ({
   ...jest.requireActual('uiSrc/slices/browser/keys'),
   keysSelector: jest.fn().mockReturnValue({
     filter: 'set',
-    search: 'dawkmdk*'
+    search: 'dawkmdk*',
   }),
 }))
 
@@ -36,8 +36,10 @@ describe('BulkActionsTabs', () => {
   })
 
   it('should call proper telemetry events', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<BulkActionsTabs {...mockedProps} onChangeType={jest.fn()} />)
 
@@ -48,10 +50,9 @@ describe('BulkActionsTabs', () => {
       eventData: {
         databaseId: '',
         action: BulkActionsType.Upload,
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     fireEvent.click(screen.getByTestId('bulk-action-tab-delete'))
 
@@ -62,11 +63,10 @@ describe('BulkActionsTabs', () => {
         action: BulkActionsType.Delete,
         filter: {
           match: 'PATTERN',
-          type: 'set'
-        }
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+          type: 'set',
+        },
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

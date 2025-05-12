@@ -63,6 +63,9 @@ APP_PACKAGE_JSON_PATH="./redisinsight/package.json"
 # Extract dependencies from the app package.json
 BINARY_PACKAGES=$(jq -r '.dependencies | keys[]' "$APP_PACKAGE_JSON_PATH" | jq -R -s -c 'split("\n")[:-1]')
 
+# Keep class transformer external for minified builds since it is not bundled
+BINARY_PACKAGES=$(echo "$BINARY_PACKAGES" | jq '. + ["class-transformer"]')
+
 echo "Binary packages to exclude during minify: $BINARY_PACKAGES"
 
 # Modify the package.json to keep only binary prod dependencies

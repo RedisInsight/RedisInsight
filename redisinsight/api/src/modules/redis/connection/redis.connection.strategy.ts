@@ -10,9 +10,7 @@ import { CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
 export abstract class RedisConnectionStrategy {
   protected logger = new Logger(this.constructor.name);
 
-  constructor(
-    protected readonly sshTunnelProvider: SshTunnelProvider,
-  ) {}
+  constructor(protected readonly sshTunnelProvider: SshTunnelProvider) {}
 
   /**
    * Try to create standalone redis connection
@@ -68,6 +66,8 @@ export abstract class RedisConnectionStrategy {
       clientMetadata?.sessionMetadata?.userId || '',
       clientMetadata?.sessionMetadata?.sessionId || '',
       clientMetadata?.sessionMetadata?.uniqueId || '',
-    ].join('-').toLowerCase();
+    ]
+      .join('-')
+      .toLowerCase();
   }
 }

@@ -38,80 +38,105 @@ describe('BrowserHistoryService', () => {
   describe('create', () => {
     it('should create new database and send analytics event', async () => {
       browserHistoryRepository.create.mockResolvedValue(mockBrowserHistory);
-      expect(await service.create(mockClientMetadata, mockBrowserHistory)).toEqual(mockBrowserHistory);
+      expect(
+        await service.create(mockClientMetadata, mockBrowserHistory),
+      ).toEqual(mockBrowserHistory);
     });
     it('should throw NotFound if no browser history?', async () => {
       browserHistoryRepository.create.mockRejectedValueOnce(new Error());
-      await expect(service.create(mockClientMetadata, mockBrowserHistory))
-        .rejects.toThrow(new Error());
+      await expect(
+        service.create(mockClientMetadata, mockBrowserHistory),
+      ).rejects.toThrow(new Error());
     });
   });
 
   describe('get', () => {
     it('should return browser history by id', async () => {
-      browserHistoryRepository.get.mockResolvedValue(mockCreateBrowserHistoryDto);
-      expect(await service.get(mockSessionMetadata, mockDatabase.id)).toEqual(mockCreateBrowserHistoryDto);
+      browserHistoryRepository.get.mockResolvedValue(
+        mockCreateBrowserHistoryDto,
+      );
+      expect(await service.get(mockSessionMetadata, mockDatabase.id)).toEqual(
+        mockCreateBrowserHistoryDto,
+      );
     });
   });
 
   describe('list', () => {
     it('should return browser history items', async () => {
-      browserHistoryRepository.list.mockResolvedValue([mockBrowserHistory, mockBrowserHistory]);
-      expect(await service.list(mockSessionMetadata, mockDatabaseId, BrowserHistoryMode.Pattern))
-        .toEqual([mockBrowserHistory, mockBrowserHistory]);
+      browserHistoryRepository.list.mockResolvedValue([
+        mockBrowserHistory,
+        mockBrowserHistory,
+      ]);
+      expect(
+        await service.list(
+          mockSessionMetadata,
+          mockDatabaseId,
+          BrowserHistoryMode.Pattern,
+        ),
+      ).toEqual([mockBrowserHistory, mockBrowserHistory]);
     });
     it('should throw Error?', async () => {
       browserHistoryRepository.list.mockRejectedValueOnce(new Error());
-      await expect(service.list(
-        mockSessionMetadata,
-        mockDatabaseId,
-        BrowserHistoryMode.Pattern,
-      )).rejects.toThrow(Error);
+      await expect(
+        service.list(
+          mockSessionMetadata,
+          mockDatabaseId,
+          BrowserHistoryMode.Pattern,
+        ),
+      ).rejects.toThrow(Error);
     });
   });
 
   describe('delete', () => {
     it('should remove existing browser history item', async () => {
       browserHistoryRepository.delete.mockResolvedValue(mockBrowserHistory);
-      expect(await service.delete(
-        mockSessionMetadata,
-        mockBrowserHistory.databaseId,
-        BrowserHistoryMode.Pattern,
-        mockBrowserHistory.id,
-      ))
-        .toEqual(mockBrowserHistory);
+      expect(
+        await service.delete(
+          mockSessionMetadata,
+          mockBrowserHistory.databaseId,
+          BrowserHistoryMode.Pattern,
+          mockBrowserHistory.id,
+        ),
+      ).toEqual(mockBrowserHistory);
     });
     it('should throw NotFoundException? on any error during deletion', async () => {
-      browserHistoryRepository.delete.mockRejectedValueOnce(new NotFoundException());
-      await expect(service.delete(
-        mockSessionMetadata,
-        mockBrowserHistory.databaseId,
-        BrowserHistoryMode.Pattern,
-        mockBrowserHistory.id,
-      ))
-        .rejects.toThrow(NotFoundException);
+      browserHistoryRepository.delete.mockRejectedValueOnce(
+        new NotFoundException(),
+      );
+      await expect(
+        service.delete(
+          mockSessionMetadata,
+          mockBrowserHistory.databaseId,
+          BrowserHistoryMode.Pattern,
+          mockBrowserHistory.id,
+        ),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('bulkDelete', () => {
     it('should remove multiple browser history items', async () => {
-      expect(await service.bulkDelete(
-        mockSessionMetadata,
-        mockBrowserHistory.databaseId,
-        BrowserHistoryMode.Pattern,
-        [mockBrowserHistory.id],
-      ))
-        .toEqual({ affected: 1 });
+      expect(
+        await service.bulkDelete(
+          mockSessionMetadata,
+          mockBrowserHistory.databaseId,
+          BrowserHistoryMode.Pattern,
+          [mockBrowserHistory.id],
+        ),
+      ).toEqual({ affected: 1 });
     });
     it('should ignore errors and do not count affected', async () => {
-      browserHistoryRepository.delete.mockRejectedValueOnce(new NotFoundException());
-      expect(await service.bulkDelete(
-        mockSessionMetadata,
-        mockBrowserHistory.databaseId,
-        BrowserHistoryMode.Pattern,
-        [mockBrowserHistory.id],
-      ))
-        .toEqual({ affected: 0 });
+      browserHistoryRepository.delete.mockRejectedValueOnce(
+        new NotFoundException(),
+      );
+      expect(
+        await service.bulkDelete(
+          mockSessionMetadata,
+          mockBrowserHistory.databaseId,
+          BrowserHistoryMode.Pattern,
+          [mockBrowserHistory.id],
+        ),
+      ).toEqual({ affected: 0 });
     });
   });
 });

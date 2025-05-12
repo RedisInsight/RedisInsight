@@ -9,33 +9,37 @@ import {
 import { AdmZip, path } from '../../helpers/test';
 const { rte, request, server, constants } = deps;
 
-const endpoint = (
-  id = constants.TEST_INSTANCE_ID,
-) => request(server).post(`/${constants.API.DATABASES}/${id}/bulk-actions/import/tutorial-data`);
+const endpoint = (id = constants.TEST_INSTANCE_ID) =>
+  request(server).post(
+    `/${constants.API.DATABASES}/${id}/bulk-actions/import/tutorial-data`,
+  );
 
-const creatCustomTutorialsEndpoint = () => request(server).post(`/custom-tutorials`);
+const creatCustomTutorialsEndpoint = () =>
+  request(server).post(`/custom-tutorials`);
 
 const getZipArchive = () => {
   const zipArchive = new AdmZip();
 
   zipArchive.addFile('info.md', Buffer.from('# info.md', 'utf8'));
-  zipArchive.addFile('_data/data.txt', Buffer.from(
-    `set ${constants.TEST_STRING_KEY_1} bulkimport`,
-    'utf8',
-  ));
+  zipArchive.addFile(
+    '_data/data.txt',
+    Buffer.from(`set ${constants.TEST_STRING_KEY_1} bulkimport`, 'utf8'),
+  );
 
   return zipArchive;
-}
+};
 
 describe('POST /databases/:id/bulk-actions/import/tutorial-data', () => {
-  requirements('!rte.sharedData', '!rte.bigData', 'rte.serverType=local')
+  requirements('!rte.sharedData', '!rte.bigData', 'rte.serverType=local');
 
   beforeEach(async () => await rte.data.truncate());
 
   describe('Common', function () {
     let tutorialId;
     it('should import data', async () => {
-      expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.not.eq('bulkimport');
+      expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.not.eq(
+        'bulkimport',
+      );
 
       // create tutorial
       const zip = getZipArchive();
@@ -65,12 +69,16 @@ describe('POST /databases/:id/bulk-actions/import/tutorial-data', () => {
         checkFn: async ({ body }) => {
           expect(body.duration).to.gt(0);
 
-          expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eq('bulkimport');
+          expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eq(
+            'bulkimport',
+          );
         },
       });
     });
     it('should import data with static path', async () => {
-      expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.not.eq('bulkimport');
+      expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.not.eq(
+        'bulkimport',
+      );
 
       // create tutorial
       const zip = getZipArchive();
@@ -86,7 +94,11 @@ describe('POST /databases/:id/bulk-actions/import/tutorial-data', () => {
       await validateApiCall({
         endpoint,
         data: {
-          path: path.join('/static/custom-tutorials', tutorialId, '_data/data.txt'),
+          path: path.join(
+            '/static/custom-tutorials',
+            tutorialId,
+            '_data/data.txt',
+          ),
         },
         responseBody: {
           id: 'empty',
@@ -100,7 +112,9 @@ describe('POST /databases/:id/bulk-actions/import/tutorial-data', () => {
         checkFn: async ({ body }) => {
           expect(body.duration).to.gt(0);
 
-          expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eq('bulkimport');
+          expect(await rte.client.get(constants.TEST_STRING_KEY_1)).to.eq(
+            'bulkimport',
+          );
         },
       });
     });
@@ -108,7 +122,11 @@ describe('POST /databases/:id/bulk-actions/import/tutorial-data', () => {
       await validateApiCall({
         endpoint,
         data: {
-          path: path.join('/custom-tutorials', tutorialId, '../../../../../_data/data.txt'),
+          path: path.join(
+            '/custom-tutorials',
+            tutorialId,
+            '../../../../../_data/data.txt',
+          ),
         },
         statusCode: 400,
         responseBody: {

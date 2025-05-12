@@ -13,16 +13,14 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
   rdiPipelineSelector: jest.fn().mockReturnValue({
     loading: false,
     error: '',
-    jobs: [
-      { name: 'job1', value: 'value' }
-    ],
+    jobs: [{ name: 'job1', value: 'value' }],
     jobsValidationErrors: {},
-  })
+  }),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
-  sendEventTelemetry: jest.fn()
+  sendEventTelemetry: jest.fn(),
 }))
 
 describe('JobsTree', () => {
@@ -33,9 +31,11 @@ describe('JobsTree', () => {
   it('should render loader', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: true,
-      error: ''
-    });
-    (rdiPipelineSelector as jest.Mock).mockImplementationOnce(rdiPipelineSelectorMock)
+      error: '',
+    })
+    ;(rdiPipelineSelector as jest.Mock).mockImplementationOnce(
+      rdiPipelineSelectorMock,
+    )
 
     render(<JobsTree {...instance(mockedProps)} />)
 
@@ -49,8 +49,8 @@ describe('JobsTree', () => {
   })
 
   it('should not render count of job if it is "0"', () => {
-    (rdiPipelineSelector as jest.Mock).mockImplementationOnce(() => ({
-      values: { jobs: [] }
+    ;(rdiPipelineSelector as jest.Mock).mockImplementationOnce(() => ({
+      values: { jobs: [] },
     }))
 
     render(<JobsTree {...instance(mockedProps)} />)
@@ -61,7 +61,9 @@ describe('JobsTree', () => {
   it('should call selected tab', () => {
     const mockOnSelectedTab = jest.fn()
 
-    render(<JobsTree {...instance(mockedProps)} onSelectedTab={mockOnSelectedTab} />)
+    render(
+      <JobsTree {...instance(mockedProps)} onSelectedTab={mockOnSelectedTab} />,
+    )
 
     fireEvent.click(screen.getByTestId('rdi-nav-job-job1'))
     expect(mockOnSelectedTab).toBeCalledWith('job1')
@@ -141,22 +143,34 @@ describe('JobsTree', () => {
     })
 
     waitFor(() => {
-      expect(screen.queryByTestId('rdi-nav-job-edit-job1')).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId('rdi-nav-job-edit-job1'),
+      ).not.toBeInTheDocument()
     })
   })
 
   it('should call proper telemetry event when adding new job', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
-    render(<JobsTree {...instance(mockedProps)} onSelectedTab={jest.fn()} rdiInstanceId="id" />)
+    render(
+      <JobsTree
+        {...instance(mockedProps)}
+        onSelectedTab={jest.fn()}
+        rdiInstanceId="id"
+      />,
+    )
 
     await act(() => {
       fireEvent.click(screen.getByTestId('add-new-job'))
     })
 
     await act(() => {
-      fireEvent.change(screen.getByTestId('inline-item-editor'), { target: { value: 'job3' } })
+      fireEvent.change(screen.getByTestId('inline-item-editor'), {
+        target: { value: 'job3' },
+      })
       fireEvent.click(screen.getByTestId('apply-btn'))
     })
 
@@ -165,15 +179,23 @@ describe('JobsTree', () => {
       eventData: {
         rdiInstanceId: 'id',
         jobName: 'job3',
-      }
+      },
     })
   })
 
   it('should call proper telemetry event when deleting job', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
-    render(<JobsTree {...instance(mockedProps)} onSelectedTab={jest.fn()} rdiInstanceId="id" />)
+    render(
+      <JobsTree
+        {...instance(mockedProps)}
+        onSelectedTab={jest.fn()}
+        rdiInstanceId="id"
+      />,
+    )
 
     await act(() => {
       fireEvent.click(screen.getByTestId('delete-job-job1'))
@@ -188,14 +210,20 @@ describe('JobsTree', () => {
       eventData: {
         rdiInstanceId: 'id',
         jobName: 'job1',
-      }
+      },
     })
   })
 
   it('should push to config tab when deleting last job', async () => {
     const mockOnSelectedTab = jest.fn()
 
-    render(<JobsTree {...instance(mockedProps)} onSelectedTab={mockOnSelectedTab} path="job1" />)
+    render(
+      <JobsTree
+        {...instance(mockedProps)}
+        onSelectedTab={mockOnSelectedTab}
+        path="job1"
+      />,
+    )
 
     await act(() => {
       fireEvent.click(screen.getByTestId('delete-job-job1'))
@@ -209,7 +237,7 @@ describe('JobsTree', () => {
   })
 
   it('should display an error icon when job has validation errors', () => {
-    (rdiPipelineSelector as jest.Mock).mockImplementationOnce(() => ({
+    ;(rdiPipelineSelector as jest.Mock).mockImplementationOnce(() => ({
       loading: false,
       error: '',
       jobs: [{ name: 'job1', value: 'value' }],
@@ -222,12 +250,12 @@ describe('JobsTree', () => {
 
     expect(screen.getByTestId('rdi-nav-job-job1')).toBeInTheDocument()
     expect(screen.getByTestId('rdi-nav-job-job1')).toContainElement(
-      screen.getByTestId('rdi-pipeline-nav__error')
+      screen.getByTestId('rdi-pipeline-nav__error'),
     )
   })
 
   it('should not display an error icon when job has no validation errors', () => {
-    (rdiPipelineSelector as jest.Mock).mockImplementationOnce(() => ({
+    ;(rdiPipelineSelector as jest.Mock).mockImplementationOnce(() => ({
       loading: false,
       error: '',
       jobs: [{ name: 'job1', value: 'value' }],
@@ -237,11 +265,13 @@ describe('JobsTree', () => {
     render(<JobsTree {...instance(mockedProps)} />)
 
     expect(screen.getByTestId('rdi-nav-job-job1')).toBeInTheDocument()
-    expect(screen.queryByTestId('rdi-pipeline-nav__error')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('rdi-pipeline-nav__error'),
+    ).not.toBeInTheDocument()
   })
 
   it('should disable apply button when job name is invalid', async () => {
-    (rdiPipelineSelector as jest.Mock).mockImplementationOnce(() => ({
+    ;(rdiPipelineSelector as jest.Mock).mockImplementationOnce(() => ({
       loading: false,
       error: '',
       jobs: [{ name: 'job1', value: 'value' }],

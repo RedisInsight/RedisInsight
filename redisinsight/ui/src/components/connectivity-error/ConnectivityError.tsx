@@ -1,45 +1,38 @@
 import React from 'react'
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPanel } from '@elastic/eui'
+import { EuiButton, EuiPanel } from '@elastic/eui'
 import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
 
+import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export type ConnectivityErrorProps = {
-  onRetry?: () => void;
-  isLoading: boolean;
-  error?: string | null;
+  onRetry?: () => void
+  isLoading: boolean
+  error?: string | null
 }
 
-const ConnectivityError = ({ isLoading, error, onRetry }: ConnectivityErrorProps) => (
-  <div className={styles.connectivityError}>
+const ConnectivityError = ({
+  isLoading,
+  error,
+  onRetry,
+}: ConnectivityErrorProps) => (
+  <Col className={styles.connectivityError}>
     <EuiPanel>
-      <div style={{ display: 'flex', height: '100%' }}>
-        { isLoading && <SuspenseLoader />}
-        <EuiFlexGroup
-          gutterSize="l"
-          alignItems="center"
-          direction="column"
-          justifyContent="center"
-        >
-          <EuiFlexItem grow={false} data-testid="connectivity-error-message">
-            {error}
-          </EuiFlexItem>
-          { onRetry && (
-            <EuiFlexItem grow={false}>
-              <EuiButton
-                fill
-                size="m"
-                color="secondary"
-                onClick={onRetry}
-              >
+      <Col style={{ minHeight: '100vh' }} centered>
+        {isLoading && <SuspenseLoader />}
+        <Col centered gap="xl">
+          <FlexItem data-testid="connectivity-error-message">{error}</FlexItem>
+          {onRetry && (
+            <FlexItem>
+              <EuiButton fill size="m" color="secondary" onClick={onRetry}>
                 Retry
               </EuiButton>
-            </EuiFlexItem>
+            </FlexItem>
           )}
-        </EuiFlexGroup>
-      </div>
+        </Col>
+      </Col>
     </EuiPanel>
-  </div>
+  </Col>
 )
 
 export default ConnectivityError

@@ -12,39 +12,39 @@ const MOCK_RDI_STRATEGIES = {
     {
       label: 'Write behind',
       value: 'write-behind',
-    }
+    },
   ],
   'db-type': [
     {
       label: 'SQL Server',
-      value: 'sql'
+      value: 'sql',
     },
     {
       label: 'Oracle',
-      value: 'oracle'
+      value: 'oracle',
     },
     {
       label: 'MySQL',
-      value: 'my-sql'
+      value: 'my-sql',
     },
     {
       label: 'MariaDB',
-      value: 'maria-db'
+      value: 'maria-db',
     },
     {
       label: 'Cassandra',
-      value: 'cassandra'
-    }
-  ]
+      value: 'cassandra',
+    },
+  ],
 }
 
 const handlers: RestHandler[] = [
   // fetch rdi strategies
-  rest.get(getMswURL(getRdiUrl('rdiInstanceId', ApiEndpoints.RDI_PIPELINE_STRATEGIES)), async (_req, res, ctx) =>
-    res(
-      ctx.status(200),
-      ctx.json(MOCK_RDI_STRATEGIES)
-    )),
+  rest.get(
+    getMswURL(getRdiUrl('rdiInstanceId', ApiEndpoints.RDI_PIPELINE_STRATEGIES)),
+    async (_req, res, ctx) =>
+      res(ctx.status(200), ctx.json(MOCK_RDI_STRATEGIES)),
+  ),
 ]
 
 export default handlers

@@ -1,9 +1,12 @@
 import {
-  AddFieldsToHashDto, CreateHashWithExpireDto,
+  AddFieldsToHashDto,
+  CreateHashWithExpireDto,
   DeleteFieldsFromHashDto,
   GetHashFieldsDto,
   GetHashFieldsResponse,
-  HashFieldDto, HashFieldTtlDto, UpdateHashFieldsTtlDto,
+  HashFieldDto,
+  HashFieldTtlDto,
+  UpdateHashFieldsTtlDto,
 } from 'src/modules/browser/hash/dto';
 import { mockKeyDto } from 'src/modules/browser/__mocks__/keys';
 import { flatMap } from 'lodash';
@@ -49,10 +52,13 @@ export const mockHashFieldTtlDto3 = Object.assign(new HashFieldTtlDto(), {
   expire: 123123,
 });
 
-export const mockUpdateHashFieldsTtlDto: UpdateHashFieldsTtlDto = Object.assign(new UpdateHashFieldsTtlDto(), {
-  keyName: mockKeyDto.keyName,
-  fields: [mockHashFieldTtlDto, mockHashFieldTtlDto2, mockHashFieldTtlDto3],
-});
+export const mockUpdateHashFieldsTtlDto: UpdateHashFieldsTtlDto = Object.assign(
+  new UpdateHashFieldsTtlDto(),
+  {
+    keyName: mockKeyDto.keyName,
+    fields: [mockHashFieldTtlDto, mockHashFieldTtlDto2, mockHashFieldTtlDto3],
+  },
+);
 
 export const mockCreateHashWithExpireDto: CreateHashWithExpireDto = {
   keyName: mockKeyDto.keyName,
@@ -60,10 +66,11 @@ export const mockCreateHashWithExpireDto: CreateHashWithExpireDto = {
   expire: 3000,
 };
 
-export const mockCreateHashWithExpireAndFieldsExpireDto: CreateHashWithExpireDto = {
-  ...mockAddFieldsWithExpirationDto,
-  expire: 3000,
-};
+export const mockCreateHashWithExpireAndFieldsExpireDto: CreateHashWithExpireDto =
+  {
+    ...mockAddFieldsWithExpirationDto,
+    expire: 3000,
+  };
 
 export const mockDeleteFieldsDto: DeleteFieldsFromHashDto = {
   keyName: mockAddFieldsDto.keyName,
@@ -92,11 +99,17 @@ export const mockGetFieldsWithTtlResponse: GetHashFieldsResponse = {
 };
 export const mockRedisHScanResponse = [
   0,
-  flatMap(mockAddFieldsDto.fields, ({ field, value }: HashFieldDto) => [field, value]),
+  flatMap(mockAddFieldsDto.fields, ({ field, value }: HashFieldDto) => [
+    field,
+    value,
+  ]),
 ];
 export const mockRedisHScanWithFieldsExpireResponse = [
   0,
-  flatMap(mockCreateHashWithExpireAndFieldsExpireDto.fields, ({ field, value }: HashFieldDto) => [field, value]),
+  flatMap(
+    mockCreateHashWithExpireAndFieldsExpireDto.fields,
+    ({ field, value }: HashFieldDto) => [field, value],
+  ),
 ];
 export const mockRedisHTtlResponse = flatMap(
   mockCreateHashWithExpireAndFieldsExpireDto.fields,

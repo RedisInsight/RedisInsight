@@ -1,8 +1,9 @@
 import { join } from 'path';
 import * as os from 'os';
 
-const homedir = process.env.RI_APP_FOLDER_ABSOLUTE_PATH
-  || (join(os.homedir(), process.env.RI_APP_FOLDER_NAME || '.redis-insight-stage'));
+const homedir =
+  process.env.RI_APP_FOLDER_ABSOLUTE_PATH ||
+  join(os.homedir(), process.env.RI_APP_FOLDER_NAME || '.redis-insight-stage');
 
 const prevHomedir = join(os.homedir(), '.redisinsight-app-stage');
 
@@ -12,7 +13,9 @@ export default {
     prevHomedir,
     logs: join(homedir, 'logs'),
     customConfig: join(homedir, 'config.json'),
-    preSetupDatabases: process.env.RI_PRE_SETUP_DATABASES_PATH || join(homedir, 'databases.json'),
+    preSetupDatabases:
+      process.env.RI_PRE_SETUP_DATABASES_PATH ||
+      join(homedir, 'databases.json'),
     customPlugins: join(homedir, 'plugins'),
     customTutorials: join(homedir, 'custom-tutorials'),
     commands: join(homedir, 'commands'),
@@ -30,13 +33,18 @@ export default {
     env: 'staging',
   },
   analytics: {
-    writeKey: process.env.RI_SEGMENT_WRITE_KEY || 'Ba1YuGnxzsQN9zjqTSvzPc6f3AvmH1mj',
+    writeKey:
+      process.env.RI_SEGMENT_WRITE_KEY || 'Ba1YuGnxzsQN9zjqTSvzPc6f3AvmH1mj',
   },
   db: {
     database: join(homedir, 'redisinsight.db'),
   },
   logger: {
-    stdout: process.env.RI_STDOUT_LOGGER ? process.env.RI_STDOUT_LOGGER === 'true' : true, // enabled by default
-    omitSensitiveData: process.env.RI_LOGGER_OMIT_DATA ? process.env.RI_LOGGER_OMIT_DATA === 'true' : false,
+    stdout: process.env.RI_STDOUT_LOGGER
+      ? process.env.RI_STDOUT_LOGGER === 'true'
+      : true, // enabled by default
+    omitSensitiveData: process.env.RI_LOGGER_OMIT_DATA
+      ? process.env.RI_LOGGER_OMIT_DATA === 'true'
+      : false,
   },
 };

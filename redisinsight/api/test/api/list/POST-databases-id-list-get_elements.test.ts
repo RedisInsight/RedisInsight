@@ -6,21 +6,22 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn, JoiRedisString
+  getMainCheckFn,
+  JoiRedisString,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/list/get-elements`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/list/get-elements`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
-  offset: Joi.number().integer().min(0)
-    .allow(true), // todo: investigate/fix BE payload transform function
-  count: Joi.number().integer().min(1)
-    .allow(true), // todo: investigate/fix BE payload transform function
+  offset: Joi.number().integer().min(0).allow(true), // todo: investigate/fix BE payload transform function
+  count: Joi.number().integer().min(1).allow(true), // todo: investigate/fix BE payload transform function
 }).strict();
 
 const validInputData = {
@@ -29,11 +30,13 @@ const validInputData = {
   count: 20,
 };
 
-const responseSchema = Joi.object().keys({
-  keyName: JoiRedisString.required(),
-  total: Joi.number().integer().required(),
-  elements: Joi.array().items(JoiRedisString).required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    keyName: JoiRedisString.required(),
+    total: Joi.number().integer().required(),
+    elements: Joi.array().items(JoiRedisString).required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -57,9 +60,7 @@ describe('POST /databases/:instanceId/list/get-elements', () => {
         responseBody: {
           keyName: constants.TEST_LIST_KEY_BIN_UTF8_1,
           total: 1,
-          elements: [
-            constants.TEST_LIST_ELEMENT_BIN_UTF8_1,
-          ],
+          elements: [constants.TEST_LIST_ELEMENT_BIN_UTF8_1],
         },
       },
       {
@@ -76,9 +77,7 @@ describe('POST /databases/:instanceId/list/get-elements', () => {
         responseBody: {
           keyName: constants.TEST_LIST_KEY_BIN_BUF_OBJ_1,
           total: 1,
-          elements: [
-            constants.TEST_LIST_ELEMENT_BIN_BUF_OBJ_1,
-          ],
+          elements: [constants.TEST_LIST_ELEMENT_BIN_BUF_OBJ_1],
         },
       },
       {
@@ -95,9 +94,7 @@ describe('POST /databases/:instanceId/list/get-elements', () => {
         responseBody: {
           keyName: constants.TEST_LIST_KEY_BIN_ASCII_1,
           total: 1,
-          elements: [
-            constants.TEST_LIST_ELEMENT_BIN_ASCII_1,
-          ],
+          elements: [constants.TEST_LIST_ELEMENT_BIN_ASCII_1],
         },
       },
     ].map(mainCheckFn);
@@ -127,7 +124,9 @@ describe('POST /databases/:instanceId/list/get-elements', () => {
           responseBody: {
             keyName: constants.TEST_LIST_KEY_2,
             total: 100,
-            elements: (new Array(100).fill(0)).map((item, i) => `element_${i + 1}`),
+            elements: new Array(100)
+              .fill(0)
+              .map((item, i) => `element_${i + 1}`),
           },
         },
         {
@@ -141,7 +140,9 @@ describe('POST /databases/:instanceId/list/get-elements', () => {
           responseBody: {
             keyName: constants.TEST_LIST_KEY_2,
             total: 100,
-            elements: (new Array(50).fill(0)).map((item, i) => `element_${i + 51}`),
+            elements: new Array(50)
+              .fill(0)
+              .map((item, i) => `element_${i + 51}`),
           },
         },
         {
@@ -155,7 +156,9 @@ describe('POST /databases/:instanceId/list/get-elements', () => {
           responseBody: {
             keyName: constants.TEST_LIST_KEY_2,
             total: 100,
-            elements: (new Array(50).fill(0)).map((item, i) => `element_${i + 1}`),
+            elements: new Array(50)
+              .fill(0)
+              .map((item, i) => `element_${i + 1}`),
           },
         },
         {
@@ -218,7 +221,7 @@ describe('POST /databases/:instanceId/list/get-elements', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -llen')
+          before: () => rte.data.setAclUserRules('~* +@all -llen'),
         },
         {
           name: 'Should throw error if no permissions for "lrange" command',
@@ -233,7 +236,7 @@ describe('POST /databases/:instanceId/list/get-elements', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -lrange')
+          before: () => rte.data.setAclUserRules('~* +@all -lrange'),
         },
       ].map(mainCheckFn);
     });

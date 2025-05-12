@@ -1,19 +1,13 @@
 import React, { ChangeEvent, useEffect, useRef } from 'react'
-import {
-  EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiFormRow,
-  EuiIcon,
-  EuiSpacer,
-  EuiToolTip
-} from '@elastic/eui'
+import { EuiFieldText, EuiFormRow, EuiIcon, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { validateEntryId } from 'uiSrc/utils'
 import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-key/AddKeyStream/AddKeyStream'
 import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -27,13 +21,7 @@ export interface Props {
 const MIN_ENTRY_ID_VALUE = '0-1'
 
 const StreamEntryFields = (props: Props) => {
-  const {
-    entryID,
-    setEntryID,
-    entryIdError,
-    fields,
-    setFields,
-  } = props
+  const { entryID, setEntryID, entryIdError, fields, setFields } = props
 
   const [isEntryIdFocused, setIsEntryIdFocused] = React.useState(false)
   const prevCountFields = useRef<number>(0)
@@ -44,7 +32,10 @@ const StreamEntryFields = (props: Props) => {
     fields.length === 1 && !(item.name.length || item.value.length)
 
   useEffect(() => {
-    if (prevCountFields.current !== 0 && prevCountFields.current < fields.length) {
+    if (
+      prevCountFields.current !== 0 &&
+      prevCountFields.current < fields.length
+    ) {
       lastAddedFieldName.current?.focus()
     }
     prevCountFields.current = fields.length
@@ -56,8 +47,8 @@ const StreamEntryFields = (props: Props) => {
       ...fields,
       {
         ...INITIAL_STREAM_FIELD_STATE,
-        id: lastField.id + 1
-      }
+        id: lastField.id + 1,
+      },
     ]
     setFields(newState)
   }
@@ -68,12 +59,15 @@ const StreamEntryFields = (props: Props) => {
   }
 
   const clearFieldsValues = (id: number) => {
-    const newState = fields.map((item) => (item.id === id
-      ? {
-        ...item,
-        name: '',
-        value: ''
-      } : item))
+    const newState = fields.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            name: '',
+            value: '',
+          }
+        : item,
+    )
     setFields(newState)
   }
 
@@ -95,7 +89,7 @@ const StreamEntryFields = (props: Props) => {
       if (item.id === id) {
         return {
           ...item,
-          [formField]: value
+          [formField]: value,
         }
       }
       return item
@@ -124,30 +118,40 @@ const StreamEntryFields = (props: Props) => {
             onChange={handleEntryIdChange}
             onBlur={onEntryIdBlur}
             onFocus={() => setIsEntryIdFocused(true)}
-            append={(
+            append={
               <EuiToolTip
                 anchorClassName="inputAppendIcon"
                 className={styles.entryIdTooltip}
                 position="left"
                 title="Enter Valid ID or *"
-                content={(
+                content={
                   <>
-                    ID must be a timestamp and sequence number greater than the last ID.
-                    <EuiSpacer size="xs" />
-                    Otherwise, type * to auto-generate ID based on the database current time.
+                    ID must be a timestamp and sequence number greater than the
+                    last ID.
+                    <Spacer size="xs" />
+                    Otherwise, type * to auto-generate ID based on the database
+                    current time.
                   </>
-                )}
+                }
               >
                 <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
               </EuiToolTip>
-            )}
+            }
             isInvalid={!!entryIdError}
             autoComplete="off"
             data-testid={config.entryId.id}
           />
         </EuiFormRow>
-        {!showEntryError && <span className={styles.timestampText}>Timestamp - Sequence Number or *</span>}
-        {showEntryError && <span className={styles.error} data-testid="stream-entry-error">{entryIdError}</span>}
+        {!showEntryError && (
+          <span className={styles.timestampText}>
+            Timestamp - Sequence Number or *
+          </span>
+        )}
+        {showEntryError && (
+          <span className={styles.error} data-testid="stream-entry-error">
+            {entryIdError}
+          </span>
+        )}
       </div>
 
       <div className={styles.fieldsWrapper}>
@@ -159,8 +163,8 @@ const StreamEntryFields = (props: Props) => {
             onClickAdd={addField}
           >
             {(item, index) => (
-              <EuiFlexGroup gutterSize="none" alignItems="center" responsive={false}>
-                <EuiFlexItem className={styles.fieldItemWrapper} grow>
+              <Row align="center">
+                <FlexItem className={styles.fieldItemWrapper} grow>
                   <EuiFormRow fullWidth>
                     <EuiFieldText
                       fullWidth
@@ -169,18 +173,17 @@ const StreamEntryFields = (props: Props) => {
                       placeholder={config.name.placeholder}
                       value={item.name}
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        handleFieldChange(
-                          'name',
-                          item.id,
-                          e.target.value
-                        )}
-                      inputRef={index === fields.length - 1 ? lastAddedFieldName : null}
+                        handleFieldChange('name', item.id, e.target.value)
+                      }
+                      inputRef={
+                        index === fields.length - 1 ? lastAddedFieldName : null
+                      }
                       autoComplete="off"
                       data-testid="field-name"
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
-                <EuiFlexItem className={styles.valueItemWrapper} grow>
+                </FlexItem>
+                <FlexItem className={styles.valueItemWrapper} grow>
                   <EuiFormRow fullWidth>
                     <EuiFieldText
                       fullWidth
@@ -190,17 +193,14 @@ const StreamEntryFields = (props: Props) => {
                       placeholder={config.value.placeholder}
                       value={item.value}
                       onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        handleFieldChange(
-                          'value',
-                          item.id,
-                          e.target.value
-                        )}
+                        handleFieldChange('value', item.id, e.target.value)
+                      }
                       autoComplete="off"
                       data-testid="field-value"
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
-              </EuiFlexGroup>
+                </FlexItem>
+              </Row>
             )}
           </AddMultipleFields>
         </div>

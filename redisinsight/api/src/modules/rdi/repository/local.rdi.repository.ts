@@ -19,20 +19,28 @@ export class LocalRdiRepository extends RdiRepository {
     private readonly encryptionService: EncryptionService,
   ) {
     super();
-    this.modelEncryptor = new ModelEncryptor(this.encryptionService, ['password']);
+    this.modelEncryptor = new ModelEncryptor(this.encryptionService, [
+      'password',
+    ]);
   }
 
   /**
    * @inheritDoc
    */
-  public async get(id: string, ignoreEncryptionErrors: boolean = false): Promise<Rdi> {
+  public async get(
+    id: string,
+    ignoreEncryptionErrors: boolean = false,
+  ): Promise<Rdi> {
     const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       return null;
     }
 
-    return classToClass(Rdi, await this.modelEncryptor.decryptEntity(entity, ignoreEncryptionErrors));
+    return classToClass(
+      Rdi,
+      await this.modelEncryptor.decryptEntity(entity, ignoreEncryptionErrors),
+    );
   }
 
   /**
@@ -62,7 +70,9 @@ export class LocalRdiRepository extends RdiRepository {
     return classToClass(
       Rdi,
       await this.modelEncryptor.decryptEntity(
-        await this.repository.save(await this.modelEncryptor.encryptEntity(entity)),
+        await this.repository.save(
+          await this.modelEncryptor.encryptEntity(entity),
+        ),
       ),
     );
   }
@@ -71,12 +81,22 @@ export class LocalRdiRepository extends RdiRepository {
    * @inheritDoc
    */
   public async update(id: string, rdi: Rdi): Promise<Rdi> {
-    const oldEntity = await this.modelEncryptor.decryptEntity((await this.repository.findOneBy({ id })), true);
+    const oldEntity = await this.modelEncryptor.decryptEntity(
+      await this.repository.findOneBy({ id }),
+      true,
+    );
     const newEntity = classToClass(RdiEntity, rdi);
 
-    const encrypted = await this.modelEncryptor.encryptEntity(this.repository.merge(oldEntity, newEntity));
+    const encrypted = await this.modelEncryptor.encryptEntity(
+      this.repository.merge(oldEntity, newEntity),
+    );
 
-    return classToClass(Rdi, await this.modelEncryptor.decryptEntity(await this.repository.save(encrypted)));
+    return classToClass(
+      Rdi,
+      await this.modelEncryptor.decryptEntity(
+        await this.repository.save(encrypted),
+      ),
+    );
   }
 
   /**

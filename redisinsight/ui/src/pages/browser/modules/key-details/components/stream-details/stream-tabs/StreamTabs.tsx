@@ -25,8 +25,10 @@ import styles from './styles.module.scss'
 const StreamTabs = () => {
   const { viewType } = useSelector(streamSelector)
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
-  const { nameString: selectedGroupName = '' } = useSelector(selectedGroupSelector) ?? {}
-  const { nameString: selectedConsumerName = '' } = useSelector(selectedConsumerSelector) ?? {}
+  const { nameString: selectedGroupName = '' } =
+    useSelector(selectedGroupSelector) ?? {}
+  const { nameString: selectedConsumerName = '' } =
+    useSelector(selectedConsumerSelector) ?? {}
 
   const { instanceId } = useParams<{ instanceId: string }>()
 
@@ -37,25 +39,19 @@ const StreamTabs = () => {
       event: TelemetryEvent.STREAM_CONSUMER_GROUPS_LOADED,
       eventData: {
         databaseId: instanceId,
-        length: data.length
-      }
+        length: data.length,
+      },
     })
   }
 
   const onSelectedTabChanged = (id: StreamViewType) => {
     if (id === StreamViewType.Data) {
-      dispatch<any>(fetchStreamEntries(
-        key,
-        SCAN_COUNT_DEFAULT,
-        SortOrder.DESC,
-        true
-      ))
+      dispatch<any>(
+        fetchStreamEntries(key, SCAN_COUNT_DEFAULT, SortOrder.DESC, true),
+      )
     }
     if (id === StreamViewType.Groups) {
-      dispatch(fetchConsumerGroups(
-        true,
-        onSuccessLoadedConsumerGroups,
-      ))
+      dispatch(fetchConsumerGroups(true, onSuccessLoadedConsumerGroups))
     }
     dispatch(setStreamViewType(id))
   }
@@ -63,11 +59,15 @@ const StreamTabs = () => {
   const renderTabs = useCallback(() => {
     const tabs = [...streamViewTypeTabs]
 
-    if (selectedGroupName && (viewType === StreamViewType.Consumers || viewType === StreamViewType.Messages)) {
+    if (
+      selectedGroupName &&
+      (viewType === StreamViewType.Consumers ||
+        viewType === StreamViewType.Messages)
+    ) {
       tabs.push({
         id: StreamViewType.Consumers,
         label: selectedGroupName,
-        separator: <EuiIcon type="arrowRight" className={styles.separator} />
+        separator: <EuiIcon type="arrowRight" className={styles.separator} />,
       })
     }
 
@@ -75,7 +75,7 @@ const StreamTabs = () => {
       tabs.push({
         id: StreamViewType.Messages,
         label: selectedConsumerName,
-        separator: <EuiIcon type="arrowRight" className={styles.separator} />
+        separator: <EuiIcon type="arrowRight" className={styles.separator} />,
       })
     }
 

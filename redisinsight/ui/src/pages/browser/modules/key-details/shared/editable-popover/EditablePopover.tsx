@@ -1,20 +1,16 @@
-import React, {
-  FormEvent,
-  useEffect,
-  useState,
-} from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 
 import {
   EuiButton,
   EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiForm, EuiLoadingSpinner,
+  EuiForm,
+  EuiLoadingSpinner,
   EuiPopover,
-  EuiSpacer,
 } from '@elastic/eui'
 
 import cx from 'classnames'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -53,7 +49,7 @@ const EditablePopover = (props: Props) => {
     className,
     editBtnClassName = '',
     isDisabledEditButton,
-    delay
+    delay,
   } = props
   const [isHovering, setIsHovering] = useState(false)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(isOpen)
@@ -68,12 +64,14 @@ const EditablePopover = (props: Props) => {
     })
   }
 
-  useEffect(() =>
-  // componentWillUnmount
-    () => {
-      declineOnUnmount && handleDecline()
-    },
-  [])
+  useEffect(
+    () =>
+      // componentWillUnmount
+      () => {
+        declineOnUnmount && handleDecline()
+      },
+    [],
+  )
 
   useEffect(() => {
     if (isOpen) delayPopover()
@@ -95,7 +93,9 @@ const EditablePopover = (props: Props) => {
     onDecline?.()
   }
 
-  const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleButtonClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
     e.stopPropagation()
     onOpen?.()
     delayPopover()
@@ -123,9 +123,11 @@ const EditablePopover = (props: Props) => {
       anchorPosition="downLeft"
       isOpen={isPopoverOpen}
       anchorClassName={className}
-      panelClassName={cx(styles.popoverWrapper, { [styles.isDelayed]: isDelayed })}
+      panelClassName={cx(styles.popoverWrapper, {
+        [styles.isDelayed]: isDelayed,
+      })}
       closePopover={handleDecline}
-      button={(
+      button={
         <div
           className={styles.contentWrapper}
           onMouseEnter={() => setIsHovering(!isDisabledEditButton)}
@@ -133,20 +135,23 @@ const EditablePopover = (props: Props) => {
           data-testid={`${prefix}_content-value-${field}`}
         >
           {content}
-          {isDelayed && <EuiLoadingSpinner className={cx(editBtnClassName, styles.spinner)} size="m" />}
-          {(!isPopoverOpen && isHovering && !isDelayed) && button}
+          {isDelayed && (
+            <EuiLoadingSpinner
+              className={cx(editBtnClassName, styles.spinner)}
+              size="m"
+            />
+          )}
+          {!isPopoverOpen && isHovering && !isDelayed && button}
         </div>
-      )}
+      }
       data-testid="popover-item-editor"
       onClick={(e) => e.stopPropagation()}
     >
       <EuiForm component="form" onSubmit={onFormSubmit}>
-        <div className={styles.content}>
-          {children}
-        </div>
-        <EuiSpacer size="s" />
-        <EuiFlexGroup className={styles.footer} responsive={false} justifyContent="flexEnd">
-          <EuiFlexItem grow={false}>
+        <div className={styles.content}>{children}</div>
+        <Spacer size="s" />
+        <Row className={styles.footer} justify="end">
+          <FlexItem>
             <EuiButton
               size="s"
               color="secondary"
@@ -155,9 +160,9 @@ const EditablePopover = (props: Props) => {
             >
               Cancel
             </EuiButton>
-          </EuiFlexItem>
+          </FlexItem>
 
-          <EuiFlexItem grow={false}>
+          <FlexItem>
             <EuiButton
               fill
               size="s"
@@ -168,8 +173,8 @@ const EditablePopover = (props: Props) => {
             >
               Save
             </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiForm>
     </EuiPopover>
   )

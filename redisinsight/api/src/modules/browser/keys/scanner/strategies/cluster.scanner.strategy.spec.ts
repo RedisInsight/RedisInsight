@@ -9,7 +9,11 @@ import {
 } from 'src/__mocks__';
 import { ReplyError } from 'src/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { GetKeyInfoResponse, GetKeysDto, RedisDataType } from 'src/modules/browser/keys/dto';
+import {
+  GetKeyInfoResponse,
+  GetKeysDto,
+  RedisDataType,
+} from 'src/modules/browser/keys/dto';
 import { BrowserToolKeysCommands } from 'src/modules/browser/constants/browser-tool-commands';
 import { IScannerNodeKeys } from 'src/modules/browser/keys/scanner/scanner.interface';
 import * as Utils from 'src/modules/redis/utils/keys.util';
@@ -71,29 +75,52 @@ describe('Cluster Scanner Strategy', () => {
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ClusterScannerStrategy,
-      ],
+      providers: [ClusterScannerStrategy],
     }).compile();
 
     strategy = module.get(ClusterScannerStrategy);
     mockGetKeysInfoFn.mockClear();
 
-    mockNode1 = generateMockRedisClient(mockBrowserClientMetadata, jest.fn(), mockClusterNodes[0]);
-    mockNode2 = generateMockRedisClient(mockBrowserClientMetadata, jest.fn(), mockClusterNodes[1]);
-    mockNode3 = generateMockRedisClient(mockBrowserClientMetadata, jest.fn(), mockClusterNodes[2]);
+    mockNode1 = generateMockRedisClient(
+      mockBrowserClientMetadata,
+      jest.fn(),
+      mockClusterNodes[0],
+    );
+    mockNode2 = generateMockRedisClient(
+      mockBrowserClientMetadata,
+      jest.fn(),
+      mockClusterNodes[1],
+    );
+    mockNode3 = generateMockRedisClient(
+      mockBrowserClientMetadata,
+      jest.fn(),
+      mockClusterNodes[2],
+    );
 
-    mockClusterRedisClient.nodes.mockResolvedValue([mockNode1, mockNode2, mockNode3]);
+    mockClusterRedisClient.nodes.mockResolvedValue([
+      mockNode1,
+      mockNode2,
+      mockNode3,
+    ]);
   });
 
   describe('getKeys', () => {
     const getKeysDto: GetKeysDto = {
-      cursor: '0', count: 15, keysInfo: true, scanThreshold: 1000,
+      cursor: '0',
+      count: 15,
+      keysInfo: true,
+      scanThreshold: 1000,
     };
 
     it('should return appropriate value with filter by type', async () => {
-      const args = { ...getKeysDto, type: RedisDataType.String, match: 'pattern*' };
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse1);
+      const args = {
+        ...getKeysDto,
+        type: RedisDataType.String,
+        match: 'pattern*',
+      };
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValue(mockGetTotalResponse1);
 
       when(mockNode1.sendCommand)
         .calledWith(expect.arrayContaining([BrowserToolKeysCommands.Scan]))
@@ -130,18 +157,36 @@ describe('Cluster Scanner Strategy', () => {
         },
       ]);
       expect(strategy.getKeysInfo).toHaveBeenCalled();
-      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '0', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
-      );
-      expect(mockNode2.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '0', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
-      );
-      expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '0', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
-      );
+      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '0',
+        'MATCH',
+        args.match,
+        'COUNT',
+        args.count,
+        'TYPE',
+        args.type,
+      ]);
+      expect(mockNode2.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '0',
+        'MATCH',
+        args.match,
+        'COUNT',
+        args.count,
+        'TYPE',
+        args.type,
+      ]);
+      expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '0',
+        'MATCH',
+        args.match,
+        'COUNT',
+        args.count,
+        'TYPE',
+        args.type,
+      ]);
     });
     it('should work with custom cursor', async () => {
       const args = {
@@ -150,7 +195,9 @@ describe('Cluster Scanner Strategy', () => {
         match: 'pattern*',
         cursor: '172.1.0.1:7000@11||172.1.0.1:7001@22||172.1.0.1:7002@33',
       };
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse1);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValue(mockGetTotalResponse1);
 
       when(mockNode1.sendCommand)
         .calledWith(expect.arrayContaining([BrowserToolKeysCommands.Scan]))
@@ -187,25 +234,45 @@ describe('Cluster Scanner Strategy', () => {
         },
       ]);
       expect(strategy.getKeysInfo).toHaveBeenCalled();
-      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '11', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
-      );
-      expect(mockNode2.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '22', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
-      );
-      expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '33', 'MATCH', args.match, 'COUNT', args.count, 'TYPE', args.type],
-      );
+      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '11',
+        'MATCH',
+        args.match,
+        'COUNT',
+        args.count,
+        'TYPE',
+        args.type,
+      ]);
+      expect(mockNode2.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '22',
+        'MATCH',
+        args.match,
+        'COUNT',
+        args.count,
+        'TYPE',
+        args.type,
+      ]);
+      expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '33',
+        'MATCH',
+        args.match,
+        'COUNT',
+        args.count,
+        'TYPE',
+        args.type,
+      ]);
     });
     it('should skip nodes with negative cursors custom cursor', async () => {
       const args = {
         ...getKeysDto,
         cursor: '172.1.0.1:7000@0||172.1.0.1:7001@-1||172.1.0.1:7002@-22',
       };
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValueOnce(mockGetTotalResponse1);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValueOnce(mockGetTotalResponse1);
 
       when(mockNode1.sendCommand)
         .calledWith(expect.arrayContaining([BrowserToolKeysCommands.Scan]))
@@ -225,50 +292,84 @@ describe('Cluster Scanner Strategy', () => {
       ]);
       expect(strategy.getKeysInfo).toBeCalledTimes(1);
       expect(mockNode1.sendCommand).toBeCalledTimes(1);
-      expect(mockNode1.sendCommand).toBeCalledWith(
-        [BrowserToolKeysCommands.Scan, '0', 'MATCH', '*', 'COUNT', args.count],
-      );
+      expect(mockNode1.sendCommand).toBeCalledWith([
+        BrowserToolKeysCommands.Scan,
+        '0',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
       expect(mockNode2.sendCommand).toBeCalledTimes(0);
       expect(mockNode3.sendCommand).toBeCalledTimes(0);
     });
     it('should call scan 3,2,1 times per nodes and return appropriate value', async () => {
       const args = { ...getKeysDto };
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValueOnce(mockGetTotalResponse3000);
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValueOnce(mockGetTotalResponse2000);
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValueOnce(mockGetTotalResponse1000);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValueOnce(mockGetTotalResponse3000);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValueOnce(mockGetTotalResponse2000);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValueOnce(mockGetTotalResponse1000);
 
       // Node1 mocks (3 iterations)
       when(mockNode1.sendCommand)
-        .calledWith(
-          [BrowserToolKeysCommands.Scan, '0', 'MATCH', '*', 'COUNT', args.count],
-        )
+        .calledWith([
+          BrowserToolKeysCommands.Scan,
+          '0',
+          'MATCH',
+          '*',
+          'COUNT',
+          args.count,
+        ])
         .mockResolvedValue(['1', [Buffer.from(getKeyInfoResponse.name)]]);
       when(mockNode1.sendCommand)
-        .calledWith(
-          [BrowserToolKeysCommands.Scan, '1', 'MATCH', '*', 'COUNT', args.count],
-        )
+        .calledWith([
+          BrowserToolKeysCommands.Scan,
+          '1',
+          'MATCH',
+          '*',
+          'COUNT',
+          args.count,
+        ])
         .mockResolvedValue(['2', [Buffer.from(getKeyInfoResponse.name)]]);
       when(mockNode1.sendCommand)
-        .calledWith(
-          [BrowserToolKeysCommands.Scan, '2', 'MATCH', '*', 'COUNT', args.count],
-        )
+        .calledWith([
+          BrowserToolKeysCommands.Scan,
+          '2',
+          'MATCH',
+          '*',
+          'COUNT',
+          args.count,
+        ])
         .mockResolvedValue(['0', [Buffer.from(getKeyInfoResponse.name)]]);
       // Node2 mocks (2 iterations)
       when(mockNode2.sendCommand)
-        .calledWith(
-          [BrowserToolKeysCommands.Scan, '0', 'MATCH', '*', 'COUNT', args.count],
-        )
+        .calledWith([
+          BrowserToolKeysCommands.Scan,
+          '0',
+          'MATCH',
+          '*',
+          'COUNT',
+          args.count,
+        ])
         .mockResolvedValue(['1', [Buffer.from(getKeyInfoResponse.name)]]);
       when(mockNode2.sendCommand)
-        .calledWith(
-          [BrowserToolKeysCommands.Scan, '1', 'MATCH', '*', 'COUNT', args.count],
-        )
+        .calledWith([
+          BrowserToolKeysCommands.Scan,
+          '1',
+          'MATCH',
+          '*',
+          'COUNT',
+          args.count,
+        ])
         .mockResolvedValue(['0', [Buffer.from(getKeyInfoResponse.name)]]);
       // Node3 mocks (1 iteration)
       when(mockNode3.sendCommand)
-        .calledWith(
-          expect.arrayContaining([BrowserToolKeysCommands.Scan]),
-        )
+        .calledWith(expect.arrayContaining([BrowserToolKeysCommands.Scan]))
         .mockResolvedValue(['0', [Buffer.from(getKeyInfoResponse.name)]]);
 
       strategy.getKeysInfo = mockGetKeysInfoFn;
@@ -298,34 +399,58 @@ describe('Cluster Scanner Strategy', () => {
       expect(strategy.getKeysInfo).toHaveBeenCalled();
 
       expect(mockNode1.sendCommand).toBeCalledTimes(3);
-      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '0', 'MATCH', '*', 'COUNT', args.count],
-      );
-      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(
-        2,
-        [BrowserToolKeysCommands.Scan, '1', 'MATCH', '*', 'COUNT', args.count],
-      );
-      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(
-        3,
-        [BrowserToolKeysCommands.Scan, '2', 'MATCH', '*', 'COUNT', args.count],
-      );
+      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '0',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
+      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(2, [
+        BrowserToolKeysCommands.Scan,
+        '1',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
+      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(3, [
+        BrowserToolKeysCommands.Scan,
+        '2',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
 
       expect(mockNode2.sendCommand).toBeCalledTimes(2);
-      expect(mockNode2.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '0', 'MATCH', '*', 'COUNT', args.count],
-      );
-      expect(mockNode2.sendCommand).toHaveBeenNthCalledWith(
-        2,
-        [BrowserToolKeysCommands.Scan, '1', 'MATCH', '*', 'COUNT', args.count],
-      );
+      expect(mockNode2.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '0',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
+      expect(mockNode2.sendCommand).toHaveBeenNthCalledWith(2, [
+        BrowserToolKeysCommands.Scan,
+        '1',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
 
       expect(mockNode3.sendCommand).toBeCalledTimes(1);
-      expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '0', 'MATCH', '*', 'COUNT', args.count],
-      );
+      expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '0',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
     });
     it.only('should call scan 3,2,N times per nodes until threshold exceeds', async () => {
       const args = { ...getKeysDto, count: 100 };
@@ -335,42 +460,71 @@ describe('Cluster Scanner Strategy', () => {
         getKeysDto.scanThreshold / args.count - 5,
       );
 
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValueOnce(mockGetTotalResponse3000);
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValueOnce(mockGetTotalResponse2000);
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValueOnce(mockGetTotalResponse1000000);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValueOnce(mockGetTotalResponse3000);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValueOnce(mockGetTotalResponse2000);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValueOnce(mockGetTotalResponse1000000);
 
       // Node1 mocks (3 iterations)
       when(mockNode1.sendCommand)
-        .calledWith(
-          [BrowserToolKeysCommands.Scan, '0', 'MATCH', '*', 'COUNT', args.count],
-        )
+        .calledWith([
+          BrowserToolKeysCommands.Scan,
+          '0',
+          'MATCH',
+          '*',
+          'COUNT',
+          args.count,
+        ])
         .mockResolvedValue(['1', [Buffer.from(getKeyInfoResponse.name)]]);
       when(mockNode1.sendCommand)
-        .calledWith(
-          [BrowserToolKeysCommands.Scan, '1', 'MATCH', '*', 'COUNT', args.count],
-        )
+        .calledWith([
+          BrowserToolKeysCommands.Scan,
+          '1',
+          'MATCH',
+          '*',
+          'COUNT',
+          args.count,
+        ])
         .mockResolvedValue(['2', [Buffer.from(getKeyInfoResponse.name)]]);
       when(mockNode1.sendCommand)
-        .calledWith(
-          [BrowserToolKeysCommands.Scan, '2', 'MATCH', '*', 'COUNT', args.count],
-        )
+        .calledWith([
+          BrowserToolKeysCommands.Scan,
+          '2',
+          'MATCH',
+          '*',
+          'COUNT',
+          args.count,
+        ])
         .mockResolvedValue(['0', [Buffer.from(getKeyInfoResponse.name)]]);
       // Node2 mocks (2 iterations)
       when(mockNode2.sendCommand)
-        .calledWith(
-          [BrowserToolKeysCommands.Scan, '0', 'MATCH', '*', 'COUNT', args.count],
-        )
+        .calledWith([
+          BrowserToolKeysCommands.Scan,
+          '0',
+          'MATCH',
+          '*',
+          'COUNT',
+          args.count,
+        ])
         .mockResolvedValue(['1', [Buffer.from(getKeyInfoResponse.name)]]);
       when(mockNode2.sendCommand)
-        .calledWith(
-          [BrowserToolKeysCommands.Scan, '1', 'MATCH', '*', 'COUNT', args.count],
-        )
+        .calledWith([
+          BrowserToolKeysCommands.Scan,
+          '1',
+          'MATCH',
+          '*',
+          'COUNT',
+          args.count,
+        ])
         .mockResolvedValue(['0', [Buffer.from(getKeyInfoResponse.name)]]);
       // Node3 mocks (infinite number of iterations limited by threshold)
       when(mockNode3.sendCommand)
-        .calledWith(
-          expect.arrayContaining([BrowserToolKeysCommands.Scan]),
-        )
+        .calledWith(expect.arrayContaining([BrowserToolKeysCommands.Scan]))
         .mockResolvedValue(['1', []]);
 
       strategy.getKeysInfo = mockGetKeysInfoFn;
@@ -395,9 +549,8 @@ describe('Cluster Scanner Strategy', () => {
           total: mockGetTotalResponse1000000,
           cursor: 1,
           scanned:
-            Math.trunc(getKeysDto.scanThreshold / args.count)
-              * args.count
-              - 5 * args.count, // 5 = scan for other shards (3 and 2)
+            Math.trunc(getKeysDto.scanThreshold / args.count) * args.count -
+            5 * args.count, // 5 = scan for other shards (3 and 2)
           keys: [],
         },
       ]);
@@ -405,46 +558,84 @@ describe('Cluster Scanner Strategy', () => {
       expect(strategy.getKeysInfo).toHaveBeenCalled();
 
       expect(mockNode1.sendCommand).toBeCalledTimes(3);
-      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '0', 'MATCH', '*', 'COUNT', args.count],
-      );
-      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(
-        2,
-        [BrowserToolKeysCommands.Scan, '1', 'MATCH', '*', 'COUNT', args.count],
-      );
-      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(
-        3,
-        [BrowserToolKeysCommands.Scan, '2', 'MATCH', '*', 'COUNT', args.count],
-      );
+      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '0',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
+      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(2, [
+        BrowserToolKeysCommands.Scan,
+        '1',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
+      expect(mockNode1.sendCommand).toHaveBeenNthCalledWith(3, [
+        BrowserToolKeysCommands.Scan,
+        '2',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
 
       expect(mockNode2.sendCommand).toBeCalledTimes(2);
-      expect(mockNode2.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '0', 'MATCH', '*', 'COUNT', args.count],
-      );
-      expect(mockNode2.sendCommand).toHaveBeenNthCalledWith(
-        2,
-        [BrowserToolKeysCommands.Scan, '1', 'MATCH', '*', 'COUNT', args.count],
-      );
+      expect(mockNode2.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '0',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
+      expect(mockNode2.sendCommand).toHaveBeenNthCalledWith(2, [
+        BrowserToolKeysCommands.Scan,
+        '1',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
 
-      expect(mockNode3.sendCommand).toBeCalledTimes(expectedNode3CallsBeforeThreshold);
-      expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(
-        1,
-        [BrowserToolKeysCommands.Scan, '0', 'MATCH', '*', 'COUNT', args.count],
+      expect(mockNode3.sendCommand).toBeCalledTimes(
+        expectedNode3CallsBeforeThreshold,
       );
-      expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(
-        2,
-        [BrowserToolKeysCommands.Scan, '1', 'MATCH', '*', 'COUNT', args.count],
-      );
-      expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(
-        3,
-        [BrowserToolKeysCommands.Scan, '1', 'MATCH', '*', 'COUNT', args.count],
-      );
-      expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(
-        4,
-        [BrowserToolKeysCommands.Scan, '1', 'MATCH', '*', 'COUNT', args.count],
-      );
+      expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(1, [
+        BrowserToolKeysCommands.Scan,
+        '0',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
+      expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(2, [
+        BrowserToolKeysCommands.Scan,
+        '1',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
+      expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(3, [
+        BrowserToolKeysCommands.Scan,
+        '1',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
+      expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(4, [
+        BrowserToolKeysCommands.Scan,
+        '1',
+        'MATCH',
+        '*',
+        'COUNT',
+        args.count,
+      ]);
       expect(mockNode3.sendCommand).toHaveBeenNthCalledWith(
         expectedNode3CallsBeforeThreshold,
         [BrowserToolKeysCommands.Scan, '1', 'MATCH', '*', 'COUNT', args.count],
@@ -452,7 +643,9 @@ describe('Cluster Scanner Strategy', () => {
     });
     it('should not call scan when total is 0', async () => {
       const args = { ...getKeysDto, count: undefined };
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse0);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValue(mockGetTotalResponse0);
 
       strategy.getKeysInfo = mockGetKeysInfoFn;
 
@@ -499,7 +692,9 @@ describe('Cluster Scanner Strategy', () => {
     });
     it('should throw error on scan command', async () => {
       const args = { ...getKeysDto };
-      jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse1);
+      jest
+        .spyOn(Utils, 'getTotalKeys')
+        .mockResolvedValue(mockGetTotalResponse1);
 
       const replyError: ReplyError = {
         ...mockRedisNoPermError,
@@ -507,9 +702,7 @@ describe('Cluster Scanner Strategy', () => {
       };
 
       when(mockNode1.sendCommand)
-        .calledWith(
-          expect.arrayContaining([BrowserToolKeysCommands.Scan]),
-        )
+        .calledWith(expect.arrayContaining([BrowserToolKeysCommands.Scan]))
         .mockRejectedValue(replyError);
 
       try {
@@ -521,7 +714,9 @@ describe('Cluster Scanner Strategy', () => {
     });
     describe('get keys by glob patter', () => {
       beforeEach(async () => {
-        jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse10);
+        jest
+          .spyOn(Utils, 'getTotalKeys')
+          .mockResolvedValue(mockGetTotalResponse10);
 
         strategy['scanNodes'] = jest.fn();
       });
@@ -589,10 +784,13 @@ describe('Cluster Scanner Strategy', () => {
     describe('find exact key', () => {
       const key = getKeyInfoResponse.name;
       beforeEach(async () => {
-        jest.spyOn(Utils, 'getTotalKeys').mockResolvedValue(mockGetTotalResponse10);
+        jest
+          .spyOn(Utils, 'getTotalKeys')
+          .mockResolvedValue(mockGetTotalResponse10);
 
         strategy['scanNodes'] = jest.fn();
-        strategy.getKeysInfo = jest.fn()
+        strategy.getKeysInfo = jest
+          .fn()
           .mockResolvedValue([getKeyInfoResponse]);
       });
       it('should find exact key when match is not glob patter', async () => {
@@ -621,7 +819,10 @@ describe('Cluster Scanner Strategy', () => {
             scanned: 10,
           },
         ]);
-        expect(strategy.getKeysInfo).toHaveBeenCalledWith(mockClusterRedisClient, [Buffer.from(key)]);
+        expect(strategy.getKeysInfo).toHaveBeenCalledWith(
+          mockClusterRedisClient,
+          [Buffer.from(key)],
+        );
         expect(strategy['scanNodes']).not.toHaveBeenCalled();
       });
       it('should find exact key when match is escaped glob patter', async () => {
@@ -696,12 +897,14 @@ describe('Cluster Scanner Strategy', () => {
       });
       it('should return empty array if key not exist', async () => {
         const dto: GetKeysDto = { ...getKeysDto, match: key };
-        strategy.getKeysInfo = jest.fn().mockResolvedValue([{
-          name: 'testString',
-          type: 'none',
-          ttl: -2,
-          size: null,
-        }]);
+        strategy.getKeysInfo = jest.fn().mockResolvedValue([
+          {
+            name: 'testString',
+            type: 'none',
+            ttl: -2,
+            size: null,
+          },
+        ]);
 
         const result = await strategy.getKeys(mockClusterRedisClient, dto);
 
@@ -775,20 +978,31 @@ describe('Cluster Scanner Strategy', () => {
 
     beforeEach(() => {
       when(mockClusterRedisClient.sendPipeline)
-        .calledWith([
-          expect.arrayContaining([BrowserToolKeysCommands.Ttl]),
-          expect.arrayContaining(['memory', 'usage']),
-          expect.arrayContaining([BrowserToolKeysCommands.Type]),
-        ],
-        { replyEncoding: 'utf8' })
-        .mockResolvedValue([[null, -1], [null, 50], [null, 'string']]);
+        .calledWith(
+          [
+            expect.arrayContaining([BrowserToolKeysCommands.Ttl]),
+            expect.arrayContaining(['memory', 'usage']),
+            expect.arrayContaining([BrowserToolKeysCommands.Type]),
+          ],
+          { replyEncoding: 'utf8' },
+        )
+        .mockResolvedValue([
+          [null, -1],
+          [null, 50],
+          [null, 'string'],
+        ]);
       when(mockClusterRedisClient.sendPipeline)
-        .calledWith([
-          expect.arrayContaining([BrowserToolKeysCommands.Ttl]),
-          expect.arrayContaining(['memory', 'usage']),
-        ],
-        { replyEncoding: 'utf8' })
-        .mockResolvedValue([[null, 999], [null, 555]]);
+        .calledWith(
+          [
+            expect.arrayContaining([BrowserToolKeysCommands.Ttl]),
+            expect.arrayContaining(['memory', 'usage']),
+          ],
+          { replyEncoding: 'utf8' },
+        )
+        .mockResolvedValue([
+          [null, 999],
+          [null, 555],
+        ]);
     });
     it('should return correct keys info (cluster)', async () => {
       const mockResult: GetKeyInfoResponse[] = keys.map((key) => ({

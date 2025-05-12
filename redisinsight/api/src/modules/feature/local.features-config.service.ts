@@ -8,7 +8,7 @@ import {
   FeatureServerEvents,
 } from 'src/modules/feature/constants';
 import { Validator } from 'class-validator';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { FeaturesConfigData } from 'src/modules/feature/model/features-config';
 import { FeatureAnalytics } from 'src/modules/feature/feature.analytics';
 import { UnableToFetchRemoteConfigException } from 'src/modules/feature/exceptions';
@@ -22,7 +22,8 @@ const FEATURES_CONFIG = config.get('features_config');
 @Injectable()
 export class LocalFeaturesConfigService
   extends FeaturesConfigService
-  implements OnModuleDestroy {
+  implements OnModuleDestroy
+{
   private validator = new Validator();
 
   private autoSyncTimeout: NodeJS.Timeout;
@@ -103,7 +104,7 @@ export class LocalFeaturesConfigService
 
       // we should use default config in case when remote is invalid
       await this.validator.validateOrReject(
-        plainToClass(FeaturesConfigData, remoteConfig),
+        plainToInstance(FeaturesConfigData, remoteConfig),
       );
 
       if (remoteConfig?.version > defaultConfig?.version) {
@@ -113,15 +114,16 @@ export class LocalFeaturesConfigService
         };
       }
     } catch (error) {
-      this.analytics.sendFeatureFlagInvalidRemoteConfig(
-        sessionMetadata,
-        {
-          configVersion: remoteConfig?.version,
-          error,
-        },
-      );
+      this.analytics.sendFeatureFlagInvalidRemoteConfig(sessionMetadata, {
+        configVersion: remoteConfig?.version,
+        error,
+      });
 
-      this.logger.error('Something wrong with remote config', error, sessionMetadata);
+      this.logger.error(
+        'Something wrong with remote config',
+        error,
+        sessionMetadata,
+      );
     }
 
     return newConfig;
@@ -141,28 +143,29 @@ export class LocalFeaturesConfigService
 
       if (newConfig?.data?.version > currentConfig?.data?.version) {
         await this.repository.update(sessionMetadata, newConfig.data);
-        this.analytics.sendFeatureFlagConfigUpdated(
-          sessionMetadata,
-          {
-            oldVersion: currentConfig?.data?.version,
-            configVersion: newConfig.data.version,
-            type: newConfig.type,
-          },
-        );
+        this.analytics.sendFeatureFlagConfigUpdated(sessionMetadata, {
+          oldVersion: currentConfig?.data?.version,
+          configVersion: newConfig.data.version,
+          type: newConfig.type,
+        });
       }
 
-      this.logger.debug('Successfully updated stored remote config', sessionMetadata);
+      this.logger.debug(
+        'Successfully updated stored remote config',
+        sessionMetadata,
+      );
       this.eventEmitter.emit(FeatureServerEvents.FeaturesRecalculate);
     } catch (error) {
-      this.analytics.sendFeatureFlagConfigUpdateError(
-        sessionMetadata,
-        {
-          configVersion: newConfig?.version,
-          error,
-        },
-      );
+      this.analytics.sendFeatureFlagConfigUpdateError(sessionMetadata, {
+        configVersion: newConfig?.version,
+        error,
+      });
 
-      this.logger.error('Unable to update features config', error, sessionMetadata);
+      this.logger.error(
+        'Unable to update features config',
+        error,
+        sessionMetadata,
+      );
     }
   }
 

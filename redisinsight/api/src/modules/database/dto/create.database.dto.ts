@@ -1,11 +1,18 @@
 import {
-  ApiExtraModels, ApiPropertyOptional, getSchemaPath, PickType,
+  ApiExtraModels,
+  ApiPropertyOptional,
+  getSchemaPath,
+  PickType,
 } from '@nestjs/swagger';
 import { Database } from 'src/modules/database/models/database';
 import { Expose, Type } from 'class-transformer';
 import {
-  IsNotEmptyObject, IsOptional, ValidateNested,
+  IsArray,
+  IsNotEmptyObject,
+  IsOptional,
+  ValidateNested,
 } from 'class-validator';
+import { NoDuplicatesByKey } from 'src/common/decorators';
 import { CreateClientCertificateDto } from 'src/modules/certificate/dto/create.client-certificate.dto';
 import { CreateCaCertificateDto } from 'src/modules/certificate/dto/create.ca-certificate.dto';
 import { UseCaCertificateDto } from 'src/modules/certificate/dto/use.ca-certificate.dto';
@@ -16,16 +23,35 @@ import { CreateBasicSshOptionsDto } from 'src/modules/ssh/dto/create.basic-ssh-o
 import { CreateCertSshOptionsDto } from 'src/modules/ssh/dto/create.cert-ssh-options.dto';
 import { sshOptionsTransformer } from 'src/modules/ssh/transformers/ssh-options.transformer';
 import { CloudDatabaseDetails } from 'src/modules/cloud/database/models/cloud-database-details';
+import { CreateTagDto } from 'src/modules/tag/dto';
 
 @ApiExtraModels(
-  CreateCaCertificateDto, UseCaCertificateDto,
-  CreateClientCertificateDto, UseClientCertificateDto,
-  CreateBasicSshOptionsDto, CreateCertSshOptionsDto,
+  CreateCaCertificateDto,
+  UseCaCertificateDto,
+  CreateClientCertificateDto,
+  UseClientCertificateDto,
+  CreateBasicSshOptionsDto,
+  CreateCertSshOptionsDto,
 )
 export class CreateDatabaseDto extends PickType(Database, [
-  'host', 'port', 'name', 'db', 'username', 'password', 'timeout', 'nameFromProvider', 'provider',
-  'tls', 'tlsServername', 'verifyServerCert', 'sentinelMaster', 'ssh', 'compressor', 'cloudDetails',
-  'forceStandalone', 'keyNameFormat',
+  'host',
+  'port',
+  'name',
+  'db',
+  'username',
+  'password',
+  'timeout',
+  'nameFromProvider',
+  'provider',
+  'tls',
+  'tlsServername',
+  'verifyServerCert',
+  'sentinelMaster',
+  'ssh',
+  'compressor',
+  'cloudDetails',
+  'forceStandalone',
+  'keyNameFormat',
 ] as const) {
   @ApiPropertyOptional({
     description: 'CA Certificate',
@@ -79,4 +105,18 @@ export class CreateDatabaseDto extends PickType(Database, [
   @Type(() => CloudDatabaseDetails)
   @ValidateNested()
   cloudDetails?: CloudDatabaseDetails;
+
+  @ApiPropertyOptional({
+    description: 'Tags associated with the database.',
+    type: CreateTagDto,
+    isArray: true,
+  })
+  @Expose()
+  @IsOptional()
+  @IsArray()
+  @NoDuplicatesByKey('key', {
+    message: 'Tags must not contain duplicates by key.',
+  })
+  @Type(() => CreateTagDto)
+  tags?: CreateTagDto[];
 }

@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiPopover, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiButton, EuiPopover, EuiText, EuiTitle } from '@elastic/eui'
 
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -40,10 +41,15 @@ const RestartChat = (props: Props) => {
       button={extendedButton}
     >
       <>
-        <EuiTitle size="xxs"><h5>Restart session</h5></EuiTitle>
-        <EuiSpacer size="s" />
-        <EuiText size="xs">This will delete the current message history and initiate a new session.</EuiText>
-        <EuiSpacer size="s" />
+        <EuiTitle size="xxs">
+          <h5>Restart session</h5>
+        </EuiTitle>
+        <Spacer size="s" />
+        <EuiText size="xs">
+          This will delete the current message history and initiate a new
+          session.
+        </EuiText>
+        <Spacer size="s" />
         <EuiButton
           fill
           size="s"

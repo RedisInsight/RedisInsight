@@ -1,181 +1,274 @@
 import { set, cloneDeep } from 'lodash'
 import React from 'react'
-import { EuiSpacer } from '@elastic/eui'
 import { AxiosError } from 'axios'
 import { parseCustomError, getRdiValidationMessage, Maybe } from 'uiSrc/utils'
 import { CustomError } from 'uiSrc/slices/interfaces'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
-const responseData = { response: { data: { }, status: 500 } }
+const responseData = { response: { data: {}, status: 500 } }
 
 const parseCustomErrorTests = [
-  [undefined, set(cloneDeep(responseData), 'response.data', { message: 'Something was wrong!' })],
+  [
+    undefined,
+    set(cloneDeep(responseData), 'response.data', {
+      message: 'Something was wrong!',
+    }),
+  ],
   ['', set(cloneDeep(responseData), 'response.data', { message: '' })],
   ['test', set(cloneDeep(responseData), 'response.data', { message: 'test' })],
-  [{ errorCode: 11_003 },
+  [
+    { errorCode: 11_003 },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Bad request',
       message: (
         <>
           Your request resulted in an error.
-          <EuiSpacer size="xs" />
+          <Spacer size="xs" />
           Try again later.
-          <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          <Spacer size="s" />
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
-      )
-    })],
-  [{ errorCode: 11_002 },
+      ),
+    }),
+  ],
+  [
+    { errorCode: 11_002 },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Access denied',
-      message: (
-        <>
-          You do not have permission to access Redis Cloud.
-        </>
-      )
-    })],
-  [{ errorCode: 11_000 },
+      message: <>You do not have permission to access Redis Cloud.</>,
+    }),
+  ],
+  [
+    { errorCode: 11_000 },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Server error',
       message: (
         <>
           Try restarting Redis Insight.
-          <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          <Spacer size="s" />
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
-      )
-    })],
-  [{ errorCode: 11_004 },
+      ),
+    }),
+  ],
+  [
+    { errorCode: 11_004 },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Resource was not found',
       message: (
         <>
           Resource requested could not be found.
-          <EuiSpacer size="xs" />
+          <Spacer size="xs" />
           Try again later.
-          <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          <Spacer size="s" />
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
-      )
-    })],
-  [{ errorCode: 11_001 },
+      ),
+    }),
+  ],
+  [
+    { errorCode: 11_001 },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Session expired',
       message: (
         <>
           Sign in again to continue working with Redis Cloud.
-          <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          <Spacer size="s" />
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
-      )
-    })],
-  [{ errorCode: 11_021 },
+      ),
+    }),
+  ],
+  [
+    { errorCode: 11_021 },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Session expired',
       message: (
         <>
           Sign in again to continue working with Redis Cloud.
-          <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          <Spacer size="s" />
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
-      )
-    })],
-  [{ errorCode: CustomErrorCodes.CloudOauthGithubEmailPermission },
+      ),
+    }),
+  ],
+  [
+    { errorCode: CustomErrorCodes.CloudOauthGithubEmailPermission },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Github Email Permission',
       message: (
         <>
-          Unable to get an email from the GitHub account. Make sure that it is available.
+          Unable to get an email from the GitHub account. Make sure that it is
+          available.
           <br />
         </>
-      )
-    })],
-  [{ errorCode: CustomErrorCodes.CloudOauthMisconfiguration },
+      ),
+    }),
+  ],
+  [
+    { errorCode: CustomErrorCodes.CloudOauthMisconfiguration },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Misconfiguration',
       message: (
         <>
-          Authorization server encountered a misconfiguration error and was unable to complete your request.
-          <EuiSpacer size="xs" />
+          Authorization server encountered a misconfiguration error and was
+          unable to complete your request.
+          <Spacer size="xs" />
           Try again later.
-          <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          <Spacer size="s" />
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
-      )
-    })],
-  [{ errorCode: CustomErrorCodes.CloudOauthUnknownAuthorizationRequest },
+      ),
+    }),
+  ],
+  [
+    { errorCode: CustomErrorCodes.CloudOauthUnknownAuthorizationRequest },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Error',
       message: (
         <>
           Unknown authorization request.
-          <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          <Spacer size="s" />
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
-      )
-    })],
-  [{ errorCode: CustomErrorCodes.CloudOauthUnexpectedError },
+      ),
+    }),
+  ],
+  [
+    { errorCode: CustomErrorCodes.CloudOauthUnexpectedError },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Error',
       message: (
         <>
           An unexpected error occurred.
-          <EuiSpacer size="s" />
-          If the issue persists, <a href={EXTERNAL_LINKS.githubIssues} target="_blank" rel="noreferrer">report the issue.</a>
+          <Spacer size="s" />
+          If the issue persists,{' '}
+          <a
+            href={EXTERNAL_LINKS.githubIssues}
+            target="_blank"
+            rel="noreferrer"
+          >
+            report the issue.
+          </a>
         </>
-      )
-    })],
-  [{ errorCode: CustomErrorCodes.CloudOauthSsoUnsupportedEmail },
+      ),
+    }),
+  ],
+  [
+    { errorCode: CustomErrorCodes.CloudOauthSsoUnsupportedEmail },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Invalid email',
-      message: (
-        <>
-          Invalid email.
-        </>
-      )
-    })],
-  [{ errorCode: 111_001 },
+      message: <>Invalid email.</>,
+    }),
+  ],
+  [
+    { errorCode: 111_001 },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Error',
       message: 'Something was wrong!',
-    })],
-  [{ errorCode: 11_108 },
+    }),
+  ],
+  [
+    { errorCode: 11_108 },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Database already exists',
       message: (
         <>
           You already have a free trial Redis Cloud database running.
-          <EuiSpacer size="s" />
-          Check out your<a href="https://cloud.redis.io/?utm_source=redisinsight&utm_medium=main&utm_campaign=main#/databases/" target="_blank" rel="noreferrer"> Cloud console </a>for connection details.
+          <Spacer size="s" />
+          Check out your
+          <a
+            href="https://cloud.redis.io/?utm_source=redisinsight&utm_medium=main&utm_campaign=main#/databases/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Cloud console
+          </a>
+          for connection details.
         </>
-      )
-    })],
-  [{ errorCode: 11_022 },
+      ),
+    }),
+  ],
+  [
+    { errorCode: 11_022 },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Invalid API key',
       message: (
         <>
           Your Redis Cloud authorization failed.
-          <EuiSpacer size="xs" />
+          <Spacer size="xs" />
           Remove the invalid API key from Redis Insight and try again.
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           Open the Settings page to manage Redis Cloud API keys.
         </>
       ),
       additionalInfo: {
         errorCode: 11022,
-        resourceId: undefined
-      }
-    })],
-  [{ errorCode: 11_401 },
+        resourceId: undefined,
+      },
+    }),
+  ],
+  [
+    { errorCode: 11_401 },
     set(cloneDeep(responseData), 'response.data', {
       title: 'Pipeline not deployed',
       message: 'Unfortunately we’ve found some errors in your pipeline.',
       additionalInfo: {
         errorCode: 11_401,
-      }
-    })],
+      },
+    }),
+  ],
 ]
 
 describe('parseCustomError', () => {
@@ -184,48 +277,65 @@ describe('parseCustomError', () => {
     (input, expected) => {
       const result = parseCustomError(input)
       expect(result).toEqual(expected)
-    }
+    },
   )
 })
 
-const getRdiValidationMessageTests: Array<[[Maybe<string>, Array<string | number>], string]> = [
+const getRdiValidationMessageTests: Array<
+  [[Maybe<string>, Array<string | number>], string]
+> = [
   [[undefined, []], ''],
   [['Custom message', []], 'Custom message'],
   [['Input is required', ['field']], 'Input is required'],
   [['Input required', ['body', 'targets']], 'Targets required'],
   [
-    ['Input should be \'postgresql\', \'mysql\', \'oracle\', \'cassandra\', \'sqlserver\' or \'redis\'', ['body', 'targets', 'type']],
-    'Type in targets should be \'postgresql\', \'mysql\', \'oracle\', \'cassandra\', \'sqlserver\' or \'redis\''
+    [
+      "Input should be 'postgresql', 'mysql', 'oracle', 'cassandra', 'sqlserver' or 'redis'",
+      ['body', 'targets', 'type'],
+    ],
+    "Type in targets should be 'postgresql', 'mysql', 'oracle', 'cassandra', 'sqlserver' or 'redis'",
   ],
   [
-    ['Input should be a valid integer, unable to parse string as an integer', ['body', 'targets', 'my-redis', 'connection']],
-    'Connection in targets/my-redis should be a valid integer, unable to parse string as an integer'
+    [
+      'Input should be a valid integer, unable to parse string as an integer',
+      ['body', 'targets', 'my-redis', 'connection'],
+    ],
+    'Connection in targets/my-redis should be a valid integer, unable to parse string as an integer',
   ],
   [
-    ['Input should be a valid integer, unable to parse string as an integer', ['body', 'targets', 'my-redis', 0]],
-    'My-redis[0] in targets should be a valid integer, unable to parse string as an integer'
+    [
+      'Input should be a valid integer, unable to parse string as an integer',
+      ['body', 'targets', 'my-redis', 0],
+    ],
+    'My-redis[0] in targets should be a valid integer, unable to parse string as an integer',
   ],
   [['Input required', ['body', 'targets', 0]], 'Targets[0] required'],
   [
-    ['Input should be a valid integer, unable to parse string as an integer', ['body', 'targets', 'my-redis', 2, 'db', 'password']],
-    'Password in targets/my-redis[2]/db should be a valid integer, unable to parse string as an integer'
+    [
+      'Input should be a valid integer, unable to parse string as an integer',
+      ['body', 'targets', 'my-redis', 2, 'db', 'password'],
+    ],
+    'Password in targets/my-redis[2]/db should be a valid integer, unable to parse string as an integer',
   ],
   [
-    ['Input should be a valid integer, unable to parse string as an integer', ['body', 'targets', 'my-redis', 2, 'password']],
-    'Password in targets/my-redis[2] should be a valid integer, unable to parse string as an integer'
+    [
+      'Input should be a valid integer, unable to parse string as an integer',
+      ['body', 'targets', 'my-redis', 2, 'password'],
+    ],
+    'Password in targets/my-redis[2] should be a valid integer, unable to parse string as an integer',
   ],
   [
-    ['Input should be a valid integer, unable to parse string as an integer', ['body', 'targets', 'my-redis', 2, 'password', 0]],
-    'Password[0] in targets/my-redis[2] should be a valid integer, unable to parse string as an integer'
+    [
+      'Input should be a valid integer, unable to parse string as an integer',
+      ['body', 'targets', 'my-redis', 2, 'password', 0],
+    ],
+    'Password[0] in targets/my-redis[2] should be a valid integer, unable to parse string as an integer',
   ],
 ]
 
 describe('getRdiValidationMessage', () => {
-  test.each(getRdiValidationMessageTests)(
-    '%j',
-    (input, expected) => {
-      const result = getRdiValidationMessage(...input)
-      expect(result).toEqual(expected)
-    }
-  )
+  test.each(getRdiValidationMessageTests)('%j', (input, expected) => {
+    const result = getRdiValidationMessage(...input)
+    expect(result).toEqual(expected)
+  })
 })

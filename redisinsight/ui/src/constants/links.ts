@@ -6,15 +6,20 @@ export const EXTERNAL_LINKS = {
   githubIssues: 'https://github.com/RedisInsight/RedisInsight/issues',
   releaseNotes: 'https://github.com/RedisInsight/RedisInsight/releases',
   userSurvey: 'https://www.surveymonkey.com/r/redisinsight',
-  recommendationFeedback: 'https://github.com/RedisInsight/RedisInsight/issues/new/choose',
+  recommendationFeedback:
+    'https://github.com/RedisInsight/RedisInsight/issues/new/choose',
   guidesRepo: 'https://github.com/RedisInsight/Tutorials',
-  redisStack: 'https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/',
+  redisStack:
+    'https://redis.io/docs/latest/operate/oss_and_stack/install/install-stack/',
   cloudConsole: 'https://cloud.redis.io/#/databases/',
   tryFree: 'https://redis.io/try-free',
   docker: 'https://redis.io/docs/install/install-stack/docker',
-  rdiQuickStart: 'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/quick-start-guide/',
-  rdiPipeline: 'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/data-pipelines/data-pipelines/',
-  rdiPipelineTransforms: 'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/data-pipelines/transform-examples/',
+  rdiQuickStart:
+    'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/quick-start-guide/',
+  rdiPipeline:
+    'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/data-pipelines/data-pipelines/',
+  rdiPipelineTransforms:
+    'https://redis.io/docs/latest/integrate/redis-data-integration/ingest/data-pipelines/transform-examples/',
   pubSub: 'https://redis.io/docs/latest/commands/psubscribe/',
 }
 
@@ -27,6 +32,7 @@ export const UTM_CAMPAINGS: Record<any, string> = {
   [OAuthSocialSource.AddDbForm]: 'add_db_form',
   PubSub: 'pub_sub',
   Main: 'main',
+  RedisJson: 'redisinsight_redisjson',
 }
 
 export const UTM_MEDIUMS = {

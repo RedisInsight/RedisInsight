@@ -15,6 +15,7 @@ import { SessionModule } from 'src/modules/session/session.module';
 import { ServerModule } from 'src/modules/server/server.module';
 import { ConstantsModule } from 'src/modules/constants/constants.module';
 import { DatabaseDiscoveryModule } from 'src/modules/database-discovery/database-discovery.module';
+import { TagModule } from 'src/modules/tag/tag.module';
 
 @Global()
 @Module({
@@ -22,6 +23,7 @@ import { DatabaseDiscoveryModule } from 'src/modules/database-discovery/database
     ConstantsModule.register(),
     EventEmitterModule.forRoot(),
     DatabaseDiscoveryModule,
+    TagModule,
     AnalyticsModule,
     EncryptionModule.register(),
     SettingsModule.register(),
@@ -40,6 +42,7 @@ import { DatabaseDiscoveryModule } from 'src/modules/database-discovery/database
     ConstantsModule,
     EncryptionModule,
     DatabaseDiscoveryModule,
+    TagModule,
     SettingsModule,
     CertificateModule,
     DatabaseModule,

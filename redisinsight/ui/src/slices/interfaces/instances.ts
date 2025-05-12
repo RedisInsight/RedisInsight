@@ -3,7 +3,10 @@ import { Maybe, Nullable } from 'uiSrc/utils'
 import { OAuthSocialAction } from 'uiSrc/slices/interfaces/cloud'
 import { GetHashFieldsResponse } from 'apiSrc/modules/browser/hash/dto'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
-import { GetRejsonRlResponseDto, SafeRejsonRlDataDto } from 'apiSrc/modules/browser/rejson-rl/dto'
+import {
+  GetRejsonRlResponseDto,
+  SafeRejsonRlDataDto,
+} from 'apiSrc/modules/browser/rejson-rl/dto'
 import {
   GetListElementsDto,
   GetListElementsResponse,
@@ -14,6 +17,7 @@ import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel-ma
 import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
 import { CreateSentinelDatabaseResponse } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.response'
 import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
+import { Tag } from './tag'
 
 export interface Instance extends Partial<DatabaseInstanceResponse> {
   host: string
@@ -52,6 +56,7 @@ export interface Instance extends Partial<DatabaseInstanceResponse> {
   visible?: boolean
   loading?: boolean
   isFreeDb?: boolean
+  tags?: Tag[]
 }
 
 export interface AdditionalRedisModule {
@@ -126,7 +131,7 @@ export interface InstanceRedisCloud {
   account: Nullable<RedisCloudAccount>
   host: string
   port: number
-  uid: number;
+  uid: number
   name: string
   id?: number
   dnsName: string
@@ -146,13 +151,13 @@ export interface InstanceRedisCloud {
   statusAdded?: AddRedisDatabaseStatus
   messageAdded?: string
   databaseDetails?: InstanceRedisCluster
-  free: boolean,
+  free: boolean
 }
 
 export interface IBulkOperationResult {
-  status: AddRedisDatabaseStatus,
-  message: string,
-  error?: any,
+  status: AddRedisDatabaseStatus
+  message: string
+  error?: any
 }
 
 export enum AddRedisDatabaseStatus {
@@ -194,7 +199,10 @@ export const COMMAND_MODULES = {
   [RedisDefaultModules.Bloom]: [RedisDefaultModules.Bloom],
 }
 
-const RediSearchModulesText = [...REDISEARCH_MODULES].reduce((prev, next) => ({ ...prev, [next]: 'Redis Query Engine' }), {})
+const RediSearchModulesText = [...REDISEARCH_MODULES].reduce(
+  (prev, next) => ({ ...prev, [next]: 'Redis Query Engine' }),
+  {},
+)
 
 // Enums don't allow to use dynamic key
 export const DATABASE_LIST_MODULES_TEXT = Object.freeze({
@@ -341,6 +349,7 @@ export interface InitialStateInstances {
     error: string
     data: Nullable<ImportDatabasesData>
   }
+  shownColumns: DatabaseListColumn[]
 }
 
 export interface ErrorImportResult {
@@ -462,26 +471,32 @@ export interface ModifiedSentinelMaster extends CreateSentinelDatabaseDto {
 
 export interface ModifiedGetListElementsResponse
   extends GetListElementsDto,
-  GetListElementsResponse {
-  elements: { index: number, element: RedisResponseBuffer }[]
-  key?: RedisString;
-  searchedIndex: Nullable<number>;
+    GetListElementsResponse {
+  elements: { index: number; element: RedisResponseBuffer }[]
+  key?: RedisString
+  searchedIndex: Nullable<number>
 }
 
 export interface InitialStateSet {
-  loading: boolean;
-  error: string;
-  data: ModifiedGetSetMembersResponse;
+  loading: boolean
+  error: string
+  data: ModifiedGetSetMembersResponse
 }
 
 export interface GetRejsonRlResponse extends GetRejsonRlResponseDto {
   data: Maybe<SafeRejsonRlDataDto[] | string | number | boolean | null>
 }
 
+export enum EditorType {
+  Default = 'default',
+  Text = 'text',
+}
+
 export interface InitialStateRejson {
   loading: boolean
   error: Nullable<string>
   data: GetRejsonRlResponse
+  editorType: EditorType
 }
 
 export interface ICredentialsRedisCluster {

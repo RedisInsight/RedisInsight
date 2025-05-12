@@ -48,7 +48,10 @@ export const REDIS_MODULES_COMMANDS = new Map([
   [AdditionalRedisModuleName.RedisAI, ['ai.info']],
   [AdditionalRedisModuleName.RedisGraph, ['graph.delete']],
   [AdditionalRedisModuleName.RedisGears, ['rg.pyexecute']],
-  [AdditionalRedisModuleName.RedisBloom, ['bf.info', 'cf.info', 'cms.info', 'topk.info']],
+  [
+    AdditionalRedisModuleName.RedisBloom,
+    ['bf.info', 'cf.info', 'cms.info', 'topk.info'],
+  ],
   [AdditionalRedisModuleName.RedisJSON, ['json.get']],
   [AdditionalRedisModuleName.RediSearch, ['ft.info']],
   [AdditionalRedisModuleName.RedisTimeSeries, ['ts.mrange', 'ts.info']],

@@ -1,7 +1,14 @@
 import React from 'react'
 import { mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { render, screen, fireEvent, mockedStore, cleanup, act } from 'uiSrc/utils/test-utils'
+import {
+  render,
+  screen,
+  fireEvent,
+  mockedStore,
+  cleanup,
+  act,
+} from 'uiSrc/utils/test-utils'
 
 import { defaultInstanceChanging } from 'uiSrc/slices/instances/instances'
 import { AddDbType } from 'uiSrc/pages/home/constants'
@@ -35,10 +42,9 @@ describe('AddDatabaseScreen', () => {
     render(<AddDatabaseScreen {...mockedProps} />)
 
     await act(async () => {
-      fireEvent.change(
-        screen.getByTestId('connection-url'),
-        { target: { value: 'q' } }
-      )
+      fireEvent.change(screen.getByTestId('connection-url'), {
+        target: { value: 'q' },
+      })
     })
 
     expect(screen.getByTestId('btn-submit')).toBeDisabled()
@@ -49,10 +55,9 @@ describe('AddDatabaseScreen', () => {
     render(<AddDatabaseScreen {...mockedProps} />)
 
     await act(async () => {
-      fireEvent.change(
-        screen.getByTestId('connection-url'),
-        { target: { value: 'redis://localhost:6322' } }
-      )
+      fireEvent.change(screen.getByTestId('connection-url'), {
+        target: { value: 'redis://localhost:6322' },
+      })
     })
 
     expect(screen.getByTestId('btn-submit')).not.toBeDisabled()
@@ -61,42 +66,51 @@ describe('AddDatabaseScreen', () => {
 
   it('should call proper actions after click manual settings', async () => {
     const onSelectOptionMock = jest.fn()
-    render(<AddDatabaseScreen {...mockedProps} onSelectOption={onSelectOptionMock} />)
+    render(
+      <AddDatabaseScreen
+        {...mockedProps}
+        onSelectOption={onSelectOptionMock}
+      />,
+    )
 
     await act(async () => {
-      fireEvent.change(
-        screen.getByTestId('connection-url'),
-        { target: { value: 'redis://localhost:6322' } }
-      )
+      fireEvent.change(screen.getByTestId('connection-url'), {
+        target: { value: 'redis://localhost:6322' },
+      })
     })
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('btn-connection-settings'))
     })
 
-    expect(onSelectOptionMock).toBeCalledWith(
-      AddDbType.manual,
-      {
-        db: undefined,
-        host: 'localhost',
-        name: 'localhost:6322',
-        password: undefined,
-        port: 6322,
-        timeout: 30000,
-        tls: false,
-        username: 'default'
-      }
-    )
+    expect(onSelectOptionMock).toBeCalledWith(AddDbType.manual, {
+      db: undefined,
+      host: 'localhost',
+      name: 'localhost:6322',
+      password: undefined,
+      port: 6322,
+      timeout: 30000,
+      tls: false,
+      username: 'default',
+    })
   })
 
   it('should call proper actions after click connectivity option', async () => {
     const onSelectOptionMock = jest.fn()
-    render(<AddDatabaseScreen {...mockedProps} onSelectOption={onSelectOptionMock} />)
+    render(
+      <AddDatabaseScreen
+        {...mockedProps}
+        onSelectOption={onSelectOptionMock}
+      />,
+    )
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('option-btn-sentinel'))
     })
 
-    expect(onSelectOptionMock).toBeCalledWith(AddDbType.sentinel, expect.any(Object))
+    expect(onSelectOptionMock).toBeCalledWith(
+      AddDbType.sentinel,
+      expect.any(Object),
+    )
   })
 })

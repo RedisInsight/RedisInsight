@@ -112,17 +112,21 @@ const getClient = async (
 
   // check for sentinel
   try {
-    const masterGroups = await standaloneClient.call('sentinel', ['masters']) as [];
+    const masterGroups = (await standaloneClient.call('sentinel', [
+      'masters',
+    ])) as [];
     if (!masterGroups?.length) {
-      throw new Error('Invalid sentinel configuration')
+      throw new Error('Invalid sentinel configuration');
     }
     info.type = constants.SENTINEL;
     const sentinelOptions = {
       ...connectionOptions,
-      sentinels: [{
-        host: constants.TEST_REDIS_HOST,
-        port: constants.TEST_REDIS_PORT,
-      }],
+      sentinels: [
+        {
+          host: constants.TEST_REDIS_HOST,
+          port: constants.TEST_REDIS_PORT,
+        },
+      ],
       name: constants.TEST_SENTINEL_MASTER_GROUP,
       sentinelUsername: constants.TEST_REDIS_USER,
       sentinelPassword: constants.TEST_REDIS_PASSWORD,
@@ -142,7 +146,7 @@ const getClient = async (
 };
 
 const initTunnel = async () => {
-  const server = await new Promise((resolve, reject) => {
+  const server = (await new Promise((resolve, reject) => {
     try {
       const server = createServer();
 
@@ -158,9 +162,9 @@ const initTunnel = async () => {
     } catch (e) {
       reject(e);
     }
-  }) as Server;
+  })) as Server;
 
-  const client = await new Promise((resolve, reject) => {
+  const client = (await new Promise((resolve, reject) => {
     const conn = new Client();
     conn.on('ready', () => resolve(conn));
     conn.on('error', (e) => {
@@ -172,7 +176,7 @@ const initTunnel = async () => {
       username: constants.TEST_SSH_USER,
       password: constants.TEST_SSH_PASSWORD || undefined,
     });
-  }) as Client;
+  })) as Client;
 
   server.on('connection', (connection) => {
     client.forwardOut(
@@ -194,7 +198,7 @@ const initTunnel = async () => {
       client.emit('error', e);
     });
   });
-}
+};
 
 let rte;
 /**
@@ -240,14 +244,17 @@ export const initRTE = async () => {
 
   const info = parseReplToObject(await rte.client.info());
 
-  rte.env =  {
+  rte.env = {
     name: constants.TEST_RUN_NAME,
     version: info['redis_version'],
     mode: info['redis_mode'],
     type: rte.info.type,
     onPremise: constants.TEST_RTE_ON_PREMISE,
     // ACL commands are blocked in the Redis Enterprise and Cloud
-    acl: !constants.TEST_CLOUD_RTE && !constants.TEST_RE_USER && semverCompare(info['redis_version'], '6') >= 0,
+    acl:
+      !constants.TEST_CLOUD_RTE &&
+      !constants.TEST_RE_USER &&
+      semverCompare(info['redis_version'], '6') >= 0,
     pass: !!constants.TEST_REDIS_PASSWORD,
     tls: !!constants.TEST_REDIS_TLS_CA,
     tlsAuth: !!constants.TEST_USER_TLS_KEY && !!constants.TEST_USER_TLS_CERT,
@@ -274,8 +281,14 @@ export const initRTE = async () => {
     fs.writeFileSync(constants.TEST_CA_CERT_PATH, constants.TEST_REDIS_TLS_CA);
   }
   if (rte.env.tlsAuth) {
-    fs.writeFileSync(constants.TEST_CLIENT_CERT_PATH, constants.TEST_USER_TLS_CERT);
-    fs.writeFileSync(constants.TEST_CLIENT_KEY_PATH, constants.TEST_USER_TLS_KEY);
+    fs.writeFileSync(
+      constants.TEST_CLIENT_CERT_PATH,
+      constants.TEST_USER_TLS_CERT,
+    );
+    fs.writeFileSync(
+      constants.TEST_CLIENT_KEY_PATH,
+      constants.TEST_USER_TLS_KEY,
+    );
   }
 
   return rte;
@@ -284,10 +297,9 @@ export const initRTE = async () => {
 const determineModulesInstalled = async (client) => {
   const modules = {};
   try {
-    (await client.call('module', 'list'))
-      .map(module => {
-        modules[module[1].toLowerCase()] = { version: module[3] || -1 };
-      });
+    (await client.call('module', 'list')).map((module) => {
+      modules[module[1].toLowerCase()] = { version: module[3] || -1 };
+    });
   } catch (e) {
     console.error('Error when try to indicate modules installed: ', e);
   }

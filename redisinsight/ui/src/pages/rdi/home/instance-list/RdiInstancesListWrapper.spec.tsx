@@ -3,12 +3,24 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 
-import ItemList, { Props as ItemListProps } from 'uiSrc/components/item-list/ItemList'
+import ItemList, {
+  Props as ItemListProps,
+} from 'uiSrc/components/item-list/ItemList'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 
-import { resetConnectedInstance, setDefaultInstance } from 'uiSrc/slices/rdi/instances'
+import {
+  resetConnectedInstance,
+  setDefaultInstance,
+} from 'uiSrc/slices/rdi/instances'
 import RdiInstancesListWrapper, { Props } from './RdiInstancesListWrapper'
 
 const mockedProps = mock<Props>()
@@ -16,16 +28,16 @@ const mockedProps = mock<Props>()
 jest.mock('uiSrc/components/item-list/ItemList', () => ({
   __esModule: true,
   namedExport: jest.fn(),
-  default: jest.fn()
+  default: jest.fn(),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
-  sendEventTelemetry: jest.fn()
+  sendEventTelemetry: jest.fn(),
 }))
 
 jest.mock('file-saver', () => ({
-  saveAs: jest.fn()
+  saveAs: jest.fn(),
 }))
 
 const mockInstances: RdiInstance[] = [
@@ -36,7 +48,7 @@ const mockInstances: RdiInstance[] = [
     lastConnection: new Date(),
     version: '1.2',
     error: '',
-    loading: false
+    loading: false,
   },
   {
     id: '2',
@@ -45,8 +57,8 @@ const mockInstances: RdiInstance[] = [
     lastConnection: new Date(),
     version: '1.3',
     error: '',
-    loading: false
-  }
+    loading: false,
+  },
 ]
 
 jest.mock('uiSrc/slices/rdi/instances', () => ({
@@ -54,8 +66,8 @@ jest.mock('uiSrc/slices/rdi/instances', () => ({
   instancesSelector: jest.fn().mockReturnValue({
     loading: false,
     error: '',
-    data: mockInstances
-  })
+    data: mockInstances,
+  }),
 }))
 
 const mockRdiInstancesList = (props: ItemListProps<RdiInstance>) => {
@@ -65,7 +77,11 @@ const mockRdiInstancesList = (props: ItemListProps<RdiInstance>) => {
 
   return (
     <div>
-      <button type="button" onClick={() => props.onDelete([mockInstances[1]])} data-testid="onDelete-btn">
+      <button
+        type="button"
+        onClick={() => props.onDelete([mockInstances[1]])}
+        data-testid="onDelete-btn"
+      >
         onDelete
       </button>
       <button
@@ -74,9 +90,10 @@ const mockRdiInstancesList = (props: ItemListProps<RdiInstance>) => {
           props.onTableChange({
             sort: {
               field: 'name',
-              direction: 'asc'
-            }
-          })}
+              direction: 'asc',
+            },
+          })
+        }
         data-testid="onTableChange-btn"
       >
         onTableChange
@@ -104,16 +121,20 @@ beforeEach(() => {
 
 describe('RdiInstancesListWrapper', () => {
   beforeAll(() => {
-    (ItemList as jest.Mock).mockImplementation(mockRdiInstancesList)
+    ;(ItemList as jest.Mock).mockImplementation(mockRdiInstancesList)
   })
 
   it('should render', () => {
-    expect(render(<RdiInstancesListWrapper {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<RdiInstancesListWrapper {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 
   it('should call proper telemetry on delete multiple instances', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
     render(<RdiInstancesListWrapper {...instance(mockedProps)} />)
 
     await act(() => {
@@ -123,10 +144,10 @@ describe('RdiInstancesListWrapper', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_INSTANCE_MULTIPLE_DELETE_CLICKED,
       eventData: {
-        ids: ['2']
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        ids: ['2'],
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper action on rdi alias click', async () => {
@@ -136,16 +157,16 @@ describe('RdiInstancesListWrapper', () => {
       fireEvent.click(screen.getByTestId('rdi-alias-1'))
     })
 
-    const expectedActions = [
-      setDefaultInstance(),
-    ]
+    const expectedActions = [setDefaultInstance()]
 
     expect(store.getActions()).toEqual(expectedActions)
   })
 
   it('should call proper telemetry on copy url', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
     render(<RdiInstancesListWrapper {...instance(mockedProps)} />)
 
     await act(() => {
@@ -156,15 +177,17 @@ describe('RdiInstancesListWrapper', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_INSTANCE_URL_COPIED,
       eventData: {
-        id: '1'
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        id: '1',
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry on delete instance', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
     render(<RdiInstancesListWrapper {...instance(mockedProps)} />)
 
     await act(() => {
@@ -174,16 +197,23 @@ describe('RdiInstancesListWrapper', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_INSTANCE_SINGLE_DELETE_CLICKED,
       eventData: {
-        id: '2'
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        id: '2',
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry on list sort', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
-    render(<RdiInstancesListWrapper {...instance(mockedProps)} onEditInstance={() => {}} />)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    render(
+      <RdiInstancesListWrapper
+        {...instance(mockedProps)}
+        onEditInstance={() => {}}
+      />,
+    )
 
     await act(() => {
       fireEvent.click(screen.getByTestId('onTableChange-btn'))
@@ -191,14 +221,16 @@ describe('RdiInstancesListWrapper', () => {
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_INSTANCE_LIST_SORTED,
-      eventData: { field: 'name', direction: 'asc' }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      eventData: { field: 'name', direction: 'asc' },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry on instance click', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
     render(<RdiInstancesListWrapper {...instance(mockedProps)} />)
 
     await act(() => {
@@ -209,8 +241,8 @@ describe('RdiInstancesListWrapper', () => {
       event: TelemetryEvent.OPEN_RDI_CLICKED,
       eventData: {
         rdiId: '1',
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

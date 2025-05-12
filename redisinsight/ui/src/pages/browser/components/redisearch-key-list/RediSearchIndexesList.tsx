@@ -1,7 +1,6 @@
 import {
   EuiButtonEmpty,
   EuiButtonIcon,
-  EuiOutsideClickDetector,
   EuiSuperSelect,
   EuiSuperSelectOption,
   EuiToolTip,
@@ -20,13 +19,26 @@ import {
 } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { changeSearchMode, fetchKeys, keysSelector } from 'uiSrc/slices/browser/keys'
+import {
+  changeSearchMode,
+  fetchKeys,
+  keysSelector,
+} from 'uiSrc/slices/browser/keys'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { bufferToString, formatLongName, isRedisearchAvailable, Nullable } from 'uiSrc/utils'
-import { SCAN_COUNT_DEFAULT, SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import {
+  bufferToString,
+  formatLongName,
+  isRedisearchAvailable,
+  Nullable,
+} from 'uiSrc/utils'
+import {
+  SCAN_COUNT_DEFAULT,
+  SCAN_TREE_COUNT_DEFAULT,
+} from 'uiSrc/constants/api'
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import styles from './styles.module.scss'
 
 export const CREATE = 'create'
@@ -41,10 +53,16 @@ const RediSearchIndexesList = (props: Props) => {
   const { viewType, searchMode } = useSelector(keysSelector)
   const { selectedIndex = '' } = useSelector(redisearchSelector)
   const { data: list = [], loading } = useSelector(redisearchListSelector)
-  const { id: instanceId, modules, host: instanceHost } = useSelector(connectedInstanceSelector)
+  const {
+    id: instanceId,
+    modules,
+    host: instanceHost,
+  } = useSelector(connectedInstanceSelector)
 
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(false)
-  const [index, setIndex] = useState<Nullable<string>>(JSON.stringify(selectedIndex))
+  const [index, setIndex] = useState<Nullable<string>>(
+    JSON.stringify(selectedIndex),
+  )
 
   const dispatch = useDispatch()
 
@@ -57,7 +75,10 @@ const RediSearchIndexesList = (props: Props) => {
     } else {
       dispatch(changeSearchMode(SearchMode.Pattern))
 
-      localStorageService.set(BrowserStorageItem.browserSearchMode, SearchMode.Pattern)
+      localStorageService.set(
+        BrowserStorageItem.browserSearchMode,
+        SearchMode.Pattern,
+      )
     }
   }, [instanceHost, modules])
 
@@ -65,30 +86,32 @@ const RediSearchIndexesList = (props: Props) => {
     setIndex(JSON.stringify(selectedIndex || ''))
   }, [selectedIndex])
 
-  useEffect(() =>
-    () => {
+  useEffect(
+    () => () => {
       redisearchController?.abort()
-    }, [])
-
-  const options: EuiSuperSelectOption<string>[] = list.map(
-    (index) => {
-      const value = formatLongName(bufferToString(index))
-
-      return {
-        value: JSON.stringify(index),
-        inputDisplay: value,
-        dropdownDisplay: value,
-        'data-test-subj': `mode-option-type-${value}`,
-      }
-    }
+    },
+    [],
   )
+
+  const options: EuiSuperSelectOption<string>[] = list.map((index) => {
+    const value = formatLongName(bufferToString(index))
+
+    return {
+      value: JSON.stringify(index),
+      inputDisplay: value,
+      dropdownDisplay: value,
+      'data-test-subj': `mode-option-type-${value}`,
+    }
+  })
 
   options.unshift({
     value: JSON.stringify(CREATE),
     inputDisplay: CREATE,
     dropdownDisplay: (
-      <div className={styles.createIndexBtn} data-testid="create-index-btn">Create Index</div>
-    )
+      <div className={styles.createIndexBtn} data-testid="create-index-btn">
+        Create Index
+      </div>
+    ),
   })
 
   const onChangeIndex = (initValue: string) => {
@@ -103,7 +126,7 @@ const RediSearchIndexesList = (props: Props) => {
         eventData: {
           databaseId: instanceId,
           view: viewType,
-        }
+        },
       })
 
       return
@@ -113,11 +136,16 @@ const RediSearchIndexesList = (props: Props) => {
     setIsSelectOpen(false)
 
     dispatch(setSelectedIndex(value))
-    dispatch(fetchKeys({
-      searchMode,
-      cursor: '0',
-      count: viewType === KeyViewType.Browser ? SCAN_COUNT_DEFAULT : SCAN_TREE_COUNT_DEFAULT,
-    }))
+    dispatch(
+      fetchKeys({
+        searchMode,
+        cursor: '0',
+        count:
+          viewType === KeyViewType.Browser
+            ? SCAN_COUNT_DEFAULT
+            : SCAN_TREE_COUNT_DEFAULT,
+      }),
+    )
 
     sendEventTelemetry({
       event: TelemetryEvent.SEARCH_INDEX_CHANGED,
@@ -125,7 +153,7 @@ const RediSearchIndexesList = (props: Props) => {
         databaseId: instanceId,
         totalNumberOfIndexes: list.length,
         view: viewType,
-      }
+      },
     })
   }
 
@@ -135,9 +163,7 @@ const RediSearchIndexesList = (props: Props) => {
   }
 
   return (
-    <EuiOutsideClickDetector
-      onOutsideClick={() => setIsSelectOpen(false)}
-    >
+    <OutsideClickDetector onOutsideClick={() => setIsSelectOpen(false)}>
       <div className={cx(styles.container)}>
         <div className={styles.select}>
           <EuiSuperSelect
@@ -162,9 +188,7 @@ const RediSearchIndexesList = (props: Props) => {
           )}
         </div>
         <div className={styles.refresh}>
-          <EuiToolTip
-            content="Refresh Indexes"
-          >
+          <EuiToolTip content="Refresh Indexes">
             <EuiButtonIcon
               size="s"
               iconType="refresh"
@@ -177,7 +201,7 @@ const RediSearchIndexesList = (props: Props) => {
           </EuiToolTip>
         </div>
       </div>
-    </EuiOutsideClickDetector>
+    </OutsideClickDetector>
   )
 }
 

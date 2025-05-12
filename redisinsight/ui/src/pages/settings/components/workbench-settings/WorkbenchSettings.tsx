@@ -1,4 +1,4 @@
-import { EuiFormRow, EuiLink, EuiSpacer, EuiSwitch, EuiTitle } from '@elastic/eui'
+import { EuiFormRow, EuiLink, EuiSwitch, EuiTitle } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,15 +7,18 @@ import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import styles from 'uiSrc/pages/settings/styles.module.scss'
 import {
   setWorkbenchCleanUp,
-  updateUserConfigSettingsAction, userSettingsConfigSelector,
-  userSettingsWBSelector
+  updateUserConfigSettingsAction,
+  userSettingsConfigSelector,
+  userSettingsWBSelector,
 } from 'uiSrc/slices/user/user-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { validateNumber } from 'uiSrc/utils'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
 const WorkbenchSettings = () => {
   const { cleanup } = useSelector(userSettingsWBSelector)
-  const { batchSize = PIPELINE_COUNT_DEFAULT } = useSelector(userSettingsConfigSelector) ?? {}
+  const { batchSize = PIPELINE_COUNT_DEFAULT } =
+    useSelector(userSettingsConfigSelector) ?? {}
 
   const dispatch = useDispatch()
 
@@ -26,16 +29,12 @@ const WorkbenchSettings = () => {
       eventData: {
         currentValue: !val,
         newValue: val,
-      }
+      },
     })
   }
 
   const handleApplyPipelineCountChanges = (value: string) => {
-    dispatch(
-      updateUserConfigSettingsAction(
-        { batchSize: toNumber(value) },
-      )
-    )
+    dispatch(updateUserConfigSettingsAction({ batchSize: toNumber(value) }))
   }
 
   return (
@@ -43,7 +42,7 @@ const WorkbenchSettings = () => {
       <EuiTitle size="xs">
         <h4>Editor Cleanup</h4>
       </EuiTitle>
-      <EuiSpacer size="m" />
+      <Spacer size="m" />
       <EuiFormRow>
         <EuiSwitch
           label="Clear the Editor after running commands"
@@ -53,7 +52,7 @@ const WorkbenchSettings = () => {
           data-testid="switch-workbench-cleanup"
         />
       </EuiFormRow>
-      <EuiSpacer size="xl" />
+      <Spacer size="xl" />
       <SettingItem
         initValue={batchSize.toString()}
         onApply={handleApplyPipelineCountChanges}
@@ -62,7 +61,7 @@ const WorkbenchSettings = () => {
         testid="pipeline-bunch"
         placeholder={`${PIPELINE_COUNT_DEFAULT}`}
         label="Commands in pipeline:"
-        summary={(
+        summary={
           <>
             {'Sets the size of a command batch for the '}
             <EuiLink
@@ -76,7 +75,7 @@ const WorkbenchSettings = () => {
             </EuiLink>
             {' mode in Workbench. 0 or 1 pipelines every command.'}
           </>
-        )}
+        }
       />
     </>
   )

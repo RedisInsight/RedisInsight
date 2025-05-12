@@ -1,14 +1,17 @@
 import React, { useState } from 'react'
-import { EuiButton, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiButton, EuiText, EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { find } from 'lodash'
 import { OAuthAgreement } from 'uiSrc/components/oauth/shared'
 import {
   oauthCloudUserSelector,
-  setOAuthCloudSource
+  setOAuthCloudSource,
 } from 'uiSrc/slices/oauth/cloud'
-import { fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import {
+  fetchSubscriptionsRedisCloud,
+  setSSOFlow,
+} from 'uiSrc/slices/instances/cloud'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
@@ -20,6 +23,7 @@ import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -40,38 +44,40 @@ const OAuthAutodiscovery = (props: Props) => {
   const handleClickDiscover = () => {
     dispatch(setSSOFlow(OAuthSocialAction.Import))
     setIsDiscoverDisabled(true)
-    dispatch(fetchSubscriptionsRedisCloud(
-      null,
-      true,
-      () => {
-        history.push(Pages.redisCloudSubscriptions)
-        setIsDiscoverDisabled(false)
-      },
-      () => setIsDiscoverDisabled(false)
-    ))
+    dispatch(
+      fetchSubscriptionsRedisCloud(
+        null,
+        true,
+        () => {
+          history.push(Pages.redisCloudSubscriptions)
+          setIsDiscoverDisabled(false)
+        },
+        () => setIsDiscoverDisabled(false),
+      ),
+    )
 
     sendEventTelemetry({
       event: TelemetryEvent.CLOUD_IMPORT_DATABASES_SUBMITTED,
       eventData: {
-        source
-      }
+        source,
+      },
     })
   }
 
   if (data) {
     const { accounts, currentAccountId } = data
-    const currentAccountName = find(accounts, ({ id }) => id === currentAccountId)
+    const currentAccountName = find(
+      accounts,
+      ({ id }) => id === currentAccountId,
+    )
 
     return (
-      <div
-        className={styles.container}
-        data-testid="oauth-container-import"
-      >
+      <div className={styles.container} data-testid="oauth-container-import">
         <EuiText className={styles.text} color="subdued">
-          Use
-          {' '}
-          <strong>{currentAccountName?.name} #{currentAccountId}</strong>
-          {' '}
+          Use{' '}
+          <strong>
+            {currentAccountName?.name} #{currentAccountId}
+          </strong>{' '}
           account to auto-discover subscriptions and add your databases.
         </EuiText>
         <EuiButton
@@ -96,14 +102,17 @@ const OAuthAutodiscovery = (props: Props) => {
       eventData: {
         accountOption,
         action: OAuthSocialAction.Import,
-        source
-      }
+        source,
+      },
     })
   }
 
   const CreateFreeDb = () => (
     <div className={styles.createDbSection}>
-      <div className={styles.createDbTitle}><CloudIcon /><span>Start FREE with Redis Cloud</span></div>
+      <div className={styles.createDbTitle}>
+        <CloudIcon />
+        <span>Start FREE with Redis Cloud</span>
+      </div>
       <OAuthSsoHandlerDialog>
         {(ssoCloudHandlerClick) => (
           <EuiButton
@@ -115,7 +124,7 @@ const OAuthAutodiscovery = (props: Props) => {
             onClick={(e: React.MouseEvent) => {
               ssoCloudHandlerClick(e, {
                 source: OAuthSocialSource.DiscoveryForm,
-                action: OAuthSocialAction.Create
+                action: OAuthSocialAction.Create,
               })
               onClose?.()
             }}
@@ -128,10 +137,7 @@ const OAuthAutodiscovery = (props: Props) => {
   )
 
   return (
-    <div
-      className={styles.container}
-      data-testid="oauth-container-import"
-    >
+    <div className={styles.container} data-testid="oauth-container-import">
       <OAuthForm
         inline={inline}
         className={styles.buttonsContainer}
@@ -141,17 +147,19 @@ const OAuthAutodiscovery = (props: Props) => {
         {(form: React.ReactNode) => (
           <>
             <EuiText className={styles.text} color="subdued">
-              Discover subscriptions and add your databases.
-              A new Redis Cloud account will be created for you if you don’t have one.
+              Discover subscriptions and add your databases. A new Redis Cloud
+              account will be created for you if you don’t have one.
             </EuiText>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             <CreateFreeDb />
-            <EuiSpacer size="xl" />
+            <Spacer size="xl" />
             <EuiText>Get started with</EuiText>
-            <EuiTitle className={styles.title} size="l"><h3>Redis Cloud account</h3></EuiTitle>
-            <EuiSpacer size="xl" />
+            <EuiTitle className={styles.title} size="l">
+              <h3>Redis Cloud account</h3>
+            </EuiTitle>
+            <Spacer size="xl" />
             {form}
-            <EuiSpacer size="xxl" />
+            <Spacer size="xxl" />
             <div className={styles.containerAgreement}>
               <OAuthAgreement size="s" />
             </div>

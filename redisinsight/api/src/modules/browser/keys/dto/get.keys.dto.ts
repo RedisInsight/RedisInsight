@@ -1,7 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
-  IsBoolean, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min, Max,
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Min,
+  Max,
 } from 'class-validator';
 import config, { Config } from 'src/utils/config';
 import { RedisDataType } from './key.dto';
@@ -12,8 +19,8 @@ const { scanThreshold, scanThresholdMax } = scanConfig;
 export class GetKeysDto {
   @ApiProperty({
     description:
-      'Iteration cursor. '
-      + 'An iteration starts when the cursor is set to 0, and terminates when the cursor returned by the server is 0.',
+      'Iteration cursor. ' +
+      'An iteration starts when the cursor is set to 0, and terminates when the cursor returned by the server is 0.',
     type: String,
     default: '0',
   })
@@ -63,7 +70,7 @@ export class GetKeysDto {
   })
   @IsBoolean()
   @IsOptional()
-  @Transform((value) => value === true || value === 'true')
+  @Transform(({ value }) => value === true || value === 'true')
   keysInfo?: boolean = true;
 
   @ApiPropertyOptional({

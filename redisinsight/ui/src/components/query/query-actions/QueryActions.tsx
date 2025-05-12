@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 
 import cx from 'classnames'
-import { EuiButton, EuiSpacer, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiText, EuiToolTip } from '@elastic/eui'
 import { ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
 import { KEYBOARD_SHORTCUTS } from 'uiSrc/constants'
 import { KeyboardShortcut } from 'uiSrc/components'
@@ -11,6 +11,7 @@ import GroupModeIcon from 'uiSrc/assets/img/icons/group_mode.svg?react'
 import RawModeIcon from 'uiSrc/assets/img/icons/raw_mode.svg?react'
 
 import Divider from 'uiSrc/components/divider/Divider'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -37,13 +38,10 @@ const QueryActions = (props: Props) => {
 
   const KeyBoardTooltipContent = KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
     <>
-      <EuiText
-        className={styles.tooltipText}
-        size="s"
-      >
+      <EuiText className={styles.tooltipText} size="s">
         {KEYBOARD_SHORTCUTS.workbench.runQuery?.label}:
       </EuiText>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <KeyboardShortcut
         badgeTextClassName={styles.tooltipText}
         separator={KEYBOARD_SHORTCUTS?._separator}
@@ -53,7 +51,9 @@ const QueryActions = (props: Props) => {
   )
 
   return (
-    <div className={cx(styles.actions, { [styles.disabledActions]: isDisabled })}>
+    <div
+      className={cx(styles.actions, { [styles.disabledActions]: isDisabled })}
+    >
       {onChangeMode && (
         <EuiToolTip
           position="left"
@@ -67,7 +67,9 @@ const QueryActions = (props: Props) => {
             onClick={() => onChangeMode()}
             iconType={RawModeIcon}
             disabled={isLoading}
-            className={cx(styles.btn, styles.textBtn, { [styles.activeBtn]: activeMode === RunQueryMode.Raw })}
+            className={cx(styles.btn, styles.textBtn, {
+              [styles.activeBtn]: activeMode === RunQueryMode.Raw,
+            })}
             data-testid="btn-change-mode"
           >
             Raw mode
@@ -77,13 +79,14 @@ const QueryActions = (props: Props) => {
       {onChangeGroupMode && (
         <EuiToolTip
           position="left"
-          content={(
+          content={
             <>
               Groups the command results into a single window.
               <br />
-              When grouped, the results can be visualized only in the text format.
+              When grouped, the results can be visualized only in the text
+              format.
             </>
-        )}
+          }
           data-testid="group-results-tooltip"
         >
           <EuiButton
@@ -93,18 +96,28 @@ const QueryActions = (props: Props) => {
             onClick={() => onChangeGroupMode()}
             disabled={isLoading}
             iconType={GroupModeIcon}
-            className={cx(styles.btn, styles.textBtn, { [styles.activeBtn]: isGroupMode(resultsMode) })}
+            className={cx(styles.btn, styles.textBtn, {
+              [styles.activeBtn]: isGroupMode(resultsMode),
+            })}
             data-testid="btn-change-group-mode"
           >
             Group results
           </EuiButton>
         </EuiToolTip>
       )}
-      <Divider orientation="vertical" colorVariable="separatorColor" className={styles.divider} />
+      <Divider
+        orientation="vertical"
+        colorVariable="separatorColor"
+        className={styles.divider}
+      />
       <EuiToolTip
         ref={runTooltipRef}
         position="left"
-        content={isLoading ? 'Please wait while the commands are being executed…' : KeyBoardTooltipContent}
+        content={
+          isLoading
+            ? 'Please wait while the commands are being executed…'
+            : KeyBoardTooltipContent
+        }
         data-testid="run-query-tooltip"
       >
         <EuiButton

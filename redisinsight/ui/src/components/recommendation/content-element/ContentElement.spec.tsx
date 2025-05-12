@@ -17,9 +17,17 @@ describe('ContentElement', () => {
       type: 'paragraph',
       value: 'paragraph',
     }
-    render(<ContentElement content={mockContent} telemetryName={mockTelemetryName} idx={0} />)
+    render(
+      <ContentElement
+        content={mockContent}
+        telemetryName={mockTelemetryName}
+        idx={0}
+      />,
+    )
 
-    expect(screen.queryByTestId(`paragraph-${mockTelemetryName}-0`)).toBeInTheDocument()
+    expect(
+      screen.queryByTestId(`paragraph-${mockTelemetryName}-0`),
+    ).toBeInTheDocument()
   })
 
   it('should render span', () => {
@@ -27,9 +35,17 @@ describe('ContentElement', () => {
       type: 'span',
       value: 'span',
     }
-    render(<ContentElement content={mockContent} telemetryName={mockTelemetryName} idx={0} />)
+    render(
+      <ContentElement
+        content={mockContent}
+        telemetryName={mockTelemetryName}
+        idx={0}
+      />,
+    )
 
-    expect(screen.queryByTestId(`span-${mockTelemetryName}-0`)).toBeInTheDocument()
+    expect(
+      screen.queryByTestId(`span-${mockTelemetryName}-0`),
+    ).toBeInTheDocument()
   })
 
   it('should render code', () => {
@@ -37,9 +53,17 @@ describe('ContentElement', () => {
       type: 'code',
       value: 'code',
     }
-    render(<ContentElement content={mockContent} telemetryName={mockTelemetryName} idx={0} />)
+    render(
+      <ContentElement
+        content={mockContent}
+        telemetryName={mockTelemetryName}
+        idx={0}
+      />,
+    )
 
-    expect(screen.queryByTestId(`code-${mockTelemetryName}-0`)).toBeInTheDocument()
+    expect(
+      screen.queryByTestId(`code-${mockTelemetryName}-0`),
+    ).toBeInTheDocument()
   })
 
   it('should render spacer', () => {
@@ -47,9 +71,17 @@ describe('ContentElement', () => {
       type: 'spacer',
       value: 'l',
     }
-    render(<ContentElement content={mockContent} telemetryName={mockTelemetryName} idx={0} />)
+    render(
+      <ContentElement
+        content={mockContent}
+        telemetryName={mockTelemetryName}
+        idx={0}
+      />,
+    )
 
-    expect(screen.queryByTestId(`spacer-${mockTelemetryName}-0`)).toBeInTheDocument()
+    expect(
+      screen.queryByTestId(`spacer-${mockTelemetryName}-0`),
+    ).toBeInTheDocument()
   })
 
   it('should render link', () => {
@@ -57,9 +89,17 @@ describe('ContentElement', () => {
       type: 'link',
       value: 'link',
     }
-    render(<ContentElement content={mockContent} telemetryName={mockTelemetryName} idx={0} />)
+    render(
+      <ContentElement
+        content={mockContent}
+        telemetryName={mockTelemetryName}
+        idx={0}
+      />,
+    )
 
-    expect(screen.queryByTestId(`link-${mockTelemetryName}-0`)).toBeInTheDocument()
+    expect(
+      screen.queryByTestId(`link-${mockTelemetryName}-0`),
+    ).toBeInTheDocument()
   })
 
   it('should render code link', () => {
@@ -67,9 +107,17 @@ describe('ContentElement', () => {
       type: 'code-link',
       value: 'link',
     }
-    render(<ContentElement content={mockContent} telemetryName={mockTelemetryName} idx={0} />)
+    render(
+      <ContentElement
+        content={mockContent}
+        telemetryName={mockTelemetryName}
+        idx={0}
+      />,
+    )
 
-    expect(screen.queryByTestId(`code-link-${mockTelemetryName}-0`)).toBeInTheDocument()
+    expect(
+      screen.queryByTestId(`code-link-${mockTelemetryName}-0`),
+    ).toBeInTheDocument()
   })
 
   it('should render link-sso', () => {
@@ -77,9 +125,17 @@ describe('ContentElement', () => {
       type: 'link-sso',
       value: 'link-sso',
     }
-    render(<ContentElement content={mockContent} telemetryName={mockTelemetryName} idx={0} />)
+    render(
+      <ContentElement
+        content={mockContent}
+        telemetryName={mockTelemetryName}
+        idx={0}
+      />,
+    )
 
-    expect(screen.queryByTestId(`link-sso-${mockTelemetryName}-0`)).toBeInTheDocument()
+    expect(
+      screen.queryByTestId(`link-sso-${mockTelemetryName}-0`),
+    ).toBeInTheDocument()
   })
 
   it('should render internal-link', () => {
@@ -90,9 +146,17 @@ describe('ContentElement', () => {
         name: 'name',
       },
     }
-    render(<ContentElement content={mockContent} telemetryName={mockTelemetryName} idx={0} />)
+    render(
+      <ContentElement
+        content={mockContent}
+        telemetryName={mockTelemetryName}
+        idx={0}
+      />,
+    )
 
-    expect(screen.queryByTestId(`internal-link-${mockTelemetryName}-0`)).toBeInTheDocument()
+    expect(
+      screen.queryByTestId(`internal-link-${mockTelemetryName}-0`),
+    ).toBeInTheDocument()
   })
 
   it('should render list', () => {
@@ -100,9 +164,17 @@ describe('ContentElement', () => {
       type: 'list',
       value: [[]],
     }
-    render(<ContentElement content={mockContent} telemetryName={mockTelemetryName} idx={0} />)
+    render(
+      <ContentElement
+        content={mockContent}
+        telemetryName={mockTelemetryName}
+        idx={0}
+      />,
+    )
 
-    expect(screen.queryByTestId(`list-${mockTelemetryName}-0`)).toBeInTheDocument()
+    expect(
+      screen.queryByTestId(`list-${mockTelemetryName}-0`),
+    ).toBeInTheDocument()
   })
 
   it('should render unknown', () => {
@@ -110,7 +182,13 @@ describe('ContentElement', () => {
       type: 'unknown',
       value: 'unknown',
     }
-    render(<ContentElement content={mockContent} telemetryName={mockTelemetryName} idx={0} />)
+    render(
+      <ContentElement
+        content={mockContent}
+        telemetryName={mockTelemetryName}
+        idx={0}
+      />,
+    )
 
     expect(screen.getByText('unknown')).toBeInTheDocument()
   })
@@ -120,7 +198,13 @@ describe('ContentElement', () => {
       type: 'unknown',
       value: { custom: 'value' },
     }
-    render(<ContentElement content={mockContent} telemetryName={mockTelemetryName} idx={0} />)
+    render(
+      <ContentElement
+        content={mockContent}
+        telemetryName={mockTelemetryName}
+        idx={0}
+      />,
+    )
 
     expect(screen.getByText('*Unknown format*')).toBeInTheDocument()
   })
@@ -133,7 +217,12 @@ describe('ContentElement', () => {
     }
 
     const { queryByTestId } = render(
-      <ContentElement onLinkClick={onClickMock} content={mockContent} telemetryName={mockTelemetryName} idx={0} />
+      <ContentElement
+        onLinkClick={onClickMock}
+        content={mockContent}
+        telemetryName={mockTelemetryName}
+        idx={0}
+      />,
     )
 
     fireEvent.click(queryByTestId(`link-${mockTelemetryName}-0`) as HTMLElement)

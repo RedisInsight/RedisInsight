@@ -3,12 +3,19 @@ import { AxiosError } from 'axios'
 import { remove } from 'lodash'
 import { apiService, localStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem, Pages } from 'uiSrc/constants'
-import { getApiErrorCode, getApiErrorMessage, getAxiosError, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
+import {
+  getApiErrorCode,
+  getApiErrorMessage,
+  getAxiosError,
+  isStatusSuccessful,
+  Maybe,
+  Nullable,
+} from 'uiSrc/utils'
 
 import { CloudJobName, CloudJobStatus } from 'uiSrc/electron/constants'
 import {
   INFINITE_MESSAGES,
-  InfiniteMessagesIds
+  InfiniteMessagesIds,
 } from 'uiSrc/components/notifications/components'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { getCloudSsoUtmParams } from 'uiSrc/utils/oauth/cloudSsoUtm'
@@ -26,15 +33,18 @@ import {
   Instance,
   OAuthSocialAction,
   OAuthSocialSource,
-  StateAppOAuth
+  StateAppOAuth,
 } from '../interfaces'
 import {
   addErrorNotification,
   addInfiniteNotification,
   addMessageNotification,
-  removeInfiniteNotification
+  removeInfiniteNotification,
 } from '../app/notifications'
-import { checkConnectToInstanceAction, setConnectedInstanceId } from '../instances/instances'
+import {
+  checkConnectToInstanceAction,
+  setConnectedInstanceId,
+} from '../instances/instances'
 import ApiStatusCode from '../../constants/apiStatusCode'
 
 export const initialState: StateAppOAuth = {
@@ -47,7 +57,8 @@ export const initialState: StateAppOAuth = {
     status: '',
   },
   source: null,
-  agreement: localStorageService.get(BrowserStorageItem.OAuthAgreement) ?? false,
+  agreement:
+    localStorageService.get(BrowserStorageItem.OAuthAgreement) ?? false,
   isOpenSocialDialog: false,
   isOpenSelectAccountDialog: false,
   showProgress: true,
@@ -69,8 +80,8 @@ export const initialState: StateAppOAuth = {
   },
   capiKeys: {
     loading: false,
-    data: null
-  }
+    data: null,
+  },
 }
 
 // A slice for recipes
@@ -98,6 +109,7 @@ const oauthCloudSlice = createSlice({
     getUserInfoSuccess: (state, { payload }: PayloadAction<CloudUser>) => {
       state.user.loading = false
       state.user.data = payload
+      state.user.error = ''
     },
     getUserInfoFailure: (state, { payload }: PayloadAction<string>) => {
       state.user.loading = false
@@ -114,16 +126,25 @@ const oauthCloudSlice = createSlice({
       state.user.freeDb.loading = false
       state.user.freeDb.error = payload
     },
-    setSocialDialogState: (state, { payload }: PayloadAction<Nullable<OAuthSocialSource>>) => {
+    setSocialDialogState: (
+      state,
+      { payload }: PayloadAction<Nullable<OAuthSocialSource>>,
+    ) => {
       if (payload) {
         state.source = payload
       }
       state.isOpenSocialDialog = !!payload
     },
-    setOAuthCloudSource: (state, { payload }: PayloadAction<Nullable<OAuthSocialSource>>) => {
+    setOAuthCloudSource: (
+      state,
+      { payload }: PayloadAction<Nullable<OAuthSocialSource>>,
+    ) => {
       state.source = payload
     },
-    setSelectAccountDialogState: (state, { payload }: PayloadAction<boolean>) => {
+    setSelectAccountDialogState: (
+      state,
+      { payload }: PayloadAction<boolean>,
+    ) => {
       state.isOpenSelectAccountDialog = payload
     },
     setJob: (state, { payload }: PayloadAction<CloudJobInfoState>) => {
@@ -195,7 +216,7 @@ const oauthCloudSlice = createSlice({
     },
     setInitialLoadingState: (state, { payload }: PayloadAction<boolean>) => {
       state.user.initialLoading = payload
-    }
+    },
   },
 })
 
@@ -233,22 +254,31 @@ export const {
   logoutUser,
   logoutUserSuccess,
   logoutUserFailure,
-  setInitialLoadingState
+  setInitialLoadingState,
 } = oauthCloudSlice.actions
 
 // A selector
 export const oauthCloudSelector = (state: RootState) => state.oauth.cloud
 export const oauthCloudJobSelector = (state: RootState) => state.oauth.cloud.job
-export const oauthCloudUserSelector = (state: RootState) => state.oauth.cloud.user
-export const oauthCloudUserDataSelector = (state: RootState) => state.oauth.cloud.user.data
-export const oauthCloudPlanSelector = (state: RootState) => state.oauth.cloud.plan
-export const oauthCloudPAgreementSelector = (state: RootState) => state.oauth.cloud.agreement
-export const oauthCapiKeysSelector = (state: RootState) => state.oauth.cloud.capiKeys
+export const oauthCloudUserSelector = (state: RootState) =>
+  state.oauth.cloud.user
+export const oauthCloudUserDataSelector = (state: RootState) =>
+  state.oauth.cloud.user.data
+export const oauthCloudPlanSelector = (state: RootState) =>
+  state.oauth.cloud.plan
+export const oauthCloudPAgreementSelector = (state: RootState) =>
+  state.oauth.cloud.agreement
+export const oauthCapiKeysSelector = (state: RootState) =>
+  state.oauth.cloud.capiKeys
 
 // The reducer
 export default oauthCloudSlice.reducer
 
-export function createFreeDbSuccess(result: CloudSuccessResult, history: any, jobName: Maybe<CloudJobName>) {
+export function createFreeDbSuccess(
+  result: CloudSuccessResult,
+  history: any,
+  jobName: Maybe<CloudJobName>,
+) {
   return async (dispatch: AppDispatch, stateInit: () => RootState) => {
     const { resourceId: id, ...details } = result
     try {
@@ -268,7 +298,11 @@ export function createFreeDbSuccess(result: CloudSuccessResult, history: any, jo
 
       dispatch(showOAuthProgress(true))
       dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
-      dispatch(addInfiniteNotification(INFINITE_MESSAGES.SUCCESS_CREATE_DB(details, onConnect, jobName)))
+      dispatch(
+        addInfiniteNotification(
+          INFINITE_MESSAGES.SUCCESS_CREATE_DB(details, onConnect, jobName),
+        ),
+      )
       dispatch(setSelectAccountDialogState(false))
     } catch (_err) {
       const error = _err as AxiosError
@@ -281,7 +315,10 @@ export function createFreeDbSuccess(result: CloudSuccessResult, history: any, jo
 }
 
 // Asynchronous thunk action
-export function fetchProfile(onSuccessAction?: (isMultiAccount?: boolean) => void, onFailAction?: () => void) {
+export function fetchProfile(
+  onSuccessAction?: (isMultiAccount?: boolean) => void,
+  onFailAction?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(getUserInfo())
 
@@ -308,7 +345,10 @@ export function fetchProfile(onSuccessAction?: (isMultiAccount?: boolean) => voi
 }
 
 // Asynchronous thunk action
-export function fetchUserInfo(onSuccessAction?: (isSelectAccout: boolean) => void, onFailAction?: () => void) {
+export function fetchUserInfo(
+  onSuccessAction?: (isSelectAccout: boolean) => void,
+  onFailAction?: () => void,
+) {
   return async (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(getUserInfo())
 
@@ -321,12 +361,16 @@ export function fetchUserInfo(onSuccessAction?: (isSelectAccout: boolean) => voi
       )
 
       if (isStatusSuccessful(status)) {
-        const isSignInFlow = getState().connections?.cloud.ssoFlow === OAuthSocialAction.SignIn
-        const isSelectAccout = !isSignInFlow && (data?.accounts?.length ?? 0) > 1
+        const isSignInFlow =
+          getState().connections?.cloud.ssoFlow === OAuthSocialAction.SignIn
+        const isSelectAccout =
+          !isSignInFlow && (data?.accounts?.length ?? 0) > 1
 
         if (isSelectAccout) {
           dispatch(setSelectAccountDialogState(true))
-          dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
+          dispatch(
+            removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress),
+          )
         }
 
         dispatch(getUserInfoSuccess(data))
@@ -351,18 +395,18 @@ export function createFreeDbJob({
   name,
   resources = {},
   onSuccessAction,
-  onFailAction
+  onFailAction,
 }: {
-  name: CloudJobName,
+  name: CloudJobName
   resources?: {
-    planId?: number,
-    databaseId?: number,
-    subscriptionId?: number,
-    region?: string,
-    provider?: string,
+    planId?: number
+    databaseId?: number
+    subscriptionId?: number
+    region?: string
+    provider?: string
     isRecommendedSettings?: boolean
   }
-  onSuccessAction?: () => void,
+  onSuccessAction?: () => void
   onFailAction?: () => void
 }) {
   return async (dispatch: AppDispatch) => {
@@ -375,14 +419,12 @@ export function createFreeDbJob({
           name,
           runMode: 'async',
           data: resources,
-        }
+        },
       )
 
       if (isStatusSuccessful(status)) {
         localStorageService.set(BrowserStorageItem.OAuthJobId, data.id)
-        dispatch(setJob(
-          { id: data.id, name, status: CloudJobStatus.Running }
-        ))
+        dispatch(setJob({ id: data.id, name, status: CloudJobStatus.Running }))
         onSuccessAction?.()
       }
     } catch (error) {
@@ -401,18 +443,16 @@ export function createFreeDbJob({
 export function activateAccount(
   id: string,
   onSuccessAction?: () => void,
-  onFailAction?: (error: string) => void
+  onFailAction?: (error: string) => void,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(getUserInfo())
 
     try {
       const { data, status } = await apiService.put<CloudUser>(
-        [
-          ApiEndpoints.CLOUD_ME_ACCOUNTS,
-          id,
-          ApiEndpoints.CLOUD_CURRENT,
-        ].join('/'),
+        [ApiEndpoints.CLOUD_ME_ACCOUNTS, id, ApiEndpoints.CLOUD_CURRENT].join(
+          '/',
+        ),
       )
 
       if (isStatusSuccessful(status)) {
@@ -437,14 +477,17 @@ export function activateAccount(
 }
 
 // Asynchronous thunk action
-export function fetchPlans(onSuccessAction?: () => void, onFailAction?: () => void) {
+export function fetchPlans(
+  onSuccessAction?: () => void,
+  onFailAction?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(getPlans())
 
     try {
-      const { data, status } = await apiService.get<CloudSubscriptionPlanResponse[]>(
-        ApiEndpoints.CLOUD_SUBSCRIPTION_PLANS
-      )
+      const { data, status } = await apiService.get<
+        CloudSubscriptionPlanResponse[]
+      >(ApiEndpoints.CLOUD_SUBSCRIPTION_PLANS)
 
       if (isStatusSuccessful(status)) {
         dispatch(getPlansSuccess(data))
@@ -468,13 +511,16 @@ export function fetchPlans(onSuccessAction?: () => void, onFailAction?: () => vo
 }
 
 // Asynchronous thunk action
-export function getCapiKeysAction(onSuccessAction?: () => void, onFailAction?: () => void) {
+export function getCapiKeysAction(
+  onSuccessAction?: () => void,
+  onFailAction?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(getCapiKeys())
 
     try {
       const { data, status } = await apiService.get<CloudCapiKey[]>(
-        ApiEndpoints.CLOUD_CAPI_KEYS
+        ApiEndpoints.CLOUD_CAPI_KEYS,
       )
 
       if (isStatusSuccessful(status)) {
@@ -491,18 +537,21 @@ export function getCapiKeysAction(onSuccessAction?: () => void, onFailAction?: (
 }
 
 // Asynchronous thunk action
-export function removeAllCapiKeysAction(onSuccessAction?: () => void, onFailAction?: () => void) {
+export function removeAllCapiKeysAction(
+  onSuccessAction?: () => void,
+  onFailAction?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(removeAllCapiKeys())
 
     try {
-      const { status } = await apiService.delete(
-        ApiEndpoints.CLOUD_CAPI_KEYS
-      )
+      const { status } = await apiService.delete(ApiEndpoints.CLOUD_CAPI_KEYS)
 
       if (isStatusSuccessful(status)) {
         dispatch(removeAllCapiKeysSuccess())
-        dispatch(addMessageNotification(successMessages.REMOVED_ALL_CAPI_KEYS()))
+        dispatch(
+          addMessageNotification(successMessages.REMOVED_ALL_CAPI_KEYS()),
+        )
         onSuccessAction?.()
       }
     } catch (_err) {
@@ -516,16 +565,16 @@ export function removeAllCapiKeysAction(onSuccessAction?: () => void, onFailActi
 
 // Asynchronous thunk action
 export function removeCapiKeyAction(
-  { id, name }: { id: string, name: string },
+  { id, name }: { id: string; name: string },
   onSuccessAction?: () => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(removeCapiKey())
 
     try {
       const { status } = await apiService.delete(
-        `${ApiEndpoints.CLOUD_CAPI_KEYS}/${id}`
+        `${ApiEndpoints.CLOUD_CAPI_KEYS}/${id}`,
       )
 
       if (isStatusSuccessful(status)) {
@@ -545,16 +594,14 @@ export function removeCapiKeyAction(
 // Asynchronous thunk action
 export function logoutUserAction(
   onSuccessAction?: () => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(logoutUser())
     dispatch(setSSOFlow())
 
     try {
-      const { status } = await apiService.get(
-        ApiEndpoints.CLOUD_ME_LOGOUT
-      )
+      const { status } = await apiService.get(ApiEndpoints.CLOUD_ME_LOGOUT)
 
       if (isStatusSuccessful(status)) {
         dispatch(logoutUserSuccess())

@@ -33,7 +33,7 @@ describe('FeatureFlagComponent', () => {
     })
 
     it('should render component', () => {
-      (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
         name: {
           flag: true,
         },
@@ -49,7 +49,7 @@ describe('FeatureFlagComponent', () => {
     })
 
     it('should render otherwise component if the feature flag not enabled', () => {
-      (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
         name: {
           flag: false,
         },
@@ -71,7 +71,7 @@ describe('FeatureFlagComponent', () => {
 
   describe('Multiple features', () => {
     it('should not render component if any feature flag is disabled', () => {
-      (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
         name: {
           flag: true,
         },
@@ -92,7 +92,7 @@ describe('FeatureFlagComponent', () => {
     })
 
     it('should use enabledByDefault=true for unmatched features', () => {
-      (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({})
+      ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({})
 
       const { queryByTestId } = render(
         <FeatureFlagComponent
@@ -107,7 +107,7 @@ describe('FeatureFlagComponent', () => {
     })
 
     it('should use enabledByDefault=false for unmatched features', () => {
-      (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({})
+      ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({})
 
       const { queryByTestId } = render(
         <FeatureFlagComponent
@@ -122,7 +122,7 @@ describe('FeatureFlagComponent', () => {
     })
 
     it('should render component if all feature flags are enabled', () => {
-      (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
         name: {
           flag: true,
         },
@@ -143,7 +143,7 @@ describe('FeatureFlagComponent', () => {
     })
 
     it('should render otherwise component if any feature flag is not enabled', () => {
-      (appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
+      ;(appFeatureFlagsFeaturesSelector as jest.Mock).mockReturnValueOnce({
         name: {
           flag: true,
         },

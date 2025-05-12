@@ -7,8 +7,6 @@ import {
   EuiText,
   EuiIcon,
   EuiLink,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiPopover,
   EuiToolTip,
 } from '@elastic/eui'
@@ -16,12 +14,16 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { putRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { recommendationsSelector, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
+import {
+  recommendationsSelector,
+  updateLiveRecommendation,
+} from 'uiSrc/slices/recommendations/recommendations'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { Nullable } from 'uiSrc/utils'
 import PetardIcon from 'uiSrc/assets/img/icons/petard.svg?react'
 import GithubSVG from 'uiSrc/assets/img/icons/github-white.svg?react'
 
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { getVotedText, voteTooltip, iconType } from './utils'
 import styles from './styles.module.scss'
 
@@ -49,10 +51,20 @@ const VoteOption = (props: Props) => {
   } = props
 
   const dispatch = useDispatch()
-  const { id: instanceId = '', provider } = useSelector(connectedInstanceSelector)
-  const { content: recommendationsContent } = useSelector(recommendationsSelector)
+  const { id: instanceId = '', provider } = useSelector(
+    connectedInstanceSelector,
+  )
+  const { content: recommendationsContent } = useSelector(
+    recommendationsSelector,
+  )
 
-  const onSuccessVoted = ({ vote, name }: { name: string, vote: Nullable<Vote> }) => {
+  const onSuccessVoted = ({
+    vote,
+    name,
+  }: {
+    name: string
+    vote: Nullable<Vote>
+  }) => {
     sendEventTelemetry({
       event: live
         ? TelemetryEvent.INSIGHTS_TIPS_VOTED
@@ -61,8 +73,8 @@ const VoteOption = (props: Props) => {
         databaseId: instanceId,
         name: recommendationsContent[name]?.telemetryEvent ?? name,
         vote,
-        provider
-      }
+        provider,
+      },
     })
   }
 
@@ -70,15 +82,18 @@ const VoteOption = (props: Props) => {
     setPopover(voteOption)
 
     if (live) {
-      dispatch(updateLiveRecommendation(id, { vote: voteOption }, onSuccessVoted))
+      dispatch(
+        updateLiveRecommendation(id, { vote: voteOption }, onSuccessVoted),
+      )
     } else {
       dispatch(putRecommendationVote(name, voteOption, onSuccessVoted))
     }
   }
 
-  const getTooltipContent = (voteOption: Vote) => (isAnalyticsEnable
-    ? voteTooltip[voteOption]
-    : 'Enable Analytics on the Settings page to vote for a tip')
+  const getTooltipContent = (voteOption: Vote) =>
+    isAnalyticsEnable
+      ? voteTooltip[voteOption]
+      : 'Enable Analytics on the Settings page to vote for a tip'
 
   return (
     <EuiPopover
@@ -88,7 +103,7 @@ const VoteOption = (props: Props) => {
       closePopover={() => setPopover('')}
       anchorClassName={styles.popoverAnchor}
       panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
-      button={(
+      button={
         <EuiToolTip
           content={getTooltipContent(voteOption)}
           position="bottom"
@@ -103,22 +118,29 @@ const VoteOption = (props: Props) => {
             onClick={() => handleClick(name)}
           />
         </EuiToolTip>
-        )}
+      }
     >
-      <div className={styles.popoverWrapper} data-testid={`${name}-${voteOption}-popover`}>
-        <EuiFlexGroup gutterSize="none" direction="column" alignItems="flexEnd">
-          <EuiFlexItem grow={false}>
-            <EuiFlexGroup gutterSize="none">
-              <EuiFlexItem grow={false}>
+      <div
+        className={styles.popoverWrapper}
+        data-testid={`${name}-${voteOption}-popover`}
+      >
+        <Col align="end">
+          <FlexItem>
+            <Row>
+              <FlexItem>
                 <EuiIcon type={PetardIcon} className={styles.petardIcon} />
-              </EuiFlexItem>
-              <EuiFlexItem>
+              </FlexItem>
+              <FlexItem grow>
                 <div>
-                  <EuiText className={styles.text} data-testid="common-text">Thank you for the feedback.</EuiText>
-                  <EuiText className={styles.text} data-testid="custom-text">{getVotedText(voteOption)}</EuiText>
+                  <EuiText className={styles.text} data-testid="common-text">
+                    Thank you for the feedback.
+                  </EuiText>
+                  <EuiText className={styles.text} data-testid="custom-text">
+                    {getVotedText(voteOption)}
+                  </EuiText>
                 </div>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
+              </FlexItem>
+              <FlexItem>
                 <EuiButtonIcon
                   iconType="cross"
                   color="primary"
@@ -128,10 +150,10 @@ const VoteOption = (props: Props) => {
                   className={styles.closeBtn}
                   onClick={() => setPopover('')}
                 />
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </EuiFlexItem>
-          <EuiFlexItem>
+              </FlexItem>
+            </Row>
+          </FlexItem>
+          <FlexItem grow>
             <EuiButton
               aria-label="recommendation feedback"
               fill
@@ -156,8 +178,8 @@ const VoteOption = (props: Props) => {
                 To Github
               </EuiLink>
             </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Col>
       </div>
     </EuiPopover>
   )

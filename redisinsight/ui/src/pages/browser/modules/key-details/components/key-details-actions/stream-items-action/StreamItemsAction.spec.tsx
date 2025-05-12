@@ -7,6 +7,8 @@ const mockedProps = mock<Props>()
 
 describe('StreamItemsAction', () => {
   it('should render', () => {
-    expect(render(<StreamItemsAction {...instance(mockedProps)} />)).toBeTruthy()
+    expect(
+      render(<StreamItemsAction {...instance(mockedProps)} />),
+    ).toBeTruthy()
   })
 })

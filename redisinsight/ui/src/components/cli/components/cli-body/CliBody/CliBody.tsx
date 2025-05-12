@@ -1,5 +1,5 @@
 import React, { Ref, useEffect, useRef, useState } from 'react'
-import { EuiFlexGroup, EuiFlexItem, keys } from '@elastic/eui'
+import { keys } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Nullable, scrollIntoView } from 'uiSrc/utils'
@@ -11,14 +11,15 @@ import CliInputWrapper from 'uiSrc/components/cli/components/cli-input'
 import { clearOutput, updateCliHistoryStorage } from 'uiSrc/utils/cliHelper'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
-  data: (string | JSX.Element)[];
-  command: string;
-  error: string;
-  setCommand: (command: string) => void;
-  onSubmit: () => void;
+  data: (string | JSX.Element)[]
+  command: string
+  error: string
+  setCommand: (command: string) => void
+  onSubmit: () => void
 }
 
 const commandTabPosInit = 0
@@ -30,12 +31,15 @@ const CliBody = (props: Props) => {
 
   const [inputEl, setInputEl] = useState<Nullable<HTMLSpanElement>>(null)
   const [commandHistory, setCommandHistory] = useState<string[]>([])
-  const [commandHistoryPos, setCommandHistoryPos] = useState<number>(commandHistoryPosInit)
+  const [commandHistoryPos, setCommandHistoryPos] = useState<number>(
+    commandHistoryPosInit,
+  )
   const [commandTabPos, setCommandTabPos] = useState<number>(commandTabPosInit)
   const [wordsTyped, setWordsTyped] = useState<number>(0)
   const [matchingCmds, setMatchingCmds] = useState<string[]>([])
   const { loading: settingsLoading } = useSelector(cliSettingsSelector)
-  const { loading, commandHistory: commandHistoryStore } = useSelector(outputSelector)
+  const { loading, commandHistory: commandHistoryStore } =
+    useSelector(outputSelector)
   const { commandsArray } = useSelector(appRedisCommandsSelector)
 
   const timerClickRef = useRef<NodeJS.Timeout>()
@@ -58,7 +62,8 @@ const CliBody = (props: Props) => {
   useEffect(() => {
     if (command) {
       setWordsTyped(
-        command.trim().match(/(?:'[^']*'|[^\s'"]|"[^"]*"|\[[^\]]*\])+/g)?.length ?? wordsTyped
+        command.trim().match(/(?:'[^']*'|[^\s'"]|"[^"]*"|\[[^\]]*\])+/g)
+          ?.length ?? wordsTyped,
       )
     }
   }, [command])
@@ -70,7 +75,10 @@ const CliBody = (props: Props) => {
     setCommand('')
   }
 
-  const onKeyDownEnter = (commandLine: string, event: React.KeyboardEvent<HTMLSpanElement>) => {
+  const onKeyDownEnter = (
+    commandLine: string,
+    event: React.KeyboardEvent<HTMLSpanElement>,
+  ) => {
     event.preventDefault()
 
     setWordsTyped(0)
@@ -106,10 +114,16 @@ const CliBody = (props: Props) => {
     setCommandFromHistory(newPos)
   }
 
-  const onKeyDownTab = (event: React.KeyboardEvent<HTMLSpanElement>, commandLine: string) => {
+  const onKeyDownTab = (
+    event: React.KeyboardEvent<HTMLSpanElement>,
+    commandLine: string,
+  ) => {
     event.preventDefault()
 
-    const nextPos = commandTabPos === matchingCmds.length - 1 ? commandTabPosInit : commandTabPos + 1
+    const nextPos =
+      commandTabPos === matchingCmds.length - 1
+        ? commandTabPosInit
+        : commandTabPos + 1
     let matchingCmdsCurrent = matchingCmds
 
     if (commandTabPos === commandTabPosInit) {
@@ -131,7 +145,9 @@ const CliBody = (props: Props) => {
       matchingCmdsCurrent = updateMatchingCmds(command)
     }
 
-    const nextPos = commandTabPos ? commandTabPos - 1 : matchingCmdsCurrent.length - 1
+    const nextPos = commandTabPos
+      ? commandTabPos - 1
+      : matchingCmdsCurrent.length - 1
 
     if (!matchingCmdsCurrent.length) {
       return
@@ -152,7 +168,8 @@ const CliBody = (props: Props) => {
 
     const isModifierKey = isModifiedEvent(event)
 
-    if (event.shiftKey && event.key === keys.TAB) return onKeyDownShiftTab(event)
+    if (event.shiftKey && event.key === keys.TAB)
+      return onKeyDownShiftTab(event)
     if (event.key === keys.TAB) return onKeyDownTab(event, commandLine)
 
     // reset command tab position
@@ -161,11 +178,16 @@ const CliBody = (props: Props) => {
     }
 
     if (event.key === keys.ENTER) return onKeyDownEnter(commandLine, event)
-    if (event.key === keys.ARROW_UP && !isModifierKey) return onKeyDownArrowUp(event)
-    if (event.key === keys.ARROW_DOWN && !isModifierKey) return onKeyDownArrowDown(event)
+    if (event.key === keys.ARROW_UP && !isModifierKey)
+      return onKeyDownArrowUp(event)
+    if (event.key === keys.ARROW_DOWN && !isModifierKey)
+      return onKeyDownArrowDown(event)
     if (event.key === keys.ESCAPE) return onKeyEsc()
 
-    if ((event.metaKey && event.key === 'k') || (event.ctrlKey && event.key === 'l')) {
+    if (
+      (event.metaKey && event.key === 'k') ||
+      (event.ctrlKey && event.key === 'l')
+    ) {
       onClearOutput(event)
     }
     return undefined
@@ -174,7 +196,9 @@ const CliBody = (props: Props) => {
   const updateMatchingCmds = (command: string = '') => {
     const matchingCmdsCurrent = [
       command,
-      ...commandsArray.filter((cmd: string) => cmd.startsWith(command.toUpperCase())),
+      ...commandsArray.filter((cmd: string) =>
+        cmd.startsWith(command.toUpperCase()),
+      ),
     ]
 
     setMatchingCmds(matchingCmdsCurrent)
@@ -224,17 +248,16 @@ const CliBody = (props: Props) => {
       role="textbox"
       tabIndex={0}
     >
-      <EuiFlexGroup
-        justifyContent="spaceBetween"
-        gutterSize="none"
-        responsive={false}
-        direction="row"
-        style={{ height: '100%' }}
-      >
-        <EuiFlexItem grow>
+      <Row justify="between" style={{ height: '100%' }}>
+        <FlexItem grow>
           <div className={styles.output}>{data}</div>
           {!error && !(loading || settingsLoading) ? (
-            <span style={{ paddingBottom: 5, paddingTop: 17 }}>
+            <span
+              style={{
+                paddingBottom: 5,
+                paddingTop: 17,
+              }}
+            >
               <CliInputWrapper
                 command={command}
                 setCommand={setCommand}
@@ -247,8 +270,8 @@ const CliBody = (props: Props) => {
             !error && <span>Executing command...</span>
           )}
           <div ref={scrollDivRef} />
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </div>
   )
 }

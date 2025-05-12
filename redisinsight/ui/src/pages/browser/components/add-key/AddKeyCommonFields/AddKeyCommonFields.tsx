@@ -2,14 +2,13 @@ import React, { ChangeEvent } from 'react'
 import { toNumber } from 'lodash'
 import {
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormFieldset,
   EuiFormRow,
-  EuiSuperSelect
+  EuiSuperSelect,
 } from '@elastic/eui'
 import { MAX_TTL_NUMBER, Maybe, validateTTLNumberForAddKey } from 'uiSrc/utils'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { AddCommonFieldsFormConfig as config } from '../constants/fields-config'
 
 import styles from './styles.module.scss'
@@ -34,7 +33,7 @@ const AddKeyCommonFields = (props: Props) => {
     keyName,
     setKeyName,
     keyTTL,
-    setKeyTTL
+    setKeyTTL,
   } = props
 
   const handleTTLChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -50,15 +49,12 @@ const AddKeyCommonFields = (props: Props) => {
 
   return (
     <div className={styles.wrapper}>
-      <EuiFlexGroup className={styles.container} responsive={false}>
-        <EuiFlexItem>
+      <Row className={styles.container}>
+        <FlexItem grow>
           <EuiFormFieldset
             legend={{ children: 'Select key type', display: 'hidden' }}
           >
-            <EuiFormRow
-              label="Key Type*"
-              fullWidth
-            >
+            <EuiFormRow label="Key Type*" fullWidth>
               <EuiSuperSelect
                 itemClassName="withColorDefinition"
                 fullWidth
@@ -70,8 +66,8 @@ const AddKeyCommonFields = (props: Props) => {
               />
             </EuiFormRow>
           </EuiFormFieldset>
-        </EuiFlexItem>
-        <EuiFlexItem>
+        </FlexItem>
+        <FlexItem grow>
           <EuiFormRow label={config.keyTTL.label} fullWidth>
             <EuiFieldText
               fullWidth
@@ -88,8 +84,8 @@ const AddKeyCommonFields = (props: Props) => {
               data-testid="ttl"
             />
           </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
       <EuiFormRow label={config.keyName.label} fullWidth>
         <EuiFieldText
           fullWidth
@@ -98,7 +94,8 @@ const AddKeyCommonFields = (props: Props) => {
           value={keyName}
           placeholder={config.keyName.placeholder}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setKeyName(e.target.value)}
+            setKeyName(e.target.value)
+          }
           disabled={loading}
           autoComplete="off"
           data-testid="key"

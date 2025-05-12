@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 
 export interface Props {
-  children: React.ReactNode,
+  children: React.ReactNode
 }
 
 const AddKeyFooter = (props: Props) => {
@@ -23,9 +23,6 @@ const AddKeyFooter = (props: Props) => {
     }
   }, [])
 
-  return ReactDOM.createPortal(
-    props.children,
-    el
-  )
+  return ReactDOM.createPortal(props.children, el)
 }
 export default AddKeyFooter

@@ -10,7 +10,10 @@ import {
 import { TelemetryEvents } from 'src/constants';
 import { DEFAULT_SUMMARY as DEFAULT_REDIS_MODULES_SUMMARY } from 'src/utils/redis-modules-summary';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
-import { Encoding, HostingProvider } from 'src/modules/database/entities/database.entity';
+import {
+  Encoding,
+  HostingProvider,
+} from 'src/modules/database/entities/database.entity';
 
 describe('DatabaseAnalytics', () => {
   let service: DatabaseAnalytics;
@@ -20,10 +23,7 @@ describe('DatabaseAnalytics', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        EventEmitter2,
-        DatabaseAnalytics,
-      ],
+      providers: [EventEmitter2, DatabaseAnalytics],
     }).compile();
 
     service = await module.get(DatabaseAnalytics);
@@ -38,7 +38,8 @@ describe('DatabaseAnalytics', () => {
         {
           ...mockDatabaseWithTlsAuth,
           ssh: true,
-        }, mockRedisGeneralInfo,
+        },
+        mockRedisGeneralInfo,
       );
 
       expect(sendEventSpy).toHaveBeenCalledWith(
@@ -74,7 +75,11 @@ describe('DatabaseAnalytics', () => {
         ...mockDatabase,
       };
 
-      service.sendInstanceAddedEvent(mockSessionMetadata, instance, mockRedisGeneralInfo);
+      service.sendInstanceAddedEvent(
+        mockSessionMetadata,
+        instance,
+        mockRedisGeneralInfo,
+      );
 
       expect(sendEventSpy).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -107,15 +112,14 @@ describe('DatabaseAnalytics', () => {
     it('should emit event without additional info', () => {
       const instance = {
         ...mockDatabaseWithTlsAuth,
-        modules: [{ name: 'search', version: 20000 }, { name: 'rediSQL', version: 1 }],
+        modules: [
+          { name: 'search', version: 20000 },
+          { name: 'rediSQL', version: 1 },
+        ],
       };
-      service.sendInstanceAddedEvent(
-        mockSessionMetadata,
-        instance,
-        {
-          version: mockRedisGeneralInfo.version,
-        },
-      );
+      service.sendInstanceAddedEvent(mockSessionMetadata, instance, {
+        version: mockRedisGeneralInfo.version,
+      });
 
       expect(sendEventSpy).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -154,15 +158,14 @@ describe('DatabaseAnalytics', () => {
       const instance = {
         ...mockDatabaseWithTlsAuth,
         db: 2,
-        modules: [{ name: 'search', version: 20000 }, { name: 'rediSQL', version: 1 }],
+        modules: [
+          { name: 'search', version: 20000 },
+          { name: 'rediSQL', version: 1 },
+        ],
       };
-      service.sendInstanceAddedEvent(
-        mockSessionMetadata,
-        instance,
-        {
-          version: mockRedisGeneralInfo.version,
-        },
-      );
+      service.sendInstanceAddedEvent(mockSessionMetadata, instance, {
+        version: mockRedisGeneralInfo.version,
+      });
 
       expect(sendEventSpy).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -513,7 +516,11 @@ describe('DatabaseAnalytics', () => {
 
   describe('sendConnectionFailedEvent', () => {
     it('should emit ConnectionFailed event', () => {
-      service.sendConnectionFailedEvent(mockSessionMetadata, mockDatabase, httpException);
+      service.sendConnectionFailedEvent(
+        mockSessionMetadata,
+        mockDatabase,
+        httpException,
+      );
 
       expect(sendFailedEventSpy).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -528,14 +535,11 @@ describe('DatabaseAnalytics', () => {
 
   describe('sendDatabaseConnectedClientListEvent', () => {
     it('should emit event', () => {
-      service.sendDatabaseConnectedClientListEvent(
-        mockSessionMetadata,
-        {
-          databaseId: mockDatabase.id,
-          version: mockDatabase.version,
-          resp: '2',
-        },
-      );
+      service.sendDatabaseConnectedClientListEvent(mockSessionMetadata, {
+        databaseId: mockDatabase.id,
+        version: mockDatabase.version,
+        resp: '2',
+      });
 
       expect(sendEventSpy).toHaveBeenCalledWith(
         mockSessionMetadata,

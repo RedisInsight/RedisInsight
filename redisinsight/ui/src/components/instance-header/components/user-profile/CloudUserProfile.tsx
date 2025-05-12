@@ -10,6 +10,10 @@ export const CloudUserProfile = () => {
   }
 
   return (
-    <UserProfileBadge error={error} data={data} data-testid="cloud-user-profile-badge" />
+    <UserProfileBadge
+      error={error}
+      data={data}
+      data-testid="cloud-user-profile-badge"
+    />
   )
 }

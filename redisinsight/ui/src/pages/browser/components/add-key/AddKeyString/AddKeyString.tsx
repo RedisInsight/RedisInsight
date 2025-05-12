@@ -1,24 +1,22 @@
-import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react'
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
   EuiButton,
-  EuiFormRow,
-  EuiTextColor,
   EuiForm,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiPanel, EuiTextArea,
+  EuiFormRow,
+  EuiPanel,
+  EuiTextArea,
+  EuiTextColor,
 } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 
 import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/browser/keys'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
-import {
-  AddStringFormConfig as config
-} from '../constants/fields-config'
+import { AddStringFormConfig as config } from '../constants/fields-config'
 
 export interface Props {
   keyName: string
@@ -48,7 +46,7 @@ const AddKeyString = (props: Props) => {
   const submitData = (): void => {
     const data: SetStringWithExpireDto = {
       keyName: stringToBuffer(keyName),
-      value: stringToBuffer(value)
+      value: stringToBuffer(value),
     }
     if (keyTTL !== undefined) {
       data.expire = keyTTL
@@ -67,7 +65,8 @@ const AddKeyString = (props: Props) => {
           placeholder={config.value.placeholder}
           value={value}
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            setValue(e.target.value)}
+            setValue(e.target.value)
+          }
           disabled={loading}
           data-testid="string-value"
         />
@@ -76,9 +75,14 @@ const AddKeyString = (props: Props) => {
         Submit
       </EuiButton>
       <AddKeyFooter>
-        <EuiPanel style={{ border: 'none' }} color="transparent" hasShadow={false} borderRadius="none">
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+        <EuiPanel
+          style={{ border: 'none' }}
+          color="transparent"
+          hasShadow={false}
+          borderRadius="none"
+        >
+          <Row justify="end">
+            <FlexItem>
               <div>
                 <EuiButton
                   color="secondary"
@@ -88,8 +92,8 @@ const AddKeyString = (props: Props) => {
                   <EuiTextColor>Cancel</EuiTextColor>
                 </EuiButton>
               </div>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <div>
                 <EuiButton
                   fill
@@ -104,8 +108,8 @@ const AddKeyString = (props: Props) => {
                   Add Key
                 </EuiButton>
               </div>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

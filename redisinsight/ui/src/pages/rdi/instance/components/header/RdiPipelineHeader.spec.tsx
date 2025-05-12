@@ -37,8 +37,8 @@ describe('RdiPipelineHeader', () => {
     const mockUseFormikContext = {
       handleSubmit: mockHandleSubmit,
       values: MOCK_RDI_PIPELINE_DATA,
-    };
-    (useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
+    }
+    ;(useFormikContext as jest.Mock).mockReturnValue(mockUseFormikContext)
   })
 
   it('should render', () => {
@@ -52,6 +52,8 @@ describe('RdiPipelineHeader', () => {
       setConfigValidationErrors(['Error: unknown error']),
     ]
 
-    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+      expectedActions,
+    )
   })
 })

@@ -22,7 +22,9 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import ModuleNotLoadedButton from './ModuleNotLoadedButton'
 import styles from './styles.module.scss'
 
-export const MODULE_OAUTH_SOURCE_MAP: { [key in RedisDefaultModules]?: String } = {
+export const MODULE_OAUTH_SOURCE_MAP: {
+  [key in RedisDefaultModules]?: String
+} = {
   [RedisDefaultModules.Bloom]: 'RedisBloom',
   [RedisDefaultModules.ReJSON]: 'RedisJSON',
   [RedisDefaultModules.Search]: 'RediSearch',
@@ -58,19 +60,25 @@ const ListItem = ({ item }: { item: string }) => (
   </li>
 )
 
-const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps) => {
+const ModuleNotLoaded = ({
+  moduleName,
+  id,
+  type = 'workbench',
+  onClose,
+}: IProps) => {
   const [width, setWidth] = useState(0)
   const freeInstances = useSelector(freeInstancesSelector) || []
-  const {
-    [FeatureFlags.cloudAds]: cloudAdsFeature,
-  } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { [FeatureFlags.cloudAds]: cloudAdsFeature } = useSelector(
+    appFeatureFlagsFeaturesSelector,
+  )
 
   const module = MODULE_OAUTH_SOURCE_MAP[moduleName]
 
   const freeDbWithModule = getDbWithModuleLoaded(freeInstances, moduleName)
-  const source = type === 'browser'
-    ? OAuthSocialSource.BrowserSearch
-    : OAuthSocialSource[module as keyof typeof OAuthSocialSource]
+  const source =
+    type === 'browser'
+      ? OAuthSocialSource.BrowserSearch
+      : OAuthSocialSource[module as keyof typeof OAuthSocialSource]
 
   useCapability(source)
 
@@ -81,39 +89,48 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
     }
   })
 
-  const renderText = useCallback((moduleName?: string) => {
-    if (!cloudAdsFeature?.flag) {
-      return (
+  const renderText = useCallback(
+    (moduleName?: string) => {
+      if (!cloudAdsFeature?.flag) {
+        return (
+          <EuiText className={cx(styles.text, styles.marginBottom)}>
+            Open a database with {moduleName}.
+          </EuiText>
+        )
+      }
+
+      return !freeDbWithModule ? (
         <EuiText className={cx(styles.text, styles.marginBottom)}>
-          Open a database with {moduleName?.toLowerCase()}.
+          Create a free trial Redis Stack database with {moduleName} which
+          extends the core capabilities of your Redis.
+        </EuiText>
+      ) : (
+        <EuiText
+          className={cx(styles.text, styles.marginBottom, styles.textFooter)}
+        >
+          Use your free trial all-in-one Redis Cloud database to start exploring
+          these capabilities.
         </EuiText>
       )
-    }
-
-    return (!freeDbWithModule ? (
-      <EuiText className={cx(styles.text, styles.marginBottom)}>
-        Create a free trial Redis Stack database with {moduleName} which extends the core capabilities of your Redis.
-      </EuiText>
-    ) : (
-      <EuiText className={cx(styles.text, styles.marginBottom, styles.textFooter)}>
-        Use your free trial all-in-one Redis Cloud database to start exploring these capabilities.
-      </EuiText>
-    ))
-  }, [freeDbWithModule])
+    },
+    [freeDbWithModule],
+  )
 
   return (
-    <div className={cx(styles.container, {
-      [styles.fullScreen]: width > MAX_ELEMENT_WIDTH || type === 'browser',
-      [styles.modal]: type === 'browser',
-    })}
+    <div
+      className={cx(styles.container, {
+        [styles.fullScreen]: width > MAX_ELEMENT_WIDTH || type === 'browser',
+        [styles.modal]: type === 'browser',
+      })}
     >
       <div className={styles.flex}>
         <div>
-          {type !== 'browser' && (
-            width > MAX_ELEMENT_WIDTH
-              ? <DesktopIcon className={styles.bigIcon} />
-              : <MobileIcon className={styles.icon} />
-          )}
+          {type !== 'browser' &&
+            (width > MAX_ELEMENT_WIDTH ? (
+              <DesktopIcon className={styles.bigIcon} />
+            ) : (
+              <MobileIcon className={styles.icon} />
+            ))}
           {type === 'browser' && (
             <EuiIcon
               className={styles.iconTelescope}
@@ -122,34 +139,61 @@ const ModuleNotLoaded = ({ moduleName, id, type = 'workbench', onClose }: IProps
             />
           )}
         </div>
-        <div className={styles.contentWrapper} data-testid="module-not-loaded-content">
+        <div
+          className={styles.contentWrapper}
+          data-testid="module-not-loaded-content"
+        >
           {renderTitle(width, MODULE_TEXT_VIEW[moduleName])}
           <EuiText className={styles.bigText}>
-            {CONTENT[moduleName]?.text.map((item: string) => (
-              width > MIN_ELEMENT_WIDTH ? <>{item}<br /></> : item
-            ))}
+            {CONTENT[moduleName]?.text.map((item: string) =>
+              width > MIN_ELEMENT_WIDTH ? (
+                <>
+                  {item}
+                  <br />
+                </>
+              ) : (
+                item
+              ),
+            )}
           </EuiText>
-          <ul className={cx(styles.list, { [styles.bloomList]: moduleName === RedisDefaultModules.Bloom })}>
+          <ul
+            className={cx(styles.list, {
+              [styles.bloomList]: moduleName === RedisDefaultModules.Bloom,
+            })}
+          >
             {CONTENT[moduleName]?.improvements.map((item: string) => (
               <ListItem key={item} item={item} />
             ))}
           </ul>
           {!!CONTENT[moduleName]?.additionalText && (
-            <EuiText className={cx(styles.text, styles.additionalText, styles.marginBottom)}>
-              {CONTENT[moduleName]?.additionalText.map((item: string) => (
-                width > MIN_ELEMENT_WIDTH ? <>{item}<br /></> : item
-              ))}
+            <EuiText
+              className={cx(
+                styles.text,
+                styles.additionalText,
+                styles.marginBottom,
+              )}
+            >
+              {CONTENT[moduleName]?.additionalText.map((item: string) =>
+                width > MIN_ELEMENT_WIDTH ? (
+                  <>
+                    {item}
+                    <br />
+                  </>
+                ) : (
+                  item
+                ),
+              )}
             </EuiText>
           )}
           {renderText(MODULE_TEXT_VIEW[moduleName])}
         </div>
       </div>
-      <div className={styles.linksWrapper} data-testid="module-not-loaded-cta-wrapper">
+      <div
+        className={styles.linksWrapper}
+        data-testid="module-not-loaded-cta-wrapper"
+      >
         {freeDbWithModule ? (
-          <OAuthConnectFreeDb
-            source={source}
-            id={freeDbWithModule.id}
-          />
+          <OAuthConnectFreeDb source={source} id={freeDbWithModule.id} />
         ) : (
           <ModuleNotLoadedButton
             moduleName={moduleName}

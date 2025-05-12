@@ -1,26 +1,25 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiTitle,
-  EuiToolTip,
-  EuiButtonIcon,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiTitle, EuiToolTip } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import {
-  setBulkActionType,
   selectedBulkActionsSelector,
   setBulkActionsInitialState,
+  setBulkActionType,
 } from 'uiSrc/slices/browser/bulkActions'
 import { BulkActionsType } from 'uiSrc/constants'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
-import { getMatchType, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  getMatchType,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { FullScreen } from 'uiSrc/components'
 
+import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import BulkUpload from './BulkUpload'
 import BulkDelete from './BulkDelete'
 import BulkActionsTabs from './BulkActionsTabs'
@@ -34,7 +33,13 @@ export interface Props {
   onToggleFullScreen: () => void
 }
 const BulkActions = (props: Props) => {
-  const { isFullScreen, arePanelsCollapsed, onClosePanel, onBulkActionsPanel, onToggleFullScreen } = props
+  const {
+    isFullScreen,
+    arePanelsCollapsed,
+    onClosePanel,
+    onBulkActionsPanel,
+    onToggleFullScreen,
+  } = props
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const { filter, search } = useSelector(keysSelector)
@@ -49,10 +54,13 @@ const BulkActions = (props: Props) => {
         databaseId: instanceId,
         filter: {
           filter,
-          match: (search && search !== DEFAULT_SEARCH_MATCH) ? getMatchType(search) : DEFAULT_SEARCH_MATCH,
+          match:
+            search && search !== DEFAULT_SEARCH_MATCH
+              ? getMatchType(search)
+              : DEFAULT_SEARCH_MATCH,
         },
-        action: type
-      }
+        action: type,
+      },
     })
   }, [])
 
@@ -68,32 +76,29 @@ const BulkActions = (props: Props) => {
 
     const eventData: Record<string, any> = {
       databaseId: instanceId,
-      action: type
+      action: type,
     }
 
     if (type === BulkActionsType.Delete) {
       eventData.filter = {
-        match: (search && search !== DEFAULT_SEARCH_MATCH) ? getMatchType(search) : DEFAULT_SEARCH_MATCH,
+        match:
+          search && search !== DEFAULT_SEARCH_MATCH
+            ? getMatchType(search)
+            : DEFAULT_SEARCH_MATCH,
         type: filter,
       }
     }
 
     sendEventTelemetry({
       event: TelemetryEvent.BULK_ACTIONS_CANCELLED,
-      eventData
+      eventData,
     })
   }
 
   return (
     <div className={styles.page}>
-      <EuiFlexGroup
-        justifyContent="center"
-        direction="column"
-        className={cx(styles.container, 'relative')}
-        gutterSize="none"
-        responsive={false}
-      >
-        <EuiFlexItem grow style={{ marginBottom: '16px' }}>
+      <Col justify="center" className={cx(styles.container, 'relative')}>
+        <FlexItem grow style={{ marginBottom: '16px' }}>
           <EuiTitle size="xs" className={styles.title}>
             <h4>Bulk Actions</h4>
           </EuiTitle>
@@ -101,7 +106,10 @@ const BulkActions = (props: Props) => {
             <FullScreen
               isFullScreen={isFullScreen}
               onToggleFullScreen={onToggleFullScreen}
-              anchorClassName={cx(styles.anchorTooltip, styles.anchorTooltipFullScreen)}
+              anchorClassName={cx(
+                styles.anchorTooltip,
+                styles.anchorTooltipFullScreen,
+              )}
             />
           )}
           {(!arePanelsCollapsed || isFullScreen) && (
@@ -120,16 +128,22 @@ const BulkActions = (props: Props) => {
               />
             </EuiToolTip>
           )}
-
-        </EuiFlexItem>
+        </FlexItem>
         <div className="eui-yScroll">
-          <div className={styles.contentActions} data-testid="bulk-actions-content">
+          <div
+            className={styles.contentActions}
+            data-testid="bulk-actions-content"
+          >
             <BulkActionsTabs onChangeType={handleChangeType} />
-            {type === BulkActionsType.Upload && (<BulkUpload onCancel={closePanel} />)}
-            {type === BulkActionsType.Delete && (<BulkDelete onCancel={closePanel} />)}
+            {type === BulkActionsType.Upload && (
+              <BulkUpload onCancel={closePanel} />
+            )}
+            {type === BulkActionsType.Delete && (
+              <BulkDelete onCancel={closePanel} />
+            )}
           </div>
         </div>
-      </EuiFlexGroup>
+      </Col>
     </div>
   )
 }

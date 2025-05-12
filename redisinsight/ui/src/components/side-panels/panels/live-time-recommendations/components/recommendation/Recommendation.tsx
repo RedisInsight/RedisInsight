@@ -4,8 +4,6 @@ import { useHistory, useParams } from 'react-router-dom'
 import {
   EuiButton,
   EuiText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiLink,
   EuiPanel,
   EuiAccordion,
@@ -22,14 +20,20 @@ import {
   RecommendationVoting,
   RecommendationCopyComponent,
   RecommendationBody,
-  FeatureFlagComponent
+  FeatureFlagComponent,
 } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { deleteLiveRecommendations, updateLiveRecommendation } from 'uiSrc/slices/recommendations/recommendations'
+import {
+  deleteLiveRecommendations,
+  updateLiveRecommendation,
+} from 'uiSrc/slices/recommendations/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import { IRecommendationsStatic, IRecommendationParams } from 'uiSrc/slices/interfaces/recommendations'
+import {
+  IRecommendationsStatic,
+  IRecommendationParams,
+} from 'uiSrc/slices/interfaces/recommendations'
 
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
@@ -37,6 +41,7 @@ import SnoozeIcon from 'uiSrc/assets/img/icons/snooze.svg?react'
 import StarsIcon from 'uiSrc/assets/img/icons/stars.svg?react'
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -67,8 +72,12 @@ const Recommendation = ({
   const { theme } = useContext(ThemeContext)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
-  const { redisStack, title, liveTitle, content = [] } = recommendationsContent[name]
-    || {}
+  const {
+    redisStack,
+    title,
+    liveTitle,
+    content = [],
+  } = recommendationsContent[name] || {}
 
   const recommendationTitle = liveTitle || title
 
@@ -78,8 +87,8 @@ const Recommendation = ({
       eventData: {
         databaseId: instanceId,
         name: recommendationsContent[name].telemetryEvent || name,
-        provider
-      }
+        provider,
+      },
     })
 
     if (!tutorialId) {
@@ -95,31 +104,24 @@ const Recommendation = ({
     event.stopPropagation()
     event.preventDefault()
     dispatch(
-      updateLiveRecommendation(
-        id,
-        { hide: !hide },
-        ({ hide, name }) => sendEventTelemetry({
+      updateLiveRecommendation(id, { hide: !hide }, ({ hide, name }) =>
+        sendEventTelemetry({
           event: TelemetryEvent.INSIGHTS_TIPS_HIDE,
           eventData: {
             databaseId: instanceId,
             action: hide ? 'hide' : 'show',
             name: recommendationsContent[name]?.telemetryEvent ?? name,
-            provider
-          }
-        })
-      )
+            provider,
+          },
+        }),
+      ),
     )
   }
 
   const handleDelete = (event: React.MouseEvent) => {
     event.stopPropagation()
     event.preventDefault()
-    dispatch(
-      deleteLiveRecommendations(
-        [{ id, isRead }],
-        onSuccessActionDelete
-      )
-    )
+    dispatch(deleteLiveRecommendations([{ id, isRead }], onSuccessActionDelete))
   }
 
   const onSuccessActionDelete = () => {
@@ -128,8 +130,8 @@ const Recommendation = ({
       eventData: {
         databaseId: instanceId,
         name: recommendationsContent[name]?.telemetryEvent ?? name,
-        provider
-      }
+        provider,
+      },
     })
   }
 
@@ -139,8 +141,8 @@ const Recommendation = ({
       eventData: {
         databaseId: instanceId,
         name: recommendationsContent[name]?.telemetryEvent ?? name,
-        provider
-      }
+        provider,
+      },
     })
   }
 
@@ -156,7 +158,7 @@ const Recommendation = ({
           color="secondary"
           data-testid={`${name}-to-tutorial-btn`}
         >
-          { tutorialId ? 'Start Tutorial' : 'Workbench' }
+          {tutorialId ? 'Start Tutorial' : 'Workbench'}
         </EuiButton>
       )}
       <RecommendationBody
@@ -177,22 +179,26 @@ const Recommendation = ({
       )}
       <FeatureFlagComponent name={FeatureFlags.envDependent}>
         <div className={styles.actions}>
-          <RecommendationVoting live id={id} vote={vote} name={name} containerClass={styles.votingContainer} />
+          <RecommendationVoting
+            live
+            id={id}
+            vote={vote}
+            name={name}
+            containerClass={styles.votingContainer}
+          />
         </div>
       </FeatureFlagComponent>
     </EuiText>
   )
 
-  const renderButtonContent = (redisStack: Maybe<boolean>, title: string, id: string) => (
-    <EuiFlexGroup
-      className={styles.fullWidth}
-      responsive={false}
-      alignItems="center"
-      justifyContent="spaceBetween"
-      gutterSize="none"
-    >
-      <EuiFlexGroup className={styles.fullWidth} alignItems="center" gutterSize="none">
-        <EuiFlexItem grow={false}>
+  const renderButtonContent = (
+    redisStack: Maybe<boolean>,
+    title: string,
+    id: string,
+  ) => (
+    <Row className={styles.fullWidth} align="center" justify="between">
+      <Row className={styles.fullWidth} align="center">
+        <FlexItem>
           {redisStack && (
             <EuiLink
               external={false}
@@ -208,18 +214,20 @@ const Recommendation = ({
                 anchorClassName="flex-row"
               >
                 <EuiIcon
-                  type={theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin}
+                  type={
+                    theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
+                  }
                   className={styles.redisStackIcon}
                   data-testid={`${id}-redis-stack-icon`}
                 />
               </EuiToolTip>
             </EuiLink>
           )}
-        </EuiFlexItem>
-        <EuiFlexItem grow className="truncateText">
+        </FlexItem>
+        <FlexItem grow className="truncateText">
           {title}
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem>
           <EuiToolTip
             title="Snooze tip"
             content="This tip will be removed from the list and displayed again when relevant."
@@ -236,13 +244,14 @@ const Recommendation = ({
               data-testid={`${name}-delete-btn`}
             />
           </EuiToolTip>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem>
           <EuiToolTip
             title={`${hide ? 'Show' : 'Hide'} tip`}
-            content={`${hide
-              ? 'This tip will be shown in the list.'
-              : 'This tip will be removed from the list and not displayed again.'
+            content={`${
+              hide
+                ? 'This tip will be shown in the list.'
+                : 'This tip will be removed from the list and not displayed again.'
             }`}
             position="top"
             display="inlineBlock"
@@ -257,9 +266,9 @@ const Recommendation = ({
               data-testid={`toggle-hide-${name}-btn`}
             />
           </EuiToolTip>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </EuiFlexGroup>
+        </FlexItem>
+      </Row>
+    </Row>
   )
 
   if (!(name in recommendationsContent)) {
@@ -275,7 +284,11 @@ const Recommendation = ({
         id={name}
         initialIsOpen={!isRead}
         arrowDisplay="right"
-        buttonContent={renderButtonContent(redisStack, recommendationTitle, name)}
+        buttonContent={renderButtonContent(
+          redisStack,
+          recommendationTitle,
+          name,
+        )}
         buttonClassName={styles.accordionBtn}
         buttonProps={{ 'data-test-subj': `${name}-button` }}
         className={styles.accordion}

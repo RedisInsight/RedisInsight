@@ -3,8 +3,6 @@ import {
   EuiFlyoutHeader,
   EuiText,
   EuiButtonEmpty,
-  EuiLoadingContent,
-  EuiHorizontalRule,
   EuiPopover,
 } from '@elastic/eui'
 import JsxParser from 'react-jsx-parser'
@@ -13,16 +11,28 @@ import { debounce } from 'lodash'
 import { useLocation, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
-import { ExternalLink } from 'uiSrc/components'
+import { ExternalLink, HorizontalRule, LoadingContent } from 'uiSrc/components'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
-import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  sendEventTelemetry,
+  TELEMETRY_EMPTY_VALUE,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import { getTutorialCapability, Nullable } from 'uiSrc/utils'
 
 import RocketIcon from 'uiSrc/assets/img/icons/rocket.svg?react'
 import { appContextCapability } from 'uiSrc/slices/app/context'
-import { isShowCapabilityTutorialPopover, setCapabilityPopoverShown } from 'uiSrc/services'
+import {
+  isShowCapabilityTutorialPopover,
+  setCapabilityPopoverShown,
+} from 'uiSrc/services'
 import { connectedInstanceCDSelector } from 'uiSrc/slices/instances/instances'
-import { Image, RedisUploadButton, CloudLink, RedisInsightLink } from 'uiSrc/components/markdown'
+import {
+  Image,
+  RedisUploadButton,
+  CloudLink,
+  RedisInsightLink,
+} from 'uiSrc/components/markdown'
 import { getTutorialSection } from '../../utils'
 import { EmptyPrompt, Pagination, Code } from '..'
 
@@ -60,7 +70,14 @@ const InternalPage = (props: Props) => {
     manifestPath,
     sourcePath,
   } = props
-  const components: any = { Image, Code, RedisUploadButton, CloudLink, RedisInsightLink, ExternalLink }
+  const components: any = {
+    Image,
+    Code,
+    RedisUploadButton,
+    CloudLink,
+    RedisInsightLink,
+    ExternalLink,
+  }
   const containerRef = useRef<HTMLDivElement>(null)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const { source } = useSelector(appContextCapability)
@@ -82,7 +99,7 @@ const InternalPage = (props: Props) => {
         link,
         section: getTutorialSection(manifestPath),
         databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
-      }
+      },
     })
   }
 
@@ -104,7 +121,7 @@ const InternalPage = (props: Props) => {
         eventData: {
           capabilityName: tutorialCapability.telemetryName,
           databaseId: instanceId,
-        }
+        },
       })
     }
   }, [free])
@@ -112,7 +129,9 @@ const InternalPage = (props: Props) => {
   useEffect(() => {
     if (!isLoading && !error && containerRef.current) {
       if (location?.hash) {
-        const target = containerRef.current?.querySelector(location.hash) as HTMLElement
+        const target = containerRef.current?.querySelector(
+          location.hash,
+        ) as HTMLElement
         if (target) {
           // HACK: force scroll to element for electron app
           target.setAttribute('tabindex', '-1')
@@ -122,24 +141,29 @@ const InternalPage = (props: Props) => {
       }
 
       if (scrollTop && containerRef.current?.scrollTop === 0) {
-        requestAnimationFrame(() => setTimeout(() => {
-          containerRef.current?.scroll(0, scrollTop)
-        }, 0))
+        requestAnimationFrame(() =>
+          setTimeout(() => {
+            containerRef.current?.scroll(0, scrollTop)
+          }, 0),
+        )
       }
     }
   }, [isLoading, location])
 
-  const contentComponent = useMemo(() => (
-    // @ts-ignore
-    <JsxParser
-      bindings={{ path }}
-      components={components}
-      blacklistedTags={['iframe', 'script']}
-      autoCloseVoidElements
-      jsx={content}
-      onError={(e) => console.error(e)}
-    />
-  ), [content])
+  const contentComponent = useMemo(
+    () => (
+      // @ts-ignore
+      <JsxParser
+        bindings={{ path }}
+        components={components}
+        blacklistedTags={['iframe', 'script']}
+        autoCloseVoidElements
+        jsx={content}
+        onError={(e) => console.error(e)}
+      />
+    ),
+    [content],
+  )
 
   return (
     <div className={styles.container} data-test-subj="internal-page">
@@ -147,13 +171,17 @@ const InternalPage = (props: Props) => {
         <div style={{ padding: 0 }}>
           <EuiPopover
             initialFocus={false}
-            panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+            panelClassName={cx(
+              'euiToolTip',
+              'popoverLikeTooltip',
+              styles.popover,
+            )}
             anchorClassName={styles.popoverAnchor}
             anchorPosition="leftCenter"
             isOpen={showCapabilityPopover}
             panelPaddingSize="m"
             closePopover={() => setShowCapabilityPopover(false)}
-            button={(
+            button={
               <EuiButtonEmpty
                 data-testid="enablement-area__page-close"
                 iconType="arrowLeft"
@@ -163,24 +191,26 @@ const InternalPage = (props: Props) => {
               >
                 {backTitle}
               </EuiButtonEmpty>
-            )}
+            }
           >
             <div data-testid="explore-capability-popover">
               <RocketIcon className={styles.rocketIcon} />
               <EuiText className={styles.popoverTitle}>Explore Redis</EuiText>
               <EuiText className={styles.popoverText}>
                 {'You expressed interest in learning about the '}
-                <b>{tutorialCapability?.name}</b>
-                . Try this tutorial to get started.
+                <b>{tutorialCapability?.name}</b>. Try this tutorial to get
+                started.
               </EuiText>
             </div>
           </EuiPopover>
         </div>
         <div>
-          <EuiHorizontalRule margin="xs" />
+          <HorizontalRule margin="xs" />
         </div>
         <div>
-          <EuiText className={styles.pageTitle} color="default">{title?.toUpperCase()}</EuiText>
+          <EuiText className={styles.pageTitle} color="default">
+            {title?.toUpperCase()}
+          </EuiText>
         </div>
       </EuiFlyoutHeader>
       <div
@@ -191,14 +221,24 @@ const InternalPage = (props: Props) => {
         role="none"
         data-testid="enablement-area__page"
       >
-        { isLoading && <EuiLoadingContent data-testid="enablement-area__page-loader" lines={3} /> }
-        { !isLoading && error && <EmptyPrompt /> }
-        { !isLoading && !error && contentComponent }
+        {isLoading && (
+          <LoadingContent
+            data-testid="enablement-area__page-loader"
+            lines={3}
+          />
+        )}
+        {!isLoading && error && <EmptyPrompt />}
+        {!isLoading && !error && contentComponent}
       </div>
       {!!pagination?.length && (
         <>
           <div className={styles.footer}>
-            <Pagination sourcePath={sourcePath} items={pagination} activePageKey={activeKey} compressed />
+            <Pagination
+              sourcePath={sourcePath}
+              items={pagination}
+              activePageKey={activeKey}
+              compressed
+            />
           </div>
         </>
       )}

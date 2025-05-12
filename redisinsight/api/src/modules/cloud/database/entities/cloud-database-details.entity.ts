@@ -1,5 +1,9 @@
 import {
-  Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
@@ -30,14 +34,10 @@ export class CloudDatabaseDetailsEntity {
   @Column({ nullable: true, default: false })
   free: boolean;
 
-  @OneToOne(
-    () => DatabaseEntity,
-    (database) => database.cloudDetails,
-    {
-      nullable: true,
-      onDelete: 'CASCADE',
-    },
-  )
+  @OneToOne(() => DatabaseEntity, (database) => database.cloudDetails, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   database: DatabaseEntity;
 }

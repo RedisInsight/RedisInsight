@@ -1,17 +1,28 @@
-import { EuiButton, EuiIcon, EuiLink, EuiPopover, EuiSpacer, EuiText } from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiLink, EuiPopover, EuiText, } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 import { AxiosError } from 'axios'
 import { truncateText } from 'uiSrc/utils'
-import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
-import { customTutorialsBulkUploadSelector, uploadDataBulkAction } from 'uiSrc/slices/workbench/wb-custom-tutorials'
+import {
+  sendEventTelemetry,
+  TELEMETRY_EMPTY_VALUE,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
+import {
+  customTutorialsBulkUploadSelector,
+  uploadDataBulkAction,
+} from 'uiSrc/slices/workbench/wb-custom-tutorials'
 
 import DatabaseNotOpened from 'uiSrc/components/messages/database-not-opened'
 
-import { checkResourse, getPathToResource } from 'uiSrc/services/resourcesService'
+import {
+  checkResourse,
+  getPathToResource,
+} from 'uiSrc/services/resourcesService'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -39,8 +50,8 @@ const RedisUploadButton = ({ label, path }: Props) => {
       sendEventTelemetry({
         event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_CLICKED,
         eventData: {
-          databaseId: instanceId || TELEMETRY_EMPTY_VALUE
-        }
+          databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
+        },
       })
     }
 
@@ -53,8 +64,8 @@ const RedisUploadButton = ({ label, path }: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_SUBMITTED,
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
   }
 
@@ -70,7 +81,11 @@ const RedisUploadButton = ({ label, path }: Props) => {
       downloadAnchor.click()
     } catch {
       const error = {
-        response: { data: { message: 'File not found. Check if this file exists and try again.' } }
+        response: {
+          data: {
+            message: 'File not found. Check if this file exists and try again.',
+          },
+        },
       } as AxiosError<any>
       dispatch(addErrorNotification(error))
     }
@@ -78,8 +93,8 @@ const RedisUploadButton = ({ label, path }: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.EXPLORE_PANEL_DOWNLOAD_BULK_FILE_CLICKED,
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
   }
 
@@ -95,7 +110,7 @@ const RedisUploadButton = ({ label, path }: Props) => {
         panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
         anchorClassName={styles.popoverAnchor}
         panelPaddingSize="none"
-        button={(
+        button={
           <EuiButton
             isLoading={isLoading}
             iconSide="right"
@@ -109,25 +124,31 @@ const RedisUploadButton = ({ label, path }: Props) => {
           >
             {truncateText(label, 86)}
           </EuiButton>
-      )}
+        }
       >
         {instanceId ? (
-          <EuiText color="subdued" className={styles.containerPopover} data-testid="upload-data-bulk-tooltip">
-            <EuiIcon
-              type="alert"
-              className={styles.popoverIcon}
-            />
+          <EuiText
+            color="subdued"
+            className={styles.containerPopover}
+            data-testid="upload-data-bulk-tooltip"
+          >
+            <EuiIcon type="alert" className={styles.popoverIcon} />
             <div className={cx(styles.popoverItem, styles.popoverItemTitle)}>
               Execute commands in bulk
             </div>
-            <EuiSpacer size="s" />
+            <Spacer size="s" />
             <div className={styles.popoverItem}>
-              All commands from the file in your tutorial will be automatically executed against your database.
-              Avoid executing them in production databases.
+              All commands from the file in your tutorial will be automatically
+              executed against your database. Avoid executing them in production
+              databases.
             </div>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             <div className={styles.popoverActions}>
-              <EuiLink onClick={handleDownload} className={styles.link} data-testid="download-redis-upload-file">
+              <EuiLink
+                onClick={handleDownload}
+                className={styles.link}
+                data-testid="download-redis-upload-file"
+              >
                 Download file
               </EuiLink>
               <EuiButton
@@ -144,7 +165,9 @@ const RedisUploadButton = ({ label, path }: Props) => {
               </EuiButton>
             </div>
           </EuiText>
-        ) : (<DatabaseNotOpened />)}
+        ) : (
+          <DatabaseNotOpened />
+        )}
       </EuiPopover>
     </div>
   )

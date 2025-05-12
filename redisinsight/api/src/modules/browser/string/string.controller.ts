@@ -9,9 +9,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  ApiBody, ApiOkResponse, ApiOperation, ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import {
   SetStringDto,
@@ -45,7 +43,7 @@ export class StringController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async setString(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: SetStringWithExpireDto,
+    @Body() dto: SetStringWithExpireDto,
   ): Promise<void> {
     return this.stringService.setString(clientMetadata, dto);
   }
@@ -63,7 +61,7 @@ export class StringController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async getStringValue(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetStringInfoDto,
+    @Body() dto: GetStringInfoDto,
   ): Promise<GetStringValueResponse> {
     return this.stringService.getStringValue(clientMetadata, dto);
   }
@@ -78,18 +76,19 @@ export class StringController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async downloadStringFile(
     @Res() res: Response,
-      @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetKeyInfoDto,
+    @BrowserClientMetadata() clientMetadata: ClientMetadata,
+    @Body() dto: GetKeyInfoDto,
   ): Promise<void> {
-    const { stream } = await this.stringService.downloadStringValue(clientMetadata, dto);
+    const { stream } = await this.stringService.downloadStringValue(
+      clientMetadata,
+      dto,
+    );
 
     res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader('Content-Disposition', 'attachment;filename="string_value"');
     res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
 
-    stream
-      .on('error', () => res.status(404).send())
-      .pipe(res);
+    stream.on('error', () => res.status(404).send()).pipe(res);
   }
 
   @Put('')
@@ -99,7 +98,7 @@ export class StringController extends BrowserBaseController {
   @ApiQueryRedisStringEncoding()
   async updateStringValue(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: SetStringDto,
+    @Body() dto: SetStringDto,
   ): Promise<void> {
     return this.stringService.updateStringValue(clientMetadata, dto);
   }

@@ -25,17 +25,34 @@ jest.mock('uiSrc/services', () => ({
 
 describe('ShortInstanceInfo', () => {
   it('should render', () => {
-    expect(render(<ShortInstanceInfo info={{ ...instance(mockedProps) }} modules={[]} databases={2} />)).toBeTruthy()
+    expect(
+      render(
+        <ShortInstanceInfo
+          info={{ ...instance(mockedProps) }}
+          modules={[]}
+          databases={2}
+        />,
+      ),
+    ).toBeTruthy()
   })
 
   it('should render database modules', () => {
-    const modules = [{ name: 'redisgears' }, { name: 'redisearch', version: '123.23' }]
-    render(<ShortInstanceInfo info={{ ...instance(mockedProps) }} modules={modules} databases={2} />)
+    const modules = [
+      { name: 'redisgears' },
+      { name: 'redisearch', version: '123.23' },
+    ]
+    render(
+      <ShortInstanceInfo
+        info={{ ...instance(mockedProps) }}
+        modules={modules}
+        databases={2}
+      />,
+    )
 
     modules.forEach(({ name, version }) => {
       expect(screen.getByTestId(`module_${name}`)).toBeInTheDocument()
       expect(screen.getByTestId(`module_${name}`)).toHaveTextContent(
-        `${truncateText(getModule(name)?.name || DATABASE_LIST_MODULES_TEXT[name] || name, 50)}${version ? `v.${version}` : ''}`
+        `${truncateText(getModule(name)?.name || DATABASE_LIST_MODULES_TEXT[name] || name, 50)}${version ? `v.${version}` : ''}`,
       )
     })
   })

@@ -1,4 +1,8 @@
-import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios'
+import axios, {
+  AxiosInstance,
+  AxiosError,
+  InternalAxiosRequestConfig,
+} from 'axios'
 import { isNumber } from 'lodash'
 import { sessionStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
@@ -7,6 +11,7 @@ import { store } from 'uiSrc/slices/store'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
 import { setConnectivityError } from 'uiSrc/slices/app/connectivity'
 import { getConfig } from 'uiSrc/config'
+import ApiErrors from 'uiSrc/constants/apiErrors'
 
 const riConfig = getConfig()
 
@@ -21,9 +26,10 @@ if (window.__RI_PROXY_PATH__) {
   apiPrefix = `${window.__RI_PROXY_PATH__}/${apiPrefix}`
 }
 
-export const getBaseUrl = () => (!isDevelopment && isWebApp
-  ? `${window.location.origin}/${apiPrefix}/`
-  : `${riConfig.api.baseUrl}:${apiPort}/${apiPrefix}/`)
+export const getBaseUrl = () =>
+  !isDevelopment && isWebApp
+    ? `${window.location.origin}/${apiPrefix}/`
+    : `${riConfig.api.baseUrl}:${apiPort}/${apiPrefix}/`
 
 const mutableAxiosInstance: AxiosInstance = axios.create({
   baseURL: hostedApiBaseUrl || getBaseUrl(),
@@ -39,7 +45,9 @@ export const requestInterceptor = (config: InternalAxiosRequestConfig) => {
     const instanceId = /databases\/([\w-]+)\/?.*/.exec(config.url || '')?.[1]
 
     if (instanceId) {
-      const dbIndex = sessionStorageService.get(`${BrowserStorageItem.dbIndex}${instanceId}`)
+      const dbIndex = sessionStorageService.get(
+        `${BrowserStorageItem.dbIndex}${instanceId}`,
+      )
 
       if (isNumber(dbIndex)) {
         config.headers[CustomHeaders.DbIndex] = dbIndex
@@ -56,7 +64,11 @@ export const requestInterceptor = (config: InternalAxiosRequestConfig) => {
 
 export const cloudAuthInterceptor = (error: AxiosError) => {
   const { response, config } = error
-  if (response?.status === 401 && config?.url && CLOUD_AUTH_API_ENDPOINTS.includes(config.url as any)) {
+  if (
+    response?.status === 401 &&
+    config?.url &&
+    CLOUD_AUTH_API_ENDPOINTS.includes(config.url as any)
+  ) {
     store?.dispatch<any>(logoutUserAction?.())
   }
 
@@ -75,39 +87,33 @@ export const hostedAuthInterceptor = (error: AxiosError) => {
 export const connectivityErrorsInterceptor = (error: AxiosError) => {
   const { response } = error
   const responseData = response?.data as {
-    message?: string,
-    code?: string,
+    message?: string
+    code?: string
     error?: string
   }
 
-  if (response?.status === 503 && (
-    responseData.code === 'serviceUnavailable'
-    || responseData.error === 'Service Unavailable'
-  )) {
-    store?.dispatch<any>(setConnectivityError('The connection to the server has been lost.'))
+  if (
+    response?.status === 503 &&
+    (responseData.code === 'serviceUnavailable' ||
+      responseData.error === 'Service Unavailable')
+  ) {
+    store?.dispatch<any>(setConnectivityError(ApiErrors.ConnectionLost))
   }
 
   return Promise.reject(error)
 }
 
-mutableAxiosInstance.interceptors.request.use(
-  requestInterceptor,
-  (error) => Promise.reject(error)
+mutableAxiosInstance.interceptors.request.use(requestInterceptor, (error) =>
+  Promise.reject(error),
 )
+
+mutableAxiosInstance.interceptors.response.use(undefined, cloudAuthInterceptor)
+
+mutableAxiosInstance.interceptors.response.use(undefined, hostedAuthInterceptor)
 
 mutableAxiosInstance.interceptors.response.use(
   undefined,
-  cloudAuthInterceptor
-)
-
-mutableAxiosInstance.interceptors.response.use(
-  undefined,
-  hostedAuthInterceptor
-)
-
-mutableAxiosInstance.interceptors.response.use(
-  undefined,
-  connectivityErrorsInterceptor
+  connectivityErrorsInterceptor,
 )
 
 export default mutableAxiosInstance

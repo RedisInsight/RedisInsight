@@ -8,7 +8,7 @@ jest.mock('uiSrc/slices/rdi/dryRun', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/dryRun'),
   rdiDryRunJobSelector: jest.fn().mockReturnValue({
     results: null,
-  })
+  }),
 }))
 
 describe('DryRunJobTransformations', () => {
@@ -19,18 +19,24 @@ describe('DryRunJobTransformations', () => {
   it('should render no transformation message', () => {
     const rdiDryRunJobSelectorMock = jest.fn().mockReturnValue({
       results: {},
-    });
-    (rdiDryRunJobSelector as jest.Mock).mockImplementationOnce(rdiDryRunJobSelectorMock)
+    })
+    ;(rdiDryRunJobSelector as jest.Mock).mockImplementationOnce(
+      rdiDryRunJobSelectorMock,
+    )
 
     render(<DryRunJobTransformations />)
-    expect(screen.getByTestId('transformations-output')).toHaveTextContent('No transformation results provided by the server.')
+    expect(screen.getByTestId('transformations-output')).toHaveTextContent(
+      'No transformation results provided by the server.',
+    )
   })
 
   it('should render transformations', () => {
     const rdiDryRunJobSelectorMock = jest.fn().mockReturnValue({
       results: { transformation: [] },
-    });
-    (rdiDryRunJobSelector as jest.Mock).mockImplementationOnce(rdiDryRunJobSelectorMock)
+    })
+    ;(rdiDryRunJobSelector as jest.Mock).mockImplementationOnce(
+      rdiDryRunJobSelectorMock,
+    )
 
     render(<DryRunJobTransformations />)
     expect(screen.getByTestId('transformations-output')).toHaveTextContent('[]')

@@ -6,12 +6,12 @@ import {
   EuiFlyout,
   EuiFlyoutBody,
   EuiInMemoryTable,
-  EuiSpacer,
-  EuiTitle
+  EuiTitle,
 } from '@elastic/eui'
 import { appInfoSelector, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
 import { KeyboardShortcut } from 'uiSrc/components'
 import { BuildType } from 'uiSrc/constants/env'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { SHORTCUTS, ShortcutGroup, separator } from './schema'
 
 import styles from './styles.module.scss'
@@ -25,14 +25,16 @@ const ShortcutsFlyout = () => {
     {
       name: '',
       field: 'description',
-      width: '60%'
+      width: '60%',
     },
     {
       name: '',
       field: 'keys',
       width: '40%',
-      render: (items: string[]) => <KeyboardShortcut items={items} separator={separator} transparent />
-    }
+      render: (items: string[]) => (
+        <KeyboardShortcut items={items} separator={separator} transparent />
+      ),
+    },
   ]
 
   const ShortcutsTable = ({ name, items }: ShortcutGroup) => (
@@ -40,14 +42,14 @@ const ShortcutsFlyout = () => {
       <EuiTitle size="xxs" data-test-subj={`shortcuts-section-${name}`}>
         <h6>{name}</h6>
       </EuiTitle>
-      <EuiSpacer size="m" />
+      <Spacer size="m" />
       <EuiInMemoryTable
         className={cx('inMemoryTableDefault', styles.table)}
         columns={tableColumns}
         items={items}
         responsive={false}
       />
-      <EuiSpacer size="xl" />
+      <Spacer size="xl" />
     </div>
   )
 
@@ -59,13 +61,18 @@ const ShortcutsFlyout = () => {
       data-test-subj="shortcuts-flyout"
     >
       <EuiFlyoutBody>
-        <EuiTitle size="s" className={styles.title} data-testid="shortcuts-title">
+        <EuiTitle
+          size="s"
+          className={styles.title}
+          data-testid="shortcuts-title"
+        >
           <h4>Shortcuts</h4>
         </EuiTitle>
-        <EuiSpacer size="m" />
-        {SHORTCUTS
-          .filter(({ excludeFor }) => !excludeFor || !excludeFor.includes(server?.buildType as BuildType))
-          .map(ShortcutsTable)}
+        <Spacer size="m" />
+        {SHORTCUTS.filter(
+          ({ excludeFor }) =>
+            !excludeFor || !excludeFor.includes(server?.buildType as BuildType),
+        ).map(ShortcutsTable)}
       </EuiFlyoutBody>
     </EuiFlyout>
   ) : null

@@ -12,7 +12,11 @@ import { SentinelMasterStatus } from 'src/modules/redis-sentinel/models/sentinel
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { ReplyError } from 'src/models';
-import { isSentinel, discoverOtherSentinels, discoverSentinelMasterGroups } from './sentinel.util';
+import {
+  isSentinel,
+  discoverOtherSentinels,
+  discoverSentinelMasterGroups,
+} from './sentinel.util';
 
 describe('Sentinel Util', () => {
   beforeEach(() => {
@@ -21,7 +25,9 @@ describe('Sentinel Util', () => {
 
   describe('isSentinel', () => {
     it('sentinel connection ok', async () => {
-      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce(mockRedisSentinelMasterResponse);
+      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce(
+        mockRedisSentinelMasterResponse,
+      );
       expect(await isSentinel(mockStandaloneRedisClient)).toEqual(true);
     });
     it('sentinel not supported', async () => {
@@ -37,15 +43,19 @@ describe('Sentinel Util', () => {
   describe('getMasterEndpoints', () => {
     it('succeed to get sentinel master endpoints', async () => {
       const masterName = mockSentinelMasterDto.name;
-      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce(mockOtherSentinelsReply);
+      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce(
+        mockOtherSentinelsReply,
+      );
 
-      const result = await discoverOtherSentinels(mockStandaloneRedisClient, masterName);
-
-      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledWith([
-        'sentinel',
-        'sentinels',
+      const result = await discoverOtherSentinels(
+        mockStandaloneRedisClient,
         masterName,
-      ], { replyEncoding: 'utf8' });
+      );
+
+      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledWith(
+        ['sentinel', 'sentinels', masterName],
+        { replyEncoding: 'utf8' },
+      );
 
       expect(result).toEqual([mockOtherSentinelEndpoint]);
     });
@@ -53,13 +63,15 @@ describe('Sentinel Util', () => {
       const masterName = mockSentinelMasterDto.name;
       mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce([]);
 
-      const result = await discoverOtherSentinels(mockStandaloneRedisClient, masterName);
-
-      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledWith([
-        'sentinel',
-        'sentinels',
+      const result = await discoverOtherSentinels(
+        mockStandaloneRedisClient,
         masterName,
-      ], { replyEncoding: 'utf8' });
+      );
+
+      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledWith(
+        ['sentinel', 'sentinels', masterName],
+        { replyEncoding: 'utf8' },
+      );
 
       expect(result).toEqual([]);
     });
@@ -70,10 +82,13 @@ describe('Sentinel Util', () => {
       });
 
       await expect(
-        discoverOtherSentinels(mockStandaloneRedisClient, mockSentinelMasterDto.name),
+        discoverOtherSentinels(
+          mockStandaloneRedisClient,
+          mockSentinelMasterDto.name,
+        ),
       ).rejects.toThrow(BadRequestException);
     });
-    it('user don\'t have required permissions', async () => {
+    it("user don't have required permissions", async () => {
       const error: ReplyError = {
         ...mockRedisNoPermError,
         command: 'SENTINEL',
@@ -81,26 +96,32 @@ describe('Sentinel Util', () => {
       mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce(error);
 
       await expect(
-        discoverOtherSentinels(mockStandaloneRedisClient, mockSentinelMasterDto.name),
+        discoverOtherSentinels(
+          mockStandaloneRedisClient,
+          mockSentinelMasterDto.name,
+        ),
       ).rejects.toThrow(ForbiddenException);
     });
   });
 
   describe('discoverSentinelMasterGroups', () => {
     it('succeed to get sentinel masters', async () => {
-      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce(
-        [mockSentinelMasterInOkState, mockSentinelMasterInDownState],
-      );
+      mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce([
+        mockSentinelMasterInOkState,
+        mockSentinelMasterInDownState,
+      ]);
       mockStandaloneRedisClient.sendCommand
         .mockResolvedValueOnce(mockOtherSentinelsReply)
         .mockResolvedValueOnce(mockOtherSentinelsReply);
 
-      const result = await discoverSentinelMasterGroups(mockStandaloneRedisClient);
+      const result = await discoverSentinelMasterGroups(
+        mockStandaloneRedisClient,
+      );
 
-      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledWith([
-        'sentinel',
-        'masters',
-      ], { replyEncoding: 'utf8' });
+      expect(mockStandaloneRedisClient.sendCommand).toHaveBeenCalledWith(
+        ['sentinel', 'masters'],
+        { replyEncoding: 'utf8' },
+      );
       expect(result).toEqual([
         mockSentinelMasterDto,
         {
@@ -124,15 +145,15 @@ describe('Sentinel Util', () => {
       }
     });
 
-    it('user don\'t have required permissions', async () => {
+    it("user don't have required permissions", async () => {
       mockStandaloneRedisClient.sendCommand.mockRejectedValueOnce({
         ...mockRedisNoPermError,
         command: 'SENTINEL',
       });
 
-      await expect(discoverSentinelMasterGroups(mockStandaloneRedisClient)).rejects.toThrow(
-        ForbiddenException,
-      );
+      await expect(
+        discoverSentinelMasterGroups(mockStandaloneRedisClient),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 });

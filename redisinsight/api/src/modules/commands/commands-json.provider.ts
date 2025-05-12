@@ -49,14 +49,19 @@ export class CommandsJsonProvider {
    */
   async getCommands() {
     try {
-      return ({
-        [this.name]: JSON.parse(await fs.readFile(
-          path.join(PATH_CONFIG.commands, `${this.name}.json`),
-          'utf8',
-        ))
-      })
+      return {
+        [this.name]: JSON.parse(
+          await fs.readFile(
+            path.join(PATH_CONFIG.commands, `${this.name}.json`),
+            'utf8',
+          ),
+        ),
+      };
     } catch (error) {
-      this.logger.warn(`Unable to get latest ${this.name} commands. Return default.`, error);
+      this.logger.warn(
+        `Unable to get latest ${this.name} commands. Return default.`,
+        error,
+      );
       return this.getDefaultCommands();
     }
   }
@@ -67,12 +72,14 @@ export class CommandsJsonProvider {
    */
   async getDefaultCommands() {
     try {
-      return ({
-        [this.name]: JSON.parse(await fs.readFile(
-          path.join(PATH_CONFIG.defaultCommandsDir, `${this.name}.json`),
-          'utf8',
-        ))
-      });
+      return {
+        [this.name]: JSON.parse(
+          await fs.readFile(
+            path.join(PATH_CONFIG.defaultCommandsDir, `${this.name}.json`),
+            'utf8',
+          ),
+        ),
+      };
     } catch (error) {
       this.logger.error(`Unable to get default ${this.name} commands.`, error);
       return {};

@@ -6,11 +6,16 @@ import {
   AiQueryBadRequestException,
   AiQueryNotFoundException,
   AiQueryInternalServerErrorException,
-  AiQueryRateLimitRequestException, AiQueryRateLimitTokenException, AiQueryRateLimitMaxTokensException,
+  AiQueryRateLimitRequestException,
+  AiQueryRateLimitTokenException,
+  AiQueryRateLimitMaxTokensException,
 } from 'src/modules/ai/query/exceptions';
 import { AiQueryServerErrors } from 'src/modules/ai/query/models';
 
-export const wrapAiQueryError = (error: any, message?: string): HttpException => {
+export const wrapAiQueryError = (
+  error: any,
+  message?: string,
+): HttpException => {
   if (error instanceof HttpException) {
     return error;
   }
@@ -19,18 +24,28 @@ export const wrapAiQueryError = (error: any, message?: string): HttpException =>
   if (error.error) {
     switch (error.error) {
       case AiQueryServerErrors.RateLimitRequest:
-        return new AiQueryRateLimitRequestException(error.message, { details: error.data });
+        return new AiQueryRateLimitRequestException(error.message, {
+          details: error.data,
+        });
       case AiQueryServerErrors.RateLimitToken:
-        return new AiQueryRateLimitTokenException(error.message, { details: error.data });
+        return new AiQueryRateLimitTokenException(error.message, {
+          details: error.data,
+        });
       case AiQueryServerErrors.MaxTokens:
-        return new AiQueryRateLimitMaxTokensException(error.message, { details: error.data });
+        return new AiQueryRateLimitMaxTokensException(error.message, {
+          details: error.data,
+        });
       default:
-        // go further
+      // go further
     }
   }
 
   // TransportError or Axios error
-  const response = get(error, ['description', 'target', '_req', 'res'], error.response);
+  const response = get(
+    error,
+    ['description', 'target', '_req', 'res'],
+    error.response,
+  );
 
   if (response) {
     const errorOptions = { cause: new Error(response.data as string) };

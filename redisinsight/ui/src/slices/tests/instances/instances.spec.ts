@@ -67,8 +67,17 @@ import reducer, {
   autoCreateAndConnectToInstanceAction,
   cloneInstanceAction,
 } from '../../instances/instances'
-import { addErrorNotification, addInfiniteNotification, addMessageNotification, IAddInstanceErrorPayload } from '../../app/notifications'
-import { ConnectionType, InitialStateInstances, Instance } from '../../interfaces'
+import {
+  addErrorNotification,
+  addInfiniteNotification,
+  addMessageNotification,
+  IAddInstanceErrorPayload,
+} from '../../app/notifications'
+import {
+  ConnectionType,
+  InitialStateInstances,
+  Instance,
+} from '../../interfaces'
 import { loadMastersSentinel } from '../../instances/sentinel'
 
 jest.mock('uiSrc/services', () => ({
@@ -304,7 +313,10 @@ describe('instances slice', () => {
       }
 
       // Act
-      const nextState = reducer(prevState, changeInstanceAliasSuccess({ id: instances[0].id, name: 'newAlias' }))
+      const nextState = reducer(
+        prevState,
+        changeInstanceAliasSuccess({ id: instances[0].id, name: 'newAlias' }),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -439,15 +451,18 @@ describe('instances slice', () => {
         opsPerSecond: 2,
         networkInKbps: 0,
         networkOutKbps: 0,
-        cpuUsagePercentage: null
+        cpuUsagePercentage: null,
       }
       const state = {
         ...initialState,
-        instanceOverview: data
+        instanceOverview: data,
       }
 
       // Act
-      const nextState = reducer(initialState, getDatabaseConfigInfoSuccess(data))
+      const nextState = reducer(
+        initialState,
+        getDatabaseConfigInfoSuccess(data),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -465,11 +480,14 @@ describe('instances slice', () => {
       const error = 'some error'
       const state = {
         ...initialState,
-        error
+        error,
       }
 
       // Act
-      const nextState = reducer(initialState, getDatabaseConfigInfoFailure(error))
+      const nextState = reducer(
+        initialState,
+        getDatabaseConfigInfoFailure(error),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -490,7 +508,7 @@ describe('instances slice', () => {
         connectedInstance: {
           ...initialState.connectedInstance,
           id,
-        }
+        },
       }
 
       // Act
@@ -514,7 +532,7 @@ describe('instances slice', () => {
         connectedInstance: {
           ...initialState.connectedInstance,
           loading: true,
-        }
+        },
       }
 
       // Act
@@ -536,11 +554,14 @@ describe('instances slice', () => {
       const instance = { ...instances[1] }
       const state: InitialStateInstances = {
         ...initialState,
-        connectedInstance: instance
+        connectedInstance: instance,
       }
 
       // Act
-      const nextState = reducer(initialState, setConnectedInstanceSuccess(instance))
+      const nextState = reducer(
+        initialState,
+        setConnectedInstanceSuccess(instance),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -560,7 +581,7 @@ describe('instances slice', () => {
         connectedInstance: {
           ...initialState.connectedInstance,
           loading: false,
-        }
+        },
       }
 
       // Act
@@ -584,12 +605,12 @@ describe('instances slice', () => {
         instanceInfo: {
           version: '6.12.0',
           databases: 12,
-          server: {}
-        }
+          server: {},
+        },
       }
       const state: InitialStateInstances = {
         ...initialState,
-        instanceInfo: initialState.instanceInfo
+        instanceInfo: initialState.instanceInfo,
       }
 
       // Act
@@ -611,15 +632,18 @@ describe('instances slice', () => {
       const payload = {
         version: '6.12.0',
         databases: 12,
-        server: {}
+        server: {},
       }
       const state: InitialStateInstances = {
         ...initialState,
-        instanceInfo: payload
+        instanceInfo: payload,
       }
 
       // Act
-      const nextState = reducer(initialState, setConnectedInfoInstanceSuccess(payload))
+      const nextState = reducer(
+        initialState,
+        setConnectedInfoInstanceSuccess(payload),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -640,7 +664,7 @@ describe('instances slice', () => {
         editedInstance: {
           ...initialState.editedInstance,
           data,
-        }
+        },
       }
 
       // Act
@@ -665,7 +689,7 @@ describe('instances slice', () => {
         editedInstance: {
           ...initialState.editedInstance,
           data,
-        }
+        },
       }
 
       // Act
@@ -687,7 +711,7 @@ describe('instances slice', () => {
       const state = {
         ...initialState.importInstances,
         loading: true,
-        error: ''
+        error: '',
       }
 
       // Act
@@ -706,21 +730,30 @@ describe('instances slice', () => {
   describe('importInstancesFromFileSuccess', () => {
     it('should properly set state', () => {
       // Arrange
-      const mockedError = { statusCode: 400, message: 'message', error: 'error' }
+      const mockedError = {
+        statusCode: 400,
+        message: 'message',
+        error: 'error',
+      }
       const data = {
         total: 3,
         fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
         partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
-        success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
+        success: [
+          { index: 1, status: 'success', port: 1233, host: 'localhost' },
+        ],
       }
       const state = {
         ...initialState.importInstances,
         loading: false,
-        data
+        data,
       }
 
       // Act
-      const nextState = reducer(initialState, importInstancesFromFileSuccess(data))
+      const nextState = reducer(
+        initialState,
+        importInstancesFromFileSuccess(data),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -739,11 +772,14 @@ describe('instances slice', () => {
       const state = {
         ...initialState.importInstances,
         loading: false,
-        error
+        error,
       }
 
       // Act
-      const nextState = reducer(initialState, importInstancesFromFileFailure(error))
+      const nextState = reducer(
+        initialState,
+        importInstancesFromFileFailure(error),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -758,7 +794,11 @@ describe('instances slice', () => {
   describe('resetImportInstances', () => {
     it('should properly set state', () => {
       // Arrange
-      const mockedError = { statusCode: 400, message: 'message', error: 'error' }
+      const mockedError = {
+        statusCode: 400,
+        message: 'message',
+        error: 'error',
+      }
       const currentState = {
         ...initialState,
         importInstances: {
@@ -767,13 +807,15 @@ describe('instances slice', () => {
             total: 3,
             fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
             partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
-            success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
-          }
-        }
+            success: [
+              { index: 1, status: 'success', port: 1233, host: 'localhost' },
+            ],
+          },
+        },
       }
 
       const state = {
-        ...initialState.importInstances
+        ...initialState.importInstances,
       }
 
       // Act
@@ -797,7 +839,7 @@ describe('instances slice', () => {
         connectedInstance: {
           ...initialState.connectedInstance,
           loading: true,
-        }
+        },
       }
 
       // Act
@@ -821,8 +863,8 @@ describe('instances slice', () => {
         connectedInstance: {
           ...initialState.connectedInstance,
           loading: false,
-          db: 5
-        }
+          db: 5,
+        },
       }
 
       // Act
@@ -846,7 +888,7 @@ describe('instances slice', () => {
         connectedInstance: {
           ...initialState.connectedInstance,
           loading: false,
-        }
+        },
       }
 
       // Act
@@ -883,7 +925,8 @@ describe('instances slice', () => {
 
       it('call both fetchInstances and loadInstancesFailure when fetch is fail', async () => {
         // Arrange
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -920,17 +963,23 @@ describe('instances slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(createInstanceStandaloneAction(requestData, jest.fn()))
+        await store.dispatch<any>(
+          createInstanceStandaloneAction(requestData, jest.fn()),
+        )
 
         // Assert
         const expectedActions = [
           defaultInstanceChanging(),
           defaultInstanceChangingSuccess(),
           loadInstances(),
-          addMessageNotification(successMessages.ADDED_NEW_INSTANCE(requestData.name))
+          addMessageNotification(
+            successMessages.ADDED_NEW_INSTANCE(requestData.name),
+          ),
         ]
 
-        expect(store.getActions().splice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().splice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
 
       it('call both createInstanceStandaloneAction and defaultInstanceChangingFailure when fetch is fail', async () => {
@@ -941,7 +990,8 @@ describe('instances slice', () => {
           port: 6379,
         }
 
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -953,7 +1003,7 @@ describe('instances slice', () => {
 
         // Act
         await store.dispatch<any>(
-          createInstanceStandaloneAction(requestData, () => ({}))
+          createInstanceStandaloneAction(requestData, () => ({})),
         )
 
         // Assert
@@ -973,7 +1023,8 @@ describe('instances slice', () => {
           port: 6379,
         }
 
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 400,
@@ -988,7 +1039,7 @@ describe('instances slice', () => {
 
         // Act
         await store.dispatch<any>(
-          createInstanceStandaloneAction(requestData, () => ({}))
+          createInstanceStandaloneAction(requestData, () => ({})),
         )
 
         // Assert
@@ -1020,7 +1071,7 @@ describe('instances slice', () => {
               errorCode: CustomErrorCodes.DatabaseAlreadyExists,
               resource: {
                 databaseId: mockId,
-              }
+              },
             },
           },
         }
@@ -1039,7 +1090,9 @@ describe('instances slice', () => {
           setDefaultInstance(),
           resetConnectedInstance(),
         ]
-        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
     })
 
@@ -1060,10 +1113,19 @@ describe('instances slice', () => {
           setDefaultInstance(),
           setDefaultInstanceSuccess(),
           loadInstances(),
-          addMessageNotification(successMessages.DELETE_INSTANCE(requestData[0].name ?? ''))
+          addMessageNotification(
+            successMessages.DELETE_INSTANCE(requestData[0].name ?? ''),
+          ),
         ]
 
-        expect(store.getActions().splice(0, expectedActions.length)).toEqual(expectedActions)
+        const actions = store.getActions()
+        // skip thunk action
+        const testActions = [
+          ...actions.slice(0, expectedActions.length - 1),
+          actions[expectedActions.length],
+        ]
+
+        expect(testActions).toEqual(expectedActions)
       })
 
       it('call both deleteInstances and setDefaultInstanceSuccess when fetch is successed for several instances', async () => {
@@ -1082,17 +1144,27 @@ describe('instances slice', () => {
           setDefaultInstance(),
           setDefaultInstanceSuccess(),
           loadInstances(),
-          addMessageNotification(successMessages.DELETE_INSTANCES(map(requestData, 'name')))
+          addMessageNotification(
+            successMessages.DELETE_INSTANCES(map(requestData, 'name')),
+          ),
         ]
 
-        expect(store.getActions().splice(0, expectedActions.length)).toEqual(expectedActions)
+        const actions = store.getActions()
+        // skip thunk action
+        const testActions = [
+          ...actions.slice(0, expectedActions.length - 1),
+          actions[expectedActions.length],
+        ]
+
+        expect(testActions).toEqual(expectedActions)
       })
 
       it('call both deleteInstances and setDefaultInstanceFailure when fetch is fail', async () => {
         // Arrange
         const requestData = instances.slice(0, 3)
 
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -1124,7 +1196,9 @@ describe('instances slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(exportInstancesAction(map(instances, 'id'), true))
+        await store.dispatch<any>(
+          exportInstancesAction(map(instances, 'id'), true),
+        )
 
         // Assert
         const expectedActions = [
@@ -1148,7 +1222,9 @@ describe('instances slice', () => {
         apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(exportInstancesAction(map(instances, 'id'), false))
+        await store.dispatch<any>(
+          exportInstancesAction(map(instances, 'id'), false),
+        )
 
         // Assert
         const expectedActions = [
@@ -1195,7 +1271,8 @@ describe('instances slice', () => {
           port: 6379,
         }
 
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -1232,7 +1309,11 @@ describe('instances slice', () => {
 
         // Act
         await store.dispatch<any>(
-          checkConnectToInstanceAction(requestId, onSuccessAction, onFailAction)
+          checkConnectToInstanceAction(
+            requestId,
+            onSuccessAction,
+            onFailAction,
+          ),
         )
 
         // Assert
@@ -1242,7 +1323,9 @@ describe('instances slice', () => {
           setDefaultInstanceSuccess(),
         ]
 
-        expect(store.getActions().splice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().splice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
 
       it('call both checkConnectToInstance and setDefaultInstanceFailure when fetch is fail', async () => {
@@ -1252,7 +1335,8 @@ describe('instances slice', () => {
         const onSuccessAction = jest.fn()
         const onFailAction = jest.fn()
 
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           instanceId: requestId,
           response: {
@@ -1265,7 +1349,11 @@ describe('instances slice', () => {
 
         // Act
         await store.dispatch<any>(
-          checkConnectToInstanceAction(requestId, onSuccessAction, onFailAction)
+          checkConnectToInstanceAction(
+            requestId,
+            onSuccessAction,
+            onFailAction,
+          ),
         )
 
         // Assert
@@ -1287,7 +1375,7 @@ describe('instances slice', () => {
           databases: 1,
           server: {},
           modules: [],
-          version: '6.52'
+          version: '6.52',
         }
         const responsePayload = { status: 200, data }
 
@@ -1295,7 +1383,7 @@ describe('instances slice', () => {
 
         // Act
         await store.dispatch<any>(
-          getDatabaseConfigInfoAction(requestId, jest.fn())
+          getDatabaseConfigInfoAction(requestId, jest.fn()),
         )
 
         // Assert
@@ -1322,7 +1410,7 @@ describe('instances slice', () => {
 
         // Act
         await store.dispatch<any>(
-          getDatabaseConfigInfoAction(requestId, jest.fn(), jest.fn())
+          getDatabaseConfigInfoAction(requestId, jest.fn(), jest.fn()),
         )
 
         // Assert
@@ -1343,7 +1431,7 @@ describe('instances slice', () => {
           databases: 12,
           server: {},
           modules: [],
-          version: '6.52'
+          version: '6.52',
         }
         const responsePayload = { status: 200, data }
 
@@ -1351,7 +1439,7 @@ describe('instances slice', () => {
 
         // Act
         await store.dispatch<any>(
-          fetchConnectedInstanceInfoAction(requestId, jest.fn())
+          fetchConnectedInstanceInfoAction(requestId, jest.fn()),
         )
 
         // Assert
@@ -1378,20 +1466,21 @@ describe('instances slice', () => {
 
         // Act
         await store.dispatch<any>(
-          fetchConnectedInstanceInfoAction(requestId, jest.fn())
+          fetchConnectedInstanceInfoAction(requestId, jest.fn()),
         )
 
         // Assert
-        const expectedActions = [
-          setConnectedInfoInstance(),
-        ]
+        const expectedActions = [setConnectedInfoInstance()]
 
         expect(store.getActions()).toEqual(expectedActions)
       })
     })
 
     describe('changeInstanceAliasAction', () => {
-      const requestPayload = { id: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff', name: 'newAlias' }
+      const requestPayload = {
+        id: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff',
+        name: 'newAlias',
+      }
       it('succeed to change database alias', async () => {
         // Arrange
         const data = {
@@ -1403,7 +1492,7 @@ describe('instances slice', () => {
 
         // Act
         await store.dispatch<any>(
-          changeInstanceAliasAction(requestPayload.id, requestPayload.name)
+          changeInstanceAliasAction(requestPayload.id, requestPayload.name),
         )
 
         // Assert
@@ -1427,7 +1516,7 @@ describe('instances slice', () => {
 
         // Act
         await store.dispatch<any>(
-          changeInstanceAliasAction(requestPayload.id, requestPayload.name)
+          changeInstanceAliasAction(requestPayload.id, requestPayload.name),
         )
 
         // Assert
@@ -1444,7 +1533,12 @@ describe('instances slice', () => {
     describe('fetchEditedInstanceAction', () => {
       it('call both setEditedInstance and setDefaultInstanceSuccess when fetch is successed', async () => {
         // Arrange
-        const editedInstance = { id: 'instanceId', host: '1', port: 1, modules: [] }
+        const editedInstance = {
+          id: 'instanceId',
+          host: '1',
+          port: 1,
+          modules: [],
+        }
         const data = instances[1]
         const responsePayload = { data, status: 200 }
 
@@ -1465,8 +1559,14 @@ describe('instances slice', () => {
 
       it('call both setDefaultInstance and setDefaultInstanceFailure when fetch is fail', async () => {
         // Arrange
-        const editedInstance = { id: 'instanceId', host: '1', port: 1, modules: [] }
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const editedInstance = {
+          id: 'instanceId',
+          host: '1',
+          port: 1,
+          modules: [],
+        }
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -1542,12 +1642,18 @@ describe('instances slice', () => {
       it('should call proper actions on success', async () => {
         // Arrange
         const formData = new FormData()
-        const mockedError = { statusCode: 400, message: 'message', error: 'error' }
+        const mockedError = {
+          statusCode: 400,
+          message: 'message',
+          error: 'error',
+        }
         const data = {
           total: 3,
           fail: [{ index: 0, status: 'fail', errors: [mockedError] }],
           partial: [{ index: 2, status: 'fail', errors: [mockedError] }],
-          success: [{ index: 1, status: 'success', port: 1233, host: 'localhost' }]
+          success: [
+            { index: 1, status: 'success', port: 1233, host: 'localhost' },
+          ],
         }
 
         const responsePayload = { data, status: 200 }
@@ -1560,9 +1666,16 @@ describe('instances slice', () => {
         // Assert
         const expectedActions = [
           importInstancesFromFile(),
-          importInstancesFromFileSuccess(responsePayload.data)
+          importInstancesFromFileSuccess(responsePayload.data),
         ]
-        expect(store.getActions()).toEqual(expectedActions)
+        const actions = store.getActions()
+        // skip thunk action
+        const testActions = [
+          ...actions.slice(0, expectedActions.length - 1),
+          actions[expectedActions.length],
+        ]
+
+        expect(testActions).toEqual(expectedActions)
       })
 
       it('should call proper actions on fail', async () => {
@@ -1605,7 +1718,10 @@ describe('instances slice', () => {
         // Act
         await store.dispatch<any>(testInstanceStandaloneAction(requestData))
 
-        expect(apiService.post).toBeCalledWith('databases/test/123', omit(requestData, 'id'))
+        expect(apiService.post).toBeCalledWith(
+          'databases/test/123',
+          omit(requestData, 'id'),
+        )
       })
 
       it('call axios with proper url with id', async () => {
@@ -1644,7 +1760,7 @@ describe('instances slice', () => {
         const expectedActions = [
           testConnection(),
           testConnectionSuccess(),
-          addMessageNotification(successMessages.TEST_CONNECTION())
+          addMessageNotification(successMessages.TEST_CONNECTION()),
         ]
 
         expect(store.getActions().splice(0, 3)).toEqual(expectedActions)
@@ -1693,12 +1809,17 @@ describe('instances slice', () => {
           port: 6379,
         }
 
-        const responsePayload = { status: 201, data: { id: mockId, name: mockName } }
+        const responsePayload = {
+          status: 201,
+          data: { id: mockId, name: mockName },
+        }
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(autoCreateAndConnectToInstanceAction(requestData))
+        await store.dispatch<any>(
+          autoCreateAndConnectToInstanceAction(requestData),
+        )
 
         // Assert
         const expectedActions = [
@@ -1710,7 +1831,9 @@ describe('instances slice', () => {
           resetConnectedInstance(),
         ]
 
-        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
 
       it('should call proper actions on fail with errorCode=11_200 (Database already exists)', async () => {
@@ -1732,7 +1855,7 @@ describe('instances slice', () => {
               errorCode: CustomErrorCodes.DatabaseAlreadyExists,
               resource: {
                 databaseId: mockId,
-              }
+              },
             },
           },
         }
@@ -1740,7 +1863,9 @@ describe('instances slice', () => {
         apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(autoCreateAndConnectToInstanceAction(requestData))
+        await store.dispatch<any>(
+          autoCreateAndConnectToInstanceAction(requestData),
+        )
 
         // Assert
         const expectedActions = [
@@ -1751,7 +1876,9 @@ describe('instances slice', () => {
           setDefaultInstance(),
           resetConnectedInstance(),
         ]
-        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
     })
 
@@ -1778,10 +1905,14 @@ describe('instances slice', () => {
           defaultInstanceChanging(),
           defaultInstanceChangingSuccess(),
           loadInstances(),
-          addMessageNotification(successMessages.ADDED_NEW_INSTANCE(requestData.name))
+          addMessageNotification(
+            successMessages.ADDED_NEW_INSTANCE(requestData.name),
+          ),
         ]
 
-        expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+        expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+          expectedActions,
+        )
       })
       it('call both createInstanceStandaloneAction and defaultInstanceChangingFailure when fetch is fail', async () => {
         // Arrange
@@ -1791,7 +1922,8 @@ describe('instances slice', () => {
           port: 6379,
         }
 
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -1802,9 +1934,7 @@ describe('instances slice', () => {
         apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
 
         // Act
-        await store.dispatch<any>(
-          cloneInstanceAction(requestData, () => ({}))
-        )
+        await store.dispatch<any>(cloneInstanceAction(requestData, () => ({})))
 
         // Assert
         const expectedActions = [

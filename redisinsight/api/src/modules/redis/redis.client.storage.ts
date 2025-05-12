@@ -15,7 +15,10 @@ export class RedisClientStorage {
   private readonly syncInterval: NodeJS.Timeout;
 
   constructor() {
-    this.syncInterval = setInterval(this.syncClients.bind(this), REDIS_CLIENTS_CONFIG.syncInterval);
+    this.syncInterval = setInterval(
+      this.syncClients.bind(this),
+      REDIS_CLIENTS_CONFIG.syncInterval,
+    );
   }
 
   onModuleDestroy() {
@@ -34,7 +37,11 @@ export class RedisClientStorage {
     try {
       this.clients.forEach((client) => {
         if (client.isIdle()) {
-          client.disconnect().catch((e) => this.logger.warn('Unable to disconnect client after idle', e));
+          client
+            .disconnect()
+            .catch((e) =>
+              this.logger.warn('Unable to disconnect client after idle', e),
+            );
           this.clients.delete(client.id);
         }
       });
@@ -50,7 +57,9 @@ export class RedisClientStorage {
    */
   private findClients(clientMetadata: Partial<ClientMetadata>): string[] {
     return [...this.clients.values()]
-      .filter((redisClient) => isMatch(redisClient['clientMetadata'], clientMetadata))
+      .filter((redisClient) =>
+        isMatch(redisClient['clientMetadata'], clientMetadata),
+      )
       .map((client) => client.id);
   }
 
@@ -78,11 +87,15 @@ export class RedisClientStorage {
    * Will generate "id" based on client metadata and invoke getClient method
    * @param clientMetadata
    */
-  public async getByMetadata(clientMetadata: ClientMetadata): Promise<RedisClient> {
+  public async getByMetadata(
+    clientMetadata: ClientMetadata,
+  ): Promise<RedisClient> {
     // Additional validation
     ClientMetadata.validate(clientMetadata);
 
-    return this.get(RedisClient.generateId(RedisClient.prepareClientMetadata(clientMetadata)));
+    return this.get(
+      RedisClient.generateId(RedisClient.prepareClientMetadata(clientMetadata)),
+    );
   }
 
   /**
@@ -97,7 +110,9 @@ export class RedisClientStorage {
     ClientMetadata.validate(client.clientMetadata);
 
     // it is safer to generate id based on clientMetadata each time
-    const id = RedisClient.generateId(RedisClient.prepareClientMetadata(client.clientMetadata));
+    const id = RedisClient.generateId(
+      RedisClient.prepareClientMetadata(client.clientMetadata),
+    );
 
     const existingClient = this.clients.get(id);
 
@@ -124,7 +139,8 @@ export class RedisClientStorage {
     const client = this.clients.get(id);
 
     if (client) {
-      await client.disconnect()
+      await client
+        .disconnect()
         .catch((e) => this.logger.warn('Unable to disconnect client', e));
 
       this.clients.delete(id);
@@ -139,11 +155,15 @@ export class RedisClientStorage {
    * Generate id from ClientMetadata and removes client using remove method
    * @param clientMetadata
    */
-  public async removeByMetadata(clientMetadata: ClientMetadata): Promise<number> {
+  public async removeByMetadata(
+    clientMetadata: ClientMetadata,
+  ): Promise<number> {
     // Additional validation
     ClientMetadata.validate(clientMetadata);
 
-    return this.remove(RedisClient.generateId(RedisClient.prepareClientMetadata(clientMetadata)));
+    return this.remove(
+      RedisClient.generateId(RedisClient.prepareClientMetadata(clientMetadata)),
+    );
   }
 
   /**
@@ -151,7 +171,9 @@ export class RedisClientStorage {
    * Useful when database was removed and there is no sense wait for "idle" before remove clients
    * @param clientMetadata
    */
-  public async removeManyByMetadata(clientMetadata: Partial<ClientMetadata>): Promise<number> {
+  public async removeManyByMetadata(
+    clientMetadata: Partial<ClientMetadata>,
+  ): Promise<number> {
     const toRemove = this.findClients(clientMetadata);
 
     this.logger.debug(`Trying to remove ${toRemove.length} clients`);

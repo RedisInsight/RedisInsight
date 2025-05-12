@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  ICloudApiCapiKey,
-} from 'src/modules/cloud/capi-key/model';
+import { ICloudApiCapiKey } from 'src/modules/cloud/capi-key/model';
 import { wrapCloudApiError } from 'src/modules/cloud/common/exceptions';
 import { ICloudApiCredentials } from 'src/modules/cloud/common/models';
 import { CloudApiProvider } from 'src/modules/cloud/common/providers/cloud.api.provider';
@@ -32,7 +30,11 @@ export class CloudCapiKeyApiProvider extends CloudApiProvider {
    * @param userId
    * @param name
    */
-  async createCapiKey(credentials: ICloudApiCredentials, userId: number, name: string): Promise<ICloudApiCapiKey> {
+  async createCapiKey(
+    credentials: ICloudApiCredentials,
+    userId: number,
+    name: string,
+  ): Promise<ICloudApiCapiKey> {
     try {
       const { data } = await this.api.post(
         '/accounts/cloud-api/cloudApiKeys',

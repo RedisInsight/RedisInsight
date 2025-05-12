@@ -1,13 +1,5 @@
 import React, { useState } from 'react'
-import {
-  EuiButton,
-  EuiButtonEmpty,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiForm,
-  EuiSpacer,
-  EuiToolTip
-} from '@elastic/eui'
+import { EuiButton, EuiButtonEmpty, EuiForm, EuiToolTip } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
@@ -19,9 +11,11 @@ import { Instance } from 'uiSrc/slices/interfaces'
 import {
   createInstanceStandaloneAction,
   instancesSelector,
-  testInstanceStandaloneAction
+  testInstanceStandaloneAction,
 } from 'uiSrc/slices/instances/instances'
 import { Pages } from 'uiSrc/constants'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import ConnectivityOptions from './components/connectivity-options'
 import ConnectionUrl from './components/connection-url'
 import { Values } from './constants'
@@ -85,19 +79,21 @@ const AddDatabaseScreen = (props: Props) => {
     if (isInvalid) return
 
     const payload = getPayload(formik.values.connectionURL)
-    dispatch(createInstanceStandaloneAction(payload as Instance, () => {
-      history.push(Pages.sentinelDatabases)
-    }))
+    dispatch(
+      createInstanceStandaloneAction(payload as Instance, () => {
+        history.push(Pages.sentinelDatabases)
+      }),
+    )
   }
 
   const formik = useFormik<Values>({
     initialValues: {
-      connectionURL: 'redis://default@127.0.0.1:6379'
+      connectionURL: 'redis://default@127.0.0.1:6379',
     },
     validate,
     enableReinitialize: true,
     validateOnMount: true,
-    onSubmit
+    onSubmit,
   })
 
   return (
@@ -107,19 +103,26 @@ const AddDatabaseScreen = (props: Props) => {
         onSubmit={formik.handleSubmit}
         data-testid="form"
       >
-        <EuiFlexGroup>
-          <EuiFlexItem>
-            <ConnectionUrl value={formik.values.connectionURL} onChange={formik.handleChange} />
-          </EuiFlexItem>
-        </EuiFlexGroup>
+        <Row responsive>
+          <FlexItem grow>
+            <ConnectionUrl
+              value={formik.values.connectionURL}
+              onChange={formik.handleChange}
+            />
+          </FlexItem>
+        </Row>
 
-        <EuiFlexGroup justifyContent="spaceBetween">
-          <EuiFlexItem grow={false}>
+        <Row responsive justify="between">
+          <FlexItem>
             <EuiToolTip
               position="top"
               anchorClassName="euiToolTip__btn-disabled"
               content={
-                isInvalid ? (<span className="euiToolTip__content">{ConnectionUrlError}</span>) : null
+                isInvalid ? (
+                  <span className="euiToolTip__content">
+                    {ConnectionUrlError}
+                  </span>
+                ) : null
               }
             >
               <EuiButtonEmpty
@@ -134,10 +137,10 @@ const AddDatabaseScreen = (props: Props) => {
                 Test Connection
               </EuiButtonEmpty>
             </EuiToolTip>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <EuiFlexGroup>
-              <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
+            <Row responsive gap="l">
+              <FlexItem>
                 <EuiButton
                   size="s"
                   color="secondary"
@@ -146,13 +149,17 @@ const AddDatabaseScreen = (props: Props) => {
                 >
                   Connection Settings
                 </EuiButton>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
+              </FlexItem>
+              <FlexItem>
                 <EuiToolTip
                   position="top"
                   anchorClassName="euiToolTip__btn-disabled"
                   content={
-                    isInvalid ? (<span className="euiToolTip__content">{ConnectionUrlError}</span>) : null
+                    isInvalid ? (
+                      <span className="euiToolTip__content">
+                        {ConnectionUrlError}
+                      </span>
+                    ) : null
                   }
                 >
                   <EuiButton
@@ -167,15 +174,18 @@ const AddDatabaseScreen = (props: Props) => {
                     Add Database
                   </EuiButton>
                 </EuiToolTip>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+              </FlexItem>
+            </Row>
+          </FlexItem>
+        </Row>
       </EuiForm>
-      <EuiSpacer />
+      <Spacer />
       <div className={styles.hr}>Or</div>
-      <EuiSpacer />
-      <ConnectivityOptions onClickOption={handleProceedForm} onClose={onClose} />
+      <Spacer />
+      <ConnectivityOptions
+        onClickOption={handleProceedForm}
+        onClose={onClose}
+      />
     </div>
   )
 }

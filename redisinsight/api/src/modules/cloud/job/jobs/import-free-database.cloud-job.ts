@@ -26,19 +26,19 @@ export class ImportFreeDatabaseCloudJob extends CloudJob {
   constructor(
     readonly options: CloudJobOptions,
     private readonly data: {
-      subscriptionId: number,
-      databaseId: number,
-      region: string,
-      provider: string,
+      subscriptionId: number;
+      databaseId: number;
+      region: string;
+      provider: string;
     },
     protected readonly dependencies: {
-      cloudDatabaseCapiService: CloudDatabaseCapiService,
-      cloudSubscriptionCapiService: CloudSubscriptionCapiService,
-      cloudTaskCapiService: CloudTaskCapiService,
-      cloudDatabaseAnalytics: CloudDatabaseAnalytics,
-      databaseService: DatabaseService,
-      cloudCapiKeyService: CloudCapiKeyService,
-      featureService: FeatureService,
+      cloudDatabaseCapiService: CloudDatabaseCapiService;
+      cloudSubscriptionCapiService: CloudSubscriptionCapiService;
+      cloudTaskCapiService: CloudTaskCapiService;
+      cloudDatabaseAnalytics: CloudDatabaseAnalytics;
+      databaseService: DatabaseService;
+      cloudCapiKeyService: CloudCapiKeyService;
+      featureService: FeatureService;
     },
   ) {
     super(options);
@@ -70,20 +70,17 @@ export class ImportFreeDatabaseCloudJob extends CloudJob {
 
     this.checkSignal();
 
-    const isDatabaseManagementEnabled = await this.dependencies.featureService.isFeatureEnabled(
-      sessionMetadata,
-      KnownFeatures.DatabaseManagement,
-    );
+    const isDatabaseManagementEnabled =
+      await this.dependencies.featureService.isFeatureEnabled(
+        sessionMetadata,
+        KnownFeatures.DatabaseManagement,
+      );
 
     if (!isDatabaseManagementEnabled) {
       throw new CloudDatabaseImportForbiddenException();
     }
 
-    const {
-      publicEndpoint,
-      name,
-      password,
-    } = cloudDatabase;
+    const { publicEndpoint, name, password } = cloudDatabase;
 
     const [host, port] = publicEndpoint.split(':');
 

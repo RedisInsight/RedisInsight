@@ -1,13 +1,11 @@
 import {
   EuiButton,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiIcon,
   EuiPanel,
   EuiTextColor,
-  EuiToolTip
+  EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useState } from 'react'
@@ -17,8 +15,13 @@ import { useParams } from 'react-router-dom'
 import { lastDeliveredIDTooltipText } from 'uiSrc/constants/texts'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { addNewGroupAction } from 'uiSrc/slices/browser/stream'
-import { consumerGroupIdRegex, stringToBuffer, validateConsumerGroupId } from 'uiSrc/utils'
+import {
+  consumerGroupIdRegex,
+  stringToBuffer,
+  validateConsumerGroupId,
+} from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/stream/dto'
 
 import styles from './styles.module.scss'
@@ -29,7 +32,9 @@ export interface Props {
 
 const AddStreamGroup = (props: Props) => {
   const { closePanel } = props
-  const { name: keyName = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
+  const { name: keyName = '' } = useSelector(selectedKeyDataSelector) ?? {
+    name: undefined,
+  }
 
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
   const [groupName, setGroupName] = useState<string>('')
@@ -60,7 +65,7 @@ const AddStreamGroup = (props: Props) => {
       event: TelemetryEvent.STREAM_CONSUMER_GROUP_CREATED,
       eventData: {
         databaseId: instanceId,
-      }
+      },
     })
   }
 
@@ -68,10 +73,12 @@ const AddStreamGroup = (props: Props) => {
     if (isFormValid) {
       const data: CreateConsumerGroupsDto = {
         keyName,
-        consumerGroups: [{
-          name: stringToBuffer(groupName),
-          lastDeliveredId: id,
-        }],
+        consumerGroups: [
+          {
+            name: stringToBuffer(groupName),
+            lastDeliveredId: id,
+          },
+        ],
       }
       dispatch(addNewGroupAction(data, onSuccessAdded))
     }
@@ -86,16 +93,21 @@ const AddStreamGroup = (props: Props) => {
         hasShadow={false}
         borderRadius="none"
         data-test-subj="add-stream-groups-field-panel"
-        className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
+        className={cx(
+          styles.content,
+          'eui-yScroll',
+          'flexItemNoFullWidth',
+          'inlineFieldsNoSpace',
+        )}
       >
-        <EuiFlexItem
+        <FlexItem
           className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace')}
           grow
         >
-          <EuiFlexGroup gutterSize="none" responsive={false}>
-            <EuiFlexItem grow>
-              <EuiFlexGroup gutterSize="none" alignItems="flexStart" responsive={false}>
-                <EuiFlexItem className={styles.groupNameWrapper} grow>
+          <Row>
+            <FlexItem grow>
+              <Row align="start">
+                <FlexItem className={styles.groupNameWrapper} grow>
                   <EuiFormRow fullWidth>
                     <EuiFieldText
                       fullWidth
@@ -103,13 +115,15 @@ const AddStreamGroup = (props: Props) => {
                       id="group-name"
                       placeholder="Enter Group Name*"
                       value={groupName}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => setGroupName(e.target.value)}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        setGroupName(e.target.value)
+                      }
                       autoComplete="off"
                       data-testid="group-name-field"
                     />
                   </EuiFormRow>
-                </EuiFlexItem>
-                <EuiFlexItem className={styles.timestampWrapper} grow>
+                </FlexItem>
+                <FlexItem className={styles.timestampWrapper} grow>
                   <EuiFormRow fullWidth>
                     <EuiFieldText
                       fullWidth
@@ -117,10 +131,12 @@ const AddStreamGroup = (props: Props) => {
                       id="id"
                       placeholder="ID*"
                       value={id}
-                      onChange={(e: ChangeEvent<HTMLInputElement>) => setId(validateConsumerGroupId(e.target.value))}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        setId(validateConsumerGroupId(e.target.value))
+                      }
                       onBlur={() => setIsIdFocused(false)}
                       onFocus={() => setIsIdFocused(true)}
-                      append={(
+                      append={
                         <EuiToolTip
                           anchorClassName="inputAppendIcon"
                           className={styles.entryIdTooltip}
@@ -128,20 +144,32 @@ const AddStreamGroup = (props: Props) => {
                           title="Enter Valid ID, 0 or $"
                           content={lastDeliveredIDTooltipText}
                         >
-                          <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} data-testid="entry-id-info-icon" />
+                          <EuiIcon
+                            type="iInCircle"
+                            style={{ cursor: 'pointer' }}
+                            data-testid="entry-id-info-icon"
+                          />
                         </EuiToolTip>
-                      )}
+                      }
                       autoComplete="off"
                       data-testid="id-field"
                     />
                   </EuiFormRow>
-                  {!showIdError && <span className={styles.idText} data-testid="id-help-text">Timestamp - Sequence Number or $</span>}
-                  {showIdError && <span className={styles.error} data-testid="id-error">{idError}</span>}
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
+                  {!showIdError && (
+                    <span className={styles.idText} data-testid="id-help-text">
+                      Timestamp - Sequence Number or $
+                    </span>
+                  )}
+                  {showIdError && (
+                    <span className={styles.error} data-testid="id-error">
+                      {idError}
+                    </span>
+                  )}
+                </FlexItem>
+              </Row>
+            </FlexItem>
+          </Row>
+        </FlexItem>
       </EuiPanel>
       <EuiPanel
         style={{ border: 'none' }}
@@ -149,15 +177,19 @@ const AddStreamGroup = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
-          <EuiFlexItem grow={false}>
+        <Row justify="end" gap="l">
+          <FlexItem>
             <div>
-              <EuiButton color="secondary" onClick={() => closePanel(true)} data-testid="cancel-stream-groups-btn">
+              <EuiButton
+                color="secondary"
+                onClick={() => closePanel(true)}
+                data-testid="cancel-stream-groups-btn"
+              >
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <div>
               <EuiButton
                 fill
@@ -170,8 +202,8 @@ const AddStreamGroup = (props: Props) => {
                 Save
               </EuiButton>
             </div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiPanel>
     </>
   )

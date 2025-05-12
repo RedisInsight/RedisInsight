@@ -7,15 +7,15 @@ import {
   CloudAuthRequestOptions,
 } from 'src/modules/cloud/auth/models/cloud-auth-request';
 import { SessionMetadata } from 'src/common/models';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import axios from 'axios';
 import * as path from 'path';
-import {
-  CloudOauthSsoUnsupportedEmailException,
-} from 'src/modules/cloud/auth/exceptions/cloud-oauth.sso-unsupported-email.exception';
+import { CloudOauthSsoUnsupportedEmailException } from 'src/modules/cloud/auth/exceptions/cloud-oauth.sso-unsupported-email.exception';
 import { Logger } from '@nestjs/common';
 
-const { idp: { sso: idpConfig } } = config.get('cloud');
+const {
+  idp: { sso: idpConfig },
+} = config.get('cloud');
 const cloudConfig = config.get('cloud');
 
 export class SsoIdpCloudAuthStrategy extends CloudAuthStrategy {
@@ -45,7 +45,9 @@ export class SsoIdpCloudAuthStrategy extends CloudAuthStrategy {
 
   private async determineIdp(email: string) {
     try {
-      const apiUrl = new URL(path.posix.join(cloudConfig.apiUrl, idpConfig.emailVerificationUri));
+      const apiUrl = new URL(
+        path.posix.join(cloudConfig.apiUrl, idpConfig.emailVerificationUri),
+      );
       apiUrl.searchParams.set('email', email);
       const { data: idp } = await axios.get(apiUrl.toString());
 
@@ -67,7 +69,7 @@ export class SsoIdpCloudAuthStrategy extends CloudAuthStrategy {
     const authClient = new OktaAuth(this.config);
     const tokenParams = await authClient.token.prepareTokenParams(this.config);
 
-    return plainToClass(CloudAuthRequest, {
+    return plainToInstance(CloudAuthRequest, {
       ...this.config,
       ...tokenParams,
       idp,

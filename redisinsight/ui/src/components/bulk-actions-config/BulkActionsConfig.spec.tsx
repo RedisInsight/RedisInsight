@@ -3,14 +3,27 @@ import { cloneDeep, set } from 'lodash'
 import React from 'react'
 import MockedSocket from 'socket.io-mock'
 import socketIO from 'socket.io-client'
-import { cleanup, initialStateDefault, mockedStore, mockStore, render } from 'uiSrc/utils/test-utils'
-import { BulkActionsServerEvent, BulkActionsStatus, BulkActionsType, FeatureFlags, SocketEvent } from 'uiSrc/constants'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+  mockStore,
+  render,
+} from 'uiSrc/utils/test-utils'
+import {
+  BulkActionsServerEvent,
+  BulkActionsStatus,
+  BulkActionsType,
+  FeatureFlags,
+  SocketEvent,
+} from 'uiSrc/constants'
 import {
   bulkActionsDeleteSelector,
   bulkActionsSelector,
   disconnectBulkDeleteAction,
   setBulkActionConnected,
-  setBulkDeleteLoading, setDeleteOverviewStatus
+  setBulkDeleteLoading,
+  setDeleteOverviewStatus,
 } from 'uiSrc/slices/browser/bulkActions'
 import { GlobalSubscriptions } from 'uiSrc/components'
 import * as ioHooks from 'uiSrc/services/hooks/useIoConnection'
@@ -38,27 +51,29 @@ jest.mock('uiSrc/slices/browser/bulkActions', () => ({
     isConnected: false,
   }),
   bulkActionsDeleteSelector: jest.fn().mockReturnValue({
-    isActionTriggered: false
+    isActionTriggered: false,
   }),
 }))
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
-    id: '1'
+    id: '1',
   }),
 }))
 
-const deletingMock = [{
-  id: '123',
-  databaseId: '1',
-  db: 1,
-  type: BulkActionsType.Delete,
-  filter: {
-    type: null,
-    match: '*',
-  }
-}]
+const deletingMock = [
+  {
+    id: '123',
+    databaseId: '1',
+    db: 1,
+    type: BulkActionsType.Delete,
+    filter: {
+      type: null,
+      match: '*',
+    },
+  },
+]
 
 describe('BulkActionsConfig', () => {
   it('should render', () => {
@@ -77,22 +92,42 @@ describe('BulkActionsConfig', () => {
 
     const afterRenderActions = [
       setBulkActionConnected(true),
-      setBulkDeleteLoading(true)
+      setBulkDeleteLoading(true),
     ]
     expect(store.getActions()).toEqual([...afterRenderActions])
-    expect(useIoConnectionSpy)
-      .toHaveBeenCalledWith(getSocketApiUrl('bulk-actions'), { query: { instanceId: '1' }, token: '' })
+    expect(useIoConnectionSpy).toHaveBeenCalledWith(
+      getSocketApiUrl('bulk-actions'),
+      { query: { instanceId: '1' }, token: '' },
+    )
   })
 
   it('should not connect socket', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: false }
+      { flag: false },
     )
 
     const { unmount } = render(<GlobalSubscriptions />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
+    })
+
+    socket.socketClient.emit(SocketEvent.Connect)
+
+    expect(store.getActions()).toEqual([])
+
+    unmount()
+  })
+
+  it('should not connect socket', () => {
+    const initialStoreState = set(
+      cloneDeep(initialStateDefault),
+      `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
+      { flag: false },
+    )
+
+    const { unmount } = render(<GlobalSubscriptions />, {
+      store: mockStore(initialStoreState),
     })
 
     socket.socketClient.emit(SocketEvent.Connect)

@@ -1,12 +1,14 @@
 import React from 'react'
 import { fireEvent, screen, within } from '@testing-library/react'
 import { render } from 'uiSrc/utils/test-utils'
-import ConnectivityError, { ConnectivityErrorProps } from 'uiSrc/components/connectivity-error/ConnectivityError'
+import ConnectivityError, {
+  ConnectivityErrorProps,
+} from 'uiSrc/components/connectivity-error/ConnectivityError'
 
 const defaultProps: ConnectivityErrorProps = {
   isLoading: false,
   onRetry: undefined,
-  error: 'Test error'
+  error: 'Test error',
 }
 
 const expectErrorMessage = (error: string) => {

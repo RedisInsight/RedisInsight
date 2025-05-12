@@ -2,10 +2,27 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 
-import { rdiPipelineStatusSelector, getPipelineStatus } from 'uiSrc/slices/rdi/pipeline'
-import { getStatistics, rdiStatisticsSelector } from 'uiSrc/slices/rdi/statistics'
-import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  rdiPipelineStatusSelector,
+  getPipelineStatus,
+} from 'uiSrc/slices/rdi/pipeline'
+import {
+  getStatistics,
+  rdiStatisticsSelector,
+} from 'uiSrc/slices/rdi/statistics'
+import {
+  TelemetryEvent,
+  TelemetryPageView,
+  sendEventTelemetry,
+  sendPageViewTelemetry,
+} from 'uiSrc/telemetry'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 import { PageNames, Pages } from 'uiSrc/constants'
 import { setLastPageContext } from 'uiSrc/slices/app/context'
 
@@ -14,8 +31,8 @@ import StatisticsPage from './StatisticsPage'
 jest.mock('uiSrc/slices/rdi/instances', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
-    name: 'name'
-  })
+    name: 'name',
+  }),
 }))
 
 jest.mock('uiSrc/slices/rdi/pipeline', () => ({
@@ -29,10 +46,10 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
           status: 'ready',
           state: 'some',
           tasks: 'none',
-        }
-      }
+        },
+      },
     },
-  })
+  }),
 }))
 
 jest.mock('uiSrc/slices/rdi/statistics', () => ({
@@ -48,8 +65,8 @@ jest.mock('uiSrc/slices/rdi/statistics', () => ({
             host: 'Redis-Cloud',
             port: 12000,
             database: 'admin',
-            user: 'admin'
-          }
+            user: 'admin',
+          },
         },
         dataStreams: {
           Stream1: {
@@ -61,8 +78,8 @@ jest.mock('uiSrc/slices/rdi/statistics', () => ({
             filtered: 0,
             rejected: 5,
             deduplicated: 0,
-            lastArrival: '1 Hour'
-          }
+            lastArrival: '1 Hour',
+          },
         },
         processingPerformance: {
           totalBatches: 3427,
@@ -71,13 +88,13 @@ jest.mock('uiSrc/slices/rdi/statistics', () => ({
           processTimeAvg: '24',
           ackTimeAvg: '6.2',
           totalTimeAvg: '6.1',
-          recPerSecAvg: 110
+          recPerSecAvg: 110,
         },
         rdiPipelineStatus: {
           rdiVersion: '2.0',
           address: '172.17.0.2:12006',
           runStatus: 'Started',
-          syncMode: 'Streaming'
+          syncMode: 'Streaming',
         },
         clients: {
           9875: {
@@ -85,26 +102,26 @@ jest.mock('uiSrc/slices/rdi/statistics', () => ({
             name: 'redis-di-cli',
             ageSec: 100,
             idleSec: 2,
-            user: 'default'
-          }
-        }
-      }
-    }
-  })
+            user: 'default',
+          },
+        },
+      },
+    },
+  }),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendPageViewTelemetry: jest.fn(),
-  sendEventTelemetry: jest.fn()
+  sendEventTelemetry: jest.fn(),
 }))
 
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
-  store.clearActions();
-  (sendEventTelemetry as jest.Mock).mockRestore()
+  store.clearActions()
+  ;(sendEventTelemetry as jest.Mock).mockRestore()
 })
 
 describe('StatisticsPage', () => {
@@ -118,19 +135,19 @@ describe('StatisticsPage', () => {
   })
 
   it('renders null when statisticsData is not available', () => {
-    (rdiStatisticsSelector as jest.Mock).mockReturnValueOnce({
-      data: null
+    ;(rdiStatisticsSelector as jest.Mock).mockReturnValueOnce({
+      data: null,
     })
     const { container } = render(<StatisticsPage />)
     expect(container.firstChild).toBeNull()
   })
 
   it('renders the empty state when pipeline data is empty', () => {
-    (rdiPipelineStatusSelector as jest.Mock).mockReturnValueOnce({
+    ;(rdiPipelineStatusSelector as jest.Mock).mockReturnValueOnce({
       data: {
         components: {},
-        pipelines: {}
-      }
+        pipelines: {},
+      },
     })
     const { getByText } = render(<StatisticsPage />)
     expect(getByText('No pipeline deployed yet')).toBeInTheDocument()
@@ -143,21 +160,23 @@ describe('StatisticsPage', () => {
       name: TelemetryPageView.RDI_STATUS,
       eventData: {
         rdiInstanceId: 'rdiInstanceId',
-      }
+      },
     })
   })
 
   it('should call proper telemetry event when refresh is clicked for processing performance section', () => {
     render(<StatisticsPage />)
 
-    fireEvent.click(screen.getByTestId('processing-performance-info-refresh-btn'))
+    fireEvent.click(
+      screen.getByTestId('processing-performance-info-refresh-btn'),
+    )
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_STATISTICS_REFRESH_CLICKED,
       eventData: {
         rdiInstanceId: 'rdiInstanceId',
-        section: 'processing_performance'
-      }
+        section: 'processing_performance',
+      },
     })
   })
 
@@ -170,8 +189,8 @@ describe('StatisticsPage', () => {
       event: TelemetryEvent.RDI_STATISTICS_REFRESH_CLICKED,
       eventData: {
         rdiInstanceId: 'rdiInstanceId',
-        section: 'data_streams'
-      }
+        section: 'data_streams',
+      },
     })
   })
 
@@ -184,8 +203,8 @@ describe('StatisticsPage', () => {
       event: TelemetryEvent.RDI_STATISTICS_REFRESH_CLICKED,
       eventData: {
         rdiInstanceId: 'rdiInstanceId',
-        section: 'clients'
-      }
+        section: 'clients',
+      },
     })
   })
 
@@ -203,8 +222,8 @@ describe('StatisticsPage', () => {
         rdiInstanceId: 'rdiInstanceId',
         section: 'processing_performance',
         enableAutoRefresh: false,
-        refreshRate: '5.0'
-      }
+        refreshRate: '5.0',
+      },
     })
   })
 
@@ -223,8 +242,8 @@ describe('StatisticsPage', () => {
         rdiInstanceId: 'rdiInstanceId',
         section: 'processing_performance',
         enableAutoRefresh: true,
-        refreshRate: '5.0'
-      }
+        refreshRate: '5.0',
+      },
     })
   })
 
@@ -242,8 +261,8 @@ describe('StatisticsPage', () => {
         rdiInstanceId: 'rdiInstanceId',
         section: 'data_streams',
         enableAutoRefresh: true,
-        refreshRate: '5.0'
-      }
+        refreshRate: '5.0',
+      },
     })
   })
 
@@ -262,8 +281,8 @@ describe('StatisticsPage', () => {
         rdiInstanceId: 'rdiInstanceId',
         section: 'data_streams',
         enableAutoRefresh: false,
-        refreshRate: '5.0'
-      }
+        refreshRate: '5.0',
+      },
     })
   })
 
@@ -281,8 +300,8 @@ describe('StatisticsPage', () => {
         rdiInstanceId: 'rdiInstanceId',
         section: 'clients',
         enableAutoRefresh: true,
-        refreshRate: '5.0'
-      }
+        refreshRate: '5.0',
+      },
     })
   })
 
@@ -301,32 +320,33 @@ describe('StatisticsPage', () => {
         rdiInstanceId: 'rdiInstanceId',
         section: 'clients',
         enableAutoRefresh: false,
-        refreshRate: '5.0'
-      }
+        refreshRate: '5.0',
+      },
     })
   })
 
   it('should get statistics on mount', () => {
-    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.rdiPipelineConfig('rdiInstanceId') })
+    reactRouterDom.useLocation = jest
+      .fn()
+      .mockReturnValue({ pathname: Pages.rdiPipelineConfig('rdiInstanceId') })
 
     render(<StatisticsPage />)
 
-    const expectedActions = [
-      getPipelineStatus(),
-      getStatistics(),
-    ]
+    const expectedActions = [getPipelineStatus(), getStatistics()]
 
-    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+      expectedActions,
+    )
   })
 
   it('should save proper page on unmount', () => {
     const { unmount } = render(<StatisticsPage />)
 
     unmount()
-    const expectedActions = [
-      setLastPageContext(PageNames.rdiStatistics),
-    ]
+    const expectedActions = [setLastPageContext(PageNames.rdiStatistics)]
 
-    expect(store.getActions().slice(0 - expectedActions.length)).toEqual(expectedActions)
+    expect(store.getActions().slice(0 - expectedActions.length)).toEqual(
+      expectedActions,
+    )
   })
 })

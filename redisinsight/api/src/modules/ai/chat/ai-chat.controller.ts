@@ -1,8 +1,12 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  Controller, Delete, Get, Param,
-  Post, Res,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Res,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -21,9 +25,7 @@ import { Response } from 'express';
 @Controller('ai/assistant/chats')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class AiChatController {
-  constructor(
-    private readonly service: AiChatService,
-  ) {}
+  constructor(private readonly service: AiChatService) {}
 
   @Post('/')
   @ApiEndpoint({
@@ -31,7 +33,9 @@ export class AiChatController {
     statusCode: 200,
     responses: [{ type: PickType(AiChat, ['id']) }],
   })
-  async create(@RequestSessionMetadata() sessionMetadata: SessionMetadata): Promise<Partial<AiChat>> {
+  async create(
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+  ): Promise<Partial<AiChat>> {
     return this.service.create(sessionMetadata);
   }
 
@@ -42,7 +46,7 @@ export class AiChatController {
     responses: [{ type: AiChat }],
   })
   async getHistory(
-  @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
     @Param('id') id: string,
   ) {
     return this.service.getHistory(sessionMetadata, id);
@@ -55,7 +59,7 @@ export class AiChatController {
     responses: [{ type: String }],
   })
   async postMessage(
-  @Res() res: Response,
+    @Res() res: Response,
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
     @Param('id') id: string,
     @Body() dto: SendAiChatMessageDto,
@@ -71,7 +75,7 @@ export class AiChatController {
   })
   async delete(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Param('id') id: string,
+    @Param('id') id: string,
   ): Promise<void> {
     return this.service.delete(sessionMetadata, id);
   }

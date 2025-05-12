@@ -55,7 +55,9 @@ describe('StringService', () => {
     }).compile();
 
     service = module.get<StringService>(StringService);
-    recommendationService = module.get<DatabaseRecommendationService>(DatabaseRecommendationService);
+    recommendationService = module.get<DatabaseRecommendationService>(
+      DatabaseRecommendationService,
+    );
     client.sendCommand = jest.fn().mockResolvedValue(undefined);
   });
 
@@ -76,7 +78,10 @@ describe('StringService', () => {
       await expect(
         service.setString(mockBrowserClientMetadata, dto),
       ).resolves.not.toThrow();
-      expect(client.sendCommand).toHaveBeenCalledWith([BrowserToolStringCommands.Set, ...args]);
+      expect(client.sendCommand).toHaveBeenCalledWith([
+        BrowserToolStringCommands.Set,
+        ...args,
+      ]);
     });
     it('set string without expiration', async () => {
       const { keyName, value } = mockSetStringDto;
@@ -88,7 +93,10 @@ describe('StringService', () => {
       await expect(
         service.setString(mockBrowserClientMetadata, mockSetStringDto),
       ).resolves.not.toThrow();
-      expect(client.sendCommand).toHaveBeenCalledWith([BrowserToolStringCommands.Set, ...args]);
+      expect(client.sendCommand).toHaveBeenCalledWith([
+        BrowserToolStringCommands.Set,
+        ...args,
+      ]);
     });
     it('key with this name exist', async () => {
       when(client.sendCommand)
@@ -111,7 +119,9 @@ describe('StringService', () => {
       ).rejects.toThrow(ForbiddenException);
     });
     it('Should proxy EncryptionService errors', async () => {
-      client.sendCommand.mockRejectedValueOnce(new KeytarUnavailableException());
+      client.sendCommand.mockRejectedValueOnce(
+        new KeytarUnavailableException(),
+      );
 
       await expect(
         service.setString(mockBrowserClientMetadata, mockSetStringDto),

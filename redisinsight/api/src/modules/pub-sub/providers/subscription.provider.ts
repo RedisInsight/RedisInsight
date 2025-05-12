@@ -8,7 +8,10 @@ import { ISubscription } from 'src/modules/pub-sub/interfaces/subscription.inter
 
 @Injectable()
 export class SubscriptionProvider {
-  createSubscription(userClient: UserClient, dto: SubscriptionDto): ISubscription {
+  createSubscription(
+    userClient: UserClient,
+    dto: SubscriptionDto,
+  ): ISubscription {
     switch (dto.type) {
       case SubscriptionType.PSubscribe:
         return new PatternSubscription(userClient, dto);

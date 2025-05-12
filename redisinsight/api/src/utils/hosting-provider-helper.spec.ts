@@ -29,116 +29,97 @@ const getHostingProviderTests = [
     input: 'askubuntu.mki5tz.0001.use1.cache.amazonaws.com',
     output: HostingProvider.AWS_ELASTICACHE,
   },
-  { input: 'contoso5.redis.cache.windows.net', output: HostingProvider.AZURE_CACHE },
-  { input: 'contoso5.redisenterprise.cache.azure.net', output: HostingProvider.AZURE_CACHE_REDIS_ENTERPRISE },
+  {
+    input: 'contoso5.redis.cache.windows.net',
+    output: HostingProvider.AZURE_CACHE,
+  },
+  {
+    input: 'contoso5.redisenterprise.cache.azure.net',
+    output: HostingProvider.AZURE_CACHE_REDIS_ENTERPRISE,
+  },
   { input: 'demo-redis-provider.unknown.com', output: HostingProvider.UNKNOWN },
   {
     input: 'localhost',
-    hello: [
-      'server', 'redis',
-    ],
-    info: '# Server\r\n'
-      + 'executable:/opt/redis/bin/redis-server',
+    hello: ['server', 'redis'],
+    info: '# Server\r\n' + 'executable:/opt/redis/bin/redis-server',
     output: HostingProvider.REDIS_COMMUNITY_EDITION,
   },
   {
     input: 'localhost',
-    hello: [
-      'server', 'redis',
-    ],
-    info: '# Server\r\n'
-      + 'executable:/data/redis-server',
+    hello: ['server', 'redis'],
+    info: '# Server\r\n' + 'executable:/data/redis-server',
     output: HostingProvider.REDIS_COMMUNITY_EDITION,
   },
   {
     input: 'localhost',
-    hello: [
-      'server', 'redis',
-    ],
-    info: '# Server\r\n'
-      + 'executable:/opt/redis-stack/bin/redis-server',
+    hello: ['server', 'redis'],
+    info: '# Server\r\n' + 'executable:/opt/redis-stack/bin/redis-server',
     output: HostingProvider.REDIS_STACK,
   },
   {
     input: 'localhost',
     hello: [
-      'server', 'redis',
-      'modules', [
-        [
-          'name', 'search',
-          'path', '/enterprise-managed',
-        ],
-      ],
+      'server',
+      'redis',
+      'modules',
+      [['name', 'search', 'path', '/enterprise-managed']],
     ],
-    info: '# Server\r\n'
-      + 'redis_version: 7.2.0',
+    info: '# Server\r\n' + 'redis_version: 7.2.0',
     output: HostingProvider.REDIS_ENTERPRISE,
   },
   {
     input: 'localhost',
     hello: [
-      'server', 'redis',
-      'modules', [
-        [
-          'name', 'search',
-          'path', 'google',
-        ],
-      ],
+      'server',
+      'redis',
+      'modules',
+      [['name', 'search', 'path', 'google']],
     ],
     output: HostingProvider.MEMORYSTORE,
   },
   {
     input: 'localhost',
-    info: '# Server\r\n'
-      + 'server_name:valkey',
+    info: '# Server\r\n' + 'server_name:valkey',
     output: HostingProvider.VALKEY,
   },
   {
     input: 'localhost',
-    info: '# Server\r\n'
-      + 'dragonfly_version:df-7.0.0',
+    info: '# Server\r\n' + 'dragonfly_version:df-7.0.0',
     output: HostingProvider.DRAGONFLY,
   },
   {
     input: 'localhost',
-    info: '# Server\r\n'
-      + 'garnet_version:gr-7.0.0',
+    info: '# Server\r\n' + 'garnet_version:gr-7.0.0',
     output: HostingProvider.GARNET,
   },
   {
     input: 'localhost',
-    info: '# Server\r\n'
-      + 'kvrocks_version:kv-7.0.0',
+    info: '# Server\r\n' + 'kvrocks_version:kv-7.0.0',
     output: HostingProvider.KVROCKS,
   },
   {
     input: 'localhost',
-    info: '# Server\r\n'
-      + 'redict_version:rd-7.0.0',
+    info: '# Server\r\n' + 'redict_version:rd-7.0.0',
     output: HostingProvider.REDICT,
   },
   {
     input: 'localhost',
-    info: '# Server\r\n'
-      + 'upstash_version:up-7.0.0',
+    info: '# Server\r\n' + 'upstash_version:up-7.0.0',
     output: HostingProvider.UPSTASH,
   },
   {
     input: 'localhost',
-    info: '# Server\r\n'
-      + 'ElastiCache:sometinhg',
+    info: '# Server\r\n' + 'ElastiCache:sometinhg',
     output: HostingProvider.AWS_ELASTICACHE,
   },
   {
     input: 'localhost',
-    info: '# Server\r\n'
-      + 'MemoryDB:sometinhg',
+    info: '# Server\r\n' + 'MemoryDB:sometinhg',
     output: HostingProvider.AWS_MEMORYDB,
   },
   {
     input: 'localhost',
-    info: '#KeyDb\r\n'
-      + 'some:data',
+    info: '#KeyDb\r\n' + 'some:data',
     output: HostingProvider.KEYDB,
   },
 ];
@@ -153,7 +134,10 @@ describe('getHostingProvider', () => {
       mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce(test.hello);
       mockStandaloneRedisClient.sendCommand.mockResolvedValueOnce(test.info);
 
-      const result = await getHostingProvider(mockStandaloneRedisClient, test.input);
+      const result = await getHostingProvider(
+        mockStandaloneRedisClient,
+        test.input,
+      );
 
       expect(result).toEqual(test.output);
     });

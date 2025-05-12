@@ -19,7 +19,9 @@ describe('ResetPipelineButton', () => {
 
     fireEvent.mouseOver(screen.getByTestId('reset-pipeline-btn'))
     await waitFor(() => screen.getByText(/flushing the target Redis database/))
-    expect(screen.getByText(/flushing the target Redis database/)).toBeInTheDocument()
+    expect(
+      screen.getByText(/flushing the target Redis database/),
+    ).toBeInTheDocument()
   })
 
   it('should call onClick when clicked', () => {

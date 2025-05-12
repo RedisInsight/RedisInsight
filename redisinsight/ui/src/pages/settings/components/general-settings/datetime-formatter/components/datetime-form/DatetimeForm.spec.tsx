@@ -12,7 +12,7 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
   ...jest.requireActual('uiSrc/slices/user/user-settings'),
   userSettingsConfigSelector: jest.fn().mockReturnValue({
     dateFormat: null,
-    timezone: null
+    timezone: null,
   }),
 }))
 
@@ -29,7 +29,9 @@ describe('DatetimeForm', () => {
   it('should not show custom btn and input unless custom radio btn is clicked ', async () => {
     const { container } = render(<DatetimeForm {...instance(mockedProps)} />)
     expect(screen.getByText('Pre-selected formats')).toBeTruthy()
-    expect(container.querySelector('[data-test-subj="select-datetime"]')).toBeTruthy()
+    expect(
+      container.querySelector('[data-test-subj="select-datetime"]'),
+    ).toBeTruthy()
     expect(screen.queryByTestId('datetime-custom-btn')).toBeFalsy()
     await act(() => fireEvent.click(screen.getByText('Custom')))
     expect(screen.queryByTestId('datetime-custom-btn')).toBeTruthy()
@@ -37,12 +39,21 @@ describe('DatetimeForm', () => {
 
   it('should display invalid format when wrong format is typed in a custom input', async () => {
     const onFormatChange = jest.fn()
-    render(<DatetimeForm {...instance(mockedProps)} onFormatChange={onFormatChange} />)
+    render(
+      <DatetimeForm
+        {...instance(mockedProps)}
+        onFormatChange={onFormatChange}
+      />,
+    )
 
     await act(() => fireEvent.click(screen.getByText('Custom')))
-    const customInput: Nullable<HTMLElement> = screen.getByTestId('custom-datetime-input')
+    const customInput: Nullable<HTMLElement> = screen.getByTestId(
+      'custom-datetime-input',
+    )
 
-    await act(() => fireEvent.change(customInput, { target: { value: 'fffffinvalid' } }))
+    await act(() =>
+      fireEvent.change(customInput, { target: { value: 'fffffinvalid' } }),
+    )
 
     expect(onFormatChange).toBeCalledWith('Invalid Format')
   })
@@ -54,16 +65,22 @@ describe('DatetimeForm', () => {
     render(<DatetimeForm {...instance(mockedProps)} />)
 
     await act(() => fireEvent.click(screen.getByText('Custom')))
-    const customInput: Nullable<HTMLElement> = screen.getByTestId('custom-datetime-input')
+    const customInput: Nullable<HTMLElement> = screen.getByTestId(
+      'custom-datetime-input',
+    )
 
-    await act(() => fireEvent.change(customInput, { target: { value: dateTimeOptions[1].value } }))
+    await act(() =>
+      fireEvent.change(customInput, {
+        target: { value: dateTimeOptions[1].value },
+      }),
+    )
     await act(() => fireEvent.click(screen.getByTestId('datetime-custom-btn')))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.SETTINGS_DATE_TIME_FORMAT_CHANGED,
       eventData: {
-        currentFormat: dateTimeOptions[1].value
-      }
+        currentFormat: dateTimeOptions[1].value,
+      },
     })
   })
 
@@ -79,8 +96,8 @@ describe('DatetimeForm', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.SETTINGS_DATE_TIME_FORMAT_CHANGED,
       eventData: {
-        currentFormat: dateTimeOptions[0].value
-      }
+        currentFormat: dateTimeOptions[0].value,
+      },
     })
   })
 
@@ -91,12 +108,14 @@ describe('DatetimeForm', () => {
     render(<DatetimeForm {...instance(mockedProps)} />)
 
     fireEvent.click(screen.getByTestId('select-datetime-testid'))
-    await act(() => fireEvent.click(screen.queryByText(dateTimeOptions[1].value) || document))
+    await act(() =>
+      fireEvent.click(screen.queryByText(dateTimeOptions[1].value) || document),
+    )
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.SETTINGS_DATE_TIME_FORMAT_CHANGED,
       eventData: {
-        currentFormat: dateTimeOptions[1].value
-      }
+        currentFormat: dateTimeOptions[1].value,
+      },
     })
   })
 })

@@ -7,19 +7,24 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn, JoiRedisString,
+  getMainCheckFn,
+  JoiRedisString,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/streams/consumer-groups/consumers/get`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/streams/consumer-groups/consumers/get`,
+  );
 
-const consumerSchema = Joi.object().keys({
-  name: JoiRedisString.required(),
-  idle: Joi.number().required(),
-  pending: Joi.number().required(),
-}).strict();
+const consumerSchema = Joi.object()
+  .keys({
+    name: JoiRedisString.required(),
+    idle: Joi.number().required(),
+    pending: Joi.number().required(),
+  })
+  .strict();
 
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
@@ -65,10 +70,12 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/get', ()
         responseSchema,
         checkFn: ({ body }) => {
           const [consumer] = body;
-          expect(consumer.name).to.eq(constants.TEST_STREAM_CONSUMER_BIN_UTF8_1);
+          expect(consumer.name).to.eq(
+            constants.TEST_STREAM_CONSUMER_BIN_UTF8_1,
+          );
           expect(consumer.pending).to.eq(0);
           expect(consumer.idle).to.gte(0);
-        }
+        },
       },
       {
         name: 'Should get stream consumer from buff (return buff)',
@@ -82,10 +89,12 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/get', ()
         responseSchema,
         checkFn: ({ body }) => {
           const [consumer] = body;
-          expect(consumer.name).to.deep.eq(constants.TEST_STREAM_CONSUMER_BIN_BUF_OBJ_1);
+          expect(consumer.name).to.deep.eq(
+            constants.TEST_STREAM_CONSUMER_BIN_BUF_OBJ_1,
+          );
           expect(consumer.pending).to.eq(0);
           expect(consumer.idle).to.gte(0);
-        }
+        },
       },
       {
         name: 'Should get stream consumer from ascii (return ascii)',
@@ -99,10 +108,12 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/get', ()
         responseSchema,
         checkFn: ({ body }) => {
           const [consumer] = body;
-          expect(consumer.name).to.deep.eq(constants.TEST_STREAM_CONSUMER_BIN_ASCII_1);
+          expect(consumer.name).to.deep.eq(
+            constants.TEST_STREAM_CONSUMER_BIN_ASCII_1,
+          );
           expect(consumer.pending).to.eq(0);
           expect(consumer.idle).to.gte(0);
-        }
+        },
       },
     ].map(mainCheckFn);
   });
@@ -150,7 +161,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/get', ()
             expect(consumer.name).to.eq(constants.TEST_STREAM_CONSUMER_1);
             expect(consumer.pending).to.eq(0);
             expect(consumer.idle).to.gte(0);
-          }
+          },
         },
         {
           name: 'Should return BadRequest error if key has another type',
@@ -231,7 +242,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/get', ()
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
         {
           name: 'Should throw error if no permissions for "xinfo" command',
@@ -244,7 +255,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/get', ()
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -xinfo')
+          before: () => rte.data.setAclUserRules('~* +@all -xinfo'),
         },
       ].map(mainCheckFn);
     });

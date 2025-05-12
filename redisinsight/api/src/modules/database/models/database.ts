@@ -28,6 +28,7 @@ import { Endpoint } from 'src/common/models';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 import { SshOptions } from 'src/modules/ssh/models/ssh-options';
 import { CloudDatabaseDetails } from 'src/modules/cloud/database/models/cloud-database-details';
+import { Tag } from 'src/modules/tag/models/tag';
 
 const CONNECTIONS_CONFIG = config.get('connections');
 
@@ -41,8 +42,8 @@ export class Database {
 
   @ApiProperty({
     description:
-      'The hostname of your Redis database, for example redis.acme.com.'
-      + ' If your Redis server is running on your local machine, you can enter either 127.0.0.1 or localhost.',
+      'The hostname of your Redis database, for example redis.acme.com.' +
+      ' If your Redis server is running on your local machine, you can enter either 127.0.0.1 or localhost.',
     type: String,
     default: 'localhost',
   })
@@ -88,19 +89,17 @@ export class Database {
   })
   @Expose()
   @IsString({ always: true })
-  @IsNotEmpty()
   @IsOptional()
   username?: string;
 
   @ApiPropertyOptional({
     description:
-      'The password, if any, for your Redis database. '
-      + 'If your database doesn’t require a password, leave this field empty.',
+      'The password, if any, for your Redis database. ' +
+      'If your database doesn’t require a password, leave this field empty.',
     type: String,
   })
   @Expose()
   @IsString({ always: true })
-  @IsNotEmpty()
   @IsOptional()
   password?: string;
 
@@ -331,7 +330,19 @@ export class Database {
   forceStandalone?: boolean;
 
   @ApiPropertyOptional({
-    description: 'Whether the database was created from a file or environment variables at startup',
+    description: 'Tags associated with the database.',
+    type: Tag,
+    isArray: true,
+  })
+  @Expose()
+  @IsOptional()
+  @IsArray()
+  @Type(() => Tag)
+  tags?: Tag[];
+
+  @ApiPropertyOptional({
+    description:
+      'Whether the database was created from a file or environment variables at startup',
     type: Boolean,
   })
   @Expose()

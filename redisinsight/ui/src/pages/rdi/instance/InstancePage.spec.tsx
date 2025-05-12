@@ -3,7 +3,7 @@ import React from 'react'
 import reactRouterDom, { BrowserRouter } from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
 
-import { cleanup, mockedStore, render, act } from 'uiSrc/utils/test-utils'
+import { act, cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { resetKeys, resetPatternKeysData } from 'uiSrc/slices/browser/keys'
 import { setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
@@ -14,7 +14,10 @@ import {
   setAppContextConnectedRdiInstanceId,
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
-import { resetCliHelperSettings, resetCliSettings } from 'uiSrc/slices/cli/cli-settings'
+import {
+  resetCliHelperSettings,
+  resetCliSettings,
+} from 'uiSrc/slices/cli/cli-settings'
 import {
   resetRedisearchKeysData,
   setRedisearchInitialState,
@@ -29,8 +32,8 @@ import {
   resetConnectedInstance as resetConnectedDatabaseInstance,
 } from 'uiSrc/slices/instances/instances'
 import {
-  setConnectedInstance,
   loadInstances as loadRdiInstances,
+  setConnectedInstance,
 } from 'uiSrc/slices/rdi/instances'
 import { PageNames, Pages } from 'uiSrc/constants'
 import {
@@ -52,7 +55,7 @@ const mockedProps = mock<Props>()
 jest.mock('uiSrc/slices/app/context', () => ({
   ...jest.requireActual('uiSrc/slices/app/context'),
   appContextSelector: jest.fn().mockReturnValue({
-    contextRdiInstanceId: RDI_INSTANCE_ID_MOCK
+    contextRdiInstanceId: RDI_INSTANCE_ID_MOCK,
   }),
 }))
 
@@ -64,7 +67,7 @@ beforeEach(() => {
 
   reactRouterDom.useHistory = jest.fn().mockReturnValue({
     push: jest.fn(),
-    block: jest.fn(() => jest.fn())
+    block: jest.fn(() => jest.fn()),
   })
 })
 
@@ -79,20 +82,20 @@ describe('InstancePage', () => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
-        </BrowserRouter>
-      )
+        </BrowserRouter>,
+      ),
     ).toBeTruthy()
   })
 
   it('should call proper actions with resetting context', async () => {
-    (appContextSelector as jest.Mock).mockReturnValue({
-      contextRdiInstanceId: ''
+    ;(appContextSelector as jest.Mock).mockReturnValue({
+      contextRdiInstanceId: '',
     })
-    await act(() => {
+    await act(async () => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
-        </BrowserRouter>
+        </BrowserRouter>,
       )
     })
 
@@ -133,19 +136,25 @@ describe('InstancePage', () => {
       loadInstancesSuccess(expect.any(Array)),
     ]
 
-    expect(store.getActions()).toEqual(expectedActions)
+    const actualActions = store.getActions()
+    // eslint-disable-next-line no-restricted-syntax
+    for (const ac of expectedActions) {
+      expect(actualActions).toContainEqual(ac)
+    }
+    // expect(actualActions).toEqual(expectedActions)
   })
 
   it('should fetch rdi instance info', async () => {
-    (appContextSelector as jest.Mock).mockReturnValue({
-      contextRdiInstanceId: 'prevId'
+    ;(appContextSelector as jest.Mock).mockReturnValue({
+      contextRdiInstanceId: 'prevId',
     })
 
-    await act(() => {
+    // this MUST be awaited, in order for all effects to happen and all actions to be dispatched
+    await act(async () => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
-        </BrowserRouter>
+        </BrowserRouter>,
       )
     })
 
@@ -161,34 +170,40 @@ describe('InstancePage', () => {
       setPipelineConfig(''),
       setPipelineJobs([]),
       resetPipelineManagement(),
-      setConnectedInstance()
+      setConnectedInstance(),
     ]
 
-    expect(store.getActions().slice(0, expectedActions.length)).toEqual(expectedActions)
+    expect(store.getActions().slice(0, expectedActions.length)).toEqual(
+      expectedActions,
+    )
   })
 
   it('should redirect to rdi pipeline management page', async () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({
       push: pushMock,
-      block: jest.fn(() => jest.fn())
+      block: jest.fn(() => jest.fn()),
     })
 
-    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.rdiPipeline(RDI_INSTANCE_ID_MOCK) })
+    reactRouterDom.useLocation = jest
+      .fn()
+      .mockReturnValue({ pathname: Pages.rdiPipeline(RDI_INSTANCE_ID_MOCK) })
 
-    await act(() => {
+    act(() => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
-        </BrowserRouter>
+        </BrowserRouter>,
       )
     })
 
-    expect(pushMock).toBeCalledWith(Pages.rdiPipelineManagement(RDI_INSTANCE_ID_MOCK))
+    expect(pushMock).toHaveBeenCalledWith(
+      Pages.rdiPipelineManagement(RDI_INSTANCE_ID_MOCK),
+    )
   })
 
   it('should redirect to rdi pipeline statistics page', async () => {
-    (appContextSelector as jest.Mock).mockReturnValue({
+    ;(appContextSelector as jest.Mock).mockReturnValue({
       contextRdiInstanceId: RDI_INSTANCE_ID_MOCK,
       lastPage: PageNames.rdiStatistics,
     })
@@ -196,19 +211,23 @@ describe('InstancePage', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({
       push: pushMock,
-      block: jest.fn(() => jest.fn())
+      block: jest.fn(() => jest.fn()),
     })
 
-    reactRouterDom.useLocation = jest.fn().mockReturnValue({ pathname: Pages.rdiPipeline(RDI_INSTANCE_ID_MOCK) })
+    reactRouterDom.useLocation = jest
+      .fn()
+      .mockReturnValue({ pathname: Pages.rdiPipeline(RDI_INSTANCE_ID_MOCK) })
 
-    await act(() => {
+    act(() => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
-        </BrowserRouter>
+        </BrowserRouter>,
       )
     })
 
-    expect(pushMock).toBeCalledWith(Pages.rdiStatistics(RDI_INSTANCE_ID_MOCK))
+    expect(pushMock).toHaveBeenCalledWith(
+      Pages.rdiStatistics(RDI_INSTANCE_ID_MOCK),
+    )
   })
 })

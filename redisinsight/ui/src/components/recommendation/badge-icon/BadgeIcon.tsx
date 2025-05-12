@@ -1,5 +1,6 @@
 import React from 'react'
-import { EuiToolTip, EuiFlexItem } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
+import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -8,13 +9,22 @@ export interface Props {
   name: string
 }
 const BadgeIcon = ({ id, icon, name }: Props) => (
-  <EuiFlexItem key={id} className={styles.badge} grow={false} data-testid={`recommendation-badge-${id}`}>
+  <FlexItem
+    key={id}
+    className={styles.badge}
+    data-testid={`recommendation-badge-${id}`}
+  >
     <div data-testid={id} className={styles.badgeWrapper}>
-      <EuiToolTip content={name} position="top" display="inlineBlock" anchorClassName="flex-row">
+      <EuiToolTip
+        content={name}
+        position="top"
+        display="inlineBlock"
+        anchorClassName="flex-row"
+      >
         {icon}
       </EuiToolTip>
     </div>
-  </EuiFlexItem>
+  </FlexItem>
 )
 
 export default BadgeIcon

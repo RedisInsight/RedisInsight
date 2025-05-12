@@ -1,14 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiButtonIcon,
-  EuiText,
-  EuiToolTip,
-  EuiIcon,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiText, EuiToolTip, EuiIcon } from '@elastic/eui'
 
 import {
   toggleCli,
@@ -22,6 +15,7 @@ import { resetOutputLoading } from 'uiSrc/slices/cli/cli-output'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 const CliHeader = () => {
@@ -30,7 +24,8 @@ const CliHeader = () => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const removeCliClient = () => {
-    const cliClientUuid = sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''
+    const cliClientUuid =
+      sessionStorageService.get(BrowserStorageItem.cliClientUuid) ?? ''
 
     cliClientUuid && dispatch(deleteCliClientAction(instanceId, cliClientUuid))
   }
@@ -46,8 +41,8 @@ const CliHeader = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CLI_CLOSED,
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
     removeCliClient()
     dispatch(resetCliSettings())
@@ -58,22 +53,16 @@ const CliHeader = () => {
     sendEventTelemetry({
       event: TelemetryEvent.CLI_MINIMIZED,
       eventData: {
-        databaseId: instanceId
-      }
+        databaseId: instanceId,
+      },
     })
     dispatch(toggleCli())
   }
 
   return (
     <div className={styles.container} id="cli-header">
-      <EuiFlexGroup
-        justifyContent="spaceBetween"
-        gutterSize="none"
-        alignItems="center"
-        responsive={false}
-        style={{ height: '100%' }}
-      >
-        <EuiFlexItem grow={false} className={styles.title}>
+      <Row justify="between" align="center" style={{ height: '100%' }}>
+        <FlexItem className={styles.title}>
           <EuiIcon type="console" size="m" />
           <OnboardingTour
             options={ONBOARDING_FEATURES.BROWSER_CLI}
@@ -82,9 +71,9 @@ const CliHeader = () => {
           >
             <EuiText>CLI</EuiText>
           </OnboardingTour>
-        </EuiFlexItem>
-        <EuiFlexItem grow />
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem grow />
+        <FlexItem grow={false}>
           <EuiToolTip
             content="Minimize"
             position="top"
@@ -101,8 +90,8 @@ const CliHeader = () => {
               onClick={handleHideCli}
             />
           </EuiToolTip>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem>
           <EuiToolTip
             content="Close"
             position="top"
@@ -119,8 +108,8 @@ const CliHeader = () => {
               onClick={handleCloseCli}
             />
           </EuiToolTip>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </div>
   )
 }

@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CloudCapiProvider } from 'src/modules/cloud/common/providers/cloud.capi.provider';
-import { ICloudCapiDatabase, ICloudCapiSubscriptionDatabases } from 'src/modules/cloud/database/models';
+import {
+  ICloudCapiDatabase,
+  ICloudCapiSubscriptionDatabases,
+  ICloudCapiDatabaseTag,
+} from 'src/modules/cloud/database/models';
 import { ICloudCapiCredentials } from 'src/modules/cloud/common/models';
 import {
   CreateFreeCloudDatabaseDto,
@@ -79,6 +83,31 @@ export class CloudDatabaseCapiProvider extends CloudCapiProvider {
       return data;
     } catch (e) {
       throw wrapCloudCapiError(e);
+    }
+  }
+
+  /**
+   * Get single database tags
+   * @param credentials
+   * @param dto
+   */
+  async getDatabaseTags(
+    credentials: ICloudCapiCredentials,
+    dto: GetCloudSubscriptionDatabaseDto,
+  ): Promise<ICloudCapiDatabaseTag[]> {
+    try {
+      const { subscriptionId, databaseId, subscriptionType } = dto;
+
+      const response = await this.api.get(
+        `${CloudCapiProvider.getPrefix(subscriptionType)}/subscriptions/${subscriptionId}/databases/${databaseId}/tags`,
+        CloudCapiProvider.getHeaders(credentials),
+      );
+      const tags: ICloudCapiDatabaseTag[] = response.data?.tags || [];
+
+      return tags;
+    } catch (e) {
+      // failed to get tags
+      return [];
     }
   }
 }

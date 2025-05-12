@@ -18,13 +18,14 @@ const redisCommandsPath = 'uiSrc/slices/app/redis-commands'
 
 jest.mock(redisCommandsPath, () => {
   const defaultState = jest.requireActual(redisCommandsPath).initialState
-  const { MOCK_COMMANDS_SPEC, MOCK_COMMANDS_ARRAY } = jest.requireActual('uiSrc/constants')
+  const { MOCK_COMMANDS_SPEC, MOCK_COMMANDS_ARRAY } =
+    jest.requireActual('uiSrc/constants')
   return {
     ...jest.requireActual(redisCommandsPath),
     appRedisCommandsSelector: jest.fn().mockReturnValue({
       ...defaultState,
       spec: MOCK_COMMANDS_SPEC,
-      commandsArray: Object.keys(MOCK_COMMANDS_ARRAY).sort()
+      commandsArray: Object.keys(MOCK_COMMANDS_ARRAY).sort(),
     }),
   }
 })
@@ -40,7 +41,11 @@ describe('CliInputWrapper', () => {
     const command = 'get'
 
     render(
-      <CliInputWrapper {...instance(mockedProps)} command={command} setCommand={setCommandMock} />
+      <CliInputWrapper
+        {...instance(mockedProps)}
+        command={command}
+        setCommand={setCommandMock}
+      />,
     )
 
     expect(screen.getByTestId(autocompleteTestId)).toBeInTheDocument()
@@ -52,7 +57,11 @@ describe('CliInputWrapper', () => {
     const command = 'client info'
 
     const { queryByTestId } = render(
-      <CliInputWrapper {...instance(mockedProps)} command={command} setCommand={setCommandMock} />
+      <CliInputWrapper
+        {...instance(mockedProps)}
+        command={command}
+        setCommand={setCommandMock}
+      />,
     )
 
     expect(queryByTestId(autocompleteTestId)).not.toBeInTheDocument()

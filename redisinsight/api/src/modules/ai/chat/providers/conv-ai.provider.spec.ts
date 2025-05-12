@@ -3,7 +3,9 @@ import axios from 'axios';
 import {
   getMockedReadableStream,
   mockAiChatId,
-  mockAiChatUnauthorizedError, mockAiHistoryApiResponse, mockHumanMessage1Response,
+  mockAiChatUnauthorizedError,
+  mockAiHistoryApiResponse,
+  mockHumanMessage1Response,
   mockSessionMetadata,
 } from 'src/__mocks__';
 import { ConvAiProvider } from 'src/modules/ai/chat/providers/conv-ai.provider';
@@ -23,9 +25,7 @@ describe('ConvAiProvider', () => {
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ConvAiProvider,
-      ],
+      providers: [ConvAiProvider],
     }).compile();
 
     service = module.get(ConvAiProvider);
@@ -68,22 +68,21 @@ describe('ConvAiProvider', () => {
         data: mockAiHistoryApiResponse,
       });
 
-      expect(await service.getHistory(mockSessionMetadata, mockAiChatId)).toEqual(mockAiHistoryApiResponse);
-      expect(mockedAxios.get).toHaveBeenCalledWith(
-        '/history',
-        {
-          headers: {
-            'session-id': mockAiChatId,
-          },
+      expect(
+        await service.getHistory(mockSessionMetadata, mockAiChatId),
+      ).toEqual(mockAiHistoryApiResponse);
+      expect(mockedAxios.get).toHaveBeenCalledWith('/history', {
+        headers: {
+          'session-id': mockAiChatId,
         },
-      );
+      });
     });
     it('throw ConvAiUnauthorized exception', async () => {
       mockedAxios.get.mockRejectedValue(mockAiChatUnauthorizedError);
 
-      await expect(service.getHistory(mockSessionMetadata, mockAiChatId)).rejects.toThrow(
-        ConvAiUnauthorizedException,
-      );
+      await expect(
+        service.getHistory(mockSessionMetadata, mockAiChatId),
+      ).rejects.toThrow(ConvAiUnauthorizedException);
     });
   });
   describe('postMessage', () => {
@@ -94,8 +93,13 @@ describe('ConvAiProvider', () => {
         data: mockStream,
       });
 
-      expect(await service.postMessage(mockSessionMetadata, mockAiChatId, mockHumanMessage1Response.content))
-        .toEqual(mockStream);
+      expect(
+        await service.postMessage(
+          mockSessionMetadata,
+          mockAiChatId,
+          mockHumanMessage1Response.content,
+        ),
+      ).toEqual(mockStream);
       expect(mockedAxios.post).toHaveBeenCalledWith(
         '/chat',
         {},
@@ -114,8 +118,13 @@ describe('ConvAiProvider', () => {
     it('throw ConvAiUnauthorized exception', async () => {
       mockedAxios.post.mockRejectedValue(mockAiChatUnauthorizedError);
 
-      await expect(service.postMessage(mockSessionMetadata, mockAiChatId, mockHumanMessage1Response.content))
-        .rejects.toThrow(ConvAiUnauthorizedException);
+      await expect(
+        service.postMessage(
+          mockSessionMetadata,
+          mockAiChatId,
+          mockHumanMessage1Response.content,
+        ),
+      ).rejects.toThrow(ConvAiUnauthorizedException);
     });
   });
   describe('reset', () => {
@@ -125,7 +134,9 @@ describe('ConvAiProvider', () => {
         data: '',
       });
 
-      expect(await service.reset(mockSessionMetadata, mockAiChatId)).toEqual(undefined);
+      expect(await service.reset(mockSessionMetadata, mockAiChatId)).toEqual(
+        undefined,
+      );
       expect(mockedAxios.post).toHaveBeenCalledWith(
         '/reset',
         {},
@@ -139,9 +150,9 @@ describe('ConvAiProvider', () => {
     it('throw ConvAiUnauthorized exception', async () => {
       mockedAxios.post.mockRejectedValue(mockAiChatUnauthorizedError);
 
-      await expect(service.reset(mockSessionMetadata, mockAiChatId)).rejects.toThrow(
-        ConvAiUnauthorizedException,
-      );
+      await expect(
+        service.reset(mockSessionMetadata, mockAiChatId),
+      ).rejects.toThrow(ConvAiUnauthorizedException);
     });
   });
 });

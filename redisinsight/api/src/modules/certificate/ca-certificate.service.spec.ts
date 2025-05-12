@@ -1,9 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   mockCaCertificate,
-  mockCaCertificateRepository, mockCreateCaCertificateDto,
+  mockCaCertificateRepository,
+  mockCreateCaCertificateDto,
   MockType,
   mockRedisClientStorage,
 } from 'src/__mocks__';
@@ -39,7 +43,9 @@ describe('CaCertificateService', () => {
 
   describe('get', () => {
     it('should return ca certificate model', async () => {
-      expect(await service.get(mockCaCertificate.id)).toEqual(mockCaCertificate);
+      expect(await service.get(mockCaCertificate.id)).toEqual(
+        mockCaCertificate,
+      );
     });
     it('should return NotFound error if no certificated found', async () => {
       repository.get.mockResolvedValueOnce(null);
@@ -68,10 +74,14 @@ describe('CaCertificateService', () => {
 
   describe('create', () => {
     it('should return ca certificate model', async () => {
-      expect(await service.create(mockCreateCaCertificateDto)).toEqual(mockCaCertificate);
+      expect(await service.create(mockCreateCaCertificateDto)).toEqual(
+        mockCaCertificate,
+      );
     });
     it('should throw encryption error', async () => {
-      repository.create.mockRejectedValueOnce(new KeytarEncryptionErrorException());
+      repository.create.mockRejectedValueOnce(
+        new KeytarEncryptionErrorException(),
+      );
 
       try {
         await service.create(mockCreateCaCertificateDto);
@@ -101,20 +111,30 @@ describe('CaCertificateService', () => {
     });
 
     it('should delete CA certificate and remove affected database clients', async () => {
-      jest.spyOn(repository, 'delete').mockResolvedValue({ affectedDatabases: mockAffectedDatabases });
-      jest.spyOn(service['redisClientStorage'], 'removeManyByMetadata').mockResolvedValue(undefined);
+      jest
+        .spyOn(repository, 'delete')
+        .mockResolvedValue({ affectedDatabases: mockAffectedDatabases });
+      jest
+        .spyOn(service['redisClientStorage'], 'removeManyByMetadata')
+        .mockResolvedValue(undefined);
 
       await service.delete(mockId);
 
       expect(repository.delete).toHaveBeenCalledWith(mockId);
-      expect(service['redisClientStorage'].removeManyByMetadata).toHaveBeenCalledTimes(mockAffectedDatabases.length);
+      expect(
+        service['redisClientStorage'].removeManyByMetadata,
+      ).toHaveBeenCalledTimes(mockAffectedDatabases.length);
       mockAffectedDatabases.forEach((databaseId) => {
-        expect(service['redisClientStorage'].removeManyByMetadata).toHaveBeenCalledWith({ databaseId });
+        expect(
+          service['redisClientStorage'].removeManyByMetadata,
+        ).toHaveBeenCalledWith({ databaseId });
       });
     });
 
     it('should throw encryption error', async () => {
-      repository.delete.mockRejectedValueOnce(new KeytarEncryptionErrorException());
+      repository.delete.mockRejectedValueOnce(
+        new KeytarEncryptionErrorException(),
+      );
 
       try {
         await service.delete(mockCaCertificate.id);

@@ -126,7 +126,7 @@ const KeyDetailsHeader = ({
   }
 
   return (
-    <div
+    <FlexItem
       className={`key-details-header ${styles.container}`}
       data-testid="key-details-header"
     >
@@ -192,7 +192,7 @@ const KeyDetailsHeader = ({
           )}
         </AutoSizer>
       )}
-    </div>
+    </FlexItem>
   )
 }
 

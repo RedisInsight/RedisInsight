@@ -11,10 +11,13 @@ import {
 import { useParams } from 'react-router-dom'
 import { findIndex, isNumber } from 'lodash'
 
-import { CopyIcon, PlayIcon,
+import {
+  CopyIcon,
+  PlayIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  DeleteIcon, } from 'uiSrc/components/base/icons'
+  DeleteIcon,
+} from 'uiSrc/components/base/icons'
 import { Theme } from 'uiSrc/constants'
 import {
   getCommandNameFromQuery,

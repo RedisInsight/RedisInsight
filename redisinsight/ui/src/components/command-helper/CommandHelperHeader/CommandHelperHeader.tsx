@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { EuiButtonIcon, EuiText, EuiToolTip, EuiIcon } from '@elastic/eui'
+import { EuiText, EuiToolTip, EuiIcon } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   resetCliHelperSettings,
@@ -13,6 +13,8 @@ import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { MinusIcon, CancelSlimIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 const CommandHelperHeader = () => {
@@ -61,9 +63,9 @@ const CommandHelperHeader = () => {
             display="inlineBlock"
             anchorClassName="flex-row"
           >
-            <EuiButtonIcon
-              iconType="minus"
-              color="primary"
+            <IconButton
+              size="S"
+              icon={MinusIcon}
               id="hide-command-helper"
               aria-label="hide command helper"
               data-testid="hide-command-helper"
@@ -79,9 +81,9 @@ const CommandHelperHeader = () => {
             display="inlineBlock"
             anchorClassName="flex-row"
           >
-            <EuiButtonIcon
-              iconType="cross"
-              color="primary"
+            <IconButton
+              size="S"
+              icon={CancelSlimIcon}
               id="close-command-helper"
               aria-label="close command helper"
               data-testid="close-command-helper"

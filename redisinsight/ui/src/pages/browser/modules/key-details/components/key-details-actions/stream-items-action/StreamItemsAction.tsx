@@ -1,8 +1,13 @@
 import React from 'react'
-import { EuiButton, EuiButtonIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
 import { MIDDLE_SCREEN_RESOLUTION } from 'uiSrc/constants'
+import { PlusInCircleIcon } from 'uiSrc/components/base/icons'
+import {
+  IconButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -21,20 +26,18 @@ const StreamItemsAction = ({ width, title, openAddItemPanel }: Props) => (
   >
     <>
       {width > MIDDLE_SCREEN_RESOLUTION ? (
-        <EuiButton
-          size="s"
-          iconType="plusInCircle"
-          color="secondary"
+        <SecondaryButton
+          size="small"
+          icon={PlusInCircleIcon}
           aria-label={title}
           onClick={openAddItemPanel}
           data-testid="add-key-value-items-btn"
         >
           {title}
-        </EuiButton>
+        </SecondaryButton>
       ) : (
-        <EuiButtonIcon
-          iconType="plusInCircle"
-          color="primary"
+        <IconButton
+          icon={PlusInCircleIcon}
           aria-label={title}
           onClick={openAddItemPanel}
           data-testid="add-key-value-items-btn"

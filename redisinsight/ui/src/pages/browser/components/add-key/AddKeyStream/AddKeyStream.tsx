@@ -113,7 +113,7 @@ const AddKeyStream = (props: Props) => {
           borderRadius="none"
           style={{ border: 'none' }}
         >
-          <Row justify="end">
+          <Row justify="end" gap="m">
             <FlexItem>
               <div>
                 <SecondaryButton

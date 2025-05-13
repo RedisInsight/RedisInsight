@@ -2,7 +2,6 @@ import React, { ChangeEvent, Ref, useEffect, useRef, useState } from 'react'
 import { capitalize } from 'lodash'
 import cx from 'classnames'
 import {
-  EuiButton,
   EuiFieldText,
   EuiForm,
   EuiToolTip,
@@ -16,7 +15,10 @@ import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { CancelSlimIcon, CheckThinIcon } from 'uiSrc/components/base/icons'
-import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import {
+  DestructiveButton,
+  IconButton,
+} from 'uiSrc/components/base/forms/buttons'
 
 import styles from './styles.module.scss'
 
@@ -283,17 +285,15 @@ const InlineItemEditor = (props: Props) => {
                           </EuiText>
                         </EuiText>
                         <div className={styles.popoverFooter}>
-                          <EuiButton
-                            fill
-                            color="warning"
+                          <DestructiveButton
                             aria-label="Save"
                             className={cx(styles.btn, styles.saveBtn)}
-                            isDisabled={isDisabledApply()}
+                            disabled={isDisabledApply()}
                             onClick={handleFormSubmit}
                             data-testid="save-btn"
                           >
                             Save
-                          </EuiButton>
+                          </DestructiveButton>
                         </div>
                       </div>
                     </EuiPopover>

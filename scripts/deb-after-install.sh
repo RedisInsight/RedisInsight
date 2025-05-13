@@ -6,10 +6,15 @@ OLD_INSTALL_PATH="/opt/Redis Insight"  # Path with space
 NEW_INSTALL_PATH="/opt/redisinsight"   # New path without space
 DESKTOP_FILE="/usr/share/applications/redisinsight.desktop"
 
-# Check if old directory exists and rename it
+# Check if old directory exists and handle it properly
 if [ -d "$OLD_INSTALL_PATH" ]; then
-    echo "Renaming $OLD_INSTALL_PATH to $NEW_INSTALL_PATH"
+    echo "Migrating from $OLD_INSTALL_PATH to $NEW_INSTALL_PATH"
+
+    # Move the old installation to the new location
     sudo mv "$OLD_INSTALL_PATH" "$NEW_INSTALL_PATH"
+
+    # Create a symlink from old path to new to maintain compatibility
+    sudo ln -sf "$NEW_INSTALL_PATH" "$OLD_INSTALL_PATH"
 fi
 
 # Update desktop file to use new path

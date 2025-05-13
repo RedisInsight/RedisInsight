@@ -10,25 +10,36 @@ export const BaseButton = ({
   loading,
   size = 'medium',
   ...props
-}: BaseButtonProps) => (
-  <Button {...props} size={size} disabled={props.disabled || loading}>
-    <ButtonIcon
-      buttonSide="left"
-      icon={icon}
-      iconSide={iconSide}
-      loading={loading}
-      size={size}
-    />
-    {children}
-    <ButtonIcon
-      buttonSide="right"
-      icon={icon}
-      iconSide={iconSide}
-      loading={loading}
-      size={size}
-    />
-  </Button>
-)
+}: BaseButtonProps) => {
+  let btnSize: 'small' | 'medium' | 'large' = 'medium'
+
+  if (size === 's') {
+    btnSize = 'small'
+  } else if (size === 'm') {
+    btnSize = 'medium'
+  } else if (size === 'l') {
+    btnSize = 'large'
+  }
+  return (
+    <Button {...props} size={btnSize} disabled={props.disabled || loading}>
+      <ButtonIcon
+        buttonSide="left"
+        icon={icon}
+        iconSide={iconSide}
+        loading={loading}
+        size={btnSize}
+      />
+      {children}
+      <ButtonIcon
+        buttonSide="right"
+        icon={icon}
+        iconSide={iconSide}
+        loading={loading}
+        size={btnSize}
+      />
+    </Button>
+  )
+}
 
 export type ButtonIconProps = Pick<
   BaseButtonProps,

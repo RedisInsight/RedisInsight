@@ -1,4 +1,4 @@
-import { EuiButton, EuiIcon, EuiImage, EuiLink, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiImage, EuiLink, EuiText } from '@elastic/eui'
 import React, { useContext } from 'react'
 
 import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
@@ -11,6 +11,7 @@ import { Theme } from 'uiSrc/constants'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 const subTitleText =
@@ -37,15 +38,13 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => {
       <EuiText className={styles.subTitle}>{subTitleText}</EuiText>
       <Row align="center" gap="m" responsive style={{ lineHeight: '20px' }}>
         <FlexItem grow>
-          <EuiButton
+          <PrimaryButton
             data-testid="empty-rdi-instance-button"
-            color="secondary"
-            fill
-            size="s"
+            size="small"
             onClick={onAddInstanceClick}
           >
             + Add RDI Endpoint
-          </EuiButton>
+          </PrimaryButton>
         </FlexItem>
         or
         <FlexItem grow>

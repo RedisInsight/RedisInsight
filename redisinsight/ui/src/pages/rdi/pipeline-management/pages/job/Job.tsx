@@ -18,7 +18,6 @@ import {
   fetchPipelineStrategies,
   rdiPipelineSelector,
   setChangedFile,
-  setPipeline,
   setPipelineJobs,
 } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType } from 'uiSrc/slices/interfaces'

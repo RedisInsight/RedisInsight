@@ -3,15 +3,13 @@ import cx from 'classnames'
 import {
   EuiButton,
   EuiButtonIcon,
+  EuiSuperSelect,
+  EuiSuperSelectOption,
   EuiTab,
   EuiTabs,
   EuiText,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiSuperSelect,
-  keys,
-  EuiSuperSelectOption,
   EuiToolTip,
+  keys,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -20,8 +18,8 @@ import { isArray, upperFirst } from 'lodash'
 import { PipelineJobsTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
-  rdiDryRunJobSelector,
   rdiDryRunJob,
+  rdiDryRunJobSelector,
   setInitialDryRunJob,
 } from 'uiSrc/slices/rdi/dryRun'
 import MonacoJson from 'uiSrc/components/monaco-editor/components/monaco-json'
@@ -30,6 +28,7 @@ import DryRunJobTransformations from 'uiSrc/pages/rdi/pipeline-management/compon
 import { createAxiosError, formatLongName, yamlToJson } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -245,8 +244,8 @@ const DryRunJobPanel = (props: Props) => {
             wrapperClassName={styles.inputCode}
             data-testid="input-value"
           />
-          <EuiFlexGroup gutterSize="none" justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row responsive justify="end">
+            <FlexItem>
               <EuiToolTip
                 content={isFormValid ? null : 'Input should have JSON format'}
                 position="top"
@@ -265,8 +264,8 @@ const DryRunJobPanel = (props: Props) => {
                   Dry run
                 </EuiButton>
               </EuiToolTip>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
           <div className={cx(styles.tabsWrapper, styles.codeLabel)}>
             {isSelectAvailable && (
               <EuiSuperSelect

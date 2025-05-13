@@ -1,17 +1,17 @@
 import React, { ChangeEvent, useState } from 'react'
 import {
   EuiButtonIcon,
-  EuiFlexItem,
-  EuiFocusTrap,
   EuiForm,
   EuiTextArea,
-  EuiWindowEvent,
   keys,
 } from '@elastic/eui'
 import cx from 'classnames'
 
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
 import { Nullable } from 'uiSrc/utils'
+import { FlexItem } from 'uiSrc/components/base/layout/flex'
+import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
+import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { isValidJSON } from '../../utils'
 import { JSONErrors } from '../../constants'
@@ -52,8 +52,8 @@ const EditEntireItemAction = (props: Props) => {
       <div className={styles.fullWidthContainer}>
         <OutsideClickDetector onOutsideClick={() => onCancel?.()}>
           <div>
-            <EuiWindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
-            <EuiFocusTrap>
+            <WindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
+            <FocusTrap>
               <EuiForm
                 component="form"
                 className="relative"
@@ -61,7 +61,7 @@ const EditEntireItemAction = (props: Props) => {
                 data-testid="json-entire-form"
                 noValidate
               >
-                <EuiFlexItem grow component="span">
+                <FlexItem grow inline>
                   <EuiTextArea
                     isInvalid={!!error}
                     className={styles.fullWidthTextArea}
@@ -72,7 +72,7 @@ const EditEntireItemAction = (props: Props) => {
                     }
                     data-testid="json-value"
                   />
-                </EuiFlexItem>
+                </FlexItem>
                 <div className={cx(styles.controls, styles.controlsBottom)}>
                   <EuiButtonIcon
                     iconSize="m"
@@ -110,7 +110,7 @@ const EditEntireItemAction = (props: Props) => {
                   </FieldMessage>
                 </div>
               )}
-            </EuiFocusTrap>
+            </FocusTrap>
           </div>
         </OutsideClickDetector>
       </div>

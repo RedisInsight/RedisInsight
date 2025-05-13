@@ -1,10 +1,4 @@
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiPopover,
-  EuiSpacer,
-  EuiText,
-} from '@elastic/eui'
+import { EuiButton, EuiButtonIcon, EuiPopover, EuiText } from '@elastic/eui'
 
 import React from 'react'
 
@@ -12,6 +6,7 @@ import cx from 'classnames'
 import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
 import { formatLongName } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
 export interface DeleteProps {
   nameString: string
@@ -57,7 +52,7 @@ export const DeleteKeyPopover = ({
         </h4>
         <EuiText size="s">will be deleted.</EuiText>
       </EuiText>
-      <EuiSpacer size="m" />
+      <Spacer size="m" />
       <EuiButton
         fill
         size="s"

@@ -122,11 +122,13 @@ export class CloudAuthService {
 
       return CloudAuthStrategy.generateAuthUrl(authRequest).toString();
     } catch (e) {
+      this.logger.error('Unable to generate authorization url', e);
+
       if (e instanceof CloudOauthSsoUnsupportedEmailException) {
         throw e;
       }
 
-      throw new CloudOauthMisconfigurationException();
+      throw new CloudOauthMisconfigurationException(undefined, { cause: e });
     }
   }
 

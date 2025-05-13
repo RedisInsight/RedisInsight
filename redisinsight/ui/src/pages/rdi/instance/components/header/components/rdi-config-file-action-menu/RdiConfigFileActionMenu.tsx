@@ -1,16 +1,11 @@
 import React, { useState } from 'react'
-import {
-  EuiPopover,
-  EuiButtonIcon,
-  EuiButtonEmpty,
-  EuiFlexGroup,
-  EuiFlexItem,
-} from '@elastic/eui'
+import { EuiButtonEmpty, EuiButtonIcon, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import threeDots from 'uiSrc/assets/img/icons/three_dots.svg?react'
 import uploadIcon from 'uiSrc/assets/img/rdi/upload.svg?react'
 import UploadModal from 'uiSrc/pages/rdi/pipeline-management/components/upload-modal/UploadModal'
 import Download from 'uiSrc/pages/rdi/instance/components/download'
+import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import FetchPipelinePopover from '../fetch-pipeline-popover'
 
 import styles from './styles.module.scss'
@@ -52,11 +47,11 @@ const RdiConfigFileActionMenu = () => {
       panelPaddingSize="none"
       anchorPosition="upRight"
     >
-      <EuiFlexGroup direction="column" alignItems="flexStart" gutterSize="none">
-        <EuiFlexItem>
+      <Col align="start">
+        <FlexItem grow>
           <FetchPipelinePopover onClose={closePopover} />
-        </EuiFlexItem>
-        <EuiFlexItem>
+        </FlexItem>
+        <FlexItem grow>
           <UploadModal onClose={closePopover}>
             <EuiButtonEmpty
               color="text"
@@ -69,11 +64,11 @@ const RdiConfigFileActionMenu = () => {
               Upload from file
             </EuiButtonEmpty>
           </UploadModal>
-        </EuiFlexItem>
-        <EuiFlexItem>
+        </FlexItem>
+        <FlexItem grow>
           <Download onClose={closePopover} />
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Col>
     </EuiPopover>
   )
 }

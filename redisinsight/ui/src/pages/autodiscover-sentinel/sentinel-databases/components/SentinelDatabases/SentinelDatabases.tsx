@@ -12,8 +12,6 @@ import {
   EuiFieldSearch,
   EuiFormRow,
   EuiToolTip,
-  EuiFlexGroup,
-  EuiFlexItem,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
@@ -22,6 +20,7 @@ import { ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from '../../../styles.module.scss'
 
 export interface Props {
@@ -208,8 +207,8 @@ const SentinelDatabases = ({
           <h1>Auto-Discover Redis Sentinel Primary Groups</h1>
         </EuiTitle>
 
-        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
-          <EuiFlexItem>
+        <Row align="end" gap="s">
+          <FlexItem grow>
             <EuiText color="subdued" className={styles.subTitle}>
               <span>
                 Redis Sentinel instance found. <br />
@@ -217,8 +216,8 @@ const SentinelDatabases = ({
                 managing. Select the primary group(s) you want to add:
               </span>
             </EuiText>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiFormRow className={styles.searchForm}>
               <EuiFieldSearch
                 placeholder="Search..."
@@ -229,8 +228,8 @@ const SentinelDatabases = ({
                 data-testid="search"
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
         <br />
 
         <div className="itemList databaseList sentinelDatabaseList">

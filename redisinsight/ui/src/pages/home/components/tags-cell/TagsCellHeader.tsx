@@ -4,11 +4,11 @@ import {
   EuiIcon,
   EuiPopover,
   EuiCheckbox,
-  EuiSpacer,
 } from '@elastic/eui'
 import React, { memo } from 'react'
 
 import FilterSvg from 'uiSrc/assets/img/icons/filter.svg'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { useFilterTags } from './useFilterTags'
 import styles from './styles.module.scss'
 
@@ -65,7 +65,7 @@ export const TagsCellHeader = memo(() => {
               }}
             />
           </EuiFormRow>
-          <EuiSpacer size="m" />
+          <Spacer size="m" />
           {Object.keys(groupedTags).map((key) => (
             <div key={key}>
               <EuiCheckbox

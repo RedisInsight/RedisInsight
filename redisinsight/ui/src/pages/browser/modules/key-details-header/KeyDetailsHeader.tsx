@@ -1,16 +1,10 @@
-import {
-  EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiLoadingContent,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 import React, { ReactElement } from 'react'
 import { isUndefined } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
-import { GroupBadge, AutoRefresh, FullScreen } from 'uiSrc/components'
+import { GroupBadge, AutoRefresh, FullScreen, LoadingContent } from 'uiSrc/components'
 import { HIDE_LAST_REFRESH } from 'uiSrc/constants'
 import {
   deleteSelectedKeyAction,
@@ -30,6 +24,7 @@ import {
   TelemetryEvent,
 } from 'uiSrc/telemetry'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { KeyDetailsHeaderName } from './components/key-details-header-name'
 import { KeyDetailsHeaderTTL } from './components/key-details-header-ttl'
 import { KeyDetailsHeaderDelete } from './components/key-details-header-delete'
@@ -130,32 +125,27 @@ const KeyDetailsHeader = ({
     >
       {loading ? (
         <div>
-          <EuiLoadingContent lines={2} />
+          <LoadingContent lines={2} />
         </div>
       ) : (
         <AutoSizer disableHeight>
           {({ width = 0 }) => (
             <div style={{ width }}>
-              <EuiFlexGroup
-                responsive={false}
-                gutterSize="s"
-                alignItems="center"
-                className={styles.keyFlexGroup}
-              >
-                <EuiFlexItem grow={false}>
+              <Row gap="s" align="center" className={styles.keyFlexGroup}>
+                <FlexItem>
                   <GroupBadge type={type} />
-                </EuiFlexItem>
+                </FlexItem>
                 <KeyDetailsHeaderName onEditKey={handleEditKey} />
-                <EuiFlexItem />
+                <FlexItem grow />
                 {!arePanelsCollapsed && (
-                  <EuiFlexItem grow={false} style={{ marginRight: '8px' }}>
+                  <FlexItem style={{ marginRight: '8px' }}>
                     <FullScreen
                       isFullScreen={isFullScreen}
                       onToggleFullScreen={onToggleFullScreen}
                     />
-                  </EuiFlexItem>
+                  </FlexItem>
                 )}
-                <EuiFlexItem grow={false}>
+                <FlexItem>
                   {(!arePanelsCollapsed || isFullScreen) && (
                     <EuiToolTip content="Close" position="left">
                       <EuiButtonIcon
@@ -168,18 +158,12 @@ const KeyDetailsHeader = ({
                       />
                     </EuiToolTip>
                   )}
-                </EuiFlexItem>
-              </EuiFlexGroup>
-              <EuiFlexGroup
-                responsive={false}
-                justifyContent="center"
-                alignItems="center"
-                className={styles.groupSecondLine}
-                gutterSize="m"
-              >
+                </FlexItem>
+              </Row>
+              <Row centered className={styles.groupSecondLine} gap="m">
                 <KeyDetailsHeaderSizeLength width={width} />
                 <KeyDetailsHeaderTTL onEditTTL={handleEditTTL} />
-                <EuiFlexItem>
+                <FlexItem grow>
                   <div className={styles.subtitleActionBtns}>
                     <AutoRefresh
                       postfix={type}
@@ -196,8 +180,8 @@ const KeyDetailsHeader = ({
                     {!isUndefined(Actions) && <Actions width={width} />}
                     <KeyDetailsHeaderDelete onDelete={handleDeleteKey} />
                   </div>
-                </EuiFlexItem>
-              </EuiFlexGroup>
+                </FlexItem>
+              </Row>
             </div>
           )}
         </AutoSizer>

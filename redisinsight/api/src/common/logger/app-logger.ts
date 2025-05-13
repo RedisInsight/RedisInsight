@@ -38,22 +38,14 @@ export class AppLogger implements LoggerService {
    * Note: args array might be mutated
    * @param args
    */
-  static getError(args: ErrorOrMeta[] = []): void | {} {
+  static getError(args: ErrorOrMeta[] = []): Error {
     let error = null;
     const index = args.findIndex((arg) => arg instanceof Error);
     if (index > -1) {
       [error] = args.splice(index, 1);
     }
 
-    if (error) {
-      return {
-        message: error.message,
-        stack: error.stack,
-        response: error.response,
-      };
-    }
-
-    return undefined;
+    return error || undefined;
   }
 
   /**

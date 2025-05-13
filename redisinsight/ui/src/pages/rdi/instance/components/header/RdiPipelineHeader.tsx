@@ -1,4 +1,3 @@
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -8,6 +7,7 @@ import {
   getPipelineStatusAction,
   rdiPipelineStatusSelector,
 } from 'uiSrc/slices/rdi/pipeline'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import CurrentPipelineStatus from './components/current-pipeline-status'
 
 import PipelineActions from './components/pipeline-actions'
@@ -50,25 +50,23 @@ const RdiPipelineHeader = () => {
     : undefined
 
   return (
-    <EuiFlexGroup
+    <Row
       className={styles.wrapper}
-      gutterSize="none"
-      alignItems="center"
-      justifyContent="spaceBetween"
-      responsive={false}
+      align="center"
+      justify="between"
     >
-      <EuiFlexItem>
+      <FlexItem grow>
         <CurrentPipelineStatus
           pipelineState={pipelineState}
           statusError={statusError}
           headerLoading={headerLoading}
         />
-      </EuiFlexItem>
+      </FlexItem>
       <PipelineActions
         collectorStatus={collectorStatus}
         pipelineStatus={pipelineStatus}
       />
-    </EuiFlexGroup>
+    </Row>
   )
 }
 

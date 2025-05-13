@@ -1,13 +1,4 @@
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
-  EuiImage,
-  EuiLink,
-  EuiSpacer,
-  EuiText,
-} from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiImage, EuiLink, EuiText } from '@elastic/eui'
 import React, { useContext } from 'react'
 
 import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
@@ -18,6 +9,8 @@ import NewTabIcon from 'uiSrc/assets/img/rdi/new_tab.svg'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { Theme } from 'uiSrc/constants'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 const subTitleText =
@@ -34,7 +27,7 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => {
       className={styles.noResultsContainer}
       data-testid="empty-rdi-instance-list"
     >
-      <EuiSpacer size="xl" />
+      <Spacer size="xl" />
       <EuiText className={styles.title}>Redis Data Integration</EuiText>
       <EuiImage
         src={theme === Theme.Dark ? EmptyListDarkIcon : EmptyListLightIcon}
@@ -42,8 +35,8 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => {
         alt="empty"
       />
       <EuiText className={styles.subTitle}>{subTitleText}</EuiText>
-      <EuiFlexGroup alignItems="center" style={{ lineHeight: '20px' }}>
-        <EuiFlexItem>
+      <Row align="center" gap="m" responsive style={{ lineHeight: '20px' }}>
+        <FlexItem grow>
           <EuiButton
             data-testid="empty-rdi-instance-button"
             color="secondary"
@@ -53,9 +46,9 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => {
           >
             + Add RDI Endpoint
           </EuiButton>
-        </EuiFlexItem>
+        </FlexItem>
         or
-        <EuiFlexItem>
+        <FlexItem grow>
           <EuiLink
             data-testid="empty-rdi-quickstart-button"
             target="_blank"
@@ -67,8 +60,8 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => {
           >
             RDI Quickstart <EuiIcon type={NewTabIcon} />
           </EuiLink>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </div>
   )
 }

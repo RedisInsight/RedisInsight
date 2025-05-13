@@ -1,10 +1,11 @@
-import { EuiButton, EuiImage, EuiText } from '@elastic/eui'
+import { EuiImage, EuiText } from '@elastic/eui'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 
 import EmptyPipelineIcon from 'uiSrc/assets/img/rdi/empty_pipeline.svg'
 import { Pages } from 'uiSrc/constants'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import Panel from '../components/panel'
 
 import styles from './styles.module.scss'
@@ -26,17 +27,15 @@ const Empty = ({ rdiInstanceId }: Props) => {
           Create your first pipeline to get started!
         </EuiText>
         <Spacer size="l" />
-        <EuiButton
+        <PrimaryButton
           data-testid="add-pipeline-btn"
-          color="secondary"
-          fill
           size="s"
           onClick={() => {
             history.push(Pages.rdiPipelineConfig(rdiInstanceId))
           }}
         >
           Add Pipeline
-        </EuiButton>
+        </PrimaryButton>
       </div>
     </Panel>
   )

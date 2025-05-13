@@ -32,7 +32,7 @@ const RdiInstanceHeader = () => {
 
   return (
     <Row className={styles.container} align="center">
-      <FlexItem style={{ overflow: 'hidden' }}>
+      <FlexItem style={{ overflow: 'hidden' }} grow>
         <div
           className={styles.breadcrumbsContainer}
           data-testid="breadcrumbs-container"

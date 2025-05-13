@@ -1,5 +1,4 @@
 import {
-  EuiButton,
   EuiForm,
   EuiFormRow,
   EuiSuperSelect,
@@ -21,6 +20,10 @@ import {
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { NO_TEMPLATE_VALUE, NO_OPTIONS, INGEST_OPTION } from './constants'
 
 import styles from './styles.module.scss'
@@ -196,15 +199,14 @@ const TemplateForm = (props: Props) => {
         )}
       </EuiForm>
       <div className={styles.actions}>
-        <EuiButton
-          color="secondary"
+        <SecondaryButton
           onClick={handleCancel}
           size="s"
           className={styles.btn}
           data-testid="template-cancel-btn"
         >
           Cancel
-        </EuiButton>
+        </SecondaryButton>
         <EuiToolTip
           content={getTooltipContent(value, isNoTemplateOptions)}
           position="bottom"
@@ -212,17 +214,15 @@ const TemplateForm = (props: Props) => {
           className={styles.btn}
           anchorClassName="flex-row"
         >
-          <EuiButton
-            fill
-            color="secondary"
-            isDisabled={isNoTemplateOptions || !!value}
+          <PrimaryButton
+            disabled={isNoTemplateOptions || !!value}
             onClick={handleApply}
-            isLoading={loading}
+            loading={loading}
             size="s"
             data-testid="template-apply-btn"
           >
             Apply
-          </EuiButton>
+          </PrimaryButton>
         </EuiToolTip>
       </div>
     </div>

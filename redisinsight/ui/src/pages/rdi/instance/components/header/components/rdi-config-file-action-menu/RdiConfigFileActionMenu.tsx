@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { EuiButtonEmpty, EuiButtonIcon, EuiPopover } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
-import threeDots from 'uiSrc/assets/img/icons/three_dots.svg?react'
-import uploadIcon from 'uiSrc/assets/img/rdi/upload.svg?react'
 import UploadModal from 'uiSrc/pages/rdi/pipeline-management/components/upload-modal/UploadModal'
 import Download from 'uiSrc/pages/rdi/instance/components/download'
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
+import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
+import { UploadIcon, MoreactionsIcon } from 'uiSrc/components/base/icons'
 import FetchPipelinePopover from '../fetch-pipeline-popover'
 
 import styles from './styles.module.scss'
@@ -22,10 +22,10 @@ const RdiConfigFileActionMenu = () => {
   }
 
   const button = (
-    <EuiButtonIcon
+    <IconButton
       className={styles.threeDotsBtn}
       role="button"
-      iconType={threeDots}
+      icon={MoreactionsIcon}
       onClick={onButtonClick}
       data-testid="rdi-config-file-action-menu-trigger"
       aria-label="rdi-config-file-action-menu-trigger"
@@ -53,16 +53,15 @@ const RdiConfigFileActionMenu = () => {
         </FlexItem>
         <FlexItem grow>
           <UploadModal onClose={closePopover}>
-            <EuiButtonEmpty
+            <EmptyButton
               color="text"
-              iconSize="m"
               className={styles.uploadBtn}
-              iconType={uploadIcon}
+              icon={UploadIcon}
               aria-labelledby="Upload pipeline button"
               data-testid="upload-file-btn"
             >
               Upload from file
-            </EuiButtonEmpty>
+            </EmptyButton>
           </UploadModal>
         </FlexItem>
         <FlexItem grow>

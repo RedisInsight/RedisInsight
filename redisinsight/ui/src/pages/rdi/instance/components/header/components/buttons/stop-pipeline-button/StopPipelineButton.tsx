@@ -1,9 +1,8 @@
 import React from 'react'
-import { EuiButton, EuiToolTip } from '@elastic/eui'
-import cx from 'classnames'
+import { EuiToolTip } from '@elastic/eui'
 
-import StopIcon from 'uiSrc/assets/img/rdi/stopFilled.svg?react'
-
+import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
+import { RiStopIcon } from 'uiSrc/components/base/icons'
 import { PipelineButtonProps } from '../reset-pipeline-button/ResetPipelineButton'
 import styles from '../styles.module.scss'
 
@@ -16,19 +15,17 @@ const StopPipelineButton = ({
     content="Stop the pipeline to prevent processing of new data arrivals."
     anchorClassName={disabled ? styles.disabled : undefined}
   >
-    <EuiButton
+    <SecondaryButton
       aria-label="Stop running pipeline"
-      type="secondary"
       size="s"
-      isLoading={loading}
-      isDisabled={disabled}
-      className={cx(styles.pipelineBtn, { [styles.btnDisabled]: disabled })}
-      iconType={StopIcon}
+      loading={loading}
+      disabled={disabled}
+      icon={RiStopIcon}
       data-testid="stop-pipeline-btn"
       onClick={onClick}
     >
       Stop Pipeline
-    </EuiButton>
+    </SecondaryButton>
   </EuiToolTip>
 )
 

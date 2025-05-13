@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
+import { EuiText, EuiLink, EuiLoadingSpinner } from '@elastic/eui'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 import { get, throttle } from 'lodash'
@@ -33,6 +33,7 @@ import { appContextPipelineManagement } from 'uiSrc/slices/app/context'
 import { createAxiosError, isEqualPipelineFile, yamlToJson } from 'uiSrc/utils'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 const Config = () => {
@@ -194,17 +195,15 @@ const Config = () => {
           />
         )}
         <div className="rdi__actions">
-          <EuiButton
-            fill
-            color="secondary"
+          <PrimaryButton
             size="s"
             onClick={testConnections}
-            isLoading={testingConnections || pipelineLoading}
+            loading={testingConnections || pipelineLoading}
             aria-labelledby="test target connections"
             data-testid="rdi-test-connection-btn"
           >
             Test Connection
-          </EuiButton>
+          </PrimaryButton>
         </div>
       </div>
       {isPanelOpen && <TestConnectionsPanel onClose={handleClosePanel} />}

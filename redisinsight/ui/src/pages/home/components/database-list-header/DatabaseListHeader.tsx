@@ -208,39 +208,37 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
           </FlexItem>
         )}
         {instances.length > 0 && (
-          <>
-            <FlexItem>
-              <Row justify="end" align="center" gap="s">
-                <FlexItem className={styles.columnsButtonItem}>
-                  <EuiPopover
-                    ownFocus={false}
-                    anchorPosition="downLeft"
-                    isOpen={columnsConfigShown}
-                    closePopover={() => setColumnsConfigShown(false)}
-                    data-testid="columns-config-popover"
-                    button={
-                      <EuiButton
-                        size="m"
-                        color="secondary"
-                        iconType={ColumnsIcon}
-                        onClick={toggleColumnsConfigVisibility}
-                        className={styles.columnsButton}
-                        data-testid="btn-columns-config"
-                        aria-label="columns"
-                      >
-                        <span>Columns</span>
-                      </EuiButton>
-                    }
-                  >
-                    {columnCheckboxes}
-                  </EuiPopover>
-                </FlexItem>
-                <FlexItem>
-                  <SearchDatabasesList />
-                </FlexItem>
-              </Row>
-            </FlexItem>
-          </>
+          <FlexItem grow>
+            <Row justify="end" align="center" gap="s">
+              <FlexItem className={styles.columnsButtonItem}>
+                <EuiPopover
+                  ownFocus={false}
+                  anchorPosition="downLeft"
+                  isOpen={columnsConfigShown}
+                  closePopover={() => setColumnsConfigShown(false)}
+                  data-testid="columns-config-popover"
+                  button={
+                    <EuiButton
+                      size="m"
+                      color="secondary"
+                      iconType={ColumnsIcon}
+                      onClick={toggleColumnsConfigVisibility}
+                      className={styles.columnsButton}
+                      data-testid="btn-columns-config"
+                      aria-label="columns"
+                    >
+                      <span>Columns</span>
+                    </EuiButton>
+                  }
+                >
+                  {columnCheckboxes}
+                </EuiPopover>
+              </FlexItem>
+              <FlexItem>
+                <SearchDatabasesList />
+              </FlexItem>
+            </Row>
+          </FlexItem>
         )}
       </Row>
       <Spacer className={styles.spacerDl} />

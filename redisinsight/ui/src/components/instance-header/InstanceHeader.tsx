@@ -2,13 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
-import {
-  EuiButtonEmpty,
-  EuiFieldNumber,
-  EuiIcon,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFieldNumber, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { selectOnFocus, validateNumber } from 'uiSrc/utils'
@@ -41,6 +35,8 @@ import { getConfig } from 'uiSrc/config'
 import { appReturnUrlSelector } from 'uiSrc/slices/app/url-handling'
 import UserProfile from 'uiSrc/components/instance-header/components/user-profile/UserProfile'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { EditIcon } from 'uiSrc/components/base/icons'
 import InstancesNavigationPopover from './components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
@@ -243,8 +239,8 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                             </InlineItemEditor>
                           </div>
                         ) : (
-                          <EuiButtonEmpty
-                            iconType="pencil"
+                          <EmptyButton
+                            icon={EditIcon}
                             iconSide="right"
                             onClick={() => setIsDbIndexEditing(true)}
                             className={styles.buttonDbIndex}
@@ -259,7 +255,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                             >
                               db{db || 0}
                             </span>
-                          </EuiButtonEmpty>
+                          </EmptyButton>
                         )}
                       </div>
                     </FlexItem>

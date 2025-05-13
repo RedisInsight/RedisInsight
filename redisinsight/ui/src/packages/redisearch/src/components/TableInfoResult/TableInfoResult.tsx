@@ -10,7 +10,7 @@ import {
   EuiTextColor,
 } from '@elastic/eui'
 
-import { LoadingContent } from 'uiSrc/components/base/layout'
+import { LoadingContent } from '../../../../../components/base/layout'
 import GroupBadge from '../GroupBadge'
 import { InfoAttributesBoolean } from '../../constants'
 

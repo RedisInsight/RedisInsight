@@ -28,6 +28,9 @@ const ThemeSettings = () => {
 
   const onChange = (value: string) => {
     const previousValue = previousThemeRef.current
+    if (previousValue === value) {
+      return
+    }
     changeTheme(value)
     dispatch(updateUserConfigSettingsAction({ theme: value }))
     sendEventTelemetry({

@@ -52,6 +52,7 @@ const ThemeSettings = () => {
           onChange={onChange}
           style={{ marginTop: '12px' }}
           data-test-subj="select-theme"
+          data-testid="select-theme"
         />
       </EuiFormRow>
       <Spacer size="xl" />

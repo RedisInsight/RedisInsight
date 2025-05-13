@@ -4,4 +4,10 @@ import CloudSettings from './cloud-settings'
 import GeneralSettings from './general-settings'
 import ThemeSettings from './theme-settings'
 
-export { AdvancedSettings, WorkbenchSettings, CloudSettings, GeneralSettings, ThemeSettings }
+export {
+  AdvancedSettings,
+  WorkbenchSettings,
+  CloudSettings,
+  GeneralSettings,
+  ThemeSettings,
+}

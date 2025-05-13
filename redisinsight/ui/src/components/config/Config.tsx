@@ -2,13 +2,13 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import { isNumber } from 'lodash'
-import { BrowserStorageItem, FeatureFlags, Theme } from "uiSrc/constants";
+import { BrowserStorageItem, FeatureFlags, Theme } from 'uiSrc/constants'
 import { BuildType } from 'uiSrc/constants/env'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
 import {
   localStorageService,
   setObjectStorage,
-  themeService
+  themeService,
 } from 'uiSrc/services'
 
 import {

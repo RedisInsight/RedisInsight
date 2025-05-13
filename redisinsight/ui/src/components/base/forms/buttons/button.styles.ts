@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from '@redislabsdev/redis-ui-components'
-import { IconType } from '@redislabsdev/redis-ui-icons'
+import { IconType } from 'uiSrc/components/base/icons'
 
 export type BaseButtonProps = React.ComponentProps<typeof Button> & {
   icon?: IconType

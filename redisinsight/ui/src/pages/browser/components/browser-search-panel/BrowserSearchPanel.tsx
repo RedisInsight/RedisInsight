@@ -1,10 +1,16 @@
 /* eslint-disable react/no-this-in-sfc */
 /* eslint-disable react/destructuring-assignment */
-import React, { FC, SVGProps, useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 
 import cx from 'classnames'
-import { EuiButtonIcon, EuiModal, EuiModalBody, EuiToolTip } from '@elastic/eui'
+import { EuiModal, EuiModalBody, EuiToolTip } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
+import {
+  BulkActions as BulkActionsIcon,
+  FilterTableIcon,
+  QuerySearchIcon,
+  IconType,
+} from 'uiSrc/components/base/icons'
 import {
   FeatureFlagComponent,
   ModuleNotLoaded,
@@ -15,10 +21,6 @@ import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import FilterKeyType from 'uiSrc/pages/browser/components/filter-key-type'
 import RediSearchIndexesList from 'uiSrc/pages/browser/components/redisearch-key-list'
 import SearchKeyList from 'uiSrc/pages/browser/components/search-key-list'
-
-import { BulkActions as BulkActionsIcon } from 'uiSrc/components/base/icons'
-import VectorIcon from 'uiSrc/assets/img/icons/vector.svg?react'
-import RediSearchIcon from 'uiSrc/assets/img/modules/RedisSearchLight.svg?react'
 
 import { changeSearchMode, keysSelector } from 'uiSrc/slices/browser/keys'
 import { isRedisearchAvailable } from 'uiSrc/utils'
@@ -39,6 +41,7 @@ import { setBulkActionType } from 'uiSrc/slices/browser/bulkActions'
 
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
 import {
+  IconButton,
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
@@ -53,7 +56,7 @@ interface ISwitchType<T> {
   getClassName: () => string
   onClick: () => void
   isActiveView: () => boolean
-  getIconType: () => string | FC<SVGProps<SVGSVGElement>>
+  getIconType: () => IconType
 }
 
 export interface Props {
@@ -87,7 +90,7 @@ const BrowserSearchPanel = (props: Props) => {
         })
       },
       getIconType() {
-        return VectorIcon
+        return FilterTableIcon
       },
       onClick() {
         handleSwitchSearchMode(this.type)
@@ -108,7 +111,7 @@ const BrowserSearchPanel = (props: Props) => {
         })
       },
       getIconType() {
-        return RediSearchIcon
+        return QuerySearchIcon
       },
       onClick() {
         if (this.disabled) {
@@ -177,9 +180,9 @@ const BrowserSearchPanel = (props: Props) => {
   }, [])
 
   const SwitchModeBtn = (item: ISwitchType<SearchMode>) => (
-    <EuiButtonIcon
+    <IconButton
       className={item.getClassName()}
-      iconType={item.getIconType()}
+      icon={item.getIconType()}
       aria-label={item.ariaLabel}
       onClick={() => item.onClick?.()}
       data-testid={item.dataTestId}

@@ -1,7 +1,9 @@
 import React from 'react'
-import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import { Nullable } from 'uiSrc/utils'
 
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { EditIcon } from 'uiSrc/components/base/icons'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -19,10 +21,9 @@ const EditItemAction = ({
 }: Props) => (
   <div className={styles.actionBtn}>
     <EuiToolTip content={tooltipContent} data-testid="edit-key-value-tooltip">
-      <EuiButtonIcon
+      <IconButton
         disabled={!isEditable}
-        iconType="pencil"
-        color="primary"
+        icon={EditIcon}
         aria-label={title}
         onClick={onEditItem}
         data-testid="edit-key-value-btn"

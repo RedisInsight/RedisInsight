@@ -25,6 +25,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
+import {
+  MoreactionsIcon,
+  EditIcon,
+  CopyIcon,
+  TagIcon,
+} from 'uiSrc/components/base/icons'
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
@@ -82,7 +88,6 @@ import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
 
 import { Tag } from 'uiSrc/slices/interfaces/tag'
 import { FeatureFlagComponent } from 'uiSrc/components'
-import { EditIcon, CopyIcon, TagIcon } from 'uiSrc/components/base/icons'
 import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
 import DbStatus from '../db-status'
 
@@ -348,14 +353,12 @@ const DatabasesListWrapper = (props: Props) => {
   })
 
   const controlsButton = (instanceId: string) => (
-    <EmptyButton
-      size="medium"
+    <IconButton
+      icon={MoreactionsIcon}
       aria-label="Controls icon"
       data-testid={`controls-button-${instanceId}`}
       onClick={() => toggleControlsPopover(instanceId)}
-    >
-      <span style={{ fontWeight: 'bold' }}>⋮</span>
-    </EmptyButton>
+    />
   )
 
   const columns: EuiTableFieldDataColumnType<Instance>[] = useMemo(

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EditIcon } from '@redislabsdev/redis-ui-icons'
+import { EditIcon } from 'uiSrc/components/base/icons'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import {
   bufferToString,

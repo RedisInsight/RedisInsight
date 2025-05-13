@@ -1,6 +1,6 @@
 import React from 'react'
-import { MonochromeIconProps } from '@redislabsdev/redis-ui-icons'
 import { useTheme } from '@redislabsdev/redis-ui-styles'
+import { MonochromeIconProps } from 'uiSrc/components/base/icons'
 
 type BaseIconProps = MonochromeIconProps & {
   icon: React.ComponentType<any>

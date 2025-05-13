@@ -32,7 +32,7 @@ export const WindowControlGroup = ({
           size="S"
           icon={MinusIcon}
           id={`hide-${id}`}
-          aria-label={`hide ${label}`}
+          aria-label={`hide ${label || id || ''}`}
           data-testid={`hide-${id}`}
           onClick={onHide}
         />
@@ -49,7 +49,7 @@ export const WindowControlGroup = ({
           size="S"
           icon={CancelSlimIcon}
           id={`close-${id}`}
-          aria-label={`close ${label}`}
+          aria-label={`close ${label || id || ''}`}
           data-testid={`close-${id}`}
           onClick={onClose}
         />

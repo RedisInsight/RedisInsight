@@ -1,18 +1,14 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import {
-  EuiButtonIcon,
-  EuiIcon,
-  EuiSwitch,
-  EuiTextColor,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon, EuiSwitch, EuiTextColor, EuiToolTip } from '@elastic/eui'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import BanIcon from 'uiSrc/assets/img/monitor/ban.svg?react'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { PlayFilledIcon } from 'uiSrc/components/base/icons'
 import MonitorLog from '../MonitorLog'
 import MonitorOutputList from '../MonitorOutputList'
 
@@ -48,10 +44,9 @@ const Monitor = (props: Props) => {
     <div className={styles.startContainer} data-testid="monitor-not-started">
       <div className={styles.startContent}>
         <EuiToolTip content="Start" display="inlineBlock">
-          <EuiButtonIcon
-            iconType="playFilled"
+          <IconButton
+            icon={PlayFilledIcon}
             className={styles.startTitleIcon}
-            size="m"
             onClick={() => handleRunMonitor(saveLogValue)}
             aria-label="start monitor"
             data-testid="start-monitor"

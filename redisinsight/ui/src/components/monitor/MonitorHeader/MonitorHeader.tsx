@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
-import { EuiButtonIcon, EuiText, EuiToolTip, EuiIcon } from '@elastic/eui'
+import { EuiText, EuiToolTip, EuiIcon } from '@elastic/eui'
 
 import {
   monitorSelector,
@@ -12,11 +12,18 @@ import {
   toggleMonitor,
 } from 'uiSrc/slices/cli/monitor'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import BanIcon from 'uiSrc/assets/img/monitor/ban.svg'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import {
+  PlayIcon,
+  PauseIcon,
+  DeleteIcon,
+  BannedIcon,
+} from 'uiSrc/components/base/icons'
+import { WindowControlGroup } from 'uiSrc/components/base/shared/WindowControlGroup'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -84,7 +91,7 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
           </OnboardingTour>
         </FlexItem>
         {isStarted && (
-          <FlexItem className={styles.actions}>
+          <FlexItem $direction="row" className={styles.actions}>
             <EuiToolTip
               content={
                 isErrorShown || isResumeLocked
@@ -95,13 +102,13 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
               }
               anchorClassName="inline-flex"
             >
-              <EuiButtonIcon
-                iconType={
+              <IconButton
+                icon={
                   isErrorShown || isResumeLocked
-                    ? BanIcon
+                    ? BannedIcon
                     : !isPaused
-                      ? 'pause'
-                      : 'play'
+                      ? PauseIcon
+                      : PlayIcon
                 }
                 onClick={() => handleRunMonitor()}
                 aria-label="start/stop monitor"
@@ -117,8 +124,8 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
                 transparent: !isStarted || !items.length,
               })}
             >
-              <EuiButtonIcon
-                iconType="eraser"
+              <IconButton
+                icon={DeleteIcon}
                 onClick={handleClearMonitor}
                 aria-label="clear profiler"
                 data-testid="clear-monitor"
@@ -127,42 +134,11 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
           </FlexItem>
         )}
         <FlexItem grow />
-        <FlexItem>
-          <EuiToolTip
-            content="Minimize"
-            position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
-          >
-            <EuiButtonIcon
-              iconType="minus"
-              color="primary"
-              id="hide-monitor"
-              aria-label="hide monitor"
-              data-testid="hide-monitor"
-              className={styles.icon}
-              onClick={handleHideMonitor}
-            />
-          </EuiToolTip>
-        </FlexItem>
-        <FlexItem>
-          <EuiToolTip
-            content="Close"
-            position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
-          >
-            <EuiButtonIcon
-              iconType="cross"
-              color="primary"
-              id="close-monitor"
-              aria-label="close monitor"
-              data-testid="close-monitor"
-              className={styles.icon}
-              onClick={handleCloseMonitor}
-            />
-          </EuiToolTip>
-        </FlexItem>
+        <WindowControlGroup
+          onClose={handleCloseMonitor}
+          onHide={handleHideMonitor}
+          id="monitor"
+        />
       </Row>
     </div>
   )

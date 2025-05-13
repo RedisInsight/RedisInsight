@@ -1,14 +1,8 @@
-import {
-  EuiIcon,
-  EuiPopover,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon, EuiPopover, EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
-import { EraserIcon } from '@redislabsdev/redis-ui-icons'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { DurationUnits } from 'uiSrc/constants'
 import { slowLogSelector } from 'uiSrc/slices/analytics/slowlog'
@@ -17,12 +11,12 @@ import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { EraserIcon, SettingsIcon } from 'uiSrc/components/base/icons'
 import {
   DestructiveButton,
   IconButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
-import { SettingsIcon } from 'uiSrc/components/base/icons'
 import SlowLogConfig from '../SlowLogConfig'
 import styles from './styles.module.scss'
 

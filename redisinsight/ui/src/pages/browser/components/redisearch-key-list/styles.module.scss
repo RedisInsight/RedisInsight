@@ -162,10 +162,10 @@
   right: 1px;
   transform: translateY(-50%);
   z-index: 6;
+  height: 100%;
+  width: 32px;
 
   .refreshBtn {
-    width: 30px;
-
     &:hover {
       transform: translateY(0) !important;
     }

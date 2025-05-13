@@ -1,7 +1,7 @@
 import React from 'react'
 import { TextButton } from '@redislabsdev/redis-ui-components'
-import { IconType } from '@redislabsdev/redis-ui-icons'
 import { ButtonIcon } from 'uiSrc/components/base/forms/buttons/Button'
+import { IconType } from 'uiSrc/components/base/icons'
 
 export type ButtonProps = React.ComponentProps<typeof TextButton> & {
   icon?: IconType

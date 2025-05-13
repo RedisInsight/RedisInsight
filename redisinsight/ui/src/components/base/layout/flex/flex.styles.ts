@@ -250,11 +250,27 @@ export type FlexItemProps = React.HTMLAttributes<HTMLDivElement> &
   PropsWithChildren &
   CommonProps & {
     grow?: (typeof VALID_GROW_VALUES)[number]
+    $direction?: (typeof dirValues)[number]
   }
 
 export const StyledFlexItem = styled.div<FlexItemProps>`
   display: flex;
-  flex-direction: column;
+  flex-direction: ${({ $direction = 'column' }) => {
+    if (!dirValues.includes($direction)) {
+      return 'column'
+    }
+    switch ($direction) {
+      case 'row':
+        return 'row'
+      case 'rowReverse':
+        return 'row-reverse'
+      case 'column':
+        return 'column'
+      case 'columnReverse':
+      default:
+        return 'column-reverse'
+    }
+  }};
   ${(props) => {
     const { grow } = props
     if (!grow) {

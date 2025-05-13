@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiButtonIcon } from '@elastic/eui'
 import cx from 'classnames'
-import { PlusIcon } from '@redislabsdev/redis-ui-icons'
+import { PlusIcon } from 'uiSrc/components/base/icons'
 import {
   appendReJSONArrayItemAction,
   fetchVisualisationResults,

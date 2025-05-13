@@ -78,7 +78,6 @@ const CliHeader = () => {
           onClose={handleCloseCli}
           onHide={handleHideCli}
           id="cli"
-          label="cli"
         />
       </Row>
     </div>

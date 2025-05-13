@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { EuiForm, EuiFormRow, EuiSuperSelect, EuiTitle } from '@elastic/eui'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
@@ -15,19 +15,19 @@ const ThemeSettings = () => {
   const [selectedTheme, setSelectedTheme] = useState('')
   const options = THEMES
   const themeContext = useContext(ThemeContext)
-  let { theme } = themeContext
-  const { changeTheme } = themeContext
+  const { theme, changeTheme } = themeContext
   const { config } = useSelector(userSettingsSelector)
+  const previousThemeRef = useRef<string>(theme)
 
   useEffect(() => {
     if (config) {
       setSelectedTheme(config.theme)
-      theme = config.theme
+      previousThemeRef.current = config.theme
     }
   }, [config])
 
   const onChange = (value: string) => {
-    const previousValue = theme
+    const previousValue = previousThemeRef.current
     changeTheme(value)
     dispatch(updateUserConfigSettingsAction({ theme: value }))
     sendEventTelemetry({

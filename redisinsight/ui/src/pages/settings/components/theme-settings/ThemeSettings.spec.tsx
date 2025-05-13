@@ -1,7 +1,8 @@
-import { cleanup, mockedStore, render } from "uiSrc/utils/test-utils";
-import { cloneDeep } from "lodash";
-import React from "react";
-import ThemeSettings from "./ThemeSettings";
+import React from 'react'
+import { cloneDeep } from 'lodash'
+import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
+
+import ThemeSettings from './ThemeSettings'
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -14,4 +15,4 @@ describe('ThemeSettings', () => {
   it('should render', () => {
     expect(render(<ThemeSettings />)).toBeTruthy()
   })
-});
+})

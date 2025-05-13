@@ -10,21 +10,18 @@ import {
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setTitle } from 'uiSrc/utils'
-import { FeatureFlags, Theme, THEMES } from 'uiSrc/constants'
+import { FeatureFlags } from 'uiSrc/constants'
 import { useDebouncedEffect } from 'uiSrc/services'
 import {
   ConsentsNotifications,
   ConsentsPrivacy,
   FeatureFlagComponent,
 } from 'uiSrc/components'
-import {
-  sendPageViewTelemetry,
-  TelemetryPageView,
-} from 'uiSrc/telemetry'
+import { sendPageViewTelemetry, TelemetryPageView } from 'uiSrc/telemetry'
 import {
   fetchUserConfigSettings,
   fetchUserSettingsSpec,
-  userSettingsSelector
+  userSettingsSelector,
 } from 'uiSrc/slices/user/user-settings'
 
 import Divider from 'uiSrc/components/divider/Divider'
@@ -39,7 +36,7 @@ import {
   AdvancedSettings,
   CloudSettings,
   WorkbenchSettings,
-  ThemeSettings
+  ThemeSettings,
 } from './components'
 import { DateTimeFormatter } from './components/general-settings'
 import styles from './styles.module.scss'

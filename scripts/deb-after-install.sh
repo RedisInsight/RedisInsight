@@ -19,33 +19,47 @@ if [ -f "$DESKTOP_FILE" ]; then
     sudo sed -i "s|$OLD_INSTALL_PATH|$NEW_INSTALL_PATH|g" "$DESKTOP_FILE"
 fi
 
-sudo tee /usr/bin/redisinsight > /dev/null << 'EOF'
+# Use 'stat' to check if the original executable is a script or a binary
+FILE_TYPE=$(file -b "$OLD_INSTALL_PATH/redisinsight" || echo "unknown")
+echo "File type: $FILE_TYPE"
+
+# Find the real executable path
+if [[ "$FILE_TYPE" == *"script"* ]]; then
+    # Try to determine the actual binary referenced in the script
+    POSSIBLE_BINARY=$(grep -l "electron" "$OLD_INSTALL_PATH"/* 2>/dev/null | head -n 1 || echo "")
+    if [ -n "$POSSIBLE_BINARY" ] && [ -x "$POSSIBLE_BINARY" ]; then
+        ACTUAL_EXECUTABLE="$POSSIBLE_BINARY"
+    else
+        # Check for common Electron app paths
+        if [ -f "$OLD_INSTALL_PATH/resources/app/redisinsight" ] && [ -x "$OLD_INSTALL_PATH/resources/app/redisinsight" ]; then
+            ACTUAL_EXECUTABLE="$OLD_INSTALL_PATH/resources/app/redisinsight"
+        elif [ -f "$OLD_INSTALL_PATH/resources/electron" ] && [ -x "$OLD_INSTALL_PATH/resources/electron" ]; then
+            ACTUAL_EXECUTABLE="$OLD_INSTALL_PATH/resources/electron"
+        else
+            ACTUAL_EXECUTABLE="$OLD_INSTALL_PATH/redisinsight"
+        fi
+    fi
+else
+    ACTUAL_EXECUTABLE="$OLD_INSTALL_PATH/redisinsight"
+fi
+
+sudo tee /usr/bin/redisinsight > /dev/null << EOF
 #!/bin/bash
 
-if [[ -n "$REDISINSIGHT_LAUNCHER_ACTIVE" ]]; then
-    echo "Error: Recursive call detected. Exiting to prevent infinite loop."
-    exit 1
-fi
-
-export REDISINSIGHT_LAUNCHER_ACTIVE=1
-
 LOG_FILE="/tmp/redisinsight-launcher.log"
-echo "$(date): Launcher started with args: $@" > "$LOG_FILE"
-echo "$(date): Script path: $0" >> "$LOG_FILE"
+echo "\$(date): Launcher started with args: \$@" > "\$LOG_FILE"
 
-EXECUTABLE="/opt/Redis Insight/redisinsight"
-
-if [ ! -f "$EXECUTABLE" ]; then
-    echo "$(date): ERROR - Executable not found at $EXECUTABLE" >> "$LOG_FILE"
-    echo "ERROR: Executable not found. See $LOG_FILE for details."
+if [ ! -f "$ACTUAL_EXECUTABLE" ]; then
+    echo "\$(date): ERROR - Executable not found at $ACTUAL_EXECUTABLE" >> "\$LOG_FILE"
+    echo "ERROR: Executable not found. See \$LOG_FILE for details."
     exit 1
 fi
 
-echo "$(date): Launching executable $EXECUTABLE directly..." >> "$LOG_FILE"
+echo "\$(date): Executing $ACTUAL_EXECUTABLE directly..." >> "\$LOG_FILE"
 
-exec "$EXECUTABLE" "$@"
+cd "$OLD_INSTALL_PATH" && exec "$ACTUAL_EXECUTABLE" "\$@"
 
-echo "$(date): Launcher exited with code $?" >> "$LOG_FILE"
+echo "\$(date): Launcher exited with code \$?" >> "\$LOG_FILE"
 EOF
 
 # Make the launcher script executable

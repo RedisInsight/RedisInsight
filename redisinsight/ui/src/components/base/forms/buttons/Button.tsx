@@ -3,6 +3,17 @@ import React from 'react'
 import { LoaderLargeIcon } from 'uiSrc/components/base/icons'
 import { BaseButtonProps } from 'uiSrc/components/base/forms/buttons/button.styles'
 
+type ButtonSize = 'small' | 'medium' | 'large'
+type SizeKey = 'small' | 's' | 'medium' | 'm' | 'large' | 'l'
+
+const buttonSizeMap: Record<SizeKey, ButtonSize> = {
+  small: 'small',
+  s: 'small',
+  medium: 'medium',
+  m: 'medium',
+  large: 'large',
+  l: 'large',
+}
 export const BaseButton = ({
   children,
   icon,
@@ -11,14 +22,10 @@ export const BaseButton = ({
   size = 'medium',
   ...props
 }: BaseButtonProps) => {
-  let btnSize: 'small' | 'medium' | 'large' = 'medium'
+  let btnSize: ButtonSize = 'medium'
 
-  if (size === 's') {
-    btnSize = 'small'
-  } else if (size === 'm') {
-    btnSize = 'medium'
-  } else if (size === 'l') {
-    btnSize = 'large'
+  if (size in buttonSizeMap) {
+    btnSize = buttonSizeMap[size]
   }
   return (
     <Button {...props} size={btnSize} disabled={props.disabled || loading}>

@@ -3,8 +3,6 @@ import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
-  EuiButton,
-  EuiButtonIcon,
   EuiComboBox,
   EuiComboBoxOptionOption,
   EuiIcon,
@@ -29,6 +27,12 @@ import TreeViewSort from 'uiSrc/assets/img/browser/treeViewSort.svg?react'
 import { comboBoxToArray } from 'uiSrc/utils'
 
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
+import {
+  IconButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { SettingsIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -80,8 +84,8 @@ const KeyTreeSettings = ({ loading }: Props) => {
   }, [treeViewSort, treeViewDelimiter])
 
   const button = (
-    <EuiButtonIcon
-      iconType="indexSettings"
+    <IconButton
+      icon={SettingsIcon}
       onClick={onButtonClick}
       disabled={loading}
       className={cx(styles.anchorBtn)}
@@ -175,23 +179,20 @@ const KeyTreeSettings = ({ loading }: Props) => {
           </FlexItem>
           <FlexItem className={styles.row}>
             <div className={styles.footer}>
-              <EuiButton
+              <SecondaryButton
                 size="s"
-                color="secondary"
                 data-testid="tree-view-cancel-btn"
                 onClick={closePopover}
               >
                 Cancel
-              </EuiButton>
-              <EuiButton
-                fill
+              </SecondaryButton>
+              <PrimaryButton
                 size="s"
-                color="secondary"
                 data-testid="tree-view-apply-btn"
                 onClick={handleApply}
               >
                 Apply
-              </EuiButton>
+              </PrimaryButton>
             </div>
           </FlexItem>
         </Col>

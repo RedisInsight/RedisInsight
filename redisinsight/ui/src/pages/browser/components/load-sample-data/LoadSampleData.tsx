@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiButton, EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -13,6 +13,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { PlayFilledIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -78,17 +79,16 @@ const LoadSampleData = (props: Props) => {
           <Spacer size="s" />
           <Row justify="end">
             <FlexItem>
-              <EuiButton
-                fill
+              <PrimaryButton
                 size="s"
-                iconType="playFilled"
+                icon={PlayFilledIcon}
                 iconSide="right"
                 color="secondary"
                 onClick={handleSampleData}
                 data-testid="load-sample-data-btn-confirm"
               >
                 Execute
-              </EuiButton>
+              </PrimaryButton>
             </FlexItem>
           </Row>
         </FlexItem>

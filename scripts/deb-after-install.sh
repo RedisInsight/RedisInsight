@@ -19,8 +19,11 @@ if [ -f "$DESKTOP_FILE" ]; then
     sudo sed -i "s|$OLD_INSTALL_PATH|$NEW_INSTALL_PATH|g" "$DESKTOP_FILE"
 fi
 
-# Update binary link to use the new path without spaces
-sudo ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight"
+# Create a launcher script that correctly handles the path with spaces
+sudo tee /usr/bin/redisinsight > /dev/null << 'EOF'
+#!/bin/bash
+exec "/opt/Redis Insight/redisinsight" "$@"
+EOF
 
 # Set basic executable permissions (on the original location)
 if [ -f "$OLD_INSTALL_PATH/redisinsight" ]; then

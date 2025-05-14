@@ -32,14 +32,18 @@ if [ -f "$NEW_INSTALL_PATH/resources/app-update.yml" ]; then
     if [ -n "$CURRENT_USER" ]; then
         sudo chown $CURRENT_USER "$NEW_INSTALL_PATH/resources/app-update.yml"
         sudo chmod 644 "$NEW_INSTALL_PATH/resources/app-update.yml"
+
+        # Make additional update-related directories and files accessible to the user
+        sudo mkdir -p "$NEW_INSTALL_PATH/resources/app.asar.unpacked"
+        sudo chown -R $CURRENT_USER "$NEW_INSTALL_PATH/resources/app.asar.unpacked"
+        sudo chmod -R 755 "$NEW_INSTALL_PATH/resources/app.asar.unpacked"
     fi
 
     cp -f "$NEW_INSTALL_PATH/resources/app-update.yml" "$UPDATE_DIR/"
-    echo "skipAuthenticationAtStartup=true" > "$UPDATE_DIR/update-config.json"
 fi
 
 mkdir -p "$HOME/.local/bin"
-cat > "$HOME/.local/bin/redisinsight-graceful-update" << 'EOF'
+cat > "$HOME/.local/bin/redisinsight-process-monitor" << 'EOF'
 #!/bin/bash
 
 sleep 3
@@ -78,15 +82,13 @@ if ! pgrep -f "redisinsight" > /dev/null; then
 fi
 EOF
 
-chmod +x "$HOME/.local/bin/redisinsight-graceful-update"
+chmod +x "$HOME/.local/bin/redisinsight-process-monitor"
 
 if [ -f "$DESKTOP_FILE" ]; then
-    sudo sed -i 's|^Exec=|Exec=env ELECTRON_NO_SUDO=1 |' "$DESKTOP_FILE"
-
     mkdir -p "$HOME/.local/share/applications"
     cp -f "$DESKTOP_FILE" "$HOME/.local/share/applications/redisinsight.desktop"
 
-    sed -i 's|^Exec=env ELECTRON_NO_SUDO=1 |Exec=bash -c "env ELECTRON_NO_SUDO=1 redisinsight & $HOME/.local/bin/redisinsight-graceful-update" |' "$HOME/.local/share/applications/redisinsight.desktop"
+    sed -i 's|^Exec=redisinsight|Exec=bash -c "redisinsight & $HOME/.local/bin/redisinsight-process-monitor"|' "$HOME/.local/share/applications/redisinsight.desktop"
 fi
 
 echo "RedisInsight post-installation setup completed successfully"

@@ -16,6 +16,8 @@ config.author = pkg.author
 config.isDevelopment = process.env.NODE_ENV === 'development'
 config.isProduction = process.env.NODE_ENV === 'production'
 config.appPort = process.env.RI_APP_PORT || configInit.defaultPort
+config.appType = process.env.RI_APP_TYPE || 'ELECTRON'
+config.isEnterprise = config.appType === 'ELECTRON_ENTERPRISE'
 config.getApiPort = () => process.env.RI_APP_PORT || configInit.defaultPort
 config.tcpLocalAuthPort = process.env.TCP_LOCAL_AUTH_PORT
   ? parseInt(process.env.TCP_LOCAL_AUTH_PORT, 10)

@@ -22,4 +22,15 @@ fi
 # Update binary link to use the new path without spaces
 sudo ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight"
 
+# Set basic executable permissions (on the original location)
+if [ -f "$OLD_INSTALL_PATH/redisinsight" ]; then
+    sudo chmod +x "$OLD_INSTALL_PATH/redisinsight"
+fi
+
+# Set correct ownership and permissions for chrome-sandbox (on the original location)
+if [ -f "$OLD_INSTALL_PATH/chrome-sandbox" ]; then
+    sudo chown root:root "$OLD_INSTALL_PATH/chrome-sandbox"
+    sudo chmod 4755 "$OLD_INSTALL_PATH/chrome-sandbox"
+fi
+
 echo "RedisInsight post-installation setup completed successfully"

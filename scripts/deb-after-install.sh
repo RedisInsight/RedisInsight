@@ -3,36 +3,26 @@ set -ex
 
 # Define paths
 OLD_INSTALL_PATH="/opt/Redis Insight"  # Path with space
-NEW_INSTALL_PATH="/opt/redisinsight"   # New path without space
+
+# Update desktop file to use executable path
 DESKTOP_FILE="/usr/share/applications/redisinsight.desktop"
-
-# Create a symlink instead of moving files
-if [ -d "$OLD_INSTALL_PATH" ] && [ ! -e "$NEW_INSTALL_PATH" ]; then
-    echo "Creating symlink from $NEW_INSTALL_PATH to $OLD_INSTALL_PATH"
-    # Create the symlink from new location to the old one
-    sudo ln -sf "$OLD_INSTALL_PATH" "$NEW_INSTALL_PATH"
-fi
-
-# Update desktop file to use new path
 if [ -f "$DESKTOP_FILE" ]; then
-    echo "Updating desktop file to use new path"
-    sudo sed -i "s|$OLD_INSTALL_PATH|$NEW_INSTALL_PATH|g" "$DESKTOP_FILE"
+    echo "Updating desktop file to use executable path"
+    sudo sed -i "s|Exec=.*|Exec=/usr/bin/redisinsight|g" "$DESKTOP_FILE"
 fi
 
-# Create the simplest possible launcher script
+# Create simple launcher script that directly uses full path
 sudo tee /usr/bin/redisinsight > /dev/null << 'EOF'
 #!/bin/bash
 
-cd "/opt/Redis Insight" || exit 1
-
 echo "Launching RedisInsight with args: $@"
-./redisinsight "$@"
+exec "/opt/Redis Insight/redisinsight" "$@"
 EOF
 
 # Make the launcher script executable
 sudo chmod +x /usr/bin/redisinsight
 
-# Ensure the original is executable
+# Set basic executable permissions (on the original location)
 if [ -f "$OLD_INSTALL_PATH/redisinsight" ]; then
     sudo chmod +x "$OLD_INSTALL_PATH/redisinsight"
 fi

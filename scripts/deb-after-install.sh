@@ -19,11 +19,33 @@ if [ -f "$DESKTOP_FILE" ]; then
     sudo sed -i "s|$OLD_INSTALL_PATH|$NEW_INSTALL_PATH|g" "$DESKTOP_FILE"
 fi
 
-# Create a launcher script that correctly handles the path with spaces
 sudo tee /usr/bin/redisinsight > /dev/null << 'EOF'
 #!/bin/bash
-exec "/opt/Redis Insight/redisinsight" "$@"
+
+LOG_FILE="/tmp/redisinsight-launcher.log"
+echo "$(date): Launcher started with args: $@" > "$LOG_FILE"
+
+if [ ! -f "/opt/Redis Insight/redisinsight" ]; then
+    echo "$(date): ERROR - Executable not found at /opt/Redis Insight/redisinsight" >> "$LOG_FILE"
+    echo "ERROR: Executable not found. See $LOG_FILE for details."
+    exit 1
+fi
+
+echo "$(date): Launching executable..." >> "$LOG_FILE"
+
+if command -v strace &>/dev/null; then
+    echo "$(date): Running with strace..." >> "$LOG_FILE"
+    strace -f "/opt/Redis Insight/redisinsight" "$@" 2>> "$LOG_FILE"
+else
+    echo "$(date): Executing normally..." >> "$LOG_FILE"
+    "/opt/Redis Insight/redisinsight" "$@"
+fi
+
+echo "$(date): Launcher exited with code $?" >> "$LOG_FILE"
 EOF
+
+# Make the launcher script executable
+sudo chmod +x /usr/bin/redisinsight
 
 # Set basic executable permissions (on the original location)
 if [ -f "$OLD_INSTALL_PATH/redisinsight" ]; then

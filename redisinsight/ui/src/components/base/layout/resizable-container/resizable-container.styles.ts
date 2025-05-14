@@ -1,8 +1,14 @@
-import { ComponentType, CSSProperties, HTMLAttributes, ReactNode } from 'react'
-import styled from 'styled-components'
+import {
+  ButtonHTMLAttributes,
+  ComponentType,
+  CSSProperties,
+  HTMLAttributes,
+  ReactNode,
+} from 'react'
+import styled, { css } from 'styled-components'
 
 import { ResizablePanelProps } from './resizable-panel.styles'
-import { ResizableButtonProps } from './resizable-button.styles'
+import { ResizableContainerActions } from './types'
 
 export interface ResizableContainerProps
   extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
@@ -16,7 +22,8 @@ export interface ResizableContainerProps
    */
   children: (
     Panel: ComponentType<ResizablePanelProps>,
-    Resizer: ComponentType<ResizableButtonProps>,
+    Resizer: ComponentType<ButtonHTMLAttributes<HTMLButtonElement>>,
+    actions: Partial<ResizableContainerActions>,
   ) => ReactNode
   /**
    * Pure function which accepts an object where keys are IDs of panels, which sizes were changed,
@@ -26,4 +33,16 @@ export interface ResizableContainerProps
   style?: CSSProperties
 }
 
-export const StyledResizableContainer = styled.div<ResizableContainerProps>``
+export const resizableContainerStyles = {
+  horizontal: css``,
+  vertical: css`
+    flex-direction: column;
+  `,
+}
+
+export const StyledResizableContainer = styled.div<ResizableContainerProps>`
+  display: flex;
+  width: 100%;
+
+  ${({ direction = 'horizontal' }) => resizableContainerStyles[direction]}
+`

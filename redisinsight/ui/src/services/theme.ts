@@ -30,7 +30,7 @@ class ThemeService {
 
     document.adoptedStyleSheets = [sheet]
 
-    localStorageService.set(BrowserStorageItem.theme, actualTheme)
+    localStorageService.set(BrowserStorageItem.theme, newTheme)
     document.body.classList.value = `theme_${actualTheme}`
   }
 

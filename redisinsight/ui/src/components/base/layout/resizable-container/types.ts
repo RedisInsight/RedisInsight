@@ -6,6 +6,10 @@ export type PanelPosition = 'first' | 'middle' | 'last'
 
 export type PanelDirection = 'left' | 'right'
 
+export type KeyMoveDirection = 'forward' | 'backward'
+
+export type ResizeTrigger = 'pointer' | 'key'
+
 export interface ResizablePanelController {
   id: string
   size: number
@@ -33,7 +37,7 @@ export type ResizableButtonMouseEvent =
   | MouseEvent<HTMLButtonElement>
   | TouchEvent<HTMLButtonElement>
 
-export type ResizableButtonKeyDownEvent = KeyboardEvent<HTMLButtonElement>
+export type ResizableButtonKeyEvent = KeyboardEvent<HTMLButtonElement>
 
 export interface ResizableContainerState {
   isDragging: boolean

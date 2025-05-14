@@ -22,35 +22,30 @@ fi
 sudo tee /usr/bin/redisinsight > /dev/null << 'EOF'
 #!/bin/bash
 
+if [[ -n "$REDISINSIGHT_LAUNCHER_ACTIVE" ]]; then
+    echo "Error: Recursive call detected. Exiting to prevent infinite loop."
+    exit 1
+fi
+
+export REDISINSIGHT_LAUNCHER_ACTIVE=1
+
 LOG_FILE="/tmp/redisinsight-launcher.log"
 echo "$(date): Launcher started with args: $@" > "$LOG_FILE"
+echo "$(date): Script path: $0" >> "$LOG_FILE"
 
-if [ ! -f "/opt/Redis Insight/redisinsight" ]; then
-    echo "$(date): ERROR - Executable not found at /opt/Redis Insight/redisinsight" >> "$LOG_FILE"
+EXECUTABLE="/opt/Redis Insight/redisinsight"
+
+if [ ! -f "$EXECUTABLE" ]; then
+    echo "$(date): ERROR - Executable not found at $EXECUTABLE" >> "$LOG_FILE"
     echo "ERROR: Executable not found. See $LOG_FILE for details."
     exit 1
 fi
 
-echo "$(date): Launching executable..." >> "$LOG_FILE"
+echo "$(date): Launching executable $EXECUTABLE directly..." >> "$LOG_FILE"
 
-"/opt/Redis Insight/redisinsight" "$@"
-RESULT=$?
+exec "$EXECUTABLE" "$@"
 
-if [ $RESULT -ne 0 ]; then
-    echo "$(date): Direct execution failed with code $RESULT, trying debug methods..." >> "$LOG_FILE"
-
-    if command -v strace &>/dev/null && strace -V &>/dev/null 2>&1; then
-        echo "$(date): Using strace for debugging..." >> "$LOG_FILE"
-        strace -f "/opt/Redis Insight/redisinsight" "$@" 2>> "$LOG_FILE" || true
-    else
-        echo "$(date): strace unavailable or permission denied, retrying direct execution..." >> "$LOG_FILE"
-        "/opt/Redis Insight/redisinsight" "$@"
-        RESULT=$?
-    fi
-fi
-
-echo "$(date): Launcher exited with code $RESULT" >> "$LOG_FILE"
-exit $RESULT
+echo "$(date): Launcher exited with code $?" >> "$LOG_FILE"
 EOF
 
 # Make the launcher script executable

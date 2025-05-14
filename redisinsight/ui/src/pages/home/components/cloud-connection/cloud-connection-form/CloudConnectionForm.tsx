@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty } from 'lodash'
 import {
-  EuiButton,
   EuiFieldText,
   EuiForm,
   EuiFormRow,
@@ -26,6 +25,11 @@ import { MessageCloudApiKeys } from 'uiSrc/pages/home/components/form/Messages'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { InfoIcon } from 'uiSrc/components/base/icons'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'
@@ -112,15 +116,14 @@ const CloudConnectionForm = (props: Props) => {
   }
 
   const CancelButton = ({ onClick }: { onClick: () => void }) => (
-    <EuiButton
+    <SecondaryButton
       size="s"
-      color="secondary"
       className="btn-cancel"
       onClick={onClick}
       style={{ marginRight: 12 }}
     >
       Cancel
-    </EuiButton>
+    </SecondaryButton>
   )
 
   const SubmitButton = ({ onClick, submitIsDisabled }: ISubmitButton) => (
@@ -140,19 +143,17 @@ const CloudConnectionForm = (props: Props) => {
         ) : null
       }
     >
-      <EuiButton
-        fill
+      <PrimaryButton
         size="s"
-        color="secondary"
         type="submit"
         onClick={onClick}
         disabled={submitIsDisabled}
-        isLoading={loading}
-        iconType={submitIsDisabled ? 'iInCircle' : undefined}
+        loading={loading}
+        icon={submitIsDisabled ? InfoIcon : undefined}
         data-testid="btn-submit"
       >
         Submit
-      </EuiButton>
+      </PrimaryButton>
     </EuiToolTip>
   )
 

@@ -1,6 +1,5 @@
 import {
   EuiBadge,
-  EuiButton,
   EuiFieldText,
   EuiForm,
   EuiFormRow,
@@ -26,6 +25,7 @@ import UserIcon from 'uiSrc/assets/img/icons/user.svg?react'
 import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 const HIDE_BADGE_TIMER = 3000
@@ -154,14 +154,9 @@ const PublishMessage = () => {
       </FlexItem>
       <Row justify="end" style={{ marginTop: 6 }}>
         <FlexItem>
-          <EuiButton
-            fill
-            color="secondary"
-            type="submit"
-            data-testid="publish-message-submit"
-          >
+          <PrimaryButton type="submit" data-testid="publish-message-submit">
             Publish
-          </EuiButton>
+          </PrimaryButton>
         </FlexItem>
       </Row>
     </EuiForm>

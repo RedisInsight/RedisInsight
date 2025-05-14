@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
   EuiBasicTableColumn,
-  EuiButton,
   EuiFieldSearch,
   EuiFormRow,
   EuiInMemoryTable,
@@ -15,6 +14,7 @@ import {
 import cx from 'classnames'
 import { map } from 'lodash'
 import { useSelector } from 'react-redux'
+import { InfoIcon } from '@redis-ui/icons'
 import { Maybe } from 'uiSrc/utils'
 import { InstanceRedisCluster } from 'uiSrc/slices/interfaces'
 import { clusterSelector } from 'uiSrc/slices/instances/cluster'
@@ -22,6 +22,11 @@ import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  DestructiveButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -114,14 +119,13 @@ const RedisClusterDatabases = ({
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
       button={
-        <EuiButton
+        <SecondaryButton
           onClick={showPopover}
-          color="secondary"
           className="btn-cancel"
           data-testid="btn-back"
         >
           Cancel
-        </EuiButton>
+        </SecondaryButton>
       }
     >
       <EuiText size="m">
@@ -132,15 +136,13 @@ const RedisClusterDatabases = ({
       </EuiText>
       <br />
       <div>
-        <EuiButton
-          fill
+        <DestructiveButton
           size="s"
-          color="warning"
           onClick={onClose}
           data-testid="btn-back-proceed"
         >
           Proceed
-        </EuiButton>
+        </DestructiveButton>
       </div>
     </EuiPopover>
   )
@@ -200,54 +202,55 @@ const RedisClusterDatabases = ({
           )}
         </div>
       </div>
-      <div
-        className={cx(
-          styles.footer,
-          'footerAddDatabase',
-          styles.footerClusterDatabases,
-        )}
-      >
-        <EuiButton
-          onClick={onBack}
-          color="secondary"
-          className="btn-cancel btn-back"
-          data-testid="btn-back-to-adding"
+      <FlexItem>
+        <Row
+          justify="between"
+          className={cx(
+            styles.footer,
+            'footerAddDatabase',
+            styles.footerClusterDatabases,
+          )}
         >
-          Back to adding databases
-        </EuiButton>
-        <div className={styles.footerButtonsGroup}>
-          <CancelButton isPopoverOpen={isPopoverOpen} />
-          <EuiToolTip
-            position="top"
-            anchorClassName="euiToolTip__btn-disabled"
-            title={
-              isSubmitDisabled()
-                ? validationErrors.SELECT_AT_LEAST_ONE('database')
-                : null
-            }
-            content={
-              isSubmitDisabled() ? (
-                <span className="euiToolTip__content">
-                  {validationErrors.NO_DBS_SELECTED}
-                </span>
-              ) : null
-            }
+          <SecondaryButton
+            onClick={onBack}
+            className="btn-cancel btn-back"
+            data-testid="btn-back-to-adding"
           >
-            <EuiButton
-              fill
-              size="m"
-              disabled={isSubmitDisabled()}
-              onClick={handleSubmit}
-              isLoading={loading}
-              color="secondary"
-              iconType={isSubmitDisabled() ? 'iInCircle' : undefined}
-              data-testid="btn-add-databases"
+            Back to adding databases
+          </SecondaryButton>
+          <FlexItem $direction="row" className={styles.footerButtonsGroup}>
+            <CancelButton isPopoverOpen={isPopoverOpen} />
+            <EuiToolTip
+              position="top"
+              anchorClassName="euiToolTip__btn-disabled"
+              title={
+                isSubmitDisabled()
+                  ? validationErrors.SELECT_AT_LEAST_ONE('database')
+                  : null
+              }
+              content={
+                isSubmitDisabled() ? (
+                  <span className="euiToolTip__content">
+                    {validationErrors.NO_DBS_SELECTED}
+                  </span>
+                ) : null
+              }
             >
-              Add selected Databases
-            </EuiButton>
-          </EuiToolTip>
-        </div>
-      </div>
+              <PrimaryButton
+                size="m"
+                disabled={isSubmitDisabled()}
+                onClick={handleSubmit}
+                loading={loading}
+                color="secondary"
+                icon={isSubmitDisabled() ? InfoIcon : undefined}
+                data-testid="btn-add-databases"
+              >
+                Add selected Databases
+              </PrimaryButton>
+            </EuiToolTip>
+          </FlexItem>
+        </Row>
+      </FlexItem>
     </AutodiscoveryPageTemplate>
   )
 }

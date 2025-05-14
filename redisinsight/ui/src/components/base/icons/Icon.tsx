@@ -13,6 +13,19 @@ const sizesMap = {
   XL: 24,
 }
 
+/**
+ * Type guard function to check if a color is a valid icon color in the theme
+ * @param theme The current theme object
+ * @param color The color string to check
+ * @returns A boolean indicating if the color is valid and a type predicate
+ */
+function isValidIconColor(
+  theme: ReturnType<typeof useTheme>,
+  color: string,
+): color is keyof typeof theme.semantic.color.icon {
+  return color in theme.semantic.color.icon
+}
+
 export const Icon = ({
   icon: IconComponent,
   customSize,
@@ -24,7 +37,10 @@ export const Icon = ({
 }: BaseIconProps) => {
   const sizeValue = customSize || sizesMap[size]
   const theme = useTheme()
-  const colorValue = customColor || theme.semantic.color.icon[color]
+  let colorValue = customColor
+  if (!colorValue && isValidIconColor(theme, color)) {
+    colorValue = theme.semantic.color.icon[color]
+  }
   const props = {
     color: colorValue,
     width: sizeValue,

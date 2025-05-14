@@ -1,21 +1,22 @@
-
 import React, { createContext, useContext } from 'react'
-import { EuiResizableContainerRegistry } from './types'
+import { ResizableContainerRegistry } from './types'
 
 interface ContainerContextProps {
-  registry?: EuiResizableContainerRegistry;
+  registry?: ResizableContainerRegistry
 }
 
-export const ResizableContainerContext = createContext<ContainerContextProps>({});
+export const ResizableContainerContext = createContext<ContainerContextProps>(
+  {},
+)
 
 interface ContextProviderProps extends Required<ContainerContextProps> {
   /**
    * ReactNode to render as this component's content
    */
-  children: any;
+  children: any
 }
 
-export const EuiResizableContainerContextProvider = ({
+export const ResizableContainerContextProvider = ({
   children,
   registry,
 }: ContextProviderProps) => (
@@ -24,12 +25,12 @@ export const EuiResizableContainerContextProvider = ({
   </ResizableContainerContext.Provider>
 )
 
-export const useEuiResizableContainerContext = () => {
-  const context = useContext(ResizableContainerContext);
+export const useResizableContainerContext = () => {
+  const context = useContext(ResizableContainerContext)
   if (!context.registry) {
     throw new Error(
-      'useEuiResizableContainerContext must be used within a <EuiResizableContainerContextProvider />'
-    );
+      'useResizableContainerContext must be used within a <ResizableContainerContextProvider />',
+    )
   }
-  return context;
-};
+  return context
+}

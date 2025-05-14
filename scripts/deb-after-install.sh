@@ -19,62 +19,22 @@ if [ -f "$DESKTOP_FILE" ]; then
     sudo sed -i "s|$OLD_INSTALL_PATH|$NEW_INSTALL_PATH|g" "$DESKTOP_FILE"
 fi
 
+# Create the simplest possible launcher script
 sudo tee /usr/bin/redisinsight > /dev/null << 'EOF'
 #!/bin/bash
 
-# Log file for debugging
-LOG_FILE="/tmp/redisinsight-launcher.log"
+cd "/opt/Redis Insight" || exit 1
 
-# Find the real binary
-INSTALL_DIR="/opt/Redis Insight"
-
-# Function to write to log
-log() {
-    echo "$(date): $1" >> "$LOG_FILE"
-}
-
-# Start with a clean log
-echo "$(date): Launcher started" > "$LOG_FILE"
-log "Args: $@"
-
-# Check if the original redisinsight is a script or binary
-file_type=$(file -b "$INSTALL_DIR/redisinsight" 2>/dev/null)
-log "File type: $file_type"
-
-# Detect Electron apps
-if [ -f "$INSTALL_DIR/resources/electron" ]; then
-    ELECTRON_PATH="$INSTALL_DIR/resources/electron"
-    log "Found Electron at: $ELECTRON_PATH"
-
-    if [ -d "$INSTALL_DIR/resources/app" ]; then
-        APP_PATH="$INSTALL_DIR/resources/app"
-        log "Found app directory at: $APP_PATH"
-        cd "$INSTALL_DIR" && exec "$ELECTRON_PATH" "$APP_PATH" "$@"
-        exit $?
-    else
-        log "No app directory found, executing electron directly"
-        cd "$INSTALL_DIR" && exec "$ELECTRON_PATH" "$@"
-        exit $?
-    fi
-elif [ -f "$INSTALL_DIR/redisinsight" ]; then
-    # Execute the original but avoid PATH search
-    log "Executing original binary with absolute path"
-    cd "$INSTALL_DIR" && exec ./redisinsight.real "$@"
-    exit $?
-else
-    log "ERROR: Could not find executable"
-    echo "Error: Could not find RedisInsight executable" >&2
-    exit 1
-fi
+echo "Launching RedisInsight with args: $@"
+./redisinsight "$@"
 EOF
 
 # Make the launcher script executable
 sudo chmod +x /usr/bin/redisinsight
 
-# Rename the original to avoid name collision in PATH
+# Ensure the original is executable
 if [ -f "$OLD_INSTALL_PATH/redisinsight" ]; then
-    sudo mv "$OLD_INSTALL_PATH/redisinsight" "$OLD_INSTALL_PATH/redisinsight.real"
-    sudo chmod +x "$OLD_INSTALL_PATH/redisinsight.real"
+    sudo chmod +x "$OLD_INSTALL_PATH/redisinsight"
 fi
 
 # Set correct ownership and permissions for chrome-sandbox (on the original location)

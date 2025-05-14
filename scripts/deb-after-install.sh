@@ -5,6 +5,7 @@ set -ex
 OLD_INSTALL_PATH="/opt/Redis Insight"  # Path with space
 NEW_INSTALL_PATH="/opt/redisinsight"   # New path without space
 DESKTOP_FILE="/usr/share/applications/redisinsight.desktop"
+UPDATE_DIR="/opt/redisinsight-updates"
 
 # Check if old directory exists and handle it properly
 if [ -d "$OLD_INSTALL_PATH" ]; then
@@ -32,5 +33,23 @@ sudo chmod +x "$NEW_INSTALL_PATH/redisinsight"
 # Set correct ownership and permissions for chrome-sandbox
 sudo chown root:root "$NEW_INSTALL_PATH/chrome-sandbox"
 sudo chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox"
+
+# Create updates directory with appropriate permissions for auto-updates
+if [ ! -d "$UPDATE_DIR" ]; then
+    sudo mkdir -p "$UPDATE_DIR"
+fi
+
+# Get the current user to set appropriate permissions
+CURRENT_USER=$(logname || echo $SUDO_USER || echo $USER)
+
+# Set permissions to allow updates without sudo
+sudo chown -R $CURRENT_USER:$(id -gn $CURRENT_USER) "$UPDATE_DIR"
+sudo chmod -R 755 "$UPDATE_DIR"
+
+# Create a symlink or ensure the app can write to the installation directory for updates
+if [ -d "$NEW_INSTALL_PATH/resources" ]; then
+    sudo chown -R $CURRENT_USER:$(id -gn $CURRENT_USER) "$NEW_INSTALL_PATH/resources/app-update.yml"
+    sudo chmod 644 "$NEW_INSTALL_PATH/resources/app-update.yml"
+fi
 
 echo "RedisInsight post-installation setup completed successfully"

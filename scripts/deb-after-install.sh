@@ -1,55 +1,92 @@
 #!/bin/bash
 set -ex
 
-# Define paths
-OLD_INSTALL_PATH="/opt/Redis Insight"  # Path with space
-NEW_INSTALL_PATH="/opt/redisinsight"   # New path without space
+OLD_INSTALL_PATH="/opt/Redis Insight"
+NEW_INSTALL_PATH="/opt/redisinsight"
 DESKTOP_FILE="/usr/share/applications/redisinsight.desktop"
-UPDATE_DIR="/opt/redisinsight-updates"
+UPDATE_DIR="$HOME/.redisinsight-updates"
 
-# Check if old directory exists and handle it properly
 if [ -d "$OLD_INSTALL_PATH" ]; then
     echo "Migrating from $OLD_INSTALL_PATH to $NEW_INSTALL_PATH"
-
-    # Move the old installation to the new location
     sudo mv "$OLD_INSTALL_PATH" "$NEW_INSTALL_PATH"
-
-    # Create a symlink from old path to new to maintain compatibility
     sudo ln -sf "$NEW_INSTALL_PATH" "$OLD_INSTALL_PATH"
 fi
 
-# Update desktop file to use new path
 if [ -f "$DESKTOP_FILE" ]; then
     echo "Updating desktop file to use new path"
     sudo sed -i "s|$OLD_INSTALL_PATH|$NEW_INSTALL_PATH|g" "$DESKTOP_FILE"
 fi
 
-# Update binary link
 sudo ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight"
-
-# Set basic executable permissions
 sudo chmod +x "$NEW_INSTALL_PATH/redisinsight"
-
-# Set correct ownership and permissions for chrome-sandbox
 sudo chown root:root "$NEW_INSTALL_PATH/chrome-sandbox"
 sudo chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox"
 
-# Create updates directory with appropriate permissions for auto-updates
-if [ ! -d "$UPDATE_DIR" ]; then
-    sudo mkdir -p "$UPDATE_DIR"
+mkdir -p "$UPDATE_DIR"
+chmod 755 "$UPDATE_DIR"
+
+if [ -f "$NEW_INSTALL_PATH/resources/app-update.yml" ]; then
+    mkdir -p "$HOME/.local/share/redisinsight"
+    CURRENT_USER=$(logname || echo $SUDO_USER || echo $USER)
+
+    if [ -n "$CURRENT_USER" ]; then
+        sudo chown $CURRENT_USER "$NEW_INSTALL_PATH/resources/app-update.yml"
+        sudo chmod 644 "$NEW_INSTALL_PATH/resources/app-update.yml"
+    fi
+
+    cp -f "$NEW_INSTALL_PATH/resources/app-update.yml" "$UPDATE_DIR/"
+    echo "skipAuthenticationAtStartup=true" > "$UPDATE_DIR/update-config.json"
 fi
 
-# Get the current user to set appropriate permissions
-CURRENT_USER=$(logname || echo $SUDO_USER || echo $USER)
+mkdir -p "$HOME/.local/bin"
+cat > "$HOME/.local/bin/redisinsight-graceful-update" << 'EOF'
+#!/bin/bash
 
-# Set permissions to allow updates without sudo
-sudo chown -R $CURRENT_USER:$(id -gn $CURRENT_USER) "$UPDATE_DIR"
-sudo chmod -R 755 "$UPDATE_DIR"
+sleep 3
+REDIS_PIDS=$(pgrep -f "redisinsight")
 
-# Create a symlink or ensure the app can write to the installation directory for updates
-if [ -d "$NEW_INSTALL_PATH/resources" ]; then
-    sudo chown -R $CURRENT_USER:$(id -gn $CURRENT_USER) "$NEW_INSTALL_PATH/resources/app-update.yml"
-    sudo chmod 644 "$NEW_INSTALL_PATH/resources/app-update.yml"
+if [ -n "$REDIS_PIDS" ]; then
+    for i in {1..30}; do
+        RUNNING=false
+        for PID in $REDIS_PIDS; do
+            if ps -p $PID > /dev/null; then
+                RUNNING=true
+                break
+            fi
+        done
+
+        if [ "$RUNNING" == "false" ]; then
+            break
+        fi
+
+        sleep 1
+    done
+
+    for PID in $REDIS_PIDS; do
+        if ps -p $PID > /dev/null; then
+            kill -15 $PID 2>/dev/null || true
+            sleep 2
+            if ps -p $PID > /dev/null; then
+                kill -9 $PID 2>/dev/null || true
+            fi
+        fi
+    done
+fi
+
+if ! pgrep -f "redisinsight" > /dev/null; then
+    nohup redisinsight > /dev/null 2>&1 &
+fi
+EOF
+
+chmod +x "$HOME/.local/bin/redisinsight-graceful-update"
+
+if [ -f "$DESKTOP_FILE" ]; then
+    sudo sed -i 's|^Exec=|Exec=env ELECTRON_NO_SUDO=1 |' "$DESKTOP_FILE"
+
+    mkdir -p "$HOME/.local/share/applications"
+    cp -f "$DESKTOP_FILE" "$HOME/.local/share/applications/redisinsight.desktop"
+
+    sed -i 's|^Exec=env ELECTRON_NO_SUDO=1 |Exec=bash -c "env ELECTRON_NO_SUDO=1 redisinsight & $HOME/.local/bin/redisinsight-graceful-update" |' "$HOME/.local/share/applications/redisinsight.desktop"
 fi
 
 echo "RedisInsight post-installation setup completed successfully"

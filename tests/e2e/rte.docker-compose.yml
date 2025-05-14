@@ -3,7 +3,7 @@ version: "3.4"
 services:
   static-server:
     logging: &logging
-      driver: none
+      driver: json-file
     build:
       context: .
       dockerfile: static-server.Dockerfile

@@ -210,17 +210,16 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
           </FlexItem>
         )}
         {instances.length > 0 && (
-          <>
-            <FlexItem>
-              <Row justify="end" align="center" gap="s">
-                <FlexItem className={styles.columnsButtonItem}>
-                  <EuiPopover
-                    ownFocus={false}
-                    anchorPosition="downLeft"
-                    isOpen={columnsConfigShown}
-                    closePopover={() => setColumnsConfigShown(false)}
-                    data-testid="columns-config-popover"
-                    button={
+          <FlexItem grow>
+            <Row justify="end" align="center" gap="s">
+              <FlexItem className={styles.columnsButtonItem}>
+                <EuiPopover
+                  ownFocus={false}
+                  anchorPosition="downLeft"
+                  isOpen={columnsConfigShown}
+                  closePopover={() => setColumnsConfigShown(false)}
+                  data-testid="columns-config-popover"
+                  button={
                       <SecondaryButton
                         icon={ColumnsIcon}
                         onClick={toggleColumnsConfigVisibility}
@@ -230,17 +229,16 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
                       >
                         <span>Columns</span>
                       </SecondaryButton>
-                    }
-                  >
-                    {columnCheckboxes}
-                  </EuiPopover>
-                </FlexItem>
-                <FlexItem>
-                  <SearchDatabasesList />
-                </FlexItem>
-              </Row>
-            </FlexItem>
-          </>
+                  }
+                >
+                  {columnCheckboxes}
+                </EuiPopover>
+              </FlexItem>
+              <FlexItem>
+                <SearchDatabasesList />
+              </FlexItem>
+            </Row>
+          </FlexItem>
         )}
       </Row>
       <Spacer className={styles.spacerDl} />

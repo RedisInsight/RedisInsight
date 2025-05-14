@@ -22,9 +22,19 @@ fi
 sudo tee /usr/bin/redisinsight > /dev/null << 'EOF'
 #!/bin/bash
 
-echo "Launching RedisInsight with args: $@"
+# Prevent recursion using an environment variable
+if [ "$REDISINSIGHT_RUNNING" = "1" ]; then
+    echo "Error: Recursive call detected. Exiting."
+    exit 1
+fi
+export REDISINSIGHT_RUNNING=1
 
-exec "/opt/Redis Insight/redisinsight" "$@"
+# Change to the application directory (important for many apps)
+cd "/opt/Redis Insight" || exit 1
+
+echo "Launching RedisInsight with args: $@"
+# Call the original with a relative path to avoid PATH lookup recursion
+./redisinsight "$@"
 EOF
 
 # Make the launcher script executable

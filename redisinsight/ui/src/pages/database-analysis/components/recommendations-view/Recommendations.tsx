@@ -4,7 +4,6 @@ import { useHistory, useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
 import {
   EuiAccordion,
-  EuiButton,
   EuiIcon,
   EuiLink,
   EuiPanel,
@@ -36,6 +35,7 @@ import { sortRecommendations } from 'uiSrc/utils/recommendation'
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { findTutorialPath } from 'uiSrc/utils'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
@@ -78,7 +78,7 @@ const Recommendations = () => {
   }
 
   const onRedisStackClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => event.stopPropagation()
 
   const renderButtonContent = (
@@ -220,15 +220,13 @@ const Recommendations = () => {
                     <RecommendationVoting vote={vote as Vote} name={name} />
                   </FeatureFlagComponent>
                   {tutorialId && (
-                    <EuiButton
-                      fill
-                      color="secondary"
+                    <PrimaryButton
                       size="s"
                       onClick={() => goToTutorial(tutorialId, id)}
                       data-testid={`${id}-to-tutorial-btn`}
                     >
                       Tutorial
-                    </EuiButton>
+                    </PrimaryButton>
                   )}
                 </div>
               </div>

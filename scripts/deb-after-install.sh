@@ -2,25 +2,26 @@
 set -ex
 
 # Define paths
-OLD_INSTALL_PATH="/opt/Redis Insight"  # Path with space
+OLD_INSTALL_PATH="/opt/Redis Insight"
+LAUNCHER_PATH="/opt/redisinsight-launcher"
 
-# Update desktop file to use executable path
+# Update desktop file to use our launcher
 DESKTOP_FILE="/usr/share/applications/redisinsight.desktop"
 if [ -f "$DESKTOP_FILE" ]; then
-    echo "Updating desktop file to use executable path"
-    sudo sed -i "s|Exec=.*|Exec=/usr/bin/redisinsight|g" "$DESKTOP_FILE"
+    echo "Updating desktop file to use launcher"
+    sudo sed -i "s|Exec=.*|Exec=$LAUNCHER_PATH|g" "$DESKTOP_FILE"
 fi
 
 # Create simple launcher script that directly uses full path
-sudo tee /usr/bin/redisinsight > /dev/null << 'EOF'
+sudo tee "$LAUNCHER_PATH" > /dev/null << EOF
 #!/bin/bash
 
-echo "Launching RedisInsight with args: $@"
-exec "/opt/Redis Insight/redisinsight" "$@"
+echo "Launching RedisInsight with args: \$@"
+exec "$OLD_INSTALL_PATH/redisinsight" "\$@"
 EOF
 
 # Make the launcher script executable
-sudo chmod +x /usr/bin/redisinsight
+sudo chmod +x "$LAUNCHER_PATH"
 
 # Set basic executable permissions (on the original location)
 if [ -f "$OLD_INSTALL_PATH/redisinsight" ]; then

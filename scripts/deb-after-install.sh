@@ -1,80 +1,45 @@
 #!/bin/bash
 set -ex
 
-OLD_INSTALL_PATH="/opt/Redis Insight"
-NEW_INSTALL_PATH="/opt/redisinsight"
+# Define paths
+OLD_INSTALL_PATH="/opt/Redis Insight"  # Path with space
+NEW_INSTALL_PATH="/opt/redisinsight"   # New path without space
 DESKTOP_FILE="/usr/share/applications/redisinsight.desktop"
+ALTERNATIVES_PATH="/etc/alternatives/redisinsight"
 
-# Get the actual user, even when run with sudo
-REAL_USER=$(logname || echo $SUDO_USER || echo $USER)
-REAL_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
-
+# Check if old directory exists and handle it properly
 if [ -d "$OLD_INSTALL_PATH" ]; then
     echo "Migrating from $OLD_INSTALL_PATH to $NEW_INSTALL_PATH"
+
+    # Move the old installation to the new location
     sudo mv "$OLD_INSTALL_PATH" "$NEW_INSTALL_PATH"
-    sudo ln -sf "$NEW_INSTALL_PATH" "$OLD_INSTALL_PATH"
+
+    # Fix the alternatives symlink (critical for updates)
+    if [ -L "$ALTERNATIVES_PATH" ]; then
+        sudo rm "$ALTERNATIVES_PATH"
+        sudo ln -s "$NEW_INSTALL_PATH/redisinsight" "$ALTERNATIVES_PATH"
+    fi
+
+    # Also update the direct /usr/bin symlink just to be sure
+    sudo ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight"
 fi
 
+# Update desktop file to use new path
 if [ -f "$DESKTOP_FILE" ]; then
     echo "Updating desktop file to use new path"
     sudo sed -i "s|$OLD_INSTALL_PATH|$NEW_INSTALL_PATH|g" "$DESKTOP_FILE"
 fi
 
-sudo ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight"
+# Set basic executable permissions
 sudo chmod +x "$NEW_INSTALL_PATH/redisinsight"
+
+# Set correct ownership and permissions for chrome-sandbox
 sudo chown root:root "$NEW_INSTALL_PATH/chrome-sandbox"
 sudo chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox"
 
-# Make update-related directories writable by the real user
-sudo -u "$REAL_USER" mkdir -p "$REAL_HOME/.cache/redisinsight-updater"
-sudo -u "$REAL_USER" chmod -R 755 "$REAL_HOME/.cache/redisinsight-updater"
-
-sudo mkdir -p /usr/local/bin
-sudo tee /usr/local/bin/redisinsight-update-helper > /dev/null << 'EOF'
-#!/bin/bash
-
-LOGFILE="/tmp/redisinsight-update.log"
-echo "Update attempted at $(date)" >> "$LOGFILE"
-echo "Arguments: $@" >> "$LOGFILE"
-
-# return success immediately to prevent hanging
-exit 0
-EOF
-
-sudo chmod +x /usr/local/bin/redisinsight-update-helper
-
-# Make sure electron-updater uses our script instead of pkexec directly
-# by creating a fake pkexec that just passes to our helper script
-sudo tee /usr/local/bin/pkexec > /dev/null << 'EOF'
-#!/bin/bash
-
-if [[ "$*" == *"redisinsight"* ]] && ([[ "$*" == *"dpkg"* ]] || [[ "$*" == *"apt-get"* ]]); then
-    /usr/local/bin/redisinsight-update-helper "$@"
-    exit 0
-else
-    /usr/bin/pkexec "$@"
-fi
-EOF
-
-sudo chmod +x /usr/local/bin/pkexec
-
-# Make the application directories writable by the real user
+# Fix paths in the update config if it exists
 if [ -f "$NEW_INSTALL_PATH/resources/app-update.yml" ]; then
-    sudo chown "$REAL_USER" "$NEW_INSTALL_PATH/resources/app-update.yml"
-    sudo chmod 644 "$NEW_INSTALL_PATH/resources/app-update.yml"
-
-    # Make additional update-related directories and files accessible
-    sudo mkdir -p "$NEW_INSTALL_PATH/resources/app.asar.unpacked"
-    sudo chown -R "$REAL_USER" "$NEW_INSTALL_PATH/resources/app.asar.unpacked"
-    sudo chmod -R 755 "$NEW_INSTALL_PATH/resources/app.asar.unpacked"
+    sudo sed -i "s|/opt/Redis Insight|/opt/redisinsight|g" "$NEW_INSTALL_PATH/resources/app-update.yml"
 fi
-
-# Create a desktop file that doesn't hang on close
-sudo -u "$REAL_USER" mkdir -p "$REAL_HOME/.local/share/applications"
-sudo -u "$REAL_USER" cp -f "$DESKTOP_FILE" "$REAL_HOME/.local/share/applications/redisinsight.desktop"
-
-# Add environment variable to PATH to find our wrapper script first
-echo 'export PATH="/usr/local/bin:$PATH"' | sudo tee -a /etc/profile.d/redisinsight-update-fix.sh > /dev/null
-sudo chmod +x /etc/profile.d/redisinsight-update-fix.sh
 
 echo "RedisInsight post-installation setup completed successfully"

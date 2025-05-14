@@ -2,36 +2,39 @@
 set -ex
 
 # Define paths
-OLD_INSTALL_PATH="/opt/Redis Insight"
-LAUNCHER_PATH="/opt/redisinsight-launcher"
-
-# Update desktop file to use our launcher
+OLD_INSTALL_PATH="/opt/Redis Insight"  # Path with space
+NEW_INSTALL_PATH="/opt/redisinsight"   # New path without space
 DESKTOP_FILE="/usr/share/applications/redisinsight.desktop"
+
+# Auto-update scenario detection:
+# If NEW_INSTALL_PATH exists and OLD_INSTALL_PATH doesn't, assume we're running
+# after an auto-update and just exit successfully
+if [ -d "$NEW_INSTALL_PATH" ] && [ ! -d "$OLD_INSTALL_PATH" ]; then
+    echo "Detected existing installation at $NEW_INSTALL_PATH"
+    echo "This appears to be an auto-update scenario - no migration needed"
+    exit 0
+fi
+
+# Check if old directory exists and rename it
+if [ -d "$OLD_INSTALL_PATH" ]; then
+    echo "Renaming $OLD_INSTALL_PATH to $NEW_INSTALL_PATH"
+    sudo mv "$OLD_INSTALL_PATH" "$NEW_INSTALL_PATH"
+fi
+
+# Update desktop file to use new path
 if [ -f "$DESKTOP_FILE" ]; then
-    echo "Updating desktop file to use launcher"
-    sudo sed -i "s|Exec=.*|Exec=$LAUNCHER_PATH|g" "$DESKTOP_FILE"
+    echo "Updating desktop file to use new path"
+    sudo sed -i "s|$OLD_INSTALL_PATH|$NEW_INSTALL_PATH|g" "$DESKTOP_FILE"
 fi
 
-# Create simple launcher script that directly uses full path
-sudo tee "$LAUNCHER_PATH" > /dev/null << EOF
-#!/bin/bash
+# Update binary link
+sudo ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight"
 
-echo "Launching RedisInsight with args: \$@"
-exec "$OLD_INSTALL_PATH/redisinsight" "\$@"
-EOF
+# Set basic executable permissions
+sudo chmod +x "$NEW_INSTALL_PATH/redisinsight"
 
-# Make the launcher script executable
-sudo chmod +x "$LAUNCHER_PATH"
-
-# Set basic executable permissions (on the original location)
-if [ -f "$OLD_INSTALL_PATH/redisinsight" ]; then
-    sudo chmod +x "$OLD_INSTALL_PATH/redisinsight"
-fi
-
-# Set correct ownership and permissions for chrome-sandbox (on the original location)
-if [ -f "$OLD_INSTALL_PATH/chrome-sandbox" ]; then
-    sudo chown root:root "$OLD_INSTALL_PATH/chrome-sandbox"
-    sudo chmod 4755 "$OLD_INSTALL_PATH/chrome-sandbox"
-fi
+# Set correct ownership and permissions for chrome-sandbox
+sudo chown root:root "$NEW_INSTALL_PATH/chrome-sandbox"
+sudo chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox"
 
 echo "RedisInsight post-installation setup completed successfully"

@@ -2383,10 +2383,10 @@
     "@react-hook/latest" "^1.0.2"
     "@react-hook/passive-layout-effect" "^1.2.0"
 
-"@redislabsdev/redis-ui-components@^37.0.0":
-  version "37.0.0"
-  resolved "https://npm.pkg.github.com/download/@redislabsdev/redis-ui-components/37.0.0/e3de3f5419a48e2bd10fcb26e9198966645bc6f0#e3de3f5419a48e2bd10fcb26e9198966645bc6f0"
-  integrity sha512-k7NTOaVUTCDZxVSgBuWtRyOMJkrDyGApCUUew2B7h3fMP702eoE4X4pNwi/DdpP9CDEnu/P7s8eruQq+jKdeVg==
+"@redis-ui/components@^38.0.0":
+  version "38.0.0"
+  resolved "https://registry.yarnpkg.com/@redis-ui/components/-/components-38.0.0.tgz#9cd99d3077fc5ced530ce79a1149f43d27c410f5"
+  integrity sha512-RD0DaAhN3LEyR+/6ozDaHih2rRTeSZwmcmQdo+z1njIQN361sQ3FMFsb+dBHWCJTS5+U2EFFRxKFWETPClPI6w==
   dependencies:
     "@radix-ui/react-checkbox" "^1.0.3"
     "@radix-ui/react-collapsible" "^1.0.3"
@@ -2409,15 +2409,15 @@
     type-fest "^3.13.1"
     virtua "^0.36.3"
 
-"@redislabsdev/redis-ui-icons@^4.16.1":
+"@redis-ui/icons@^4.16.1":
   version "4.16.1"
-  resolved "https://npm.pkg.github.com/download/@redislabsdev/redis-ui-icons/4.16.1/b27dfe9ab0356f049bd260bd2befda220393ce86#b27dfe9ab0356f049bd260bd2befda220393ce86"
-  integrity sha512-+j9J70nwRSABWMmEi9d+xM07/pwOissBib26HUDkuJlieNO0kptNw4hHZoI1jB7R7EiAIq3D+FGFDe2ri+FAGw==
+  resolved "https://registry.yarnpkg.com/@redis-ui/icons/-/icons-4.16.1.tgz#87fc6ab073a203de6b313a4868c0a84f076c8580"
+  integrity sha512-ZRQWzambHq9A/5zWx4HXEBNU8uCFwf6Ap0NKZryoMq5iGfygBF8k8A89RmwUXuSlJ99NRxW+RvmbcMd+Tyosmg==
 
-"@redislabsdev/redis-ui-styles@^11.0.1":
-  version "11.0.1"
-  resolved "https://npm.pkg.github.com/download/@redislabsdev/redis-ui-styles/11.0.1/4479aa97609e2602c5d57457d40b8d985c0f7268#4479aa97609e2602c5d57457d40b8d985c0f7268"
-  integrity sha512-k5K0EbYhimbocmf4ig5fEMn2puIY0cwKCBWoyd4Px8LH3SCJ9wXpj54WpbZDt92ZvbsxlOLhkaiMimd+xoGvQQ==
+"@redis-ui/styles@^11.0.2":
+  version "11.0.2"
+  resolved "https://registry.yarnpkg.com/@redis-ui/styles/-/styles-11.0.2.tgz#9c9bf40cbcf256a056c1664a613725d310b051f2"
+  integrity sha512-Lx2+WQ1obHq64W9tJV1zG+fRJIP9DoLbhc3JsAApyw/Xd4+e19Kqrvm7kysMMUCqKyYHu8eyx1WfmlS0nprX2A==
   dependencies:
     color-alpha "^2.0.0"
 

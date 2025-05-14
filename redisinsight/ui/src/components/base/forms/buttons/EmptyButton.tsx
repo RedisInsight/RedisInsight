@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextButton } from '@redislabsdev/redis-ui-components'
+import { TextButton } from '@redis-ui/components'
 import { ButtonIcon } from 'uiSrc/components/base/forms/buttons/Button'
 import { IconType } from 'uiSrc/components/base/icons'
 

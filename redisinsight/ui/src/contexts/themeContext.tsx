@@ -4,9 +4,9 @@ import {
   theme as redisUiOldTheme,
   themeLight,
   themeDark,
-} from '@redislabsdev/redis-ui-styles'
-import '@redislabsdev/redis-ui-styles/normalized-styles.css'
-import '@redislabsdev/redis-ui-styles/fonts.css'
+} from '@redis-ui/styles'
+import '@redis-ui/styles/normalized-styles.css'
+import '@redis-ui/styles/fonts.css'
 
 import { ipcThemeChange } from 'uiSrc/electron/utils'
 import {

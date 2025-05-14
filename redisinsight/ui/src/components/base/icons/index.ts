@@ -20,5 +20,5 @@ export { Trigger } from './Trigger'
 export { ThreeDotsIcon } from './ThreeDotsIcon'
 export { UserInCircle } from './UserInCircle'
 
-export * from '@redislabsdev/redis-ui-icons'
-export { LoaderLargeIcon } from '@redislabsdev/redis-ui-icons/multicolor'
+export * from '@redis-ui/icons'
+export { LoaderLargeIcon } from '@redis-ui/icons/multicolor'

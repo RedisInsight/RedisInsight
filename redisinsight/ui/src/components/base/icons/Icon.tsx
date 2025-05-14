@@ -1,5 +1,5 @@
 import React from 'react'
-import { useTheme } from '@redislabsdev/redis-ui-styles'
+import { useTheme } from '@redis-ui/styles'
 import { MonochromeIconProps } from 'uiSrc/components/base/icons'
 
 type BaseIconProps = MonochromeIconProps & {

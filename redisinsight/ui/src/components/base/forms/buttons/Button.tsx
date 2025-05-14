@@ -1,4 +1,4 @@
-import { Button } from '@redislabsdev/redis-ui-components'
+import { Button } from '@redis-ui/components'
 import React from 'react'
 import { LoaderLargeIcon } from 'uiSrc/components/base/icons'
 import { BaseButtonProps } from 'uiSrc/components/base/forms/buttons/button.styles'

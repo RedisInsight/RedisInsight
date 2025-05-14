@@ -44,9 +44,7 @@ const init = async () => {
 
   app.setName(config.name)
   app.setAppUserModelId(config.name)
-  if (process.platform !== 'darwin') {
-    app.setAboutPanelOptions(AboutPanelOptions)
-  }
+  app.setAboutPanelOptions(AboutPanelOptions)
 
   await installExtensions()
 

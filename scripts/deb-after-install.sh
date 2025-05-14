@@ -33,15 +33,24 @@ fi
 
 echo "$(date): Launching executable..." >> "$LOG_FILE"
 
-if command -v strace &>/dev/null; then
-    echo "$(date): Running with strace..." >> "$LOG_FILE"
-    strace -f "/opt/Redis Insight/redisinsight" "$@" 2>> "$LOG_FILE"
-else
-    echo "$(date): Executing normally..." >> "$LOG_FILE"
-    "/opt/Redis Insight/redisinsight" "$@"
+"/opt/Redis Insight/redisinsight" "$@"
+RESULT=$?
+
+if [ $RESULT -ne 0 ]; then
+    echo "$(date): Direct execution failed with code $RESULT, trying debug methods..." >> "$LOG_FILE"
+
+    if command -v strace &>/dev/null && strace -V &>/dev/null 2>&1; then
+        echo "$(date): Using strace for debugging..." >> "$LOG_FILE"
+        strace -f "/opt/Redis Insight/redisinsight" "$@" 2>> "$LOG_FILE" || true
+    else
+        echo "$(date): strace unavailable or permission denied, retrying direct execution..." >> "$LOG_FILE"
+        "/opt/Redis Insight/redisinsight" "$@"
+        RESULT=$?
+    fi
 fi
 
-echo "$(date): Launcher exited with code $?" >> "$LOG_FILE"
+echo "$(date): Launcher exited with code $RESULT" >> "$LOG_FILE"
+exit $RESULT
 EOF
 
 # Make the launcher script executable

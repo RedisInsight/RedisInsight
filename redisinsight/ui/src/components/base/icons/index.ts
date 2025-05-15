@@ -1,7 +1,7 @@
 export { BannedIcon } from './BannedIcon'
 export { BulkActions } from './BulkActions'
 export { Cloud } from './Cloud'
-export { Copilot } from './Copilot'
+export { CopilotIcon } from './Copilot'
 export { ExtendIcon } from './ExtendIcon'
 export { Github } from './Github'
 export { Group as GroupModeIcon } from './Group'

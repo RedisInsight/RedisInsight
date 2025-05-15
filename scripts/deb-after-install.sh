@@ -5,13 +5,20 @@ OLD_INSTALL_PATH="/opt/Redis Insight"
 NEW_INSTALL_PATH="/opt/redisinsight"
 DESKTOP_FILE="/usr/share/applications/redisinsight.desktop"
 
-# Try to gracefully terminate any running instances
-if pgrep redisinsight >/dev/null; then
-    echo "RedisInsight is running, attempting to terminate gracefully"
-    pkill redisinsight || true
-    # Give it a moment to shut down
-    sleep 2
-fi
+
+echo "Checking for running RedisInsight instances..."
+RUNNING_PIDS=$(pgrep -f "$NEW_INSTALL_PATH/redisinsight" || pgrep -f "$OLD_INSTALL_PATH/redisinsight" || true)
+
+OUR_PID=$$
+for PID in $RUNNING_PIDS; do
+    if ! ps -o pid= --ppid $OUR_PID | grep -q $PID; then
+        echo "Found running RedisInsight instance (PID: $PID), attempting to terminate..."
+        kill $PID 2>/dev/null || true
+    fi
+done
+
+# Brief pause to let processes terminate
+sleep 1
 
 # Handle update case: redisinsight exists, Redis Insight exists too
 # This means that we are in an update scenario
@@ -29,9 +36,13 @@ if [ -d "$NEW_INSTALL_PATH" ] && [ -d "$OLD_INSTALL_PATH" ]; then
 
     # Ensure binary link and permissions
     ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight" || true
-    chmod +x "$NEW_INSTALL_PATH/redisinsight" || true
-    chown root:root "$NEW_INSTALL_PATH/chrome-sandbox" || true
-    chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox" || true
+    if [ -f "$NEW_INSTALL_PATH/redisinsight" ]; then
+        chmod +x "$NEW_INSTALL_PATH/redisinsight" || true
+    fi
+    if [ -f "$NEW_INSTALL_PATH/chrome-sandbox" ]; then
+        chown root:root "$NEW_INSTALL_PATH/chrome-sandbox" || true
+        chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox" || true
+    fi
 
     echo "Update handled successfully"
     exit 0
@@ -43,9 +54,13 @@ if [ -d "$NEW_INSTALL_PATH" ] && [ ! -d "$OLD_INSTALL_PATH" ]; then
 
     # Ensure binary link and permissions
     ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight" || true
-    chmod +x "$NEW_INSTALL_PATH/redisinsight" || true
-    chown root:root "$NEW_INSTALL_PATH/chrome-sandbox" || true
-    chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox" || true
+    if [ -f "$NEW_INSTALL_PATH/redisinsight" ]; then
+        chmod +x "$NEW_INSTALL_PATH/redisinsight" || true
+    fi
+    if [ -f "$NEW_INSTALL_PATH/chrome-sandbox" ]; then
+        chown root:root "$NEW_INSTALL_PATH/chrome-sandbox" || true
+        chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox" || true
+    fi
 
     echo "Installation/update completed successfully"
     exit 0
@@ -66,9 +81,13 @@ if [ ! -d "$NEW_INSTALL_PATH" ] && [ -d "$OLD_INSTALL_PATH" ]; then
 
     # Ensure binary link and permissions
     ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight" || true
-    chmod +x "$NEW_INSTALL_PATH/redisinsight" || true
-    chown root:root "$NEW_INSTALL_PATH/chrome-sandbox" || true
-    chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox" || true
+    if [ -f "$NEW_INSTALL_PATH/redisinsight" ]; then
+        chmod +x "$NEW_INSTALL_PATH/redisinsight" || true
+    fi
+    if [ -f "$NEW_INSTALL_PATH/chrome-sandbox" ]; then
+        chown root:root "$NEW_INSTALL_PATH/chrome-sandbox" || true
+        chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox" || true
+    fi
 
     echo "Migration completed successfully"
     exit 0

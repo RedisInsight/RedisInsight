@@ -59,7 +59,7 @@
     right: 0;
     padding: 16px 18px 0;
 
-    :global(.euiButton) {
+    :global(button) {
       margin-left: 18px;
     }
   }

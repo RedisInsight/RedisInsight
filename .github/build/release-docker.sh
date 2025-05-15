@@ -2,7 +2,7 @@
 set -e
 
 HELP="Args:
--v - Semver (2.90.0)
+-v - Semver (2.92.0)
 -d - Build image repository (Ex: -d redisinsight)
 -r - Target repository (Ex: -r redis/redisinsight)
 "

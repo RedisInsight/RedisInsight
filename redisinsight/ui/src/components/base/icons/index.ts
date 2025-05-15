@@ -23,4 +23,9 @@ export { Trigger } from './Trigger'
 export { UserInCircle } from './UserInCircle'
 
 export * from '@redis-ui/icons'
-export { LoaderLargeIcon } from '@redis-ui/icons/multicolor'
+export {
+  LoaderLargeIcon,
+  AzureIcon,
+  Awss3Icon,
+  GooglecloudIcon,
+} from '@redis-ui/icons/multicolor'

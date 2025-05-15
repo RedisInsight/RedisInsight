@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import {
-  EuiButton,
   EuiIcon,
   EuiModal,
   EuiModalBody,
@@ -28,6 +27,11 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { FeatureFlags } from 'uiSrc/constants'
 import { Region } from 'uiSrc/slices/interfaces'
 
+import {
+  EmptyButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
 import { OAuthProvider, OAuthProviders } from './constants'
 import styles from './styles.module.scss'
@@ -189,8 +193,9 @@ const OAuthSelectPlan = () => {
                     <EuiIcon type="check" />
                   </div>
                 )}
-                <EuiButton
-                  iconType={icon}
+                <EmptyButton
+                  size="large"
+                  icon={icon}
                   onClick={() => setProviderSelected(id)}
                   className={cx(styles.providerBtn, {
                     [styles.activeProvider]: id === providerSelected,
@@ -223,26 +228,24 @@ const OAuthSelectPlan = () => {
             )}
           </section>
           <footer className={styles.footer}>
-            <EuiButton
+            <SecondaryButton
               className={styles.button}
               onClick={handleOnClose}
               data-testid="close-oauth-select-plan-dialog"
               aria-labelledby="close oauth select plan dialog"
             >
               Cancel
-            </EuiButton>
-            <EuiButton
-              fill
-              isDisabled={loading || !planIdSelected}
-              isLoading={loading}
-              color="secondary"
+            </SecondaryButton>
+            <PrimaryButton
+              disabled={loading || !planIdSelected}
+              loading={loading}
               className={styles.button}
               onClick={handleSubmit}
               data-testid="submit-oauth-select-plan-dialog"
               aria-labelledby="submit oauth select plan dialog"
             >
               Create database
-            </EuiButton>
+            </PrimaryButton>
           </footer>
         </section>
       </EuiModalBody>

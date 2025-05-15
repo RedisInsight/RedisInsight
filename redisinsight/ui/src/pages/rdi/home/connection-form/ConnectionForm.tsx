@@ -1,5 +1,4 @@
 import {
-  EuiFieldPassword,
   EuiFieldText,
   EuiForm,
   EuiFormRow,
@@ -33,6 +32,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
+import { PasswordInput } from 'uiSrc/components/base/inputs'
 import ValidationTooltip from './components/ValidationTooltip'
 
 import styles from './styles.module.scss'
@@ -242,13 +242,13 @@ const ConnectionForm = (props: Props) => {
                           form: FormikHelpers<string>
                           meta: FieldMetaProps<string>
                         }) => (
-                          <EuiFieldPassword
+                          <PasswordInput
                             data-testid="connection-form-password-input"
-                            className={styles.passwordField}
                             fullWidth
                             placeholder="Enter the RDI Redis password"
                             maxLength={500}
                             {...field}
+                            onChangeCapture={field.onChange}
                             value={
                               isNull(field.value) ? SECURITY_FIELD : field.value
                             }

@@ -20,6 +20,19 @@ done
 # Brief pause to let processes terminate
 sleep 1
 
+if [ -f "$DESKTOP_FILE" ]; then
+    echo "Updating desktop file for launcher compatibility..."
+
+    # First replace the old path with the new path throughout the file
+    sed -i "s|$OLD_INSTALL_PATH|$NEW_INSTALL_PATH|g" "$DESKTOP_FILE" || true
+
+    # Then ensure the Exec line is properly formatted without quotes
+    sed -i "s|^Exec=.*|Exec=$NEW_INSTALL_PATH/redisinsight %U|g" "$DESKTOP_FILE" || true
+
+    # Update desktop database to refresh the icon
+    update-desktop-database 2>/dev/null || true
+fi
+
 # Handle update case: redisinsight exists, Redis Insight exists too
 # This means that we are in an update scenario
 if [ -d "$NEW_INSTALL_PATH" ] && [ -d "$OLD_INSTALL_PATH" ]; then
@@ -28,11 +41,6 @@ if [ -d "$NEW_INSTALL_PATH" ] && [ -d "$OLD_INSTALL_PATH" ]; then
     cp -rf "$OLD_INSTALL_PATH"/* "$NEW_INSTALL_PATH"/ || true
 
     rm -rf "$OLD_INSTALL_PATH" || true
-
-    if [ -f "$DESKTOP_FILE" ]; then
-        echo "Updating desktop file reference"
-        sed -i "s|$OLD_INSTALL_PATH|$NEW_INSTALL_PATH|g" "$DESKTOP_FILE" || true
-    fi
 
     # Ensure binary link and permissions
     ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight" || true
@@ -73,11 +81,6 @@ if [ ! -d "$NEW_INSTALL_PATH" ] && [ -d "$OLD_INSTALL_PATH" ]; then
 
     # Simply move the directory
     mv "$OLD_INSTALL_PATH" "$NEW_INSTALL_PATH" || true
-
-    if [ -f "$DESKTOP_FILE" ]; then
-        echo "Updating desktop file reference"
-        sed -i "s|$OLD_INSTALL_PATH|$NEW_INSTALL_PATH|g" "$DESKTOP_FILE" || true
-    fi
 
     # Ensure binary link and permissions
     ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight" || true

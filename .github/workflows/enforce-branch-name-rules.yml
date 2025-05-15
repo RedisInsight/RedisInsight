@@ -14,6 +14,7 @@ jobs:
           echo "Source branch: ${{ github.head_ref }}"
           if [[ "${{ github.head_ref }}" != feature/* && \
                 "${{ github.head_ref }}" != bugfix/* && \
+                "${{ github.head_ref }}" != release/* && \
                 "${{ github.head_ref }}" != ric/* ]]; then
             echo "❌ Pull requests to 'main' are only allowed from 'feature/**', 'bugfix/**', 'release/**', or 'ric/**' branches."
             exit 1

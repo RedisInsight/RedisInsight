@@ -218,7 +218,7 @@ const RedisClusterDatabases = ({
           >
             Back to adding databases
           </SecondaryButton>
-          <FlexItem $direction="row" className={styles.footerButtonsGroup}>
+          <FlexItem direction="row" className={styles.footerButtonsGroup}>
             <CancelButton isPopoverOpen={isPopoverOpen} />
             <EuiToolTip
               position="top"

@@ -1,16 +1,15 @@
 import React from 'react'
 import { render } from 'uiSrc/utils/test-utils'
-import { theme } from 'uiSrc/components/base/theme'
 import { alignValues, dirValues, gapSizes, justifyValues } from './flex.styles'
 import { Col, FlexGroup as Flex, FlexItem, Grid, Row } from './flex'
 
 const gapStyles = {
   none: '',
-  xs: theme.semantic.core.space.xs,
-  s: theme.semantic.core.space.s,
-  m: theme.semantic.core.space.m,
-  l: theme.semantic.core.space.l,
-  xl: theme.semantic.core.space.xl,
+  xs: '0.2rem',
+  s: '0.4rem',
+  m: '0.8rem',
+  l: '2rem',
+  xl: '2.4rem',
 }
 describe('Flex Components', () => {
   it('should render', () => {

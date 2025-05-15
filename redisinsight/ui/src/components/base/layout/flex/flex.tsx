@@ -1,13 +1,14 @@
 import React from 'react'
 import classNames from 'classnames'
 import {
+  dirValues,
   FlexItemProps,
   FlexProps,
   GridProps,
   StyledFlex,
   StyledFlexItem,
   StyledGrid,
-  VALID_GROW_VALUES,
+  VALID_PADDING_VALUES,
 } from 'uiSrc/components/base/layout/flex/flex.styles'
 
 export const Grid = ({ children, className, ...rest }: GridProps) => {
@@ -51,10 +52,10 @@ export const FlexGroup = ({ children, className, ...rest }: FlexProps) => {
  * Column Component
  *
  * A Column component is a special type of FlexGroup that is meant to be used when you
- * want to layout out a group of items in a vertical column. It is functionally equivalent to
+ * want to layout a group of items in a vertical column. It is functionally equivalent to
  * using a FlexGroup with a direction of 'column', but includes some additional conveniences.
  *
- * This is the preferred API of a component, that is not meant to be distributed, but widely used in our project
+ * This is the preferred API of a component that is not meant to be distributed but widely used in our project
  *
  * @example
  * <Col>
@@ -109,7 +110,7 @@ export const Row = ({
 /**
  * Flex item component
  *
- * This represents more or less direct implementation of `EuiFlexItem`
+ * This represents a more or less direct implementation of `EuiFlexItem`
  *
  * @remarks
  * This component is useful when you want to create a flex item that can
@@ -124,14 +125,22 @@ export const FlexItem = ({
   children,
   className,
   grow = false,
+  padding,
+  direction,
   ...rest
-}: FlexItemProps) => {
-  if (!VALID_GROW_VALUES.includes(grow)) {
-    throw new Error(`Invalid grow value: ${grow}`)
-  }
+}: Omit<FlexItemProps, '$padding' | '$direction'> & {
+  padding?: (typeof VALID_PADDING_VALUES)[number]
+  direction?: (typeof dirValues)[number]
+}) => {
   const classes = classNames('RI-flex-item', className)
   return (
-    <StyledFlexItem {...rest} grow={grow} className={classes}>
+    <StyledFlexItem
+      {...rest}
+      grow={grow}
+      $padding={padding}
+      $direction={direction}
+      className={classes}
+    >
       {children}
     </StyledFlexItem>
   )

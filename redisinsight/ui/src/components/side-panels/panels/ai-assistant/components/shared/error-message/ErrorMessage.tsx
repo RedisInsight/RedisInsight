@@ -1,11 +1,12 @@
 import React from 'react'
-import { EuiButton } from '@elastic/eui'
 
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { AI_CHAT_ERRORS } from 'uiSrc/constants/apiErrors'
 import ApiStatusCode from 'uiSrc/constants/apiStatusCode'
 
+import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
+import { DeleteIcon } from 'uiSrc/components/base/icons'
 import RestartChat from '../restart-chat'
 
 import styles from './styles.module.scss'
@@ -90,15 +91,14 @@ const ErrorMessage = (props: Props) => {
         <RestartChat
           anchorClassName={styles.restartSessionWrapper}
           button={
-            <EuiButton
+            <SecondaryButton
               size="s"
-              color="secondary"
-              iconType="eraser"
+              icon={DeleteIcon}
               className={styles.restartSessionBtn}
               data-testid="ai-chat-error-restart-session-btn"
             >
               Restart session
-            </EuiButton>
+            </SecondaryButton>
           }
           onConfirm={onRestart}
         />

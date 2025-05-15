@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  EuiButton,
   EuiIcon,
   EuiLink,
   EuiLoadingSpinner,
@@ -26,6 +25,10 @@ import {
 } from 'uiSrc/constants/links'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export enum InfiniteMessagesIds {
@@ -185,15 +188,13 @@ export const INFINITE_MESSAGES = {
                   <ExternalLink href={MANAGE_DB_LINK}>Manage DB</ExternalLink>
                 </FlexItem>
                 <FlexItem>
-                  <EuiButton
-                    fill
+                  <PrimaryButton
                     size="s"
-                    color="secondary"
                     onClick={() => onSuccess()}
                     data-testid="notification-connect-db"
                   >
                     Connect
-                  </EuiButton>
+                  </PrimaryButton>
                 </FlexItem>
               </Row>
             </FlexItem>
@@ -224,26 +225,23 @@ export const INFINITE_MESSAGES = {
         <Spacer size="m" />
         <Row justify="between">
           <FlexItem>
-            <EuiButton
-              fill
+            <PrimaryButton
               size="s"
-              color="secondary"
               onClick={() => onSuccess?.()}
               data-testid="import-db-sso-btn"
             >
               Import
-            </EuiButton>
+            </PrimaryButton>
           </FlexItem>
           <FlexItem>
-            <EuiButton
+            <SecondaryButton
               size="s"
-              color="secondary"
               className="infiniteMessage__btn"
               onClick={() => onClose?.()}
               data-testid="cancel-import-db-sso-btn"
             >
               Cancel
-            </EuiButton>
+            </SecondaryButton>
           </FlexItem>
         </Row>
       </div>
@@ -284,15 +282,13 @@ export const INFINITE_MESSAGES = {
         <Spacer size="m" />
         <Row justify="end">
           <FlexItem>
-            <EuiButton
-              fill
+            <PrimaryButton
               size="s"
-              color="secondary"
               onClick={() => onClose?.()}
               data-testid="database-import-forbidden-notification-ok-btn"
             >
               Ok
-            </EuiButton>
+            </PrimaryButton>
           </FlexItem>
         </Row>
       </div>
@@ -323,26 +319,23 @@ export const INFINITE_MESSAGES = {
         <Spacer size="m" />
         <Row justify="between">
           <FlexItem>
-            <EuiButton
-              fill
+            <PrimaryButton
               size="s"
-              color="secondary"
               onClick={() => onSuccess?.()}
               data-testid="create-subscription-sso-btn"
             >
               Create
-            </EuiButton>
+            </PrimaryButton>
           </FlexItem>
           <FlexItem>
-            <EuiButton
+            <SecondaryButton
               size="s"
-              color="secondary"
               className="infiniteMessage__btn"
               onClick={() => onClose?.()}
               data-testid="cancel-create-subscription-sso-btn"
             >
               Cancel
-            </EuiButton>
+            </SecondaryButton>
           </FlexItem>
         </Row>
       </div>
@@ -396,15 +389,13 @@ export const INFINITE_MESSAGES = {
           </>
         </EuiText>
         <br />
-        <EuiButton
-          fill
+        <PrimaryButton
           size="s"
-          color="secondary"
           onClick={() => onSuccess?.()}
           data-testid="app-restart-btn"
         >
           Restart
-        </EuiButton>
+        </PrimaryButton>
       </div>
     ),
   }),
@@ -439,15 +430,13 @@ export const INFINITE_MESSAGES = {
             {/* // TODO remove display none when statistics page will be available */}
             <Row style={{ display: 'none' }} justify="end" align="center">
               <FlexItem>
-                <EuiButton
-                  fill
+                <PrimaryButton
                   size="s"
-                  color="secondary"
                   onClick={() => {}}
                   data-testid="notification-connect-db"
                 >
                   Statistics
-                </EuiButton>
+                </PrimaryButton>
               </FlexItem>
             </Row>
           </FlexItem>

@@ -1,61 +1,32 @@
 #!/bin/bash
-# Exit on error but continue past command failures with || true
-set -e
+set -ex
 
-# Define paths
-OLD_INSTALL_PATH="/opt/Redis Insight"  # Path with space
-NEW_INSTALL_PATH="/opt/redisinsight"   # New path without space
+OLD_INSTALL_PATH="/opt/Redis Insight"
+NEW_INSTALL_PATH="/opt/redisinsight"
 DESKTOP_FILE="/usr/share/applications/redisinsight.desktop"
 
-# Simple auto-update detection - if we have the new path but not the old path
-if [ -d "$NEW_INSTALL_PATH" ] && [ ! -d "$OLD_INSTALL_PATH" ]; then
-    echo "Auto-update scenario detected"
-
-    # Always update the symlink
-    sudo ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight" || true
-
-    # Set permissions only if files exist
-    if [ -f "$NEW_INSTALL_PATH/redisinsight" ]; then
-        sudo chmod +x "$NEW_INSTALL_PATH/redisinsight" || true
-    fi
-
-    if [ -f "$NEW_INSTALL_PATH/chrome-sandbox" ]; then
-        sudo chown root:root "$NEW_INSTALL_PATH/chrome-sandbox" || true
-        sudo chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox" || true
-    fi
-
-    echo "RedisInsight auto-update post-install completed"
+# Skip migration if new structure already exists
+if [ -d "$NEW_INSTALL_PATH" ]; then
+    echo "New path already exists. Assuming clean install or previous fix. Skipping migration."
     exit 0
 fi
 
-# Check if old directory exists and rename it
+# Proceed only if old path exists
 if [ -d "$OLD_INSTALL_PATH" ]; then
-    echo "Migrating from old installation path"
-    if [ -d "$NEW_INSTALL_PATH" ]; then
-        echo "WARNING: Both old and new paths exist. Removing new path first."
-        sudo rm -rf "$NEW_INSTALL_PATH" || true
+    echo "Old path found. Migrating to new path..."
+    mv "$OLD_INSTALL_PATH" "$NEW_INSTALL_PATH"
+
+    if [ -f "$DESKTOP_FILE" ]; then
+        echo "Updating desktop file"
+        sed -i "s|$OLD_INSTALL_PATH|$NEW_INSTALL_PATH|g" "$DESKTOP_FILE"
     fi
-    sudo mv "$OLD_INSTALL_PATH" "$NEW_INSTALL_PATH" || true
+
+    ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight"
+    chmod +x "$NEW_INSTALL_PATH/redisinsight"
+    chown root:root "$NEW_INSTALL_PATH/chrome-sandbox"
+    chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox"
+
+    echo "Migration completed"
+else
+    echo "Neither old nor new path exists. Unexpected state. Skipping."
 fi
-
-# Update desktop file to use new path if it exists
-if [ -f "$DESKTOP_FILE" ]; then
-    echo "Updating desktop file"
-    sudo sed -i "s|$OLD_INSTALL_PATH|$NEW_INSTALL_PATH|g" "$DESKTOP_FILE" || true
-fi
-
-# Always update the symlink
-sudo ln -sf "$NEW_INSTALL_PATH/redisinsight" "/usr/bin/redisinsight" || true
-
-# Set executable permissions
-if [ -f "$NEW_INSTALL_PATH/redisinsight" ]; then
-    sudo chmod +x "$NEW_INSTALL_PATH/redisinsight" || true
-fi
-
-# Set correct ownership and permissions for chrome-sandbox
-if [ -f "$NEW_INSTALL_PATH/chrome-sandbox" ]; then
-    sudo chown root:root "$NEW_INSTALL_PATH/chrome-sandbox" || true
-    sudo chmod 4755 "$NEW_INSTALL_PATH/chrome-sandbox" || true
-fi
-
-echo "RedisInsight post-installation setup completed successfully"

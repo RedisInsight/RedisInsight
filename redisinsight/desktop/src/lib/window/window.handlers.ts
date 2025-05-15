@@ -110,6 +110,8 @@ export const initWindowIPCHandlers = () => {
     })
   })
   ipcMain.handle(IpcInvokeEvent.appRestart, async () => {
-    quitAndInstallUpdate()
+    setImmediate(() => {
+      quitAndInstallUpdate()
+    })
   })
 }

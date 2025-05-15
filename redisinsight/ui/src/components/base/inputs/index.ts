@@ -1,1 +1,1 @@
-export { default as PasswordInput, RedisPasswordInputProps } from './PasswordInput/PasswordInput'
+export { default as PasswordInput } from './PasswordInput/PasswordInput'

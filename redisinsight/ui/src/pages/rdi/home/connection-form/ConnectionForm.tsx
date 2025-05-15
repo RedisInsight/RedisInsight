@@ -231,7 +231,14 @@ const ConnectionForm = (props: Props) => {
                     </EuiFormRow>
                   </FlexItem>
                   <FlexItem grow={1}>
-                    <EuiFormRow label="Password">
+                    <EuiFormRow
+                      label={
+                        <>
+                          Password
+                          <AppendInfo content="The RDI REST API authentication is using the RDI Redis username and password." />
+                        </>
+                      }
+                    >
                       <Field name="password">
                         {({
                           field,
@@ -244,7 +251,6 @@ const ConnectionForm = (props: Props) => {
                         }) => (
                           <PasswordInput
                             data-testid="connection-form-password-input"
-                            fullWidth
                             placeholder="Enter the RDI Redis password"
                             maxLength={500}
                             {...field}
@@ -257,9 +263,6 @@ const ConnectionForm = (props: Props) => {
                                 form.setFieldValue('password', '')
                               }
                             }}
-                            append={
-                              <AppendInfo content="The RDI REST API authentication is using the RDI Redis username and password." />
-                            }
                           />
                         )}
                       </Field>

@@ -12,6 +12,8 @@ module.exports = {
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
     '\\.scss\\?inline$': '<rootDir>/redisinsight/__mocks__/scssRaw.js',
     'uiSrc/(.*)': '<rootDir>/redisinsight/ui/src/$1',
+    '@redislabsdev/redis-ui-styles': '@redis-ui/styles',
+    '@redislabsdev/redis-ui-icons': '@redis-ui/icons',
     'monaco-editor': '<rootDir>/redisinsight/__mocks__/monacoMock.js',
     'monaco-yaml': '<rootDir>/redisinsight/__mocks__/monacoYamlMock.js',
     unified: '<rootDir>/redisinsight/__mocks__/unified.js',

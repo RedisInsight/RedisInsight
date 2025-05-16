@@ -7,14 +7,21 @@ jobs:
     runs-on: ubuntu-latest
     name: Frontend tests coverage
     steps:
+      - uses: actions/checkout@v4
+
       - name: Download Coverage Report
         uses: actions/download-artifact@v4
         with:
           name: report-fe
           path: report
 
-      - name: Set Permissions for Coverage File
-        run: chmod 644 report/coverage/coverage-final.json
+      - name: Install all libs and dependencies
+        uses: ./.github/actions/install-all-build-libs
+        with:
+          skip-backend-deps: '1'
+
+      # - name: Set Permissions for Coverage File
+      #   run: chmod 644 report/coverage/coverage-final.json
 
       - name: Validate Coverage File
         run: |
@@ -32,19 +39,16 @@ jobs:
         run: |
           echo "Checking if coverage-final.json exists..."
           ls -l report/coverage/
-      - uses: actions/checkout@v4
 
       - uses: jwalton/gh-find-current-pr@v1
         id: findPr
 
       # - name: Enable Debug Logging
       #   run: echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
-      - name: Install dotenv
-        run: npm install dotenv
 
       - uses: ArtiomTr/jest-coverage-report-action@v2
         with:
           prnumber: ${{ steps.findPr.outputs.number }}
           coverage-file: report/coverage/coverage-final.json
           base-coverage-file: report/coverage/coverage-final.json
-          working-directory: ${{ github.workspace }}
+          # working-directory: ${{ github.workspace }}

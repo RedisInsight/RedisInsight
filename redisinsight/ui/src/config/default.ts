@@ -53,6 +53,7 @@ export const defaultConfig = {
     defaultTheme: process.env.RI_DEFAULT_THEME ?? 'SYSTEM',
     lazyLoad: booleanEnv('RI_ROUTES_LAZY_LOAD', false),
     routesExcludedByEnv: booleanEnv('RI_ROUTES_EXCLUDED_BY_ENV', false),
+    acceptTermsAndConditions: booleanEnv('RI_ACCEPT_TERMS_AND_CONDITIONS', false),
     returnUrlBase: process.env.RI_RETURN_URL_BASE,
     returnUrlLabel: process.env.RI_RETURN_URL_LABEL || 'Back',
     returnUrlTooltip: process.env.RI_RETURN_URL_TOOLTIP || 'Back',

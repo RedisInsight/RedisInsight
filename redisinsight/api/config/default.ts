@@ -94,6 +94,8 @@ export default {
     secretStoragePassword: process.env.RI_SECRET_STORAGE_PASSWORD,
     agreementsPath: process.env.RI_AGREEMENTS_PATH,
     encryptionKey: process.env.RI_ENCRYPTION_KEY,
+    acceptTermsAndConditions:
+      process.env.RI_ACCEPT_TERMS_AND_CONDITIONS === 'true',
     tlsCert: process.env.RI_SERVER_TLS_CERT,
     tlsKey: process.env.RI_SERVER_TLS_KEY,
     staticContent: !!process.env.RI_SERVE_STATICS || true,

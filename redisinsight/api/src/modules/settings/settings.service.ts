@@ -56,14 +56,25 @@ export class SettingsService {
   ): Promise<GetAppSettingsResponse> {
     this.logger.debug('Getting application settings.', sessionMetadata);
     try {
-      const agreements =
-        await this.agreementRepository.getOrCreate(sessionMetadata);
       const settings =
         await this.settingsRepository.getOrCreate(sessionMetadata);
       this.logger.debug(
         'Succeed to get application settings.',
         sessionMetadata,
       );
+      if (SERVER_CONFIG.acceptTermsAndConditions) {
+        return classToClass(GetAppSettingsResponse, {
+          ...settings?.data,
+          agreements: {
+            analytics: false,
+            encryption: true,
+            eula: true,
+            notifications: false,
+          },
+        });
+      }
+      const agreements =
+        await this.agreementRepository.getOrCreate(sessionMetadata);
       return classToClass(GetAppSettingsResponse, {
         ...settings?.data,
         agreements: agreements?.version

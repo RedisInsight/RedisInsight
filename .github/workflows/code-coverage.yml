@@ -22,6 +22,12 @@ jobs:
           cat report/coverage/coverage-final.json
           jq . report/coverage/coverage-final.json
 
+      - name: Validate Coverage File Working Directory
+        run: |
+          echo "Validating ${{ github.workspace }} coverage-final.json..."
+          cat ${{ github.workspace }}/report/coverage/coverage-final.json
+          jq . ${{ github.workspace }}/report/coverage/coverage-final.json
+
       - name: Debug Coverage File
         run: |
           echo "Checking if coverage-final.json exists..."
@@ -31,8 +37,8 @@ jobs:
       - uses: jwalton/gh-find-current-pr@v1
         id: findPr
 
-      - name: Enable Debug Logging
-        run: echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
+      # - name: Enable Debug Logging
+      #   run: echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
 
       - uses: ArtiomTr/jest-coverage-report-action@v2
         with:

@@ -39,6 +39,8 @@ jobs:
 
       # - name: Enable Debug Logging
       #   run: echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
+      - name: Install dotenv
+        run: npm install dotenv
 
       - uses: ArtiomTr/jest-coverage-report-action@v2
         with:

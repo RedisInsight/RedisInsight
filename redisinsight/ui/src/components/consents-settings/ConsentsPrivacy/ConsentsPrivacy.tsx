@@ -97,6 +97,7 @@ const ConsentsPrivacy = () => {
             onChangeAgreement={onChangeAgreement}
             isSettingsPage
             key={consent.agreementName}
+            linkToPrivacyPolicy
           />
         ))}
       </div>

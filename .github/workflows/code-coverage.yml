@@ -7,6 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     name: Frontend tests coverage
     steps:
+      - name: Download Coverage Report
+        uses: actions/download-artifact@v4
+        with:
+          name: report-fe
+          path: report
       - name: Debug Coverage Folder
         run: |
           echo "Checking folder contents..."

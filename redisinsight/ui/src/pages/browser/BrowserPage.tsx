@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiResizableContainer, EuiButton } from '@elastic/eui'
+import { EuiResizableContainer } from '@elastic/eui'
 
 import { isNumber } from 'lodash'
 import {
@@ -43,6 +43,8 @@ import {
 import OnboardingStartPopover from 'uiSrc/pages/browser/components/onboarding-start-popover'
 import { sidePanelsSelector } from 'uiSrc/slices/panels/sidePanels'
 import { useStateWithContext } from 'uiSrc/services/hooks'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { ArrowLeftIcon } from 'uiSrc/components/base/icons'
 import BrowserSearchPanel from './components/browser-search-panel'
 import BrowserLeftPanel from './components/browser-left-panel'
 import BrowserRightPanel from './components/browser-right-panel'
@@ -281,17 +283,17 @@ const BrowserPage = () => {
 
   return (
     <div className={`browserPage ${styles.container}`}>
+      <OnboardingStartPopover />
       {arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen && (
-        <EuiButton
-          color="secondary"
-          iconType="arrowLeft"
-          size="s"
+        <EmptyButton
+          icon={ArrowLeftIcon}
+          size="small"
           onClick={closePanel}
           className={styles.backBtn}
           data-testid="back-right-panel-btn"
         >
           Back
-        </EuiButton>
+        </EmptyButton>
       )}
       <div
         className={cx({

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import { EuiButton } from '@elastic/eui'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 
 export interface Props {
   path: string
@@ -20,15 +20,13 @@ const InternalLink = (props: Props) => {
     onClick?.()
   }
   return (
-    <EuiButton
-      fill
-      color="secondary"
+    <PrimaryButton
       size="s"
       onClick={handleClick}
       data-testid={dataTestid || 'internal-link'}
     >
       {text}
-    </EuiButton>
+    </PrimaryButton>
   )
 }
 

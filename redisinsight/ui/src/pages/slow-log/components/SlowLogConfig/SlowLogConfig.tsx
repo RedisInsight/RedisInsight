@@ -1,6 +1,4 @@
 import {
-  EuiButton,
-  EuiButtonEmpty,
   EuiFieldText,
   EuiForm,
   EuiFormRow,
@@ -31,6 +29,12 @@ import { errorValidateNegativeInteger, validateNumber } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  EmptyButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { convertNumberByUnits } from '../../utils'
 import styles from './styles.module.scss'
 
@@ -129,15 +133,13 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
       </EuiText>
 
       <Spacer size="xs" />
-      <EuiButton
-        fill
-        color="secondary"
+      <PrimaryButton
         className={styles.clusterBtn}
         onClick={closePopover}
         data-testid="slowlog-config-ok-btn"
       >
         Ok
-      </EuiButton>
+      </PrimaryButton>
     </>
   )
 
@@ -238,36 +240,33 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
             <Spacer size="m" />
           </EuiForm>
 
-          <div className={styles.footer}>
-            <div className={styles.helpText}>
+          <Row className={styles.footer}>
+            <FlexItem className={styles.helpText}>
               NOTE: This is server configuration
-            </div>
-            <div className={styles.actions}>
-              <EuiButtonEmpty
-                size="l"
+            </FlexItem>
+            <Row align="center" gap="m" className={styles.actions}>
+              <EmptyButton
+                size="large"
                 onClick={handleDefault}
                 data-testid="slowlog-config-default-btn"
               >
                 Default
-              </EuiButtonEmpty>
-              <EuiButton
-                color="secondary"
+              </EmptyButton>
+              <SecondaryButton
                 onClick={handleCancel}
                 data-testid="slowlog-config-cancel-btn"
               >
                 Cancel
-              </EuiButton>
-              <EuiButton
-                fill
-                color="secondary"
-                isDisabled={disabledApplyBtn()}
+              </SecondaryButton>
+              <PrimaryButton
+                disabled={disabledApplyBtn()}
                 onClick={handleSave}
                 data-testid="slowlog-config-save-btn"
               >
                 Save
-              </EuiButton>
-            </div>
-          </div>
+              </PrimaryButton>
+            </Row>
+          </Row>
         </>
       )}
     </div>

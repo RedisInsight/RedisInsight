@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { EuiButton, EuiIcon, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiIcon, EuiText, EuiTitle } from '@elastic/eui'
 import { useHistory } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -8,6 +8,7 @@ import { getConfig } from 'uiSrc/config'
 import Logo from 'uiSrc/assets/img/logo.svg?react'
 import Robot from 'uiSrc/assets/img/robot.svg?react'
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 const NotFoundErrorPage = () => {
@@ -53,15 +54,13 @@ const NotFoundErrorPage = () => {
                   We searched every shard, <br />
                   But couldn&apos;t find the page you&apos;re after.
                 </p>
-                <EuiButton
-                  color="secondary"
-                  fill
+                <PrimaryButton
                   size="s"
                   onClick={onDbButtonClick}
                   data-testid="not-found-db-list-button"
                 >
                   Databases page
-                </EuiButton>
+                </PrimaryButton>
               </EuiText>
             </FlexItem>
           </Col>

@@ -1,11 +1,15 @@
 import React from 'react'
-import { EuiButton, EuiTextColor } from '@elastic/eui'
+import { EuiTextColor } from '@elastic/eui'
 import { matchPath, useHistory, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { Pages } from 'uiSrc/constants'
 import { updateUserConfigSettingsAction } from 'uiSrc/slices/user/user-settings'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  DestructiveButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 
 export interface Props {
   onClose?: () => void
@@ -50,32 +54,28 @@ const EncryptionErrorContent = (props: Props) => {
         with databases.
       </EuiTextColor>
       <Spacer />
-      <Row justify="end">
+      <Row justify="end" gap="m">
         <FlexItem>
           <div>
-            <EuiButton
-              size="s"
-              color="warning"
+            <DestructiveButton
               onClick={disableEncryption}
               className="toast-danger-btn euiBorderWidthThick"
               data-testid="toast-action-btn"
             >
               Disable Encryption
-            </EuiButton>
+            </DestructiveButton>
           </div>
         </FlexItem>
         <FlexItem>
           <div>
-            <EuiButton
-              fill
-              size="s"
-              color="warning"
+            <SecondaryButton
+              inverted
               onClick={onClose}
-              className="toast-danger-btn"
               data-testid="toast-cancel-btn"
+              className="toast-danger-btn"
             >
               Cancel
-            </EuiButton>
+            </SecondaryButton>
           </div>
         </FlexItem>
       </Row>

@@ -2,8 +2,6 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
-  EuiButton,
-  EuiTextColor,
   EuiFieldText,
   EuiPanel,
   EuiSuperSelect,
@@ -26,6 +24,10 @@ import { KeyTypes } from 'uiSrc/constants'
 import { stringToBuffer } from 'uiSrc/utils'
 import { AddListFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { PushElementToListDto } from 'apiSrc/modules/browser/list/dto'
 
 import styles from '../styles.module.scss'
@@ -169,29 +171,25 @@ const AddListElements = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <Row justify="end" gap="xl">
+        <Row justify="end" gap="m">
           <FlexItem>
             <div>
-              <EuiButton
-                color="secondary"
+              <SecondaryButton
                 onClick={() => closePanel(true)}
                 data-testid="cancel-members-btn"
               >
-                <EuiTextColor color="default">Cancel</EuiTextColor>
-              </EuiButton>
+                Cancel
+              </SecondaryButton>
             </div>
           </FlexItem>
           <FlexItem>
             <div>
-              <EuiButton
-                fill
-                size="m"
-                color="secondary"
+              <PrimaryButton
                 onClick={submitData}
                 data-testid="save-elements-btn"
               >
                 Save
-              </EuiButton>
+              </PrimaryButton>
             </div>
           </FlexItem>
         </Row>

@@ -1,19 +1,16 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/no-this-in-sfc */
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiCheckbox,
-  EuiIcon,
-  EuiPopover,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiCheckbox, EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
-import React, { FC, Ref, SVGProps, useRef, useState } from 'react'
+import React, { Ref, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import ColumnsIcon from 'uiSrc/assets/img/icons/columns.svg?react'
-import TreeViewIcon from 'uiSrc/assets/img/icons/treeview.svg?react'
+import {
+  IconType,
+  ColumnsIcon,
+  EqualIcon,
+  FoldersIcon,
+} from 'uiSrc/components/base/icons'
 import KeysSummary from 'uiSrc/components/keys-summary'
 import {
   SCAN_COUNT_DEFAULT,
@@ -55,6 +52,10 @@ import { BrowserColumns, KeyValueFormat } from 'uiSrc/constants'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { setConnectivityError } from 'uiSrc/slices/app/connectivity'
+import {
+  IconButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 const HIDE_REFRESH_LABEL_WIDTH = 640
@@ -68,7 +69,7 @@ interface ISwitchType<T> {
   getClassName: () => string
   onClick: () => void
   isActiveView: () => boolean
-  getIconType: () => string | FC<SVGProps<SVGSVGElement>>
+  getIconType: () => IconType
 }
 
 export interface Props {
@@ -120,7 +121,7 @@ const KeysHeader = (props: Props) => {
         return cx(styles.viewTypeBtn, { [styles.active]: this.isActiveView() })
       },
       getIconType() {
-        return 'menu'
+        return EqualIcon
       },
       onClick() {
         handleSwitchView(this.type)
@@ -141,7 +142,7 @@ const KeysHeader = (props: Props) => {
         return cx(styles.viewTypeBtn, { [styles.active]: this.isActiveView() })
       },
       getIconType() {
-        return TreeViewIcon
+        return FoldersIcon
       },
       onClick() {
         handleSwitchView(this.type)
@@ -295,10 +296,10 @@ const KeysHeader = (props: Props) => {
               position="top"
               key={view.tooltipText}
             >
-              <EuiButtonIcon
-                iconSize="s"
+              <IconButton
+                size="S"
                 className={view.getClassName()}
-                iconType={view.getIconType()}
+                icon={view.getIconType()}
                 aria-label={view.ariaLabel}
                 onClick={() => view.onClick()}
                 data-testid={view.dataTestId}
@@ -347,7 +348,7 @@ const KeysHeader = (props: Props) => {
                     searchMode === SearchMode.Redisearch && !selectedIndex
                   }
                   disabledRefreshButtonMessage="Select an index to refresh keys."
-                  iconSize="xs"
+                  iconSize="S"
                   postfix="keys"
                   loading={loading}
                   lastRefreshTime={keysState.lastRefreshTime}
@@ -367,10 +368,9 @@ const KeysHeader = (props: Props) => {
                     panelClassName={styles.popoverWrapper}
                     closePopover={() => setColumnsConfigShown(false)}
                     button={
-                      <EuiButton
-                        size="s"
-                        color="secondary"
-                        iconType={ColumnsIcon}
+                      <SecondaryButton
+                        size="small"
+                        icon={ColumnsIcon}
                         onClick={toggleColumnsConfigVisibility}
                         className={styles.columnsButton}
                         data-testid="btn-columns-actions"
@@ -379,7 +379,7 @@ const KeysHeader = (props: Props) => {
                         <span className={styles.columnsButtonText}>
                           Columns
                         </span>
-                      </EuiButton>
+                      </SecondaryButton>
                     }
                   >
                     <Row align="center" gap="m">

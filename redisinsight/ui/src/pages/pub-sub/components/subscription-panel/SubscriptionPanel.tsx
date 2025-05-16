@@ -1,11 +1,4 @@
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiFieldText,
-  EuiIcon,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFieldText, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -19,7 +12,6 @@ import {
 } from 'uiSrc/slices/pubsub/pubsub'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-import UserInCircle from 'uiSrc/assets/img/icons/user_in_circle.svg?react'
 import SubscribedIconDark from 'uiSrc/assets/img/pub-sub/subscribed.svg'
 import SubscribedIconLight from 'uiSrc/assets/img/pub-sub/subscribed-lt.svg'
 import NotSubscribedIconDark from 'uiSrc/assets/img/pub-sub/not-subscribed.svg'
@@ -27,6 +19,12 @@ import NotSubscribedIconLight from 'uiSrc/assets/img/pub-sub/not-subscribed-lt.s
 
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  UserIcon,
+  IndicatorExcludedIcon,
+  DeleteIcon,
+} from 'uiSrc/components/base/icons'
+import { Button, IconButton } from 'uiSrc/components/base/forms/buttons'
 import PatternsInfo from './components/patternsInfo'
 import ClickableAppendInfo from './components/clickable-append-info'
 import styles from './styles.module.scss'
@@ -75,11 +73,7 @@ const SubscriptionPanel = () => {
   const displayMessages = count !== 0 || isSubscribed
 
   return (
-    <Row
-      className={styles.container}
-      align="center"
-      justify="between" gap="s"
-    >
+    <Row className={styles.container} align="center" justify="between" gap="s">
       <FlexItem>
         <Row align="center">
           <FlexItem className={styles.iconSubscribe}>
@@ -127,19 +121,16 @@ const SubscriptionPanel = () => {
             />
           </FlexItem>
           <FlexItem>
-            <EuiButton
-              fill={!isSubscribed}
+            <Button
+              variant={isSubscribed ? 'secondary-ghost' : 'primary'}
               size="s"
-              color="secondary"
-              className={styles.buttonSubscribe}
-              type="submit"
-              onClick={toggleSubscribe}
-              iconType={isSubscribed ? 'minusInCircle' : UserInCircle}
+              icon={isSubscribed ? IndicatorExcludedIcon : UserIcon}
               data-testid="subscribe-btn"
+              onClick={toggleSubscribe}
               disabled={loading}
             >
-              {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
-            </EuiButton>
+              Subscribe
+            </Button>
           </FlexItem>
           {!!messages.length && (
             <FlexItem style={{ marginLeft: 8 }}>
@@ -147,8 +138,8 @@ const SubscriptionPanel = () => {
                 content="Clear Messages"
                 anchorClassName={cx('inline-flex')}
               >
-                <EuiButtonIcon
-                  iconType="eraser"
+                <IconButton
+                  icon={DeleteIcon}
                   onClick={onClickClear}
                   aria-label="clear pub sub"
                   data-testid="clear-pubsub-btn"

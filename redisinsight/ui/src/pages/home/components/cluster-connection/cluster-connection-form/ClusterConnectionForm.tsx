@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom'
 import { isEmpty } from 'lodash'
 import { FormikErrors, useFormik } from 'formik'
 import {
-  EuiButton,
   EuiFieldNumber,
   EuiFieldPassword,
   EuiFieldText,
@@ -26,6 +25,11 @@ import { ICredentialsRedisCluster } from 'uiSrc/slices/interfaces'
 import { MessageEnterpriceSoftware } from 'uiSrc/pages/home/components/form/Messages'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
 
 export interface Props {
   host: string
@@ -162,15 +166,14 @@ const ClusterConnectionForm = (props: Props) => {
   )
 
   const CancelButton = ({ onClick }: { onClick: () => void }) => (
-    <EuiButton
+    <SecondaryButton
       size="s"
-      color="secondary"
       className="btn-cancel"
       onClick={onClick}
       style={{ marginRight: 12 }}
     >
       Cancel
-    </EuiButton>
+    </SecondaryButton>
   )
 
   const SubmitButton = ({ onClick, submitIsDisabled }: ISubmitButton) => (
@@ -190,19 +193,17 @@ const ClusterConnectionForm = (props: Props) => {
         ) : null
       }
     >
-      <EuiButton
-        fill
+      <PrimaryButton
         size="s"
-        color="secondary"
         type="submit"
         onClick={onClick}
         disabled={submitIsDisabled}
-        isLoading={loading}
-        iconType={submitIsDisabled ? 'iInCircle' : undefined}
+        loading={loading}
+        icon={submitIsDisabled ? InfoIcon : undefined}
         data-testid="btn-submit"
       >
         Submit
-      </EuiButton>
+      </PrimaryButton>
     </EuiToolTip>
   )
 

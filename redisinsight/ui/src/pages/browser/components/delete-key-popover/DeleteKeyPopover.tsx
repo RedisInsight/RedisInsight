@@ -1,4 +1,4 @@
-import { EuiButton, EuiButtonIcon, EuiPopover, EuiText } from '@elastic/eui'
+import { EuiPopover, EuiText } from '@elastic/eui'
 
 import React from 'react'
 
@@ -7,6 +7,11 @@ import { KeyTypes, ModulesKeyTypes } from 'uiSrc/constants'
 import { formatLongName } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  DestructiveButton,
+  IconButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { DeleteIcon } from 'uiSrc/components/base/icons'
 
 export interface DeleteProps {
   nameString: string
@@ -36,8 +41,8 @@ export const DeleteKeyPopover = ({
     closePopover={() => onOpenPopover(-1, type)}
     panelPaddingSize="l"
     button={
-      <EuiButtonIcon
-        iconType="trash"
+      <IconButton
+        icon={DeleteIcon}
         onClick={() => onOpenPopover(rowId, type)}
         aria-label="Delete Key"
         data-testid={`delete-key-btn-${nameString}`}
@@ -53,17 +58,15 @@ export const DeleteKeyPopover = ({
         <EuiText size="s">will be deleted.</EuiText>
       </EuiText>
       <Spacer size="m" />
-      <EuiButton
-        fill
-        size="s"
-        color="warning"
-        iconType="trash"
-        isDisabled={deleting}
+      <DestructiveButton
+        size="small"
+        icon={DeleteIcon}
+        disabled={deleting}
         onClick={() => onDelete(name)}
         data-testid="submit-delete-key"
       >
         Delete
-      </EuiButton>
+      </DestructiveButton>
     </>
   </EuiPopover>
 )

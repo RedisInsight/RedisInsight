@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiGlobalToastList, EuiButton, EuiTextColor } from '@elastic/eui'
+import { EuiGlobalToastList, EuiTextColor } from '@elastic/eui'
 import { Toast } from '@elastic/eui/src/components/toast/global_toast_list'
 import cx from 'classnames'
 import {
@@ -20,6 +20,7 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import errorMessages from './error-messages'
 import { InfiniteMessagesIds } from './components'
 
@@ -53,15 +54,15 @@ const Notifications = () => {
       <Spacer />
       <Row justify="end">
         <FlexItem>
-          <EuiButton
-            fill
-            size="s"
+          <SecondaryButton
+            filled
+            size="medium"
             onClick={() => onSubmitNotification(toast, group)}
             className={styles.toastSuccessBtn}
             data-testid="submit-tooltip-btn"
           >
             Ok
-          </EuiButton>
+          </SecondaryButton>
         </FlexItem>
       </Row>
     </>
@@ -82,7 +83,6 @@ const Notifications = () => {
       }
       toast.text = getSuccessText(message, toast, group)
       toast.onClose = () => removeToast(toast)
-
       return toast
     })
 

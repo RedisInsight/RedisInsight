@@ -1,5 +1,4 @@
 import {
-  EuiButton,
   EuiFieldPassword,
   EuiFieldText,
   EuiForm,
@@ -29,6 +28,11 @@ import { RdiInstance } from 'uiSrc/slices/interfaces'
 import { getFormUpdates, Nullable } from 'uiSrc/utils'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
 import ValidationTooltip from './components/ValidationTooltip'
 
 import styles from './styles.module.scss'
@@ -127,30 +131,27 @@ const ConnectionForm = (props: Props) => {
         <FlexItem>
           <Row gap="m">
             <FlexItem>
-              <EuiButton
+              <SecondaryButton
                 size="s"
-                color="secondary"
                 data-testid="connection-form-cancel-button"
                 onClick={onCancel}
               >
                 Cancel
-              </EuiButton>
+              </SecondaryButton>
             </FlexItem>
             <FlexItem>
               <ValidationTooltip isValid={isValid} errors={errors}>
-                <EuiButton
+                <PrimaryButton
                   data-testid="connection-form-add-button"
                   type="submit"
-                  fill
                   size="s"
-                  color="secondary"
-                  iconType={!isValid ? 'iInCircle' : undefined}
-                  isLoading={isLoading}
+                  icon={!isValid ? InfoIcon : undefined}
+                  loading={isLoading}
                   disabled={!isValid}
                   onClick={onSubmit}
                 >
                   {editInstance ? 'Apply Changes' : 'Add Endpoint'}
-                </EuiButton>
+                </PrimaryButton>
               </ValidationTooltip>
             </FlexItem>
           </Row>

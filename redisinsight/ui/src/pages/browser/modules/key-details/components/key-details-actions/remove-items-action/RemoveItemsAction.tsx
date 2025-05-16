@@ -1,6 +1,8 @@
 import React from 'react'
-import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { MinusInCircleIcon } from 'uiSrc/components/base/icons'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -14,9 +16,8 @@ const RemoveItemsAction = ({ title, openRemoveItemPanel }: Props) => (
     position="left"
     anchorClassName={styles.actionBtn}
   >
-    <EuiButtonIcon
-      iconType="minusInCircle"
-      color="primary"
+    <IconButton
+      icon={MinusInCircleIcon}
       aria-label={title}
       onClick={openRemoveItemPanel}
       data-testid="remove-key-value-items-btn"

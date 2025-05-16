@@ -1,16 +1,16 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiForm,
-  EuiLoadingSpinner,
-  EuiPopover,
-} from '@elastic/eui'
+import { EuiForm, EuiLoadingSpinner, EuiPopover } from '@elastic/eui'
 
 import cx from 'classnames'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  IconButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { EditIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -105,15 +105,14 @@ const EditablePopover = (props: Props) => {
   const isDisabledApply = (): boolean => !!(isLoading || isDisabled)
 
   const button = (
-    <EuiButtonIcon
-      disabled={isPopoverOpen}
-      iconType={btnIconType || 'pencil'}
+    <IconButton
+      disabled={isPopoverOpen || isDisabledEditButton}
+      icon={btnIconType || EditIcon}
       aria-label="Edit field"
       color="primary"
       onClick={isDisabledEditButton ? () => {} : handleButtonClick}
       className={editBtnClassName}
       data-testid={`${prefix}_edit-btn-${field}`}
-      isDisabled={isDisabledEditButton}
     />
   )
 
@@ -150,29 +149,26 @@ const EditablePopover = (props: Props) => {
       <EuiForm component="form" onSubmit={onFormSubmit}>
         <div className={styles.content}>{children}</div>
         <Spacer size="s" />
-        <Row className={styles.footer} justify="end">
+        <Row className={styles.footer} justify="end" gap="m">
           <FlexItem>
-            <EuiButton
+            <SecondaryButton
               size="s"
-              color="secondary"
               onClick={() => handleDecline()}
               data-testid="cancel-btn"
             >
               Cancel
-            </EuiButton>
+            </SecondaryButton>
           </FlexItem>
 
           <FlexItem>
-            <EuiButton
-              fill
+            <PrimaryButton
               size="s"
               type="submit"
-              color="secondary"
-              isDisabled={isDisabledApply()}
+              disabled={isDisabledApply()}
               data-testid="save-btn"
             >
               Save
-            </EuiButton>
+            </PrimaryButton>
           </FlexItem>
         </Row>
       </EuiForm>

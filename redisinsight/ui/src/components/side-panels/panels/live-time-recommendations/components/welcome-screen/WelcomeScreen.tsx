@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import cx from 'classnames'
-import { EuiText, EuiButton } from '@elastic/eui'
+import { EuiText } from '@elastic/eui'
 
 import { DEFAULT_DELIMITER, FeatureFlags, Pages } from 'uiSrc/constants'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
@@ -18,6 +18,7 @@ import {
   ANALYZE_TOOLTIP_MESSAGE,
 } from 'uiSrc/constants/recommendations'
 import { FeatureFlagComponent } from 'uiSrc/components'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import PopoverRunAnalyze from '../popover-run-analyze'
 
 import styles from './styles.module.scss'
@@ -81,15 +82,13 @@ const NoRecommendationsScreen = () => {
                 : ANALYZE_TOOLTIP_MESSAGE
             }
           >
-            <EuiButton
-              fill
-              color="secondary"
+            <PrimaryButton
               size="s"
               onClick={() => setIsShowInfo(true)}
               data-testid="insights-db-analysis-link"
             >
               Analyze Database
-            </EuiButton>
+            </PrimaryButton>
           </PopoverRunAnalyze>
         </FeatureFlagComponent>
       ) : (

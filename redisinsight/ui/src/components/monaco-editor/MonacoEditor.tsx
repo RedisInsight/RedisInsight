@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import ReactMonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import cx from 'classnames'
-import { EuiButton, EuiIcon } from '@elastic/eui'
 import { merge } from 'lodash'
 
 import { MonacoThemes, darkTheme, lightTheme } from 'uiSrc/constants/monaco'
@@ -13,6 +12,8 @@ import {
 import { DSL, Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
+import { EditIcon } from 'uiSrc/components/base/icons'
+import { ActionIconButton } from 'uiSrc/components/base/forms/buttons'
 import DedicatedEditor from './components/dedicated-editor'
 import styles from './styles.module.scss'
 
@@ -296,15 +297,13 @@ const MonacoEditor = (props: Props) => {
         />
       )}
       {isEditable && readOnly && !isEditing && (
-        <EuiButton
-          fill
-          color="secondary"
+        <ActionIconButton
+          variant="secondary"
           onClick={() => setIsEditing(true)}
           className={styles.editBtn}
           data-testid="edit-monaco-value"
-        >
-          <EuiIcon type="pencil" />
-        </EuiButton>
+          icon={EditIcon}
+        />
       )}
     </div>
   )

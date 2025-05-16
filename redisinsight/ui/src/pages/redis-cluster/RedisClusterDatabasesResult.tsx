@@ -22,6 +22,10 @@ import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -130,25 +134,24 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
           />
         </div>
       </div>
-      <div className={cx(styles.footer, 'footerAddDatabase')}>
-        <EuiButton
-          onClick={() => onBack(false)}
-          color="secondary"
-          className="btn-cancel btn-back"
-          data-testid="btn-back-to-adding"
-        >
-          Back to adding databases
-        </EuiButton>
-        <EuiButton
-          fill
-          size="m"
-          onClick={() => onView(false)}
-          color="secondary"
-          data-testid="btn-view-databases"
-        >
-          View Databases
-        </EuiButton>
-      </div>
+      <FlexItem className={cx(styles.footer, 'footerAddDatabase')}>
+        <Row justify="between">
+          <SecondaryButton
+            onClick={() => onBack(false)}
+            className="btn-cancel btn-back"
+            data-testid="btn-back-to-adding"
+          >
+            Back to adding databases
+          </SecondaryButton>
+          <PrimaryButton
+            size="m"
+            onClick={() => onView(false)}
+            data-testid="btn-view-databases"
+          >
+            View Databases
+          </PrimaryButton>
+        </Row>
+      </FlexItem>
     </AutodiscoveryPageTemplate>
   )
 }

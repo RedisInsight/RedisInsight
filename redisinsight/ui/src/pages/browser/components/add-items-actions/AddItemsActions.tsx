@@ -1,6 +1,8 @@
 import React from 'react'
 import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { PlusInCircleIcon } from 'uiSrc/components/base/icons'
 
 export interface Props {
   id: number
@@ -71,9 +73,8 @@ const AddItemsActions = (props: Props) => {
                 position="left"
                 anchorClassName={anchorClassName}
               >
-                <EuiButtonIcon
-                  iconType="plusInCircle"
-                  color="primary"
+                <IconButton
+                  icon={PlusInCircleIcon}
                   disabled={loading || addItemIsDisabled}
                   aria-label="Add new item"
                   onClick={addItem}

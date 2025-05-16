@@ -1,4 +1,5 @@
 import { compareConsents, isDifferentConsentsExists } from 'uiSrc/utils'
+import { defaultConfig } from 'uiSrc/config/default'
 
 const spec = {
   agreements: {
@@ -58,5 +59,18 @@ describe('isDifferentConsentsExists', () => {
     expect(isDifferentConsentsExists(spec.agreements, agreements1)).toBeFalsy()
     expect(isDifferentConsentsExists(spec.agreements, agreements2)).toBeFalsy()
     expect(isDifferentConsentsExists(spec.agreements, agreements3)).toBeTruthy()
+  })
+
+  it('should return false when defaultConfig.app.acceptTermsAndConditions is true', () => {
+    const originalAcceptTerms = defaultConfig.app.acceptTermsAndConditions
+    defaultConfig.app.acceptTermsAndConditions = true
+    const agreements = {
+      eula: false,
+      version: '1.0.0',
+    }
+
+    expect(isDifferentConsentsExists(spec.agreements, agreements)).toBeFalsy()
+
+    defaultConfig.app.acceptTermsAndConditions = originalAcceptTerms
   })
 })

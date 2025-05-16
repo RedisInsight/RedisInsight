@@ -52,7 +52,6 @@
 
     .euiFieldText,
     .euiFieldNumber,
-    .euiFieldPassword,
     .euiFieldSearch,
     .euiSelect,
     .euiSuperSelectControl,
@@ -81,8 +80,7 @@
       .euiSuperSelectControl:not(.euiSuperSelectControl--compressed),
       .euiSelect:not(.euiSelect--compressed),
       .euiFieldText:not(.euiFieldText--compressed),
-      .euiFieldNumber:not(.euiFieldNumber--compressed),
-      .euiFieldPassword {
+      .euiFieldNumber:not(.euiFieldNumber--compressed) {
         height: 40px !important;
       }
     }

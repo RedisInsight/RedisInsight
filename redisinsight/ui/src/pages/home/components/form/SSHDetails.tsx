@@ -2,7 +2,6 @@ import React, { ChangeEvent } from 'react'
 import {
   EuiCheckbox,
   EuiFieldNumber,
-  EuiFieldPassword,
   EuiFieldText,
   EuiFormRow,
   EuiRadioGroup,
@@ -26,6 +25,7 @@ import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PasswordInput } from 'uiSrc/components/base/inputs'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -164,21 +164,18 @@ const SSHDetails = (props: Props) => {
             <Row gap="m" responsive className={flexGroupClassName}>
               <FlexItem grow className={flexItemClassName}>
                 <EuiFormRow label="Password">
-                  <EuiFieldPassword
-                    type="password"
+                  <PasswordInput
                     name="sshPassword"
                     id="sshPassword"
                     data-testid="sshPassword"
-                    fullWidth
-                    className="passwordField"
                     maxLength={10_000}
-                    placeholder="Enter SSH Password"
+                    placeholder="Enter SSH Password1"
                     value={
                       formik.values.sshPassword === true
                         ? SECURITY_FIELD
                         : (formik.values.sshPassword ?? '')
                     }
-                    onChange={formik.handleChange}
+                    onChangeCapture={formik.handleChange}
                     onFocus={() => {
                       if (formik.values.sshPassword === true) {
                         formik.setFieldValue('sshPassword', '')
@@ -201,7 +198,6 @@ const SSHDetails = (props: Props) => {
                       id="sshPrivateKey"
                       data-testid="sshPrivateKey"
                       fullWidth
-                      className="passwordField"
                       maxLength={50_000}
                       placeholder="Enter SSH Private Key in PEM format"
                       value={
@@ -225,13 +221,10 @@ const SSHDetails = (props: Props) => {
               <Row gap="m" responsive className={flexGroupClassName}>
                 <FlexItem grow className={flexItemClassName}>
                   <EuiFormRow label="Passphrase">
-                    <EuiFieldPassword
-                      type="password"
+                    <PasswordInput
                       name="sshPassphrase"
                       id="sshPassphrase"
                       data-testid="sshPassphrase"
-                      fullWidth
-                      className="passwordField"
                       maxLength={50_000}
                       placeholder="Enter Passphrase for Private Key"
                       value={
@@ -239,7 +232,7 @@ const SSHDetails = (props: Props) => {
                           ? SECURITY_FIELD
                           : (formik.values.sshPassphrase ?? '')
                       }
-                      onChange={formik.handleChange}
+                      onChangeCapture={formik.handleChange}
                       onFocus={() => {
                         if (formik.values.sshPassphrase === true) {
                           formik.setFieldValue('sshPassphrase', '')

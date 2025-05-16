@@ -4,7 +4,6 @@ import { FormikProps } from 'formik'
 
 import {
   EuiFieldNumber,
-  EuiFieldPassword,
   EuiFieldText,
   EuiFormRow,
   EuiIcon,
@@ -24,6 +23,7 @@ import {
 } from 'uiSrc/utils'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { PasswordInput } from 'uiSrc/components/base/inputs'
 
 interface IShowFields {
   alias: boolean
@@ -192,13 +192,10 @@ const DatabaseForm = (props: Props) => {
 
         <FlexItem grow>
           <EuiFormRow label="Password">
-            <EuiFieldPassword
-              type="password"
+            <PasswordInput
               name="password"
               id="password"
               data-testid="password"
-              fullWidth
-              className="passwordField"
               maxLength={10_000}
               placeholder="Enter Password"
               value={
@@ -206,13 +203,12 @@ const DatabaseForm = (props: Props) => {
                   ? SECURITY_FIELD
                   : (formik.values.password ?? '')
               }
-              onChange={formik.handleChange}
+              onChangeCapture={formik.handleChange}
               onFocus={() => {
                 if (formik.values.password === true) {
                   formik.setFieldValue('password', '')
                 }
               }}
-              dualToggleProps={{ color: 'text' }}
               autoComplete="new-password"
               disabled={isFieldDisabled('password')}
             />

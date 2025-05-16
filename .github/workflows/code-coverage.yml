@@ -1,0 +1,17 @@
+name: 'Code Coverage'
+on:
+  workflow_call:
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    name: Frontend tests coverage
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+      - uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          prnumber: ${{ steps.findPr.outputs.number }}
+          coverage-file: ./report/coverage/coverage-final.json
+          base-coverage-file: ./report/coverage/coverage-final.json

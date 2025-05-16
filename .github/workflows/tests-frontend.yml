@@ -13,7 +13,6 @@ jobs:
     name: Frontend tests
     steps:
       - uses: actions/checkout@v4
-      - uses: ArtiomTr/jest-coverage-report-action@v2
 
       - name: Install all libs and dependencies
         uses: ./.github/actions/install-all-build-libs

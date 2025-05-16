@@ -94,6 +94,11 @@ jobs:
     uses: ./.github/workflows/tests-frontend.yml
     secrets: inherit
 
+  frontend-tests-coverage:
+    needs: frontend-tests
+    uses: ./.github/workflows/code-coverage.yml
+    secrets: inherit
+
   backend-tests:
     needs: changes
     if: inputs.group_tests == 'all' || inputs.group_tests == 'without_e2e' || startsWith(github.ref_name, 'be/') || startsWith(github.ref_name, 'fe-be/') || startsWith(github.ref_name, 'feature/') || startsWith(github.ref_name, 'bugfix/') || startsWith(github.ref_name, 'ric/')

@@ -10,7 +10,7 @@ env:
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
-    name: Frontend tests (Coverage: ${{ env.coverage }}%)
+    name: 'Frontend tests (Coverage: ${{ env.coverage }}%)'
     steps:
       - uses: actions/checkout@v4
 

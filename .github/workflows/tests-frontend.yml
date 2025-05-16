@@ -10,7 +10,7 @@ env:
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
-    name: Frontend tests
+    name: Frontend tests (Coverage: ${{ env.coverage }}%)
     steps:
       - uses: actions/checkout@v4
 
@@ -51,6 +51,13 @@ jobs:
       - name: Unit tests UI
         timeout-minutes: 30
         run: yarn test:cov --ci --silent
+
+      - name: Extract Coverage Percentage
+        id: extract-coverage
+        run: |
+          COVERAGE=$(cat ./report/coverage/coverage-summary.json | jq '.total.lines.pct')
+          echo "Coverage: $COVERAGE%"
+          echo "coverage=$COVERAGE" >> $GITHUB_ENV
 
       - name: Upload Test Report
         uses: actions/upload-artifact@v4

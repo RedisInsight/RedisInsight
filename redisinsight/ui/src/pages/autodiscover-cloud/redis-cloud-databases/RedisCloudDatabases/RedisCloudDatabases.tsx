@@ -27,6 +27,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Pages } from 'uiSrc/constants'
 import styles from '../styles.module.scss'
 
 export interface Props {

@@ -11,7 +11,7 @@ import {
 import { useLatest } from './hooks'
 import { ResizableContainerContextProvider } from './context'
 import { getPosition, useContainerCallbacks } from './helpers'
-import { useResizeObserver } from '../../utils/observer/resize_observer/resize-observer'
+import { useResizeObserver } from '../../utils'
 
 const initialState: ResizableContainerState = {
   isDragging: false,

@@ -64,7 +64,7 @@ jobs:
       - name: Upload vendor plugins to s3 bucket
         if: steps.download-vendor.outcome == 'success'
         run: |
-          aws s3 cp vendor/ s3://${SELECTED_AWS_BUCKET_NAME}/public/plugins/static/ --recursive
+          aws s3 cp vendor/ s3://${AWS_BUCKET_NAME_TEST}/public/plugins/static/ --recursive
 
       - name: Generate job summary
         run: |

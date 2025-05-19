@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
 import { ResizableButtonProps } from './ResizableButton'
+import { forwardRef } from 'react'
 
 export const resizableCollapseButtonStyles = {
   resizableCollapseButton: css`
@@ -338,10 +339,14 @@ export const resizableButtonStyles = {
   },
 }
 
-export const StyledResizableButton = styled.button<ResizableButtonProps>`
-  ${resizableButtonStyles.euiResizableButton}
-  ${({ isHorizontal = false }) =>
-    isHorizontal
-      ? resizableButtonStyles.horizontal
-      : resizableButtonStyles.vertical}
+const StyledResizableButton = styled.button<ResizableButtonProps>`
+${resizableButtonStyles.euiResizableButton}
+${({ isHorizontal = false }) =>
+  isHorizontal
+    ? resizableButtonStyles.horizontal
+    : resizableButtonStyles.vertical}
 `
+
+export const RawResizableButton = 
+  forwardRef<HTMLButtonElement, React.ComponentPropsWithoutRef<typeof StyledResizableButton>>(
+  (props, ref) => <StyledResizableButton ref={ref} {...props} />)

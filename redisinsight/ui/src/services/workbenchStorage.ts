@@ -315,7 +315,7 @@ async function cleanupDatabaseHistory(dbId: string) {
   const commandsHistory: CommandHistoryType = await getLocalWbHistory(dbId)
   let size = 0
   // collect items up to maxItemsPerDb
-  const update = commandsHistory.reduce((acc, commandsHistoryElement) => {
+  const update = commandsHistory.reverse().reduce((acc, commandsHistoryElement) => {
     if (size >= WORKBENCH_HISTORY_MAX_LENGTH) {
       return acc
     }

@@ -72,6 +72,18 @@ describe('LocalAgreementsRepository', () => {
 
       await expect(service.getOrCreate()).rejects.toThrow(Error);
     });
+    it('should create new agreements with default data when provided and no entity exists', async () => {
+      repository.findOneBy.mockResolvedValueOnce(null);
+      const defaultData = { eula: true, analytics: false };
+
+      await service.getOrCreate({ data: defaultData });
+
+      expect(repository.create).toHaveBeenCalledWith({
+        id: 1,
+        data: JSON.stringify(defaultData),
+      });
+      expect(repository.save).toHaveBeenCalled();
+    });
   });
 
   describe('update', () => {

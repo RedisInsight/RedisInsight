@@ -169,7 +169,7 @@ const SSHDetails = (props: Props) => {
                     id="sshPassword"
                     data-testid="sshPassword"
                     maxLength={10_000}
-                    placeholder="Enter SSH Password1"
+                    placeholder="Enter SSH Password"
                     value={
                       formik.values.sshPassword === true
                         ? SECURITY_FIELD

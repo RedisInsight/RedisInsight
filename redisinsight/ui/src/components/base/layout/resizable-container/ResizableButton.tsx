@@ -1,36 +1,32 @@
 import React, {
-  FunctionComponent,
   ButtonHTMLAttributes,
   MouseEvent,
   useCallback,
   useMemo,
   useRef,
 } from 'react'
-import { EuiI18n } from '@elastic/eui/src/components/i18n/i18n'
-import { useEuiResizableContainerContext } from '@elastic/eui/src/components/resizable_container/context'
-import { StyledResizableButton } from './euiResizableButton.scss'
+import { EuiI18n, htmlIdGenerator } from '@elastic/eui'
 
-import { htmlIdGenerator } from '../../services'
 import {
-  EuiResizableButtonController,
-  EuiResizableButtonMouseEvent,
-  EuiResizableButtonKeyDownEvent,
+  ResizableButtonController,
+  ResizableButtonMouseEvent,
 } from './types'
+import { useResizableContainerContext } from './context'
 
 interface ResizableButtonControls {
-  onKeyDown: (eve: EuiResizableButtonKeyDownEvent) => void
-  onMouseDown: (eve: EuiResizableButtonMouseEvent) => void
-  onTouchStart: (eve: EuiResizableButtonMouseEvent) => void
+  onKeyDown: (eve: ResizableButtonMouseEvent) => void
+  onMouseDown: (eve: ResizableButtonMouseEvent) => void
+  onTouchStart: (eve: ResizableButtonMouseEvent) => void
   onFocus: (id: string) => void
   onBlur: () => void
   registration: {
-    register: (resizer: EuiResizableButtonController) => void
-    deregister: (resizerId: EuiResizableButtonController['id']) => void
+    register: (resizer: ResizableButtonController) => void
+    deregister: (resizerId: ResizableButtonController['id']) => void
   }
   isHorizontal: boolean
 }
 
-export interface EuiResizableButtonProps
+export interface ResizableButtonProps
   extends Omit<
     ButtonHTMLAttributes<HTMLButtonElement>,
     keyof ResizableButtonControls
@@ -39,7 +35,7 @@ export interface EuiResizableButtonProps
 
 const generatePanelId = htmlIdGenerator('resizable-button')
 
-export const EuiResizableButton: FunctionComponent<EuiResizableButtonProps> = ({
+export const ResizableButton = ({
   isHorizontal,
   id,
   registration,
@@ -47,10 +43,10 @@ export const EuiResizableButton: FunctionComponent<EuiResizableButtonProps> = ({
   onFocus,
   onBlur,
   ...rest
-}) => {
+}: ResizableButtonProps) => {
   const resizerId = useRef(id || generatePanelId())
-  const { registry: { resizers } = { resizers: {} } } =
-    useEuiResizableContainerContext()
+  const context = useResizableContainerContext()
+  const resizers = context?.registry?.resizers || {}
   const isDisabled = useMemo(
     () =>
       disabled ||

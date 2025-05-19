@@ -62,7 +62,7 @@ jobs:
           path: vendor
 
       - name: Upload vendor plugins to s3 bucket
-        if: steps.download-vendor.outcome == 'success'
+        if: steps.download-vendor.outcome == 'success' && ${{ inputs.environment != 'production' }}
         run: |
           aws s3 cp vendor/ s3://${AWS_BUCKET_NAME_TEST}/public/plugins/static/ --recursive
 

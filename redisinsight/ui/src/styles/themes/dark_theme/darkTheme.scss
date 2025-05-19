@@ -212,4 +212,7 @@
   // layout
   --hrBackgroundColor: #{var(--euiColorDarkShade)};
   --loadingContentLightestShade: #{var(--euiColorLightestShade)};
+  --resizableButtonShadowOpacity: calc(#{var(--euiShadowColor)} * 3.5);
+  --resizableDarkestShade: #{var(--euiColorDarkestShade)};
+  --resizableBorderColor: #343741;
 }

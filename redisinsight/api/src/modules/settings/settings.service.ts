@@ -58,24 +58,35 @@ export class SettingsService {
     try {
       const settings =
         await this.settingsRepository.getOrCreate(sessionMetadata);
+        
+      let agreements;
+      if (SERVER_CONFIG.acceptTermsAndConditions) {
+        const isEncryptionAvailable = 
+          (await this.keyEncryptionStrategy.isAvailable()) || 
+          (await this.keytarEncryptionStrategy.isAvailable());
+        
+        const defaultOptions = {
+          data: {
+            analytics: false,
+            encryption: isEncryptionAvailable,
+            eula: true,
+            notifications: false,
+          }
+        };
+        
+        agreements = await this.agreementRepository.getOrCreate(
+          defaultOptions
+        );
+      } else {
+        agreements = await this.agreementRepository.getOrCreate();
+      }
+      
       this.logger.debug(
         'Succeed to get application settings.',
         sessionMetadata,
       );
-      if (SERVER_CONFIG.acceptTermsAndConditions) {
-        return classToClass(GetAppSettingsResponse, {
-          ...settings?.data,
-          acceptTermsAndConditionsOverwritten: true,
-          agreements: {
-            analytics: false,
-            encryption: true,
-            eula: true,
-            notifications: false,
-          },
-        });
-      }
-      const agreements =
-        await this.agreementRepository.getOrCreate(sessionMetadata);
+      
+  
       return classToClass(GetAppSettingsResponse, {
         ...settings?.data,
         acceptTermsAndConditionsOverwritten: false,

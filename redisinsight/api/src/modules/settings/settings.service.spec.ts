@@ -111,6 +111,7 @@ describe('SettingsService', () => {
         dateFormat: null,
         timezone: null,
         agreements: null,
+        acceptTermsAndConditionsOverwritten: false,
       });
 
       expect(eventEmitter.emit).not.toHaveBeenCalled();
@@ -124,6 +125,7 @@ describe('SettingsService', () => {
 
       expect(result).toEqual({
         ...mockSettings.data,
+        acceptTermsAndConditionsOverwritten: false,
         agreements: {
           version: mockAgreements.version,
           ...mockAgreements.data,
@@ -137,6 +139,7 @@ describe('SettingsService', () => {
         encryption: true,
         eula: true,
         notifications: false,
+        acceptTermsAndConditionsOverwritten: true,
       };
       settingsRepository.getOrCreate.mockResolvedValue(mockSettings);
 

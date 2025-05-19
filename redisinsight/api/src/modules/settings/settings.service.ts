@@ -65,6 +65,7 @@ export class SettingsService {
       if (SERVER_CONFIG.acceptTermsAndConditions) {
         return classToClass(GetAppSettingsResponse, {
           ...settings?.data,
+          acceptTermsAndConditionsOverwritten: true,
           agreements: {
             analytics: false,
             encryption: true,
@@ -77,6 +78,7 @@ export class SettingsService {
         await this.agreementRepository.getOrCreate(sessionMetadata);
       return classToClass(GetAppSettingsResponse, {
         ...settings?.data,
+        acceptTermsAndConditionsOverwritten: false,
         agreements: agreements?.version
           ? {
               ...agreements?.data,

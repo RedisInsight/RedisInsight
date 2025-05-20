@@ -9,7 +9,7 @@ on:
 jobs:
   coverage:
     runs-on: ubuntu-latest
-    name: Frontend tests coverage
+    name: Jest tests coverage
     steps:
       - uses: actions/checkout@v4
 
@@ -34,5 +34,5 @@ jobs:
           base-coverage-file: report/coverage/report.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-step: all
-          custom-title: Code Coverage report for ${{ inputs.resource_name }}
+          custom-title: Code Coverage - ${{ inputs.resource_name == 'report-be' && 'Backend' || 'Frontend' }} unit tests
           # working-directory: ${{ github.workspace }}

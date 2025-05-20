@@ -191,7 +191,42 @@ jobs:
           sudo mkdir -p /usr/src/app
           sudo cp -a ./redisinsight/api/. /usr/src/app/
           sudo cp -R ./coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
-          cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary
+          cd /usr/src/app && npx nyc report -t ./coverages -r text -r text-summary > coverage-summary.txt
+
+      - name: Parse Coverage Summary
+        id: parse-coverage
+        run: |
+          # Extract coverage data from the summary
+          STATEMENTS=$(grep "Statements" coverage-summary.txt | awk '{print $3}')
+          BRANCHES=$(grep "Branches" coverage-summary.txt | awk '{print $3}')
+          FUNCTIONS=$(grep "Functions" coverage-summary.txt | awk '{print $3}')
+          LINES=$(grep "Lines" coverage-summary.txt | awk '{print $3}')
+
+          # Format as a Markdown table
+          echo "| Metric      | Coverage |" > coverage-table.md
+          echo "|-------------|----------|" >> coverage-table.md
+          echo "| Statements  | $STATEMENTS |" >> coverage-table.md
+          echo "| Branches    | $BRANCHES |" >> coverage-table.md
+          echo "| Functions   | $FUNCTIONS |" >> coverage-table.md
+          echo "| Lines       | $LINES |" >> coverage-table.md
+
+          # Output the table for the next step
+          cat coverage-table.md
+          echo "table=$(cat coverage-table.md)" >> $GITHUB_OUTPUT
+
+      - name: Post Coverage Summary as Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const table = process.env.TABLE;
+            github.rest.issues.createComment({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `### Code Coverage - Integration Tests\n\n${table}`
+            });
+          env:
+            TABLE: ${{ steps.parse-coverage.outputs.table }}
 
       - name: Delete Artifact
         uses: actions/github-script@v7

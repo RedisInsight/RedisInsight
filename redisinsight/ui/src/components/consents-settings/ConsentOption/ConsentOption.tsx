@@ -1,9 +1,10 @@
 import React from 'react'
-import { EuiLink, EuiSwitch, EuiText } from '@elastic/eui'
+import { EuiSwitch, EuiText } from '@elastic/eui'
 import parse from 'html-react-parser'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { ItemDescription } from './components'
 import { IConsent } from '../ConsentsSettings'
 
 import styles from '../styles.module.scss'
@@ -27,24 +28,6 @@ const ConsentOption = (props: Props) => {
     linkToPrivacyPolicy = false,
   } = props
 
-  const getText = () => (
-    <>
-      {consent.description && parse(consent.description)}
-      {linkToPrivacyPolicy && (
-        <>
-          <EuiLink
-            external={false}
-            target="_blank"
-            href="https://redis.io/legal/privacy-policy/?utm_source=redisinsight&utm_medium=app&utm_campaign=telemetry"
-          >
-            Privacy Policy
-          </EuiLink>
-          .
-        </>
-      )}
-    </>
-  )
-
   return (
     <FlexItem key={consent.agreementName} grow>
       {isSettingsPage && consent.description && (
@@ -55,7 +38,7 @@ const ConsentOption = (props: Props) => {
             color="subdued"
             style={{ marginTop: '12px' }}
           >
-            {getText()}
+            <ItemDescription description={consent.description} withLink={linkToPrivacyPolicy} />
           </EuiText>
           <Spacer size="m" />
         </>
@@ -83,7 +66,7 @@ const ConsentOption = (props: Props) => {
               color="subdued"
               style={{ marginTop: '12px' }}
             >
-              {getText()}
+              <ItemDescription description={consent.description} withLink={linkToPrivacyPolicy} />
             </EuiText>
           )}
         </FlexItem>

@@ -4,7 +4,6 @@ import {
   EuiText,
   EuiTourStep,
   EuiButtonEmpty,
-  EuiButton,
   EuiButtonIcon,
 } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
@@ -15,6 +14,10 @@ import {
   setOnboardNextStep,
   setOnboardPrevStep,
 } from 'uiSrc/slices/app/features'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { Props as OnboardingWrapperProps } from './OnboardingTourWrapper'
 
 import styles from './styles.module.scss'
@@ -116,25 +119,22 @@ const OnboardingTour = (props: Props) => {
         </EuiText>
         <div className={styles.backNext}>
           {currentStep > 1 && (
-            <EuiButton
+            <SecondaryButton
               onClick={handleClickBack}
-              color="secondary"
               size="s"
               data-testid="back-btn"
             >
               Back
-            </EuiButton>
+            </SecondaryButton>
           )}
-          <EuiButton
+          <PrimaryButton
             onClick={handleClickNext}
-            color="secondary"
             size="s"
-            fill
             data-testid="next-btn"
             style={{ marginLeft: 8 }}
           >
             {!isLastStep ? 'Next' : 'Take me back'}
-          </EuiButton>
+          </PrimaryButton>
         </div>
       </div>
     </>

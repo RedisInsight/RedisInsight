@@ -17,7 +17,3 @@ export type SecondaryButtonProps = ButtonProps & {
   filled?: boolean
   inverted?: boolean
 }
-export type OutlineButtonProps = Omit<
-  SecondaryButtonProps,
-  'filled' | 'inverted'
->

@@ -1,7 +1,8 @@
-import { EuiButton, EuiPopover, EuiText } from '@elastic/eui'
+import { EuiPopover, EuiText } from '@elastic/eui'
 import React from 'react'
 
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -43,18 +44,15 @@ const PopoverRunAnalyze = (props: Props) => {
           {popoverContent}
         </EuiText>
         <Spacer size="m" />
-        <EuiButton
+        <PrimaryButton
           aria-label="Analyze"
-          fill
           data-testid="approve-insights-db-analysis-btn"
-          color="secondary"
-          iconSide="left"
           onClick={onApproveClick}
           size="s"
           className={styles.popoverApproveBtn}
         >
           Analyze
-        </EuiButton>
+        </PrimaryButton>
       </div>
     </EuiPopover>
   )

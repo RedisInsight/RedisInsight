@@ -1,7 +1,6 @@
 import { isEmpty } from 'lodash'
 import React, { ChangeEvent, useState } from 'react'
 import {
-  EuiButton,
   EuiFieldText,
   EuiForm,
   EuiFormRow,
@@ -13,6 +12,11 @@ import { validateEmail, validateField } from 'uiSrc/utils'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -71,17 +75,15 @@ const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
         ) : null
       }
     >
-      <EuiButton
-        fill
+      <PrimaryButton
         size="s"
-        color="secondary"
         type="submit"
         disabled={disabled}
-        iconType={disabled ? 'iInCircle' : undefined}
+        icon={disabled ? InfoIcon : undefined}
         data-testid="btn-submit"
       >
         {text}
-      </EuiButton>
+      </PrimaryButton>
     </EuiToolTip>
   )
 
@@ -114,15 +116,14 @@ const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
         <Spacer />
         <Row justify="end">
           <FlexItem>
-            <EuiButton
-              color="secondary"
+            <SecondaryButton
               type="button"
               size="s"
               onClick={onBack}
               data-testid="btn-back"
             >
               Back
-            </EuiButton>
+            </SecondaryButton>
           </FlexItem>
           <FlexItem>
             <SubmitButton text="Login" disabled={submitIsDisabled()} />

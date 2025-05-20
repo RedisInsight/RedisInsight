@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo } from 'react'
-import { EuiButton } from '@elastic/eui'
 import { Maybe } from 'uiSrc/utils'
+import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
+import { DownloadIcon } from 'uiSrc/components/base/icons'
+import { Link } from 'uiSrc/components/base/link/Link'
 import { RedisString } from 'apiSrc/common/constants'
 
 export interface BulkDeleteSummaryButtonProps {
@@ -16,6 +18,7 @@ const BulkDeleteSummaryButton = ({
   pattern,
   deletedKeys,
   keysType,
+  children,
   ...rest
 }: BulkDeleteSummaryButtonProps) => {
   const fileUrl = useMemo(() => {
@@ -37,16 +40,17 @@ const BulkDeleteSummaryButton = ({
   )
 
   return (
-    <EuiButton
-      size="s"
-      download={getFileName()}
+    <SecondaryButton
       color="secondary"
-      iconType="download"
+      icon={DownloadIcon}
       iconSide="left"
-      href={fileUrl}
       data-testid="download-bulk-delete-report"
       {...rest}
-    />
+    >
+      <Link download={getFileName()} href={fileUrl}>
+        {children}
+      </Link>
+    </SecondaryButton>
   )
 }
 

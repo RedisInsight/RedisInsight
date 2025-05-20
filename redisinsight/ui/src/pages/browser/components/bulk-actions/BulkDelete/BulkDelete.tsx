@@ -61,7 +61,7 @@ const BulkDelete = (props: Props) => {
           >
             <BulkDeleteSummary />
 
-            {isCompleted && (
+            {true && (
               <div className={styles.bulkDeleteSummaryButtonWrapper}>
                 <BulkDeleteSummaryButton
                   deletedKeys={deletedKeys}

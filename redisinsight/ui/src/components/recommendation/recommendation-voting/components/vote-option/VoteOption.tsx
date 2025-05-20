@@ -2,7 +2,6 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
-  EuiButton,
   EuiButtonIcon,
   EuiText,
   EuiIcon,
@@ -24,6 +23,7 @@ import PetardIcon from 'uiSrc/assets/img/icons/petard.svg?react'
 import GithubSVG from 'uiSrc/assets/img/icons/github-white.svg?react'
 
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { getVotedText, voteTooltip, iconType } from './utils'
 import styles from './styles.module.scss'
 
@@ -154,12 +154,10 @@ const VoteOption = (props: Props) => {
             </Row>
           </FlexItem>
           <FlexItem grow>
-            <EuiButton
+            <PrimaryButton
               aria-label="recommendation feedback"
-              fill
               data-testid="recommendation-feedback-btn"
               className={styles.feedbackBtn}
-              color="secondary"
               size="s"
             >
               <EuiLink
@@ -177,7 +175,7 @@ const VoteOption = (props: Props) => {
                 />
                 To Github
               </EuiLink>
-            </EuiButton>
+            </PrimaryButton>
           </FlexItem>
         </Col>
       </div>

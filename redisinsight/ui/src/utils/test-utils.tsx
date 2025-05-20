@@ -11,6 +11,8 @@ import {
   waitFor,
 } from '@testing-library/react'
 
+import { ThemeProvider } from 'styled-components'
+import { themeLight } from '@redis-ui/styles'
 import { RootState, store as rootStore } from 'uiSrc/slices/store'
 import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
 import { initialState as initialStateTags } from 'uiSrc/slices/instances/tags'
@@ -173,7 +175,9 @@ const render = (
   }: Options = initialStateDefault,
 ) => {
   const Wrapper = ({ children }: { children: JSX.Element }) => (
-    <Provider store={store}>{children}</Provider>
+    <ThemeProvider theme={themeLight}>
+      <Provider store={store}>{children}</Provider>
+    </ThemeProvider>
   )
 
   const wrapper = !withRouter ? Wrapper : BrowserRouter

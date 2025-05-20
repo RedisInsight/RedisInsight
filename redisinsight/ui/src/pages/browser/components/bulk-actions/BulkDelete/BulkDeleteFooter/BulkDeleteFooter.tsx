@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiButton, EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
@@ -20,6 +20,12 @@ import { BulkActionsType } from 'uiSrc/constants'
 import { getRangeForNumber, BULK_THRESHOLD_BREAKPOINTS } from 'uiSrc/utils'
 
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
+import {
+  DestructiveButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { RefreshIcon } from 'uiSrc/components/base/icons'
 import BulkDeleteContent from '../BulkDeleteContent'
 import { isProcessedBulkAction } from '../../utils'
 
@@ -90,24 +96,22 @@ const BulkDeleteFooter = (props: Props) => {
       {status && <BulkDeleteContent />}
       <div className={styles.footer}>
         {!loading && (
-          <EuiButton
-            color="secondary"
+          <SecondaryButton
             onClick={handleCancel}
             className={styles.cancelBtn}
             data-testid="bulk-action-cancel-btn"
           >
             {isProcessedBulkAction(status) ? 'Close' : 'Cancel'}
-          </EuiButton>
+          </SecondaryButton>
         )}
         {loading && (
-          <EuiButton
-            color="secondary"
+          <SecondaryButton
             onClick={handleStop}
             className={styles.cancelBtn}
             data-testid="bulk-action-stop-btn"
           >
             Stop
-          </EuiButton>
+          </SecondaryButton>
         )}
 
         {!isProcessedBulkAction(status) && (
@@ -119,16 +123,14 @@ const BulkDeleteFooter = (props: Props) => {
             panelClassName={styles.panelPopover}
             panelPaddingSize="none"
             button={
-              <EuiButton
-                fill
-                color="secondary"
-                isLoading={loading}
+              <PrimaryButton
+                loading={loading}
                 disabled={loading}
                 onClick={handleDeleteWarning}
                 data-testid="bulk-action-warning-btn"
               >
                 Delete
-              </EuiButton>
+              </PrimaryButton>
             }
           >
             <EuiText
@@ -143,29 +145,25 @@ const BulkDeleteFooter = (props: Props) => {
               <div className={styles.popoverItem}>
                 {`All keys with ${filter ? filter?.toUpperCase() : 'all'} key type and selected pattern will be deleted.`}
               </div>
-              <EuiButton
-                fill
+              <DestructiveButton
                 size="s"
-                color="warning"
                 className={styles.deleteApproveBtn}
                 onClick={handleDelete}
                 data-testid="bulk-action-apply-btn"
               >
                 Delete
-              </EuiButton>
+              </DestructiveButton>
             </EuiText>
           </EuiPopover>
         )}
         {isProcessedBulkAction(status) && (
-          <EuiButton
-            fill
-            iconType="refresh"
-            color="secondary"
+          <PrimaryButton
+            icon={RefreshIcon}
             onClick={handleStartNew}
             data-testid="bulk-action-start-again-btn"
           >
             Start New
-          </EuiButton>
+          </PrimaryButton>
         )}
       </div>
     </div>

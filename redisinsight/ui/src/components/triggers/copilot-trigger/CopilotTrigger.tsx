@@ -1,6 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -8,8 +8,9 @@ import {
   toggleSidePanel,
 } from 'uiSrc/slices/panels/sidePanels'
 
-import CopilotIcon from 'uiSrc/assets/img/icons/copilot.svg?react'
+import { CopilotIcon } from 'uiSrc/components/base/icons'
 import { SidePanels } from 'uiSrc/slices/interfaces/insights'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 const CopilotTrigger = () => {
@@ -28,13 +29,10 @@ const CopilotTrigger = () => {
       })}
     >
       <EuiToolTip content="Redis Copilot">
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
+        <EmptyButton
           className={styles.btn}
           role="button"
-          iconType={CopilotIcon}
+          icon={CopilotIcon}
           onClick={handleClickTrigger}
           data-testid="copilot-trigger"
         />

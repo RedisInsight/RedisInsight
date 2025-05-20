@@ -5,7 +5,6 @@ import {
   EuiBasicTableColumn,
   EuiTableSelectionType,
   PropertySort,
-  EuiButton,
   EuiPopover,
   EuiText,
   EuiTitle,
@@ -27,6 +26,12 @@ import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  DestructiveButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -138,14 +143,13 @@ const RedisCloudSubscriptions = ({
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
       button={
-        <EuiButton
+        <SecondaryButton
           onClick={showPopover}
-          color="secondary"
           className="btn-cancel"
           data-testid="btn-cancel"
         >
           Cancel
-        </EuiButton>
+        </SecondaryButton>
       }
     >
       <EuiText size="m">
@@ -156,15 +160,13 @@ const RedisCloudSubscriptions = ({
       </EuiText>
       <br />
       <div>
-        <EuiButton
-          fill
+        <DestructiveButton
           size="s"
-          color="warning"
           onClick={onClose}
           data-testid="btn-cancel-proceed"
         >
           Proceed
-        </EuiButton>
+        </DestructiveButton>
       </div>
     </EuiPopover>
   )
@@ -184,18 +186,16 @@ const RedisCloudSubscriptions = ({
         ) : null
       }
     >
-      <EuiButton
-        fill
+      <PrimaryButton
         size="m"
         disabled={isDisabled}
         onClick={handleSubmit}
-        isLoading={loading}
-        color="secondary"
-        iconType={isDisabled ? 'iInCircle' : undefined}
+        loading={loading}
+        icon={isDisabled ? InfoIcon : undefined}
         data-testid="btn-show-databases"
       >
         Show databases
-      </EuiButton>
+      </PrimaryButton>
     </EuiToolTip>
   )
 
@@ -301,18 +301,21 @@ const RedisCloudSubscriptions = ({
           )}
         </div>
       </div>
-      <div className={cx(styles.footer, 'footerAddDatabase')}>
-        <EuiButton
-          onClick={onBack}
-          color="secondary"
-          className="btn-cancel btn-back"
-          data-testid="btn-back-adding"
-        >
-          Back to adding databases
-        </EuiButton>
-        <CancelButton isPopoverOpen={isPopoverOpen} />
-        <SubmitButton isDisabled={selection.length < 1} />
-      </div>
+      <FlexItem padding={4}>
+        <Row gap="m" justify="between">
+          <SecondaryButton
+            onClick={onBack}
+            className="btn-cancel btn-back"
+            data-testid="btn-back-adding"
+          >
+            Back to adding databases
+          </SecondaryButton>
+          <FlexItem direction="row">
+            <CancelButton isPopoverOpen={isPopoverOpen} />
+            <SubmitButton isDisabled={selection.length < 1} />
+          </FlexItem>
+        </Row>
+      </FlexItem>
     </AutodiscoveryPageTemplate>
   )
 }

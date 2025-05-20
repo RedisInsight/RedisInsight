@@ -91,7 +91,7 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
           </OnboardingTour>
         </FlexItem>
         {isStarted && (
-          <FlexItem $direction="row" className={styles.actions}>
+          <FlexItem direction="row" className={styles.actions}>
             <EuiToolTip
               content={
                 isErrorShown || isResumeLocked

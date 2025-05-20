@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { EuiButton, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiText, EuiTitle } from '@elastic/eui'
 
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
 import {
@@ -27,6 +27,7 @@ import { useCapability } from 'uiSrc/services'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import {
   MODULE_CAPABILITY_TEXT_NOT_AVAILABLE,
   MODULE_CAPABILITY_TEXT_NOT_AVAILABLE_ENTERPRISE,
@@ -70,17 +71,15 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
                 {moduleText?.text}
               </EuiText>
               <Spacer size="s" />
-              <EuiButton
-                fill
+              <PrimaryButton
                 size="s"
-                color="secondary"
                 className={styles.btnLink}
                 onClick={() => {
                   history.push(Pages.home)
                 }}
               >
                 Redis Databases page
-              </EuiButton>
+              </PrimaryButton>
             </>
           }
         >

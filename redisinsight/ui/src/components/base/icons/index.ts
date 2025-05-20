@@ -1,7 +1,7 @@
 export { BannedIcon } from './BannedIcon'
 export { BulkActions } from './BulkActions'
 export { Cloud } from './Cloud'
-export { Copilot } from './Copilot'
+export { CopilotIcon } from './Copilot'
 export { ExtendIcon } from './ExtendIcon'
 export { Github } from './Github'
 export { Group as GroupModeIcon } from './Group'
@@ -23,4 +23,9 @@ export { Trigger } from './Trigger'
 export { UserInCircle } from './UserInCircle'
 
 export * from '@redis-ui/icons'
-export { LoaderLargeIcon } from '@redis-ui/icons/multicolor'
+export {
+  LoaderLargeIcon,
+  AzureIcon,
+  Awss3Icon,
+  GooglecloudIcon,
+} from '@redis-ui/icons/multicolor'

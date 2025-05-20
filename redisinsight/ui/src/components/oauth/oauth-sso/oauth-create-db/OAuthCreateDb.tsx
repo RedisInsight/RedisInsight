@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiButton, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiText, EuiTitle } from '@elastic/eui'
 import {
   createFreeDbJob,
   fetchPlans,
@@ -30,6 +30,7 @@ import { Nullable } from 'uiSrc/utils'
 import OAuthForm from 'uiSrc/components/oauth/shared/oauth-form'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import {
   OAuthAdvantages,
   OAuthAgreement,
@@ -158,14 +159,12 @@ const OAuthCreateDb = (props: Props) => {
                 onChange={handleChangeRecommendedSettings}
               />
               <Spacer />
-              <EuiButton
-                fill
-                color="secondary"
+              <PrimaryButton
                 onClick={handleClickCreate}
                 data-testid="oauth-create-db"
               >
                 Create
-              </EuiButton>
+              </PrimaryButton>
             </>
           )}
         </FlexItem>

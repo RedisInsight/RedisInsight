@@ -5,7 +5,6 @@ import {
   EuiBasicTableColumn,
   EuiTableSelectionType,
   PropertySort,
-  EuiButton,
   EuiPopover,
   EuiText,
   EuiTitle,
@@ -21,6 +20,12 @@ import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  DestructiveButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
 import styles from '../../../styles.module.scss'
 
 export interface Props {
@@ -127,14 +132,14 @@ const SentinelDatabases = ({
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
       button={
-        <EuiButton
+        <SecondaryButton
           onClick={showPopover}
           color="secondary"
           className="btn-cancel"
           data-testid="btn-cancel"
         >
           Cancel
-        </EuiButton>
+        </SecondaryButton>
       }
     >
       <EuiText size="m">
@@ -145,15 +150,13 @@ const SentinelDatabases = ({
       </EuiText>
       <br />
       <div>
-        <EuiButton
-          fill
+        <DestructiveButton
           size="s"
-          color="warning"
           onClick={onClose}
           data-testid="btn-cancel-proceed"
         >
           Proceed
-        </EuiButton>
+        </DestructiveButton>
       </div>
     </EuiPopover>
   )
@@ -184,18 +187,16 @@ const SentinelDatabases = ({
           ) : null
         }
       >
-        <EuiButton
-          fill
-          color="secondary"
+        <PrimaryButton
           type="submit"
           onClick={onClick}
           disabled={isSubmitDisabled()}
-          isLoading={loading}
-          iconType={isSubmitDisabled() ? 'iInCircle' : undefined}
+          loading={loading}
+          icon={isSubmitDisabled() ? InfoIcon : undefined}
           data-testid="btn-add-primary-group"
         >
           Add Primary Group
-        </EuiButton>
+        </PrimaryButton>
       </EuiToolTip>
     )
   }
@@ -252,18 +253,24 @@ const SentinelDatabases = ({
           )}
         </div>
       </div>
-      <div className={cx(styles.footer, 'footerAddDatabase')}>
-        <EuiButton
-          onClick={onBack}
-          color="secondary"
-          className="btn-cancel btn-back"
-          data-testid="btn-back-to-adding"
+      <FlexItem>
+        <Row
+          justify="between"
+          className={cx(styles.footer, 'footerAddDatabase')}
         >
-          Back to adding databases
-        </EuiButton>
-        <CancelButton isPopoverOpen={isPopoverOpen} />
-        <SubmitButton onClick={handleSubmit} />
-      </div>
+          <SecondaryButton
+            onClick={onBack}
+            className="btn-cancel btn-back"
+            data-testid="btn-back-to-adding"
+          >
+            Back to adding databases
+          </SecondaryButton>
+          <div>
+            <CancelButton isPopoverOpen={isPopoverOpen} />
+            <SubmitButton onClick={handleSubmit} />
+          </div>
+        </Row>
+      </FlexItem>
     </AutodiscoveryPageTemplate>
   )
 }

@@ -14,7 +14,6 @@ import {
 import cx from 'classnames'
 import { map } from 'lodash'
 import { useSelector } from 'react-redux'
-import { InfoIcon } from '@redis-ui/icons'
 import { Maybe } from 'uiSrc/utils'
 import { InstanceRedisCluster } from 'uiSrc/slices/interfaces'
 import { clusterSelector } from 'uiSrc/slices/instances/cluster'
@@ -22,6 +21,7 @@ import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { InfoIcon } from 'uiSrc/components/base/icons'
 import {
   DestructiveButton,
   PrimaryButton,
@@ -218,7 +218,7 @@ const RedisClusterDatabases = ({
           >
             Back to adding databases
           </SecondaryButton>
-          <FlexItem $direction="row" className={styles.footerButtonsGroup}>
+          <FlexItem direction="row" className={styles.footerButtonsGroup}>
             <CancelButton isPopoverOpen={isPopoverOpen} />
             <EuiToolTip
               position="top"

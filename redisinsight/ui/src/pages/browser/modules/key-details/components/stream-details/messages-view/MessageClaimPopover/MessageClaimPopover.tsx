@@ -5,7 +5,6 @@ import {
   EuiSuperSelect,
   EuiSuperSelectOption,
   EuiPopover,
-  EuiButton,
   EuiForm,
   EuiFormRow,
   EuiFieldNumber,
@@ -30,6 +29,10 @@ import {
 } from 'uiSrc/utils/streamUtils'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import {
   ClaimPendingEntryDto,
   ClaimPendingEntriesResponse,
@@ -172,9 +175,8 @@ const MessageClaimPopover = (props: Props) => {
   }, [consumers, currentConsumerName])
 
   const button = (
-    <EuiButton
+    <SecondaryButton
       size="s"
-      color="secondary"
       aria-label="Claim pending message"
       onClick={showPopover}
       data-testid="claim-pending-message"
@@ -182,7 +184,7 @@ const MessageClaimPopover = (props: Props) => {
       disabled={consumerOptions.length < 1}
     >
       CLAIM
-    </EuiButton>
+    </SecondaryButton>
   )
 
   const buttonTooltip = (
@@ -338,24 +340,20 @@ const MessageClaimPopover = (props: Props) => {
             />
           </FlexItem>
           <div>
-            <EuiButton
-              color="secondary"
+            <SecondaryButton
               className={styles.footerBtn}
               onClick={handleCancel}
             >
               Cancel
-            </EuiButton>
-            <EuiButton
-              fill
-              color="secondary"
+            </SecondaryButton>
+            <PrimaryButton
               className={styles.footerBtn}
-              size="m"
               type="submit"
               onClick={() => formik.handleSubmit()}
               data-testid="btn-submit"
             >
               Claim
-            </EuiButton>
+            </PrimaryButton>
           </div>
         </Row>
       </EuiForm>

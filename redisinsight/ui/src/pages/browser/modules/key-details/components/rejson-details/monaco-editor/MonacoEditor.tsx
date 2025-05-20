@@ -39,7 +39,11 @@ const MonacoEditor = (props: BaseProps) => {
   }
 
   return (
-    <div className={styles.jsonData} id="jsonData" data-testid="json-data">
+    <div
+      className={styles.monacoEditorJsonData}
+      id="monaco-editor-json-data"
+      data-testid="monaco-editor-json-data"
+    >
       <Editor
         language="json"
         value={value}

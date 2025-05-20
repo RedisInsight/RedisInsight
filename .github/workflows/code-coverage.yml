@@ -35,4 +35,3 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-step: all
           custom-title: Code Coverage - ${{ inputs.resource_name == 'report-be' && 'Backend' || 'Frontend' }} unit tests
-          # working-directory: ${{ github.workspace }}

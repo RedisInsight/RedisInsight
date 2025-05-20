@@ -1,7 +1,6 @@
 .euiFormControlLayout--group {
   .euiFieldText,
   .euiFieldNumber,
-  .euiFieldPassword,
   .euiSelect,
   .euiSuperSelectControl,
   .euiTextArea {
@@ -29,10 +28,6 @@ input[name='sentinelMasterPassword'] ~ .euiFormControlLayoutIcons,
 input[name='sshPassword'] ~ .euiFormControlLayoutIcons,
 input[name='sshPassphrase'] ~ .euiFormControlLayoutIcons {
   display: none;
-}
-
-.euiFieldPassword.euiFieldPassword--compressed {
-  padding: 8px !important;
 }
 
 .inputAppendIcon.inputAppendIcon {

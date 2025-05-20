@@ -211,6 +211,18 @@ jobs:
           echo "| Functions   | $FUNCTIONS |" >> coverage-table.md
           echo "| Lines       | $LINES |" >> coverage-table.md
 
+      - uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+
+      - name: Debug Event Context
+        run: |
+          echo "Event Name: ${{ github.event_name }}"
+          echo "PR: ${{ context.payload.pull_request.number }}"
+          echo "PR2: ${{ steps.findPr.outputs.number }}
+          echo "Payload: ${{ toJson(github.event) }}"
+          echo "Owner: ${{ context.repo.owner }}"
+          echo "Repo: ${{ context.repo.repo }}"
+
       - name: Post Coverage Summary as Comment
         uses: actions/github-script@v7
         with:
@@ -218,13 +230,13 @@ jobs:
             const fs = require('fs');
             const table = fs.readFileSync('coverage-table.md', 'utf8');
             github.rest.issues.createComment({
-              issue_number: context.payload.pull_request.number,
+              issue_number: process.env.RR_Number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: `### Code Coverage - Integration Tests\n\n${table}`
             });
         env:
-          TABLE: ${{ steps.parse-coverage.outputs.table }}
+          RR_Number: ${{ steps.findPr.outputs.number }}
 
       - name: Delete Artifact
         uses: actions/github-script@v7

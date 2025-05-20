@@ -20,37 +20,19 @@ jobs:
         with:
           skip-backend-deps: '1'
 
-      # - name: Set Permissions for Coverage File
-      #   run: chmod 644 report/coverage/coverage-final.json
-
-      - name: Validate Coverage File
-        run: |
-          echo "Validating coverage-final.json..."
-          cat report/coverage/coverage-final.json
-          jq . report/coverage/coverage-final.json
-
-      - name: Validate Coverage File Working Directory
-        run: |
-          echo "Validating ${{ github.workspace }} coverage-final.json..."
-          cat ${{ github.workspace }}/report/coverage/coverage-final.json
-          jq . ${{ github.workspace }}/report/coverage/coverage-final.json
-
       - name: Debug Coverage File
         run: |
-          echo "Checking if coverage-final.json exists..."
+          echo "Checking if report exists..."
           ls -l report/coverage/
 
       - uses: jwalton/gh-find-current-pr@v1
         id: findPr
 
-      # - name: Enable Debug Logging
-      #   run: echo "ACTIONS_STEP_DEBUG=true" >> $GITHUB_ENV
-
       - uses: ArtiomTr/jest-coverage-report-action@v2
         with:
           prnumber: ${{ steps.findPr.outputs.number }}
-          coverage-file: report/coverage/coverage-final.json
-          base-coverage-file: report/coverage/coverage-final.json
+          coverage-file: report/coverage/report.json
+          base-coverage-file: report/coverage/report.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-step: all
           # working-directory: ${{ github.workspace }}

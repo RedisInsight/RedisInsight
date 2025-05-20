@@ -5,6 +5,7 @@ import {
   mockAgreementsRepository,
   mockAppSettings,
   mockDatabaseDiscoveryService,
+  mockEncryptionService,
   mockEncryptionStrategyInstance,
   mockKeyEncryptionStrategyInstance,
   mockSessionMetadata,
@@ -32,6 +33,7 @@ import { ToggleAnalyticsReason } from 'src/modules/settings/constants/settings';
 import { when } from 'jest-when';
 import { classToClass } from 'src/utils';
 import { GetAppSettingsResponse } from 'src/modules/settings/dto/settings.dto';
+import { EncryptionService } from 'src/modules/encryption/encryption.service';
 
 const REDIS_SCAN_CONFIG = config.get('redis_scan');
 const WORKBENCH_CONFIG = config.get('workbench');
@@ -47,6 +49,7 @@ describe('SettingsService', () => {
   let settingsRepository: MockType<SettingsRepository>;
   let analyticsService: SettingsAnalytics;
   let keytarStrategy: MockType<KeytarEncryptionStrategy>;
+  let encryptionService: MockType<EncryptionService>;
   let eventEmitter: EventEmitter2;
 
   beforeEach(async () => {
@@ -80,6 +83,10 @@ describe('SettingsService', () => {
           useFactory: mockKeyEncryptionStrategyInstance,
         },
         {
+          provide: EncryptionService,
+          useFactory: mockEncryptionService,
+        },
+        {
           provide: EventEmitter2,
           useFactory: () => ({
             emit: jest.fn(),
@@ -95,6 +102,7 @@ describe('SettingsService', () => {
     analyticsService = module.get(SettingsAnalytics);
     service = module.get(SettingsService);
     eventEmitter = module.get(EventEmitter2);
+    encryptionService = module.get(EncryptionService);
   });
 
   describe('getAppSettings', () => {

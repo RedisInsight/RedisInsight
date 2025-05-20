@@ -17,7 +17,7 @@ export class LocalAgreementsRepository extends AgreementsRepository {
 
   async getOrCreate(
     sessionMetadata: SessionMetadata,
-    defaultOptions: DefaultAgreementsOptions = {},
+    defaultOptions: DefaultAgreementsOptions = {}
   ): Promise<Agreements> {
     let entity = await this.repository.findOneBy({});
     if (!entity) {
@@ -30,7 +30,7 @@ export class LocalAgreementsRepository extends AgreementsRepository {
         );
       } catch (e) {
         if (e.code === 'SQLITE_CONSTRAINT') {
-          return this.getOrCreate(sessionMetadata);
+          return this.getOrCreate(sessionMetadata, defaultOptions);
         }
 
         throw e;

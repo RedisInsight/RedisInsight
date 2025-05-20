@@ -46,6 +46,7 @@ export class SettingsService {
     private readonly analytics: SettingsAnalytics,
     private readonly keytarEncryptionStrategy: KeytarEncryptionStrategy,
     private readonly keyEncryptionStrategy: KeyEncryptionStrategy,
+    @Inject(forwardRef(() => EncryptionService))
     private readonly encryptionService: EncryptionService,
     private eventEmitter: EventEmitter2,
   ) {}

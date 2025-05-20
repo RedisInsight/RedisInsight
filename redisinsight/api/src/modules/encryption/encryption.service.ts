@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { KeytarEncryptionStrategy } from 'src/modules/encryption/strategies/keytar-encryption.strategy';
 import { PlainEncryptionStrategy } from 'src/modules/encryption/strategies/plain-encryption.strategy';
 import {
@@ -14,6 +14,7 @@ import { ConstantsProvider } from 'src/modules/constants/providers/constants.pro
 @Injectable()
 export class EncryptionService {
   constructor(
+    @Inject(forwardRef(() => SettingsService))
     private readonly settingsService: SettingsService,
     private readonly keytarEncryptionStrategy: KeytarEncryptionStrategy,
     private readonly plainEncryptionStrategy: PlainEncryptionStrategy,

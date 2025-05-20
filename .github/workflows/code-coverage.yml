@@ -51,4 +51,6 @@ jobs:
           prnumber: ${{ steps.findPr.outputs.number }}
           coverage-file: report/coverage/coverage-final.json
           base-coverage-file: report/coverage/coverage-final.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-step: all
           # working-directory: ${{ github.workspace }}

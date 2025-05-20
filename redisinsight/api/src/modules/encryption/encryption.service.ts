@@ -38,6 +38,14 @@ export class EncryptionService {
   }
 
   /**
+   * Checks if any encryption strategy other than PLAIN is available
+   */
+  async isEncryptionAvailable(): Promise<boolean> {
+    const strategies = await this.getAvailableEncryptionStrategies();
+    return strategies.length > 1 || (strategies.length === 1 && strategies[0] !== EncryptionStrategy.PLAIN);
+  }
+
+  /**
    * Get encryption strategy based on app settings
    * This strategy should be received from app settings but before it should be set by user.
    * As this settings is required we have to block any action that requires explicit user choice

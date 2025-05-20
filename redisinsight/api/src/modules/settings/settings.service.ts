@@ -30,6 +30,7 @@ import {
   GetAppSettingsResponse,
   UpdateSettingsDto,
 } from './dto/settings.dto';
+import { EncryptionService } from '../encryption/encryption.service';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
@@ -45,6 +46,7 @@ export class SettingsService {
     private readonly analytics: SettingsAnalytics,
     private readonly keytarEncryptionStrategy: KeytarEncryptionStrategy,
     private readonly keyEncryptionStrategy: KeyEncryptionStrategy,
+    private readonly encryptionService: EncryptionService,
     private eventEmitter: EventEmitter2,
   ) {}
 
@@ -61,9 +63,7 @@ export class SettingsService {
 
       let defaultOptions: object;
       if (SERVER_CONFIG.acceptTermsAndConditions) {
-        const isEncryptionAvailable =
-          (await this.keyEncryptionStrategy.isAvailable()) ||
-          (await this.keytarEncryptionStrategy.isAvailable());
+        const isEncryptionAvailable = await this.encryptionService.isEncryptionAvailable();          
 
         defaultOptions = {
           data: {

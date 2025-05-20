@@ -225,8 +225,8 @@ jobs:
               repo: context.repo.repo,
               body: `### Code Coverage - Integration Tests\n\n${table}`
             });
-          env:
-            TABLE: ${{ steps.parse-coverage.outputs.table }}
+        env:
+          TABLE: ${{ steps.parse-coverage.outputs.table }}
 
       - name: Delete Artifact
         uses: actions/github-script@v7

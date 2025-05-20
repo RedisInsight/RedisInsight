@@ -4,6 +4,7 @@ import parse from 'html-react-parser'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { ItemDescription } from './components'
 import { IConsent } from '../ConsentsSettings'
 
 import styles from '../styles.module.scss'
@@ -14,6 +15,7 @@ interface Props {
   checked: boolean
   isSettingsPage?: boolean
   withoutSpacer?: boolean
+  linkToPrivacyPolicy?: boolean
 }
 
 const ConsentOption = (props: Props) => {
@@ -23,7 +25,9 @@ const ConsentOption = (props: Props) => {
     checked,
     isSettingsPage = false,
     withoutSpacer = false,
+    linkToPrivacyPolicy = false,
   } = props
+
   return (
     <FlexItem key={consent.agreementName} grow>
       {isSettingsPage && consent.description && (
@@ -34,7 +38,7 @@ const ConsentOption = (props: Props) => {
             color="subdued"
             style={{ marginTop: '12px' }}
           >
-            {parse(consent.description)}
+            <ItemDescription description={consent.description} withLink={linkToPrivacyPolicy} />
           </EuiText>
           <Spacer size="m" />
         </>
@@ -62,7 +66,7 @@ const ConsentOption = (props: Props) => {
               color="subdued"
               style={{ marginTop: '12px' }}
             >
-              {parse(consent.description)}
+              <ItemDescription description={consent.description} withLink={linkToPrivacyPolicy} />
             </EuiText>
           )}
         </FlexItem>

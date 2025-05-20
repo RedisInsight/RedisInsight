@@ -1,6 +1,10 @@
 name: 'Code Coverage'
 on:
   workflow_call:
+    inputs:
+      resource_name:
+        description: Resource name of report folder
+        type: string
 
 jobs:
   coverage:
@@ -12,18 +16,13 @@ jobs:
       - name: Download Coverage Report
         uses: actions/download-artifact@v4
         with:
-          name: report-fe
+          name: ${{ inputs.resource_name }}
           path: report
 
       - name: Install all libs and dependencies
         uses: ./.github/actions/install-all-build-libs
         with:
           skip-backend-deps: '1'
-
-      - name: Debug Coverage File
-        run: |
-          echo "Checking if report exists..."
-          ls -l report/coverage/
 
       - uses: jwalton/gh-find-current-pr@v1
         id: findPr
@@ -35,4 +34,5 @@ jobs:
           base-coverage-file: report/coverage/report.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-step: all
+          custom-title: Code Coverage report for ${{ inputs.resource_name }}
           # working-directory: ${{ github.workspace }}

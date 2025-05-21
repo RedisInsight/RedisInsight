@@ -197,19 +197,39 @@ jobs:
       - name: Parse Coverage Summary
         id: parse-coverage
         run: |
-          # Extract coverage data from the summary and remove any trailing newlines
-          STATEMENTS=$(grep "Statements" coverage-summary.txt | awk '{print $3}' | tr -d '\n')
-          BRANCHES=$(grep "Branches" coverage-summary.txt | awk '{print $3}' | tr -d '\n')
-          FUNCTIONS=$(grep "Functions" coverage-summary.txt | awk '{print $3}' | tr -d '\n')
-          LINES=$(grep "Lines" coverage-summary.txt | awk '{print $3}' | tr -d '\n')
+          # Extract coverage data from the summary
+          STATEMENTS_PERCENT=$(grep "Statements" coverage-summary.txt | awk '{print $3}' | tr -d '\n' | tr -d '%')
+          STATEMENTS_COVERED=$(grep "Statements" coverage-summary.txt | awk '{print $4}' | tr -d '\n' | tr -d '()')
+          BRANCHES_PERCENT=$(grep "Branches" coverage-summary.txt | awk '{print $3}' | tr -d '\n' | tr -d '%')
+          BRANCHES_COVERED=$(grep "Branches" coverage-summary.txt | awk '{print $4}' | tr -d '\n' | tr -d '()')
+          FUNCTIONS_PERCENT=$(grep "Functions" coverage-summary.txt | awk '{print $3}' | tr -d '\n' | tr -d '%')
+          FUNCTIONS_COVERED=$(grep "Functions" coverage-summary.txt | awk '{print $4}' | tr -d '\n' | tr -d '()')
+          LINES_PERCENT=$(grep "Lines" coverage-summary.txt | awk '{print $3}' | tr -d '\n' | tr -d '%')
+          LINES_COVERED=$(grep "Lines" coverage-summary.txt | awk '{print $4}' | tr -d '\n' | tr -d '()')
+
+          # Determine status based on percentage
+          get_status() {
+            if [ "$1" -lt 50 ]; then
+              echo "🔴"
+            elif [ "$1" -lt 80 ]; then
+              echo "🟡"
+            else
+              echo "🟢"
+            fi
+          }
+
+          STATEMENTS_STATUS=$(get_status $STATEMENTS_PERCENT)
+          BRANCHES_STATUS=$(get_status $BRANCHES_PERCENT)
+          FUNCTIONS_STATUS=$(get_status $FUNCTIONS_PERCENT)
+          LINES_STATUS=$(get_status $LINES_PERCENT)
 
           # Format as a Markdown table
-          echo "| Category    | Percentage  |" > coverage-table.md
-          echo "|-------------|-------------|" >> coverage-table.md
-          echo "| Statements  | $STATEMENTS |" >> coverage-table.md
-          echo "| Branches    | $BRANCHES |" >> coverage-table.md
-          echo "| Functions   | $FUNCTIONS |" >> coverage-table.md
-          echo "| Lines       | $LINES |" >> coverage-table.md
+          echo "| Status      | Category    | Percentage  | Covered/Total |" > coverage-table.md
+          echo "|-------------|-------------|-------------|---------------|" >> coverage-table.md
+          echo "| $STATEMENTS_STATUS | Statements  | ${STATEMENTS_PERCENT}% | $STATEMENTS_COVERED |" >> coverage-table.md
+          echo "| $BRANCHES_STATUS | Branches    | ${BRANCHES_PERCENT}% | $BRANCHES_COVERED |" >> coverage-table.md
+          echo "| $FUNCTIONS_STATUS | Functions   | ${FUNCTIONS_PERCENT}% | $FUNCTIONS_COVERED |" >> coverage-table.md
+          echo "| $LINES_STATUS | Lines       | ${LINES_PERCENT}% | $LINES_COVERED |" >> coverage-table.md
 
       - uses: jwalton/gh-find-current-pr@v1
         id: findPr

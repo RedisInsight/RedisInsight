@@ -100,6 +100,7 @@ jobs:
     secrets: inherit
     with:
       resource_name: report-fe
+      type: unit
 
   backend-tests:
     needs: changes
@@ -123,6 +124,14 @@ jobs:
       short_rte_list: ${{ inputs.short_rte_list || true }}
       redis_client: ${{ inputs.redis_client || '' }}
       debug: ${{ inputs.debug || false }}
+
+  integration-tests-coverage:
+    needs: integration-tests
+    uses: ./.github/workflows/code-coverage.yml
+    secrets: inherit
+    with:
+      resource_name: integration-coverage
+      type: integration
 
   # # E2E Approve
   e2e-approve:

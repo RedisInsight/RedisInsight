@@ -21,7 +21,7 @@ const Group = ({
   if (maxWidth) {
     newStyle = {
       ...newStyle,
-      maxWidth: maxWidth === true ? MAX_FORM_WIDTH - 1 : maxWidth,
+      maxWidth: maxWidth === true ? MAX_FORM_WIDTH : maxWidth,
     }
   }
   const classes = classNames(ListClassNames.listGroup, className)

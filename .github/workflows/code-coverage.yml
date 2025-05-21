@@ -19,11 +19,6 @@ jobs:
           name: ${{ inputs.resource_name }}
           path: report
 
-      - name: Install all libs and dependencies
-        uses: ./.github/actions/install-all-build-libs
-        with:
-          skip-backend-deps: '1'
-
       - uses: jwalton/gh-find-current-pr@v1
         id: findPr
 

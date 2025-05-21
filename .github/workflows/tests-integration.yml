@@ -197,15 +197,15 @@ jobs:
       - name: Parse Coverage Summary
         id: parse-coverage
         run: |
-          # Extract coverage data from the summary
-          STATEMENTS=$(grep "Statements" coverage-summary.txt | awk '{print $3}')
-          BRANCHES=$(grep "Branches" coverage-summary.txt | awk '{print $3}')
-          FUNCTIONS=$(grep "Functions" coverage-summary.txt | awk '{print $3}')
-          LINES=$(grep "Lines" coverage-summary.txt | awk '{print $3}')
+          # Extract coverage data from the summary and remove any trailing newlines
+          STATEMENTS=$(grep "Statements" coverage-summary.txt | awk '{print $3}' | tr -d '\n')
+          BRANCHES=$(grep "Branches" coverage-summary.txt | awk '{print $3}' | tr -d '\n')
+          FUNCTIONS=$(grep "Functions" coverage-summary.txt | awk '{print $3}' | tr -d '\n')
+          LINES=$(grep "Lines" coverage-summary.txt | awk '{print $3}' | tr -d '\n')
 
           # Format as a Markdown table
-          echo "| Metric      | Coverage |" > coverage-table.md
-          echo "|-------------|----------|" >> coverage-table.md
+          echo "| Category    | Percentage  |" > coverage-table.md
+          echo "|-------------|-------------|" >> coverage-table.md
           echo "| Statements  | $STATEMENTS |" >> coverage-table.md
           echo "| Branches    | $BRANCHES |" >> coverage-table.md
           echo "| Functions   | $FUNCTIONS |" >> coverage-table.md

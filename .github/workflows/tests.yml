@@ -114,6 +114,7 @@ jobs:
     secrets: inherit
     with:
       resource_name: report-be
+      type: unit
 
   integration-tests:
     needs: changes

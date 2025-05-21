@@ -5,15 +5,14 @@ on:
       type:
         description: Type of report (unit or integration)
         type: string
-        default: unit
       resource_name:
-        description: Resource name of report folder
+        description: Resource name of coverage report
         type: string
 
 jobs:
   coverage-unit:
     runs-on: ubuntu-latest
-    name: Jest tests coverage
+    name: Unit tests coverage
     if: ${{ inputs.type == 'unit' }}
     steps:
       - uses: actions/checkout@v4
@@ -38,7 +37,7 @@ jobs:
 
   coverage-integration:
     runs-on: ubuntu-latest
-    name: Jest tests coverage
+    name: Integration tests coverage
     if: ${{ inputs.type == 'integration' }}
     steps:
       - uses: actions/checkout@v4
@@ -51,7 +50,10 @@ jobs:
       - name: Parse Coverage Summary
         id: parse-coverage
         run: |
-          # Define a reusable function to extract coverage data
+          # Extract coverage data from file.
+          # Example of processed row:
+          #   Statements   : 81.75% ( 16130/19730 )
+          # field '$3' = 81.75%, field '$5' = 16130
           extract_coverage_data() {
               local keyword=$1
               local field=$2

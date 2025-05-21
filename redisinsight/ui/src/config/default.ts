@@ -47,7 +47,7 @@ export const defaultConfig = {
   },
   app: {
     version: packageJson.version,
-    sha: process.env.GIT_SHA,
+    sha: process.env.GITHUB_SHA,
     env: process.env.NODE_ENV,
     type: process.env.RI_APP_TYPE,
     resourcesBaseUrl: process.env.RI_RESOURCES_BASE_URL ?? apiUrl, // todo: no usage found

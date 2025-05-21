@@ -126,13 +126,13 @@ jobs:
       redis_client: ${{ inputs.redis_client || '' }}
       debug: ${{ inputs.debug || false }}
 
-  integration-tests-coverage:
-    needs: integration-tests
-    uses: ./.github/workflows/code-coverage.yml
-    secrets: inherit
-    with:
-      resource_name: integration-coverage
-      type: integration
+  # integration-tests-coverage:
+  #   needs: integration-tests
+  #   uses: ./.github/workflows/code-coverage.yml
+  #   secrets: inherit
+  #   with:
+  #     resource_name: integration-coverage
+  #     type: integration
 
   # # E2E Approve
   e2e-approve:

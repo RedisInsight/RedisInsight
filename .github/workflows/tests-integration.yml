@@ -206,7 +206,7 @@ jobs:
           sudo mkdir -p /usr/src/app
           sudo cp -a ./redisinsight/api/. /usr/src/app/
           sudo cp -R ./coverages /usr/src/app && sudo chmod 777 -R /usr/src/app
-          cd /usr/src/app && npx nyc report -t ./coverages -r json
+          cd /usr/src/app && npx nyc report -t ./coverages -r json-summary -r json --report-dir=./coverages
           cp -r ./coverages $GITHUB_WORKSPACE
 
       - name: Upload integration-coverage as artifact

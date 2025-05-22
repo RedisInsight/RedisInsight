@@ -31,10 +31,6 @@ $breakpoint-to-hide-resize-panel: 1280px;
   display: none;
 }
 
-.noVisible {
-  visibility: hidden;
-}
-
 .resizePanelLeft {
   min-width: 600px;
   :global(.euiResizablePanel__content) {
@@ -115,8 +111,15 @@ $breakpoint-to-hide-resize-panel: 1280px;
 }
 
 .panelGroup {
-  .hidden {
-    visibility: hidden;
+  .panel {
+    .noVisible{
+      visibility: hidden;
+    }
+
+    .fullWidth {
+      width: 100% !important;
+      min-width: 100% !important;
+    }
   }
 
   .panelSeparator {

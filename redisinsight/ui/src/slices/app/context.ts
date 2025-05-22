@@ -81,7 +81,7 @@ export const initialState: StateAppContext = {
       isNotRendered: true,
       selectedKey: null,
     },
-    panelSizes: {},
+    panelSizes: [],
     tree: {
       openNodes: {},
       selectedLeaf: null,

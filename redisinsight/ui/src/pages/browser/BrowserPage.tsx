@@ -119,9 +119,9 @@ const BrowserPage = () => {
     // componentWillUnmount
     return () => {
       globalThis.removeEventListener('resize', updateWindowDimensions)
-      setSizes((prevSizes: any) => {
+      setSizes((prevSizes: number[]) => {
         dispatch(setBrowserPanelSizes(prevSizes))
-        return {}
+        return []
       })
       dispatch(setBrowserBulkActionOpen(isBulkActionsPanelOpenRef.current))
       dispatch(setBrowserSelectedKey(selectedKeyRef.current))
@@ -306,9 +306,9 @@ const BrowserPage = () => {
         />
       </div>
       <div className={cx(styles.main)}>
-        <PanelGroup className={styles.panelGroup} direction="horizontal">
+        <PanelGroup className={styles.panelGroup} direction="horizontal" onLayout={onPanelWidthChange}>
           <Panel
-            defaultSize={50}
+            defaultSize={sizes && sizes[0] ? sizes[0] : 50}
             minSize={45}
             id={firstPanelId}
             className={cx({
@@ -326,7 +326,7 @@ const BrowserPage = () => {
             <PanelResizeHandle className={styles.panelSeparator} />
           )}
           <Panel
-            defaultSize={50}
+            defaultSize={sizes && sizes[1] ? sizes[1] : 50}
             minSize={45}
             id={secondPanelId}
             className={cx({

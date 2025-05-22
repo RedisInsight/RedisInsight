@@ -13,6 +13,7 @@ $breakpoint-to-hide-resize-panel: 1280px;
   flex-grow: 1;
   padding: 0 16px;
   overflow: hidden;
+  position: relative;
 }
 
 .resizableButton {
@@ -110,5 +111,19 @@ $breakpoint-to-hide-resize-panel: 1280px;
 
   &:hover {
     color: var(--buttonSecondaryTextColor) !important
+  }
+}
+
+.panelGroup {
+  .hidden {
+    visibility: hidden;
+  }
+
+  .panelSeparator {
+    background-color: var(--separatorColor);
+    width: 16px;
+    z-index: 10;
+    content: '';
+    display: block;
   }
 }

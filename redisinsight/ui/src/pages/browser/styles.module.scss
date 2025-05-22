@@ -89,10 +89,6 @@ $breakpoint-to-hide-resize-panel: 1280px;
   }
 
   .panelSeparator {
-    background-color: var(--separatorColor);
     width: 16px;
-    z-index: 10;
-    content: '';
-    display: block;
   }
 }

@@ -92,7 +92,7 @@ describe('InstancePage', () => {
       contextRdiInstanceId: '',
     })
 
-    await act(async () => {
+    await act(async () =>
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
@@ -151,7 +151,7 @@ describe('InstancePage', () => {
     })
 
     // this MUST be awaited, in order for all effects to happen and all actions to be dispatched
-    await act(async () => {
+    await act(async () =>
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />

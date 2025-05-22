@@ -1,4 +1,6 @@
 /* eslint-disable max-len */
+import { numberWithSpaces } from 'src/utils/base.helper';
+
 export default {
   UNAUTHORIZED: 'Authorization failed',
   FORBIDDEN: 'Access denied',
@@ -102,8 +104,10 @@ export default {
     `Required ${module} module is not loaded.`,
   APP_SETTINGS_NOT_FOUND: () => 'Could not find application settings.',
   SERVER_INFO_NOT_FOUND: () => 'Could not find server info.',
-  INCREASE_MINIMUM_LIMIT: (count: string) =>
-    `Set MAXSEARCHRESULTS to at least ${count}.`,
+  INCREASE_MINIMUM_LIMIT: (count: number) =>
+    count
+      ? `Set MAXSEARCHRESULTS to at least ${numberWithSpaces(count)}.`
+      : 'Increase MAXSEARCHRESULTS value to search more.',
   INVALID_WINDOW_ID: 'Invalid window id.',
   UNDEFINED_WINDOW_ID: 'Undefined window id.',
   LIBRARY_NOT_EXIST: 'This library does not exist.',

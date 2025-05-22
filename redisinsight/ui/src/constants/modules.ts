@@ -19,7 +19,7 @@ import {
   RedisSearchLightIcon,
   RedisTimeSeriesDarkIcon,
   RedisTimeSeriesLightIcon,
-} from 'uiSrc/components/base/icons/modules'
+} from 'uiSrc/components/base/icons'
 
 const rediSearchIcons = {
   iconDark: RedisSearchDarkIcon,

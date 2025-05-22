@@ -19,10 +19,7 @@ import { DEFAULT_MODULES_INFO } from 'uiSrc/constants/modules'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import {
-  UnknownDarkIcon,
-  UnknownLightIcon,
-} from 'uiSrc/components/base/icons/modules'
+import { UnknownDarkIcon, UnknownLightIcon } from 'uiSrc/components/base/icons'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import styles from './styles.module.scss'
 

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { isString } from 'lodash'
-import { EuiButtonIcon, EuiToolTip, IconType } from '@elastic/eui'
+import { EuiToolTip, IconType } from '@elastic/eui'
 
 import {
   AddRedisClusterDatabaseOptions,
@@ -11,11 +11,13 @@ import {
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
-import ActiveActiveDark from 'uiSrc/assets/img/options/Active-ActiveDark.svg'
-import ActiveActiveLight from 'uiSrc/assets/img/options/Active-ActiveLight.svg'
-import RedisOnFlashDark from 'uiSrc/assets/img/options/RedisOnFlashDark.svg'
-import RedisOnFlashLight from 'uiSrc/assets/img/options/RedisOnFlashLight.svg'
-
+import {
+  ActiveActiveDarkIcon,
+  ActiveActiveLightIcon,
+  RedisOnFlashDarkIcon,
+  RedisOnFlashLightIcon,
+} from 'uiSrc/components/base/icons'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -38,7 +40,7 @@ const DatabaseListOptions = ({ options }: Props) => {
 
   const OPTIONS_CONTENT = {
     [AddRedisClusterDatabaseOptions.ActiveActive]: {
-      icon: theme === Theme.Dark ? ActiveActiveDark : ActiveActiveLight,
+      icon: theme === Theme.Dark ? ActiveActiveDarkIcon : ActiveActiveLightIcon,
       text: DATABASE_LIST_OPTIONS_TEXT[
         AddRedisClusterDatabaseOptions.ActiveActive
       ],
@@ -58,7 +60,7 @@ const DatabaseListOptions = ({ options }: Props) => {
       ],
     },
     [AddRedisClusterDatabaseOptions.Flash]: {
-      icon: theme === Theme.Dark ? RedisOnFlashDark : RedisOnFlashLight,
+      icon: theme === Theme.Dark ? RedisOnFlashDarkIcon : RedisOnFlashLightIcon,
       text: DATABASE_LIST_OPTIONS_TEXT[AddRedisClusterDatabaseOptions.Flash],
     },
     [AddRedisClusterDatabaseOptions.Replication]: {
@@ -96,8 +98,8 @@ const DatabaseListOptions = ({ options }: Props) => {
           anchorClassName={styles.tooltip}
         >
           {icon ? (
-            <EuiButtonIcon
-              iconType={icon}
+            <IconButton
+              icon={icon}
               onClick={() => handleCopy(contentProp)}
               aria-labelledby={`${contentProp}_module`}
             />

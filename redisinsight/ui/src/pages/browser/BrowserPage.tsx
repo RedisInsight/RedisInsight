@@ -309,12 +309,11 @@ const BrowserPage = () => {
         <PanelGroup className={styles.panelGroup} direction="horizontal">
           <Panel
             defaultSize={50}
-            minSize={40}
+            minSize={45}
             id={firstPanelId}
-            className={[
-              arePanelsCollapsed || (isBrowserFullScreen && !isRightPanelOpen) ? styles.fullWidth : '',
-            ].join(' ')
-            }
+            className={cx({
+              [styles.fullWidth]: arePanelsCollapsed || (isBrowserFullScreen && !isRightPanelOpen)
+            })}
           >
             <BrowserLeftPanel
               selectedKey={selectedKey}
@@ -328,14 +327,13 @@ const BrowserPage = () => {
           )}
           <Panel
             defaultSize={50}
-            minSize={40}
+            minSize={45}
             id={secondPanelId}
-            className={[
-              arePanelsCollapsed || (isRightPanelOpen && isBrowserFullScreen)
-                ? `${styles.fullWidth} ${styles.keyDetails}` : '',
-              isBrowserFullScreen && !isRightPanelOpen ? styles.noVisible : '',
-              isRightPanelOpen ? styles.keyDetailsOpen : '',
-            ].join(' ')}
+            className={cx({
+              [styles.keyDetailsOpen]: isRightPanelOpen,
+              [styles.fullWidth]: arePanelsCollapsed || (isRightPanelOpen && isBrowserFullScreen),
+              [styles.keyDetails]: arePanelsCollapsed || (isRightPanelOpen && isBrowserFullScreen),
+            })}
           >
             <BrowserRightPanel
               arePanelsCollapsed={arePanelsCollapsed}
@@ -352,7 +350,7 @@ const BrowserPage = () => {
         </PanelGroup>
       </div>
       <OnboardingStartPopover />
-    </div>
+    </div >
   )
 }
 

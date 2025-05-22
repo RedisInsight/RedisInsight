@@ -112,6 +112,23 @@ describe('DatabaseFactory', () => {
 
       expect(result).toEqual(mockClusterDatabaseWithTlsAuth);
     });
+    it('should create standalone model when cluster database is passed but with standalone flag on', async () => {
+      mockRedisSentinelUtil.isSentinel.mockResolvedValue(false);
+      mockRedisClusterUtil.isCluster.mockResolvedValue(true);
+
+      const result = await service.createDatabaseModel(mockSessionMetadata, {
+        ...mockClusterDatabaseWithTlsAuth,
+        forceStandalone: true,
+      });
+
+      expect({
+        forceStandalone: result.forceStandalone,
+        connectionType: result.connectionType,
+      }).toEqual({
+        forceStandalone: true,
+        connectionType: ConnectionType.STANDALONE,
+      });
+    });
   });
 
   describe('createStandaloneDatabaseModel', () => {

@@ -73,7 +73,7 @@ export class DatabaseFactory {
         database,
         client,
       );
-    } else if ((await isCluster(client)) && !database.forceStandalone) {
+    } else if (!database.forceStandalone && (await isCluster(client))) {
       model = await this.createClusterDatabaseModel(
         sessionMetadata,
         database,

@@ -1,6 +1,5 @@
 import React, { ReactElement, useEffect } from 'react'
 import { Provider, useSelector } from 'react-redux'
-import { EuiPage, EuiPageBody } from '@elastic/eui'
 
 import { Route, Switch } from 'react-router-dom'
 import { store } from 'uiSrc/slices/store'
@@ -8,6 +7,7 @@ import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { removePagePlaceholder } from 'uiSrc/utils'
 import MonacoLanguages from 'uiSrc/components/monaco-laguages'
 import AppInit from 'uiSrc/components/init/AppInit'
+import { Page, PageBody } from 'uiSrc/components/base/layout/page'
 import { Pages, Theme } from './constants'
 import { themeService } from './services'
 import {
@@ -59,14 +59,14 @@ const App = ({ children }: { children?: ReactElement[] }) => {
           path="*"
           render={() => (
             <>
-              <EuiPage className="main">
+              <Page className="main">
                 <GlobalDialogs />
                 <GlobalSubscriptions />
                 <NavigationMenu />
-                <EuiPageBody component="main">
+                <PageBody component="main">
                   <MainComponent />
-                </EuiPageBody>
-              </EuiPage>
+                </PageBody>
+              </Page>
               <Notifications />
               <Config />
               <ShortcutsFlyout />

@@ -3,28 +3,27 @@ import { useDispatch, useSelector } from 'react-redux'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, forEach } from 'lodash'
 import {
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiSwitch,
-  EuiSpacer,
   EuiText,
   EuiButton,
   EuiTitle,
   EuiToolTip,
   EuiForm,
-  EuiHorizontalRule,
   EuiCallOut,
   EuiLink,
 } from '@elastic/eui'
 import { EuiSwitchEvent } from '@elastic/eui/src/components/form/switch'
 import cx from 'classnames'
 
+import { HorizontalRule } from 'uiSrc/components'
 import { compareConsents } from 'uiSrc/utils'
 import {
   updateUserConfigSettingsAction,
   userSettingsSelector,
 } from 'uiSrc/slices/user/user-settings'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import ConsentOption from './ConsentOption'
 
 import styles from './styles.module.scss'
@@ -220,7 +219,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
       data-testid="consents-settings-form"
     >
       <div className={styles.consentsWrapper}>
-        <EuiSpacer size="m" />
+        <Spacer size="m" />
         {consents.length > 1 && (
           <>
             <EuiCallOut>
@@ -233,10 +232,10 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
                 Workbench plugins, use files from trusted authors only.
               </EuiText>
             </EuiCallOut>
-            <EuiSpacer size="l" />
-            <EuiFlexItem>
-              <EuiFlexGroup gutterSize="s">
-                <EuiFlexItem grow={false}>
+            <Spacer />
+            <FlexItem>
+              <Row gap="m">
+                <FlexItem>
                   <EuiSwitch
                     showLabel={false}
                     label=""
@@ -245,8 +244,8 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
                     className={styles.switchOption}
                     data-testid="switch-option-recommended"
                   />
-                </EuiFlexItem>
-                <EuiFlexItem grow={false}>
+                </FlexItem>
+                <FlexItem>
                   <EuiText className={styles.label}>
                     Use recommended settings
                   </EuiText>
@@ -258,10 +257,10 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
                   >
                     Select to activate all listed options.
                   </EuiText>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiFlexItem>
-            <EuiHorizontalRule
+                </FlexItem>
+              </Row>
+            </FlexItem>
+            <HorizontalRule
               margin="l"
               className={cx({
                 [styles.pluginWarningHR]: !!requiredConsents.length,
@@ -271,15 +270,15 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         )}
         {!!privacyConsents.length && (
           <>
-            <EuiSpacer size="l" />
+            <Spacer />
             <EuiTitle size="m">
               <h1 className={styles.title}>Privacy Settings</h1>
             </EuiTitle>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             <EuiText className={styles.smallText} size="s" color="subdued">
               To optimize your experience, Redis Insight uses third-party tools.
             </EuiText>
-            <EuiSpacer size="l" />
+            <Spacer />
           </>
         )}
         {privacyConsents.map((consent: IConsent) => (
@@ -292,11 +291,11 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         ))}
         {!!notificationConsents.length && (
           <>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             <EuiTitle size="m">
               <h1 className={styles.title}>Notifications</h1>
             </EuiTitle>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
           </>
         )}
         {notificationConsents.map((consent: IConsent) => (
@@ -310,8 +309,8 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
       </div>
       {requiredConsents.length ? (
         <>
-          <EuiHorizontalRule margin="l" className={styles.requiredHR} />
-          <EuiSpacer size="m" />
+          <HorizontalRule margin="l" className={styles.requiredHR} />
+          <Spacer size="m" />
           <EuiText color="subdued" size="s" className={styles.smallText}>
             To use Redis Insight, please accept the terms and conditions:{' '}
             <EuiLink
@@ -322,18 +321,14 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
               Server Side Public License
             </EuiLink>
           </EuiText>
-          <EuiSpacer size="m" />
+          <Spacer size="m" />
         </>
       ) : (
-        <EuiSpacer size="l" />
+        <Spacer />
       )}
 
-      <EuiFlexGroup
-        alignItems="center"
-        justifyContent="spaceBetween"
-        responsive={false}
-      >
-        <EuiFlexItem grow={false}>
+      <Row align="center" justify="between" responsive={false}>
+        <FlexItem>
           {requiredConsents.map((consent: IConsent) => (
             <ConsentOption
               consent={consent}
@@ -343,8 +338,8 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
               key={consent.agreementName}
             />
           ))}
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem>
           <EuiToolTip
             position="top"
             anchorClassName="euiToolTip__btn-disabled"
@@ -372,8 +367,8 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
               Submit
             </EuiButton>
           </EuiToolTip>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </EuiForm>
   )
 }

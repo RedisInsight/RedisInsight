@@ -23,6 +23,7 @@ export const INSTANCES_MOCK: Instance[] = [
     modules: [],
     db: 123,
     lastConnection: new Date('2021-04-22T09:03:56.917Z'),
+    version: null,
   },
   {
     id: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4',
@@ -52,6 +53,7 @@ export const INSTANCES_MOCK: Instance[] = [
     nameFromProvider: null,
     lastConnection: new Date('2021-04-22T18:40:44.031Z'),
     modules: [],
+    version: null,
     endpoints: [
       {
         host: 'localhost',

@@ -1,11 +1,4 @@
-import {
-  EuiButton,
-  EuiIcon,
-  EuiLink,
-  EuiPopover,
-  EuiSpacer,
-  EuiText,
-} from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiLink, EuiPopover, EuiText, } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
@@ -29,6 +22,7 @@ import {
   getPathToResource,
 } from 'uiSrc/services/resourcesService'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -142,13 +136,13 @@ const RedisUploadButton = ({ label, path }: Props) => {
             <div className={cx(styles.popoverItem, styles.popoverItemTitle)}>
               Execute commands in bulk
             </div>
-            <EuiSpacer size="s" />
+            <Spacer size="s" />
             <div className={styles.popoverItem}>
               All commands from the file in your tutorial will be automatically
               executed against your database. Avoid executing them in production
               databases.
             </div>
-            <EuiSpacer size="m" />
+            <Spacer size="m" />
             <div className={styles.popoverActions}>
               <EuiLink
                 onClick={handleDownload}

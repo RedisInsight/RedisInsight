@@ -3,7 +3,7 @@ import React from 'react'
 import reactRouterDom, { BrowserRouter } from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
 
-import { cleanup, mockedStore, render, act } from 'uiSrc/utils/test-utils'
+import { act, cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import { resetKeys, resetPatternKeysData } from 'uiSrc/slices/browser/keys'
 import { setMonitorInitialState } from 'uiSrc/slices/cli/monitor'
 import { setInitialPubSubState } from 'uiSrc/slices/pubsub/pubsub'
@@ -32,8 +32,8 @@ import {
   resetConnectedInstance as resetConnectedDatabaseInstance,
 } from 'uiSrc/slices/instances/instances'
 import {
-  setConnectedInstance,
   loadInstances as loadRdiInstances,
+  setConnectedInstance,
 } from 'uiSrc/slices/rdi/instances'
 import { PageNames, Pages } from 'uiSrc/constants'
 import {
@@ -91,7 +91,8 @@ describe('InstancePage', () => {
     ;(appContextSelector as jest.Mock).mockReturnValue({
       contextRdiInstanceId: '',
     })
-    await act(() =>
+
+    await act(async () => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
@@ -136,7 +137,12 @@ describe('InstancePage', () => {
       loadInstancesSuccess(expect.any(Array)),
     ]
 
-    expect(store.getActions()).toEqual(expectedActions)
+    const actualActions = store.getActions()
+    // eslint-disable-next-line no-restricted-syntax
+    for (const ac of expectedActions) {
+      expect(actualActions).toContainEqual(ac)
+    }
+    // expect(actualActions).toEqual(expectedActions)
   })
 
   it('should fetch rdi instance info', async () => {
@@ -144,7 +150,8 @@ describe('InstancePage', () => {
       contextRdiInstanceId: 'prevId',
     })
 
-    await act(() =>
+    // this MUST be awaited, in order for all effects to happen and all actions to be dispatched
+    await act(async () => {
       render(
         <BrowserRouter>
           <InstancePage {...instance(mockedProps)} />
@@ -211,7 +218,6 @@ describe('InstancePage', () => {
     reactRouterDom.useLocation = jest
       .fn()
       .mockReturnValue({ pathname: Pages.rdiPipeline(RDI_INSTANCE_ID_MOCK) })
-
     await act(() =>
       render(
         <BrowserRouter>

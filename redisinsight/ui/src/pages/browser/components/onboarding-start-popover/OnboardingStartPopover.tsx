@@ -3,7 +3,6 @@ import {
   EuiButton,
   EuiButtonEmpty,
   EuiPopover,
-  EuiSpacer,
   EuiText,
   EuiTitle,
 } from '@elastic/eui'
@@ -17,6 +16,7 @@ import {
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 const OnboardingStartPopover = () => {
@@ -59,7 +59,7 @@ const OnboardingStartPopover = () => {
       <EuiTitle size="xs">
         <h5>Take a quick tour of Redis Insight?</h5>
       </EuiTitle>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <EuiText data-testid="onboarding-start-content">
         Hi! Redis Insight has many tools that can help you to optimize the
         development process.

@@ -51,8 +51,7 @@ const filesToUpdate = [
       __dirname,
       '../redisinsight/desktop/src/lib/aboutPanel/aboutPanel.ts',
     ),
-    regex:
-      /applicationVersion:\s*`\${app\.getVersion\(\)\s*\|\|\s*'([^']+)'}\${/,
+    regex: /app\.getVersion\(\)\s*\|\|\s*'([^']+)'/,
     replacement: (match, p1) => match.replace(p1, newVersion),
   },
   {

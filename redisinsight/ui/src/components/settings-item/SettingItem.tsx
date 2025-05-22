@@ -1,17 +1,11 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import cx from 'classnames'
-import {
-  EuiFieldNumber,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
-  EuiSpacer,
-  EuiText,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiFieldNumber, EuiIcon, EuiText, EuiTitle } from '@elastic/eui'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -73,29 +67,23 @@ const SettingItem = (props: Props) => {
       <EuiTitle className={styles.title} size="xxs">
         <span>{title}</span>
       </EuiTitle>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <EuiText className={styles.smallText} size="s" color="subdued">
         {summary}
       </EuiText>
-      <EuiSpacer size="m" />
-      <EuiFlexGroup
-        alignItems="center"
-        gutterSize="none"
-        responsive={false}
-        className={styles.container}
-      >
-        <EuiFlexItem grow={false} style={{ marginRight: '4px' }}>
+      <Spacer size="m" />
+      <Row align="center" className={styles.container}>
+        <FlexItem style={{ marginRight: '4px' }}>
           <EuiText size="xs" color="subdued" className={styles.inputLabel}>
             {label}
           </EuiText>
-        </EuiFlexItem>
+        </FlexItem>
 
-        <EuiFlexItem
+        <FlexItem
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
           onClick={() => setEditing(true)}
-          grow={false}
-          component="span"
+          inline
           style={{ paddingBottom: '1px' }}
         >
           {isEditing || isHovering ? (
@@ -128,9 +116,9 @@ const SettingItem = (props: Props) => {
               {value}
             </EuiText>
           )}
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiSpacer size="m" />
+        </FlexItem>
+      </Row>
+      <Spacer size="m" />
     </>
   )
 }

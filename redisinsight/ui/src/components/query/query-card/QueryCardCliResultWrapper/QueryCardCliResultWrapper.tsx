@@ -1,8 +1,9 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiLoadingContent, EuiIcon, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiText } from '@elastic/eui'
 import { isArray } from 'lodash'
 
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import { CommandExecutionResult } from 'uiSrc/slices/interfaces'
 import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import {
@@ -65,16 +66,16 @@ const QueryCardCliResultWrapper = (props: Props) => {
               items={
                 result[0]?.status === CommandExecutionStatus.Success
                   ? formatToText(
-                      replaceEmptyValue(result[0]?.response),
-                      query,
-                    ).split('\n')
+                    replaceEmptyValue(result[0]?.response),
+                    query,
+                  ).split('\n')
                   : [
-                      cliParseTextResponse(
-                        replaceEmptyValue(result[0]?.response),
-                        '',
-                        result[0]?.status,
-                      ),
-                    ]
+                    cliParseTextResponse(
+                      replaceEmptyValue(result[0]?.response),
+                      '',
+                      result[0]?.status,
+                    ),
+                  ]
               }
             />
           )}
@@ -82,7 +83,7 @@ const QueryCardCliResultWrapper = (props: Props) => {
       )}
       {loading && (
         <div className={styles.loading} data-testid="query-cli-loader">
-          <EuiLoadingContent lines={1} />
+          <LoadingContent lines={1} />
         </div>
       )}
     </div>

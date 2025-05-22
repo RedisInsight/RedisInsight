@@ -10,7 +10,7 @@ import { fileURLToPath, URL } from 'url';
 import path from 'path';
 import { defaultConfig } from './src/config/default';
 
-const isElectron = defaultConfig.app.type === 'electron';
+const isElectron = defaultConfig.app.type === 'ELECTRON';
 // set path to index.tsx in the index.html
 process.env.RI_INDEX_NAME = isElectron ? 'indexElectron.tsx' : 'index.tsx';
 const outDir = isElectron ? '../dist/renderer' : './dist';

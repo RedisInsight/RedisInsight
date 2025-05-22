@@ -1,19 +1,13 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiTitle,
-  EuiToolTip,
-  EuiButtonIcon,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiTitle, EuiToolTip } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import {
-  setBulkActionType,
   selectedBulkActionsSelector,
   setBulkActionsInitialState,
+  setBulkActionType,
 } from 'uiSrc/slices/browser/bulkActions'
 import { BulkActionsType } from 'uiSrc/constants'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
@@ -25,6 +19,7 @@ import {
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { FullScreen } from 'uiSrc/components'
 
+import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import BulkUpload from './BulkUpload'
 import BulkDelete from './BulkDelete'
 import BulkActionsTabs from './BulkActionsTabs'
@@ -102,14 +97,8 @@ const BulkActions = (props: Props) => {
 
   return (
     <div className={styles.page}>
-      <EuiFlexGroup
-        justifyContent="center"
-        direction="column"
-        className={cx(styles.container, 'relative')}
-        gutterSize="none"
-        responsive={false}
-      >
-        <EuiFlexItem grow style={{ marginBottom: '16px' }}>
+      <Col justify="center" className={cx(styles.container, 'relative')}>
+        <FlexItem grow style={{ marginBottom: '16px' }}>
           <EuiTitle size="xs" className={styles.title}>
             <h4>Bulk Actions</h4>
           </EuiTitle>
@@ -139,7 +128,7 @@ const BulkActions = (props: Props) => {
               />
             </EuiToolTip>
           )}
-        </EuiFlexItem>
+        </FlexItem>
         <div className="eui-yScroll">
           <div
             className={styles.contentActions}
@@ -154,7 +143,7 @@ const BulkActions = (props: Props) => {
             )}
           </div>
         </div>
-      </EuiFlexGroup>
+      </Col>
     </div>
   )
 }

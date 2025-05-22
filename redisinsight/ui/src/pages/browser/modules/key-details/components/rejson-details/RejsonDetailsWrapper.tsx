@@ -123,11 +123,15 @@ const RejsonDetailsWrapper = (props: Props) => {
   const shouldShowTextEditor =
     !isUndefined(updatedData) && editorType === EditorType.Text
 
+  const keyDetailsBodyName = shouldShowDefaultEditor
+    ? 'key-details-body'
+    : 'key-details-body-monaco-editor'
+
   return (
     <div className="fluid flex-column relative">
       <KeyDetailsHeader {...props} key="key-details-header" />
 
-      <div className="key-details-body" key="key-details-body">
+      <div className={keyDetailsBodyName} key={keyDetailsBodyName}>
         <div className="flex-column" style={{ flex: '1', height: '100%' }}>
           <div data-testid="json-details" className={styles.container}>
             {loading && (

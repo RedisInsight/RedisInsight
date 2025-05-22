@@ -1,13 +1,5 @@
 import React, { useState } from 'react'
-import {
-  EuiButton,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiIcon,
-  EuiPopover,
-  EuiSpacer,
-  EuiText,
-} from '@elastic/eui'
+import { EuiButton, EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -18,6 +10,8 @@ import {
 } from 'uiSrc/slices/browser/bulkActions'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -71,20 +65,20 @@ const LoadSampleData = (props: Props) => {
         </EuiButton>
       }
     >
-      <EuiFlexGroup gutterSize="s" responsive={false}>
-        <EuiFlexItem grow={false}>
+      <Row gap="m" responsive={false}>
+        <FlexItem>
           <EuiIcon type="alert" className={styles.popoverIcon} />
-        </EuiFlexItem>
-        <EuiFlexItem>
+        </FlexItem>
+        <FlexItem>
           <EuiText>Execute commands in bulk</EuiText>
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           <EuiText color="subdued" size="s">
             All commands from the file will be automatically executed against
             your database. Avoid executing them in production databases.
           </EuiText>
-          <EuiSpacer size="s" />
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Spacer size="s" />
+          <Row justify="end">
+            <FlexItem>
               <EuiButton
                 fill
                 size="s"
@@ -96,10 +90,10 @@ const LoadSampleData = (props: Props) => {
               >
                 Execute
               </EuiButton>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+            </FlexItem>
+          </Row>
+        </FlexItem>
+      </Row>
     </EuiPopover>
   )
 }

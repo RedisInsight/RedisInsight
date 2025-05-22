@@ -105,7 +105,7 @@ export default {
       : true,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
     appType: process.env.RI_APP_TYPE,
-    appVersion: process.env.RI_APP_VERSION || '2.68.0',
+    appVersion: process.env.RI_APP_VERSION || '2.70.0',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
@@ -217,6 +217,7 @@ export default {
       : true,
     pipelineSummaryLimit:
       parseInt(process.env.RI_LOGGER_PIPELINE_SUMMARY_LIMIT, 10) || 5,
+    logDepthLevel: parseInt(process.env.RI_LOGGER_DEPTH_LEVEL, 10) || 5,
   },
   plugins: {
     stateMaxSize:

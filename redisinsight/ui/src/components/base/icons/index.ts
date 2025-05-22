@@ -3,9 +3,9 @@ export { BulkActions } from './BulkActions'
 export { Cloud } from './Cloud'
 export { CopilotIcon } from './Copilot'
 export { ExtendIcon } from './ExtendIcon'
-export { Github } from './Github'
 export { Group as GroupModeIcon } from './Group'
 export { Icon } from './Icon'
+export type { IconProps } from './Icon'
 export { MinusInCircleIcon } from './MinusInCircle'
 export { Play as PlayIcon } from './Play'
 export { PlayFilledIcon } from './PlayFilled'
@@ -25,6 +25,7 @@ export { UserInCircle } from './UserInCircle'
 
 export * from './modules'
 export * from './options'
+export * from './sidebar'
 
 export * from '@redis-ui/icons'
 export {

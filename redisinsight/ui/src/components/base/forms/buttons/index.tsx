@@ -6,6 +6,7 @@ import { IconButton } from 'uiSrc/components/base/forms/buttons/IconButton'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons/PrimaryButton'
 import { SecondaryButton } from 'uiSrc/components/base/forms/buttons/SecondaryButton'
 
+export type { IconType } from 'uiSrc/components/base/forms/buttons/IconButton'
 export {
   ActionIconButton,
   BaseButton as Button,

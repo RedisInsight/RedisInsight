@@ -33,7 +33,7 @@ jobs:
           base-coverage-file: report/coverage/report.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           skip-step: all
-          custom-title: Code Coverage - ${{ inputs.resource_name == 'report-be' && 'Backend' || 'Frontend' }} unit tests
+          custom-title: Code Coverage - ${{ inputs.resource_name == 'report-be' && 'Backend unit' || inputs.resource_name == 'report-fe' && 'Frontend unit' || 'Integration' }} tests
 
   coverage-integration:
     runs-on: ubuntu-latest

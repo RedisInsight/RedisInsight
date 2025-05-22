@@ -11,7 +11,6 @@ import {
   EuiPageSideBar,
   EuiToolTip,
 } from '@elastic/eui'
-import styled, { css } from 'styled-components'
 import HighlightedFeature, {
   Props as HighlightedFeatureProps,
 } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
@@ -53,6 +52,7 @@ import {
   WorkbenchIcon,
   GithubIcon,
 } from 'uiSrc/components/base/icons'
+import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
 import CreateCloud from './components/create-cloud'
 import HelpMenu from './components/help-menu/HelpMenu'
 import NotificationMenu from './components/notifications-center'
@@ -76,33 +76,6 @@ interface INavigations {
   onboard?: any
   featureFlag?: FeatureFlags
 }
-
-const ActiveStyle = css`
-  background-color: var(--euiColorSuccessText) !important;
-  transform: none;
-  cursor: default;
-`
-const NavigationItemWrapper = styled.div<{
-  active: boolean
-  children: React.ReactNode
-  className: string
-}>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0;
-  color: #bdc3d7 !important;
-  & button {
-    cursor: default;
-  }
-
-  &:hover button {
-    transform: translateY(-1px);
-    background-color: #34406f !important;
-    ${({ active }) => active && ActiveStyle}
-  }
-  ${({ active }) => active && ActiveStyle}
-`
 
 const NavigationMenu = () => {
   const history = useHistory()

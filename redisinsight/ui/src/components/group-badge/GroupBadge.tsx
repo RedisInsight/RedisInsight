@@ -1,9 +1,11 @@
 import cx from 'classnames'
 import React from 'react'
-import { EuiBadge, EuiButtonIcon, EuiText } from '@elastic/eui'
+import { EuiBadge, EuiText } from '@elastic/eui'
 import { CommandGroup, KeyTypes, GROUP_TYPES_COLORS } from 'uiSrc/constants'
 import { getGroupTypeDisplay } from 'uiSrc/utils'
 
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -41,10 +43,10 @@ const GroupBadge = ({
         {getGroupTypeDisplay(type)}
       </EuiText>
     )}
-    {onDelete && (
-      <EuiButtonIcon
-        size="xs"
-        iconType="cross"
+    {!onDelete && (
+      <IconButton
+        size="XS"
+        icon={CancelSlimIcon}
         color="primary"
         aria-label="Delete"
         onClick={() => onDelete(type)}

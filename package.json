@@ -279,6 +279,7 @@
     "react-jsx-parser": "^1.28.4",
     "react-monaco-editor": "^0.55.0",
     "react-redux": "^7.2.2",
+    "react-resizable-panels": "^3.0.2",
     "react-rnd": "^10.3.5",
     "react-router-dom": "^5.3.4",
     "react-virtualized": "^9.22.2",

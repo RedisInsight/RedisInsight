@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/no-nested-template-literals */
 import React, { useContext } from 'react'
-import { EuiButtonIcon, EuiIcon, EuiTextColor, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiTextColor, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
 import { Theme } from 'uiSrc/constants'
@@ -11,6 +11,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import UnknownLight from 'uiSrc/assets/img/modules/UnknownLight.svg'
 import UnknownDark from 'uiSrc/assets/img/modules/UnknownDark.svg'
 import { DEFAULT_MODULES_INFO } from 'uiSrc/constants/modules'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import styles from './styles.module.scss'
@@ -114,8 +115,8 @@ const DatabaseListModules = React.memo((props: Props) => {
   ) => (
     <span key={moduleName || abbreviation || content}>
       {icon ? (
-        <EuiButtonIcon
-          iconType={icon}
+        <IconButton
+          icon={icon}
           className={cx(styles.icon, { [styles.circle]: inCircle })}
           onClick={() => handleCopy(content)}
           data-testid={`${content}_module`}

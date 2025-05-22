@@ -1,6 +1,7 @@
 import React from 'react'
-import { EuiButtonEmpty, EuiText, EuiIcon } from '@elastic/eui'
+import { EuiText, EuiIcon } from '@elastic/eui'
 
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -26,7 +27,7 @@ const UploadFile = (props: Props) => {
   }
 
   return (
-    <EuiButtonEmpty className={styles.emptyBtn}>
+    <EmptyButton className={styles.emptyBtn}>
       <label
         htmlFor={id}
         className={styles.uploadBtn}
@@ -48,7 +49,7 @@ const UploadFile = (props: Props) => {
           aria-label="Select file"
         />
       </label>
-    </EuiButtonEmpty>
+    </EmptyButton>
   )
 }
 

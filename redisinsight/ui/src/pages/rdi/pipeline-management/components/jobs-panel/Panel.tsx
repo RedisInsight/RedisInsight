@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
 import {
-  EuiButtonIcon,
   EuiSuperSelect,
   EuiSuperSelectOption,
   EuiTab,
@@ -28,8 +27,13 @@ import { createAxiosError, formatLongName, yamlToJson } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
-import { PlayFilledIcon } from 'uiSrc/components/base/icons'
+import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
+import {
+  PlayFilledIcon,
+  CancelSlimIcon,
+  ExtendIcon,
+  ShrinkIcon,
+} from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -211,19 +215,15 @@ const DryRunJobPanel = (props: Props) => {
         <div className={styles.header}>
           <EuiText className={styles.title}>Test transformation logic</EuiText>
           <div>
-            <EuiButtonIcon
-              iconSize="m"
-              iconType={isFullScreen ? 'fullScreenExit' : 'fullScreen'}
-              color="primary"
+            <IconButton
+              icon={isFullScreen ? ShrinkIcon : ExtendIcon}
               aria-label="toggle fullscrenn dry run panel"
               className={styles.fullScreenBtn}
               onClick={handleFullScreen}
               data-testid="fullScreen-dry-run-btn"
             />
-            <EuiButtonIcon
-              iconSize="m"
-              iconType="cross"
-              color="primary"
+            <IconButton
+              icon={CancelSlimIcon}
               aria-label="close dry run panel"
               className={styles.closeBtn}
               onClick={onClose}

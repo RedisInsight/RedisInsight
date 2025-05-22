@@ -1,13 +1,7 @@
 import React from 'react'
-import {
-  EuiButtonIcon,
-  EuiListGroupItem,
-  EuiText,
-  EuiTextColor,
-  EuiToolTip,
-} from '@elastic/eui'
-
-import cx from 'classnames'
+import { EuiText, EuiTextColor, EuiToolTip } from '@elastic/eui'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon } from 'uiSrc/components/base/icons'
 import styles from '../../styles.module.scss'
 
 export interface Props {
@@ -32,8 +26,8 @@ const SentinelHostPort = (props: Props) => {
           content="Copy"
           anchorClassName="copyHostPortTooltip"
         >
-          <EuiButtonIcon
-            iconType="copy"
+          <IconButton
+            icon={CopyIcon}
             aria-label="Copy host:port"
             className={styles.copyHostPortBtn}
             onClick={() => handleCopy(`${host}:${port}`)}

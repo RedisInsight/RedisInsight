@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiButtonEmpty, EuiTitle } from '@elastic/eui'
+import { EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
@@ -9,14 +9,14 @@ import { resetDataRedisCloud } from 'uiSrc/slices/instances/cloud'
 import { resetDataRedisCluster } from 'uiSrc/slices/instances/cluster'
 import { resetDataSentinel } from 'uiSrc/slices/instances/sentinel'
 
-import Logo from 'uiSrc/assets/img/logo.svg?react'
-
 import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
 import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { RedisLogoFullIcon } from 'uiSrc/components/base/icons'
 import styles from './PageHeader.module.scss'
 
 interface Props {
@@ -65,7 +65,7 @@ const PageHeader = (props: Props) => {
           {subtitle ? <span data-testid="page-subtitle">{subtitle}</span> : ''}
         </div>
         {children ? <>{children}</> : ''}
-        {showInsights ? (
+        {!showInsights ? (
           <Row style={{ flexGrow: 0 }} align="center">
             {isAnyChatAvailable && (
               <FlexItem style={{ marginRight: 12 }}>
@@ -89,13 +89,13 @@ const PageHeader = (props: Props) => {
           </Row>
         ) : (
           <div className={styles.pageHeaderLogo}>
-            <EuiButtonEmpty
+            <EmptyButton
               aria-label="redisinsight"
               onClick={goHome}
               onKeyDown={goHome}
               className={styles.logo}
               tabIndex={0}
-              iconType={Logo}
+              icon={RedisLogoFullIcon}
               data-testid="redis-logo-home"
             />
           </div>

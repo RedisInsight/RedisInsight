@@ -13,49 +13,14 @@ $breakpoint-to-hide-resize-panel: 1280px;
   flex-grow: 1;
   padding: 0 16px;
   overflow: hidden;
-  position: relative;
 }
 
 .resizableButton {
   z-index: 10 !important;
 }
 
-.resizableContainer {
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  height: 100%;
-}
-
 .hidden {
   display: none;
-}
-
-.resizePanelLeft {
-  min-width: 600px;
-  :global(.euiResizablePanel__content) {
-    @media (min-width: $breakpoint-to-hide-resize-panel) {
-      padding-right: 8px;
-    }
-  }
-}
-
-.resizePanelRight {
-  min-width: 550px;
-  :global(.euiResizablePanel__content) {
-    @media (min-width: $breakpoint-to-hide-resize-panel) {
-      padding-left: 8px;
-    }
-  }
-}
-
-.fullWidth {
-  width: 100% !important;
-  min-width: 100% !important;
-  :global(.euiResizablePanel__content) {
-    padding-right: 0;
-    padding-left: 0;
-  }
 }
 
 .keysContainer {
@@ -79,17 +44,16 @@ $breakpoint-to-hide-resize-panel: 1280px;
 
 .keyDetails {
   width: 100%;
+  height: 100%;
   position: absolute !important;
-  top: 0;
-  height: 100% !important;
   left: 100%;
+  top: 0;
   transition: left 0.25s ease;
-  z-index: 10;
   will-change: left;
 }
 
 .keyDetailsOpen {
-  left: 0 !important;
+  left: 0;
 
   @media (max-width: 1123.98px) {
     width: 100% !important;
@@ -111,6 +75,8 @@ $breakpoint-to-hide-resize-panel: 1280px;
 }
 
 .panelGroup {
+  position: relative;
+
   .panel {
     .noVisible{
       visibility: hidden;

@@ -38,6 +38,7 @@ export interface IConsent {
   required: boolean
   editable: boolean
   disabled: boolean
+  linkToPrivacyPolicy: boolean
   category?: string
   since: string
   title: string
@@ -287,7 +288,6 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             checked={formik.values[consent.agreementName] ?? false}
             onChangeAgreement={onChangeAgreement}
             key={consent.agreementName}
-            linkToPrivacyPolicy
           />
         ))}
         {!!notificationConsents.length && (

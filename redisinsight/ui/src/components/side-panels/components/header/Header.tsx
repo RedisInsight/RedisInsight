@@ -1,8 +1,9 @@
 import React from 'react'
-import { EuiButtonIcon } from '@elastic/eui'
 
 import { FullScreen } from 'uiSrc/components'
 
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -29,10 +30,8 @@ const Header = (props: Props) => {
         onToggleFullScreen={onToggleFullScreen}
         btnTestId={`fullScreen-${panelName}-btn`}
       />
-      <EuiButtonIcon
-        iconSize="m"
-        iconType="cross"
-        color="primary"
+      <IconButton
+        icon={CancelSlimIcon}
         aria-label="close insights"
         className={styles.closeBtn}
         onClick={onClose}

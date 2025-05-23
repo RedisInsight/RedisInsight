@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
 import * as d3 from 'd3'
 import { executeRedisCommand, formatRedisReply } from 'redisinsight-plugin-sdk'
-import { EuiButtonIcon, EuiToolTip, EuiSwitch } from '@elastic/eui'
+import { EuiToolTip, EuiSwitch } from '@elastic/eui'
 import Graphd3, { IGraphD3 } from './graphd3'
 import { responseParser } from './parser'
 import {
@@ -20,6 +20,8 @@ import {
   NODE_COLORS,
   NODE_COLORS_DARK,
 } from './constants'
+import { IconButton } from '../../../components/base/forms/buttons'
+import { CopyIcon, CancelSlimIcon } from '../../../components/base/icons'
 
 enum EntityType {
   Node = 'Node',
@@ -478,11 +480,9 @@ export default function Graph(props: {
                   {selectedEntity.property}
                 </div>
               )}
-              <EuiButtonIcon
-                color="text"
+              <IconButton
                 onClick={() => setSelectedEntity(null)}
-                display="empty"
-                iconType="cross"
+                icon={CancelSlimIcon}
                 aria-label="Close"
               />
             </div>
@@ -532,10 +532,9 @@ export default function Graph(props: {
           },
         ].map((item) => (
           <EuiToolTip position="left" content={item.name}>
-            <EuiButtonIcon
-              color="text"
+            <IconButton
               onClick={item.onClick}
-              iconType={item.icon}
+              icon={item.icon}
               aria-label={item.name}
             />
           </EuiToolTip>

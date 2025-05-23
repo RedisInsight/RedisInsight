@@ -31,7 +31,7 @@ import validationErrors from 'uiSrc/constants/validationErrors'
 import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/InputFieldSentinel'
 
 import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
-import { InfoIcon } from 'uiSrc/components/base/icons'
+import { InfoIcon, CopyIcon } from 'uiSrc/components/base/icons'
 import SentinelDatabasesResult from './components'
 
 import styles from '../styles.module.scss'
@@ -53,7 +53,7 @@ const SentinelDatabasesResultPage = () => {
 
   useEffect(() => {
     if (!masters.length) {
-      // history.push(Pages.home)
+      history.push(Pages.home)
     }
 
     dispatch(resetLoadedSentinel(LoadedSentinel.MastersAdded))
@@ -208,7 +208,7 @@ const SentinelDatabasesResultPage = () => {
               anchorClassName="copyPublicEndpointTooltip"
             >
               <IconButton
-                icon={IconButton}
+                icon={CopyIcon}
                 aria-label="Copy public endpoint"
                 className="copyPublicEndpointBtn"
                 onClick={() => handleCopy(text)}

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiButtonEmpty } from '@elastic/eui'
 import {
   aiAssistantChatSelector,
   askAssistantChatbot,
@@ -22,6 +21,8 @@ import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { generateHumanMessage } from 'uiSrc/utils/transformers/chatbot'
 
 import { CustomErrorCodes } from 'uiSrc/constants'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { EraserIcon } from 'uiSrc/components/base/icons'
 import { ASSISTANCE_CHAT_AGREEMENTS } from '../texts'
 import {
   AssistanceChatInitialMessage,
@@ -173,10 +174,10 @@ const AssistanceChat = () => {
         <span />
         <RestartChat
           button={
-            <EuiButtonEmpty
+            <EmptyButton
               disabled={!!inProgressMessage || !messages?.length}
-              iconType="eraser"
-              size="xs"
+              icon={EraserIcon}
+              size="small"
               className={styles.headerBtn}
               data-testid="ai-general-restart-session-btn"
             />

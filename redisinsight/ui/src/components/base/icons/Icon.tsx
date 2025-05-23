@@ -21,7 +21,7 @@ const sizesMap = {
  */
 function isValidIconColor(
   theme: ReturnType<typeof useTheme>,
-  color: string,
+  color: string | number | symbol,
 ): color is keyof typeof theme.semantic.color.icon {
   return color in theme.semantic.color.icon
 }

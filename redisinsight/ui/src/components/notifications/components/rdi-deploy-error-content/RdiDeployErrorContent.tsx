@@ -32,12 +32,12 @@ const RdiDeployErrorContent = (props: Props) => {
         <Col>
           <FlexItem>Review the error log for details.</FlexItem>
           <FlexItem>
-            <DestructiveButton
-              size="s"
-              className="toast-danger-btn"
-              data-testid="donwload-log-file-btn"
-            >
-              <Link href={fileUrl} download="error-log.txt">
+            <DestructiveButton size="s" className="toast-danger-btn">
+              <Link
+                href={fileUrl}
+                download="error-log.txt"
+                data-testid="donwload-log-file-btn"
+              >
                 Download Error Log File
               </Link>
             </DestructiveButton>

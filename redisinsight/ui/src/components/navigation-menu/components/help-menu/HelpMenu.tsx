@@ -1,5 +1,4 @@
 import {
-  EuiButtonIcon,
   EuiIcon,
   EuiLink,
   EuiPopover,
@@ -30,6 +29,9 @@ import { FeatureFlags } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { SupportIcon } from 'uiSrc/components/base/icons'
+import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
 import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
 
@@ -72,16 +74,19 @@ const HelpMenu = () => {
   }
 
   const HelpMenuButton = () => (
-    <EuiButtonIcon
+    <NavigationItemWrapper
       className={cx(navStyles.navigationButton, {
         [navStyles.navigationButtonNotified]: isReleaseNotesViewed === false,
       })}
-      iconType="questionInCircle"
-      iconSize="l"
-      aria-label="Help Menu"
-      onClick={() => setIsHelpMenuActive((value) => !value)}
-      data-testid="help-menu-button"
-    />
+    >
+      <IconButton
+        size="L"
+        icon={SupportIcon}
+        aria-label="Help Menu"
+        onClick={() => setIsHelpMenuActive((value) => !value)}
+        data-testid="help-menu-button"
+      />
+    </NavigationItemWrapper>
   )
 
   return (

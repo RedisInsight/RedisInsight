@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { EuiButtonEmpty, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import React from 'react'
+import { EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
 import { oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
@@ -9,6 +9,8 @@ import GoogleIcon from 'uiSrc/assets/img/oauth/google.svg?react'
 import GithubIcon from 'uiSrc/assets/img/oauth/github.svg?react'
 import SsoIcon from 'uiSrc/assets/img/oauth/sso.svg?react'
 
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -60,22 +62,22 @@ const OAuthSocialButtons = (props: Props) => {
           content={agreement ? null : 'Acknowledge the agreement'}
           data-testid={`${label}-tooltip`}
         >
-          <>
-            <EuiButtonEmpty
-              disabled={!agreement || disabled}
-              className={cx(styles.button, className, {
-                [styles.inline]: inline,
-              })}
-              onClick={() => {
-                onClick(strategy)
-              }}
-              data-testid={label}
-              aria-labelledby={label}
-            >
+          <EmptyButton
+            disabled={!agreement || disabled}
+            className={cx(styles.button, className, {
+              [styles.inline]: inline,
+            })}
+            onClick={() => {
+              onClick(strategy)
+            }}
+            data-testid={label}
+            aria-labelledby={label}
+          >
+            <FlexItem direction={inline ? 'row' : 'column'}>
               <EuiIcon type={icon} />
               <EuiText className={styles.label}>{text}</EuiText>
-            </EuiButtonEmpty>
-          </>
+            </FlexItem>
+          </EmptyButton>
         </EuiToolTip>
       ))}
     </div>

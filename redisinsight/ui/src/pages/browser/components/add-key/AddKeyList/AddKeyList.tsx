@@ -1,12 +1,7 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import {
-  EuiTextColor,
-  EuiForm,
-  EuiPanel,
-  EuiSuperSelect,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiPanel, EuiSuperSelect } from '@elastic/eui'
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'

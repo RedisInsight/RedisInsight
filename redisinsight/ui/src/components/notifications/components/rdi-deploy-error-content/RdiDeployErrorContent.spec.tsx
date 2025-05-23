@@ -1,9 +1,6 @@
 import React from 'react'
-import { instance, mock } from 'ts-mockito'
 import { render, screen } from 'uiSrc/utils/test-utils'
-import RdiDeployErrorContent, { Props } from './RdiDeployErrorContent'
-
-const mockedProps = mock<Props>()
+import RdiDeployErrorContent from './RdiDeployErrorContent'
 
 describe('RdiDeployErrorContent', () => {
   const mockMessage = 'Test error log content'

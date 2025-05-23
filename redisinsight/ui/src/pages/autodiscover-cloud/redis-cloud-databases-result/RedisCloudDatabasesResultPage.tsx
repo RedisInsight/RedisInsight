@@ -1,6 +1,5 @@
 import {
   EuiBasicTableColumn,
-  EuiButtonIcon,
   EuiIcon,
   EuiText,
   EuiTextColor,
@@ -31,6 +30,8 @@ import {
 } from 'uiSrc/utils'
 import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon } from 'uiSrc/components/base/icons'
 import RedisCloudDatabasesResult from './RedisCloudDatabasesResult'
 
 import styles from './styles.module.scss'
@@ -161,8 +162,8 @@ const RedisCloudDatabasesResultPage = () => {
               content="Copy"
               anchorClassName="copyPublicEndpointTooltip"
             >
-              <EuiButtonIcon
-                iconType="copy"
+              <IconButton
+                icon={CopyIcon}
                 aria-label="Copy public endpoint"
                 className="copyPublicEndpointBtn"
                 onClick={() => handleCopy(text)}
@@ -180,7 +181,7 @@ const RedisCloudDatabasesResultPage = () => {
       align: 'left',
       width: '200px',
       sortable: true,
-      render: function Modules(modules: any[], instance: InstanceRedisCloud) {
+      render: function Modules(_modules: any[], instance: InstanceRedisCloud) {
         return (
           <DatabaseListModules
             modules={instance.modules?.map((name) => ({ name }))}
@@ -196,7 +197,7 @@ const RedisCloudDatabasesResultPage = () => {
       align: 'left',
       width: '180px',
       sortable: true,
-      render: function Opitions(opts: any[], instance: InstanceRedisCloud) {
+      render: function Opitions(_opts: any[], instance: InstanceRedisCloud) {
         const options = parseInstanceOptionsCloud(
           instance.databaseId,
           instancesForOptions,

@@ -4,11 +4,7 @@ import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import ReactMonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import { Rnd } from 'react-rnd'
 import cx from 'classnames'
-import {
-  EuiButtonIcon,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-} from '@elastic/eui'
+import { EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
 
 import {
   decoration,
@@ -27,6 +23,8 @@ import {
 import { IEditorMount } from 'uiSrc/pages/workbench/interfaces'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CancelSlimIcon, CheckThinIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -298,19 +296,15 @@ const DedicatedEditor = (props: Props) => {
                   />
                 )}
                 <div>
-                  <EuiButtonIcon
-                    iconSize="m"
-                    iconType="cross"
-                    color="primary"
+                  <IconButton
+                    icon={CancelSlimIcon}
                     aria-label="Cancel editing"
                     className={styles.declineBtn}
                     onClick={() => onCancel(selectedLang.id as DSL)}
                     data-testid="cancel-btn"
                   />
-                  <EuiButtonIcon
-                    iconSize="m"
-                    iconType="check"
-                    color="primary"
+                  <IconButton
+                    icon={CheckThinIcon}
                     type="submit"
                     aria-label="Apply"
                     onClick={handleSubmit}

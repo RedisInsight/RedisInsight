@@ -70,13 +70,13 @@
   justify-content: space-between;
 }
 
-.declineBtn:hover {
+.declineBtn:hover span {
   color: var(--euiColorColorDanger) !important;
 }
 
 .applyBtn {
   margin-left: 6px;
-  &:hover {
+  &:hover span {
     color: var(--euiColorPrimary) !important;
   }
 }

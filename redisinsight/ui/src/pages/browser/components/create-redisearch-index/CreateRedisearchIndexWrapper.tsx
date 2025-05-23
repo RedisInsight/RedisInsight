@@ -1,14 +1,10 @@
 import React from 'react'
-import {
-  EuiButtonIcon,
-  EuiLink,
-  EuiText,
-  EuiTitle,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiLink, EuiText, EuiTitle, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import CreateRedisearchIndex from './CreateRedisearchIndex'
 
 import styles from './styles.module.scss'
@@ -37,9 +33,8 @@ const CreateRedisearchIndexWrapper = ({
               position="left"
               anchorClassName={styles.closeBtnTooltip}
             >
-              <EuiButtonIcon
-                iconType="cross"
-                color="primary"
+              <IconButton
+                icon={CancelSlimIcon}
                 aria-label="Close panel"
                 className={styles.closeBtn}
                 data-testid="create-index-close-panel"

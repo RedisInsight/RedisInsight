@@ -15,8 +15,7 @@
     }
 
     &.inline {
-      :global(.euiButtonEmpty__text) {
-        display: flex;
+      :global(.RI-flex-item) {
         align-items: center;
 
         svg {

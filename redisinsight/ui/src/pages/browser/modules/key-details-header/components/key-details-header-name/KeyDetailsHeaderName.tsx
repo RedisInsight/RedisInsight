@@ -1,10 +1,4 @@
-import {
-  EuiButtonIcon,
-  EuiFieldText,
-  EuiIcon,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFieldText, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { isNull } from 'lodash'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
@@ -34,6 +28,8 @@ import {
 } from 'uiSrc/utils'
 
 import { FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -210,11 +206,10 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
                 content="Copy"
                 anchorClassName={styles.copyKey}
               >
-                <EuiButtonIcon
-                  iconType="copy"
+                <IconButton
+                  icon={CopyIcon}
                   id={COPY_KEY_NAME_ICON}
                   aria-label="Copy key name"
-                  color="primary"
                   onClick={(event: any) =>
                     handleCopy(event, key!, keyIsEditing, keyNameRef)
                   }

@@ -1,11 +1,13 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { EuiText, EuiTextColor, EuiButtonIcon } from '@elastic/eui'
+import { EuiText, EuiTextColor } from '@elastic/eui'
 import cx from 'classnames'
 
 import { bufferToString } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -55,10 +57,10 @@ const RecommendationCopyComponent = ({
         >
           {formattedName}
         </EuiTextColor>
-        <EuiButtonIcon
+        <IconButton
           onClick={handleCopy}
           className={styles.btn}
-          iconType="copy"
+          icon={CopyIcon}
           data-testid="copy-key-name-btn"
           aria-label="copy key name"
         />

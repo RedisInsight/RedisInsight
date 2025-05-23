@@ -43,7 +43,7 @@ const GroupBadge = ({
         {getGroupTypeDisplay(type)}
       </EuiText>
     )}
-    {!onDelete && (
+    {onDelete && (
       <IconButton
         size="XS"
         icon={CancelSlimIcon}

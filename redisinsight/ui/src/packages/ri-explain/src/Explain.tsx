@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import React, { useEffect, useState, useRef } from 'react'
 import { Model, Graph } from '@antv/x6'
 import { register } from '@antv/x6-react-shape'
@@ -539,7 +540,7 @@ function ExplainDraw({
                 <IconButton
                   color="text"
                   onClick={item.onClick}
-                  iconType={item.icon}
+                  icon={item.icon}
                   aria-label={item.name}
                 />
               </EuiToolTip>

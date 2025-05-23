@@ -1,5 +1,39 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+class RedisDatabaseStatsDto {
+  @ApiProperty({
+    type: String,
+  })
+  instantaneous_input_kbps: string | undefined;
+
+  @ApiProperty({
+    type: String,
+  })
+  instantaneous_ops_per_sec: string | undefined;
+
+  @ApiProperty({
+    type: String,
+  })
+  instantaneous_output_kbps: string | undefined;
+
+  @ApiProperty({
+    type: Number,
+  })
+  maxmemory_policy: string | undefined;
+
+  @ApiProperty({
+    description: 'Redis database mode',
+    type: String,
+  })
+  numberOfKeysRange: string | undefined;
+
+  @ApiProperty({
+    description: 'Redis database role',
+    type: String,
+  })
+  uptime_in_days: string | undefined;
+}
+
 export class RedisNodeInfoResponse {
   @ApiProperty({
     description: 'Redis database version',
@@ -24,9 +58,9 @@ export class RedisNodeInfoResponse {
 
   @ApiPropertyOptional({
     description: 'Various Redis stats',
-    type: Object,
+    type: RedisDatabaseStatsDto,
   })
-  stats?: any;
+  stats?: RedisDatabaseStatsDto;
 
   @ApiPropertyOptional({
     description: 'The number of Redis databases',

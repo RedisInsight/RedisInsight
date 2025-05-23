@@ -8,7 +8,6 @@ import {
   EuiTitle,
   EuiToolTip,
   EuiForm,
-  EuiCallOut,
   EuiLink,
 } from '@elastic/eui'
 import { EuiSwitchEvent } from '@elastic/eui/src/components/form/switch'
@@ -25,6 +24,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
+import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
 import ConsentOption from './ConsentOption'
 
 import styles from './styles.module.scss'
@@ -223,7 +223,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         <Spacer size="m" />
         {consents.length > 1 && (
           <>
-            <EuiCallOut>
+            <CallOut variant="attention">
               <EuiText
                 size="s"
                 className={styles.smallText}
@@ -232,7 +232,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
                 To avoid automatic execution of malicious code, when adding new
                 Workbench plugins, use files from trusted authors only.
               </EuiText>
-            </EuiCallOut>
+            </CallOut>
             <Spacer />
             <FlexItem>
               <Row gap="m">

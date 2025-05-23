@@ -4,8 +4,7 @@ import { register } from '@antv/x6-react-shape'
 import Hierarchy from '@antv/hierarchy'
 import { formatRedisReply } from 'redisinsight-plugin-sdk'
 
-import { EuiButtonIcon, EuiToolTip, EuiIcon } from '@elastic/eui'
-
+import { EuiToolTip, EuiIcon } from '@elastic/eui'
 import {
   EDGE_COLOR_BODY_DARK,
   EDGE_COLOR_BODY_LIGHT,
@@ -26,6 +25,7 @@ import {
   findFlatProfile,
 } from './parser'
 import { ExplainNode, ProfileNode } from './Node'
+import { IconButton } from '../../../components/base/forms/buttons'
 
 interface IExplain {
   command: string
@@ -532,7 +532,7 @@ function ExplainDraw({
               },
             ].map((item) => (
               <EuiToolTip position="left" content={item.name}>
-                <EuiButtonIcon
+                <IconButton
                   color="text"
                   onClick={item.onClick}
                   iconType={item.icon}

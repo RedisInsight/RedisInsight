@@ -1,14 +1,9 @@
-import {
-  EuiFieldText,
-  EuiFormRow,
-  EuiIcon,
-  EuiPopover,
-  EuiCheckbox,
-} from '@elastic/eui'
+import { EuiFieldText, EuiFormRow, EuiIcon, EuiPopover } from '@elastic/eui'
 import React, { memo } from 'react'
 
 import FilterSvg from 'uiSrc/assets/img/icons/filter.svg'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { useFilterTags } from './useFilterTags'
 import styles from './styles.module.scss'
 
@@ -68,7 +63,7 @@ export const TagsCellHeader = memo(() => {
           <Spacer size="m" />
           {Object.keys(groupedTags).map((key) => (
             <div key={key}>
-              <EuiCheckbox
+              <Checkbox
                 id={key}
                 className={styles.filterTagLabel}
                 label={key}
@@ -80,8 +75,8 @@ export const TagsCellHeader = memo(() => {
                 }}
               />
               {groupedTags[key].map((value) => (
-                <div key={value} style={{ paddingLeft: '20px' }}>
-                  <EuiCheckbox
+                <div key={value} style={{ margin: '10px 0 0 20px' }}>
+                  <Checkbox
                     id={`${key}:${value}`}
                     className={styles.filterTagLabel}
                     data-testid={`${key}:${value}`}

@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/no-this-in-sfc */
-import { EuiCheckbox, EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { Ref, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -56,6 +56,7 @@ import {
   IconButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from './styles.module.scss'
 
 const HIDE_REFRESH_LABEL_WIDTH = 640
@@ -384,7 +385,7 @@ const KeysHeader = (props: Props) => {
                   >
                     <Row align="center" gap="m">
                       <FlexItem grow>
-                        <EuiCheckbox
+                        <Checkbox
                           id="show-key-size"
                           name="show-key-size"
                           label="Key size"
@@ -416,7 +417,7 @@ const KeysHeader = (props: Props) => {
                         </EuiToolTip>
                       </FlexItem>
                     </Row>
-                    <EuiCheckbox
+                    <Checkbox
                       id="show-ttl"
                       name="show-ttl"
                       label="TTL"

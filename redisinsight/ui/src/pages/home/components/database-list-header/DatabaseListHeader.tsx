@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { EuiCheckbox, EuiPopover } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import { useSelector, useDispatch } from 'react-redux'
 import { isEmpty } from 'lodash'
 import cx from 'classnames'
@@ -32,6 +32,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { ColumnsIcon } from 'uiSrc/components/base/icons'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import SearchDatabasesList from '../search-databases-list'
 
 import styles from './styles.module.scss'
@@ -170,7 +171,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
 
   const columnCheckboxes = Array.from(COLUMN_FIELD_NAME_MAP.entries()).map(
     ([field, name]) => (
-      <EuiCheckbox
+      <Checkbox
         key={`show-${field}`}
         id={`show-${field}`}
         name={`show-${field}`}
@@ -220,18 +221,26 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
                   closePopover={() => setColumnsConfigShown(false)}
                   data-testid="columns-config-popover"
                   button={
-                      <SecondaryButton
-                        icon={ColumnsIcon}
-                        onClick={toggleColumnsConfigVisibility}
-                        className={styles.columnsButton}
-                        data-testid="btn-columns-config"
-                        aria-label="columns"
-                      >
-                        <span>Columns</span>
-                      </SecondaryButton>
+                    <SecondaryButton
+                      icon={ColumnsIcon}
+                      onClick={toggleColumnsConfigVisibility}
+                      className={styles.columnsButton}
+                      data-testid="btn-columns-config"
+                      aria-label="columns"
+                    >
+                      <span>Columns</span>
+                    </SecondaryButton>
                   }
                 >
-                  {columnCheckboxes}
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.5rem',
+                    }}
+                  >
+                    {columnCheckboxes}
+                  </div>
                 </EuiPopover>
               </FlexItem>
               <FlexItem>

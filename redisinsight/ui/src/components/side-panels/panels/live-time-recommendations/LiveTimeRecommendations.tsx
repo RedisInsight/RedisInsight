@@ -6,7 +6,6 @@ import {
   EuiText,
   EuiIcon,
   EuiToolTip,
-  EuiCheckbox,
   EuiTextColor,
 } from '@elastic/eui'
 import { remove } from 'lodash'
@@ -38,6 +37,7 @@ import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import GithubSVG from 'uiSrc/assets/img/github.svg?react'
 import { FeatureFlagComponent, LoadingContent } from 'uiSrc/components'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import PopoverRunAnalyze from './components/popover-run-analyze'
@@ -187,7 +187,7 @@ const LiveTimeRecommendations = () => {
       </div>
 
       {isShowHiddenDisplayed && (
-        <EuiCheckbox
+        <Checkbox
           id="showHidden"
           name="showHidden"
           label="Show hidden"

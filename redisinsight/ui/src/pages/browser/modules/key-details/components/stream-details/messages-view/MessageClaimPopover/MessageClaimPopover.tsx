@@ -10,7 +10,6 @@ import {
   EuiFieldNumber,
   EuiSwitch,
   EuiText,
-  EuiCheckbox,
   EuiToolTip,
 } from '@elastic/eui'
 import { useFormik } from 'formik'
@@ -33,6 +32,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import {
   ClaimPendingEntryDto,
   ClaimPendingEntriesResponse,
@@ -313,7 +313,7 @@ const MessageClaimPopover = (props: Props) => {
               </FlexItem>
               <FlexItem grow={2}>
                 <EuiFormRow className={styles.hiddenLabel} label="force">
-                  <EuiCheckbox
+                  <Checkbox
                     id="force_claim"
                     name="force"
                     label="Force Claim"

@@ -1,11 +1,9 @@
 import {
   EuiBasicTableColumn,
-  EuiButtonIcon,
   EuiLoadingSpinner,
   EuiTextColor,
   EuiText,
   EuiIcon,
-  EuiButton,
   EuiToolTip,
 } from '@elastic/eui'
 import { pick } from 'lodash'
@@ -32,6 +30,8 @@ import { InputFieldSentinel } from 'uiSrc/components'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/InputFieldSentinel'
 
+import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
 import SentinelDatabasesResult from './components'
 
 import styles from '../styles.module.scss'
@@ -53,7 +53,7 @@ const SentinelDatabasesResultPage = () => {
 
   useEffect(() => {
     if (!masters.length) {
-      history.push(Pages.home)
+      // history.push(Pages.home)
     }
 
     dispatch(resetLoadedSentinel(LoadedSentinel.MastersAdded))
@@ -207,8 +207,8 @@ const SentinelDatabasesResultPage = () => {
               content="Copy"
               anchorClassName="copyPublicEndpointTooltip"
             >
-              <EuiButtonIcon
-                iconType="copy"
+              <IconButton
+                icon={IconButton}
                 aria-label="Copy public endpoint"
                 className="copyPublicEndpointBtn"
                 onClick={() => handleCopy(text)}
@@ -358,17 +358,15 @@ const SentinelDatabasesResultPage = () => {
                 ) : null
               }
             >
-              <EuiButton
-                fill
+              <PrimaryButton
                 size="s"
-                color="secondary"
-                isDisabled={isDisabled}
-                isLoading={loading}
+                disabled={isDisabled}
+                loading={loading}
                 onClick={() => handleAddInstance(name)}
-                iconType={isDisabled ? 'iInCircle' : undefined}
+                icon={isDisabled ? InfoIcon : undefined}
               >
                 Add Primary Group
-              </EuiButton>
+              </PrimaryButton>
             </EuiToolTip>
           </div>
         )

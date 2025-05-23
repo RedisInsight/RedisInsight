@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiBadge, EuiButton, EuiTitle, } from '@elastic/eui'
+import { EuiBadge, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import { AddDbType } from 'uiSrc/pages/home/constants'
 import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
@@ -11,8 +11,9 @@ import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 import RocketIcon from 'uiSrc/assets/img/oauth/rocket.svg?react'
 
-import { FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
+import { Col, FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import { CONNECTIVITY_OPTIONS } from '../../constants'
 
 import styles from './styles.module.scss'
@@ -34,21 +35,22 @@ const ConnectivityOptions = (props: Props) => {
         <Spacer />
         <Grid gap="l" columns={3} responsive>
           <FlexItem>
-            <EuiButton
-              color="secondary"
+            <SecondaryButton
               className={styles.typeBtn}
               onClick={() => onClickOption(AddDbType.cloud)}
               data-testid="discover-cloud-btn"
             >
-              <CloudIcon className={styles.btnIcon} />
-              Add databases
-            </EuiButton>
+              <Col align="center">
+                <CloudIcon className={styles.btnIcon} />
+                Add databases
+              </Col>
+            </SecondaryButton>
           </FlexItem>
           <FeatureFlagComponent name={FeatureFlags.cloudAds}>
             <FlexItem>
               <OAuthSsoHandlerDialog>
                 {(ssoCloudHandlerClick, isSSOEnabled) => (
-                  <EuiButton
+                  <SecondaryButton
                     color="secondary"
                     className={styles.typeBtn}
                     href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
@@ -67,9 +69,13 @@ const ConnectivityOptions = (props: Props) => {
                     <EuiBadge color="subdued" className={styles.freeBadge}>
                       Free
                     </EuiBadge>
-                    <RocketIcon className={cx(styles.btnIcon, styles.rocket)} />
-                    New database
-                  </EuiButton>
+                    <Col align="center">
+                      <RocketIcon
+                        className={cx(styles.btnIcon, styles.rocket)}
+                      />
+                      New database
+                    </Col>
+                  </SecondaryButton>
                 )}
               </OAuthSsoHandlerDialog>
             </FlexItem>
@@ -86,7 +92,7 @@ const ConnectivityOptions = (props: Props) => {
         <Grid gap="l" responsive columns={3}>
           {CONNECTIVITY_OPTIONS.map(({ id, type, title, icon }) => (
             <FlexItem key={id}>
-              <EuiButton
+              <SecondaryButton
                 color="secondary"
                 className={cx(styles.typeBtn, styles.small)}
                 onClick={() => onClickOption(type)}
@@ -94,7 +100,7 @@ const ConnectivityOptions = (props: Props) => {
               >
                 {icon?.({ className: styles.btnIcon })}
                 {title}
-              </EuiButton>
+              </SecondaryButton>
             </FlexItem>
           ))}
         </Grid>

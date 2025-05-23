@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  EuiButton,
   EuiFilePicker,
   EuiIcon,
   EuiPopover,
@@ -30,6 +29,11 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { isProcessedBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
 import { UploadWarning } from 'uiSrc/components'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { RefreshIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -171,14 +175,13 @@ const BulkUpload = (props: Props) => {
         </BulkActionsInfo>
       )}
       <div className={styles.footer}>
-        <EuiButton
-          color="secondary"
+        <SecondaryButton
           onClick={handleClickCancel}
           className={styles.cancelBtn}
           data-testid="bulk-action-cancel-btn"
         >
           {isProcessedBulkAction(status) ? 'Close' : 'Cancel'}
-        </EuiButton>
+        </SecondaryButton>
         {!isCompleted ? (
           <EuiPopover
             id="bulk-upload-warning-popover"
@@ -188,16 +191,14 @@ const BulkUpload = (props: Props) => {
             panelClassName={styles.panelPopover}
             panelPaddingSize="none"
             button={
-              <EuiButton
-                fill
-                color="secondary"
+              <PrimaryButton
                 onClick={handleUploadWarning}
                 disabled={isSubmitDisabled || loading}
-                isLoading={loading}
+                loading={loading}
                 data-testid="bulk-action-warning-btn"
               >
                 Upload
-              </EuiButton>
+              </PrimaryButton>
             }
           >
             <EuiText
@@ -213,28 +214,25 @@ const BulkUpload = (props: Props) => {
                 All commands from the file will be executed against your
                 database.
               </div>
-              <EuiButton
-                fill
+              <PrimaryButton
                 size="s"
-                color="secondary"
                 className={styles.uploadApproveBtn}
                 onClick={handleUpload}
                 data-testid="bulk-action-apply-btn"
               >
                 Upload
-              </EuiButton>
+              </PrimaryButton>
             </EuiText>
           </EuiPopover>
         ) : (
-          <EuiButton
-            fill
-            iconType="refresh"
+          <PrimaryButton
+            icon={RefreshIcon}
             color="secondary"
             onClick={onStartAgain}
             data-testid="bulk-action-start-new-btn"
           >
             Start New
-          </EuiButton>
+          </PrimaryButton>
         )}
       </div>
     </div>

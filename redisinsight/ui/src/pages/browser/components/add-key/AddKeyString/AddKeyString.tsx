@@ -1,18 +1,15 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import {
-  EuiButton,
-  EuiForm,
-  EuiFormRow,
-  EuiPanel,
-  EuiTextArea,
-  EuiTextColor,
-} from '@elastic/eui'
+import { EuiFormRow, EuiForm, EuiPanel, EuiTextArea } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 
 import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/browser/keys'
 
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
@@ -71,9 +68,9 @@ const AddKeyString = (props: Props) => {
           data-testid="string-value"
         />
       </EuiFormRow>
-      <EuiButton type="submit" fill style={{ display: 'none' }}>
+      <PrimaryButton type="submit" style={{ display: 'none' }}>
         Submit
-      </EuiButton>
+      </PrimaryButton>
       <AddKeyFooter>
         <EuiPanel
           style={{ border: 'none' }}
@@ -81,32 +78,28 @@ const AddKeyString = (props: Props) => {
           hasShadow={false}
           borderRadius="none"
         >
-          <Row justify="end">
+          <Row justify="end" gap="m">
             <FlexItem>
               <div>
-                <EuiButton
-                  color="secondary"
+                <SecondaryButton
                   onClick={() => onCancel(true)}
                   className="btn-cancel btn-back"
                 >
-                  <EuiTextColor>Cancel</EuiTextColor>
-                </EuiButton>
+                  Cancel
+                </SecondaryButton>
               </div>
             </FlexItem>
             <FlexItem>
               <div>
-                <EuiButton
-                  fill
-                  size="m"
-                  color="secondary"
+                <PrimaryButton
                   className="btn-add"
-                  isLoading={loading}
+                  loading={loading}
                   onClick={submitData}
                   disabled={!isFormValid || loading}
                   data-testid="add-key-string-btn"
                 >
                   Add Key
-                </EuiButton>
+                </PrimaryButton>
               </div>
             </FlexItem>
           </Row>

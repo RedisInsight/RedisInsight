@@ -1,4 +1,4 @@
-// import { theme } from '@redislabsdev/redis-ui-styles'
+// import { theme } from '@redis-ui/styles'
 // todo: after integration with redis-ui, override the theme here
 
 export const theme = {

@@ -1,4 +1,4 @@
-import { EuiButtonIcon, EuiTab, EuiTabs, EuiTitle, keys } from '@elastic/eui'
+import { EuiTab, EuiTabs, EuiTitle, keys } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, pick } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
@@ -25,6 +25,8 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { ArrowLeftIcon } from 'uiSrc/components/base/icons'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { MANUAL_FORM_TABS, ManualFormTab } from './constants'
 import CloneConnection from './components/CloneConnection'
 import FooterActions from './components/FooterActions'
@@ -155,10 +157,9 @@ const ManualConnectionForm = (props: Props) => {
       setModalHeader(
         <Row align="center" gap="s">
           <FlexItem>
-            <EuiButtonIcon
+            <IconButton
               onClick={handleClickBackClone}
-              iconSize="m"
-              iconType="sortLeft"
+              icon={ArrowLeftIcon}
               aria-label="back"
               data-testid="back-btn"
             />

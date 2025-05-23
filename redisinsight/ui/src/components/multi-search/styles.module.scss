@@ -48,22 +48,7 @@
   }
 
   .clearButton {
-    color: var(--htmlColor) !important;
-    width: 16px;
-    height: 16px;
-    background-color: var(--separatorColor);
-    border-radius: 100%;
     margin-left: 5px;
-
-    &:hover,
-    &:focus {
-      background-color: var(--separatorColor) !important;
-    }
-
-    :global(.euiIcon) {
-      width: 10px;
-      height: 10px;
-    }
   }
 
   .autoSuggestions {
@@ -121,8 +106,7 @@
   }
 
   .historyIcon {
-    margin-left: 8px;
-    margin-right: -4px;
+    margin-inline: 8px;
   }
 
   .clearHistory {

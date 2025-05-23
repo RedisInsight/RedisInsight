@@ -1,4 +1,4 @@
-import { EuiButton, EuiButtonIcon, EuiPopover, EuiText } from '@elastic/eui'
+import { EuiPopover, EuiText } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 
@@ -16,6 +16,11 @@ import {
 } from 'uiSrc/telemetry'
 import { formatLongName } from 'uiSrc/utils'
 
+import { DeleteIcon } from 'uiSrc/components/base/icons'
+import {
+  DestructiveButton,
+  IconButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -64,9 +69,8 @@ const KeyDetailsHeaderDelete = ({ onDelete }: Props) => {
       closePopover={closePopoverDelete}
       panelPaddingSize="l"
       button={
-        <EuiButtonIcon
-          iconType="trash"
-          color="primary"
+        <IconButton
+          icon={DeleteIcon}
           aria-label="Delete Key"
           className="deleteKeyBtn"
           onClick={showPopoverDelete}
@@ -82,17 +86,15 @@ const KeyDetailsHeaderDelete = ({ onDelete }: Props) => {
           <EuiText size="s">will be deleted.</EuiText>
         </EuiText>
         <div className={styles.popoverFooter}>
-          <EuiButton
-            fill
-            size="s"
-            color="warning"
-            iconType="trash"
-            onClick={() => onDelete(keyBuffer)}
+          <DestructiveButton
+            size="small"
+            icon={DeleteIcon}
+            onClick={() => onDelete(keyBuffer!)}
             className={styles.popoverDeleteBtn}
             data-testid="delete-key-confirm-btn"
           >
             Delete
-          </EuiButton>
+          </DestructiveButton>
         </div>
       </div>
     </EuiPopover>

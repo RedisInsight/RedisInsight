@@ -1,5 +1,4 @@
 import {
-  EuiButton,
   EuiFilePicker,
   EuiIcon,
   EuiLoadingSpinner,
@@ -19,6 +18,10 @@ import { Nullable } from 'uiSrc/utils'
 
 import { UploadWarning } from 'uiSrc/components'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props<T> {
@@ -147,36 +150,25 @@ const ImportFileModal = <T,>({
 
       {data && (
         <EuiModalFooter>
-          <EuiButton
-            color="secondary"
-            onClick={onClose}
-            fill
-            data-testid="ok-btn"
-          >
+          <PrimaryButton onClick={onClose} data-testid="ok-btn">
             Ok
-          </EuiButton>
+          </PrimaryButton>
         </EuiModalFooter>
       )}
 
       {isShowForm && (
         <EuiModalFooter>
-          <EuiButton
-            color="secondary"
-            onClick={onClose}
-            data-testid="cancel-btn"
-          >
+          <SecondaryButton onClick={onClose} data-testid="cancel-btn">
             Cancel
-          </EuiButton>
+          </SecondaryButton>
 
-          <EuiButton
-            color="secondary"
+          <PrimaryButton
             onClick={onSubmit}
-            fill
-            isDisabled={isSubmitDisabled}
+            disabled={isSubmitDisabled}
             data-testid="submit-btn"
           >
             {submitBtnText || 'Import'}
-          </EuiButton>
+          </PrimaryButton>
         </EuiModalFooter>
       )}
     </EuiModal>

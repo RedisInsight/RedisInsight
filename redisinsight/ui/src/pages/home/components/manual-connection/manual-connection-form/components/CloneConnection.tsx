@@ -1,8 +1,9 @@
 import React from 'react'
-import { EuiButton } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon } from 'uiSrc/components/base/icons'
 
 export interface Props {
   id?: string
@@ -26,16 +27,15 @@ const CloneConnection = (props: Props) => {
     <>
       <Row gap="m" justify="end" style={{ flexGrow: 0 }}>
         <FlexItem>
-          <EuiButton
-            size="s"
-            color="secondary"
-            iconType="copy"
+          <SecondaryButton
+            size="small"
+            icon={CopyIcon}
             aria-label="Clone database"
             data-testid="clone-db-btn"
             onClick={handleClickClone}
           >
             Clone Connection
-          </EuiButton>
+          </SecondaryButton>
         </FlexItem>
       </Row>
       <Spacer />

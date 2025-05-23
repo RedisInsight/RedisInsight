@@ -8,12 +8,10 @@ import React, {
 import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
 import {
-  EuiButton,
   EuiFieldText,
-  EuiForm,
   EuiFormRow,
+  EuiForm,
   EuiPanel,
-  EuiTextColor,
 } from '@elastic/eui'
 import { Maybe, stringToBuffer, validateScoreNumber } from 'uiSrc/utils'
 import { isNaNConvertedString } from 'uiSrc/utils/numbers'
@@ -25,6 +23,10 @@ import {
   INITIAL_ZSET_MEMBER_STATE,
   IZsetMemberState,
 } from 'uiSrc/pages/browser/components/add-key/AddKeyZset/interfaces'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/z-set/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
@@ -236,9 +238,9 @@ const AddKeyZset = (props: Props) => {
         )}
       </AddMultipleFields>
 
-      <EuiButton type="submit" fill style={{ display: 'none' }}>
+      <PrimaryButton type="submit" style={{ display: 'none' }}>
         Submit
-      </EuiButton>
+      </PrimaryButton>
       <AddKeyFooter>
         <EuiPanel
           className="flexItemNoFullWidth"
@@ -250,29 +252,25 @@ const AddKeyZset = (props: Props) => {
           <Row justify="end">
             <FlexItem>
               <div>
-                <EuiButton
-                  color="secondary"
+                <SecondaryButton
                   onClick={() => onCancel(true)}
                   className="btn-cancel btn-back"
                 >
-                  <EuiTextColor>Cancel</EuiTextColor>
-                </EuiButton>
+                  Cancel
+                </SecondaryButton>
               </div>
             </FlexItem>
             <FlexItem>
               <div>
-                <EuiButton
-                  fill
-                  size="m"
-                  color="secondary"
+                <PrimaryButton
                   className="btn-add"
-                  isLoading={loading}
+                  loading={loading}
                   onClick={submitData}
                   disabled={!isFormValid || loading}
                   data-testid="add-key-zset-btn"
                 >
                   Add Key
-                </EuiButton>
+                </PrimaryButton>
               </div>
             </FlexItem>
           </Row>

@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { toNumber } from 'lodash'
 import {
-  EuiButton,
-  EuiTextColor,
   EuiFormRow,
   EuiFieldText,
   EuiPanel,
@@ -43,6 +41,12 @@ import {
 import { AddListFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  DestructiveButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { DeleteIcon } from 'uiSrc/components/base/icons'
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/list/dto'
 
 import {
@@ -174,16 +178,13 @@ const RemoveListElements = (props: Props) => {
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
       button={
-        <EuiButton
-          fill
-          size="m"
-          color="secondary"
+        <PrimaryButton
           onClick={showPopover}
           disabled={!isFormValid}
           data-testid="remove-elements-btn"
         >
           Remove
-        </EuiButton>
+        </PrimaryButton>
       }
     >
       <div className={styles.popover}>
@@ -208,17 +209,15 @@ const RemoveListElements = (props: Props) => {
           )}
         </EuiText>
         <Spacer />
-        <EuiButton
-          fill
-          size="s"
-          color="warning"
+        <DestructiveButton
+          size="small"
           onClick={submitData}
-          iconType="trash"
+          icon={DeleteIcon}
           className={styles.popoverDeleteBtn}
           data-testid="remove-submit"
         >
           Remove
-        </EuiButton>
+        </DestructiveButton>
       </div>
     </EuiPopover>
   )
@@ -308,13 +307,12 @@ const RemoveListElements = (props: Props) => {
         <Row justify="end" gap="xl">
           <FlexItem>
             <div>
-              <EuiButton
-                color="secondary"
+              <SecondaryButton
                 onClick={() => closePanel(true)}
                 data-testid="cancel-elements-btn"
               >
-                <EuiTextColor color="default">Cancel</EuiTextColor>
-              </EuiButton>
+                Cancel
+              </SecondaryButton>
             </div>
           </FlexItem>
           <FlexItem>

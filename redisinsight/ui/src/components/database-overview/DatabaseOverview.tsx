@@ -1,6 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { getConfig } from 'uiSrc/config'
 
 import {
@@ -15,6 +15,7 @@ import MetricItem, {
 import { useDatabaseOverview } from 'uiSrc/components/database-overview/hooks/useDatabaseOverview'
 
 import { IMetric } from 'uiSrc/components/database-overview/components/OverviewMetrics'
+import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import AutoRefresh from '../auto-refresh'
 import styles from './styles.module.scss'
 
@@ -37,9 +38,10 @@ const DatabaseOverview = () => {
   return (
     <Row className={styles.container}>
       <FlexItem grow key="overview">
-        <Row className={cx('flex-row', styles.itemContainer, styles.overview)}
-            align="center"
-          >
+        <Row
+          className={cx('flex-row', styles.itemContainer, styles.overview)}
+          align="center"
+        >
           {connectivityError && (
             <MetricItem
               id="connectivityError"
@@ -55,9 +57,8 @@ const DatabaseOverview = () => {
                   className={styles.upgradeBtnItem}
                   style={{ borderRight: 'none' }}
                 >
-                  <EuiButton
-                    color="secondary"
-                    fill={!!usedMemoryPercent && usedMemoryPercent >= 75}
+                  <SecondaryButton
+                    filled={!!usedMemoryPercent && usedMemoryPercent >= 75}
                     className={cx(styles.upgradeBtn)}
                     style={{ fontWeight: '400' }}
                     onClick={() => {
@@ -69,7 +70,7 @@ const DatabaseOverview = () => {
                     data-testid="upgrade-ri-db-button"
                   >
                     Upgrade plan
-                  </EuiButton>
+                  </SecondaryButton>
                 </OverviewItem>
               )}
               {metrics?.map((overviewItem) => (
@@ -88,7 +89,7 @@ const DatabaseOverview = () => {
                   <AutoRefresh
                     displayText={false}
                     displayLastRefresh={false}
-                    iconSize="xs"
+                    iconSize="S"
                     loading={false}
                     enableAutoRefreshDefault
                     lastRefreshTime={lastRefreshTime}

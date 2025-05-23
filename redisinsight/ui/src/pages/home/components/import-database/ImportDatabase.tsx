@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  EuiButton,
   EuiFilePicker,
   EuiIcon,
   EuiLoadingSpinner,
@@ -23,6 +22,11 @@ import { UploadWarning } from 'uiSrc/components'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
 import ResultsLog from './components/ResultsLog'
 
 import styles from './styles.module.scss'
@@ -108,15 +112,14 @@ const ImportDatabase = (props: Props) => {
     if (error) {
       return ReactDOM.createPortal(
         <div className="footerAddDatabase">
-          <EuiButton
-            fill
+          <PrimaryButton
             size="s"
             color="secondary"
             onClick={onClickRetry}
             data-testid="btn-retry"
           >
             Retry
-          </EuiButton>
+          </PrimaryButton>
         </div>,
         footerEl,
       )
@@ -125,16 +128,14 @@ const ImportDatabase = (props: Props) => {
     if (data) {
       return ReactDOM.createPortal(
         <div className="footerAddDatabase">
-          <EuiButton
-            fill
+          <PrimaryButton
             size="s"
-            color="secondary"
             type="submit"
             onClick={handleOnClose}
             data-testid="btn-close"
           >
             Ok
-          </EuiButton>
+          </PrimaryButton>
         </div>,
         footerEl,
       )
@@ -142,33 +143,30 @@ const ImportDatabase = (props: Props) => {
 
     return ReactDOM.createPortal(
       <div className="footerAddDatabase">
-        <EuiButton
+        <SecondaryButton
           size="s"
-          color="secondary"
           className="btn-cancel"
           onClick={handleOnClose}
           style={{ marginRight: 12 }}
         >
           Cancel
-        </EuiButton>
+        </SecondaryButton>
         <EuiToolTip
           position="top"
           anchorClassName="euiToolTip__btn-disabled"
           content={isSubmitDisabled ? 'Upload a file' : undefined}
         >
-          <EuiButton
-            fill
+          <PrimaryButton
             size="s"
-            color="secondary"
             type="submit"
             onClick={onSubmit}
-            isLoading={loading}
+            loading={loading}
             disabled={isSubmitDisabled}
-            iconType={isSubmitDisabled ? 'iInCircle' : undefined}
+            icon={isSubmitDisabled ? InfoIcon : undefined}
             data-testid="btn-submit"
           >
             Submit
-          </EuiButton>
+          </PrimaryButton>
         </EuiToolTip>
       </div>,
       footerEl,

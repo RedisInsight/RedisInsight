@@ -1,6 +1,5 @@
 import {
   EuiFieldText,
-  EuiFieldPassword,
   EuiIcon,
   EuiFieldNumber,
 } from '@elastic/eui'
@@ -9,6 +8,7 @@ import React, { useState } from 'react'
 import cx from 'classnames'
 import { useDebouncedEffect } from 'uiSrc/services'
 import { validateNumber } from 'uiSrc/utils'
+import { PasswordInput } from 'uiSrc/components/base/inputs'
 
 import styles from './styles.module.scss'
 
@@ -68,11 +68,10 @@ const InputFieldSentinel = (props: Props) => {
         />
       )}
       {inputType === SentinelInputFieldType.Password && (
-        <EuiFieldPassword
+        <PasswordInput
           {...clearProp}
-          compressed
           value={value}
-          onChange={(e) => handleChange(e.target?.value)}
+          onChange={(value) => handleChange(value)}
           data-testid="sentinel-input-password"
         />
       )}

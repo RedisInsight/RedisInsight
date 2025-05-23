@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { EuiButton, EuiIcon, EuiLink, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiIcon, EuiLink, EuiText, EuiTitle } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import RedisDbBlueIcon from 'uiSrc/assets/img/icons/redis_db_blue.svg'
 
@@ -20,6 +20,7 @@ import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import { FeatureFlags } from 'uiSrc/constants'
 
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 const utm = {
@@ -70,11 +71,7 @@ const FilterNotAvailable = ({ onClose }: { onClose?: () => void }) => {
           <div className={styles.linksWrapper}>
             <OAuthSsoHandlerDialog>
               {(ssoCloudHandlerClick) => (
-                <EuiButton
-                  fill
-                  color="secondary"
-                  target="_blank"
-                  href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, utm)}
+                <PrimaryButton
                   onClick={(e) => {
                     ssoCloudHandlerClick(e, {
                       source: OAuthSocialSource.BrowserFiltering,
@@ -86,7 +83,7 @@ const FilterNotAvailable = ({ onClose }: { onClose?: () => void }) => {
                   size="s"
                 >
                   Get Started For Free
-                </EuiButton>
+                </PrimaryButton>
               )}
             </OAuthSsoHandlerDialog>
             <Spacer size="m" />

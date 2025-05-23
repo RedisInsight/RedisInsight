@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiButton, EuiLink } from '@elastic/eui'
+import { EuiLink } from '@elastic/eui'
 import { useHistory } from 'react-router-dom'
 import {
   FeatureFlags,
@@ -18,6 +18,7 @@ import {
   OAuthSocialSource,
   RedisDefaultModules,
 } from 'uiSrc/slices/interfaces'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 
 export interface IProps {
   moduleName: RedisDefaultModules
@@ -75,14 +76,9 @@ const ModuleNotLoadedButton = ({
             }}
             data-testid="get-started-link"
           >
-            <EuiButton
-              fill
-              size="s"
-              color="secondary"
-              className={styles.btnLink}
-            >
+            <PrimaryButton size="s" className={styles.btnLink}>
               Redis Databases page
-            </EuiButton>
+            </PrimaryButton>
           </EuiLink>
         }
       >
@@ -109,14 +105,9 @@ const ModuleNotLoadedButton = ({
               }}
               data-testid="get-started-link"
             >
-              <EuiButton
-                fill
-                size="s"
-                color="secondary"
-                className={styles.btnLink}
-              >
+              <PrimaryButton size="s" className={styles.btnLink}>
                 Get Started For Free
-              </EuiButton>
+              </PrimaryButton>
             </EuiLink>
           )}
         </OAuthSsoHandlerDialog>

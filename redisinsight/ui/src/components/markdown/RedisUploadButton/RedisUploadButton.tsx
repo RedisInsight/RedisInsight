@@ -1,4 +1,4 @@
-import { EuiButton, EuiIcon, EuiLink, EuiPopover, EuiText, } from '@elastic/eui'
+import { EuiIcon, EuiLink, EuiPopover, EuiText } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
@@ -23,6 +23,11 @@ import {
 } from 'uiSrc/services/resourcesService'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { PlayFilledIcon, ContractsIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -111,19 +116,18 @@ const RedisUploadButton = ({ label, path }: Props) => {
         anchorClassName={styles.popoverAnchor}
         panelPaddingSize="none"
         button={
-          <EuiButton
-            isLoading={isLoading}
+          <SecondaryButton
+            loading={isLoading}
             iconSide="right"
-            iconType="indexRuntime"
+            icon={ContractsIcon}
             size="s"
             className={styles.button}
             onClick={openPopover}
-            fullWidth
             color="secondary"
             data-testid="upload-data-bulk-btn"
           >
             {truncateText(label, 86)}
-          </EuiButton>
+          </SecondaryButton>
         }
       >
         {instanceId ? (
@@ -151,18 +155,16 @@ const RedisUploadButton = ({ label, path }: Props) => {
               >
                 Download file
               </EuiLink>
-              <EuiButton
-                fill
+              <PrimaryButton
                 size="s"
-                color="secondary"
-                iconType="playFilled"
+                icon={PlayFilledIcon}
                 iconSide="right"
                 className={styles.uploadApproveBtn}
                 onClick={uploadData}
                 data-testid="upload-data-bulk-apply-btn"
               >
                 Execute
-              </EuiButton>
+              </PrimaryButton>
             </div>
           </EuiText>
         ) : (

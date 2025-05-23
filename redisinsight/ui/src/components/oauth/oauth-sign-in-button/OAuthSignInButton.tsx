@@ -1,11 +1,12 @@
 import React from 'react'
-import { EuiButton, EuiImage } from '@elastic/eui'
+import { EuiImage } from '@elastic/eui'
 
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 
 import RedisLogo from 'uiSrc/assets/img/logo_small.svg'
 
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -18,7 +19,7 @@ const OAuthSignInButton = (props: Props) => {
   return (
     <OAuthSsoHandlerDialog>
       {(socialCloudHandlerClick) => (
-        <EuiButton
+        <SecondaryButton
           className={styles.btn}
           size="s"
           onClick={(e: React.MouseEvent) =>
@@ -31,7 +32,7 @@ const OAuthSignInButton = (props: Props) => {
         >
           <EuiImage className={styles.logo} src={RedisLogo} alt="" />
           <span>Cloud sign in</span>
-        </EuiButton>
+        </SecondaryButton>
       )}
     </OAuthSsoHandlerDialog>
   )

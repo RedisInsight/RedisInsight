@@ -1,5 +1,7 @@
 import React from 'react'
-import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { EditIcon } from 'uiSrc/components/base/icons'
 import { useChangeEditorType } from './useChangeEditorType'
 
 export enum ButtonMode {
@@ -24,8 +26,9 @@ const ChangeEditorTypeButton = ({
 
   return (
     <EuiToolTip content={tooltip} position="right">
-      <EuiButtonIcon
-        iconType="pencil"
+      <IconButton
+        size="S"
+        icon={EditIcon}
         onClick={switchEditorType}
         aria-label="Change editor type"
         disabled={isDisabled}

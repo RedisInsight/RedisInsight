@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiPopover, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiPopover, EuiText, EuiTitle } from '@elastic/eui'
 
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -50,16 +51,14 @@ const RestartChat = (props: Props) => {
           session.
         </EuiText>
         <Spacer size="s" />
-        <EuiButton
-          fill
+        <PrimaryButton
           size="s"
-          color="secondary"
           onClick={handleConfirm}
           className={styles.confirmBtn}
           data-testid="ai-chat-restart-confirm"
         >
           Restart
-        </EuiButton>
+        </PrimaryButton>
       </>
     </EuiPopover>
   )

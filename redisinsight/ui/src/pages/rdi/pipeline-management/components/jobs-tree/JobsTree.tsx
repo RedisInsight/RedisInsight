@@ -1,6 +1,5 @@
 import {
   EuiAccordion,
-  EuiButton,
   EuiButtonIcon,
   EuiIcon,
   EuiLoadingSpinner,
@@ -29,6 +28,7 @@ import { isEqualPipelineFile, Nullable } from 'uiSrc/utils'
 import statusErrorIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/status_error.svg?react'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { DestructiveButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -210,14 +210,13 @@ const JobsTree = (props: IProps) => {
               </EuiText>
             }
             submitBtn={
-              <EuiButton
-                fill
+              <DestructiveButton
                 size="s"
                 color="secondary"
                 data-testid="delete-confirm-btn"
               >
                 Delete
-              </EuiButton>
+              </DestructiveButton>
             }
             onConfirm={() => handleDeleteClick(name)}
             button={

@@ -1,11 +1,5 @@
 import React, { useState } from 'react'
-import {
-  EuiButton,
-  EuiFieldText,
-  EuiFilePicker,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFieldText, EuiFilePicker, EuiText, EuiToolTip } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { FormikErrors } from 'formik/dist/types'
 import { isEmpty } from 'lodash'
@@ -14,6 +8,11 @@ import { Nullable } from 'uiSrc/utils'
 import validationErrors from 'uiSrc/constants/validationErrors'
 
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
 import CreateTutorialLink from '../CreateTutorialLink'
 import styles from './styles.module.scss'
 
@@ -105,14 +104,13 @@ const UploadTutorialForm = (props: Props) => {
           <div className={styles.footer}>
             <CreateTutorialLink />
             <div className={styles.footerButtons}>
-              <EuiButton
-                color="secondary"
+              <SecondaryButton
                 size="s"
                 onClick={() => onCancel?.()}
                 data-testid="cancel-upload-tutorial-btn"
               >
                 Cancel
-              </EuiButton>
+              </SecondaryButton>
               <EuiToolTip
                 position="top"
                 anchorClassName="euiToolTip__btn-disabled"
@@ -125,18 +123,16 @@ const UploadTutorialForm = (props: Props) => {
                 }
                 content={getSubmitButtonContent(isSubmitDisabled)}
               >
-                <EuiButton
+                <PrimaryButton
                   className={styles.btnSubmit}
-                  color="secondary"
                   size="s"
-                  fill
                   onClick={() => formik.handleSubmit()}
-                  iconType={isSubmitDisabled ? 'iInCircle' : undefined}
+                  icon={isSubmitDisabled ? InfoIcon : undefined}
                   disabled={isSubmitDisabled}
                   data-testid="submit-upload-tutorial-btn"
                 >
                   Submit
-                </EuiButton>
+                </PrimaryButton>
               </EuiToolTip>
             </div>
           </div>

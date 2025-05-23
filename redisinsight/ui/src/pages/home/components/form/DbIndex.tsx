@@ -1,10 +1,5 @@
 import React, { ChangeEvent } from 'react'
-import {
-  EuiCheckbox,
-  EuiFieldNumber,
-  EuiFormRow,
-  htmlIdGenerator,
-} from '@elastic/eui'
+import { EuiFieldNumber, EuiFormRow, htmlIdGenerator } from '@elastic/eui'
 import { FormikProps } from 'formik'
 
 import { validateNumber } from 'uiSrc/utils'
@@ -12,6 +7,7 @@ import { validateNumber } from 'uiSrc/utils'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -24,7 +20,8 @@ const DbIndex = (props: Props) => {
   const handleChangeDbIndexCheckbox = (
     e: ChangeEvent<HTMLInputElement>,
   ): void => {
-    const isChecked = e.target.checked
+    // Need to check the type of event to safely access properties
+    const isChecked = 'checked' in e.target ? e.target.checked : false
     if (!isChecked) {
       // Reset db field to initial value
       formik.setFieldValue('db', null)
@@ -37,14 +34,16 @@ const DbIndex = (props: Props) => {
       <Row gap="s">
         <FlexItem>
           <EuiFormRow>
-            <EuiCheckbox
-              id={`${htmlIdGenerator()()} over db`}
-              name="showDb"
-              label="Select Logical Database"
-              checked={!!formik.values.showDb}
-              onChange={handleChangeDbIndexCheckbox}
-              data-testid="showDb"
-            />
+            <>
+              <Checkbox
+                id={`${htmlIdGenerator()()} over db`}
+                name="showDb"
+                label="Select Logical Database"
+                checked={!!formik.values.showDb}
+                onChange={handleChangeDbIndexCheckbox}
+                data-testid="showDb"
+              />
+            </>
           </EuiFormRow>
         </FlexItem>
       </Row>

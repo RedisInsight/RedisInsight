@@ -13,6 +13,7 @@ import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { NONE } from 'uiSrc/pages/home/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 
 export interface Props {
   formik: FormikProps<DbConnectionInfo>
@@ -68,7 +69,7 @@ const DbCompressor = (props: Props) => {
       <Row gap="m" responsive={false}>
         <FlexItem>
           <EuiFormRow>
-            <EuiCheckbox
+            <Checkbox
               id={`${htmlIdGenerator()()} over db compressor`}
               name="showCompressor"
               label="Enable Automatic Data Decompression"

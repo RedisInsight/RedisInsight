@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import cx from 'classnames'
 import {
-  EuiCallOut,
   EuiCollapsibleNavGroup,
   EuiForm,
   EuiFormRow,
@@ -41,6 +40,7 @@ import {
   PageHeader,
   PageContentBody,
 } from 'uiSrc/components/base/layout/page'
+import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
 import {
   AdvancedSettings,
   CloudSettings,
@@ -157,12 +157,12 @@ const SettingsPage = () => {
           <EuiLoadingSpinner size="xl" />
         </div>
       )}
-      <EuiCallOut className={styles.warning}>
+      <CallOut className={styles.warning}>
         <EuiText size="s" className={styles.smallText}>
           Advanced settings should only be changed if you understand their
           impact.
         </EuiText>
-      </EuiCallOut>
+      </CallOut>
       <AdvancedSettings />
     </div>
   )

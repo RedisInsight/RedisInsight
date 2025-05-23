@@ -65,6 +65,7 @@ import {
   OAuthSocialSource,
 } from 'uiSrc/slices/interfaces'
 import {
+  getRedisInfoSummary,
   getRedisModulesSummary,
   sendEventTelemetry,
   TelemetryEvent,
@@ -184,12 +185,13 @@ const DatabasesListWrapper = (props: Props) => {
 
     history.push(Pages.browser(id))
   }
-  const handleCheckConnectToInstance = (
+  const handleCheckConnectToInstance = async (
     event: React.MouseEvent | React.KeyboardEvent,
     { id, provider, modules }: Instance,
   ) => {
     event.preventDefault()
     const modulesSummary = getRedisModulesSummary(modules)
+    const infoData = await getRedisInfoSummary(id)
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
@@ -197,6 +199,7 @@ const DatabasesListWrapper = (props: Props) => {
         provider,
         source: 'db_list',
         ...modulesSummary,
+        ...infoData,
       },
     })
     dispatch(

@@ -13,6 +13,7 @@ import {
   TelemetryEvent,
   getRedisModulesSummary,
   sendEventTelemetry,
+  getRedisInfoSummary,
 } from 'uiSrc/telemetry'
 import { getDbIndex } from 'uiSrc/utils'
 import {
@@ -56,20 +57,22 @@ const InstancesList = ({
     history.push(Pages.browser(id))
   }
 
-  const goToInstance = (instance: Instance) => {
+  const goToInstance = async (instance: Instance) => {
     if (instanceId === instance.id) {
       // already connected so do nothing
       return
     }
     setLoading(true)
     const modulesSummary = getRedisModulesSummary(instance.modules)
-    sendEventTelemetry({
+    const infoData = await getRedisInfoSummary(instance.id)
+    await sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
         databaseId: instance.id,
         source: 'navigation_panel',
         provider: instance.provider,
         ...modulesSummary,
+        ...infoData,
       },
     })
     dispatch(

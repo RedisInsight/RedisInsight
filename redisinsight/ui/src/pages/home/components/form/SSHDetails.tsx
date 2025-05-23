@@ -1,6 +1,5 @@
 import React, { ChangeEvent } from 'react'
 import {
-  EuiCheckbox,
   EuiFieldNumber,
   EuiFieldText,
   EuiRadioGroup,
@@ -26,6 +25,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { PasswordInput } from 'uiSrc/components/base/inputs'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -61,7 +61,7 @@ const SSHDetails = (props: Props) => {
         align={!flexGroupClassName ? 'end' : undefined}
       >
         <FlexItem style={{ width: '230px' }} className={flexItemClassName}>
-          <EuiCheckbox
+          <Checkbox
             id={`${htmlIdGenerator()()} ssh`}
             name="ssh"
             label="Use SSH Tunnel"
@@ -147,7 +147,7 @@ const SSHDetails = (props: Props) => {
             <FlexItem
               grow
               className={cx(flexItemClassName, styles.sshPassTypeWrapper)}
-              >
+            >
               <EuiRadioGroup
                 id="sshPassType"
                 name="sshPassType"

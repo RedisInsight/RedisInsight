@@ -223,17 +223,6 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         <Spacer size="m" />
         {consents.length > 1 && (
           <>
-            <EuiCallOut>
-              <EuiText
-                size="s"
-                className={styles.smallText}
-                data-testid="plugin-section"
-              >
-                To avoid automatic execution of malicious code, when adding new
-                Workbench plugins, use files from trusted authors only.
-              </EuiText>
-            </EuiCallOut>
-            <Spacer />
             <FlexItem>
               <Row gap="m">
                 <FlexItem>

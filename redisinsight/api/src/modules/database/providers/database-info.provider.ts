@@ -168,7 +168,7 @@ export class DatabaseInfoProvider {
       return {
         version: serverInfo?.redis_version,
         databases,
-        role: get(replicationInfo, 'role') || undefined,
+        role: get(replicationInfo, 'role'),
         totalKeys,
         usedMemory: parseInt(get(memoryInfo, 'used_memory'), 10) || undefined,
         connectedClients:
@@ -181,14 +181,17 @@ export class DatabaseInfoProvider {
           undefined,
         server: serverInfo,
         stats: {
-          instantaneous_ops_per_sec:
-            get(statsInfo, 'instantaneous_ops_per_sec') || undefined,
-          instantaneous_input_kbps:
-            get(statsInfo, 'instantaneous_input_kbps') || undefined,
-          instantaneous_output_kbps:
-            get(statsInfo, 'instantaneous_output_kbps') || undefined,
-          uptime_in_days: get(serverInfo, 'uptime_in_days') || undefined,
-          maxmemory_policy: get(memoryInfo, 'maxmemory_policy') || undefined,
+          instantaneous_ops_per_sec: get(
+            statsInfo,
+            'instantaneous_ops_per_sec',
+          ),
+          instantaneous_input_kbps: get(statsInfo, 'instantaneous_input_kbps'),
+          instantaneous_output_kbps: get(
+            statsInfo,
+            'instantaneous_output_kbps',
+          ),
+          uptime_in_days: get(serverInfo, 'uptime_in_days', undefined),
+          maxmemory_policy: get(memoryInfo, 'maxmemory_policy', undefined),
           numberOfKeysRange: getRangeForNumber(
             totalKeys,
             TOTAL_KEYS_BREAKPOINTS,

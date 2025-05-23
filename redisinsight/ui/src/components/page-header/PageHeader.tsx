@@ -65,7 +65,7 @@ const PageHeader = (props: Props) => {
           {subtitle ? <span data-testid="page-subtitle">{subtitle}</span> : ''}
         </div>
         {children ? <>{children}</> : ''}
-        {!showInsights ? (
+        {showInsights ? (
           <Row style={{ flexGrow: 0 }} align="center">
             {isAnyChatAvailable && (
               <FlexItem style={{ marginRight: 12 }}>

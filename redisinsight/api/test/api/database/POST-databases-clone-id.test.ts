@@ -121,12 +121,12 @@ describe(`POST /databases/clone/:id`, () => {
           port: 1111,
           ssh: false,
         },
-        statusCode: 503,
+        statusCode: 424,
         responseBody: {
-          statusCode: 503,
-          // message: `Could not connect to ${constants.TEST_REDIS_HOST}:1111, please check the connection details.`,
-          // todo: verify error handling because right now messages are different
-          error: 'Service Unavailable',
+          statusCode: 424,
+          message: `Could not connect to ${constants.TEST_REDIS_HOST}:1111, please check the connection details.`,
+          error: 'RedisConnectionUnavailableException',
+          errorCode: 10904,
         },
         after: async () => {
           expect(await localDb.getInstanceByName('new name')).to.eq(null);

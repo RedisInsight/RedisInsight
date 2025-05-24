@@ -80,6 +80,7 @@ export class KeysService {
         plainToInstance(GetKeysWithDetailsResponse, nodeResult),
       );
     } catch (error) {
+      console.log('___ERROR', error);
       this.logger.error(
         `Failed to get keys with details info. ${error.message}.`,
         clientMetadata,

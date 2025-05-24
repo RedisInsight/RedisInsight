@@ -179,7 +179,7 @@ describe(`PATCH /databases/:id`, () => {
               request(server).get(
                 `/${constants.API.DATABASES}/${oldDatabase.id}/connect`,
               ),
-            statusCode: 503,
+            statusCode: 424,
           });
         },
         responseBody: {
@@ -195,18 +195,18 @@ describe(`PATCH /databases/:id`, () => {
         },
       },
       {
-        name: 'Should return 503 error if incorrect connection data provided',
+        name: 'Should return 424 error if incorrect connection data provided',
         data: {
           name: 'new name',
           port: 1111,
           ssh: false,
         },
-        statusCode: 503,
+        statusCode: 424,
         responseBody: {
-          statusCode: 503,
-          // message: `Could not connect to ${constants.TEST_REDIS_HOST}:1111, please check the connection details.`,
-          // todo: verify error handling because right now messages are different
-          error: 'Service Unavailable',
+          statusCode: 424,
+          message: `Could not connect to ${constants.TEST_REDIS_HOST}:1111, please check the connection details.`,
+          error: 'RedisConnectionUnavailableException',
+          errorCode: 10904,
         },
         after: async () => {
           // check that instance wasn't changed

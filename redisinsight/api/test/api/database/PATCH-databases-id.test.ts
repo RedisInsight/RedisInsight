@@ -458,7 +458,7 @@ describe(`PATCH /databases/:id`, () => {
         it('Should throw an error if db index specified', async () => {
           await validateApiCall({
             endpoint,
-            statusCode: 400,
+            statusCode: 424,
             data: {
               db: constants.TEST_REDIS_DB_INDEX,
             },
@@ -1005,7 +1005,7 @@ describe(`PATCH /databases/:id`, () => {
 
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
-          statusCode: 400,
+          statusCode: 424,
           data: {
             name: dbName,
             host: constants.TEST_REDIS_HOST,
@@ -1062,9 +1062,11 @@ describe(`PATCH /databases/:id`, () => {
           data: {
             caCert: null,
           },
-          statusCode: 400,
+          statusCode: 424,
           responseBody: {
-            error: 'Bad Request',
+            error: 'RedisConnectionIncorrectCertificateException',
+            statusCode: 424,
+            errorCode: 10907
           },
         });
       });

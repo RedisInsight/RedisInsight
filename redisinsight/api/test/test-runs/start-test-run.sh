@@ -8,6 +8,7 @@ helpFunction()
   printf "Some of the required parameters are empty\n\n"
   printf "Usage: %s -r RTE [-t local]\n" "$0"
   printf " -r - (required) Redis Test Environment (RTE). Should match any service name from redis.docker-compose.yml\n"
+  printf " -f - (optional) force rebuild api image\n"
   printf " -t - Backend build type.
     \t local - (default) run server using source code
     \t docker - run server on built docker container
@@ -16,11 +17,12 @@ helpFunction()
 }
 
 # required params
-while getopts "r:t:" opt
+while getopts "r:t:f" opt
 do
    case "$opt" in
       r ) RTE="$OPTARG" ;;
       t ) BUILD="$OPTARG" ;;
+      f ) FORCE_REBUILD=true ;;
       ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
    esac
 done
@@ -53,6 +55,14 @@ eval "ID=$ID RTE=$RTE docker compose \
   -f $BASEDIR/$BUILD.build.yml \
   -f $BASEDIR/$RTE/docker-compose.yml \
   --env-file $BASEDIR/$BUILD.build.env build --no-cache redis"
+
+if [ "$FORCE_REBUILD" = true ]; then
+    echo "Force rebuilding api and test containers"
+    eval "ID=$ID RTE=$RTE docker compose \
+      -f $BASEDIR/$BUILD.build.yml \
+      -f $BASEDIR/$RTE/docker-compose.yml \
+      --env-file $BASEDIR/$BUILD.build.env build --no-cache test app"
+fi
 
 echo "Test run is starting... ${RTE}"
 eval "ID=$ID RTE=$RTE docker compose -p $ID \

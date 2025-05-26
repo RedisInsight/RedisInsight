@@ -227,7 +227,7 @@ describe(`POST /databases/test/:id`, () => {
         it('Should throw an error if db index specified', async () => {
           await validateApiCall({
             endpoint,
-            statusCode: 400,
+            statusCode: 424,
             data: {
               db: constants.TEST_REDIS_DB_INDEX,
             },
@@ -527,7 +527,7 @@ describe(`POST /databases/test/:id`, () => {
 
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
-          statusCode: 400,
+          statusCode: 524,
           data: {
             name: dbName,
             host: constants.TEST_REDIS_HOST,

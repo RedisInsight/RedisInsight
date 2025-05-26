@@ -115,7 +115,7 @@ describe(`POST /databases/clone/:id`, () => {
     const dbName = constants.getRandomString();
     [
       {
-        name: 'Should return 503 error if incorrect connection data provided',
+        name: 'Should return 424 error if incorrect connection data provided',
         data: {
           name: 'new name',
           port: 1111,
@@ -802,7 +802,7 @@ describe(`POST /databases/clone/:id`, () => {
           data: {
             caCert: null,
           },
-          statusCode: 503,
+          statusCode: 424,
         });
       });
       it('Should throw an error without invalid cert', async () => {

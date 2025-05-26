@@ -1062,9 +1062,11 @@ describe(`PATCH /databases/:id`, () => {
           data: {
             caCert: null,
           },
-          statusCode: 400,
+          statusCode: 424,
           responseBody: {
-            error: 'Bad Request',
+            error: 'RedisConnectionIncorrectCertificateException',
+            statusCode: 424,
+            errorCode: 10907
           },
         });
       });

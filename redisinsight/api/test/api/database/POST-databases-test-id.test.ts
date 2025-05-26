@@ -149,7 +149,7 @@ describe(`POST /databases/test/:id`, () => {
         },
       },
       {
-        name: 'Should return 503 error if incorrect connection data provided',
+        name: 'Should return 424 error if incorrect connection data provided',
         data: {
           name: 'new name',
           port: 1111,
@@ -544,7 +544,7 @@ describe(`POST /databases/test/:id`, () => {
 
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
-          statusCode: 503,
+          statusCode: 424,
           data: {
             name: dbName,
             tls: true,
@@ -557,7 +557,7 @@ describe(`POST /databases/test/:id`, () => {
 
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
-          statusCode: 503,
+          statusCode: 424,
           data: {
             name: dbName,
             tls: true,
@@ -575,7 +575,7 @@ describe(`POST /databases/test/:id`, () => {
           data: {
             caCert: null,
           },
-          statusCode: 503,
+          statusCode: 424,
         });
       });
       it('Should throw an error without invalid cert', async () => {

@@ -8,12 +8,12 @@ import {
   EuiText,
   EuiTitle,
   EuiFieldSearch,
-  EuiFormRow,
   EuiToolTip,
 } from '@elastic/eui'
 import { map, pick } from 'lodash'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import { FormField } from '@redis-ui/components'
 
 import { cloudSelector } from 'uiSrc/slices/instances/cloud'
 import { InstanceRedisCloud } from 'uiSrc/slices/interfaces'
@@ -214,7 +214,7 @@ const RedisCloudDatabasesPage = ({
           </FlexItem>
         </Row>
         <FlexItem>
-          <EuiFormRow className={styles.searchForm}>
+          <FormField className={styles.searchForm}>
             <EuiFieldSearch
               placeholder="Search..."
               className={styles.search}
@@ -223,7 +223,7 @@ const RedisCloudDatabasesPage = ({
               aria-label="Search"
               data-testid="search"
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
         <br />
 

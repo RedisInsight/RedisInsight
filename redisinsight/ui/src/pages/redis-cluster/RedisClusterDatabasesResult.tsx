@@ -3,11 +3,9 @@ import {
   EuiInMemoryTable,
   EuiBasicTableColumn,
   PropertySort,
-  EuiButton,
   EuiText,
   EuiTitle,
   EuiFieldSearch,
-  EuiFormRow,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
@@ -26,6 +24,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -109,7 +108,7 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
             </MessageBar>
           </FlexItem>
           <FlexItem>
-            <EuiFormRow className={styles.searchForm}>
+            <FormField className={styles.searchForm}>
               <EuiFieldSearch
                 placeholder="Search..."
                 className={styles.search}
@@ -118,7 +117,7 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
                 aria-label="Search"
                 data-testid="search"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
         <br />

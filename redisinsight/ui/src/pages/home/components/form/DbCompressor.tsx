@@ -1,7 +1,6 @@
 import React, { ChangeEvent } from 'react'
 import {
   EuiCheckbox,
-  EuiFormRow,
   EuiSuperSelect,
   EuiSuperSelectOption,
   htmlIdGenerator,
@@ -13,6 +12,7 @@ import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { NONE } from 'uiSrc/pages/home/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 
 export interface Props {
   formik: FormikProps<DbConnectionInfo>
@@ -67,7 +67,7 @@ const DbCompressor = (props: Props) => {
     <>
       <Row gap="m" responsive={false}>
         <FlexItem>
-          <EuiFormRow>
+          <FormField>
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db compressor`}
               name="showCompressor"
@@ -76,7 +76,7 @@ const DbCompressor = (props: Props) => {
               onChange={handleChangeDbCompressorCheckbox}
               data-testid="showCompressor"
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
       </Row>
 
@@ -85,7 +85,7 @@ const DbCompressor = (props: Props) => {
           <Spacer />
           <Row gap="m">
             <FlexItem grow>
-              <EuiFormRow label="Decompression format">
+              <FormField label="Decompression format">
                 <EuiSuperSelect
                   name="compressor"
                   placeholder="Decompression format"
@@ -96,7 +96,7 @@ const DbCompressor = (props: Props) => {
                   }}
                   data-testid="select-compressor"
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
             <FlexItem grow />
           </Row>

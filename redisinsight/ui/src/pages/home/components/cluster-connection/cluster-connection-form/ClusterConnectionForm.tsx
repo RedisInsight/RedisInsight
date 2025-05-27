@@ -7,7 +7,6 @@ import {
   EuiFieldPassword,
   EuiFieldText,
   EuiForm,
-  EuiFormRow,
   EuiIcon,
   EuiToolTip,
   keys,
@@ -30,6 +29,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 
 export interface Props {
   host: string
@@ -233,7 +233,7 @@ const ClusterConnectionForm = (props: Props) => {
         <WindowEvent event="keydown" handler={onKeyDown} />
         <Row responsive>
           <FlexItem grow={4}>
-            <EuiFormRow label="Cluster Host*">
+            <FormField label="Cluster Host*">
               <EuiFieldText
                 name="host"
                 id="host"
@@ -252,13 +252,13 @@ const ClusterConnectionForm = (props: Props) => {
                 }
                 append={<AppendHostName />}
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
 
           <FlexItem grow={2}>
-            <EuiFormRow
+            <FormField
               label="Cluster Port*"
-              helpText="Should not exceed 65535."
+              additionalText="Should not exceed 65535."
             >
               <EuiFieldNumber
                 name="port"
@@ -278,13 +278,13 @@ const ClusterConnectionForm = (props: Props) => {
                 min={0}
                 max={MAX_PORT_NUMBER}
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
 
         <Row responsive>
           <FlexItem grow>
-            <EuiFormRow label="Admin Username*">
+            <FormField label="Admin Username*">
               <EuiFieldText
                 name="username"
                 id="username"
@@ -295,11 +295,11 @@ const ClusterConnectionForm = (props: Props) => {
                 value={formik.values.username}
                 onChange={formik.handleChange}
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
 
           <FlexItem grow>
-            <EuiFormRow label="Admin Password*">
+            <FormField label="Admin Password*">
               <EuiFieldPassword
                 type="dual"
                 name="password"
@@ -314,7 +314,7 @@ const ClusterConnectionForm = (props: Props) => {
                 dualToggleProps={{ color: 'text' }}
                 autoComplete="new-password"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
       </EuiForm>

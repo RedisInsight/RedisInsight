@@ -1,6 +1,7 @@
 import React from 'react'
-import { EuiFormRow, EuiIcon, EuiTextArea, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiTextArea, EuiToolTip } from '@elastic/eui'
 
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -9,7 +10,7 @@ export interface Props {
 }
 
 const ConnectionUrl = ({ value, onChange }: Props) => (
-  <EuiFormRow
+  <FormField
     label={
       <div className={styles.connectionUrlInfo}>
         <div>Connection URL</div>
@@ -50,7 +51,7 @@ const ConnectionUrl = ({ value, onChange }: Props) => (
       style={{ height: 88 }}
       data-testid="connection-url"
     />
-  </EuiFormRow>
+  </FormField>
 )
 
 export default ConnectionUrl

@@ -29,16 +29,6 @@
   width: 600px !important;
   max-width: 600px !important;
   padding-bottom: 2px;
-
-  :global(.euiFormRow__fieldWrapper) {
-    width: 100% !important;
-    min-width: 100% !important;
-
-    :global(.euiFormControlLayout) {
-      display: inline-block;
-      width: 120px;
-    }
-  }
 }
 
 .rowFields {

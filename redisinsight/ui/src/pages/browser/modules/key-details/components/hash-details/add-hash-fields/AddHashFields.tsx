@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiFieldText, EuiFormRow, EuiPanel } from '@elastic/eui'
+import { EuiFieldText, EuiPanel } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import {
   keysSelector,
@@ -31,6 +31,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import {
   AddFieldsToHashDto,
   HashFieldDto,
@@ -186,7 +187,7 @@ const AddHashFields = (props: Props) => {
           {(item, index) => (
             <Row align="center">
               <FlexItem grow={2}>
-                <EuiFormRow fullWidth>
+                <FormField>
                   <EuiFieldText
                     fullWidth
                     name={`fieldName-${item.id}`}
@@ -202,10 +203,10 @@ const AddHashFields = (props: Props) => {
                     }
                     data-testid="hash-field"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
               <FlexItem grow={2}>
-                <EuiFormRow fullWidth>
+                <FormField>
                   <EuiFieldText
                     fullWidth
                     name={`fieldValue-${item.id}`}
@@ -218,11 +219,11 @@ const AddHashFields = (props: Props) => {
                     }
                     data-testid="hash-value"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
               {isExpireFieldsAvailable && (
                 <FlexItem grow={1}>
-                  <EuiFormRow fullWidth>
+                  <FormField>
                     <EuiFieldText
                       fullWidth
                       name={`fieldTTL-${item.id}`}
@@ -239,7 +240,7 @@ const AddHashFields = (props: Props) => {
                       }
                       data-testid="hash-ttl"
                     />
-                  </EuiFormRow>
+                  </FormField>
                 </FlexItem>
               )}
             </Row>

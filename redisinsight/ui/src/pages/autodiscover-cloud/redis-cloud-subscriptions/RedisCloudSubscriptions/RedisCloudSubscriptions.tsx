@@ -9,10 +9,10 @@ import {
   EuiText,
   EuiTitle,
   EuiFieldSearch,
-  EuiFormRow,
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
+import { FormField } from '@redis-ui/components'
 import {
   InstanceRedisCloud,
   RedisCloudAccount,
@@ -266,7 +266,7 @@ const RedisCloudSubscriptions = ({
             </MessageBar>
           </FlexItem>
           <FlexItem>
-            <EuiFormRow className={styles.searchForm}>
+            <FormField className={styles.searchForm}>
               <EuiFieldSearch
                 placeholder="Search..."
                 className={styles.search}
@@ -275,7 +275,7 @@ const RedisCloudSubscriptions = ({
                 aria-label="Search"
                 data-testid="search"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
         <br />

@@ -2,7 +2,6 @@ import React from 'react'
 import {
   EuiFieldPassword,
   EuiFieldText,
-  EuiFormRow,
   EuiText,
   EuiTextColor,
 } from '@elastic/eui'
@@ -13,6 +12,7 @@ import { SECURITY_FIELD } from 'uiSrc/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from '../../styles.module.scss'
 
 export interface Props {
@@ -43,7 +43,7 @@ const SentinelMasterDatabase = (props: Props) => {
       )}
       <Row gap="m" responsive className={flexGroupClassName}>
         <FlexItem grow className={flexItemClassName}>
-          <EuiFormRow label="Username">
+          <FormField label="Username">
             <EuiFieldText
               name="sentinelMasterUsername"
               id="sentinelMasterUsername"
@@ -54,11 +54,11 @@ const SentinelMasterDatabase = (props: Props) => {
               onChange={formik.handleChange}
               data-testid="sentinel-mater-username"
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
 
         <FlexItem grow className={flexItemClassName}>
-          <EuiFormRow label="Password">
+          <FormField label="Password">
             <EuiFieldPassword
               type="password"
               name="sentinelMasterPassword"
@@ -82,7 +82,7 @@ const SentinelMasterDatabase = (props: Props) => {
               dualToggleProps={{ color: 'text' }}
               autoComplete="new-password"
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
       </Row>
     </>

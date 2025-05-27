@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiFieldText, EuiForm, EuiFormRow, EuiTitle } from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiTitle } from '@elastic/eui'
 import { FormikProps } from 'formik'
 import {
   PrimaryGroupSentinel,
@@ -15,6 +15,7 @@ import {
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import DecompressionAndFormatters from './DecompressionAndFormatters'
 
 import { ManualFormTab } from '../constants'
@@ -86,7 +87,7 @@ const EditSentinelConnection = (props: Props) => {
     <>
       <Row gap="m">
         <FlexItem grow>
-          <EuiFormRow label="Database Alias*">
+          <FormField label="Database Alias*">
             <EuiFieldText
               fullWidth
               name="name"
@@ -98,7 +99,7 @@ const EditSentinelConnection = (props: Props) => {
               maxLength={500}
               onChange={formik.handleChange}
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
       </Row>
       <Spacer size="s" />

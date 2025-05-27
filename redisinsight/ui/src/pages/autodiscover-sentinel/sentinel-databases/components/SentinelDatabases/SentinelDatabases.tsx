@@ -9,11 +9,11 @@ import {
   EuiText,
   EuiTitle,
   EuiFieldSearch,
-  EuiFormRow,
   EuiToolTip,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
+import { FormField } from '@redis-ui/components'
 import { sentinelSelector } from 'uiSrc/slices/instances/sentinel'
 import { ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
 import validationErrors from 'uiSrc/constants/validationErrors'
@@ -219,7 +219,7 @@ const SentinelDatabases = ({
             </EuiText>
           </FlexItem>
           <FlexItem>
-            <EuiFormRow className={styles.searchForm}>
+            <FormField className={styles.searchForm}>
               <EuiFieldSearch
                 placeholder="Search..."
                 className={styles.search}
@@ -228,7 +228,7 @@ const SentinelDatabases = ({
                 aria-label="Search"
                 data-testid="search"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
         <br />

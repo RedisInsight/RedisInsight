@@ -2,7 +2,6 @@ import {
   EuiFieldPassword,
   EuiFieldText,
   EuiForm,
-  EuiFormRow,
   EuiIcon,
   EuiTitle,
   EuiToolTip,
@@ -33,6 +32,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import ValidationTooltip from './components/ValidationTooltip'
 
 import styles from './styles.module.scss'
@@ -177,9 +177,8 @@ const ConnectionForm = (props: Props) => {
             data-testid="connection-form"
           >
             <div className={cx('container relative')}>
-              <EuiFormRow
+              <FormField
                 label="RDI Alias*"
-                fullWidth
                 className={styles.withoutPadding}
               >
                 <Field name="name">
@@ -193,8 +192,8 @@ const ConnectionForm = (props: Props) => {
                     />
                   )}
                 </Field>
-              </EuiFormRow>
-              <EuiFormRow label="URL*" fullWidth>
+              </FormField>
+              <FormField label="URL*">
                 <Field name="url">
                   {({ field }: { field: FieldInputProps<string> }) => (
                     <EuiFieldText
@@ -209,11 +208,11 @@ const ConnectionForm = (props: Props) => {
                     />
                   )}
                 </Field>
-              </EuiFormRow>
-              <EuiFormRow>
+              </FormField>
+              <FormField>
                 <Row gap="m">
                   <FlexItem grow={1}>
-                    <EuiFormRow label="Username">
+                    <FormField label="Username">
                       <Field name="username">
                         {({ field }: { field: FieldInputProps<string> }) => (
                           <EuiFieldText
@@ -228,10 +227,10 @@ const ConnectionForm = (props: Props) => {
                           />
                         )}
                       </Field>
-                    </EuiFormRow>
+                    </FormField>
                   </FlexItem>
                   <FlexItem grow={1}>
-                    <EuiFormRow label="Password">
+                    <FormField label="Password">
                       <Field name="password">
                         {({
                           field,
@@ -263,10 +262,10 @@ const ConnectionForm = (props: Props) => {
                           />
                         )}
                       </Field>
-                    </EuiFormRow>
+                    </FormField>
                   </FlexItem>
                 </Row>
-              </EuiFormRow>
+              </FormField>
             </div>
             <Footer
               isValid={isValid}

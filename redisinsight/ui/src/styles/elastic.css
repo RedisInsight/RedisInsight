@@ -8504,19 +8504,9 @@
     .euiDescribedFormGroup .euiDescribedFormGroup__fields {
       padding-top: 0;
     }
-    .euiDescribedFormGroup
-      .euiDescribedFormGroup__fields
-      > .euiFormRow--hasEmptyLabelSpace:first-child {
-      padding-top: 0;
-    }
   }
   @media only screen and (min-width: 575px) and (max-width: 767px) {
     .euiDescribedFormGroup .euiDescribedFormGroup__fields {
-      padding-top: 0;
-    }
-    .euiDescribedFormGroup
-      .euiDescribedFormGroup__fields
-      > .euiFormRow--hasEmptyLabelSpace:first-child {
       padding-top: 0;
     }
   }
@@ -10261,84 +10251,6 @@
   }
   .euiFormLabel[for] {
     cursor: pointer;
-  }
-  .euiFormRow {
-    display: flex;
-    flex-direction: column;
-    max-width: 400px;
-  }
-  .euiFormRow + .euiFormRow,
-  .euiFormRow + .euiButton {
-    margin-top: 16px;
-  }
-  .euiFormRow--fullWidth {
-    max-width: 100%;
-  }
-  .euiFormRow--hasEmptyLabelSpace {
-    margin-top: 22px;
-    min-height: 40px;
-    padding-bottom: 0;
-    justify-content: center;
-  }
-  .euiFormRow__labelWrapper {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin-bottom: 4px;
-  }
-  .euiFormRow--horizontal {
-    flex-direction: row;
-    align-items: stretch;
-  }
-  .euiFormRow--horizontal .euiFormRow__label {
-    overflow-wrap: break-word !important;
-    word-wrap: break-word !important;
-    word-break: break-word;
-    hyphens: auto;
-    max-width: 100%;
-  }
-  .euiFormRow--horizontal .euiFormRow__labelWrapper {
-    display: block;
-    line-height: 31px;
-    width: calc(33% - 8px);
-    margin-right: 8px;
-    margin-bottom: 0;
-  }
-  .euiFormRow--horizontal .euiFormRow__fieldWrapper {
-    width: 67%;
-  }
-  .euiFormRow--horizontal + .euiFormRow--horizontal {
-    margin-top: 8px;
-  }
-  .euiFormRow--horizontal + .euiFormRow--horizontal.euiFormRow--hasSwitch {
-    margin-top: 12px;
-  }
-  .euiFormRow--horizontal.euiFormRow--hasSwitch .euiFormRow__labelWrapper {
-    line-height: 19px;
-    width: auto;
-    min-width: calc(33% - 8px);
-  }
-  .euiFormRow--horizontal.euiFormRow--hasSwitch .euiFormRow__fieldWrapper {
-    width: auto;
-  }
-  .euiFormRow--horizontal.euiFormRow--hasSwitch
-    .euiFormRow__fieldWrapper
-    .euiSwitch--compressed {
-    margin-top: 2px;
-  }
-  .euiFormRow--horizontal.euiFormRow--hasSwitch + .euiFormRow--horizontal {
-    margin-top: 12px;
-  }
-  .euiFormRow__fieldWrapperDisplayOnly {
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-  }
-  .euiFormRow--compressed.euiFormRow--hasEmptyLabelSpace {
-    min-height: 32px;
-  }
-  .euiFormRow--compressed .euiFormRow__fieldWrapperDisplayOnly {
-    min-height: 32px;
   }
   .euiRadio {
     position: relative;

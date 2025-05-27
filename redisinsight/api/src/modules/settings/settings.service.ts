@@ -52,6 +52,26 @@ export class SettingsService {
   ) {}
 
   /**
+   * Discovers databases after EULA has been accepted
+   * @param sessionMetadata
+   * @private
+   */
+  private async discoverDatabasesAfterEulaAccepted(
+    sessionMetadata: SessionMetadata,
+  ): Promise<void> {
+    try {
+      await this.databaseDiscoveryService.discover(sessionMetadata, true);
+    } catch (e) {
+      // ignore error
+      this.logger.error(
+        'Failed discover databases after eula accepted.',
+        e,
+        sessionMetadata,
+      );
+    }
+  }
+
+  /**
    * Method to get settings
    */
   public async getAppSettings(
@@ -75,6 +95,9 @@ export class SettingsService {
           },
           version: (await this.getAgreementsSpec()).version,
         };
+        
+        // If eula is automatically accepted, also discover databases
+        await this.discoverDatabasesAfterEulaAccepted(sessionMetadata);
       }
 
       const agreements = await this.agreementRepository.getOrCreate(sessionMetadata, defaultOptions);
@@ -153,16 +176,7 @@ export class SettingsService {
 
       // Discover databases from envs or autodiscovery flow when eula accept
       if (!oldAppSettings?.agreements?.eula && results?.agreements?.eula) {
-        try {
-          await this.databaseDiscoveryService.discover(sessionMetadata, true);
-        } catch (e) {
-          // ignore error
-          this.logger.error(
-            'Failed discover databases after eula accepted.',
-            e,
-            sessionMetadata,
-          );
-        }
+        await this.discoverDatabasesAfterEulaAccepted(sessionMetadata);
       }
 
       return results;

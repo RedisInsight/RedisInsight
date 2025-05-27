@@ -11,7 +11,7 @@
     "dev:electron:api": "cross-env RI_APP_PORT=5540 RI_APP_TYPE=ELECTRON NODE_ENV=development USE_TCP_CLOUD_AUTH=true yarn --cwd redisinsight/api start:dev",
     "dev:electron": "cross-env RI_APP_TYPE=ELECTRON RI_AUTO_BOOTSTRAP=false NODE_ENV=development USE_TCP_CLOUD_AUTH=true yarn --cwd redisinsight/desktop dev",
     "dev:desktop": "concurrently \"yarn dev:electron:api\" \"yarn dev:electron:ui\" \"yarn dev:electron\"",
-    "build:ui": "cross-env NODE_ENV=production RI_APP_TYPE=WEB yarn --cwd redisinsight/ui build",
+    "build:ui": "cross-env NODE_ENV=production RI_APP_TYPE=web yarn --cwd redisinsight/ui build",
     "build:renderer": "cross-env NODE_ENV=production RI_APP_TYPE=ELECTRON yarn --cwd redisinsight/ui build --emptyOutDir && copyfiles ./redisinsight/desktop/splash.html ./redisinsight/dist/renderer -f",
     "stats:ui": "yarn --cwd redisinsight/ui stats",
     "build": "cross-env NODE_ENV=development concurrently \"yarn build:main\" \"yarn build:renderer\"",

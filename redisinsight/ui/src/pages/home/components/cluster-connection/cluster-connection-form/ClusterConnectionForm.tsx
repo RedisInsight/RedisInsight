@@ -4,7 +4,6 @@ import { isEmpty } from 'lodash'
 import { FormikErrors, useFormik } from 'formik'
 import {
   EuiFieldNumber,
-  EuiFieldPassword,
   EuiFieldText,
   EuiForm,
   EuiIcon,
@@ -30,6 +29,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { PasswordInput } from 'uiSrc/components/base/inputs'
 
 export interface Props {
   host: string
@@ -300,18 +300,15 @@ const ClusterConnectionForm = (props: Props) => {
 
           <FlexItem grow>
             <FormField label="Admin Password*">
-              <EuiFieldPassword
+              <PasswordInput
                 type="dual"
                 name="password"
                 id="password"
                 data-testid="password"
-                fullWidth
-                className="passwordField"
                 maxLength={200}
                 placeholder="Enter Password"
                 value={formik.values.password}
                 onChange={formik.handleChange}
-                dualToggleProps={{ color: 'text' }}
                 autoComplete="new-password"
               />
             </FormField>

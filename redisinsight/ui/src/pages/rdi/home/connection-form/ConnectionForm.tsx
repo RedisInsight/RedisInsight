@@ -1,5 +1,4 @@
 import {
-  EuiFieldPassword,
   EuiFieldText,
   EuiForm,
   EuiIcon,
@@ -33,6 +32,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { PasswordInput } from 'uiSrc/components/base/inputs'
 import ValidationTooltip from './components/ValidationTooltip'
 
 import styles from './styles.module.scss'
@@ -230,7 +230,14 @@ const ConnectionForm = (props: Props) => {
                     </FormField>
                   </FlexItem>
                   <FlexItem grow={1}>
-                    <FormField label="Password">
+                    <FormField
+                      label={
+                        <>
+                          Password
+                          <AppendInfo content="The RDI REST API authentication is using the RDI Redis username and password." />
+                        </>
+                      }
+                    >
                       <Field name="password">
                         {({
                           field,
@@ -241,13 +248,12 @@ const ConnectionForm = (props: Props) => {
                           form: FormikHelpers<string>
                           meta: FieldMetaProps<string>
                         }) => (
-                          <EuiFieldPassword
+                          <PasswordInput
                             data-testid="connection-form-password-input"
-                            className={styles.passwordField}
-                            fullWidth
                             placeholder="Enter the RDI Redis password"
                             maxLength={500}
                             {...field}
+                            onChangeCapture={field.onChange}
                             value={
                               isNull(field.value) ? SECURITY_FIELD : field.value
                             }
@@ -256,9 +262,6 @@ const ConnectionForm = (props: Props) => {
                                 form.setFieldValue('password', '')
                               }
                             }}
-                            append={
-                              <AppendInfo content="The RDI REST API authentication is using the RDI Redis username and password." />
-                            }
                           />
                         )}
                       </Field>

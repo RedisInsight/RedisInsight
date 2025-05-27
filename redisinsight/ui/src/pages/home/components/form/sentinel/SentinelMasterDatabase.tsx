@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  EuiFieldPassword,
   EuiFieldText,
   EuiText,
   EuiTextColor,
@@ -10,6 +9,7 @@ import { FormikProps } from 'formik'
 import { Nullable } from 'uiSrc/utils'
 import { SECURITY_FIELD } from 'uiSrc/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
+import { PasswordInput } from 'uiSrc/components/base/inputs'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
@@ -59,13 +59,11 @@ const SentinelMasterDatabase = (props: Props) => {
 
         <FlexItem grow className={flexItemClassName}>
           <FormField label="Password">
-            <EuiFieldPassword
+            <PasswordInput
               type="password"
               name="sentinelMasterPassword"
               id="sentinelMasterPassword"
               data-testid="sentinel-master-password"
-              fullWidth
-              className="passwordField"
               maxLength={200}
               placeholder="Enter Password"
               value={
@@ -73,13 +71,12 @@ const SentinelMasterDatabase = (props: Props) => {
                   ? SECURITY_FIELD
                   : (formik.values.sentinelMasterPassword ?? '')
               }
-              onChange={formik.handleChange}
+              onChangeCapture={formik.handleChange}
               onFocus={() => {
                 if (formik.values.sentinelMasterPassword === true) {
                   formik.setFieldValue('sentinelMasterPassword', '')
                 }
               }}
-              dualToggleProps={{ color: 'text' }}
               autoComplete="new-password"
             />
           </FormField>

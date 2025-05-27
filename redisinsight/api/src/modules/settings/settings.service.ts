@@ -5,6 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  OnApplicationBootstrap,
 } from '@nestjs/common';
 import { difference, isEmpty, map, cloneDeep } from 'lodash';
 import { readFile } from 'fs-extra';
@@ -35,7 +36,7 @@ import { EncryptionService } from '../encryption/encryption.service';
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
-export class SettingsService {
+export class SettingsService implements OnApplicationBootstrap {
   private logger = new Logger('SettingsService');
 
   constructor(
@@ -50,6 +51,20 @@ export class SettingsService {
     private readonly encryptionService: EncryptionService,
     private eventEmitter: EventEmitter2,
   ) {}
+
+  async onApplicationBootstrap() {
+    // Check if we need to run discovery due to environment variables
+    if (SERVER_CONFIG.acceptTermsAndConditions) {
+      const sessionMetadata = { requestId: 'system-init' };
+      // Add small delay to ensure all services are fully ready
+      setTimeout(() => {
+        this.discoverDatabasesAfterEulaAccepted(null)
+          .catch(err => {
+            this.logger.error('Bootstrap database discovery failed', err);
+          });
+      }, 1000);
+    }
+  }
 
   /**
    * Discovers databases after EULA has been accepted
@@ -103,13 +118,6 @@ export class SettingsService {
         'Succeed to get application settings.',
         sessionMetadata,
       );
-
-      if (SERVER_CONFIG.acceptTermsAndConditions) {
-        process.nextTick(async () => {
-          await this.discoverDatabasesAfterEulaAccepted(sessionMetadata);
-        });
-      }
-
 
       return classToClass(GetAppSettingsResponse, {
         ...settings?.data,

@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { pathExists, readFile } from 'fs-extra';
 import { Database } from 'src/modules/database/models/database';
 import {
@@ -34,7 +35,7 @@ export const populateDefaultValues = (
   database: Partial<Database>,
 ): Database => {
   const {
-    id,
+    id = uuidv4(),
     host,
     port = 6379,
     name = `${host}:${port}`,

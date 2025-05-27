@@ -110,7 +110,7 @@ export class SettingsService implements OnApplicationBootstrap {
             notifications: false,
           },
           version: (await this.getAgreementsSpec()).version,
-        };     
+        };
       }
 
       const agreements = await this.agreementRepository.getOrCreate(sessionMetadata, defaultOptions);

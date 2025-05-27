@@ -1,5 +1,12 @@
 import React, { ChangeEvent } from 'react'
-import { Checkbox as RedisUiCheckbox, CheckedType } from '@redis-ui/components'
+import {
+  Checkbox as RedisUiCheckbox,
+  CheckedType,
+  Typography,
+} from '@redis-ui/components'
+import { BodySizesType } from '@redis-ui/components/dist/Typography/components/Body/Body.types'
+
+type Size = BodySizesType
 
 export type CheckboxProps = Omit<
   React.ComponentProps<typeof RedisUiCheckbox>,
@@ -9,18 +16,42 @@ export type CheckboxProps = Omit<
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void
   name?: string
   id?: string
+  labelSize?: Size
 }
 
-export const Checkbox = (props: CheckboxProps) => {
-  const { onChange, onCheckedChange, id, ...rest } = props
+type CheckboxLabelProps = Omit<
+  React.ComponentProps<typeof Typography.Body>,
+  'children' | 'component'
+> & {
+  children: string | React.ReactNode
+}
 
+const CheckboxLabel = ({ children, ...rest }: CheckboxLabelProps) => {
+  if (typeof children !== 'string') {
+    return <>children</>
+  }
+  return (
+    <Typography.Body {...rest} component="span">
+      {children}
+    </Typography.Body>
+  )
+}
+
+export const Checkbox = ({
+  onChange,
+  onCheckedChange,
+  id,
+  label,
+  labelSize = 'S',
+  ...rest
+}: CheckboxProps) => {
   /**
    * Handles the change event for a checkbox input and notifies the relevant handlers.
    *
-   * This is added to provide compatibility with the `onChange` handler expected by Formik library.
+   * This is added to provide compatibility with the `onChange` handler expected by the Formik library.
    * Constructs a synthetic event object designed to mimic a React checkbox change event.
    * Updates the `checked` status and passes the constructed event to the `onChange` handler
-   * if provided. Additionally, invokes the `onCheckedChange` handler with the new `checked` state,
+   * if provided. Additionally, invokes the `onCheckedChange` handler with the new `checked` state
    * if it is defined.
    *
    * @param {CheckedType} checked - The new checked state of the checkbox. It is expected to
@@ -41,6 +72,11 @@ export const Checkbox = (props: CheckboxProps) => {
   }
 
   return (
-    <RedisUiCheckbox {...rest} id={id} onCheckedChange={handleCheckedChange} />
+    <RedisUiCheckbox
+      {...rest}
+      id={id}
+      onCheckedChange={handleCheckedChange}
+      label={<CheckboxLabel size={labelSize}>{label}</CheckboxLabel>}
+    />
   )
 }

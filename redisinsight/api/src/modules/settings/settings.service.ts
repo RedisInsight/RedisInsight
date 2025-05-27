@@ -38,6 +38,8 @@ const SERVER_CONFIG = config.get('server') as Config['server'];
 @Injectable()
 export class SettingsService implements OnApplicationBootstrap {
   private logger = new Logger('SettingsService');
+  private triggerAutoDiscoveryDueToEnv = false;
+  private autoDiscoveryDueToEnvTriggered = false;
 
   constructor(
     @Inject(forwardRef(() => DatabaseDiscoveryService))
@@ -54,15 +56,13 @@ export class SettingsService implements OnApplicationBootstrap {
 
   async onApplicationBootstrap() {
     // Check if we need to run discovery due to environment variables
-    if (SERVER_CONFIG.acceptTermsAndConditions) {
-      const sessionMetadata = { requestId: 'system-init' };
-      // Add small delay to ensure all services are fully ready
-      setTimeout(() => {
-        this.discoverDatabasesAfterEulaAccepted(null)
-          .catch(err => {
-            this.logger.error('Bootstrap database discovery failed', err);
-          });
-      }, 1000);
+    if (
+      SERVER_CONFIG.acceptTermsAndConditions
+      && this.triggerAutoDiscoveryDueToEnv
+      && !this.autoDiscoveryDueToEnvTriggered
+    ) {
+      this.autoDiscoveryDueToEnvTriggered = true;
+      process.nextTick(() => this.discoverDatabasesAfterEulaAccepted(null));
     }
   }
 
@@ -99,6 +99,7 @@ export class SettingsService implements OnApplicationBootstrap {
 
       let defaultOptions: object;
       if (SERVER_CONFIG.acceptTermsAndConditions) {
+        this.triggerAutoDiscoveryDueToEnv = true;
         const isEncryptionAvailable = await this.encryptionService.isEncryptionAvailable();          
 
         defaultOptions = {

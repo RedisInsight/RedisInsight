@@ -9,7 +9,7 @@ import { SessionMetadata } from 'src/common/models';
 export interface IExecResult {
   response: any;
   status: CommandExecutionStatus;
-  error?: RedisError | ReplyError | Error,
+  error?: RedisError | ReplyError | Error;
 }
 
 @Injectable()
@@ -18,8 +18,14 @@ export class ProfilerAnalyticsService extends TelemetryBaseService {
 
   constructor(protected eventEmitter: EventEmitter2) {
     super(eventEmitter);
-    this.events.set(TelemetryEvents.ProfilerLogDownloaded, this.sendLogDownloaded.bind(this));
-    this.events.set(TelemetryEvents.ProfilerLogDeleted, this.sendLogDeleted.bind(this));
+    this.events.set(
+      TelemetryEvents.ProfilerLogDownloaded,
+      this.sendLogDownloaded.bind(this),
+    );
+    this.events.set(
+      TelemetryEvents.ProfilerLogDeleted,
+      this.sendLogDeleted.bind(this),
+    );
   }
 
   sendLogDeleted(
@@ -28,14 +34,10 @@ export class ProfilerAnalyticsService extends TelemetryBaseService {
     fileSizeBytes: number,
   ): void {
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.ProfilerLogDeleted,
-        {
-          databaseId,
-          fileSizeBytes,
-        },
-      );
+      this.sendEvent(sessionMetadata, TelemetryEvents.ProfilerLogDeleted, {
+        databaseId,
+        fileSizeBytes,
+      });
     } catch (e) {
       // continue regardless of error
     }
@@ -47,14 +49,10 @@ export class ProfilerAnalyticsService extends TelemetryBaseService {
     fileSizeBytes: number,
   ): void {
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.ProfilerLogDownloaded,
-        {
-          databaseId,
-          fileSizeBytes,
-        },
-      );
+      this.sendEvent(sessionMetadata, TelemetryEvents.ProfilerLogDownloaded, {
+        databaseId,
+        fileSizeBytes,
+      });
     } catch (e) {
       // continue regardless of error
     }

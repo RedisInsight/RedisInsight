@@ -8,7 +8,7 @@ import { AppDispatch, RootState } from '../store'
 export const initialState: DatabaseSettings = {
   loading: false,
   error: '',
-  data: {}
+  data: {},
 }
 
 // A slice for recipes
@@ -19,13 +19,17 @@ const appDbSettingsSlice = createSlice({
     getDBSettings: (state) => {
       state.loading = true
     },
-    getDBSettingsSuccess: (state, { payload: {
-      data,
-      id
-    } }: { payload: {
-      id: string,
-      data: DatabaseSettingsData
-    } }) => {
+    getDBSettingsSuccess: (
+      state,
+      {
+        payload: { data, id },
+      }: {
+        payload: {
+          id: string
+          data: DatabaseSettingsData
+        }
+      },
+    ) => {
       state.loading = false
       state.data = { ...state.data, [id]: data }
     },
@@ -37,11 +41,8 @@ const appDbSettingsSlice = createSlice({
 })
 
 // Actions generated from the slice
-export const {
-  getDBSettings,
-  getDBSettingsSuccess,
-  getDBSettingsFailure,
-} = appDbSettingsSlice.actions
+export const { getDBSettings, getDBSettingsSuccess, getDBSettingsFailure } =
+  appDbSettingsSlice.actions
 
 // A selector
 export const appDBSettingsSelector = (state: RootState) => state.app.dbSettings
@@ -50,10 +51,14 @@ export const appDBSettingsSelector = (state: RootState) => state.app.dbSettings
 export default appDbSettingsSlice.reducer
 
 // Asynchronous thunk action
-export function fetchDBSettings(id: string, onSuccessAction?: (payload: {
+export function fetchDBSettings(
   id: string,
-  data: DatabaseSettingsData
-}) => void, onFailAction?: () => void) {
+  onSuccessAction?: (payload: {
+    id: string
+    data: DatabaseSettingsData
+  }) => void,
+  onFailAction?: () => void,
+) {
   return async (dispatch: AppDispatch) => {
     dispatch(getDBSettings())
     if (!id) {
@@ -67,7 +72,7 @@ export function fetchDBSettings(id: string, onSuccessAction?: (payload: {
         dispatch(getDBSettingsSuccess({ id, data }))
         onSuccessAction?.({
           id,
-          data
+          data,
         })
       } else {
         dispatch(getDBSettingsFailure(data))

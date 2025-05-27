@@ -5,54 +5,28 @@
       "index_name",
       "idx",
       "index_options",
-      [
-
-      ],
+      [],
       "index_definition",
       [
-          "key_type",
-          "HASH",
-          "prefixes",
-          [
-            "doc:"
-          ],
-          "language_field",
-          "__language",
-          "default_score",
-          "0.5",
-          "score_field",
-          "doc_score",
-          "payload_field",
-          "__payload"
+        "key_type",
+        "HASH",
+        "prefixes",
+        ["doc:"],
+        "language_field",
+        "__language",
+        "default_score",
+        "0.5",
+        "score_field",
+        "doc_score",
+        "payload_field",
+        "__payload"
       ],
       "fields",
       [
-          [
-            "title",
-            "type",
-            "TEXT",
-            "WEIGHT",
-            "1"
-          ],
-          [
-            "body",
-            "type",
-            "TEXT",
-            "WEIGHT",
-            "1"
-          ],
-          [
-            "url",
-            "type",
-            "TEXT",
-            "WEIGHT",
-            "1"
-          ],
-          [
-            "visits",
-            "type",
-            "NUMERIC"
-          ]
+        ["title", "type", "TEXT", "WEIGHT", "1"],
+        ["body", "type", "TEXT", "WEIGHT", "1"],
+        ["url", "type", "TEXT", "WEIGHT", "1"],
+        ["visits", "type", "NUMERIC"]
       ],
       "num_docs",
       "2",
@@ -90,31 +64,31 @@
       "1",
       "gc_stats",
       [
-          "bytes_collected",
-          "0",
-          "total_ms_run",
-          "0",
-          "total_cycles",
-          "0",
-          "average_cycle_time_ms",
-          "-nan",
-          "last_run_time_ms",
-          "0",
-          "gc_numeric_trees_missed",
-          "0",
-          "gc_blocks_denied",
-          "0"
+        "bytes_collected",
+        "0",
+        "total_ms_run",
+        "0",
+        "total_cycles",
+        "0",
+        "average_cycle_time_ms",
+        "-nan",
+        "last_run_time_ms",
+        "0",
+        "gc_numeric_trees_missed",
+        "0",
+        "gc_blocks_denied",
+        "0"
       ],
       "cursor_stats",
       [
-          "global_idle",
-          0,
-          "global_total",
-          0,
-          "index_capacity",
-          128,
-          "index_total",
-          0
+        "global_idle",
+        0,
+        "global_total",
+        0,
+        "index_capacity",
+        128,
+        "index_total",
+        0
       ]
     ]
   }

@@ -2,7 +2,10 @@ import { RedisClientSubscriber } from 'src/modules/pub-sub/model/redis-client-su
 import { UserClient } from 'src/modules/pub-sub/model/user-client';
 import { ISubscription } from 'src/modules/pub-sub/interfaces/subscription.interface';
 import { IMessage } from 'src/modules/pub-sub/interfaces/message.interface';
-import { PubSubServerEvents, RedisClientSubscriberEvents } from 'src/modules/pub-sub/constants';
+import {
+  PubSubServerEvents,
+  RedisClientSubscriberEvents,
+} from 'src/modules/pub-sub/constants';
 import { Logger } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { PubSubWsException } from 'src/modules/pub-sub/errors/pub-sub-ws.exception';
@@ -22,15 +25,27 @@ export class UserSession {
     this.id = userClient.getId();
     this.userClient = userClient;
     this.redisClient = redisClient;
-    redisClient.on(RedisClientSubscriberEvents.Message, this.handleMessage.bind(this));
-    redisClient.on(RedisClientSubscriberEvents.End, this.handleDisconnect.bind(this));
+    redisClient.on(
+      RedisClientSubscriberEvents.Message,
+      this.handleMessage.bind(this),
+    );
+    redisClient.on(
+      RedisClientSubscriberEvents.End,
+      this.handleDisconnect.bind(this),
+    );
   }
 
-  getId() { return this.id; }
+  getId() {
+    return this.id;
+  }
 
-  getUserClient() { return this.userClient; }
+  getUserClient() {
+    return this.userClient;
+  }
 
-  getRedisClient() { return this.redisClient; }
+  getRedisClient() {
+    return this.redisClient;
+  }
 
   /**
    * Subscribe to a Pub/Sub channel and create Redis client connection if needed
@@ -38,11 +53,15 @@ export class UserSession {
    * @param subscription
    */
   async subscribe(subscription: ISubscription) {
-    this.logger.debug(`Subscribe ${subscription} ${this}. Getting Redis client...`);
+    this.logger.debug(
+      `Subscribe ${subscription} ${this}. Getting Redis client...`,
+    );
 
     const client = await this.redisClient?.getClient();
 
-    if (!client) { throw new Error('There is no Redis client initialized'); }
+    if (!client) {
+      throw new Error('There is no Redis client initialized');
+    }
 
     if (!this.subscriptions.has(subscription.getId())) {
       this.subscriptions.set(subscription.getId(), subscription);
@@ -97,10 +116,12 @@ export class UserSession {
   handleDisconnect() {
     this.logger.debug(`Handle disconnect ${this}`);
 
-    this.userClient.getSocket().emit(
-      PubSubServerEvents.Exception,
-      new PubSubWsException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
-    );
+    this.userClient
+      .getSocket()
+      .emit(
+        PubSubServerEvents.Exception,
+        new PubSubWsException(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
+      );
 
     this.destroy();
   }

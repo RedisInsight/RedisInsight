@@ -1,7 +1,12 @@
-import { CloudJob, CloudJobOptions, WaitForTaskCloudJob } from 'src/modules/cloud/job/jobs';
+import {
+  CloudJob,
+  CloudJobOptions,
+  WaitForTaskCloudJob,
+} from 'src/modules/cloud/job/jobs';
 import { CloudTaskCapiService } from 'src/modules/cloud/task/cloud-task.capi.service';
 import {
-  CloudSubscription, CloudSubscriptionType,
+  CloudSubscription,
+  CloudSubscriptionType,
 } from 'src/modules/cloud/subscription/models';
 import { CloudSubscriptionCapiService } from 'src/modules/cloud/subscription/cloud-subscription.capi.service';
 import { CloudDatabase } from 'src/modules/cloud/database/models';
@@ -34,18 +39,18 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
   constructor(
     readonly options: CloudJobOptions,
     private readonly data: {
-      subscriptionId: number,
+      subscriptionId: number;
     },
     protected readonly dependencies: {
-      cloudDatabaseCapiService: CloudDatabaseCapiService,
-      cloudSubscriptionCapiService: CloudSubscriptionCapiService,
-      cloudTaskCapiService: CloudTaskCapiService,
-      cloudDatabaseAnalytics: CloudDatabaseAnalytics,
-      databaseService: DatabaseService,
-      databaseInfoService: DatabaseInfoService,
-      bulkImportService: BulkImportService,
-      cloudCapiKeyService: CloudCapiKeyService,
-      featureService: FeatureService,
+      cloudDatabaseCapiService: CloudDatabaseCapiService;
+      cloudSubscriptionCapiService: CloudSubscriptionCapiService;
+      cloudTaskCapiService: CloudTaskCapiService;
+      cloudDatabaseAnalytics: CloudDatabaseAnalytics;
+      databaseService: DatabaseService;
+      databaseInfoService: DatabaseInfoService;
+      bulkImportService: BulkImportService;
+      cloudCapiKeyService: CloudCapiKeyService;
+      featureService: FeatureService;
     },
   ) {
     super(options);
@@ -62,20 +67,22 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
 
       this.logger.debug('Getting subscription metadata');
 
-      freeSubscription = await this.dependencies.cloudSubscriptionCapiService.getSubscription(
-        this.options.capiCredentials,
-        this.data.subscriptionId,
-        CloudSubscriptionType.Fixed,
-      );
+      freeSubscription =
+        await this.dependencies.cloudSubscriptionCapiService.getSubscription(
+          this.options.capiCredentials,
+          this.data.subscriptionId,
+          CloudSubscriptionType.Fixed,
+        );
       let cloudDatabase: CloudDatabase;
 
-      let createFreeDatabaseTask = await this.dependencies.cloudDatabaseCapiService.createFreeDatabase(
-        this.options.capiCredentials,
-        {
-          subscriptionId: freeSubscription.id,
-          subscriptionType: freeSubscription.type,
-        },
-      );
+      let createFreeDatabaseTask =
+        await this.dependencies.cloudDatabaseCapiService.createFreeDatabase(
+          this.options.capiCredentials,
+          {
+            subscriptionId: freeSubscription.id,
+            subscriptionType: freeSubscription.type,
+          },
+        );
 
       this.checkSignal();
 
@@ -99,7 +106,9 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
       } as CloudDatabase;
 
       if (!cloudDatabase) {
-        throw new CloudJobUnexpectedErrorException('Unable to create free cloud database');
+        throw new CloudJobUnexpectedErrorException(
+          'Unable to create free cloud database',
+        );
       }
 
       this.checkSignal();
@@ -117,20 +126,17 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
 
       this.checkSignal();
 
-      const isDatabaseManagementEnabled = await this.dependencies.featureService.isFeatureEnabled(
-        sessionMetadata,
-        KnownFeatures.DatabaseManagement,
-      );
+      const isDatabaseManagementEnabled =
+        await this.dependencies.featureService.isFeatureEnabled(
+          sessionMetadata,
+          KnownFeatures.DatabaseManagement,
+        );
 
       if (!isDatabaseManagementEnabled) {
         throw new CloudDatabaseImportForbiddenException();
       }
 
-      const {
-        publicEndpoint,
-        name,
-        password,
-      } = cloudDatabase;
+      const { publicEndpoint, name, password } = cloudDatabase;
 
       const [host, port] = publicEndpoint.split(':');
 
@@ -158,7 +164,8 @@ export class CreateFreeDatabaseCloudJob extends CloudJob {
           context: ClientContext.Common,
           db: database.db,
         };
-        const dbSize = await this.dependencies.databaseInfoService.getDBSize(clientMetadata);
+        const dbSize =
+          await this.dependencies.databaseInfoService.getDBSize(clientMetadata);
 
         if (dbSize === 0) {
           this.dependencies.bulkImportService.importDefaultData(clientMetadata);

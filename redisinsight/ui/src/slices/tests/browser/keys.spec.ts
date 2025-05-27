@@ -1,18 +1,45 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { configureStore } from '@reduxjs/toolkit'
-import { BrowserColumns, DEFAULT_SHOWN_COLUMNS, KeyTypes, KeyValueFormat, ModulesKeyTypes } from 'uiSrc/constants'
+import {
+  BrowserColumns,
+  DEFAULT_SHOWN_COLUMNS,
+  KeyTypes,
+  KeyValueFormat,
+  ModulesKeyTypes,
+} from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { parseKeysListResponse, stringToBuffer, UTF8ToBuffer } from 'uiSrc/utils'
-import { cleanup, clearStoreActions, initialStateDefault, mockedStore, mockStore } from 'uiSrc/utils/test-utils'
-import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import {
+  parseKeysListResponse,
+  stringToBuffer,
+  UTF8ToBuffer,
+} from 'uiSrc/utils'
+import {
+  cleanup,
+  clearStoreActions,
+  initialStateDefault,
+  mockedStore,
+  mockStore,
+} from 'uiSrc/utils/test-utils'
+import {
+  addErrorNotification,
+  addMessageNotification,
+} from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SearchHistoryItem, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { resetBrowserTree, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
+import {
+  resetBrowserTree,
+  setBrowserSelectedKey,
+} from 'uiSrc/slices/app/context'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import { rootReducer } from 'uiSrc/slices/store'
+import { setEditorType } from 'uiSrc/slices/browser/rejson'
+import { EditorType } from 'uiSrc/slices/interfaces'
 import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/hash/dto'
-import { CreateListWithExpireDto, ListElementDestination } from 'apiSrc/modules/browser/list/dto'
+import {
+  CreateListWithExpireDto,
+  ListElementDestination,
+} from 'apiSrc/modules/browser/list/dto'
 import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/rejson-rl/dto'
 import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
 import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/z-set/dto'
@@ -172,7 +199,7 @@ describe('keys slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadKeysSuccess({ data, isFiltered: false, isSearched: false })
+        loadKeysSuccess({ data, isFiltered: false, isSearched: false }),
       )
 
       // Assert
@@ -200,7 +227,7 @@ describe('keys slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadKeysSuccess({ data, isFiltered: false, isSearched: false })
+        loadKeysSuccess({ data, isFiltered: false, isSearched: false }),
       )
 
       // Assert
@@ -302,7 +329,7 @@ describe('keys slice', () => {
         data: {
           ...data,
           previousResultCount: data.keys.length,
-          lastRefreshTime: initialState.data.lastRefreshTime
+          lastRefreshTime: initialState.data.lastRefreshTime,
         },
       }
 
@@ -403,7 +430,13 @@ describe('keys slice', () => {
   describe('setLastBatchKeys', () => {
     it('should properly set the state', () => {
       // Arrange
-      const strToKey = (name: string) => ({ name, nameString: name, ttl: 1, size: 1, type: 'hash' })
+      const strToKey = (name: string) => ({
+        name,
+        nameString: name,
+        ttl: 1,
+        size: 1,
+        type: 'hash',
+      })
       const data = ['44', '55', '66'].map(strToKey)
 
       const state = {
@@ -411,7 +444,7 @@ describe('keys slice', () => {
         data: {
           ...initialState.data,
           keys: ['1', '2', '3', '44', '55', '66'].map(strToKey),
-        }
+        },
       }
 
       const prevState = {
@@ -419,7 +452,7 @@ describe('keys slice', () => {
         data: {
           ...initialState.data,
           keys: ['1', '2', '3', '4', '5', '6'].map(strToKey),
-        }
+        },
       }
 
       // Act
@@ -540,11 +573,14 @@ describe('keys slice', () => {
           keys: [{ name: 'name' }],
           scanned: 1,
           total: 1,
-        }
+        },
       }
 
       // Act
-      const nextState = reducer(initialState, updateKeyList({ keyName: 'name', keyType: 'hash' }))
+      const nextState = reducer(
+        initialState,
+        updateKeyList({ keyName: 'name', keyType: 'hash' }),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -676,7 +712,7 @@ describe('keys slice', () => {
       // Arrange
       const state = {
         ...initialState,
-        deleting: true
+        deleting: true,
       }
 
       // Act
@@ -695,11 +731,11 @@ describe('keys slice', () => {
       // Arrange
       const currentState = {
         ...initialState,
-        deleting: true
+        deleting: true,
       }
       const state = {
         ...initialState,
-        deleting: false
+        deleting: false,
       }
 
       // Act
@@ -718,11 +754,11 @@ describe('keys slice', () => {
       // Arrange
       const currentState = {
         ...initialState,
-        deleting: true
+        deleting: true,
       }
       const state = {
         ...initialState,
-        deleting: false
+        deleting: false,
       }
 
       // Act
@@ -795,7 +831,10 @@ describe('keys slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, defaultSelectedKeyActionFailure(data))
+      const nextState = reducer(
+        initialState,
+        defaultSelectedKeyActionFailure(data),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -859,7 +898,10 @@ describe('keys slice', () => {
       }
 
       // Act
-      const nextState = reducer(initialStateMock, editPatternKeyTTLFromList([key, ttl]))
+      const nextState = reducer(
+        initialStateMock,
+        editPatternKeyTTLFromList([key, ttl]),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -877,8 +919,8 @@ describe('keys slice', () => {
         ...initialState,
         selectedKey: {
           ...initialState.selectedKey,
-          viewFormat
-        }
+          viewFormat,
+        },
       }
 
       // Act
@@ -900,8 +942,8 @@ describe('keys slice', () => {
         ...initialState,
         selectedKey: {
           ...initialState.selectedKey,
-          viewFormat
-        }
+          viewFormat,
+        },
       }
 
       // Act
@@ -922,8 +964,8 @@ describe('keys slice', () => {
         ...initialState,
         searchHistory: {
           ...initialState.searchHistory,
-          loading: true
-        }
+          loading: true,
+        },
       }
 
       // Act
@@ -941,15 +983,19 @@ describe('keys slice', () => {
     it('should properly set state', () => {
       // Arrange
       const data: SearchHistoryItem[] = [
-        { id: '1', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } }
+        {
+          id: '1',
+          mode: SearchMode.Pattern,
+          filter: { type: 'list', match: '*' },
+        },
       ]
       const state = {
         ...initialState,
         searchHistory: {
           ...initialState.searchHistory,
           loading: false,
-          data
-        }
+          data,
+        },
       }
 
       // Act
@@ -970,8 +1016,8 @@ describe('keys slice', () => {
         ...initialState,
         searchHistory: {
           ...initialState.searchHistory,
-          loading: false
-        }
+          loading: false,
+        },
       }
 
       // Act
@@ -992,8 +1038,8 @@ describe('keys slice', () => {
         ...initialState,
         searchHistory: {
           ...initialState.searchHistory,
-          loading: true
-        }
+          loading: true,
+        },
       }
 
       // Act
@@ -1011,16 +1057,24 @@ describe('keys slice', () => {
     it('should properly set state', () => {
       // Arrange
       const data: SearchHistoryItem[] = [
-        { id: '1', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
-        { id: '2', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
+        {
+          id: '1',
+          mode: SearchMode.Pattern,
+          filter: { type: 'list', match: '*' },
+        },
+        {
+          id: '2',
+          mode: SearchMode.Pattern,
+          filter: { type: 'list', match: '*' },
+        },
       ]
       const currentState = {
         ...initialState,
         searchHistory: {
           ...initialState.searchHistory,
           loading: false,
-          data
-        }
+          data,
+        },
       }
 
       const state = {
@@ -1029,9 +1083,13 @@ describe('keys slice', () => {
           ...initialState.searchHistory,
           loading: false,
           data: [
-            { id: '1', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
-          ]
-        }
+            {
+              id: '1',
+              mode: SearchMode.Pattern,
+              filter: { type: 'list', match: '*' },
+            },
+          ],
+        },
       }
 
       // Act
@@ -1052,8 +1110,8 @@ describe('keys slice', () => {
         ...initialState,
         searchHistory: {
           ...initialState.searchHistory,
-          loading: false
-        }
+          loading: false,
+        },
       }
 
       // Act
@@ -1072,16 +1130,13 @@ describe('keys slice', () => {
       const key = stringToBuffer('key')
 
       // Act
-      await store.dispatch<any>(
-        refreshKey(key, ModulesKeyTypes.Graph)
-      )
+      await store.dispatch<any>(refreshKey(key, ModulesKeyTypes.Graph))
 
       // Assert
-      const expectedActions = [
-        refreshKeyInfo(),
-        defaultSelectedKeyAction()
-      ]
-      expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+      const expectedActions = [refreshKeyInfo(), defaultSelectedKeyAction()]
+      expect(clearStoreActions(store.getActions())).toEqual(
+        clearStoreActions(expectedActions),
+      )
     })
   })
 
@@ -1124,7 +1179,9 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchKeys({ searchMode: SearchMode.Pattern, cursor: '0', count: 20 }))
+        await store.dispatch<any>(
+          fetchKeys({ searchMode: SearchMode.Pattern, cursor: '0', count: 20 }),
+        )
 
         // Assert
         const expectedActions = [
@@ -1151,7 +1208,9 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchKeys({ searchMode: SearchMode.Pattern, cursor: '0', count: 20 }))
+        await store.dispatch<any>(
+          fetchKeys({ searchMode: SearchMode.Pattern, cursor: '0', count: 20 }),
+        )
 
         // Assert
         const expectedActions = [
@@ -1202,7 +1261,9 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchMoreKeys(SearchMode.Pattern, [], '0', 20))
+        await store.dispatch<any>(
+          fetchMoreKeys(SearchMode.Pattern, [], '0', 20),
+        )
 
         // Assert
         const expectedActions = [
@@ -1225,7 +1286,9 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchMoreKeys(SearchMode.Pattern, [], '0', 20))
+        await store.dispatch<any>(
+          fetchMoreKeys(SearchMode.Pattern, [], '0', 20),
+        )
 
         // Assert
         const expectedActions = [
@@ -1302,7 +1365,7 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(fetchKeyInfo("keyName"))
+        await store.dispatch<any>(fetchKeyInfo('keyName'))
 
         // Assert
         const expectedActions = [
@@ -1313,6 +1376,29 @@ describe('keys slice', () => {
           setBrowserSelectedKey(null),
         ]
         expect(store.getActions()).toEqual(expectedActions)
+      })
+
+      it('should set default JSON editor', async () => {
+        // Arrange
+        const data = {
+          name: stringToBuffer('rejson'),
+          type: KeyTypes.ReJSON,
+          ttl: -1,
+          size: 10,
+        }
+        const responsePayload = { data, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchKeyInfo(data.name))
+
+        // Assert
+        expect(store.getActions()).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining(setEditorType(EditorType.Default)),
+          ]),
+        )
       })
     })
 
@@ -1330,7 +1416,9 @@ describe('keys slice', () => {
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(refreshKeyInfoAction(stringToBuffer('keyName')))
+        await store.dispatch<any>(
+          refreshKeyInfoAction(stringToBuffer('keyName')),
+        )
 
         // Assert
         const expectedActions = [
@@ -1590,7 +1678,10 @@ describe('keys slice', () => {
         await store.dispatch<any>(editKey(key, newKey))
 
         // Assert
-        const expectedActions = [defaultSelectedKeyAction(), editPatternKeyFromList({ key, newKey })]
+        const expectedActions = [
+          defaultSelectedKeyAction(),
+          editPatternKeyFromList({ key, newKey }),
+        ]
         expect(store.getActions()).toEqual(expectedActions)
       })
     })
@@ -1615,7 +1706,7 @@ describe('keys slice', () => {
           defaultSelectedKeyAction(),
           defaultSelectedKeyActionSuccess(),
           loadKeyInfoSuccess({ data: '{}', keyName: 'keyName' }),
-          updateSelectedKeyRefreshTime(MOCK_TIMESTAMP)
+          updateSelectedKeyRefreshTime(MOCK_TIMESTAMP),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -1658,7 +1749,7 @@ describe('keys slice', () => {
       {
         name: 'no columns',
         shownColumns: [],
-      }
+      },
     ]
     describe('fetchKeysMetadata', () => {
       shownColumnsTestCases.forEach(({ name, shownColumns }) => {
@@ -1676,7 +1767,7 @@ describe('keys slice', () => {
 
           const testStore = configureStore({
             reducer: rootReducer,
-            preloadedState: initialStateWithColumns
+            preloadedState: initialStateWithColumns,
           })
 
           const data = [
@@ -1685,21 +1776,21 @@ describe('keys slice', () => {
               type: 'hash',
               ttl: -1,
               size: 100,
-              length: 100
+              length: 100,
             },
             {
               name: stringToBuffer('key2'),
               type: 'hash',
               ttl: -1,
               size: 150,
-              length: 100
+              length: 100,
             },
             {
               name: stringToBuffer('key3'),
               type: 'hash',
               ttl: -1,
               size: 110,
-              length: 100
+              length: 100,
             },
           ]
           const responsePayload = { data, status: 200 }
@@ -1715,8 +1806,8 @@ describe('keys slice', () => {
               data.map(({ name }) => ({ name })),
               null,
               controller.signal,
-              onSuccessMock
-            )
+              onSuccessMock,
+            ),
           )
 
           const expectedData = {
@@ -1754,7 +1845,7 @@ describe('keys slice', () => {
 
           const testStore = configureStore({
             reducer: rootReducer,
-            preloadedState: initialStateWithColumns
+            preloadedState: initialStateWithColumns,
           })
 
           const data = [
@@ -1793,16 +1884,16 @@ describe('keys slice', () => {
           // Act
           await testStore.dispatch<any>(
             fetchKeysMetadataTree(
-              data.map(({ name }, i) => ([i, name])),
+              data.map(({ name }, i) => [i, name]),
               null,
               controller.signal,
               onSuccessMock,
-            )
+            ),
           )
 
           const expectedData = {
-            keys: data.map(({ name }) => (name)),
-            type: undefined
+            keys: data.map(({ name }) => name),
+            type: undefined,
           }
 
           expectedData.includeTTL = shownColumns.includes(BrowserColumns.TTL)
@@ -1824,13 +1915,13 @@ describe('keys slice', () => {
       it('updateKeyList should be called', async () => {
         // Act
         await store.dispatch<any>(
-          addKeyIntoList({ key: 'key', keyType: 'hash' })
+          addKeyIntoList({ key: 'key', keyType: 'hash' }),
         )
 
         // Assert
         const expectedActions = [
           resetBrowserTree(),
-          updateKeyList({ keyName: 'key', keyType: 'hash' })
+          updateKeyList({ keyName: 'key', keyType: 'hash' }),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -1840,8 +1931,16 @@ describe('keys slice', () => {
       it('success fetch history', async () => {
         // Arrange
         const data: SearchHistoryItem[] = [
-          { id: '1', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
-          { id: '2', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
+          {
+            id: '1',
+            mode: SearchMode.Pattern,
+            filter: { type: 'list', match: '*' },
+          },
+          {
+            id: '2',
+            mode: SearchMode.Pattern,
+            filter: { type: 'list', match: '*' },
+          },
         ]
         const responsePayload = { data, status: 200 }
 
@@ -1885,8 +1984,16 @@ describe('keys slice', () => {
       it('success fetch history', async () => {
         // Arrange
         const data: SearchHistoryItem[] = [
-          { id: '1', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
-          { id: '2', mode: SearchMode.Pattern, filter: { type: 'list', match: '*' } },
+          {
+            id: '1',
+            mode: SearchMode.Pattern,
+            filter: { type: 'list', match: '*' },
+          },
+          {
+            id: '2',
+            mode: SearchMode.Pattern,
+            filter: { type: 'list', match: '*' },
+          },
         ]
         const responsePayload = { data, status: 200 }
 
@@ -1976,7 +2083,9 @@ describe('keys slice', () => {
         apiService.delete = jest.fn().mockResolvedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(deleteSearchHistoryAction(SearchMode.Pattern, ['1']))
+        await store.dispatch<any>(
+          deleteSearchHistoryAction(SearchMode.Pattern, ['1']),
+        )
 
         // Assert
         const expectedActions = [
@@ -1999,7 +2108,9 @@ describe('keys slice', () => {
         apiService.delete = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
-        await store.dispatch<any>(deleteSearchHistoryAction(SearchMode.Pattern, ['1']))
+        await store.dispatch<any>(
+          deleteSearchHistoryAction(SearchMode.Pattern, ['1']),
+        )
 
         // Assert
         const expectedActions = [

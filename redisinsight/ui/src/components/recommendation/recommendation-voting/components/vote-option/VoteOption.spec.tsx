@@ -33,7 +33,7 @@ jest.mock('uiSrc/slices/user/user-settings', () => ({
   userSettingsConfigSelector: jest.fn().mockReturnValue({
     agreements: {
       analytics: true,
-    }
+    },
   }),
 }))
 
@@ -43,16 +43,30 @@ describe('VoteOption', () => {
   })
 
   it('should render proper text for Like vote', async () => {
-    render(<VoteOption {...instance(mockedProps)} voteOption={Vote.Like} popover={Vote.Like} />)
+    render(
+      <VoteOption
+        {...instance(mockedProps)}
+        voteOption={Vote.Like}
+        popover={Vote.Like}
+      />,
+    )
 
-    expect(screen.getByTestId('common-text')).toHaveTextContent('Thank you for the feedback.')
-    expect(screen.getByTestId('custom-text')).toHaveTextContent('Share your ideas with us.')
+    expect(screen.getByTestId('common-text')).toHaveTextContent(
+      'Thank you for the feedback.',
+    )
+    expect(screen.getByTestId('custom-text')).toHaveTextContent(
+      'Share your ideas with us.',
+    )
   })
 
   it('should render proper text for Dislike vote', () => {
     render(<VoteOption {...instance(mockedProps)} vote={Vote.Dislike} />)
-    expect(screen.getByTestId('common-text')).toHaveTextContent('Thank you for the feedback.')
-    expect(screen.getByTestId('custom-text')).toHaveTextContent('Tell us how we can improve.')
+    expect(screen.getByTestId('common-text')).toHaveTextContent(
+      'Thank you for the feedback.',
+    )
+    expect(screen.getByTestId('custom-text')).toHaveTextContent(
+      'Tell us how we can improve.',
+    )
   })
 
   it('should call "setRecommendationVote" action be called after click "useful-vote-btn"', () => {
@@ -63,7 +77,7 @@ describe('VoteOption', () => {
         voteOption={Vote.Like}
         vote={Vote.Like}
         setPopover={() => {}}
-      />
+      />,
     )
     fireEvent.click(screen.getByTestId('useful-vote-btn'))
 
@@ -79,7 +93,7 @@ describe('VoteOption', () => {
         voteOption={Vote.Dislike}
         vote={Vote.Dislike}
         setPopover={() => {}}
-      />
+      />,
     )
     fireEvent.click(screen.getByTestId('not useful-vote-btn'))
 

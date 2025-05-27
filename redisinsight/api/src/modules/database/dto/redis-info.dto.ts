@@ -1,5 +1,39 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+class RedisDatabaseStatsDto {
+  @ApiProperty({
+    type: String,
+  })
+  instantaneous_input_kbps: string | undefined;
+
+  @ApiProperty({
+    type: String,
+  })
+  instantaneous_ops_per_sec: string | undefined;
+
+  @ApiProperty({
+    type: String,
+  })
+  instantaneous_output_kbps: string | undefined;
+
+  @ApiProperty({
+    type: Number,
+  })
+  maxmemory_policy: string | undefined;
+
+  @ApiProperty({
+    description: 'Redis database mode',
+    type: String,
+  })
+  numberOfKeysRange: string | undefined;
+
+  @ApiProperty({
+    description: 'Redis database role',
+    type: String,
+  })
+  uptime_in_days: string | undefined;
+}
+
 export class RedisNodeInfoResponse {
   @ApiProperty({
     description: 'Redis database version',
@@ -9,8 +43,8 @@ export class RedisNodeInfoResponse {
 
   @ApiPropertyOptional({
     description:
-      'Value is "master" if the instance is replica of no one, '
-      + 'or "slave" if the instance is a replica of some master instance',
+      'Value is "master" if the instance is replica of no one, ' +
+      'or "slave" if the instance is a replica of some master instance',
     enum: ['master', 'slave'],
     default: 'master',
   })
@@ -21,6 +55,12 @@ export class RedisNodeInfoResponse {
     type: Object,
   })
   server?: any;
+
+  @ApiPropertyOptional({
+    description: 'Various Redis stats',
+    type: RedisDatabaseStatsDto,
+  })
+  stats?: RedisDatabaseStatsDto;
 
   @ApiPropertyOptional({
     description: 'The number of Redis databases',
@@ -126,7 +166,7 @@ export class RedisDatabaseHelloResponse {
     description: 'Redis database mode',
     type: String,
   })
-  mode: "standalone" | "sentinel" | "cluster";
+  mode: 'standalone' | 'sentinel' | 'cluster';
 
   @ApiProperty({
     description: 'Redis database role',
@@ -139,5 +179,5 @@ export class RedisDatabaseHelloResponse {
     type: RedisDatabaseModuleDto,
     isArray: true,
   })
-  modules: RedisDatabaseModuleDto[]
+  modules: RedisDatabaseModuleDto[];
 }

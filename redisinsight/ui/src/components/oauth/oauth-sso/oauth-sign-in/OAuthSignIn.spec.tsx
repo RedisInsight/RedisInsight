@@ -1,7 +1,14 @@
 import React from 'react'
 
 import { cloneDeep } from 'lodash'
-import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 import { MOCK_OAUTH_SSO_EMAIL } from 'uiSrc/mocks/data/oauth'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OAuthSocialAction, OAuthStrategy } from 'uiSrc/slices/interfaces'
@@ -19,7 +26,7 @@ jest.mock('uiSrc/slices/oauth/cloud', () => ({
   ...jest.requireActual('uiSrc/slices/oauth/cloud'),
   oauthCloudPAgreementSelector: jest.fn().mockReturnValue(true),
   oauthCloudUserSelector: jest.fn().mockReturnValue({
-    data: null
+    data: null,
   }),
 }))
 
@@ -30,7 +37,7 @@ beforeEach(() => {
   store = cloneDeep(mockedStore)
   store.clearActions()
   window.app = {
-    ipc: { invoke: invokeMock }
+    ipc: { invoke: invokeMock },
   } as any
 })
 
@@ -43,7 +50,9 @@ describe('OAuthSignIn', () => {
     render(<OAuthSignIn />)
 
     expect(screen.getByTestId('oauth-advantages')).toBeInTheDocument()
-    expect(screen.getByTestId('oauth-container-social-buttons')).toBeInTheDocument()
+    expect(
+      screen.getByTestId('oauth-container-social-buttons'),
+    ).toBeInTheDocument()
     expect(screen.getByTestId('oauth-agreement-checkbox')).toBeInTheDocument()
   })
 
@@ -58,11 +67,13 @@ describe('OAuthSignIn', () => {
       eventData: {
         accountOption: OAuthStrategy.SSO,
         action: OAuthSocialAction.SignIn,
-      }
+      },
     })
 
     await act(async () => {
-      fireEvent.change(screen.getByTestId('sso-email'), { target: { value: MOCK_OAUTH_SSO_EMAIL } })
+      fireEvent.change(screen.getByTestId('sso-email'), {
+        target: { value: MOCK_OAUTH_SSO_EMAIL },
+      })
     })
 
     expect(screen.getByTestId('btn-submit')).not.toBeDisabled()
@@ -75,29 +86,23 @@ describe('OAuthSignIn', () => {
       event: TelemetryEvent.CLOUD_SIGN_IN_SSO_OPTION_PROCEEDED,
       eventData: {
         action: OAuthSocialAction.SignIn,
-      }
+      },
     })
 
     expect(invokeMock).toBeCalledTimes(1)
-    expect(invokeMock).toBeCalledWith(
-      IpcInvokeEvent.cloudOauth,
-      {
-        action: OAuthSocialAction.SignIn,
-        strategy: OAuthStrategy.SSO,
-        data: {
-          email: MOCK_OAUTH_SSO_EMAIL
-        }
-      }
-    )
+    expect(invokeMock).toBeCalledWith(IpcInvokeEvent.cloudOauth, {
+      action: OAuthSocialAction.SignIn,
+      strategy: OAuthStrategy.SSO,
+      data: {
+        email: MOCK_OAUTH_SSO_EMAIL,
+      },
+    })
     invokeMock.mockRestore()
 
-    const expectedActions = [
-      setSSOFlow(OAuthSocialAction.SignIn),
-      signIn(),
-    ]
+    const expectedActions = [setSSOFlow(OAuthSocialAction.SignIn), signIn()]
     expect(store.getActions()).toEqual(expectedActions)
 
-    invokeMock.mockRestore();
-    (sendEventTelemetry as jest.Mock).mockRestore()
+    invokeMock.mockRestore()
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

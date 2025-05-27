@@ -18,9 +18,7 @@ import {
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import {
-  LocalClientCertificateRepository,
-} from 'src/modules/certificate/repositories/local.client-certificate.repository';
+import { LocalClientCertificateRepository } from 'src/modules/certificate/repositories/local.client-certificate.repository';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
 import { DatabaseEntity } from 'src/modules/database/entities/database.entity';
 
@@ -57,10 +55,12 @@ describe('LocalClientCertificateRepository', () => {
     service = await module.get(LocalClientCertificateRepository);
 
     repository.findOneBy.mockResolvedValue(mockClientCertificateEntity);
-    repository.createQueryBuilder().getMany.mockResolvedValue([
-      pick(mockClientCertificateEntity, 'id', 'name'),
-      pick(mockClientCertificateEntity, 'id', 'name'),
-    ]);
+    repository
+      .createQueryBuilder()
+      .getMany.mockResolvedValue([
+        pick(mockClientCertificateEntity, 'id', 'name'),
+        pick(mockClientCertificateEntity, 'id', 'name'),
+      ]);
     repository.save.mockResolvedValue(mockClientCertificateEntity);
     repository.create.mockReturnValue(mockClientCertificate); // not an entity since create happens before encryption
 
@@ -138,9 +138,13 @@ describe('LocalClientCertificateRepository', () => {
     });
 
     it('should delete client certificate and return affected databases', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(mockClientCertificate);
+      jest
+        .spyOn(repository, 'findOneBy')
+        .mockResolvedValue(mockClientCertificate);
 
-      databaseRepository.createQueryBuilder().getMany.mockResolvedValue(mockAffectedDatabases.map((id) => ({ id })));
+      databaseRepository
+        .createQueryBuilder()
+        .getMany.mockResolvedValue(mockAffectedDatabases.map((id) => ({ id })));
 
       jest.spyOn(repository, 'delete').mockResolvedValue(undefined);
 
@@ -148,10 +152,18 @@ describe('LocalClientCertificateRepository', () => {
 
       expect(result).toEqual({ affectedDatabases: mockAffectedDatabases });
       expect(repository.findOneBy).toHaveBeenCalledWith({ id: mockId });
-      expect(service['databaseRepository'].createQueryBuilder).toHaveBeenCalledWith('d');
-      expect(databaseRepository.createQueryBuilder().leftJoinAndSelect).toHaveBeenCalledWith('d.clientCert', 'c');
-      expect(databaseRepository.createQueryBuilder().where).toHaveBeenCalledWith({ clientCert: mockId });
-      expect(databaseRepository.createQueryBuilder().select).toHaveBeenCalledWith(['d.id']);
+      expect(
+        service['databaseRepository'].createQueryBuilder,
+      ).toHaveBeenCalledWith('d');
+      expect(
+        databaseRepository.createQueryBuilder().leftJoinAndSelect,
+      ).toHaveBeenCalledWith('d.clientCert', 'c');
+      expect(
+        databaseRepository.createQueryBuilder().where,
+      ).toHaveBeenCalledWith({ clientCert: mockId });
+      expect(
+        databaseRepository.createQueryBuilder().select,
+      ).toHaveBeenCalledWith(['d.id']);
       expect(repository.delete).toHaveBeenCalledWith(mockId);
     });
 
@@ -168,7 +180,10 @@ describe('LocalClientCertificateRepository', () => {
     it('should delete certificates with isPreSetup flag enabled', async () => {
       const excludeIds = ['_1', '_2'];
 
-      repository.createQueryBuilder().delete().execute.mockResolvedValue({ raw: [], affected: 1 });
+      repository
+        .createQueryBuilder()
+        .delete()
+        .execute.mockResolvedValue({ raw: [], affected: 1 });
 
       const result = await service.cleanupPreSetup(excludeIds);
 

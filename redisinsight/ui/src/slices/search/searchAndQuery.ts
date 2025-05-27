@@ -11,7 +11,9 @@ export const initialState: StateSearchAndQuery = {
   clearing: false,
   error: '',
   items: [],
-  activeRunQueryMode: localStorageService?.get(BrowserStorageItem.SQRunQueryMode) ?? RunQueryMode.ASCII,
+  activeRunQueryMode:
+    localStorageService?.get(BrowserStorageItem.SQRunQueryMode) ??
+    RunQueryMode.ASCII,
 }
 
 const searchAndQuerySlice = createSlice({
@@ -22,13 +24,11 @@ const searchAndQuerySlice = createSlice({
       state.activeRunQueryMode = payload
       localStorageService.set(BrowserStorageItem.SQRunQueryMode, payload)
     },
-  }
+  },
 })
 
 export const searchAndQuerySelector = (state: RootState) => state.search.query
 
 export default searchAndQuerySlice.reducer
 
-export const {
-  changeSQActiveRunQueryMode,
-} = searchAndQuerySlice.actions
+export const { changeSQActiveRunQueryMode } = searchAndQuerySlice.actions

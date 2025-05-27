@@ -1,20 +1,18 @@
 import {
   EuiButton,
+  EuiButtonIcon,
   EuiComboBox,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormFieldset,
   EuiFormRow,
   EuiHealth,
-  EuiPanel,
-  EuiSuperSelect,
-  EuiTextColor,
-  EuiText,
   EuiLink,
+  EuiPanel,
   EuiPopover,
-  EuiButtonIcon,
+  EuiSuperSelect,
   EuiSuperSelectOption,
+  EuiText,
+  EuiTextColor,
 } from '@elastic/eui'
 import { EuiComboBoxOptionOption } from '@elastic/eui/src/components/combo_box/types'
 import cx from 'classnames'
@@ -22,7 +20,10 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Divider from 'uiSrc/components/divider/Divider'
-import { createIndexStateSelector, createRedisearchIndexAction } from 'uiSrc/slices/browser/redisearch'
+import {
+  createIndexStateSelector,
+  createRedisearchIndexAction,
+} from 'uiSrc/slices/browser/redisearch'
 import { stringToBuffer } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { keysSelector } from 'uiSrc/slices/browser/keys'
@@ -30,6 +31,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { getFieldTypeOptions } from 'uiSrc/utils/redisearch'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
@@ -46,17 +48,24 @@ const keyTypeOptions = KEY_TYPE_OPTIONS.map((item) => {
   return {
     value,
     inputDisplay: (
-      <EuiHealth color={color} style={{ lineHeight: 'inherit' }} data-test-subj={value}>
+      <EuiHealth
+        color={color}
+        style={{ lineHeight: 'inherit' }}
+        data-test-subj={value}
+      >
         {text}
       </EuiHealth>
     ),
   }
 })
 
-const initialFieldValue = (fieldTypeOptions: EuiSuperSelectOption<string>[], id = 0) => ({
+const initialFieldValue = (
+  fieldTypeOptions: EuiSuperSelectOption<string>[],
+  id = 0,
+) => ({
   id,
   identifier: '',
-  fieldType: fieldTypeOptions[0]?.value || ''
+  fieldType: fieldTypeOptions[0]?.value || '',
 })
 
 const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
@@ -64,11 +73,15 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
   const { loading } = useSelector(createIndexStateSelector)
   const { id: instanceId, modules } = useSelector(connectedInstanceSelector)
 
-  const [keyTypeSelected, setKeyTypeSelected] = useState<RedisearchIndexKeyType>(keyTypeOptions[0].value)
+  const [keyTypeSelected, setKeyTypeSelected] =
+    useState<RedisearchIndexKeyType>(keyTypeOptions[0].value)
   const [prefixes, setPrefixes] = useState<EuiComboBoxOptionOption[]>([])
   const [indexName, setIndexName] = useState<string>('')
-  const [fieldTypeOptions, setFieldTypeOptions] = useState<EuiSuperSelectOption<string>[]>(getFieldTypeOptions)
-  const [fields, setFields] = useState<any[]>([initialFieldValue(fieldTypeOptions)])
+  const [fieldTypeOptions, setFieldTypeOptions] =
+    useState<EuiSuperSelectOption<string>[]>(getFieldTypeOptions)
+  const [fields, setFields] = useState<any[]>([
+    initialFieldValue(fieldTypeOptions),
+  ])
 
   const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState<boolean>(false)
 
@@ -78,7 +91,10 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (prevCountFields.current !== 0 && prevCountFields.current < fields.length) {
+    if (
+      prevCountFields.current !== 0 &&
+      prevCountFields.current < fields.length
+    ) {
       lastAddedIdentifier.current?.focus()
     }
     prevCountFields.current = fields.length
@@ -98,7 +114,11 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
   }
 
   const clearFieldsValues = (id: number) => {
-    setFields((fields) => fields.map((item) => (item.id === id ? initialFieldValue(fieldTypeOptions, id) : item)))
+    setFields((fields) =>
+      fields.map((item) =>
+        item.id === id ? initialFieldValue(fieldTypeOptions, id) : item,
+      ),
+    )
   }
 
   const onClickRemove = ({ id }: any) => {
@@ -111,7 +131,11 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
   }
 
   const handleFieldChange = (formField: string, id: number, value: string) => {
-    setFields((fields) => fields.map((item) => ((item.id === id) ? { ...item, [formField]: value } : item)))
+    setFields((fields) =>
+      fields.map((item) =>
+        item.id === id ? { ...item, [formField]: value } : item,
+      ),
+    )
   }
 
   const submitData = () => {
@@ -121,8 +145,8 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
       prefixes: prefixes.map((p) => stringToBuffer(p.label as string)),
       fields: fields.map((item) => ({
         name: stringToBuffer(item.identifier),
-        type: item.fieldType
-      }))
+        type: item.fieldType,
+      })),
     }
 
     dispatch(createRedisearchIndexAction(data, onSuccess))
@@ -137,13 +161,14 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
         dataType: data.type,
         countOfPrefixes: data.prefixes?.length || 0,
         countOfFieldNames: data.fields?.length || 0,
-      }
+      },
     })
 
     onCreateIndex?.()
   }
 
-  const isClearDisabled = (item: any): boolean => fields.length === 1 && !(item.identifier.length)
+  const isClearDisabled = (item: any): boolean =>
+    fields.length === 1 && !item.identifier.length
 
   const IdentifierInfo = () => (
     <EuiPopover
@@ -153,7 +178,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
       panelClassName={cx('euiToolTip', 'popoverLikeTooltip')}
       closePopover={() => setIsInfoPopoverOpen(false)}
       initialFocus={false}
-      button={(
+      button={
         <EuiButtonIcon
           iconType="iInCircle"
           color="subdued"
@@ -161,9 +186,11 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
           aria-label="identifier info icon"
           data-testid="identifier-info-icon"
           className={styles.infoIcon}
-          onClick={() => setIsInfoPopoverOpen((isPopoverOpen) => !isPopoverOpen)}
+          onClick={() =>
+            setIsInfoPopoverOpen((isPopoverOpen) => !isPopoverOpen)
+          }
         />
-      )}
+      }
     >
       <>
         <EuiLink
@@ -171,8 +198,8 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
           href={getUtmExternalLink(
             'https://redis.io/commands/ft.create/#SCHEMA',
             {
-              campaign: 'browser_search'
-            }
+              campaign: 'browser_search',
+            },
           )}
           target="_blank"
         >
@@ -182,7 +209,6 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
         {keyTypeSelected === RedisearchIndexKeyType.HASH
           ? 'Enter a hash field name.'
           : 'Enter a JSON path expression.'}
-
       </>
     </EuiPopover>
   )
@@ -192,8 +218,8 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
       <div className="eui-yScroll">
         <div className={styles.contentFields}>
           <div className={styles.fieldsContainer}>
-            <EuiFlexGroup responsive={false} className={styles.row}>
-              <EuiFlexItem>
+            <Row className={styles.row}>
+              <FlexItem grow>
                 <EuiFormRow label="Index Name" fullWidth>
                   <EuiFieldText
                     fullWidth
@@ -206,47 +232,48 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                     data-testid="index-name"
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
-              <EuiFlexItem>
+              </FlexItem>
+              <FlexItem grow>
                 <EuiFormFieldset
                   legend={{ children: 'Select key type', display: 'hidden' }}
                 >
-                  <EuiFormRow
-                    label="Key Type*"
-                    fullWidth
-                  >
+                  <EuiFormRow label="Key Type*" fullWidth>
                     <EuiSuperSelect
                       itemClassName="withColorDefinition"
                       fullWidth
                       options={keyTypeOptions}
                       valueOfSelected={keyTypeSelected}
-                      onChange={(value: RedisearchIndexKeyType) => setKeyTypeSelected(value)}
+                      onChange={(value: RedisearchIndexKeyType) =>
+                        setKeyTypeSelected(value)
+                      }
                       data-testid="key-type"
                     />
                   </EuiFormRow>
                 </EuiFormFieldset>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-            <EuiFlexGroup responsive={false} className={styles.row} style={{ maxWidth: '100%' }}>
-              <EuiFlexItem style={{ minWidth: '100%', maxWidth: '100%' }}>
-                <EuiFormRow
-                  label="Key Prefixes"
-                  fullWidth
-                >
+              </FlexItem>
+            </Row>
+            <Row className={styles.row} style={{ maxWidth: '100%' }}>
+              <FlexItem grow style={{ minWidth: '100%', maxWidth: '100%' }}>
+                <EuiFormRow label="Key Prefixes" fullWidth>
                   <EuiComboBox
                     noSuggestions
                     isClearable={false}
                     placeholder="Enter Prefix"
                     selectedOptions={prefixes}
-                    onCreateOption={(searchValue) => setPrefixes([...prefixes, { label: searchValue }])}
+                    onCreateOption={(searchValue) =>
+                      setPrefixes([...prefixes, { label: searchValue }])
+                    }
                     onChange={(selectedOptions) => setPrefixes(selectedOptions)}
                     className={styles.combobox}
                     data-testid="prefix-combobox"
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-            <Divider colorVariable="separatorColor" className={styles.controlsDivider} />
+              </FlexItem>
+            </Row>
+            <Divider
+              colorVariable="separatorColor"
+              className={styles.controlsDivider}
+            />
             <EuiText color="subdued">
               Identifier
               {IdentifierInfo()}
@@ -259,8 +286,8 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
               onClickAdd={addField}
             >
               {(item, index) => (
-                <EuiFlexGroup gutterSize="none" alignItems="center">
-                  <EuiFlexItem grow>
+                <Row align="center">
+                  <FlexItem grow>
                     <EuiFormRow fullWidth>
                       <EuiFieldText
                         fullWidth
@@ -268,33 +295,37 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                         id={`identifier-${item.id}`}
                         placeholder="Enter Identifier"
                         value={item.identifier}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => handleFieldChange(
-                          'identifier',
-                          item.id,
-                          e.target.value
-                        )}
-                        inputRef={index === fields.length - 1 ? lastAddedIdentifier : null}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          handleFieldChange(
+                            'identifier',
+                            item.id,
+                            e.target.value,
+                          )
+                        }
+                        inputRef={
+                          index === fields.length - 1
+                            ? lastAddedIdentifier
+                            : null
+                        }
                         autoComplete="off"
                         data-testid={`identifier-${item.id}`}
                       />
                     </EuiFormRow>
-                  </EuiFlexItem>
-                  <EuiFlexItem grow>
+                  </FlexItem>
+                  <FlexItem grow>
                     <EuiFormRow>
                       <EuiSuperSelect
                         itemClassName="withColorDefinition"
                         options={fieldTypeOptions}
                         valueOfSelected={item.fieldType}
-                        onChange={(value: string) => handleFieldChange(
-                          'fieldType',
-                          item.id,
-                          value
-                        )}
+                        onChange={(value: string) =>
+                          handleFieldChange('fieldType', item.id, value)
+                        }
                         data-testid={`field-type-${item.id}`}
                       />
                     </EuiFormRow>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
+                  </FlexItem>
+                </Row>
               )}
             </AddMultipleFields>
           </div>
@@ -307,8 +338,8 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
         borderRadius="none"
         className={styles.footer}
       >
-        <EuiFlexGroup justifyContent="flexEnd" responsive={false}>
-          <EuiFlexItem grow={false}>
+        <Row justify="end">
+          <FlexItem>
             <EuiButton
               color="secondary"
               onClick={() => onClosePanel?.()}
@@ -317,8 +348,8 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
             >
               <EuiTextColor>Cancel</EuiTextColor>
             </EuiButton>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiButton
               fill
               size="m"
@@ -330,8 +361,8 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
             >
               Create Index
             </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiPanel>
     </>
   )

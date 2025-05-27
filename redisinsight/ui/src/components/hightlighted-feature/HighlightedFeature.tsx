@@ -34,22 +34,28 @@ const HighlightedFeature = (props: Props) => {
     dotClassName,
     tooltipPosition = 'bottom',
     hideFirstChild,
-    dataTestPostfix = ''
+    dataTestPostfix = '',
   } = props
 
-  const innerContent = hideFirstChild && !isString(children) ? children.props.children : children
+  const innerContent =
+    hideFirstChild && !isString(children) ? children.props.children : children
 
   const BadgeHighlighting = () => (
     <>
       {innerContent}
-      <EuiBadge className={styles.badge} data-testid="badge-highlighting">New!</EuiBadge>
+      <EuiBadge className={styles.badge} data-testid="badge-highlighting">
+        New!
+      </EuiBadge>
     </>
   )
 
   const DotHighlighting = () => (
     <>
       {innerContent}
-      <span className={cx(styles.dot, dotClassName)} data-testid="dot-highlighting" />
+      <span
+        className={cx(styles.dot, dotClassName)}
+        data-testid="dot-highlighting"
+      />
     </>
   )
 
@@ -73,29 +79,34 @@ const HighlightedFeature = (props: Props) => {
       position={tooltipPosition}
       data-testid="tooltip-badge-highlighting"
     >
-      <div className={styles.badgeContainer} data-testid="tooltip-badge-highlighting-inner">
+      <div
+        className={styles.badgeContainer}
+        data-testid="tooltip-badge-highlighting-inner"
+      >
         <BadgeHighlighting />
       </div>
     </EuiToolTip>
   )
 
   if (type === 'dialog') {
-    return !isHighlight ? null : (<>{children}</>)
+    return !isHighlight ? null : <>{children}</>
   }
 
-  if (!isHighlight) return (<>{children}</>)
+  if (!isHighlight) return <>{children}</>
 
   return (
     <div
-      className={cx(styles.wrapper, wrapperClassName, { 'transform-on-hover': transformOnHover })}
+      className={cx(styles.wrapper, wrapperClassName, {
+        'transform-on-hover': transformOnHover,
+      })}
       onClick={() => onClick?.()}
       role="presentation"
       data-testid={`feature-highlighted-${dataTestPostfix}`}
     >
-      {type === 'plain' && (<DotHighlighting />)}
-      {type === 'tooltip' && (<TooltipHighlighting />)}
-      {type === 'popover' && (<DotHighlighting />)}
-      {type === 'tooltip-badge' && (<TooltipBadgeHighlighting />)}
+      {type === 'plain' && <DotHighlighting />}
+      {type === 'tooltip' && <TooltipHighlighting />}
+      {type === 'popover' && <DotHighlighting />}
+      {type === 'tooltip-badge' && <TooltipBadgeHighlighting />}
     </div>
   )
 }

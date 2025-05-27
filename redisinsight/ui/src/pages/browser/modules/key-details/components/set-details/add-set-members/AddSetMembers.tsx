@@ -4,24 +4,33 @@ import cx from 'classnames'
 import {
   EuiButton,
   EuiTextColor,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiFieldText,
   EuiPanel,
 } from '@elastic/eui'
 
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import {
+  selectedKeyDataSelector,
+  keysSelector,
+} from 'uiSrc/slices/browser/keys'
 import { addSetMembersAction, setSelector } from 'uiSrc/slices/browser/set'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { KeyTypes } from 'uiSrc/constants'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 
 import { stringToBuffer } from 'uiSrc/utils'
 import { AddZsetFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
-import { INITIAL_SET_MEMBER_STATE, ISetMemberState } from 'uiSrc/pages/browser/components/add-key/AddKeySet/interfaces'
+import {
+  INITIAL_SET_MEMBER_STATE,
+  ISetMemberState,
+} from 'uiSrc/pages/browser/components/add-key/AddKeySet/interfaces'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -31,9 +40,13 @@ export interface Props {
 const AddSetMembers = (props: Props) => {
   const { closePanel } = props
   const dispatch = useDispatch()
-  const [members, setMembers] = useState<ISetMemberState[]>([{ ...INITIAL_SET_MEMBER_STATE }])
+  const [members, setMembers] = useState<ISetMemberState[]>([
+    { ...INITIAL_SET_MEMBER_STATE },
+  ])
   const { loading } = useSelector(setSelector)
-  const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
+  const { name: selectedKey = '' } = useSelector(selectedKeyDataSelector) ?? {
+    name: undefined,
+  }
   const { viewType } = useSelector(keysSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const lastAddedMemberName = useRef<HTMLInputElement>(null)
@@ -48,13 +61,13 @@ const AddSetMembers = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED,
       ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.Set,
         numberOfAdded: members.length,
-      }
+      },
     })
   }
 
@@ -76,12 +89,14 @@ const AddSetMembers = (props: Props) => {
   }
 
   const clearMemberValues = (id: number) => {
-    const newState = members.map((item) => (item.id === id
-      ? {
-        ...item,
-        name: '',
-      }
-      : item))
+    const newState = members.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            name: '',
+          }
+        : item,
+    )
     setMembers(newState)
   }
 
@@ -116,7 +131,8 @@ const AddSetMembers = (props: Props) => {
     dispatch(addSetMembersAction(data, onSuccessAdded))
   }
 
-  const isClearDisabled = (item: ISetMemberState): boolean => members.length === 1 && !item.name.length
+  const isClearDisabled = (item: ISetMemberState): boolean =>
+    members.length === 1 && !item.name.length
 
   return (
     <>
@@ -134,8 +150,8 @@ const AddSetMembers = (props: Props) => {
           onClickAdd={addMember}
         >
           {(item, index) => (
-            <EuiFlexGroup gutterSize="none" alignItems="center">
-              <EuiFlexItem grow>
+            <Row align="center">
+              <FlexItem grow>
                 <EuiFormRow fullWidth>
                   <EuiFieldText
                     fullWidth
@@ -144,14 +160,17 @@ const AddSetMembers = (props: Props) => {
                     placeholder={config.member.placeholder}
                     value={item.name}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      handleMemberChange('name', item.id, e.target.value)}
-                    inputRef={index === members.length - 1 ? lastAddedMemberName : null}
+                      handleMemberChange('name', item.id, e.target.value)
+                    }
+                    inputRef={
+                      index === members.length - 1 ? lastAddedMemberName : null
+                    }
                     disabled={loading}
                     data-testid="member-name"
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
-            </EuiFlexGroup>
+              </FlexItem>
+            </Row>
           )}
         </AddMultipleFields>
       </EuiPanel>
@@ -161,13 +180,17 @@ const AddSetMembers = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
-          <EuiFlexItem grow={false}>
-            <EuiButton color="secondary" onClick={() => closePanel(true)} data-testid="cancel-members-btn">
+        <Row justify="end" gap="xl">
+          <FlexItem>
+            <EuiButton
+              color="secondary"
+              onClick={() => closePanel(true)}
+              data-testid="cancel-members-btn"
+            >
               <EuiTextColor color="default">Cancel</EuiTextColor>
             </EuiButton>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiButton
               fill
               size="m"
@@ -179,8 +202,8 @@ const AddSetMembers = (props: Props) => {
             >
               Save
             </EuiButton>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiPanel>
     </>
   )

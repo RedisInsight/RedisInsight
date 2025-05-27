@@ -1,5 +1,8 @@
 import {
-  Column, Entity, PrimaryGeneratedColumn, UpdateDateColumn,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Expose } from 'class-transformer';
 import { DataAsJsonString } from 'src/common/decorators';

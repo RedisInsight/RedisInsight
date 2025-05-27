@@ -7,10 +7,11 @@ import { IRoute, FeatureFlags, Pages } from 'uiSrc/constants'
 
 const PrivateRoute = (route: IRoute) => {
   const { path, exact, routes, featureFlag, redirect } = route
-  const {
-    [featureFlag as FeatureFlags]: feature,
-  } = useSelector(appFeatureFlagsFeaturesSelector)
-  const { isShowConceptsPopup: haveToAcceptAgreements } = useSelector(userSettingsSelector)
+  const { [featureFlag as FeatureFlags]: feature } = useSelector(
+    appFeatureFlagsFeaturesSelector,
+  )
+  const { isShowConceptsPopup: haveToAcceptAgreements } =
+    useSelector(userSettingsSelector)
 
   return (
     <Route
@@ -22,7 +23,7 @@ const PrivateRoute = (route: IRoute) => {
             <Redirect
               to={{
                 search: props.location.search,
-                pathname: redirect(props?.match?.params)
+                pathname: redirect(props?.match?.params),
               }}
             />
           )
@@ -32,33 +33,35 @@ const PrivateRoute = (route: IRoute) => {
           return <Redirect to="/" />
         }
 
-        return feature?.flag === false
-          ? <Redirect to={Pages.notFound} />
-          : (
-            // pass the sub-routes down to keep nesting
-            // @ts-ignore
-            <route.component {...props} routes={routes} />
-          )
+        return feature?.flag === false ? (
+          <Redirect to={Pages.notFound} />
+        ) : (
+          // pass the sub-routes down to keep nesting
+          // @ts-ignore
+          <route.component {...props} routes={routes} />
+        )
       }}
     />
   )
 }
 
 const RouteWithSubRoutes = (route: IRoute) => {
-  const { isAvailableWithoutAgreements, featureFlag, path, exact, routes } = route
+  const { isAvailableWithoutAgreements, featureFlag, path, exact, routes } =
+    route
 
-  return ((!isAvailableWithoutAgreements || featureFlag) ? PrivateRoute(route)
-    : (
-      <Route
-        path={path}
-        exact={exact}
-        render={(props) => (
-          // pass the sub-routes down to keep nesting
-          // @ts-ignore
-          <route.component {...props} routes={routes} />
-        )}
-      />
-    ))
+  return !isAvailableWithoutAgreements || featureFlag ? (
+    PrivateRoute(route)
+  ) : (
+    <Route
+      path={path}
+      exact={exact}
+      render={(props) => (
+        // pass the sub-routes down to keep nesting
+        // @ts-ignore
+        <route.component {...props} routes={routes} />
+      )}
+    />
+  )
 }
 
 export default RouteWithSubRoutes

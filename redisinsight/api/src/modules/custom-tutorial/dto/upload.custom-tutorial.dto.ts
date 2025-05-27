@@ -1,7 +1,10 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import {
-  HasMimeType, IsFile, MaxFileSize, MemoryStoredFile,
+  HasMimeType,
+  IsFile,
+  MaxFileSize,
+  MemoryStoredFile,
 } from 'nestjs-form-data';
 
 export class UploadCustomTutorialDto {

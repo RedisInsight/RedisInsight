@@ -2,7 +2,8 @@ import { EuiToolTip, ToolTipPositions } from '@elastic/eui'
 import { EuiToolTipProps } from '@elastic/eui/src/components/tool_tip/tool_tip'
 import React from 'react'
 
-export interface Props extends Omit<EuiToolTipProps, 'children' | 'delay' | 'position'> {
+export interface Props
+  extends Omit<EuiToolTipProps, 'children' | 'delay' | 'position'> {
   value: string | JSX.Element
   tooltipContent: string | JSX.Element
   expanded?: boolean

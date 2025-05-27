@@ -1,8 +1,9 @@
 import React, { useContext } from 'react'
-import { EuiListGroupItem, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { truncateText } from 'uiSrc/utils'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
+import { Item as ListItem } from 'uiSrc/components/base/layout/list'
 
 import styles from './styles.module.scss'
 import './styles.scss'
@@ -48,19 +49,17 @@ const InternalLink = (props: Props) => {
       <>
         <div className={styles.title}>{children || label}</div>
         {!!summary && (
-          <div className={styles.summary}>
-            {truncateText(summary, 140)}
-          </div>
+          <div className={styles.summary}>{truncateText(summary, 140)}</div>
         )}
       </>
     </EuiToolTip>
   )
   return (
-    <EuiListGroupItem
+    <ListItem
       data-testid={`internal-link-${testId}`}
       className={cx(
         styles.link,
-        iconPosition === 'right' && styles.linkIconRight
+        iconPosition === 'right' && styles.linkIconRight,
       )}
       iconType={iconType}
       size={size}

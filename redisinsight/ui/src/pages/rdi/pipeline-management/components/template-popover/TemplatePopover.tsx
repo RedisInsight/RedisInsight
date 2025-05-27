@@ -1,11 +1,12 @@
 import React from 'react'
-import { EuiButton, EuiPopover, EuiOutsideClickDetector } from '@elastic/eui'
+import { EuiButton, EuiPopover } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import TemplateForm from 'uiSrc/pages/rdi/pipeline-management/components/template-form'
 import { fetchPipelineStrategies } from 'uiSrc/slices/rdi/pipeline'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 
 import styles from './styles.module.scss'
 
@@ -19,7 +20,14 @@ export interface Props {
 }
 
 const TemplatePopover = (props: Props) => {
-  const { isPopoverOpen, setIsPopoverOpen, value, loading, setFieldValue, source } = props
+  const {
+    isPopoverOpen,
+    setIsPopoverOpen,
+    value,
+    loading,
+    setFieldValue,
+    source,
+  } = props
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
@@ -35,7 +43,7 @@ const TemplatePopover = (props: Props) => {
   }
 
   return (
-    <EuiOutsideClickDetector onOutsideClick={handleClose}>
+    <OutsideClickDetector onOutsideClick={handleClose}>
       <EuiPopover
         ownFocus
         anchorPosition="downRight"
@@ -43,7 +51,7 @@ const TemplatePopover = (props: Props) => {
         closePopover={handleClose}
         className={styles.anchor}
         panelClassName={styles.popoverWrapper}
-        button={(
+        button={
           <EuiButton
             fill
             size="s"
@@ -55,11 +63,16 @@ const TemplatePopover = (props: Props) => {
           >
             Insert template
           </EuiButton>
-      )}
+        }
       >
-        <TemplateForm closePopover={handleClose} setTemplate={setFieldValue} source={source} value={value} />
+        <TemplateForm
+          closePopover={handleClose}
+          setTemplate={setFieldValue}
+          source={source}
+          value={value}
+        />
       </EuiPopover>
-    </EuiOutsideClickDetector>
+    </OutsideClickDetector>
   )
 }
 

@@ -4,8 +4,11 @@ import { isUndefined } from 'lodash';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
-import { plainToClass } from 'class-transformer';
-import { DatabaseAnalysis, ShortDatabaseAnalysis } from 'src/modules/database-analysis/models';
+import { plainToInstance } from 'class-transformer';
+import {
+  DatabaseAnalysis,
+  ShortDatabaseAnalysis,
+} from 'src/modules/database-analysis/models';
 import { RecommendationVoteDto } from 'src/modules/database-analysis/dto';
 import { classToClass } from 'src/utils';
 import config from 'src/utils/config';
@@ -43,7 +46,9 @@ export class DatabaseAnalysisProvider {
    */
   async create(analysis: Partial<DatabaseAnalysis>): Promise<DatabaseAnalysis> {
     const entity = await this.repository.save(
-      await this.encryptEntity(plainToClass(DatabaseAnalysisEntity, analysis)),
+      await this.encryptEntity(
+        plainToInstance(DatabaseAnalysisEntity, analysis),
+      ),
     );
 
     // cleanup history and ignore error if any
@@ -68,7 +73,10 @@ export class DatabaseAnalysisProvider {
       throw new NotFoundException(ERROR_MESSAGES.DATABASE_ANALYSIS_NOT_FOUND);
     }
 
-    return classToClass(DatabaseAnalysis, await this.decryptEntity(entity, true));
+    return classToClass(
+      DatabaseAnalysis,
+      await this.decryptEntity(entity, true),
+    );
   }
 
   /**
@@ -76,7 +84,10 @@ export class DatabaseAnalysisProvider {
    * @param id
    * @param dto
    */
-  async recommendationVote(id: string, dto: RecommendationVoteDto): Promise<DatabaseAnalysis> {
+  async recommendationVote(
+    id: string,
+    dto: RecommendationVoteDto,
+  ): Promise<DatabaseAnalysis> {
     this.logger.debug('Updating database analysis with recommendation vote');
     const { name, vote } = dto;
     const oldDatabaseAnalysis = await this.repository.findOneBy({ id });
@@ -86,12 +97,21 @@ export class DatabaseAnalysisProvider {
       throw new NotFoundException(ERROR_MESSAGES.DATABASE_ANALYSIS_NOT_FOUND);
     }
 
-    const entity = classToClass(DatabaseAnalysis, await this.decryptEntity(oldDatabaseAnalysis, true));
+    const entity = classToClass(
+      DatabaseAnalysis,
+      await this.decryptEntity(oldDatabaseAnalysis, true),
+    );
 
-    entity.recommendations = entity.recommendations.map((recommendation) => (
-      recommendation.name === name ? { ...recommendation, vote } : recommendation));
+    entity.recommendations = entity.recommendations.map((recommendation) =>
+      recommendation.name === name
+        ? { ...recommendation, vote }
+        : recommendation,
+    );
 
-    await this.repository.update(id, await this.encryptEntity(plainToClass(DatabaseAnalysisEntity, entity)));
+    await this.repository.update(
+      id,
+      await this.encryptEntity(plainToInstance(DatabaseAnalysisEntity, entity)),
+    );
 
     return entity;
   }
@@ -112,7 +132,9 @@ export class DatabaseAnalysisProvider {
 
     this.logger.debug('Succeed to get command executions');
 
-    return entities.map((entity) => classToClass(ShortDatabaseAnalysis, entity));
+    return entities.map((entity) =>
+      classToClass(ShortDatabaseAnalysis, entity),
+    );
   }
 
   /**
@@ -121,13 +143,15 @@ export class DatabaseAnalysisProvider {
    */
   async cleanupDatabaseHistory(databaseId: string): Promise<void> {
     // todo: investigate why delete with sub-query doesn't works
-    const idsToDelete = (await this.repository
-      .createQueryBuilder()
-      .where({ databaseId })
-      .select('id')
-      .orderBy('createdAt', 'DESC')
-      .offset(DATABASE_ANALYSIS_CONFIG.maxItemsPerDb)
-      .getRawMany()).map((item) => item.id);
+    const idsToDelete = (
+      await this.repository
+        .createQueryBuilder()
+        .where({ databaseId })
+        .select('id')
+        .orderBy('createdAt', 'DESC')
+        .offset(DATABASE_ANALYSIS_CONFIG.maxItemsPerDb)
+        .getRawMany()
+    ).map((item) => item.id);
 
     await this.repository
       .createQueryBuilder()
@@ -144,18 +168,24 @@ export class DatabaseAnalysisProvider {
    * @param entity
    * @private
    */
-  private async encryptEntity(entity: DatabaseAnalysisEntity): Promise<DatabaseAnalysisEntity> {
+  private async encryptEntity(
+    entity: DatabaseAnalysisEntity,
+  ): Promise<DatabaseAnalysisEntity> {
     const encryptedEntity = {
       ...entity,
     };
 
-    await Promise.all(this.encryptedFields.map(async (field) => {
-      if (entity[field]) {
-        const { data, encryption } = await this.encryptionService.encrypt(entity[field]);
-        encryptedEntity[field] = data;
-        encryptedEntity['encryption'] = encryption;
-      }
-    }));
+    await Promise.all(
+      this.encryptedFields.map(async (field) => {
+        if (entity[field]) {
+          const { data, encryption } = await this.encryptionService.encrypt(
+            entity[field],
+          );
+          encryptedEntity[field] = data;
+          encryptedEntity['encryption'] = encryption;
+        }
+      }),
+    );
 
     return encryptedEntity;
   }
@@ -180,9 +210,11 @@ export class DatabaseAnalysisProvider {
       ...entity,
     };
 
-    await Promise.all(this.encryptedFields.map(async (field) => {
-      decrypted[field] = await this.decryptField(entity, field, ignoreErrors);
-    }));
+    await Promise.all(
+      this.encryptedFields.map(async (field) => {
+        decrypted[field] = await this.decryptField(entity, field, ignoreErrors);
+      }),
+    );
 
     return new DatabaseAnalysisEntity({
       ...decrypted,
@@ -207,9 +239,15 @@ export class DatabaseAnalysisProvider {
     }
 
     try {
-      return await this.encryptionService.decrypt(entity[field], entity.encryption);
+      return await this.encryptionService.decrypt(
+        entity[field],
+        entity.encryption,
+      );
     } catch (error) {
-      this.logger.error(`Unable to decrypt database analysis ${entity.id} fields: ${field}`, error);
+      this.logger.error(
+        `Unable to decrypt database analysis ${entity.id} fields: ${field}`,
+        error,
+      );
       if (!ignoreErrors) {
         throw error;
       }

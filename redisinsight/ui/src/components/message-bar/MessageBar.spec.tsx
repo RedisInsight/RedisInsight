@@ -15,15 +15,13 @@ describe('MessageBar', () => {
     render(
       <MessageBar opened>
         <p data-testid="text">lorem ipsum</p>
-      </MessageBar>
+      </MessageBar>,
     )
     expect(screen.getByTestId('text')).toBeTruthy()
   })
 
   it('should close after click cancel', () => {
-    render(
-      <MessageBar opened />
-    )
+    render(<MessageBar opened />)
 
     expect(screen.getByTestId(CLOSE_BUTTON)).toBeInTheDocument()
 

@@ -1,5 +1,8 @@
 import {
-  isObject, registerDecorator, ValidationArguments, ValidationOptions,
+  isObject,
+  registerDecorator,
+  ValidationArguments,
+  ValidationOptions,
 } from 'class-validator';
 
 export function IsObjectWithValues(
@@ -18,7 +21,9 @@ export function IsObjectWithValues(
           if (!isObject(data)) return false;
 
           for (const value of Object.values(data)) {
-            const isInvalidValue = valueValidators.some((validator) => !validator(value));
+            const isInvalidValue = valueValidators.some(
+              (validator) => !validator(value),
+            );
             if (isInvalidValue) {
               return false;
             }

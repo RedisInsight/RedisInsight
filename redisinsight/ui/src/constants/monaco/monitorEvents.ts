@@ -3,5 +3,5 @@ export enum MonitorEvent {
   MonitorData = 'monitorData',
   Exception = 'exception',
   Pause = 'pause',
-  FlushLogs = 'flushLogs'
+  FlushLogs = 'flushLogs',
 }

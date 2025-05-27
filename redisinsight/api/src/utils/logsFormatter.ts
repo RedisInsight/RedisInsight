@@ -1,79 +1,76 @@
 import { format } from 'winston';
-import { pick, get, map } from 'lodash';
+import { omit } from 'lodash';
 import { inspect } from 'util';
+import config, { Config } from 'src/utils/config';
 
-const errorWhiteListFields = [
-  'message',
-  'command.name',
-];
+const LOGGER_CONFIG = config.get('logger') as Config['logger'];
 
-const sanitizeStack = (stack: any[]) => {
-  try {
-    let sanitizedStack = stack;
-
-    if (stack && stack.length) {
-      sanitizedStack = stack.map((error) => {
-        if (error?.name === 'AxiosError') {
-          return {
-            ...pick(error, ['message', 'name', 'code', 'stack']),
-            response: error?.response?.data,
-          };
-        }
-
-        return error;
-      });
-    }
-
-    return inspect(sanitizedStack);
-  } catch (e) {
-    return e.stack;
-  }
+type SanitizeOptions = {
+  omitSensitiveData?: boolean;
 };
 
-/**
- * Get only whitelisted fields from logs when omitSensitiveData option enabled
- */
-export const sensitiveDataFormatter = format((info, opts = {}) => {
-  let stack;
-  if (opts?.omitSensitiveData) {
-    stack = map(get(info, 'stack', []), (stackItem) => pick(stackItem, errorWhiteListFields));
-  } else {
-    stack = map(get(info, 'stack', []), (stackItem) => {
-      if (stackItem?.stack) {
-        return {
-          ...stackItem,
-          stack: stackItem.stack,
-        };
-      }
+type SanitizedError = {
+  type: string;
+  message: string;
+  stack?: string;
+  cause?: ReturnType<typeof sanitizeError>;
+};
 
-      return stackItem;
-    });
+export const getOriginalErrorCause = (cause: unknown): Error | undefined => {
+  if (cause instanceof Error) {
+    return getOriginalErrorCause((cause as any).cause) || cause;
   }
+  return undefined;
+};
+
+export const sanitizeError = (error?: Error, opts: SanitizeOptions = {} ): SanitizedError | undefined => {
+  if (!error) return undefined;
 
   return {
-    ...info,
-    stack: sanitizeStack(stack),
+    type: error.constructor?.name ?? 'UnknownError',
+    message: String(error.message ?? 'Unknown error'),
+    stack: opts.omitSensitiveData ? undefined : error.stack,
+    cause: sanitizeError(getOriginalErrorCause((error as any).cause), opts),
   };
+};
+
+export const sanitizeErrors = <T>(obj: T, opts: SanitizeOptions = {}, seen = new WeakMap<any, any>()): T => {
+  if (obj instanceof Error) {
+    return sanitizeError(obj, opts) as unknown as T;
+  }
+
+  if (obj === null || typeof obj !== 'object') return obj;
+
+  if (seen.has(obj)) {
+    return '[Circular]' as unknown as T;
+  }
+
+  const clone: any = Array.isArray(obj) ? [] : {};
+  seen.set(obj, clone);
+
+  Object.keys(obj).forEach(key => {
+    clone[key] = sanitizeErrors(obj[key], opts, seen);
+  });
+
+  return clone;
+};
+
+export const prepareLogsData = format((info, opts: SanitizeOptions = {}) => {
+  return sanitizeErrors(info, opts);
 });
 
-export const jsonFormat = format.printf((info) => {
-  const logData = {
-    level: info.level,
-    timestamp: new Date().toLocaleString(),
-    context: info.context,
-    message: info.message,
-    stack: sanitizeStack(info.stack),
-  };
-  return JSON.stringify(logData);
-});
-
-export const prettyFormat = format.printf((info) => {
+export const prettyFileFormat = format.printf((info) => {
   const separator = ' | ';
   const timestamp = new Date().toLocaleString();
-  const {
-    level, context, message, stack,
-  } = info;
+  const { level, context, message } = info;
 
-  const logData = [timestamp, `${level}`.toUpperCase(), context, message, { stack: sanitizeStack(stack) }];
+  const logData = [
+    timestamp,
+    `${level}`.toUpperCase(),
+    context,
+    message,
+    inspect(omit(info, ['timestamp', 'level', 'context', 'message', 'stack']), { depth: LOGGER_CONFIG.logDepthLevel }),
+  ];
+
   return logData.join(separator);
 });

@@ -1,21 +1,34 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
-import { setBrowserPatternKeyListDataLoaded, setBrowserSelectedKey } from 'uiSrc/slices/app/context'
+import {
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
+import {
+  setBrowserPatternKeyListDataLoaded,
+  setBrowserSelectedKey,
+} from 'uiSrc/slices/app/context'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import * as keysSlice from 'uiSrc/slices/browser/keys'
-import { KeysStoreData, KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
+import {
+  KeysStoreData,
+  KeyViewType,
+  SearchMode,
+} from 'uiSrc/slices/interfaces/keys'
 import { BrowserColumns } from 'uiSrc/constants'
 
+import { setConnectivityError } from 'uiSrc/slices/app/connectivity'
 import KeysHeader from './KeysHeader'
 
 let store: typeof mockedStore
 beforeEach(() => {
   cleanup()
   store = cloneDeep(mockedStore)
-  store.clearActions();
-
-  (keysSlice.keysSelector as jest.Mock).mockReturnValue({
+  store.clearActions()
+  ;(keysSlice.keysSelector as jest.Mock).mockReturnValue({
     ...mockSelectorData,
   })
 })
@@ -64,7 +77,7 @@ const propsMock = {
     scanned: 5,
     shardsMeta: {},
     previousResultCount: 1,
-    lastRefreshTime: 3
+    lastRefreshTime: 3,
   } as KeysStoreData,
   loading: false,
   sizes: {},
@@ -120,55 +133,67 @@ describe('KeysHeader', () => {
   })
 
   it('should render Scan more button if total => keys.length', () => {
-    (keysSlice.keysSelector as jest.Mock).mockReturnValue({
-      ...mockSelectorData,
-      searchMode: SearchMode.Redisearch,
-      viewType: KeyViewType.Tree
-    })
-
-    const { queryByTestId } = render(<KeysHeader
-      {...propsMock}
-      keysState={{
-        ...propsMock.keysState,
-        maxResults: 200,
-        total: 200,
-      }}
-      nextCursor="3"
-    />)
-
-    expect(queryByTestId('scan-more')).toBeInTheDocument()
-  })
-
-  it('should not render Scan more button for if searchMode = "Redisearch" and keys.length > maxResults', () => {
-    (keysSlice.keysSelector as jest.Mock).mockReturnValue({
+    ;(keysSlice.keysSelector as jest.Mock).mockReturnValue({
       ...mockSelectorData,
       searchMode: SearchMode.Redisearch,
       viewType: KeyViewType.Tree,
     })
 
-    const { queryByTestId } = render(<KeysHeader
-      {...propsMock}
-      keysState={{
-        ...propsMock.keysState,
-        maxResults: propsMock.keysState.keys.length - 1,
-        total: 200,
-        nextCursor: '3',
-      }}
-    />)
+    const { queryByTestId } = render(
+      <KeysHeader
+        {...propsMock}
+        keysState={{
+          ...propsMock.keysState,
+          maxResults: 200,
+          total: 200,
+        }}
+        nextCursor="3"
+      />,
+    )
+
+    expect(queryByTestId('scan-more')).toBeInTheDocument()
+  })
+
+  it('should not render Scan more button for if searchMode = "Redisearch" and keys.length > maxResults', () => {
+    ;(keysSlice.keysSelector as jest.Mock).mockReturnValue({
+      ...mockSelectorData,
+      searchMode: SearchMode.Redisearch,
+      viewType: KeyViewType.Tree,
+    })
+
+    const { queryByTestId } = render(
+      <KeysHeader
+        {...propsMock}
+        keysState={{
+          ...propsMock.keysState,
+          maxResults: propsMock.keysState.keys.length - 1,
+          total: 200,
+          nextCursor: '3',
+        }}
+      />,
+    )
 
     expect(queryByTestId('scan-more')).not.toBeInTheDocument()
   })
 
   it('should reset selected key data when no keys data is returned', async () => {
-    (keysSlice.fetchKeys as jest.Mock).mockImplementation((_options: any, onSuccess: (data: any) => void, __onFailed: () => void) => () => {
-        onSuccess({ keys: [] }) // Simulate empty data response
-      })
+    ;(keysSlice.fetchKeys as jest.Mock).mockImplementation(
+      (_options: any, onSuccess: (data: any) => void, __onFailed: () => void) =>
+        () => {
+          onSuccess({ keys: [] }) // Simulate empty data response
+        },
+    )
 
     render(<KeysHeader {...propsMock} />)
 
-    fireEvent.click(screen.getByTestId("keys-refresh-btn"))
+    fireEvent.click(screen.getByTestId('keys-refresh-btn'))
 
-    const expectedActions = [keysSlice.resetKeyInfo(), setBrowserSelectedKey(null), setBrowserPatternKeyListDataLoaded(true)]
+    const expectedActions = [
+      keysSlice.resetKeyInfo(),
+      setBrowserSelectedKey(null),
+      setBrowserPatternKeyListDataLoaded(true),
+      setConnectivityError(null),
+    ]
     expect(store.getActions()).toEqual(expectedActions)
   })
 })

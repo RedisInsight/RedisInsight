@@ -17,13 +17,14 @@ beforeEach(() => {
 
 jest.mock(redisCommandsPath, () => {
   const defaultState = jest.requireActual(redisCommandsPath).initialState
-  const { MOCK_COMMANDS_SPEC, MOCK_COMMANDS_ARRAY } = jest.requireActual('uiSrc/constants')
+  const { MOCK_COMMANDS_SPEC, MOCK_COMMANDS_ARRAY } =
+    jest.requireActual('uiSrc/constants')
   return {
     ...jest.requireActual(redisCommandsPath),
     appRedisCommandsSelector: jest.fn().mockReturnValue({
       ...defaultState,
       spec: MOCK_COMMANDS_SPEC,
-      commandsArray: MOCK_COMMANDS_ARRAY
+      commandsArray: MOCK_COMMANDS_ARRAY,
     }),
   }
 })
@@ -54,7 +55,7 @@ describe('CliHelper', () => {
 
   it('Default text component should not be in the Document when Command is matched', () => {
     const { queryByTestId } = render(
-      <CommandHelper {...instance(mockedProps)} commandLine={commandLine} />
+      <CommandHelper {...instance(mockedProps)} commandLine={commandLine} />,
     )
 
     const cliHelperDefault = queryByTestId('cli-helper-default')
@@ -72,7 +73,7 @@ describe('CliHelper', () => {
 
   it('Title text component should be in the Document when Command is matched', () => {
     const { queryByTestId } = render(
-      <CommandHelper {...instance(mockedProps)} commandLine={commandLine} />
+      <CommandHelper {...instance(mockedProps)} commandLine={commandLine} />,
     )
 
     const cliHelperTitle = queryByTestId('cli-helper-title')
@@ -82,7 +83,11 @@ describe('CliHelper', () => {
 
   it('Summary text component should be in the Document when Command is matched and summary exists', () => {
     const { queryByTestId } = render(
-      <CommandHelper {...instance(mockedProps)} commandLine={commandLine} summary="summary" />
+      <CommandHelper
+        {...instance(mockedProps)}
+        commandLine={commandLine}
+        summary="summary"
+      />,
     )
 
     const cliHelperTitle = queryByTestId('cli-helper-summary')
@@ -92,7 +97,11 @@ describe('CliHelper', () => {
 
   it('Complexity badge text component should be in the Document when Command is matched and complexity exists', () => {
     const { queryByTestId } = render(
-      <CommandHelper {...instance(mockedProps)} commandLine={commandLine} complexityShort="O(N)" />
+      <CommandHelper
+        {...instance(mockedProps)}
+        commandLine={commandLine}
+        complexityShort="O(N)"
+      />,
     )
 
     const cliHelperTitle = queryByTestId('cli-helper-complexity-short')
@@ -102,7 +111,11 @@ describe('CliHelper', () => {
 
   it('Complexity text component should be in the Document when Command is matched and complexity exists', () => {
     const { queryByTestId } = render(
-      <CommandHelper {...instance(mockedProps)} commandLine={commandLine} complexity="O(N) bla bla" />
+      <CommandHelper
+        {...instance(mockedProps)}
+        commandLine={commandLine}
+        complexity="O(N) bla bla"
+      />,
     )
 
     const cliHelperTitle = queryByTestId('cli-helper-complexity')
@@ -112,7 +125,12 @@ describe('CliHelper', () => {
 
   it('Complexity text component should not be in the Document when Command is matched and complexity exists and ComplexityShort detected', () => {
     const { queryByTestId } = render(
-      <CommandHelper {...instance(mockedProps)} commandLine={commandLine} complexity="O(N)" complexityShort="O(N)" />
+      <CommandHelper
+        {...instance(mockedProps)}
+        commandLine={commandLine}
+        complexity="O(N)"
+        complexityShort="O(N)"
+      />,
     )
 
     const cliHelperTitle = queryByTestId('cli-helper-complexity')
@@ -122,7 +140,11 @@ describe('CliHelper', () => {
 
   it('Since text component should be in the Document when Command is matched and since exists', () => {
     const { queryByTestId } = render(
-      <CommandHelper {...instance(mockedProps)} commandLine={commandLine} since="2.0" />
+      <CommandHelper
+        {...instance(mockedProps)}
+        commandLine={commandLine}
+        since="2.0"
+      />,
     )
 
     const cliHelperTitle = queryByTestId('cli-helper-since')
@@ -132,9 +154,15 @@ describe('CliHelper', () => {
 
   it('Arguments component should be in the Document when Command is matched and argList exists', () => {
     // eslint-disable-next-line react/no-array-index-key
-    const argList = ['key', 'field'].map((field, i) => <div key={i}>{field}</div>)
+    const argList = ['key', 'field'].map((field, i) => (
+      <div key={i}>{field}</div>
+    ))
     const { queryByTestId } = render(
-      <CommandHelper {...instance(mockedProps)} commandLine={commandLine} argList={argList} />
+      <CommandHelper
+        {...instance(mockedProps)}
+        commandLine={commandLine}
+        argList={argList}
+      />,
     )
 
     const cliHelperTitle = queryByTestId('cli-helper-arguments')
@@ -143,8 +171,16 @@ describe('CliHelper', () => {
   })
 
   it('Search results should be in the Document when Command is matched', () => {
-    render(<CommandHelper {...instance(mockedProps)} isSearching searchedCommands={mockedSearchedCommands} />)
-    const cliHelperSearchResultsTitle = screen.queryAllByTestId(/cli-helper-output-title/)
+    render(
+      <CommandHelper
+        {...instance(mockedProps)}
+        isSearching
+        searchedCommands={mockedSearchedCommands}
+      />,
+    )
+    const cliHelperSearchResultsTitle = screen.queryAllByTestId(
+      /cli-helper-output-title/,
+    )
 
     expect(cliHelperSearchResultsTitle).toHaveLength(2)
   })

@@ -2,7 +2,10 @@ import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams, useLocation } from 'react-router-dom'
 import { Pages } from 'uiSrc/constants'
-import { appContextAnalytics, setLastAnalyticsPage } from 'uiSrc/slices/app/context'
+import {
+  appContextAnalytics,
+  setLastAnalyticsPage,
+} from 'uiSrc/slices/app/context'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
 
@@ -24,12 +27,18 @@ const AnalyticsPage = ({ routes = [] }: Props) => {
 
   const dispatch = useDispatch()
 
-  useEffect(() => () => {
-    dispatch(setLastAnalyticsPage(pathnameRef.current))
-  }, [])
+  useEffect(
+    () => () => {
+      dispatch(setLastAnalyticsPage(pathnameRef.current))
+    },
+    [],
+  )
 
   useEffect(() => {
-    if (pathname === Pages.clusterDetails(instanceId) && connectionType !== ConnectionType.Cluster) {
+    if (
+      pathname === Pages.clusterDetails(instanceId) &&
+      connectionType !== ConnectionType.Cluster
+    ) {
       history.push(Pages.databaseAnalysis(instanceId))
       return
     }
@@ -47,12 +56,15 @@ const AnalyticsPage = ({ routes = [] }: Props) => {
         return
       }
 
-      history.push(connectionType === ConnectionType.Cluster
-        ? Pages.clusterDetails(instanceId)
-        : Pages.databaseAnalysis(instanceId))
+      history.push(
+        connectionType === ConnectionType.Cluster
+          ? Pages.clusterDetails(instanceId)
+          : Pages.databaseAnalysis(instanceId),
+      )
     }
 
-    pathnameRef.current = pathname === Pages.analytics(instanceId) ? '' : pathname
+    pathnameRef.current =
+      pathname === Pages.analytics(instanceId) ? '' : pathname
   }, [pathname])
 
   return (

@@ -18,10 +18,14 @@ import {
   mockEncryptionService,
   mockRepository,
   mockSessionMetadata,
+  mockTagsRepository,
   MockType,
 } from 'src/__mocks__';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
-import { ConnectionType, DatabaseEntity } from 'src/modules/database/entities/database.entity';
+import {
+  ConnectionType,
+  DatabaseEntity,
+} from 'src/modules/database/entities/database.entity';
 import { CaCertificateRepository } from 'src/modules/certificate/repositories/ca-certificate.repository';
 import { ClientCertificateRepository } from 'src/modules/certificate/repositories/client-certificate.repository';
 import { StackDatabasesRepository } from 'src/modules/database/repositories/stack.databases.repository';
@@ -29,12 +33,19 @@ import config from 'src/utils/config';
 import { NotImplementedException } from '@nestjs/common';
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import { TagRepository } from 'src/modules/tag/repository/tag.repository';
 
 const REDIS_STACK_CONFIG = config.get('redisStack');
 
 const listFields = [
-  'id', 'name', 'host', 'port', 'db',
-  'connectionType', 'modules', 'lastConnection',
+  'id',
+  'name',
+  'host',
+  'port',
+  'db',
+  'connectionType',
+  'modules',
+  'lastConnection',
 ];
 
 describe('StackDatabasesRepository', () => {
@@ -74,6 +85,10 @@ describe('StackDatabasesRepository', () => {
           provide: ConstantsProvider,
           useFactory: mockConstantsProvider,
         },
+        {
+          provide: TagRepository,
+          useFactory: mockTagsRepository,
+        },
       ],
     }).compile();
 
@@ -83,19 +98,26 @@ describe('StackDatabasesRepository', () => {
     encryptionService = await module.get(EncryptionService);
     service = await module.get(StackDatabasesRepository);
 
-    repository.findOneBy.mockResolvedValue(mockDatabaseEntity);
-    repository.createQueryBuilder().getOne.mockResolvedValue(mockDatabaseEntity);
-    repository.createQueryBuilder().getMany.mockResolvedValue([
-      pick(mockDatabaseWithTlsAuthEntity, ...listFields),
-      pick(mockDatabaseWithTlsAuthEntity, ...listFields),
-    ]);
+    repository.findOne.mockResolvedValue(mockDatabaseEntity);
+    repository
+      .createQueryBuilder()
+      .getOne.mockResolvedValue(mockDatabaseEntity);
+    repository
+      .createQueryBuilder()
+      .getMany.mockResolvedValue([
+        pick(mockDatabaseWithTlsAuthEntity, ...listFields),
+        pick(mockDatabaseWithTlsAuthEntity, ...listFields),
+      ]);
     repository.save.mockResolvedValue(mockDatabaseEntity);
     repository.update.mockResolvedValue(mockDatabaseEntity);
 
     when(encryptionService.decrypt)
       .calledWith(mockDatabasePasswordEncrypted, expect.anything())
       .mockResolvedValue(mockDatabasePasswordPlain)
-      .calledWith(mockDatabaseSentinelMasterPasswordEncrypted, expect.anything())
+      .calledWith(
+        mockDatabaseSentinelMasterPasswordEncrypted,
+        expect.anything(),
+      )
       .mockResolvedValue(mockDatabaseSentinelMasterPasswordPlain);
     when(encryptionService.encrypt)
       .calledWith(mockDatabasePasswordPlain)
@@ -145,13 +167,17 @@ describe('StackDatabasesRepository', () => {
   describe('exists', () => {
     it('should return true when receive database entity', async () => {
       expect(await service.exists(mockSessionMetadata)).toEqual(true);
-      expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({ id: REDIS_STACK_CONFIG.id });
+      expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({
+        id: REDIS_STACK_CONFIG.id,
+      });
     });
 
     it('should return false when no database received', async () => {
       repository.createQueryBuilder().getOne.mockResolvedValue(null);
       expect(await service.exists(mockSessionMetadata)).toEqual(false);
-      expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({ id: REDIS_STACK_CONFIG.id });
+      expect(repository.createQueryBuilder().where).toHaveBeenCalledWith({
+        id: REDIS_STACK_CONFIG.id,
+      });
     });
   });
 
@@ -160,7 +186,7 @@ describe('StackDatabasesRepository', () => {
       const result = await service.get(mockSessionMetadata, mockDatabaseId);
 
       expect(result).toEqual(mockDatabase);
-      expect(repository.findOneBy).toHaveBeenCalledWith({ id: REDIS_STACK_CONFIG.id });
+      expect(repository.findOne).toHaveBeenCalled();
       expect(caCertRepository.get).not.toHaveBeenCalled();
       expect(clientCertRepository.get).not.toHaveBeenCalled();
     });
@@ -183,7 +209,11 @@ describe('StackDatabasesRepository', () => {
     it('should update standalone database', async () => {
       repository.merge.mockReturnValue(mockDatabase);
 
-      const result = await service.update(mockSessionMetadata, mockDatabaseId, mockDatabase);
+      const result = await service.update(
+        mockSessionMetadata,
+        mockDatabaseId,
+        mockDatabase,
+      );
 
       expect(result).toEqual(mockDatabase);
     });

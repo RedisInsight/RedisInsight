@@ -13,14 +13,31 @@ import reducer, {
   STATUS_LOADING,
   STATUS_SUCCESS,
 } from 'uiSrc/slices/app/init'
-import { cleanup, getMswURL, initialStateDefault, mockedStore, waitFor } from 'uiSrc/utils/test-utils'
-import { getFeatureFlags, getFeatureFlagsFailure, getFeatureFlagsSuccess } from 'uiSrc/slices/app/features'
+import {
+  cleanup,
+  getMswURL,
+  initialStateDefault,
+  mockedStore,
+  waitFor,
+} from 'uiSrc/utils/test-utils'
+import {
+  getFeatureFlags,
+  getFeatureFlagsFailure,
+  getFeatureFlagsSuccess,
+} from 'uiSrc/slices/app/features'
 import { getConfig } from 'uiSrc/config'
-import { CSRFTokenResponse, fetchCsrfToken, fetchCsrfTokenFail } from 'uiSrc/slices/app/csrf'
+import {
+  CSRFTokenResponse,
+  fetchCsrfToken,
+  fetchCsrfTokenFail,
+} from 'uiSrc/slices/app/csrf'
 import { FEATURES_DATA_MOCK } from 'uiSrc/mocks/handlers/app/featureHandlers'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { mswServer } from 'uiSrc/mocks/server'
-import { getUserProfile, getUserProfileSuccess } from 'uiSrc/slices/user/cloud-user-profile'
+import {
+  getUserProfile,
+  getUserProfileSuccess,
+} from 'uiSrc/slices/user/cloud-user-profile'
 import { CLOUD_ME_DATA_MOCK } from 'uiSrc/mocks/handlers/oauth/cloud'
 
 const riConfig = getConfig()
@@ -37,7 +54,7 @@ describe('init slice', () => {
     it('should properly initialize app state', () => {
       const state = {
         ...initialState,
-        status: STATUS_LOADING
+        status: STATUS_LOADING,
       }
 
       // Act
@@ -56,7 +73,7 @@ describe('init slice', () => {
     it('should have success state', () => {
       const state = {
         ...initialState,
-        status: STATUS_SUCCESS
+        status: STATUS_SUCCESS,
       }
 
       // Act
@@ -76,13 +93,16 @@ describe('init slice', () => {
       const state = {
         ...initialState,
         status: STATUS_FAIL,
-        error: FAILED_TO_FETCH_CSRF_TOKEN_ERROR
+        error: FAILED_TO_FETCH_CSRF_TOKEN_ERROR,
       }
 
       // Act
-      const nextState = reducer(initialState, initializeAppStateFail({
-        error: FAILED_TO_FETCH_CSRF_TOKEN_ERROR
-      }))
+      const nextState = reducer(
+        initialState,
+        initializeAppStateFail({
+          error: FAILED_TO_FETCH_CSRF_TOKEN_ERROR,
+        }),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -111,11 +131,10 @@ describe('init slice', () => {
 
     it('failed to init data', async () => {
       mswServer.use(
-        rest.get<typeof FEATURES_DATA_MOCK[]>(
+        rest.get<(typeof FEATURES_DATA_MOCK)[]>(
           getMswURL(ApiEndpoints.FEATURES),
-          async (_req, res, ctx) =>
-            res(ctx.status(500))
-        )
+          async (_req, res, ctx) => res(ctx.status(500)),
+        ),
       )
 
       // Act
@@ -137,9 +156,8 @@ describe('init slice', () => {
       mswServer.use(
         rest.get<CSRFTokenResponse>(
           getMswURL(riConfig.api.csrfEndpoint),
-          async (_req, res, ctx) =>
-            res(ctx.status(500))
-        )
+          async (_req, res, ctx) => res(ctx.status(500)),
+        ),
       )
 
       // Act
@@ -156,7 +174,7 @@ describe('init slice', () => {
       expect(store.getActions()).toEqual(expectedActions)
     })
 
-    it('fetches user profile if !envDependant', async () => {
+    it('fetches user profile if !envDependent', async () => {
       riConfig.api.csrfEndpoint = ''
 
       const newFeatureFlags = {
@@ -164,18 +182,18 @@ describe('init slice', () => {
           ...FEATURES_DATA_MOCK.features,
           envDependent: {
             name: 'envDependent',
-            flag: false
+            flag: false,
           },
-        }
+        },
       }
 
       // Arrange
       mswServer.use(
-        rest.get<typeof FEATURES_DATA_MOCK[]>(
+        rest.get<(typeof FEATURES_DATA_MOCK)[]>(
           getMswURL(ApiEndpoints.FEATURES),
           async (_req, res, ctx) =>
             res(ctx.status(200), ctx.json(newFeatureFlags)),
-        )
+        ),
       )
 
       // Act

@@ -63,7 +63,9 @@ export class CliBusinessService {
    * Method to create new redis client and return uuid
    * @param clientMetadata
    */
-  public async getClient(clientMetadata: ClientMetadata): Promise<CreateCliClientResponse> {
+  public async getClient(
+    clientMetadata: ClientMetadata,
+  ): Promise<CreateCliClientResponse> {
     this.logger.debug('Create Redis client for CLI.', clientMetadata);
     try {
       const uuid = uuidv4();
@@ -72,17 +74,25 @@ export class CliBusinessService {
         uniqueId: uuid,
       });
 
-      this.logger.debug('Succeed to create Redis client for CLI.', clientMetadata);
+      this.logger.debug(
+        'Succeed to create Redis client for CLI.',
+        clientMetadata,
+      );
       this.cliAnalyticsService.sendClientCreatedEvent(
         clientMetadata.sessionMetadata,
         clientMetadata.databaseId,
       );
       return { uuid };
     } catch (error) {
-      this.logger.error('Failed to create redis client for CLI.', error, clientMetadata);
+      this.logger.error(
+        'Failed to create redis client for CLI.',
+        error,
+        clientMetadata,
+      );
       this.cliAnalyticsService.sendClientCreationFailedEvent(
         clientMetadata.sessionMetadata,
-        clientMetadata.databaseId, error,
+        clientMetadata.databaseId,
+        error,
       );
       throw error;
     }
@@ -92,7 +102,9 @@ export class CliBusinessService {
    * Method to close exist client and create a new one
    * @param clientMetadata
    */
-  public async reCreateClient(clientMetadata: ClientMetadata): Promise<CreateCliClientResponse> {
+  public async reCreateClient(
+    clientMetadata: ClientMetadata,
+  ): Promise<CreateCliClientResponse> {
     this.logger.debug('re-create Redis client for CLI.', clientMetadata);
     try {
       await this.databaseClientFactory.deleteClient(clientMetadata);
@@ -103,14 +115,21 @@ export class CliBusinessService {
         uniqueId: uuid,
       });
 
-      this.logger.debug('Succeed to re-create Redis client for CLI.', clientMetadata);
+      this.logger.debug(
+        'Succeed to re-create Redis client for CLI.',
+        clientMetadata,
+      );
       this.cliAnalyticsService.sendClientRecreatedEvent(
         clientMetadata.sessionMetadata,
         clientMetadata.databaseId,
       );
       return { uuid };
     } catch (error) {
-      this.logger.error('Failed to re-create redis client for CLI.', error, clientMetadata);
+      this.logger.error(
+        'Failed to re-create redis client for CLI.',
+        error,
+        clientMetadata,
+      );
       this.cliAnalyticsService.sendClientCreationFailedEvent(
         clientMetadata.sessionMetadata,
         clientMetadata.databaseId,
@@ -129,8 +148,13 @@ export class CliBusinessService {
   ): Promise<DeleteClientResponse> {
     this.logger.debug('Deleting Redis client for CLI.', clientMetadata);
     try {
-      const affected = await this.databaseClientFactory.deleteClient(clientMetadata) as unknown as number;
-      this.logger.debug('Succeed to delete Redis client for CLI.', clientMetadata);
+      const affected = (await this.databaseClientFactory.deleteClient(
+        clientMetadata,
+      )) as unknown as number;
+      this.logger.debug(
+        'Succeed to delete Redis client for CLI.',
+        clientMetadata,
+      );
 
       if (affected) {
         this.cliAnalyticsService.sendClientDeletedEvent(
@@ -141,7 +165,11 @@ export class CliBusinessService {
       }
       return { affected };
     } catch (error) {
-      this.logger.error('Failed to delete Redis client for CLI.', error, clientMetadata);
+      this.logger.error(
+        'Failed to delete Redis client for CLI.',
+        error,
+        clientMetadata,
+      );
       throw new InternalServerErrorException(error.message);
     }
   }
@@ -162,11 +190,14 @@ export class CliBusinessService {
     let args: string[] = [];
 
     try {
-      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client: RedisClient =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       const formatter = this.outputFormatterManager.getStrategy(outputFormat);
       [command, ...args] = splitCliCommandLine(commandLine);
-      const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`) ? 'utf8' : undefined;
+      const replyEncoding = checkHumanReadableCommands(`${command} ${args[0]}`)
+        ? 'utf8'
+        : undefined;
       this.checkUnsupportedCommands(`${command} ${args[0]}`);
 
       this.recommendationService.check(
@@ -175,7 +206,9 @@ export class CliBusinessService {
         command,
       );
 
-      const reply = await client.sendCommand([command, ...args], { replyEncoding });
+      const reply = await client.sendCommand([command, ...args], {
+        replyEncoding,
+      });
 
       this.cliAnalyticsService.sendCommandExecutedEvent(
         clientMetadata.sessionMetadata,
@@ -194,19 +227,26 @@ export class CliBusinessService {
         );
       }
 
-      this.logger.debug('Succeed to execute redis CLI command.', clientMetadata);
+      this.logger.debug(
+        'Succeed to execute redis CLI command.',
+        clientMetadata,
+      );
 
       return {
         response: formatter.format(reply),
         status: CommandExecutionStatus.Success,
       };
     } catch (error) {
-      this.logger.error('Failed to execute redis CLI command.', error, clientMetadata);
+      this.logger.error(
+        'Failed to execute redis CLI command.',
+        error,
+        clientMetadata,
+      );
 
       if (
-        error instanceof CommandParsingError
-        || error instanceof CommandNotSupportedError
-        || error?.name === 'ReplyError'
+        error instanceof CommandParsingError ||
+        error instanceof CommandNotSupportedError ||
+        error?.name === 'ReplyError'
       ) {
         this.cliAnalyticsService.sendCommandErrorEvent(
           clientMetadata.sessionMetadata,
@@ -231,7 +271,10 @@ export class CliBusinessService {
         },
       );
 
-      if (error instanceof EncryptionServiceErrorException || error instanceof ClientNotFoundErrorException) {
+      if (
+        error instanceof EncryptionServiceErrorException ||
+        error instanceof ClientNotFoundErrorException
+      ) {
         throw error;
       }
 
@@ -240,8 +283,9 @@ export class CliBusinessService {
   }
 
   private checkUnsupportedCommands(commandLine: string) {
-    const unsupportedCommand = getUnsupportedCommands()
-      .find((command) => commandLine.toLowerCase().startsWith(command));
+    const unsupportedCommand = getUnsupportedCommands().find((command) =>
+      commandLine.toLowerCase().startsWith(command),
+    );
     if (unsupportedCommand) {
       throw new CommandNotSupportedError(
         ERROR_MESSAGES.CLI_COMMAND_NOT_SUPPORTED(

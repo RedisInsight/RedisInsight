@@ -1,7 +1,4 @@
-import {
-  IsArray,
-  ValidateNested,
-} from 'class-validator';
+import { IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateNotificationDto } from 'src/modules/notification/dto/create-notification.dto';
 

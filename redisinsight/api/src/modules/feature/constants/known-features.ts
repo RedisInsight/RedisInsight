@@ -1,4 +1,8 @@
-import { FeatureStorage, IFeatureFlag, KnownFeatures } from 'src/modules/feature/constants/index';
+import {
+  FeatureStorage,
+  IFeatureFlag,
+  KnownFeatures,
+} from 'src/modules/feature/constants/index';
 import { CloudSsoFeatureFlag } from 'src/modules/cloud/cloud-sso.feature.flag';
 import config, { Config } from 'src/utils/config';
 

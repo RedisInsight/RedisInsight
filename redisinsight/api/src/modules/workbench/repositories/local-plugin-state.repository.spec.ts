@@ -71,7 +71,9 @@ describe('LocalPluginStateRepository', () => {
       repository.save.mockReturnValueOnce(mockPluginStateEntity);
       encryptionService.encrypt.mockReturnValue(mockEncryptResult);
 
-      expect(await service.upsert(mockSessionMetadata, mockPluginStatePartial)).toEqual(undefined);
+      expect(
+        await service.upsert(mockSessionMetadata, mockPluginStatePartial),
+      ).toEqual(undefined);
     });
     it('should throw origin error when error is not a SQL constraint error', async () => {
       const constraintError: any = new Error('any error');
@@ -84,7 +86,9 @@ describe('LocalPluginStateRepository', () => {
         fail();
       } catch (e) {
         expect(e).not.toBeInstanceOf(NotFoundException);
-        expect(e.message).not.toEqual(ERROR_MESSAGES.COMMAND_EXECUTION_NOT_FOUND);
+        expect(e.message).not.toEqual(
+          ERROR_MESSAGES.COMMAND_EXECUTION_NOT_FOUND,
+        );
       }
     });
     it('should throw not found error ON SQL constraint error', async () => {
@@ -106,17 +110,29 @@ describe('LocalPluginStateRepository', () => {
   describe('getOne', () => {
     it('should return decrypted and transformed state', async () => {
       repository.findOneBy.mockResolvedValueOnce(mockPluginStateEntity);
-      encryptionService.decrypt.mockReturnValueOnce(JSON.stringify(mockPluginState.state));
+      encryptionService.decrypt.mockReturnValueOnce(
+        JSON.stringify(mockPluginState.state),
+      );
 
       expect(
-        await service.getOne(mockSessionMetadata, mockVisualizationId, mockCommandExecutionId),
+        await service.getOne(
+          mockSessionMetadata,
+          mockVisualizationId,
+          mockCommandExecutionId,
+        ),
       ).toEqual(mockPluginState);
     });
     it('should return null fields in case of decryption errors', async () => {
       repository.findOneBy.mockResolvedValueOnce(mockPluginStateEntity);
-      encryptionService.decrypt.mockRejectedValueOnce(new KeytarDecryptionErrorException());
+      encryptionService.decrypt.mockRejectedValueOnce(
+        new KeytarDecryptionErrorException(),
+      );
 
-      const result = await service.getOne(mockSessionMetadata, mockVisualizationId, mockCommandExecutionId);
+      const result = await service.getOne(
+        mockSessionMetadata,
+        mockVisualizationId,
+        mockCommandExecutionId,
+      );
 
       expect(result).toBeInstanceOf(PluginState);
       expect(result).toEqual({
@@ -128,7 +144,11 @@ describe('LocalPluginStateRepository', () => {
       repository.findOneBy.mockResolvedValueOnce(null);
 
       try {
-        await service.getOne(mockSessionMetadata, mockVisualizationId, mockCommandExecutionId);
+        await service.getOne(
+          mockSessionMetadata,
+          mockVisualizationId,
+          mockCommandExecutionId,
+        );
         fail();
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);

@@ -6,7 +6,7 @@ import CurrentPipelineStatus, { Props } from './CurrentPipelineStatus'
 
 const mockedProps: Props = {
   pipelineState: PipelineState.CDC,
-  statusError: ''
+  statusError: '',
 }
 
 describe('CurrentPipelineStatus', () => {
@@ -21,7 +21,12 @@ describe('CurrentPipelineStatus', () => {
 
   it('should show error label and tooltip when statusError is not empty', async () => {
     const errorMessage = 'Some Error Message'
-    render(<CurrentPipelineStatus pipelineState={undefined} statusError={errorMessage} />)
+    render(
+      <CurrentPipelineStatus
+        pipelineState={undefined}
+        statusError={errorMessage}
+      />,
+    )
     expect(screen.getByText('Error')).toBeInTheDocument()
 
     fireEvent.mouseOver(screen.getByTestId('pipeline-state-badge'))

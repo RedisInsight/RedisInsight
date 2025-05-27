@@ -5,7 +5,6 @@ import {
   EuiFilePicker,
   EuiIcon,
   EuiPopover,
-  EuiSpacer,
   EuiText,
   EuiTextColor,
   EuiToolTip,
@@ -21,7 +20,7 @@ import {
   bulkActionsUploadSummarySelector,
   bulkUploadDataAction,
   setBulkUploadStartAgain,
-  uploadController
+  uploadController,
 } from 'uiSrc/slices/browser/bulkActions'
 
 import BulkActionsInfo from 'uiSrc/pages/browser/components/bulk-actions/BulkActionsInfo'
@@ -30,6 +29,7 @@ import BulkActionSummary from 'uiSrc/pages/browser/components/bulk-actions/BulkA
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { isProcessedBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
 import { UploadWarning } from 'uiSrc/components'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -43,8 +43,10 @@ const BulkUpload = (props: Props) => {
   const { onCancel } = props
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { loading, fileName } = useSelector(bulkActionsUploadSelector)
-  const { status, progress, duration } = useSelector(bulkActionsUploadOverviewSelector) ?? {}
-  const { succeed, processed, failed } = useSelector(bulkActionsUploadSummarySelector) ?? {}
+  const { status, progress, duration } =
+    useSelector(bulkActionsUploadOverviewSelector) ?? {}
+  const { succeed, processed, failed } =
+    useSelector(bulkActionsUploadSummarySelector) ?? {}
 
   const [files, setFiles] = useState<Nullable<FileList>>(null)
   const [isInvalid, setIsInvalid] = useState<boolean>(false)
@@ -67,8 +69,8 @@ const BulkUpload = (props: Props) => {
       event: TelemetryEvent.BULK_ACTIONS_WARNING,
       eventData: {
         databaseId: instanceId,
-        action: BulkActionsType.Upload
-      }
+        action: BulkActionsType.Upload,
+      },
     })
   }
 
@@ -86,7 +88,12 @@ const BulkUpload = (props: Props) => {
 
       const formData = new FormData()
       formData.append('file', files[0])
-      dispatch(bulkUploadDataAction(instanceId, { file: formData, fileName: files[0].name }))
+      dispatch(
+        bulkUploadDataAction(instanceId, {
+          file: formData,
+          fileName: files[0].name,
+        }),
+      )
     }
   }
 
@@ -102,20 +109,23 @@ const BulkUpload = (props: Props) => {
           <EuiText color="subdued">
             Upload the text file with the list of Redis commands
             <EuiToolTip
-              content={(
+              content={
                 <>
                   <EuiText size="xs">SET Key0 Value0</EuiText>
                   <EuiText size="xs">SET Key1 Value1</EuiText>
                   <EuiText size="xs">...</EuiText>
                   <EuiText size="xs">SET KeyN ValueN</EuiText>
                 </>
-              )}
+              }
               data-testid="bulk-upload-tooltip-example"
             >
-              <EuiIcon type="iInCircle" style={{ marginLeft: 4, marginBottom: 2 }} />
+              <EuiIcon
+                type="iInCircle"
+                style={{ marginLeft: 4, marginBottom: 2 }}
+              />
             </EuiToolTip>
           </EuiText>
-          <EuiSpacer size="l" />
+          <Spacer size="l" />
           <EuiFilePicker
             id="bulk-upload-file-input"
             initialPromptText="Select or drag and drop a file"
@@ -127,12 +137,16 @@ const BulkUpload = (props: Props) => {
             aria-label="Select or drag and drop file"
           />
           {isInvalid && (
-            <EuiTextColor color="danger" className={styles.errorFileMsg} data-testid="input-file-error-msg">
+            <EuiTextColor
+              color="danger"
+              className={styles.errorFileMsg}
+              data-testid="input-file-error-msg"
+            >
               File should not exceed {MAX_MB_FILE} MB
             </EuiTextColor>
           )}
           <UploadWarning />
-          <EuiSpacer size="l" />
+          <Spacer size="l" />
         </div>
       ) : (
         <BulkActionsInfo
@@ -140,7 +154,11 @@ const BulkUpload = (props: Props) => {
           status={status}
           progress={progress}
           title="Commands executed from file"
-          subTitle={(<div className="truncateText" style={{ paddingTop: 6 }}>{fileName}</div>)}
+          subTitle={
+            <div className="truncateText" style={{ paddingTop: 6 }}>
+              {fileName}
+            </div>
+          }
         >
           <BulkActionSummary
             type={BulkActionsType.Upload}
@@ -169,7 +187,7 @@ const BulkUpload = (props: Props) => {
             closePopover={() => setIsPopoverOpen(false)}
             panelClassName={styles.panelPopover}
             panelPaddingSize="none"
-            button={(
+            button={
               <EuiButton
                 fill
                 color="secondary"
@@ -180,18 +198,20 @@ const BulkUpload = (props: Props) => {
               >
                 Upload
               </EuiButton>
-              )}
+            }
           >
-            <EuiText color="subdued" className={styles.containerPopover} data-testid="bulk-action-tooltip">
-              <EuiIcon
-                type="alert"
-                className={styles.popoverIcon}
-              />
+            <EuiText
+              color="subdued"
+              className={styles.containerPopover}
+              data-testid="bulk-action-tooltip"
+            >
+              <EuiIcon type="alert" className={styles.popoverIcon} />
               <div className={cx(styles.popoverItem, styles.popoverItemTitle)}>
                 Are you sure you want to perform this action?
               </div>
               <div className={styles.popoverItem}>
-                All commands from the file will be executed against your database.
+                All commands from the file will be executed against your
+                database.
               </div>
               <EuiButton
                 fill

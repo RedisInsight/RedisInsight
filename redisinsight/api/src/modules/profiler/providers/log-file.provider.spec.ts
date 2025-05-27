@@ -29,20 +29,32 @@ describe('LogFileProvider', () => {
   });
 
   it('getOrCreate', async () => {
-    const logFile1 = await service.getOrCreate(mockLogFile.instanceId, mockLogFile.id);
+    const logFile1 = await service.getOrCreate(
+      mockLogFile.instanceId,
+      mockLogFile.id,
+    );
     expect(service['profilerLogFiles'].size).toEqual(1);
     expect(logFile1['analyticsEvents']).toEqual(mockProfilerAnalyticsEvents);
 
-    const logFile2 = await service.getOrCreate(mockDatabase.id, mockDatabase.id);
+    const logFile2 = await service.getOrCreate(
+      mockDatabase.id,
+      mockDatabase.id,
+    );
     expect(service['profilerLogFiles'].size).toEqual(2);
 
-    const logFile22 = await service.getOrCreate(mockDatabase.id, mockDatabase.id);
+    const logFile22 = await service.getOrCreate(
+      mockDatabase.id,
+      mockDatabase.id,
+    );
     expect(service['profilerLogFiles'].size).toEqual(2);
     expect(logFile2).toEqual(logFile22);
   });
 
   it('get', async () => {
-    const logFile1 = await service.getOrCreate(mockLogFile.instanceId, mockLogFile.id);
+    const logFile1 = await service.getOrCreate(
+      mockLogFile.instanceId,
+      mockLogFile.id,
+    );
     expect(service['profilerLogFiles'].size).toEqual(1);
 
     const logFile2 = await service.get(mockLogFile.id);
@@ -60,10 +72,15 @@ describe('LogFileProvider', () => {
   });
 
   it('getDownloadData', async () => {
-    const logFile1 = await service.getOrCreate(mockLogFile.instanceId, mockLogFile.id);
+    const logFile1 = await service.getOrCreate(
+      mockLogFile.instanceId,
+      mockLogFile.id,
+    );
     const { stream, filename } = await service.getDownloadData(logFile1.id);
     expect(stream).toBeInstanceOf(ReadStream);
-    expect(filename).toMatch(`${logFile1['alias']}-${logFile1['startTime'].getTime()}-`);
+    expect(filename).toMatch(
+      `${logFile1['alias']}-${logFile1['startTime'].getTime()}-`,
+    );
   });
 
   it('onModuleDestroy', async () => {

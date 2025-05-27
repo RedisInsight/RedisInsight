@@ -15,12 +15,15 @@ export const mockSessionCustomData = {
       name: 'object0',
       value: true,
     },
-    arrayField: [{
-      name: 'object1',
-    }, {
-      name: 'object2',
-      array: ['some', 'array'],
-    }],
+    arrayField: [
+      {
+        name: 'object1',
+      },
+      {
+        name: 'object2',
+        array: ['some', 'array'],
+      },
+    ],
   },
 };
 

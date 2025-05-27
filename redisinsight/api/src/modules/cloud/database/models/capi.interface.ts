@@ -1,4 +1,7 @@
-import { CloudDatabaseProtocol, CloudDatabaseStatus } from 'src/modules/cloud/database/models';
+import {
+  CloudDatabaseProtocol,
+  CloudDatabaseStatus,
+} from 'src/modules/cloud/database/models';
 
 interface ICloudCapiDatabaseAlert {
   name: string;
@@ -23,6 +26,14 @@ interface ICloudCapiDatabaseSecurity {
   password?: string;
   sslClientAuthentication: boolean;
   sourceIps: string[];
+}
+
+export interface ICloudCapiDatabaseTag {
+  key: string;
+  value: string;
+  createdAt: string;
+  updatedAt: string;
+  links: string[];
 }
 
 export interface ICloudCapiDatabase {
@@ -68,5 +79,7 @@ export interface ICloudCapiSubscriptionDatabasesSubscription {
 
 export interface ICloudCapiSubscriptionDatabases {
   accountId: number;
-  subscription: ICloudCapiSubscriptionDatabasesSubscription | ICloudCapiSubscriptionDatabasesSubscription[];
+  subscription:
+    | ICloudCapiSubscriptionDatabasesSubscription
+    | ICloudCapiSubscriptionDatabasesSubscription[];
 }

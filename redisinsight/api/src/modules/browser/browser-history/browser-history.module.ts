@@ -7,14 +7,19 @@ import { BrowserHistoryRepository } from './repositories/browser-history.reposit
 @Global()
 @Module({})
 export class BrowserHistoryModule {
-  static register({ route }, browserHistoryRepository: Type<BrowserHistoryRepository>): DynamicModule {
+  static register(
+    { route },
+    browserHistoryRepository: Type<BrowserHistoryRepository>,
+  ): DynamicModule {
     return {
       module: BrowserHistoryModule,
       imports: [
-        RouterModule.register([{
-          path: route,
-          module: BrowserHistoryModule,
-        }]),
+        RouterModule.register([
+          {
+            path: route,
+            module: BrowserHistoryModule,
+          },
+        ]),
       ],
       controllers: [BrowserHistoryController],
       providers: [

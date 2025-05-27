@@ -1,6 +1,4 @@
-import {
-  DynamicModule, Module, Type,
-} from '@nestjs/common';
+import { DynamicModule, Module, Type } from '@nestjs/common';
 import { WorkbenchController } from 'src/modules/workbench/workbench.controller';
 import { WorkbenchService } from 'src/modules/workbench/workbench.service';
 import { WorkbenchCommandsExecutor } from 'src/modules/workbench/providers/workbench-commands.executor';
@@ -27,13 +25,8 @@ export class WorkbenchModule {
   ): DynamicModule {
     return {
       module: WorkbenchModule,
-      imports: [
-        CommandsModule,
-      ],
-      controllers: [
-        WorkbenchController,
-        PluginsController,
-      ],
+      imports: [CommandsModule],
+      controllers: [WorkbenchController, PluginsController],
       providers: [
         WorkbenchService,
         WorkbenchCommandsExecutor,
@@ -47,9 +40,12 @@ export class WorkbenchModule {
         },
         {
           provide: CommandsService,
-          useFactory: () => new CommandsService(
-            COMMANDS_CONFIGS.map(({ name, url }) => new CommandsJsonProvider(name, url)),
-          ),
+          useFactory: () =>
+            new CommandsService(
+              COMMANDS_CONFIGS.map(
+                ({ name, url }) => new CommandsJsonProvider(name, url),
+              ),
+            ),
         },
         PluginsService,
         PluginCommandsWhitelistProvider,

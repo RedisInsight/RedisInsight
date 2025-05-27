@@ -1,5 +1,11 @@
 import React, { useState } from 'react'
-import { EuiButton, EuiFieldText, EuiFilePicker, EuiSpacer, EuiText, EuiToolTip } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiFieldText,
+  EuiFilePicker,
+  EuiText,
+  EuiToolTip,
+} from '@elastic/eui'
 import { useFormik } from 'formik'
 import { FormikErrors } from 'formik/dist/types'
 import { isEmpty } from 'lodash'
@@ -7,6 +13,7 @@ import { isEmpty } from 'lodash'
 import { Nullable } from 'uiSrc/utils'
 import validationErrors from 'uiSrc/constants/validationErrors'
 
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import CreateTutorialLink from '../CreateTutorialLink'
 import styles from './styles.module.scss'
 
@@ -26,7 +33,7 @@ const UploadTutorialForm = (props: Props) => {
 
   const initialValues: FormValues = {
     file: null,
-    link: ''
+    link: '',
   }
 
   const isSubmitDisabled = !isEmpty(errors)
@@ -59,7 +66,9 @@ const UploadTutorialForm = (props: Props) => {
     if (errorsArr.length > maxErrorsCount) {
       errorsArr.splice(maxErrorsCount, errorsArr.length, ['...'])
     }
-    return isSubmitDisabled ? (<span className="euiToolTip__content">{errorsArr}</span>) : null
+    return isSubmitDisabled ? (
+      <span className="euiToolTip__content">{errorsArr}</span>
+    ) : null
   }
 
   const handleFileChange = (files: FileList | null) => {
@@ -70,7 +79,7 @@ const UploadTutorialForm = (props: Props) => {
     <div className={styles.outerWrapper}>
       <div className={styles.wrapper} data-testid="upload-tutorial-form">
         <EuiText>Add new Tutorial</EuiText>
-        <EuiSpacer size="m" />
+        <Spacer size="m" />
         <div>
           <div className={styles.uploadFileWrapper}>
             <EuiFilePicker
@@ -92,7 +101,7 @@ const UploadTutorialForm = (props: Props) => {
             className={styles.input}
             data-testid="tutorial-link-field"
           />
-          <EuiSpacer size="l" />
+          <Spacer size="l" />
           <div className={styles.footer}>
             <CreateTutorialLink />
             <div className={styles.footerButtons}>
@@ -109,7 +118,9 @@ const UploadTutorialForm = (props: Props) => {
                 anchorClassName="euiToolTip__btn-disabled"
                 title={
                   isSubmitDisabled
-                    ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
+                    ? validationErrors.REQUIRED_TITLE(
+                        Object.keys(errors).length,
+                      )
                     : null
                 }
                 content={getSubmitButtonContent(isSubmitDisabled)}

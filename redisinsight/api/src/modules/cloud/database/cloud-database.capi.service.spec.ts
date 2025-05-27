@@ -1,10 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  mockCloudCapiAuthDto, mockCloudCapiSubscriptionDatabasesFixed,
+  mockCloudCapiAuthDto,
+  mockCloudCapiDatabaseTags,
+  mockCloudCapiSubscriptionDatabasesFixed,
   mockCloudDatabase,
   mockCloudDatabaseCapiProvider,
-  mockCloudDatabaseFromList, mockCloudDatabaseFromListFixed,
-  mockCloudTaskInit, mockCreateFreeCloudDatabaseDto,
+  mockCloudDatabaseFromList,
+  mockCloudDatabaseFromListFixed,
+  mockCloudTaskInit,
+  mockCreateFreeCloudDatabaseDto,
   mockGetCloudSubscriptionDatabaseDto,
   mockGetCloudSubscriptionDatabasesDto,
   mockGetCloudSubscriptionDatabasesDtoFixed,
@@ -35,61 +39,83 @@ describe('CloudDatabaseCapiService', () => {
 
   describe('getDatabase', () => {
     it('successfully get cloud databases', async () => {
-      expect(await service.getDatabase(
-        mockCloudCapiAuthDto,
-        mockGetCloudSubscriptionDatabaseDto,
-      )).toEqual(mockCloudDatabase);
+      expect(
+        await service.getDatabase(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabaseDto,
+        ),
+      ).toEqual({
+        ...mockCloudDatabase,
+        tags: mockCloudCapiDatabaseTags,
+      });
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
-      capi.getDatabase.mockRejectedValueOnce(new CloudApiUnauthorizedException());
-      await expect(service.getDatabase(
-        mockCloudCapiAuthDto,
-        mockGetCloudSubscriptionDatabaseDto,
-      )).rejects.toThrow(
-        CloudApiUnauthorizedException,
+      capi.getDatabase.mockRejectedValueOnce(
+        new CloudApiUnauthorizedException(),
       );
+      await expect(
+        service.getDatabase(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabaseDto,
+        ),
+      ).rejects.toThrow(CloudApiUnauthorizedException);
     });
   });
   describe('getDatabases', () => {
     it('successfully get cloud databases', async () => {
-      expect(await service.getDatabases(
-        mockCloudCapiAuthDto,
-        mockGetCloudSubscriptionDatabasesDto,
-      )).toEqual([mockCloudDatabaseFromList]);
+      expect(
+        await service.getDatabases(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabasesDto,
+        ),
+      ).toEqual([mockCloudDatabaseFromList]);
     });
     it('successfully get cloud fixed databases', async () => {
-      capi.getDatabases.mockResolvedValueOnce(mockCloudCapiSubscriptionDatabasesFixed);
-      expect(await service.getDatabases(
-        mockCloudCapiAuthDto,
-        mockGetCloudSubscriptionDatabasesDtoFixed,
-      )).toEqual([mockCloudDatabaseFromListFixed]);
+      capi.getDatabases.mockResolvedValueOnce(
+        mockCloudCapiSubscriptionDatabasesFixed,
+      );
+      expect(
+        await service.getDatabases(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabasesDtoFixed,
+        ),
+      ).toEqual([mockCloudDatabaseFromListFixed]);
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
-      capi.getDatabases.mockRejectedValueOnce(new CloudApiUnauthorizedException());
-      await expect(service.getDatabases(
-        mockCloudCapiAuthDto,
-        mockGetCloudSubscriptionDatabasesDto,
-      )).rejects.toThrow(
-        CloudApiUnauthorizedException,
+      capi.getDatabases.mockRejectedValueOnce(
+        new CloudApiUnauthorizedException(),
       );
+      await expect(
+        service.getDatabases(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabasesDto,
+        ),
+      ).rejects.toThrow(CloudApiUnauthorizedException);
     });
   });
   describe('createFreeDatabase', () => {
     it('successfully create free cloud database', async () => {
-      expect(await service.createFreeDatabase(
+      expect(
+        await service.createFreeDatabase(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabasesDtoFixed,
+        ),
+      ).toEqual(mockCloudTaskInit);
+      expect(capi.createFreeDatabase).toHaveBeenCalledWith(
         mockCloudCapiAuthDto,
-        mockGetCloudSubscriptionDatabasesDtoFixed,
-      )).toEqual(mockCloudTaskInit);
-      expect(capi.createFreeDatabase).toHaveBeenCalledWith(mockCloudCapiAuthDto, mockCreateFreeCloudDatabaseDto);
+        mockCreateFreeCloudDatabaseDto,
+      );
     });
     it('throw CloudApiUnauthorizedException exception', async () => {
-      capi.createFreeDatabase.mockRejectedValueOnce(new CloudApiUnauthorizedException());
-      await expect(service.createFreeDatabase(
-        mockCloudCapiAuthDto,
-        mockGetCloudSubscriptionDatabaseDto,
-      )).rejects.toThrow(
-        CloudApiUnauthorizedException,
+      capi.createFreeDatabase.mockRejectedValueOnce(
+        new CloudApiUnauthorizedException(),
       );
+      await expect(
+        service.createFreeDatabase(
+          mockCloudCapiAuthDto,
+          mockGetCloudSubscriptionDatabaseDto,
+        ),
+      ).rejects.toThrow(CloudApiUnauthorizedException);
     });
   });
 });

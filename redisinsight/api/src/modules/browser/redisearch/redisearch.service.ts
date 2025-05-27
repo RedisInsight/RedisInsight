@@ -18,7 +18,7 @@ import {
 } from 'src/modules/browser/redisearch/dto';
 import { GetKeysWithDetailsResponse } from 'src/modules/browser/keys/dto';
 import { DEFAULT_MATCH, RedisErrorCodes } from 'src/constants';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { numberWithSpaces } from 'src/utils/base.helper';
 import { BrowserHistoryMode, RedisString } from 'src/common/constants';
 import { CreateBrowserHistoryDto } from 'src/modules/browser/browser-history/dto';
@@ -47,23 +47,24 @@ export class RedisearchService {
    * Get list of all available redisearch indexes
    * @param clientMetadata
    */
-  public async list(clientMetadata: ClientMetadata): Promise<ListRedisearchIndexesResponse> {
+  public async list(
+    clientMetadata: ClientMetadata,
+  ): Promise<ListRedisearchIndexesResponse> {
     this.logger.debug('Getting all redisearch indexes.', clientMetadata);
 
     try {
-      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
-      const nodes = await this.getShards(client) as RedisClient[];
+      const client: RedisClient =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const nodes = (await this.getShards(client)) as RedisClient[];
 
-      const res = await Promise.all(nodes.map(async (node) => node.sendCommand(
-        ['FT._LIST'],
-      )));
+      const res = await Promise.all(
+        nodes.map(async (node) => node.sendCommand(['FT._LIST'])),
+      );
 
-      return plainToClass(ListRedisearchIndexesResponse, {
-        indexes: (
-          uniq(
-            ([].concat(...res)).map((idx) => idx.toString('hex')),
-          )
-        ).map((idx) => Buffer.from(idx, 'hex')),
+      return plainToInstance(ListRedisearchIndexesResponse, {
+        indexes: uniq([].concat(...res).map((idx) => idx.toString('hex'))).map(
+          (idx) => Buffer.from(idx, 'hex'),
+        ),
       });
     } catch (e) {
       this.logger.error('Failed to get redisearch indexes', e, clientMetadata);
@@ -83,24 +84,24 @@ export class RedisearchService {
     this.logger.debug('Creating redisearch index.', clientMetadata);
 
     try {
-      const {
-        index, type, prefixes, fields,
-      } = dto;
+      const { index, type, prefixes, fields } = dto;
 
-      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client: RedisClient =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       try {
-        const indexInfo = await client.sendCommand([
-          'FT.INFO',
-          index,
-        ], { replyEncoding: 'utf8' });
+        const indexInfo = await client.sendCommand(['FT.INFO', index], {
+          replyEncoding: 'utf8',
+        });
 
         if (indexInfo) {
           this.logger.error(
             `Failed to create redisearch index. ${ERROR_MESSAGES.REDISEARCH_INDEX_EXIST}`,
             clientMetadata,
           );
-          return Promise.reject(new ConflictException(ERROR_MESSAGES.REDISEARCH_INDEX_EXIST));
+          return Promise.reject(
+            new ConflictException(ERROR_MESSAGES.REDISEARCH_INDEX_EXIST),
+          );
         }
       } catch (error) {
         if (!error.message?.toLowerCase()?.includes('unknown index name')) {
@@ -108,32 +109,35 @@ export class RedisearchService {
         }
       }
 
-      const nodes = await this.getShards(client) as RedisClient[];
+      const nodes = (await this.getShards(client)) as RedisClient[];
 
-      const commandArgs: any[] = [
-        index, 'ON', type,
-      ];
+      const commandArgs: any[] = [index, 'ON', type];
 
       if (prefixes && prefixes.length) {
         commandArgs.push('PREFIX', prefixes.length, ...prefixes);
       }
 
       commandArgs.push(
-        'SCHEMA', ...[].concat(...fields.map((field) => ([field.name, field.type]))),
+        'SCHEMA',
+        ...[].concat(...fields.map((field) => [field.name, field.type])),
       );
 
-      await Promise.all(nodes.map(async (node) => {
-        try {
-          await node.sendCommand([
-            'FT.CREATE',
-            ...commandArgs,
-          ], { replyEncoding: 'utf8' });
-        } catch (e) {
-          if (!e.message.includes('MOVED') && !e.message.includes('already exists')) {
-            throw e;
+      await Promise.all(
+        nodes.map(async (node) => {
+          try {
+            await node.sendCommand(['FT.CREATE', ...commandArgs], {
+              replyEncoding: 'utf8',
+            });
+          } catch (e) {
+            if (
+              !e.message.includes('MOVED') &&
+              !e.message.includes('already exists')
+            ) {
+              throw e;
+            }
           }
-        }
-      }));
+        }),
+      );
 
       return undefined;
     } catch (e) {
@@ -160,14 +164,14 @@ export class RedisearchService {
         throw new Error('Index was not provided');
       }
 
-      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client: RedisClient =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      const infoReply = await client.sendCommand(
-        ['FT.INFO', index],
-        { replyEncoding: 'utf8' },
-      ) as string[][];
+      const infoReply = (await client.sendCommand(['FT.INFO', index], {
+        replyEncoding: 'utf8',
+      })) as string[][];
 
-      return plainToClass(IndexInfoDto, convertIndexInfoReply(infoReply));
+      return plainToInstance(IndexInfoDto, convertIndexInfoReply(infoReply));
     } catch (e) {
       this.logger.error('Failed to get index info', e, clientMetadata);
       throw catchAclError(e);
@@ -187,34 +191,38 @@ export class RedisearchService {
     this.logger.debug('Searching keys using redisearch.', clientMetadata);
 
     try {
-      const {
-        index, query, offset, limit,
-      } = dto;
+      const { index, query, offset, limit } = dto;
 
-      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client: RedisClient =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       if (isUndefined(this.maxSearchResults.get(clientMetadata.databaseId))) {
         try {
-          const [[, maxSearchResults]] = await client.sendCommand([
-            'FT.CONFIG',
-            'GET',
-            'MAXSEARCHRESULTS',
-          ], { replyEncoding: 'utf8' }) as [[string, string]];
+          const [[, maxSearchResults]] = (await client.sendCommand(
+            ['FT.CONFIG', 'GET', 'MAXSEARCHRESULTS'],
+            { replyEncoding: 'utf8' },
+          )) as [[string, string]];
 
-          this.maxSearchResults.set(clientMetadata.databaseId, toNumber(maxSearchResults));
+          this.maxSearchResults.set(
+            clientMetadata.databaseId,
+            toNumber(maxSearchResults),
+          );
         } catch (error) {
           this.maxSearchResults.set(clientMetadata.databaseId, null);
         }
       }
       // Workaround: recalculate limit to not query more then MAXSEARCHRESULTS
       let safeLimit = limit;
-      const maxSearchResult = this.maxSearchResults.get(clientMetadata.databaseId);
+      const maxSearchResult = this.maxSearchResults.get(
+        clientMetadata.databaseId,
+      );
 
       if (maxSearchResult && offset + limit > maxSearchResult) {
-        safeLimit = offset <= maxSearchResult ? maxSearchResult - offset : limit;
+        safeLimit =
+          offset <= maxSearchResult ? maxSearchResult - offset : limit;
       }
 
-      const [total, ...keyNames] = await client.sendCommand([
+      const [total, ...keyNames] = (await client.sendCommand([
         'FT.SEARCH',
         index,
         query,
@@ -222,28 +230,28 @@ export class RedisearchService {
         'LIMIT',
         offset,
         safeLimit,
-      ]) as [number, RedisString[]];
+      ])) as [number, RedisString[]];
 
       let type;
       if (keyNames.length) {
-        type = await client.sendCommand([
-          'TYPE',
-          keyNames[0] as unknown as RedisClientCommandArgument,
-        ], { replyEncoding: 'utf8' });
+        type = await client.sendCommand(
+          ['TYPE', keyNames[0] as unknown as RedisClientCommandArgument],
+          { replyEncoding: 'utf8' },
+        );
       }
 
       // Do not save default match "*"
       if (query !== DEFAULT_MATCH) {
         await this.browserHistory.create(
           clientMetadata,
-          plainToClass(
-            CreateBrowserHistoryDto,
-            { filter: { match: query, type: null }, mode: BrowserHistoryMode.Redisearch },
-          ),
+          plainToInstance(CreateBrowserHistoryDto, {
+            filter: { match: query, type: null },
+            mode: BrowserHistoryMode.Redisearch,
+          }),
         );
       }
 
-      return plainToClass(GetKeysWithDetailsResponse, {
+      return plainToInstance(GetKeysWithDetailsResponse, {
         cursor: limit + offset >= total ? 0 : limit + offset,
         total,
         scanned: keyNames.length + offset,
@@ -251,12 +259,18 @@ export class RedisearchService {
         maxResults: maxSearchResult,
       });
     } catch (e) {
-      this.logger.error('Failed to search keys using redisearch index', e, clientMetadata);
+      this.logger.error(
+        'Failed to search keys using redisearch index',
+        e,
+        clientMetadata,
+      );
       if (e instanceof HttpException) {
         throw e;
       }
       if (e.message?.includes(RedisErrorCodes.RedisearchLimit)) {
-        throw new BadRequestException(ERROR_MESSAGES.INCREASE_MINIMUM_LIMIT(numberWithSpaces(dto.limit)));
+        throw new BadRequestException(
+          ERROR_MESSAGES.INCREASE_MINIMUM_LIMIT(numberWithSpaces(dto.limit)),
+        );
       }
       throw catchAclError(e);
     }

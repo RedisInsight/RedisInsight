@@ -1,34 +1,25 @@
-import {
-  EuiButton,
-  EuiForm,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiToolTip,
-  keys,
-  EuiSpacer,
-} from '@elastic/eui'
+import { EuiButton, EuiForm, EuiToolTip, keys } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, pick } from 'lodash'
 import React, { useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 
 import validationErrors from 'uiSrc/constants/validationErrors'
-import {
-  fieldDisplayNames,
-} from 'uiSrc/pages/home/constants'
+import { fieldDisplayNames } from 'uiSrc/pages/home/constants'
 import { getFormErrors, getSubmitButtonContent } from 'uiSrc/pages/home/utils'
 import { DbConnectionInfo, ISubmitButton } from 'uiSrc/pages/home/interfaces'
 import {
+  DatabaseForm,
   MessageSentinel,
   TlsDetails,
-  DatabaseForm,
 } from 'uiSrc/pages/home/components/form'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
 export interface Props {
   loading: boolean
   initialValues: DbConnectionInfo
-  certificates: { id: string; name: string }[],
-  caCertificates: { id: string; name: string }[],
+  certificates: { id: string; name: string }[]
+  caCertificates: { id: string; name: string }[]
   onSubmit: (values: DbConnectionInfo) => void
   onHostNamePaste: (content: string) => boolean
   onClose?: () => void
@@ -53,7 +44,7 @@ const SentinelConnectionForm = (props: Props) => {
   } = props
 
   const [errors, setErrors] = useState<FormikErrors<DbConnectionInfo>>(
-    getInitFieldsDisplayNames(initialValues)
+    getInitFieldsDisplayNames(initialValues),
   )
 
   const formRef = useRef<HTMLDivElement>(null)
@@ -83,10 +74,7 @@ const SentinelConnectionForm = (props: Props) => {
     }
   }
 
-  const SubmitButton = ({
-    onClick,
-    submitIsDisabled,
-  }: ISubmitButton) => (
+  const SubmitButton = ({ onClick, submitIsDisabled }: ISubmitButton) => (
     <EuiToolTip
       position="top"
       anchorClassName="euiToolTip__btn-disabled"
@@ -119,9 +107,8 @@ const SentinelConnectionForm = (props: Props) => {
 
     if (footerEl) {
       return ReactDOM.createPortal(
-        (
-          <div className="footerAddDatabase">
-            {onClose && (
+        <div className="footerAddDatabase">
+          {onClose && (
             <EuiButton
               size="s"
               onClick={onClose}
@@ -131,21 +118,24 @@ const SentinelConnectionForm = (props: Props) => {
             >
               Cancel
             </EuiButton>
-            )}
-            <SubmitButton
-              onClick={formik.submitForm}
-              submitIsDisabled={submitIsDisable()}
-            />
-          </div>
-        ),
-        footerEl
+          )}
+          <SubmitButton
+            onClick={formik.submitForm}
+            submitIsDisabled={submitIsDisable()}
+          />
+        </div>,
+        footerEl,
       )
     }
     return null
   }
 
   return (
-    <div className="relative" data-testid="add-db_sentinel" style={{ height: '100%' }}>
+    <div
+      className="relative"
+      data-testid="add-db_sentinel"
+      style={{ height: '100%' }}
+    >
       <div className="getStartedForm eui-yScroll" ref={formRef}>
         <MessageSentinel />
         <br />
@@ -157,10 +147,15 @@ const SentinelConnectionForm = (props: Props) => {
         >
           <DatabaseForm
             formik={formik}
-            showFields={{ host: true, port: true, alias: false, timeout: false }}
+            showFields={{
+              host: true,
+              port: true,
+              alias: false,
+              timeout: false,
+            }}
             onHostNamePaste={onHostNamePaste}
           />
-          <EuiSpacer />
+          <Spacer />
           <TlsDetails
             formik={formik}
             certificates={certificates}

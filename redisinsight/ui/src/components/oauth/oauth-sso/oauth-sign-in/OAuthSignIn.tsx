@@ -1,15 +1,13 @@
 import React from 'react'
-import { EuiFlexGroup, EuiFlexItem, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiText, EuiTitle } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
-import {
-  OAuthAdvantages,
-  OAuthAgreement,
-} from 'uiSrc/components/oauth/shared'
+import { OAuthAdvantages, OAuthAgreement } from 'uiSrc/components/oauth/shared'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { Nullable } from 'uiSrc/utils'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import OAuthForm from '../../shared/oauth-form/OAuthForm'
 import styles from './styles.module.scss'
 
@@ -30,18 +28,18 @@ const OAuthSignIn = (props: Props) => {
       eventData: {
         accountOption,
         action,
-        source
-      }
+        source,
+      },
     })
   }
 
   return (
     <div className={styles.container} data-testid="oauth-container-signIn">
-      <EuiFlexGroup gutterSize="none" responsive={false}>
-        <EuiFlexItem className={styles.advantagesContainer}>
+      <Row>
+        <FlexItem grow className={styles.advantagesContainer}>
           <OAuthAdvantages />
-        </EuiFlexItem>
-        <EuiFlexItem className={styles.socialContainer}>
+        </FlexItem>
+        <FlexItem grow className={styles.socialContainer}>
           <OAuthForm
             onClick={handleSocialButtonClick}
             action={action}
@@ -50,14 +48,16 @@ const OAuthSignIn = (props: Props) => {
             {(form: React.ReactNode) => (
               <>
                 <EuiText className={styles.subTitle}>Get started with</EuiText>
-                <EuiTitle className={styles.title}><h2>Redis Cloud account</h2></EuiTitle>
+                <EuiTitle className={styles.title}>
+                  <h2>Redis Cloud account</h2>
+                </EuiTitle>
                 {form}
                 <OAuthAgreement />
               </>
             )}
           </OAuthForm>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </div>
   )
 }

@@ -17,14 +17,18 @@ const endpoint = (
   visualizationId = constants.TEST_PLUGIN_VISUALIZATION_ID_1,
   id = constants.TEST_COMMAND_EXECUTION_ID_1,
 ) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/plugins/${visualizationId}/command-executions/${id}/state`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/plugins/${visualizationId}/command-executions/${id}/state`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
   state: Joi.any().required(),
-}).messages({
-  'any.required': '{#label} should be defined',
-}).strict();
+})
+  .messages({
+    'any.required': '{#label} should be defined',
+  })
+  .strict();
 
 const validInputData = {
   state: {
@@ -63,11 +67,12 @@ describe('POST /databases/:instanceId/plugins/:vId/command-executions/:id/state'
     [
       {
         name: 'Should return 404 not found when incorrect instance',
-        endpoint: () => endpoint(
-          constants.TEST_NOT_EXISTED_INSTANCE_ID,
-          constants.TEST_PLUGIN_VISUALIZATION_ID_1,
-          constants.TEST_NOT_EXISTED_INSTANCE_ID,
-        ),
+        endpoint: () =>
+          endpoint(
+            constants.TEST_NOT_EXISTED_INSTANCE_ID,
+            constants.TEST_PLUGIN_VISUALIZATION_ID_1,
+            constants.TEST_NOT_EXISTED_INSTANCE_ID,
+          ),
         statusCode: 404,
         data: {
           state: 'some state',
@@ -75,7 +80,7 @@ describe('POST /databases/:instanceId/plugins/:vId/command-executions/:id/state'
         responseBody: {
           statusCode: 404,
           message: 'Command execution was not found.',
-          error: 'Not Found'
+          error: 'Not Found',
         },
       },
       {
@@ -86,20 +91,26 @@ describe('POST /databases/:instanceId/plugins/:vId/command-executions/:id/state'
         statusCode: 201,
         checkFn: async ({ body }) => {
           expect(body).to.eql({});
-          const entity: any = await (await localDb.getRepository(localDb.repositories.PLUGIN_STATE))
-            .findOneBy({
-              commandExecutionId: constants.TEST_COMMAND_EXECUTION_ID_1,
-              visualizationId: constants.TEST_PLUGIN_VISUALIZATION_ID_1,
-            });
+          const entity: any = await (
+            await localDb.getRepository(localDb.repositories.PLUGIN_STATE)
+          ).findOneBy({
+            commandExecutionId: constants.TEST_COMMAND_EXECUTION_ID_1,
+            visualizationId: constants.TEST_PLUGIN_VISUALIZATION_ID_1,
+          });
 
-          expect(entity.state).to.eql(localDb.encryptData(JSON.stringify('some state')))
+          expect(entity.state).to.eql(
+            localDb.encryptData(JSON.stringify('some state')),
+          );
         },
         before: async () => {
-          await localDb.generateNCommandExecutions({
-            databaseId: constants.TEST_INSTANCE_ID,
-            id: constants.TEST_COMMAND_EXECUTION_ID_1,
-          }, 1);
-        }
+          await localDb.generateNCommandExecutions(
+            {
+              databaseId: constants.TEST_INSTANCE_ID,
+              id: constants.TEST_COMMAND_EXECUTION_ID_1,
+            },
+            1,
+          );
+        },
       },
       {
         name: 'Should set empty string',
@@ -109,20 +120,24 @@ describe('POST /databases/:instanceId/plugins/:vId/command-executions/:id/state'
         statusCode: 201,
         checkFn: async ({ body }) => {
           expect(body).to.eql({});
-          const entity: any = await (await localDb.getRepository(localDb.repositories.PLUGIN_STATE))
-            .findOneBy({
-              commandExecutionId: constants.TEST_COMMAND_EXECUTION_ID_1,
-              visualizationId: constants.TEST_PLUGIN_VISUALIZATION_ID_1,
-            });
+          const entity: any = await (
+            await localDb.getRepository(localDb.repositories.PLUGIN_STATE)
+          ).findOneBy({
+            commandExecutionId: constants.TEST_COMMAND_EXECUTION_ID_1,
+            visualizationId: constants.TEST_PLUGIN_VISUALIZATION_ID_1,
+          });
 
-          expect(entity.state).to.eql(localDb.encryptData(JSON.stringify('')))
+          expect(entity.state).to.eql(localDb.encryptData(JSON.stringify('')));
         },
         before: async () => {
-          await localDb.generateNCommandExecutions({
-            databaseId: constants.TEST_INSTANCE_ID,
-            id: constants.TEST_COMMAND_EXECUTION_ID_1,
-          }, 1);
-        }
+          await localDb.generateNCommandExecutions(
+            {
+              databaseId: constants.TEST_INSTANCE_ID,
+              id: constants.TEST_COMMAND_EXECUTION_ID_1,
+            },
+            1,
+          );
+        },
       },
       {
         name: 'Should set null state',
@@ -132,20 +147,26 @@ describe('POST /databases/:instanceId/plugins/:vId/command-executions/:id/state'
         statusCode: 201,
         checkFn: async ({ body }) => {
           expect(body).to.eql({});
-          const entity: any = await (await localDb.getRepository(localDb.repositories.PLUGIN_STATE))
-            .findOneBy({
-              commandExecutionId: constants.TEST_COMMAND_EXECUTION_ID_1,
-              visualizationId: constants.TEST_PLUGIN_VISUALIZATION_ID_1,
-            });
+          const entity: any = await (
+            await localDb.getRepository(localDb.repositories.PLUGIN_STATE)
+          ).findOneBy({
+            commandExecutionId: constants.TEST_COMMAND_EXECUTION_ID_1,
+            visualizationId: constants.TEST_PLUGIN_VISUALIZATION_ID_1,
+          });
 
-          expect(entity.state).to.eql(localDb.encryptData(JSON.stringify(null)))
+          expect(entity.state).to.eql(
+            localDb.encryptData(JSON.stringify(null)),
+          );
         },
         before: async () => {
-          await localDb.generateNCommandExecutions({
-            databaseId: constants.TEST_INSTANCE_ID,
-            id: constants.TEST_COMMAND_EXECUTION_ID_1,
-          }, 1);
-        }
+          await localDb.generateNCommandExecutions(
+            {
+              databaseId: constants.TEST_INSTANCE_ID,
+              id: constants.TEST_COMMAND_EXECUTION_ID_1,
+            },
+            1,
+          );
+        },
       },
     ].map(mainCheckFn);
   });

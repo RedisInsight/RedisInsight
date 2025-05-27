@@ -13,11 +13,27 @@ import {
   signInFailure,
 } from 'uiSrc/slices/oauth/cloud'
 import { BrowserStorageItem, Pages } from 'uiSrc/constants'
-import { cloudSelector, fetchSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
-import { CloudAuthResponse, CloudAuthStatus, CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
-import { addErrorNotification, addInfiniteNotification, removeInfiniteNotification } from 'uiSrc/slices/app/notifications'
+import {
+  cloudSelector,
+  fetchSubscriptionsRedisCloud,
+  setSSOFlow,
+} from 'uiSrc/slices/instances/cloud'
+import {
+  CloudAuthResponse,
+  CloudAuthStatus,
+  CloudJobName,
+  CloudJobStep,
+} from 'uiSrc/electron/constants'
+import {
+  addErrorNotification,
+  addInfiniteNotification,
+  removeInfiniteNotification,
+} from 'uiSrc/slices/app/notifications'
 import { parseCustomError } from 'uiSrc/utils'
-import { INFINITE_MESSAGES, InfiniteMessagesIds } from 'uiSrc/components/notifications/components'
+import {
+  INFINITE_MESSAGES,
+  InfiniteMessagesIds,
+} from 'uiSrc/components/notifications/components'
 import { localStorageService } from 'uiSrc/services'
 import { CustomError, OAuthSocialAction } from 'uiSrc/slices/interfaces'
 
@@ -56,32 +72,44 @@ const ConfigOAuth = () => {
       return
     }
 
-    dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
+    dispatch(
+      addInfiniteNotification(
+        INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials),
+      ),
+    )
 
     if (ssoFlowRef.current === OAuthSocialAction.Import) {
-      dispatch(fetchSubscriptionsRedisCloud(
-        null,
-        true,
-        () => {
-          closeInfinityNotification()
-          history.push(Pages.redisCloudSubscriptions)
-        },
-        closeInfinityNotification,
-      ))
+      dispatch(
+        fetchSubscriptionsRedisCloud(
+          null,
+          true,
+          () => {
+            closeInfinityNotification()
+            history.push(Pages.redisCloudSubscriptions)
+          },
+          closeInfinityNotification,
+        ),
+      )
       return
     }
 
     if (isRecommendedSettingsRef.current) {
-      dispatch(createFreeDbJob({
-        name: CloudJobName.CreateFreeSubscriptionAndDatabase,
-        resources: {
-          isRecommendedSettings: isRecommendedSettingsRef.current
-        },
-        onSuccessAction: () => {
-          dispatch(addInfiniteNotification(INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials)))
-        },
-        onFailAction: closeInfinityNotification
-      }))
+      dispatch(
+        createFreeDbJob({
+          name: CloudJobName.CreateFreeSubscriptionAndDatabase,
+          resources: {
+            isRecommendedSettings: isRecommendedSettingsRef.current,
+          },
+          onSuccessAction: () => {
+            dispatch(
+              addInfiniteNotification(
+                INFINITE_MESSAGES.PENDING_CREATE_DB(CloudJobStep.Credentials),
+              ),
+            )
+          },
+          onFailAction: closeInfinityNotification,
+        }),
+      )
 
       return
     }
@@ -93,9 +121,18 @@ const ConfigOAuth = () => {
     dispatch(removeInfiniteNotification(InfiniteMessagesIds.oAuthProgress))
   }
 
-  const cloudOauthCallback = (_e: any, { status, message = '', error }: CloudAuthResponse) => {
+  const cloudOauthCallback = (
+    _e: any,
+    { status, message = '', error }: CloudAuthResponse,
+  ) => {
     if (status === CloudAuthStatus.Succeed) {
-      dispatch(setJob({ id: '', name: CloudJobName.CreateFreeSubscriptionAndDatabase, status: '' }))
+      dispatch(
+        setJob({
+          id: '',
+          name: CloudJobName.CreateFreeSubscriptionAndDatabase,
+          status: '',
+        }),
+      )
       localStorageService.remove(BrowserStorageItem.OAuthJobId)
       dispatch(showOAuthProgress(true))
       dispatch(addInfiniteNotification(INFINITE_MESSAGES.AUTHENTICATING()))

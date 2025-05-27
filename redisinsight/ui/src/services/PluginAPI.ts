@@ -4,7 +4,7 @@ class PluginAPIService {
   onEvent(iframeId = '', event = '', callback: any) {
     this.subscriptions[iframeId] = {
       ...this.subscriptions[iframeId],
-      [event]: callback
+      [event]: callback,
     }
   }
 

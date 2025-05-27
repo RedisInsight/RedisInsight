@@ -39,14 +39,14 @@ global['jest'] = {
 
 global['expect'] = {
   any: () => {},
-}
+};
 
 /**
  * Initialize dependencies
  */
-export async function depsInit () {
+export async function depsInit() {
   // create cloud subscription if needed
-  if(constants.TEST_CLOUD_RTE) {
+  if (constants.TEST_CLOUD_RTE) {
     await initCloudDatabase();
   }
 
@@ -83,4 +83,4 @@ export const deps = {
   getSocket,
   rte: null,
   testEnv,
-}
+};

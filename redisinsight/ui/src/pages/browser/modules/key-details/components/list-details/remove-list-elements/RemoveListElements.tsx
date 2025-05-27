@@ -5,8 +5,6 @@ import { toNumber } from 'lodash'
 import {
   EuiButton,
   EuiTextColor,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiFieldText,
   EuiPanel,
@@ -14,21 +12,37 @@ import {
   EuiSuperSelectOption,
   EuiText,
   EuiPopover,
-  EuiSpacer,
   EuiIcon,
 } from '@elastic/eui'
 
 import { KeyTypes } from 'uiSrc/constants'
-import { validateCountNumber, isVersionHigherOrEquals, formatNameShort, bufferToString } from 'uiSrc/utils'
-import { sendEventTelemetry, TelemetryEvent, getBasedOnViewTypeEvent } from 'uiSrc/telemetry'
+import {
+  validateCountNumber,
+  isVersionHigherOrEquals,
+  formatNameShort,
+  bufferToString,
+} from 'uiSrc/utils'
+import {
+  sendEventTelemetry,
+  TelemetryEvent,
+  getBasedOnViewTypeEvent,
+} from 'uiSrc/telemetry'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
+import {
+  selectedKeyDataSelector,
+  keysSelector,
+} from 'uiSrc/slices/browser/keys'
 import { deleteListElementsAction } from 'uiSrc/slices/browser/list'
-import { connectedInstanceOverviewSelector, connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import {
+  connectedInstanceOverviewSelector,
+  connectedInstanceSelector,
+} from 'uiSrc/slices/instances/instances'
 
 import { AddListFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/list/dto'
 
 import {
@@ -59,16 +73,21 @@ const RemoveListElements = (props: Props) => {
   const { closePanel, onRemoveKey } = props
 
   const [count, setCount] = useState<string>('')
-  const [destination, setDestination] = useState<ListElementDestination>(TAIL_DESTINATION)
+  const [destination, setDestination] =
+    useState<ListElementDestination>(TAIL_DESTINATION)
   const [isFormValid, setIsFormValid] = useState<boolean>(true)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
   const [isInfoPopoverOpen, setIsInfoPopoverOpen] = useState<boolean>(false)
   const [canRemoveMultiple, setCanRemoveMultiple] = useState<boolean>(true)
-  const { name: selectedKey = '', length } = useSelector(selectedKeyDataSelector) ?? {
+  const { name: selectedKey = '', length } = useSelector(
+    selectedKeyDataSelector,
+  ) ?? {
     name: undefined,
     length: 0,
   }
-  const { version: databaseVersion = '' } = useSelector(connectedInstanceOverviewSelector)
+  const { version: databaseVersion = '' } = useSelector(
+    connectedInstanceOverviewSelector,
+  )
   const { id: instanceId } = useSelector(connectedInstanceSelector)
   const { viewType } = useSelector(keysSelector)
 
@@ -89,7 +108,7 @@ const RemoveListElements = (props: Props) => {
     if (
       !isVersionHigherOrEquals(
         databaseVersion,
-        CommandsVersions.REMOVE_MULTIPLE_LIST_ELEMENTS.since
+        CommandsVersions.REMOVE_MULTIPLE_LIST_ELEMENTS.since,
       )
     ) {
       setCount('1')
@@ -107,12 +126,12 @@ const RemoveListElements = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_VALUE_REMOVE_CLICKED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVE_CLICKED,
       ),
       eventData: {
         databaseId: instanceId,
-        keyType: KeyTypes.List
-      }
+        keyType: KeyTypes.List,
+      },
     })
   }
 
@@ -127,13 +146,13 @@ const RemoveListElements = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_VALUE_REMOVED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_REMOVED,
       ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.List,
         numberOfRemoved: toNumber(count),
-      }
+      },
     })
   }
 
@@ -154,7 +173,7 @@ const RemoveListElements = (props: Props) => {
       closePopover={closePopover}
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
-      button={(
+      button={
         <EuiButton
           fill
           size="m"
@@ -165,32 +184,30 @@ const RemoveListElements = (props: Props) => {
         >
           Remove
         </EuiButton>
-      )}
+      }
     >
       <div className={styles.popover}>
         <EuiText size="m">
           <h4 style={{ marginTop: 0 }}>
-            <b>{count}</b>
-            {' '}
-            Element(s)
+            <b>{count}</b> Element(s)
           </h4>
           <EuiText size="s">
-            will be removed from the
-            {' '}
-            {destination.toLowerCase()}
-            {' '}
-            of
-            {' '}
+            will be removed from the {destination.toLowerCase()} of{' '}
             <b>{formatNameShort(bufferToString(selectedKey))}</b>
           </EuiText>
           {(!length || length <= +count) && (
             <div className={styles.appendInfo}>
-              <EuiIcon type="alert" style={{ marginRight: '1rem', marginTop: '4px' }} />
-              <EuiText size="s">If you remove all Elements, the whole Key will be deleted.</EuiText>
+              <EuiIcon
+                type="alert"
+                style={{ marginRight: '1rem', marginTop: '4px' }}
+              />
+              <EuiText size="s">
+                If you remove all Elements, the whole Key will be deleted.
+              </EuiText>
             </div>
           )}
         </EuiText>
-        <EuiSpacer />
+        <Spacer />
         <EuiButton
           fill
           size="s"
@@ -213,17 +230,21 @@ const RemoveListElements = (props: Props) => {
       isOpen={isInfoPopoverOpen}
       closePopover={() => setIsInfoPopoverOpen(false)}
       initialFocus={false}
-      button={(
+      button={
         <EuiIcon
           className={styles.infoIcon}
           type="iInCircle"
-          onClick={() => setIsInfoPopoverOpen((isPopoverOpen) => !isPopoverOpen)}
+          onClick={() =>
+            setIsInfoPopoverOpen((isPopoverOpen) => !isPopoverOpen)
+          }
           style={{ cursor: 'pointer' }}
           data-testid="info-tooltip-icon"
         />
-      )}
+      }
     >
-      <div className={styles.popover}>{HelpTexts.REMOVING_MULTIPLE_ELEMENTS_NOT_SUPPORT}</div>
+      <div className={styles.popover}>
+        {HelpTexts.REMOVING_MULTIPLE_ELEMENTS_NOT_SUPPORT}
+      </div>
     </EuiPopover>
   )
 
@@ -233,22 +254,29 @@ const RemoveListElements = (props: Props) => {
         color="transparent"
         hasShadow={false}
         borderRadius="none"
-        className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
+        className={cx(
+          styles.content,
+          'eui-yScroll',
+          'flexItemNoFullWidth',
+          'inlineFieldsNoSpace',
+        )}
       >
-        <EuiFlexItem grow>
-          <EuiFlexGroup gutterSize="none" alignItems="center">
-            <EuiFlexItem grow={false} style={{ minWidth: '220px' }}>
+        <FlexItem grow>
+          <Row align="center">
+            <FlexItem style={{ minWidth: '220px' }}>
               <EuiFormRow fullWidth>
                 <EuiSuperSelect
                   className={styles.select}
                   valueOfSelected={destination}
                   options={optionsDestinations}
-                  onChange={(value) => setDestination(value as ListElementDestination)}
+                  onChange={(value) =>
+                    setDestination(value as ListElementDestination)
+                  }
                   data-testid="destination-select"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-            <EuiFlexItem grow>
+            </FlexItem>
+            <FlexItem grow style={{ width: '100%' }}>
               <EuiFormRow fullWidth>
                 <EuiFieldText
                   fullWidth
@@ -259,15 +287,17 @@ const RemoveListElements = (props: Props) => {
                   value={count}
                   data-testid="count-input"
                   autoComplete="off"
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => handleCountChange(e)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    handleCountChange(e)
+                  }
                   inputRef={countInput}
                   disabled={!canRemoveMultiple}
                   append={!canRemoveMultiple ? InfoBoxPopover() : <></>}
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
+            </FlexItem>
+          </Row>
+        </FlexItem>
       </EuiPanel>
       <EuiPanel
         style={{ border: 'none' }}
@@ -275,20 +305,22 @@ const RemoveListElements = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
-          <EuiFlexItem grow={false}>
+        <Row justify="end" gap="xl">
+          <FlexItem>
             <div>
-              <EuiButton color="secondary" onClick={() => closePanel(true)} data-testid="cancel-elements-btn">
+              <EuiButton
+                color="secondary"
+                onClick={() => closePanel(true)}
+                data-testid="cancel-elements-btn"
+              >
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <div>
-              {RemoveButton()}
-            </div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+          <FlexItem>
+            <div>{RemoveButton()}</div>
+          </FlexItem>
+        </Row>
       </EuiPanel>
     </>
   )

@@ -22,7 +22,7 @@ import {
   GetPendingEntriesDto,
   PendingEntryDto,
 } from 'src/modules/browser/stream/dto';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { ClientMetadata } from 'src/common/models';
 import { RedisClient } from 'src/modules/redis/client';
 import { checkIfKeyNotExists } from 'src/modules/browser/utils';
@@ -46,15 +46,18 @@ export class ConsumerService {
     try {
       this.logger.debug('Getting consumers list.', clientMetadata);
       const { keyName, groupName } = dto;
-      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client: RedisClient =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyNotExists(keyName, client);
 
-      return ConsumerService.formatReplyToDto(await client.sendCommand([
-        BrowserToolStreamCommands.XInfoConsumers,
-        keyName,
-        groupName,
-      ]) as string[][]);
+      return ConsumerService.formatReplyToDto(
+        (await client.sendCommand([
+          BrowserToolStreamCommands.XInfoConsumers,
+          keyName,
+          groupName,
+        ])) as string[][],
+      );
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -84,21 +87,22 @@ export class ConsumerService {
     try {
       this.logger.debug('Deleting consumers from the group.', clientMetadata);
       const { keyName, groupName, consumerNames } = dto;
-      const client: RedisClient = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client: RedisClient =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyNotExists(keyName, client);
 
-      const toolCommands: Array<[
-        toolCommand: BrowserToolCommands,
-        ...args: Array<string | number | Buffer>,
-      ]> = consumerNames.map((consumerName) => (
+      const toolCommands: Array<
         [
-          BrowserToolStreamCommands.XGroupDelConsumer,
-          keyName,
-          groupName,
-          consumerName,
+          toolCommand: BrowserToolCommands,
+          ...args: Array<string | number | Buffer>,
         ]
-      ));
+      > = consumerNames.map((consumerName) => [
+        BrowserToolStreamCommands.XGroupDelConsumer,
+        keyName,
+        groupName,
+        consumerName,
+      ]);
 
       const transactionResults = await client.sendPipeline(toolCommands);
       catchMultiTransactionError(transactionResults);
@@ -132,22 +136,23 @@ export class ConsumerService {
   ): Promise<PendingEntryDto[]> {
     try {
       this.logger.debug('Getting pending entries list.', clientMetadata);
-      const {
-        keyName, groupName, start, end, count, consumerName,
-      } = dto;
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const { keyName, groupName, start, end, count, consumerName } = dto;
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyNotExists(keyName, client);
 
-      return ConsumerService.formatReplyToPendingEntriesDto(await client.sendCommand([
-        BrowserToolStreamCommands.XPending,
-        keyName,
-        groupName,
-        start,
-        end,
-        count,
-        consumerName,
-      ]) as string[][]);
+      return ConsumerService.formatReplyToPendingEntriesDto(
+        (await client.sendCommand([
+          BrowserToolStreamCommands.XPending,
+          keyName,
+          groupName,
+          start,
+          end,
+          count,
+          consumerName,
+        ])) as string[][],
+      );
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -177,18 +182,22 @@ export class ConsumerService {
     try {
       this.logger.debug('Acknowledging pending entries.', clientMetadata);
       const { keyName, groupName, entries } = dto;
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyNotExists(keyName, client);
 
-      const affected = await client.sendCommand([
+      const affected = (await client.sendCommand([
         BrowserToolStreamCommands.XAck,
         keyName,
         groupName,
         ...entries,
-      ]) as number;
+      ])) as number;
 
-      this.logger.debug('Successfully acknowledged pending entries.', clientMetadata);
+      this.logger.debug(
+        'Successfully acknowledged pending entries.',
+        clientMetadata,
+      );
       return { affected };
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -215,9 +224,18 @@ export class ConsumerService {
     try {
       this.logger.debug('Claiming pending entries.', clientMetadata);
       const {
-        keyName, groupName, consumerName, minIdleTime, entries, idle, time, retryCount, force,
+        keyName,
+        groupName,
+        consumerName,
+        minIdleTime,
+        entries,
+        idle,
+        time,
+        retryCount,
+        force,
       } = dto;
-      const client = await this.databaseClientFactory.getOrCreateClient(clientMetadata);
+      const client =
+        await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
       await checkIfKeyNotExists(keyName, client);
 
@@ -240,12 +258,15 @@ export class ConsumerService {
       // Return just an array of IDs of messages successfully claimed, without returning the actual message.
       args.push('justid');
 
-      const affected = await client.sendCommand([
-        BrowserToolStreamCommands.XClaim,
-        ...args,
-      ], { replyEncoding: 'utf8' }) as string[];
+      const affected = (await client.sendCommand(
+        [BrowserToolStreamCommands.XClaim, ...args],
+        { replyEncoding: 'utf8' },
+      )) as string[];
 
-      this.logger.debug('Successfully claimed pending entries.', clientMetadata);
+      this.logger.debug(
+        'Successfully claimed pending entries.',
+        clientMetadata,
+      );
       return { affected };
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -302,9 +323,9 @@ export class ConsumerService {
       return null;
     }
 
-    const [,name,,pending,,idle] = entry;
+    const [, name, , pending, , idle] = entry;
 
-    return plainToClass(ConsumerDto, {
+    return plainToInstance(ConsumerDto, {
       name,
       pending,
       idle,
@@ -331,7 +352,9 @@ export class ConsumerService {
    * ]
    * @param reply
    */
-  static formatReplyToPendingEntriesDto(reply: Array<Array<string | number>>): PendingEntryDto[] {
+  static formatReplyToPendingEntriesDto(
+    reply: Array<Array<string | number>>,
+  ): PendingEntryDto[] {
     return reply.map(ConsumerService.formatArrayToPendingEntryDto);
   }
 
@@ -339,12 +362,14 @@ export class ConsumerService {
    * Format single reply entry to DTO
    * @param entry
    */
-  static formatArrayToPendingEntryDto(entry: Array<string | number>): PendingEntryDto {
+  static formatArrayToPendingEntryDto(
+    entry: Array<string | number>,
+  ): PendingEntryDto {
     if (!entry?.length) {
       return null;
     }
 
-    return plainToClass(PendingEntryDto, {
+    return plainToInstance(PendingEntryDto, {
       id: `${entry[0]}`,
       consumerName: entry[1],
       idle: +entry[2],

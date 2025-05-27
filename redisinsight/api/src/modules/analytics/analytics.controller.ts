@@ -1,6 +1,9 @@
 import {
   Body,
-  Controller, Post, UsePipes, ValidationPipe,
+  Controller,
+  Post,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
@@ -27,7 +30,7 @@ export class AnalyticsController {
   })
   async sendEvent(
     @Body() dto: SendEventDto,
-      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<void> {
     return this.service.sendEvent(sessionMetadata, dto);
   }
@@ -44,7 +47,7 @@ export class AnalyticsController {
   })
   async sendPage(
     @Body() dto: SendEventDto,
-      @RequestSessionMetadata() sessionMetadata: SessionMetadata,
+    @RequestSessionMetadata() sessionMetadata: SessionMetadata,
   ): Promise<void> {
     return this.service.sendPage(sessionMetadata, dto);
   }

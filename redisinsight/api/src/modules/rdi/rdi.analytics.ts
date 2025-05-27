@@ -10,16 +10,16 @@ export class RdiAnalytics extends TelemetryBaseService {
     super(eventEmitter);
   }
 
-  sendRdiInstanceDeleted(sessionMetadata: SessionMetadata, numberOfInstances: number, error?: string) {
+  sendRdiInstanceDeleted(
+    sessionMetadata: SessionMetadata,
+    numberOfInstances: number,
+    error?: string,
+  ) {
     try {
-      this.sendEvent(
-        sessionMetadata,
-        TelemetryEvents.RdiInstanceDeleted,
-        {
-          numberOfInstances,
-          error,
-        },
-      );
+      this.sendEvent(sessionMetadata, TelemetryEvents.RdiInstanceDeleted, {
+        numberOfInstances,
+        error,
+      });
     } catch (e) {
       // continue regardless of error
     }

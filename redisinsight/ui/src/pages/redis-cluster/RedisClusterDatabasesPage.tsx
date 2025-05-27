@@ -1,11 +1,9 @@
 import {
   EuiBasicTableColumn,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiButtonIcon,
+  EuiIcon,
   EuiText,
   EuiTextColor,
-  EuiIcon,
   EuiToolTip,
 } from '@elastic/eui'
 import React from 'react'
@@ -19,10 +17,19 @@ import {
   resetDataRedisCluster,
   resetInstancesRedisCluster,
 } from 'uiSrc/slices/instances/cluster'
-import { Maybe, formatLongName, parseInstanceOptionsCluster, setTitle } from 'uiSrc/utils'
-import { InstanceRedisCluster, AddRedisDatabaseStatus } from 'uiSrc/slices/interfaces'
+import {
+  formatLongName,
+  Maybe,
+  parseInstanceOptionsCluster,
+  setTitle,
+} from 'uiSrc/utils'
+import {
+  AddRedisDatabaseStatus,
+  InstanceRedisCluster,
+} from 'uiSrc/slices/interfaces'
 import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import RedisClusterDatabases from './RedisClusterDatabases'
 import RedisClusterDatabasesResult from './RedisClusterDatabasesResult'
 
@@ -32,7 +39,11 @@ const RedisClusterDatabasesPage = () => {
   const dispatch = useDispatch()
   const history = useHistory()
 
-  const { credentials, data: instances, dataAdded: instancesAdded } = useSelector(clusterSelector)
+  const {
+    credentials,
+    data: instances,
+    dataAdded: instancesAdded,
+  } = useSelector(clusterSelector)
   setTitle('Auto-Discover Redis Enterprise Databases')
 
   const sendCancelEvent = () => {
@@ -71,7 +82,9 @@ const RedisClusterDatabasesPage = () => {
       sortable: true,
       width: '420px',
       render: function InstanceCell(name: string = '') {
-        const cellContent = name.substring(0, 200).replace(/\s\s/g, '\u00a0\u00a0')
+        const cellContent = name
+          .substring(0, 200)
+          .replace(/\s\s/g, '\u00a0\u00a0')
         return (
           <div role="presentation" data-testid={`db_name_${name}`}>
             <EuiToolTip
@@ -104,13 +117,20 @@ const RedisClusterDatabasesPage = () => {
       dataType: 'auto',
       truncateText: true,
       sortable: true,
-      render: function DnsName(dnsName: string, { port }: InstanceRedisCluster) {
+      render: function DnsName(
+        dnsName: string,
+        { port }: InstanceRedisCluster,
+      ) {
         const text = `${dnsName}:${port}`
         return (
           !!dnsName && (
             <div className="host_port">
               <EuiText className="copyHostPortText">{text}</EuiText>
-              <EuiToolTip position="right" content="Copy" anchorClassName="copyHostPortTooltip">
+              <EuiToolTip
+                position="right"
+                content="Copy"
+                anchorClassName="copyHostPortTooltip"
+              >
                 <EuiButtonIcon
                   iconType="copy"
                   aria-label="Copy host:port"
@@ -132,7 +152,11 @@ const RedisClusterDatabasesPage = () => {
       width: '190px',
       sortable: true,
       render: function Modules(modules: any[], instance: InstanceRedisCluster) {
-        return <DatabaseListModules modules={instance?.modules?.map((name) => ({ name }))} />
+        return (
+          <DatabaseListModules
+            modules={instance?.modules?.map((name) => ({ name }))}
+          />
+        )
       },
     },
     {
@@ -144,7 +168,10 @@ const RedisClusterDatabasesPage = () => {
       width: '220px',
       sortable: true,
       render: function Opitions(opts: any[], instance: InstanceRedisCluster) {
-        const options = parseInstanceOptionsCluster(instance?.uid, instances || [])
+        const options = parseInstanceOptionsCluster(
+          instance?.uid,
+          instances || [],
+        )
         return <DatabaseListOptions options={options} />
       },
     },
@@ -158,24 +185,30 @@ const RedisClusterDatabasesPage = () => {
     align: 'left',
     width: '110px',
     sortable: true,
-    render: function Message(messageAdded: string, { statusAdded }: InstanceRedisCluster) {
+    render: function Message(
+      messageAdded: string,
+      { statusAdded }: InstanceRedisCluster,
+    ) {
       return (
         <>
           {statusAdded === AddRedisDatabaseStatus.Success ? (
             <EuiText>{messageAdded}</EuiText>
           ) : (
             <EuiToolTip position="left" title="Error" content={messageAdded}>
-              <EuiFlexGroup alignItems="center" gutterSize="s" responsive={false}>
-                <EuiFlexItem grow={false}>
+              <Row align="center" gap="s">
+                <FlexItem>
                   <EuiIcon type="alert" color="danger" />
-                </EuiFlexItem>
+                </FlexItem>
 
-                <EuiFlexItem grow={false}>
-                  <EuiTextColor color="danger" className="flex-row euiTextAlign--center">
+                <FlexItem>
+                  <EuiTextColor
+                    color="danger"
+                    className="flex-row euiTextAlign--center"
+                  >
                     Error
                   </EuiTextColor>
-                </EuiFlexItem>
-              </EuiFlexGroup>
+                </FlexItem>
+              </Row>
             </EuiToolTip>
           )}
         </>
@@ -183,7 +216,9 @@ const RedisClusterDatabasesPage = () => {
     },
   }
 
-  const columnsResult: EuiBasicTableColumn<InstanceRedisCluster>[] = [...columns]
+  const columnsResult: EuiBasicTableColumn<InstanceRedisCluster>[] = [
+    ...columns,
+  ]
   columnsResult.push(messageColumn)
 
   if (instancesAdded.length) {

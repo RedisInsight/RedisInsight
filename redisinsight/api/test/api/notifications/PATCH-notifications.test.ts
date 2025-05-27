@@ -1,5 +1,9 @@
 import { describe, it, deps, expect, validateApiCall } from '../deps';
-import { createDefaultNotifications, getRepository, repositories } from '../../helpers/local-db';
+import {
+  createDefaultNotifications,
+  getRepository,
+  repositories,
+} from '../../helpers/local-db';
 const { request, server } = deps;
 
 const endpoint = () => request(server).patch(`/notifications/read`);
@@ -35,15 +39,19 @@ describe('PATCH /notifications/read', () => {
       name: 'Should set all notifications into read state',
       before: async () => {
         const notifications = await repo.createQueryBuilder().getMany();
-        expect(notifications.filter(notification => {
-          return notification.read === false;
-        }).length).to.gte(2);
+        expect(
+          notifications.filter((notification) => {
+            return notification.read === false;
+          }).length,
+        ).to.gte(2);
       },
       after: async () => {
         const notifications = await repo.createQueryBuilder().getMany();
-        expect(notifications.filter(notification => {
-          return notification.read === false;
-        }).length).to.eq(0);
+        expect(
+          notifications.filter((notification) => {
+            return notification.read === false;
+          }).length,
+        ).to.eq(0);
       },
     },
   ].map(mainCheckFn);

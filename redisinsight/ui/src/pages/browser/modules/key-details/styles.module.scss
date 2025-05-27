@@ -38,6 +38,12 @@
   height: calc(100% - 144px);
 }
 
+// 108px is the key details header height
+:global(.key-details-body-monaco-editor) {
+  position: relative;
+  height: calc(100% - 108px);
+}
+
 :global(.key-details-footer) {
   margin: 0 16px;
   padding: 16px 0 20px 0;

@@ -1,9 +1,13 @@
 import React, { useContext } from 'react'
 import { capitalize } from 'lodash'
-import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiText } from '@elastic/eui'
 
 import cx from 'classnames'
-import { CONNECTION_TYPE_DISPLAY, ConnectionType, DATABASE_LIST_MODULES_TEXT } from 'uiSrc/slices/interfaces'
+import {
+  CONNECTION_TYPE_DISPLAY,
+  ConnectionType,
+  DATABASE_LIST_MODULES_TEXT,
+} from 'uiSrc/slices/interfaces'
 import { getModule, Nullable, truncateText } from 'uiSrc/utils'
 
 import ConnectionIcon from 'uiSrc/assets/img/icons/connection.svg?react'
@@ -16,6 +20,7 @@ import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import UnknownDark from 'uiSrc/assets/img/modules/UnknownDark.svg'
 import UnknownLight from 'uiSrc/assets/img/modules/UnknownLight.svg'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import styles from './styles.module.scss'
 
@@ -37,7 +42,10 @@ const ShortInstanceInfo = ({ info, databases, modules }: Props) => {
   const { theme } = useContext(ThemeContext)
 
   const getIcon = (name: string) => {
-    const icon = DEFAULT_MODULES_INFO[name]?.[theme === Theme.Dark ? 'iconDark' : 'iconLight']
+    const icon =
+      DEFAULT_MODULES_INFO[name]?.[
+        theme === Theme.Dark ? 'iconDark' : 'iconLight'
+      ]
     if (icon) {
       return icon
     }
@@ -52,46 +60,48 @@ const ShortInstanceInfo = ({ info, databases, modules }: Props) => {
       </div>
       <div className={styles.tooltipItem}>
         <span>
-          {host}
-          :
-          {port}
+          {host}:{port}
         </span>
       </div>
       {databases > 1 && (
-        <EuiFlexGroup className={styles.dbIndexInfo} alignItems="center" gutterSize="none">
-          <EuiFlexItem grow={false} style={{ marginRight: 16 }}>
-            <EuiIcon className={styles.messageInfoIcon} size="xxl" type={MessageInfoIcon} />
-          </EuiFlexItem>
-          <EuiFlexItem>
+        <Row
+          className={styles.dbIndexInfo}
+          align="center"
+        >
+          <FlexItem style={{ marginRight: 16 }}>
+            <EuiIcon
+              className={styles.messageInfoIcon}
+              size="xxl"
+              type={MessageInfoIcon}
+            />
+          </FlexItem>
+          <FlexItem grow>
             <EuiText size="s">Logical Databases</EuiText>
             <EuiText color="subdued" size="xs">
-              Select logical databases to work with in Browser, Workbench, and Database Analysis.
+              Select logical databases to work with in Browser, Workbench, and
+              Database Analysis.
             </EuiText>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       )}
-      <EuiFlexGroup
-        className={styles.tooltipItem}
-        gutterSize="none"
-        alignItems="center"
-        justifyContent="flexStart"
-        responsive={false}
-      >
-        <EuiFlexItem className={styles.rowTooltipItem} grow={false}>
+      <Row className={styles.tooltipItem} align="center" justify="start">
+        <FlexItem className={styles.rowTooltipItem}>
           <EuiIcon type={ConnectionIcon} />
           <span className={styles.tooltipItemValue}>
-            {connectionType ? CONNECTION_TYPE_DISPLAY[connectionType] : capitalize(connectionType)}
+            {connectionType
+              ? CONNECTION_TYPE_DISPLAY[connectionType]
+              : capitalize(connectionType)}
           </span>
-        </EuiFlexItem>
-        <EuiFlexItem className={styles.rowTooltipItem} grow={false}>
+        </FlexItem>
+        <FlexItem className={styles.rowTooltipItem}>
           <EuiIcon type={VersionIcon} />
           <span className={styles.tooltipItemValue}>{version}</span>
-        </EuiFlexItem>
-        <EuiFlexItem className={styles.rowTooltipItem} grow={false}>
+        </FlexItem>
+        <FlexItem className={styles.rowTooltipItem}>
           <EuiIcon type={UserIcon} />
           <span className={styles.tooltipItemValue}>{user || 'Default'}</span>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
       {!!modules?.length && (
         <div className={styles.modules}>
           <h4 className={styles.mi_fieldName}>Database Modules</h4>
@@ -102,7 +112,14 @@ const ShortInstanceInfo = ({ info, databases, modules }: Props) => {
               data-testid={`module_${name}`}
             >
               <EuiIcon type={getIcon(name)} className={styles.mi_icon} />
-              <span>{truncateText(getModule(name)?.name || DATABASE_LIST_MODULES_TEXT[name] || name, 50)}</span>
+              <span>
+                {truncateText(
+                  getModule(name)?.name ||
+                    DATABASE_LIST_MODULES_TEXT[name] ||
+                    name,
+                  50,
+                )}
+              </span>
               {!!(semanticVersion || version) && (
                 <span className={styles.mi_version}>
                   v.

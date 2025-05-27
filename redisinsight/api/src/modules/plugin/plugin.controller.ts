@@ -7,9 +7,7 @@ import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 @ApiTags('Plugins')
 @Controller('/plugins')
 export class PluginController {
-  constructor(
-    private readonly pluginService: PluginService,
-  ) {}
+  constructor(private readonly pluginService: PluginService) {}
 
   @ApiEndpoint({
     statusCode: 200,

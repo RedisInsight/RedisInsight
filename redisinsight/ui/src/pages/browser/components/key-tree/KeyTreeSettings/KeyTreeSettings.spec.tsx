@@ -2,7 +2,11 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { DEFAULT_DELIMITER, SortOrder } from 'uiSrc/constants'
-import { resetBrowserTree, setBrowserTreeDelimiter, setBrowserTreeSort } from 'uiSrc/slices/app/context'
+import {
+  resetBrowserTree,
+  setBrowserTreeDelimiter,
+  setBrowserTreeSort,
+} from 'uiSrc/slices/app/context'
 import {
   cleanup,
   clearStoreActions,
@@ -63,16 +67,19 @@ describe('KeyTreeDelimiter', () => {
     })
     await waitForEuiPopoverVisible()
 
-    const comboboxInput = document
-      .querySelector('[data-testid="delimiter-combobox"] [data-test-subj="comboBoxSearchInput"]') as HTMLInputElement
+    const comboboxInput = document.querySelector(
+      '[data-testid="delimiter-combobox"] [data-test-subj="comboBoxSearchInput"]',
+    ) as HTMLInputElement
 
     expect(comboboxInput).toBeInTheDocument()
     expect(screen.getByTestId(SORTING_SELECT)).toBeInTheDocument()
   })
 
   it('"setBrowserTreeDelimiter" and "setBrowserTreeSort" should be called after Apply change delimiter', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
     const value = 'val'
     render(<KeyTreeSettings {...instance(mockedProps)} />)
 
@@ -82,18 +89,20 @@ describe('KeyTreeDelimiter', () => {
 
     await waitForEuiPopoverVisible()
 
-    const comboboxInput = document
-      .querySelector('[data-testid="delimiter-combobox"] [data-test-subj="comboBoxSearchInput"]') as HTMLInputElement
+    const comboboxInput = document.querySelector(
+      '[data-testid="delimiter-combobox"] [data-test-subj="comboBoxSearchInput"]',
+    ) as HTMLInputElement
 
-    fireEvent.change(
-      comboboxInput,
-      { target: { value } }
-    )
+    fireEvent.change(comboboxInput, { target: { value } })
 
     fireEvent.keyDown(comboboxInput, { key: 'Enter', code: 13, charCode: 13 })
 
-    const containerLabels = document.querySelector('[data-test-subj="comboBoxInput"]')!
-    expect(containerLabels.querySelector(`[title="${value}"]`)).toBeInTheDocument()
+    const containerLabels = document.querySelector(
+      '[data-test-subj="comboBoxInput"]',
+    )!
+    expect(
+      containerLabels.querySelector(`[title="${value}"]`),
+    ).toBeInTheDocument()
 
     fireEvent.click(containerLabels.querySelector('[title^="Remove :"]')!)
     expect(containerLabels.querySelector('[title=":"]')).not.toBeInTheDocument()
@@ -106,9 +115,8 @@ describe('KeyTreeDelimiter', () => {
 
     await act(() => {
       fireEvent.click(screen.getByTestId(SORTING_DESC_ITEM))
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     await act(() => {
       fireEvent.click(screen.getByTestId(APPLY_BTN))
@@ -122,7 +130,7 @@ describe('KeyTreeDelimiter', () => {
     ]
 
     expect(clearStoreActions(store.getActions())).toEqual(
-      clearStoreActions(expectedActions)
+      clearStoreActions(expectedActions),
     )
 
     expect(sendEventTelemetry).toBeCalledWith({
@@ -131,7 +139,7 @@ describe('KeyTreeDelimiter', () => {
         databaseId: INSTANCE_ID_MOCK,
         from: comboBoxToArray([DEFAULT_DELIMITER]),
         to: [value],
-      }
+      },
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
@@ -139,10 +147,9 @@ describe('KeyTreeDelimiter', () => {
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
         sorting: SortOrder.DESC,
-      }
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('"setBrowserTreeDelimiter" should be called with DEFAULT_DELIMITER after Apply change with empty input', async () => {
@@ -154,7 +161,9 @@ describe('KeyTreeDelimiter', () => {
 
     await waitForEuiPopoverVisible()
 
-    const containerLabels = document.querySelector('[data-test-subj="comboBoxInput"]')!
+    const containerLabels = document.querySelector(
+      '[data-test-subj="comboBoxInput"]',
+    )!
     fireEvent.click(containerLabels.querySelector('[title^="Remove :"]')!)
     expect(containerLabels.querySelector('[title=":"]')).not.toBeInTheDocument()
 
@@ -168,7 +177,7 @@ describe('KeyTreeDelimiter', () => {
     ]
 
     expect(clearStoreActions(store.getActions())).toEqual(
-      clearStoreActions(expectedActions)
+      clearStoreActions(expectedActions),
     )
   })
 })

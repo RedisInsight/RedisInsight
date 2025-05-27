@@ -1,9 +1,7 @@
 import React, { ChangeEvent } from 'react'
 import {
   EuiCheckbox,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiFormRow, EuiSpacer,
+  EuiFormRow,
   EuiSuperSelect,
   EuiSuperSelectOption,
   htmlIdGenerator,
@@ -13,6 +11,8 @@ import { FormikProps } from 'formik'
 import { KeyValueCompressor } from 'uiSrc/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { NONE } from 'uiSrc/pages/home/constants'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
 export interface Props {
   formik: FormikProps<DbConnectionInfo>
@@ -44,30 +44,29 @@ const DbCompressor = (props: Props) => {
     },
     {
       value: KeyValueCompressor.Brotli,
-      inputDisplay: 'Brotli'
+      inputDisplay: 'Brotli',
     },
     {
       value: KeyValueCompressor.PHPGZCompress,
-      inputDisplay: 'PHP GZCompress'
+      inputDisplay: 'PHP GZCompress',
     },
   ]
 
-  const handleChangeDbCompressorCheckbox = (e: ChangeEvent<HTMLInputElement>): void => {
+  const handleChangeDbCompressorCheckbox = (
+    e: ChangeEvent<HTMLInputElement>,
+  ): void => {
     const isChecked = e.target.checked
     if (!isChecked) {
       // Reset db field to initial value
       formik.setFieldValue('compressor', NONE)
     }
-    formik.setFieldValue(
-      'showCompressor',
-      isChecked
-    )
+    formik.setFieldValue('showCompressor', isChecked)
   }
 
   return (
     <>
-      <EuiFlexGroup responsive={false}>
-        <EuiFlexItem grow={false}>
+      <Row gap="m" responsive={false}>
+        <FlexItem>
           <EuiFormRow>
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db compressor`}
@@ -78,34 +77,29 @@ const DbCompressor = (props: Props) => {
               data-testid="showCompressor"
             />
           </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
 
       {formik.values.showCompressor && (
         <>
-          <EuiSpacer />
-          <EuiFlexGroup responsive={false}>
-            <EuiFlexItem>
+          <Spacer />
+          <Row gap="m">
+            <FlexItem grow>
               <EuiFormRow label="Decompression format">
                 <EuiSuperSelect
                   name="compressor"
                   placeholder="Decompression format"
-                  valueOfSelected={
-                    formik.values.compressor ?? NONE
-                  }
+                  valueOfSelected={formik.values.compressor ?? NONE}
                   options={optionsCompressor}
                   onChange={(value) => {
-                    formik.setFieldValue(
-                      'compressor',
-                      value || NONE
-                    )
+                    formik.setFieldValue('compressor', value || NONE)
                   }}
                   data-testid="select-compressor"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-            <EuiFlexItem />
-          </EuiFlexGroup>
+            </FlexItem>
+            <FlexItem grow />
+          </Row>
         </>
       )}
     </>

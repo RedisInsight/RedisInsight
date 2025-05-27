@@ -16,20 +16,14 @@ describe('AddHashFields', () => {
   it('should set field name properly', () => {
     render(<AddHashFields {...instance(mockedProps)} />)
     const fieldName = screen.getByTestId(HASH_FIELD)
-    fireEvent.change(
-      fieldName,
-      { target: { value: 'field name' } }
-    )
+    fireEvent.change(fieldName, { target: { value: 'field name' } })
     expect(fieldName).toHaveValue('field name')
   })
 
   it('should set field value properly', () => {
     render(<AddHashFields {...instance(mockedProps)} />)
     const fieldName = screen.getByTestId(HASH_VALUE)
-    fireEvent.change(
-      fieldName,
-      { target: { value: '123' } }
-    )
+    fireEvent.change(fieldName, { target: { value: '123' } })
     expect(fieldName).toHaveValue('123')
   })
 
@@ -50,14 +44,8 @@ describe('AddHashFields', () => {
     render(<AddHashFields {...instance(mockedProps)} />)
     const fieldName = screen.getByTestId(HASH_FIELD)
     const fieldValue = screen.getByTestId(HASH_VALUE)
-    fireEvent.change(
-      fieldName,
-      { target: { value: 'name' } }
-    )
-    fireEvent.change(
-      fieldValue,
-      { target: { value: 'val' } }
-    )
+    fireEvent.change(fieldName, { target: { value: 'name' } })
+    fireEvent.change(fieldValue, { target: { value: 'val' } })
     fireEvent.click(screen.getByTestId('remove-item'))
 
     expect(fieldName).toHaveValue('')

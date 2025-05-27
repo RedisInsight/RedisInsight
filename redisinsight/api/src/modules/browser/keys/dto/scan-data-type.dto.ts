@@ -1,15 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsInt, IsNotEmpty, IsOptional, IsString, Min,
-} from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { KeyDto } from './key.dto';
 
 export class ScanDataTypeDto extends KeyDto {
   @ApiProperty({
     description:
-      'Iteration cursor. '
-      + 'An iteration starts when the cursor is set to 0, and terminates when the cursor returned by the server is 0.',
+      'Iteration cursor. ' +
+      'An iteration starts when the cursor is set to 0, and terminates when the cursor returned by the server is 0.',
     type: Number,
     minimum: 0,
     default: 0,

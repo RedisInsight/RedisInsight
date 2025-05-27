@@ -1,27 +1,28 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiLoadingContent } from '@elastic/eui'
 
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import styles from './styles.module.scss'
 
 export interface Props {
-  result: React.ReactElement | string;
-  loading?: boolean;
+  result: React.ReactElement | string
+  loading?: boolean
 }
 
 const QueryCardCommonResult = (props: Props) => {
   const { result, loading } = props
 
   return (
-    <div data-testid="query-common-result-wrapper" className={cx('queryResultsContainer', styles.container)}>
+    <div
+      data-testid="query-common-result-wrapper"
+      className={cx('queryResultsContainer', styles.container)}
+    >
       {!loading && (
-        <div data-testid="query-common-result">
-          { result || '(nil)' }
-        </div>
+        <div data-testid="query-common-result">{result || '(nil)'}</div>
       )}
       {loading && (
         <div className={styles.loading}>
-          <EuiLoadingContent lines={1} />
+          <LoadingContent lines={1} />
         </div>
       )}
     </div>

@@ -19,18 +19,21 @@ const testCases = [
     url: 'https://somesite.test/image.png',
     path: `${TUTORIAL_PATH}/lvl1/lvl2/lvl3/intro.md`,
     result: 'https://somesite.test/image.png',
-  }
+  },
 ]
 describe('remarkImage', () => {
   testCases.forEach((tc) => {
     it(`should return ${tc.result} for url:${tc.url}, path: ${tc.path} `, () => {
       const node = {
         url: tc.url,
-      };
+      }
 
       // mock implementation
-      (visit as jest.Mock)
-        .mockImplementation((_tree: any, _name: string, callback: (node: any) => void) => { callback(node) })
+      ;(visit as jest.Mock).mockImplementation(
+        (_tree: any, _name: string, callback: (node: any) => void) => {
+          callback(node)
+        },
+      )
 
       const remark = remarkImage(tc.path)
       remark({} as Node)

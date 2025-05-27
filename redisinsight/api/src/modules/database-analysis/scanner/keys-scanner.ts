@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { getTotalKeys } from 'src/modules/redis/utils';
 import { KeyInfoProvider } from 'src/modules/database-analysis/scanner/key-info/key-info.provider';
-import { RedisClient, RedisClientConnectionType, RedisClientNodeRole } from 'src/modules/redis/client';
+import {
+  RedisClient,
+  RedisClientConnectionType,
+  RedisClientNodeRole,
+} from 'src/modules/redis/client';
 import { ScanFilter } from 'src/modules/database-analysis/models/scan-filter';
 
 @Injectable()
 export class KeysScanner {
-  constructor(
-    private readonly keyInfoProvider: KeyInfoProvider,
-  ) {}
+  constructor(private readonly keyInfoProvider: KeyInfoProvider) {}
 
   async scan(client: RedisClient, opts: { filter: ScanFilter }) {
     let nodes = [];
@@ -28,19 +30,17 @@ export class KeysScanner {
     let libraries: string[];
 
     try {
-      indexes = await client.sendCommand(
-        ['FT._LIST'],
-        { replyEncoding: 'utf8' },
-      ) as string[];
+      indexes = (await client.sendCommand(['FT._LIST'], {
+        replyEncoding: 'utf8',
+      })) as string[];
     } catch (err) {
       // Ignore errors
     }
 
     try {
-      libraries = await client.sendCommand(
-        ['TFUNCTION', 'LIST'],
-        { replyEncoding: 'utf8' },
-      ) as string[];
+      libraries = (await client.sendCommand(['TFUNCTION', 'LIST'], {
+        replyEncoding: 'utf8',
+      })) as string[];
     } catch (err) {
       // Ignore errors
     }
@@ -50,19 +50,14 @@ export class KeysScanner {
     let scanned = 0;
     let cursor: number;
 
-    while (
-      scanned < opts.filter.count
-      && cursor !== 0
-    ) {
-      const [
-        cursorResp,
-        keysResp,
-      ] = await client.sendCommand([
+    while (scanned < opts.filter.count && cursor !== 0) {
+      const [cursorResp, keysResp] = (await client.sendCommand([
         'scan',
         cursor || 0,
-        'count', COUNT,
+        'count',
+        COUNT,
         ...opts.filter.getScanArgsArray(),
-      ]) as [string, Buffer[]];
+      ])) as [string, Buffer[]];
 
       cursor = parseInt(cursorResp, 10) || 0;
       scanned += COUNT;
@@ -71,27 +66,23 @@ export class KeysScanner {
 
     const [sizes, types, ttls] = await Promise.all([
       client.sendPipeline(
-        keys.map((key) => ([
-          'memory',
-          'usage',
-          key,
-          'samples',
-          '0',
-        ])),
+        keys.map((key) => ['memory', 'usage', key, 'samples', '0']),
       ),
       client.sendPipeline(
-        keys.map((key) => (['type', key])),
+        keys.map((key) => ['type', key]),
         { replyEncoding: 'utf8' },
       ),
-      client.sendPipeline(
-        keys.map((key) => (['ttl', key])),
-      ),
+      client.sendPipeline(keys.map((key) => ['ttl', key])),
     ]);
 
-    const lengths = await Promise.all(keys.map(async (key, i) => {
-      const strategy = this.keyInfoProvider.getStrategy(types[i][1] as string);
-      return strategy.getLengthSafe(client, key);
-    }));
+    const lengths = await Promise.all(
+      keys.map(async (key, i) => {
+        const strategy = this.keyInfoProvider.getStrategy(
+          types[i][1] as string,
+        );
+        return strategy.getLengthSafe(client, key);
+      }),
+    );
 
     const nodeKeys = [];
     for (let i = 0; i < keys.length; i += 1) {

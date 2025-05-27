@@ -16,9 +16,13 @@ import reducer, {
   setIsPubSubUnSubscribed,
   setLoading,
   setPubSubConnected,
-  toggleSubscribeTriggerPubSub
+  toggleSubscribeTriggerPubSub,
 } from 'uiSrc/slices/pubsub/pubsub'
-import { cleanup, initialStateDefault, mockedStore } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
 
 let store: typeof mockedStore
 
@@ -48,7 +52,7 @@ describe('pubsub slice', () => {
         // Arrange
         const state = {
           ...initialState,
-          isConnected
+          isConnected,
         }
 
         // Act
@@ -70,11 +74,18 @@ describe('pubsub slice', () => {
         const state = {
           ...initialState,
           isSubscribeTriggered: !initialState.isSubscribeTriggered,
-          subscriptions: [{ channel: '1', type: 'p' }, { channel: '*', type: 'p' }, { channel: '3', type: 'p' }]
+          subscriptions: [
+            { channel: '1', type: 'p' },
+            { channel: '*', type: 'p' },
+            { channel: '3', type: 'p' },
+          ],
         }
 
         // Act
-        const nextState = reducer(initialState, toggleSubscribeTriggerPubSub(channels))
+        const nextState = reducer(
+          initialState,
+          toggleSubscribeTriggerPubSub(channels),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -90,11 +101,14 @@ describe('pubsub slice', () => {
         const state = {
           ...initialState,
           isSubscribeTriggered: !initialState.isSubscribeTriggered,
-          subscriptions: [{ channel: '*', type: 'p' }]
+          subscriptions: [{ channel: '*', type: 'p' }],
         }
 
         // Act
-        const nextState = reducer(initialState, toggleSubscribeTriggerPubSub(channels))
+        const nextState = reducer(
+          initialState,
+          toggleSubscribeTriggerPubSub(channels),
+        )
 
         // Assert
         const rootState = Object.assign(initialStateDefault, {
@@ -109,11 +123,11 @@ describe('pubsub slice', () => {
         // Arrange
         const currentState = {
           ...initialState,
-          isSubscribed: true
+          isSubscribed: true,
         }
         const state = {
           ...currentState,
-          isSubscribed: false
+          isSubscribed: false,
         }
 
         // Act
@@ -135,21 +149,21 @@ describe('pubsub slice', () => {
             {
               message: '1',
               channel: '2',
-              time: 123123123
+              time: 123123123,
             },
             {
               message: '2',
               channel: '2',
-              time: 123123123
-            }
-          ]
+              time: 123123123,
+            },
+          ],
         }
 
         // Arrange
         const state: typeof initialState = {
           ...initialState,
           count: payload.count,
-          messages: payload.messages
+          messages: payload.messages,
         }
 
         // Act
@@ -165,14 +179,14 @@ describe('pubsub slice', () => {
       it('should properly set items no more than MONITOR_ITEMS_MAX_COUNT', () => {
         const payload = {
           count: PUB_SUB_ITEMS_MAX_COUNT + 10,
-          messages: new Array(PUB_SUB_ITEMS_MAX_COUNT + 10)
+          messages: new Array(PUB_SUB_ITEMS_MAX_COUNT + 10),
         }
 
         // Arrange
         const state: typeof initialState = {
           ...initialState,
           count: PUB_SUB_ITEMS_MAX_COUNT + 10,
-          messages: new Array(PUB_SUB_ITEMS_MAX_COUNT)
+          messages: new Array(PUB_SUB_ITEMS_MAX_COUNT),
         }
 
         // Act
@@ -192,13 +206,13 @@ describe('pubsub slice', () => {
         const currentState = {
           ...initialState,
           messages: ['a', 'b', 'c'],
-          count: 3
+          count: 3,
         }
 
         const state = {
           ...currentState,
           messages: [],
-          count: 0
+          count: 0,
         }
 
         // Act
@@ -218,7 +232,7 @@ describe('pubsub slice', () => {
 
         const state = {
           ...initialState,
-          loading: true
+          loading: true,
         }
 
         // Act
@@ -240,7 +254,7 @@ describe('pubsub slice', () => {
           loading: true,
           isSubscribed: true,
           isSubscribeTriggered: true,
-          isConnected: true
+          isConnected: true,
         }
 
         const state = {
@@ -263,7 +277,7 @@ describe('pubsub slice', () => {
         // Arrange
         const state = {
           ...initialState,
-          publishing: true
+          publishing: true,
         }
 
         // Act
@@ -281,7 +295,7 @@ describe('pubsub slice', () => {
       it('should properly set state', () => {
         // Arrange
         const state = {
-          ...initialState
+          ...initialState,
         }
 
         // Act
@@ -301,7 +315,7 @@ describe('pubsub slice', () => {
         const error = 'Some error'
         const state = {
           ...initialState,
-          error
+          error,
         }
 
         // Act
@@ -328,14 +342,11 @@ describe('pubsub slice', () => {
 
         // Act
         await store.dispatch<any>(
-          publishMessageAction('123', 'channel', 'message')
+          publishMessageAction('123', 'channel', 'message'),
         )
 
         // Assert
-        const expectedActions = [
-          publishMessage(),
-          publishMessageSuccess(),
-        ]
+        const expectedActions = [publishMessage(), publishMessageSuccess()]
 
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -353,14 +364,14 @@ describe('pubsub slice', () => {
 
         // Act
         await store.dispatch<any>(
-          publishMessageAction('123', 'channel', 'message')
+          publishMessageAction('123', 'channel', 'message'),
         )
 
         // Assert
         const expectedActions = [
           publishMessage(),
           addErrorNotification(responsePayload as AxiosError),
-          publishMessageError(errorMessage)
+          publishMessageError(errorMessage),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

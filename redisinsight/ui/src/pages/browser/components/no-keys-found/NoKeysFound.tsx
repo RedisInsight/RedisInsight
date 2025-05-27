@@ -1,22 +1,25 @@
 import React from 'react'
-import {
-  EuiTitle,
-  EuiSpacer,
-  EuiImage,
-  EuiButtonEmpty,
-} from '@elastic/eui'
+import { EuiTitle, EuiImage, EuiButtonEmpty } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
 
 import { findTutorialPath } from 'uiSrc/utils'
-import { openTutorialByPath, sidePanelsSelector } from 'uiSrc/slices/panels/sidePanels'
+import {
+  openTutorialByPath,
+  sidePanelsSelector,
+} from 'uiSrc/slices/panels/sidePanels'
 import { SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
-import { changeKeyViewType, fetchKeys, keysSelector } from 'uiSrc/slices/browser/keys'
+import {
+  changeKeyViewType,
+  fetchKeys,
+  keysSelector,
+} from 'uiSrc/slices/browser/keys'
 import { SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { TutorialsIds } from 'uiSrc/constants'
 
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import LoadSampleData from '../load-sample-data'
 
 import styles from './styles.module.scss'
@@ -43,11 +46,13 @@ const NoKeysFound = (props: Props) => {
       dispatch(changeKeyViewType(KeyViewType.Tree))
     }
 
-    dispatch(fetchKeys({
-      searchMode: SearchMode.Pattern,
-      cursor: '0',
-      count: SCAN_TREE_COUNT_DEFAULT
-    }))
+    dispatch(
+      fetchKeys({
+        searchMode: SearchMode.Pattern,
+        cursor: '0',
+        count: SCAN_TREE_COUNT_DEFAULT,
+      }),
+    )
   }
 
   return (
@@ -57,11 +62,11 @@ const NoKeysFound = (props: Props) => {
         src={TelescopeImg}
         alt="no results image"
       />
-      <EuiSpacer size="l" />
+      <Spacer />
       <EuiTitle className={styles.title} size="s">
         <span>Let&apos;s start working</span>
       </EuiTitle>
-      <EuiSpacer size="l" />
+      <Spacer />
       <div className={styles.actions}>
         <LoadSampleData onSuccess={onSuccessLoadData} />
         <EuiButtonEmpty

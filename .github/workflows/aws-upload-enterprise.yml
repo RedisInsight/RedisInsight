@@ -1,0 +1,58 @@
+name: AWS Upload Enterprise
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: Environment for build
+        required: false
+        default: 'development'
+        type: string
+
+env:
+  AWS_BUCKET_NAME_PROD: ${{ vars.AWS_BUCKET_NAME_ENTERPRISE }}
+  AWS_BUCKET_NAME_TEST: ${{ vars.AWS_BUCKET_NAME_ENTERPRISE_TEST }}
+  AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+  AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  s3:
+    name: Upload to s3
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get current date
+        id: date
+        uses: ./.github/actions/get-current-date
+
+      - name: Download builds
+        uses: actions/download-artifact@v4
+        with:
+          pattern: '*-builds'
+          path: release
+          merge-multiple: true
+
+      - run: ls -R ./release
+
+      - name: Upload builds to s3 bucket dev sub folder
+        if: ${{ inputs.environment != 'production' }}
+        run: |
+          SUB_PATH="dev-builds/${{ steps.date.outputs.date }}/${{ github.run_id }}"
+          echo "SUB_PATH=${SUB_PATH}" >> $GITHUB_ENV
+
+          aws s3 cp release/ s3://${AWS_BUCKET_NAME_TEST}/public/${SUB_PATH} --recursive
+
+      - name: Upload builds to s3 bucket pre-release sub folder
+        if: ${{ inputs.environment == 'production' }}
+        run: |
+          APP_VERSION=$(jq -r '.version' redisinsight/package.json)
+
+          aws s3 cp release/ s3://${AWS_BUCKET_NAME_PROD}/releases/${APP_VERSION} --recursive
+          aws s3 cp release/ s3://${AWS_BUCKET_NAME_PROD}/latest --recursive
+
+      - name: Generate job summary
+        run: |
+          node ./.github/generate-build-summary.js

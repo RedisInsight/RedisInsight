@@ -1,12 +1,9 @@
 import React from 'react'
 import cx from 'classnames'
-import {
-  EuiLoadingContent,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiText, EuiToolTip } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import { Maybe, formatBytes } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
@@ -18,16 +15,11 @@ export interface Props {
 }
 
 const KeyRowSize = (props: Props) => {
-  const {
-    size,
-    nameString,
-    deletePopoverId,
-    rowId,
-  } = props
+  const { size, nameString, deletePopoverId, rowId } = props
 
   if (isUndefined(size)) {
     return (
-      <EuiLoadingContent
+      <LoadingContent
         lines={1}
         className={cx(styles.keyInfoLoading, styles.keySize)}
         data-testid={`size-loading_${nameString}`}
@@ -37,7 +29,12 @@ const KeyRowSize = (props: Props) => {
 
   if (!size) {
     return (
-      <EuiText color="subdued" size="s" className={cx(styles.keySize)} data-testid={`size-${nameString}`}>
+      <EuiText
+        color="subdued"
+        size="s"
+        className={cx(styles.keySize)}
+        data-testid={`size-${nameString}`}
+      >
         -
       </EuiText>
     )
@@ -47,24 +44,22 @@ const KeyRowSize = (props: Props) => {
       <EuiText
         color="subdued"
         size="s"
-        className={cx(
-          styles.keySize,
-          'moveOnHoverKey',
-          { hide: deletePopoverId === rowId },
-        )}
+        className={cx(styles.keySize, 'moveOnHoverKey', {
+          hide: deletePopoverId === rowId,
+        })}
         style={{ maxWidth: '100%' }}
       >
-        <div style={{ display: 'flex' }} className="truncateText" data-testid={`size-${nameString}`}>
+        <div
+          style={{ display: 'flex' }}
+          className="truncateText"
+          data-testid={`size-${nameString}`}
+        >
           <EuiToolTip
             title="Key Size"
             className={styles.tooltip}
             anchorClassName="truncateText"
             position="right"
-            content={(
-              <>
-                {formatBytes(size, 3)}
-              </>
-            )}
+            content={<>{formatBytes(size, 3)}</>}
           >
             <>{formatBytes(size, 0)}</>
           </EuiToolTip>

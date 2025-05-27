@@ -1,6 +1,5 @@
 import { DatabaseRecommendation } from 'src/modules/database-recommendation/models';
-import { DatabaseRecommendationEntity }
-  from 'src/modules/database-recommendation/entities/database-recommendation.entity';
+import { DatabaseRecommendationEntity } from 'src/modules/database-recommendation/entities/database-recommendation.entity';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
 import { mockDatabaseId } from 'src/__mocks__/databases';
 
@@ -8,27 +7,30 @@ export const mockDatabaseRecommendationId = 'databaseRecommendationID';
 
 export const mockRecommendationName = 'string';
 
-export const mockDatabaseRecommendationParamsEncrypted = 'recommendation.params_ENCRYPTED';
+export const mockDatabaseRecommendationParamsEncrypted =
+  'recommendation.params_ENCRYPTED';
 
 export const mockDatabaseRecommendationParamsPlain = {};
 
-export const mockDatabaseRecommendation = Object.assign(new DatabaseRecommendation(), {
-  id: mockDatabaseRecommendationId,
-  name: mockRecommendationName,
-  databaseId: mockDatabaseId,
-  read: false,
-  disabled: false,
-  hide: false,
-  params: mockDatabaseRecommendationParamsPlain,
-});
-
-export const mockDatabaseRecommendationEntity = new DatabaseRecommendationEntity(
+export const mockDatabaseRecommendation = Object.assign(
+  new DatabaseRecommendation(),
   {
+    id: mockDatabaseRecommendationId,
+    name: mockRecommendationName,
+    databaseId: mockDatabaseId,
+    read: false,
+    disabled: false,
+    hide: false,
+    params: mockDatabaseRecommendationParamsPlain,
+  },
+);
+
+export const mockDatabaseRecommendationEntity =
+  new DatabaseRecommendationEntity({
     ...mockDatabaseRecommendation,
     params: mockDatabaseRecommendationParamsEncrypted,
     encryption: EncryptionStrategy.KEYTAR,
-  },
-);
+  });
 
 export const mockDatabaseRecommendationService = () => ({
   create: jest.fn(),

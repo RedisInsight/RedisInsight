@@ -7,9 +7,13 @@ export class TcpAuthStrategy implements AuthStrategy {
 
   private initialized = false
 
-  private readonly port = parseInt(process.env.TCP_LOCAL_CLOUD_AUTH_PORT || '5542', 10)
+  private readonly port = parseInt(
+    process.env.TCP_LOCAL_CLOUD_AUTH_PORT || '5542',
+    10,
+  )
 
-  private constructor() { }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  private constructor() {}
 
   public static getInstance(): TcpAuthStrategy {
     if (!TcpAuthStrategy.instance) {

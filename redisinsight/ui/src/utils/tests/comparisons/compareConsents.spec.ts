@@ -8,27 +8,27 @@ const spec = {
       editable: false,
       since: '1.0.2',
       title: 'EULA: Redis Insight License Terms',
-      label: 'Label'
-    }
-  }
+      label: 'Label',
+    },
+  },
 }
 
 describe('compareConsents', () => {
   it('compareConsents should return array of difference of consents', () => {
     const agreements1 = {
       eula: true,
-      version: '1.0.2'
+      version: '1.0.2',
     }
 
     const agreements2 = {
       eula: true,
       eulaNew: false,
-      version: '1.0.2'
+      version: '1.0.2',
     }
 
     const agreements3 = {
       eula: false,
-      version: '1.0.0'
+      version: '1.0.0',
     }
 
     expect(compareConsents(spec.agreements, agreements1)).toHaveLength(0)
@@ -41,18 +41,18 @@ describe('isDifferentConsentsExists', () => {
   it('isDifferentConsentsExists should return true if some difference in consents', () => {
     const agreements1 = {
       eula: true,
-      version: '1.0.2'
+      version: '1.0.2',
     }
 
     const agreements2 = {
       eula: true,
       eulaNew: false,
-      version: '1.0.2'
+      version: '1.0.2',
     }
 
     const agreements3 = {
       eula: false,
-      version: '1.0.0'
+      version: '1.0.0',
     }
 
     expect(isDifferentConsentsExists(spec.agreements, agreements1)).toBeFalsy()

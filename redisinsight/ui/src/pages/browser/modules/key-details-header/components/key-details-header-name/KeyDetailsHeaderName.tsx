@@ -1,8 +1,6 @@
 import {
   EuiButtonIcon,
   EuiFieldText,
-  EuiFlexGrid,
-  EuiFlexItem,
   EuiIcon,
   EuiText,
   EuiToolTip,
@@ -13,14 +11,21 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
-import {
-  TEXT_UNPRINTABLE_CHARACTERS,
-} from 'uiSrc/constants'
+import { TEXT_UNPRINTABLE_CHARACTERS } from 'uiSrc/constants'
 import { AddCommonFieldsFormConfig } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
-import { initialKeyInfo, keysSelector, selectedKeyDataSelector, selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import {
+  initialKeyInfo,
+  keysSelector,
+  selectedKeyDataSelector,
+  selectedKeySelector,
+} from 'uiSrc/slices/browser/keys'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import {
   formatLongName,
   isEqualBuffers,
@@ -28,17 +33,20 @@ import {
   stringToBuffer,
 } from 'uiSrc/utils'
 
+import { FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
-  onEditKey: (key: RedisResponseBuffer, newKey: RedisResponseBuffer, onFailure?: () => void) => void
+  onEditKey: (
+    key: RedisResponseBuffer,
+    newKey: RedisResponseBuffer,
+    onFailure?: () => void,
+  ) => void
 }
 
 const COPY_KEY_NAME_ICON = 'copyKeyNameIcon'
 
-const KeyDetailsHeaderName = ({
-  onEditKey,
-}: Props) => {
+const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
   const { loading } = useSelector(selectedKeySelector)
   const {
     ttl: ttlProp,
@@ -75,7 +83,9 @@ const KeyDetailsHeaderName = ({
     setKeyIsEditing(true)
   }
 
-  const onChangeKey = ({ currentTarget: { value } }: ChangeEvent<HTMLInputElement>) => {
+  const onChangeKey = ({
+    currentTarget: { value },
+  }: ChangeEvent<HTMLInputElement>) => {
     keyIsEditing && setKey(value)
   }
 
@@ -85,13 +95,17 @@ const KeyDetailsHeaderName = ({
 
     const newKeyBuffer = stringToBuffer(key || '')
 
-    if (keyBuffer && !isEqualBuffers(keyBuffer, newKeyBuffer) && !isNull(keyProp)) {
+    if (
+      keyBuffer &&
+      !isEqualBuffers(keyBuffer, newKeyBuffer) &&
+      !isNull(keyProp)
+    ) {
       onEditKey(keyBuffer, newKeyBuffer, () => setKey(keyProp))
     }
   }
 
   const cancelEditKey = (event?: React.MouseEvent<HTMLElement>) => {
-    const { id } = event?.target as HTMLElement || {}
+    const { id } = (event?.target as HTMLElement) || {}
     if (id === COPY_KEY_NAME_ICON) {
       return
     }
@@ -106,7 +120,7 @@ const KeyDetailsHeaderName = ({
     event: any,
     text = '',
     keyInputIsEditing: boolean,
-    keyNameInputRef: React.RefObject<HTMLInputElement>
+    keyNameInputRef: React.RefObject<HTMLInputElement>,
   ) => {
     navigator.clipboard.writeText(text)
 
@@ -120,24 +134,23 @@ const KeyDetailsHeaderName = ({
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_COPIED,
-        TelemetryEvent.TREE_VIEW_KEY_COPIED
+        TelemetryEvent.TREE_VIEW_KEY_COPIED,
       ),
       eventData: {
         databaseId: instanceId,
-        keyType: type
-      }
+        keyType: type,
+      },
     })
   }
 
   const appendKeyEditing = () =>
-    (!keyIsEditing ? <EuiIcon type="pencil" color="subdued" /> : '')
+    !keyIsEditing ? <EuiIcon type="pencil" color="subdued" /> : ''
 
   return (
-    <EuiFlexItem
+    <FlexItem
       onMouseEnter={onMouseEnterKey}
       onMouseLeave={onMouseLeaveKey}
       onClick={onClickKey}
-      grow={false}
       className={cx(
         styles.keyFlexItem, // TODO with styles.keyFlexItemEditing
         keyIsEditing || keyIsHovering ? styles.keyFlexItemEditing : null,
@@ -145,17 +158,11 @@ const KeyDetailsHeaderName = ({
       data-testid="edit-key-btn"
     >
       {(keyIsEditing || keyIsHovering) && (
-        <EuiFlexGrid
-          columns={1}
-          responsive={false}
-          gutterSize="none"
+        <Grid
           className={styles.classNameGridComponent}
+          data-testid="edit-key-grid"
         >
-          <EuiFlexItem
-            grow
-            component="span"
-            className={styles.flexItemKeyInput}
-          >
+          <FlexItem grow className={styles.flexItemKeyInput}>
             <EuiToolTip
               title="Key Name"
               position="left"
@@ -176,11 +183,13 @@ const KeyDetailsHeaderName = ({
                     name="key"
                     id="key"
                     inputRef={keyNameRef}
-                    className={cx(
-                      styles.keyInput,
-                      { [styles.keyInputEditing]: keyIsEditing, 'input-warning': !keyIsEditable }
-                    )}
-                    placeholder={AddCommonFieldsFormConfig?.keyName?.placeholder}
+                    className={cx(styles.keyInput, {
+                      [styles.keyInputEditing]: keyIsEditing,
+                      'input-warning': !keyIsEditable,
+                    })}
+                    placeholder={
+                      AddCommonFieldsFormConfig?.keyName?.placeholder
+                    }
                     value={key!}
                     fullWidth={false}
                     compressed
@@ -207,21 +216,26 @@ const KeyDetailsHeaderName = ({
                   aria-label="Copy key name"
                   color="primary"
                   onClick={(event: any) =>
-                    handleCopy(event, key!, keyIsEditing, keyNameRef)}
+                    handleCopy(event, key!, keyIsEditing, keyNameRef)
+                  }
                   data-testid="copy-key-name-btn"
                 />
               </EuiToolTip>
             )}
-          </EuiFlexItem>
-        </EuiFlexGrid>
+          </FlexItem>
+        </Grid>
       )}
-      <EuiText className={cx(styles.key, { [styles.hidden]: keyIsEditing || keyIsHovering })} data-testid="key-name-text">
+      <EuiText
+        className={cx(styles.key, {
+          [styles.hidden]: keyIsEditing || keyIsHovering,
+        })}
+        data-testid="key-name-text"
+      >
         <b className="truncateText">
           {replaceSpaces(keyProp?.substring(0, 200))}
         </b>
       </EuiText>
-    </EuiFlexItem>
-
+    </FlexItem>
   )
 }
 

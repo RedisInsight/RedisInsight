@@ -2,14 +2,14 @@ import {
   EuiButtonIcon,
   EuiFieldText,
   EuiIcon,
-  EuiOutsideClickDetector,
   EuiProgress,
   EuiToolTip,
-  keys
+  keys,
 } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { GroupBadge } from 'uiSrc/components'
+import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { Nullable } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
@@ -68,7 +68,8 @@ const MultiSearch = (props: Props) => {
 
   const { options: suggestionOptions = [] } = suggestions ?? {}
 
-  const isArrowUpOrDown = (key: string) => [keys.ARROW_DOWN, keys.ARROW_UP].includes(key)
+  const isArrowUpOrDown = (key: string) =>
+    [keys.ARROW_DOWN, keys.ARROW_UP].includes(key)
 
   useEffect(() => {
     if (!suggestionOptions?.length) {
@@ -118,12 +119,14 @@ const MultiSearch = (props: Props) => {
     if (isArrowUpOrDown(e.key)) {
       e.preventDefault()
       const diff = focusedItem + (keys.ARROW_DOWN === e.key ? 1 : -1)
-      setFocusedItem(diff > max ? min : (diff < min ? max : diff))
+      setFocusedItem(diff > max ? min : diff < min ? max : diff)
     }
 
     if (e.key === 'Delete') {
       focusedItem > -1 && e.preventDefault()
-      handleDeleteSuggestion(focusedItem > -1 ? [suggestionOptions[focusedItem].id] : undefined)
+      handleDeleteSuggestion(
+        focusedItem > -1 ? [suggestionOptions[focusedItem].id] : undefined,
+      )
     }
 
     if (keys.ESCAPE === e.key) setShowAutoSuggestions(false)
@@ -157,17 +160,26 @@ const MultiSearch = (props: Props) => {
   )
 
   return (
-    <EuiOutsideClickDetector onOutsideClick={exitAutoSuggestions}>
+    <OutsideClickDetector onOutsideClick={exitAutoSuggestions}>
       <div
         className={cx(styles.multiSearchWrapper, className)}
         onKeyDown={handleKeyDown}
         role="presentation"
         data-testid="multi-search"
       >
-        <div className={cx(styles.multiSearch, { [styles.isFocused]: isInputFocus })}>
+        <div
+          className={cx(styles.multiSearch, {
+            [styles.isFocused]: isInputFocus,
+          })}
+        >
           <div>
             {options.map((option) => (
-              <GroupBadge key={option} type={option} onDelete={onDeleteOption} compressed={compressed} />
+              <GroupBadge
+                key={option}
+                type={option}
+                onDelete={onDeleteOption}
+                compressed={compressed}
+              />
             ))}
           </div>
           <EuiFieldText
@@ -175,7 +187,9 @@ const MultiSearch = (props: Props) => {
             placeholder={placeholder}
             value={value}
             onKeyDown={handleKeyDown}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onChange(e.target.value)
+            }
             onFocus={() => setIsInputFocus(true)}
             onBlur={() => setIsInputFocus(false)}
             controlOnly
@@ -183,7 +197,11 @@ const MultiSearch = (props: Props) => {
             {...rest}
           />
           {showAutoSuggestions && !!suggestionOptions?.length && (
-            <div role="presentation" className={styles.autoSuggestions} data-testid="suggestions">
+            <div
+              role="presentation"
+              className={styles.autoSuggestions}
+              data-testid="suggestions"
+            >
               {suggestions?.loading && (
                 <EuiProgress
                   color="primary"
@@ -193,42 +211,54 @@ const MultiSearch = (props: Props) => {
                 />
               )}
               <ul role="listbox">
-                {suggestionOptions?.map(({ id, option, value }, index) => (
-                  value && (
-                    <li
-                      key={id}
-                      className={cx(styles.suggestion, { [styles.focused]: focusedItem === index })}
-                      onClick={() => handleApplySuggestion(index)}
-                      role="presentation"
-                      data-testid={`suggestion-item-${id}`}
-                    >
-                      {option && (
-                        <GroupBadge
-                          type={option}
-                          compressed={compressed}
-                          className={styles.suggestionOption}
+                {suggestionOptions?.map(
+                  ({ id, option, value }, index) =>
+                    value && (
+                      <li
+                        key={id}
+                        className={cx(styles.suggestion, {
+                          [styles.focused]: focusedItem === index,
+                        })}
+                        onClick={() => handleApplySuggestion(index)}
+                        role="presentation"
+                        data-testid={`suggestion-item-${id}`}
+                      >
+                        {option && (
+                          <GroupBadge
+                            type={option}
+                            compressed={compressed}
+                            className={styles.suggestionOption}
+                          />
+                        )}
+                        <span
+                          className={styles.suggestionText}
+                          data-testid="suggestion-item-text"
+                        >
+                          {value}
+                        </span>
+                        <EuiButtonIcon
+                          className={styles.suggestionRemoveBtn}
+                          iconType="cross"
+                          color="primary"
+                          aria-label="Remove History Record"
+                          onClick={(e: React.MouseEvent) => {
+                            e.stopPropagation()
+                            handleDeleteSuggestion([id])
+                          }}
+                          data-testid={`remove-suggestion-item-${id}`}
                         />
-                      )}
-                      <span className={styles.suggestionText} data-testid="suggestion-item-text">{value}</span>
-                      <EuiButtonIcon
-                        className={styles.suggestionRemoveBtn}
-                        iconType="cross"
-                        color="primary"
-                        aria-label="Remove History Record"
-                        onClick={(e: React.MouseEvent) => {
-                          e.stopPropagation()
-                          handleDeleteSuggestion([id])
-                        }}
-                        data-testid={`remove-suggestion-item-${id}`}
-                      />
-                    </li>
-                  )
-                ))}
+                      </li>
+                    ),
+                )}
               </ul>
               <div
                 role="presentation"
                 className={styles.clearHistory}
-                onClick={() => handleDeleteSuggestion(suggestionOptions?.map((item) => item.id))}
+                onClick={() =>
+                  handleDeleteSuggestion(
+                    suggestionOptions?.map((item) => item.id),
+                  )
+                }
                 data-testid="clear-history-btn"
               >
                 <EuiIcon type="eraser" style={{ marginRight: 6 }} />
@@ -237,10 +267,7 @@ const MultiSearch = (props: Props) => {
             </div>
           )}
           {(value || !!options.length) && (
-            <EuiToolTip
-              content="Reset Filters"
-              position="bottom"
-            >
+            <EuiToolTip content="Reset Filters" position="bottom">
               <EuiButtonIcon
                 display="empty"
                 iconType="cross"
@@ -287,7 +314,7 @@ const MultiSearch = (props: Props) => {
           {!disableSubmit && SubmitBtn()}
         </div>
       </div>
-    </EuiOutsideClickDetector>
+    </OutsideClickDetector>
   )
 }
 

@@ -1,7 +1,10 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { setMatchedCommand, clearSearchingCommand } from 'uiSrc/slices/cli/cli-settings'
+import {
+  setMatchedCommand,
+  clearSearchingCommand,
+} from 'uiSrc/slices/cli/cli-settings'
 import { cleanup, mockedStore, render } from 'uiSrc/utils/test-utils'
 import CliAutocomplete, { Props } from './CliAutocomplete'
 
@@ -50,7 +53,11 @@ describe('CliAutocomplete', () => {
     const command = 'clear'
 
     const { queryByTestId } = render(
-      <CliAutocomplete {...instance(mockedProps)} commandName={command} arguments={[]} />
+      <CliAutocomplete
+        {...instance(mockedProps)}
+        commandName={command}
+        arguments={[]}
+      />,
     )
 
     const autocompleteComponent = queryByTestId(CliAutocompleteTestId)
@@ -60,7 +67,11 @@ describe('CliAutocomplete', () => {
 
   it('Autocomplete should be in Document with "scan" command ', () => {
     const { queryByTestId } = render(
-      <CliAutocomplete {...instance(mockedProps)} commandName={scanCommand} arguments={scanArgs} />
+      <CliAutocomplete
+        {...instance(mockedProps)}
+        commandName={scanCommand}
+        arguments={scanArgs}
+      />,
     )
 
     const autocompleteComponent = queryByTestId(CliAutocompleteTestId)
@@ -70,7 +81,11 @@ describe('CliAutocomplete', () => {
 
   it('should "setMatchedCommand" & "clearSearchingCommand" action be called after unmount with empty string', () => {
     const { unmount } = render(
-      <CliAutocomplete {...instance(mockedProps)} commandName={scanCommand} arguments={scanArgs} />
+      <CliAutocomplete
+        {...instance(mockedProps)}
+        commandName={scanCommand}
+        arguments={scanArgs}
+      />,
     )
 
     unmount()
@@ -88,7 +103,7 @@ describe('CliAutocomplete', () => {
         commandName={scanCommand}
         arguments={scanArgs}
         wordsTyped={2}
-      />
+      />,
     )
 
     const autocompleteComponent = queryByTestId(CliAutocompleteTestId)
@@ -105,7 +120,7 @@ describe('CliAutocomplete', () => {
         commandName={scanCommand}
         arguments={scanArgs}
         wordsTyped={2}
-      />
+      />,
     )
 
     const autocompleteComponent = queryByTestId(CliAutocompleteTestId)
@@ -121,7 +136,7 @@ describe('CliAutocomplete', () => {
         commandName={scanCommand}
         arguments={scanArgs}
         wordsTyped={2}
-      />
+      />,
     )
 
     const autocompleteComponent = queryByTestId(CliAutocompleteTestId)
@@ -138,7 +153,7 @@ describe('CliAutocomplete', () => {
         commandName={scanCommand}
         arguments={scanArgs}
         wordsTyped={10}
-      />
+      />,
     )
 
     const autocompleteComponent = queryByTestId(CliAutocompleteTestId)

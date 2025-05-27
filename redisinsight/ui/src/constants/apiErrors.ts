@@ -7,6 +7,7 @@ enum ApiErrors {
   KeytarDecryption = 'KeytarDecryptionError',
   ClientNotFound = 'ClientNotFoundError',
   RedisearchIndexNotFound = 'no such index',
+  ConnectionLost = 'The connection to the server has been lost.',
 }
 
 export const ApiEncryptionErrors: string[] = [
@@ -27,7 +28,7 @@ export const AI_CHAT_ERRORS = {
 
     return error
   },
-  tokenLimit: () => 'Conversation is too long. Restart the session.'
+  tokenLimit: () => 'Conversation is too long. Restart the session.',
 }
 
 export default ApiErrors

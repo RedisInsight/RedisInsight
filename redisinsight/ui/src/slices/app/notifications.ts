@@ -3,8 +3,17 @@ import { AxiosError } from 'axios'
 import { findIndex, isUndefined } from 'lodash'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
-import { getApiErrorMessage, getApiErrorName, isStatusSuccessful, Maybe, Nullable } from 'uiSrc/utils'
-import { NotificationsDto, NotificationDto } from 'apiSrc/modules/notification/dto'
+import {
+  getApiErrorMessage,
+  getApiErrorName,
+  isStatusSuccessful,
+  Maybe,
+  Nullable,
+} from 'uiSrc/utils'
+import {
+  NotificationsDto,
+  NotificationDto,
+} from 'apiSrc/modules/notification/dto'
 import { IError, InfiniteMessage, StateAppNotifications } from '../interfaces'
 
 import { AppDispatch, RootState } from '../store'
@@ -21,25 +30,28 @@ export const initialState: StateAppNotifications = {
     isCenterOpen: false,
     totalUnread: 0,
     shouldDisplayToast: false,
-  }
+  },
 }
 
 export interface IAddInstanceErrorPayload extends AxiosError {
-  instanceId?: string,
+  instanceId?: string
 }
 // A slice for recipes
 const notificationsSlice = createSlice({
   name: 'notifications',
   initialState,
   reducers: {
-    addErrorNotification: (state, { payload }: { payload: IAddInstanceErrorPayload }) => {
+    addErrorNotification: (
+      state,
+      { payload }: { payload: IAddInstanceErrorPayload },
+    ) => {
       const { instanceId } = payload
       const title = payload?.response?.data?.title
       const errorName = getApiErrorName(payload)
       const message = getApiErrorMessage(payload)
       const additionalInfo = payload?.response?.data?.additionalInfo
       const errorExistedId = state.errors.findIndex(
-        (err) => err.message === message
+        (err) => err.message === message,
       )
 
       if (errorExistedId !== -1) {
@@ -73,11 +85,13 @@ const notificationsSlice = createSlice({
       state.messages.push({
         ...payload,
         id: `${Date.now()}`,
-        group: payload.group
+        group: payload.group,
       })
     },
     removeMessage: (state, { payload = '' }: { payload: string }) => {
-      state.messages = state.messages.filter((message) => message.id !== payload)
+      state.messages = state.messages.filter(
+        (message) => message.id !== payload,
+      )
       state.errors = state.errors.filter((error) => error.id !== payload)
     },
     resetMessages: (state) => {
@@ -85,29 +99,43 @@ const notificationsSlice = createSlice({
     },
     setIsCenterOpen: (state, { payload }: { payload: Maybe<boolean> }) => {
       if (isUndefined(payload)) {
-        state.notificationCenter.isCenterOpen = !state.notificationCenter.isCenterOpen
+        state.notificationCenter.isCenterOpen =
+          !state.notificationCenter.isCenterOpen
         return
       }
       state.notificationCenter.isCenterOpen = payload
     },
-    setIsNotificationOpen: (state, { payload }: { payload: Maybe<boolean> }) => {
+    setIsNotificationOpen: (
+      state,
+      { payload }: { payload: Maybe<boolean> },
+    ) => {
       if (isUndefined(payload)) {
-        state.notificationCenter.isNotificationOpen = !state.notificationCenter.isNotificationOpen
+        state.notificationCenter.isNotificationOpen =
+          !state.notificationCenter.isNotificationOpen
         return
       }
       state.notificationCenter.isNotificationOpen = payload
     },
-    setNewNotificationReceived: (state, { payload }: { payload: NotificationsDto }) => {
+    setNewNotificationReceived: (
+      state,
+      { payload }: { payload: NotificationsDto },
+    ) => {
       state.notificationCenter.totalUnread = payload.totalUnread
       state.notificationCenter.isNotificationOpen = true
     },
-    setLastReceivedNotification: (state, { payload }: { payload: Nullable<NotificationDto> }) => {
+    setLastReceivedNotification: (
+      state,
+      { payload }: { payload: Nullable<NotificationDto> },
+    ) => {
       state.notificationCenter.lastReceivedNotification = payload
     },
     getNotifications: (state) => {
       state.notificationCenter.loading = true
     },
-    getNotificationsSuccess: (state, { payload }: { payload: NotificationsDto }) => {
+    getNotificationsSuccess: (
+      state,
+      { payload }: { payload: NotificationsDto },
+    ) => {
       state.notificationCenter.loading = false
       state.notificationCenter.notifications = payload.notifications
       state.notificationCenter.totalUnread = payload.totalUnread
@@ -118,7 +146,10 @@ const notificationsSlice = createSlice({
     unreadNotifications: (state, { payload }) => {
       state.notificationCenter.totalUnread = payload
     },
-    addInfiniteNotification: (state, { payload }: PayloadAction<InfiniteMessage>) => {
+    addInfiniteNotification: (
+      state,
+      { payload }: PayloadAction<InfiniteMessage>,
+    ) => {
       const index = findIndex(state.infiniteMessages, { id: payload.id })
       if (index === -1) {
         state.infiniteMessages.push(payload)
@@ -127,8 +158,10 @@ const notificationsSlice = createSlice({
       }
     },
     removeInfiniteNotification: (state, { payload }: PayloadAction<string>) => {
-      state.infiniteMessages = state.infiniteMessages.filter((message) => message.id !== payload)
-    }
+      state.infiniteMessages = state.infiniteMessages.filter(
+        (message) => message.id !== payload,
+      )
+    },
   },
 })
 
@@ -167,14 +200,14 @@ export default notificationsSlice.reducer
 
 export function fetchNotificationsAction(
   onSuccessAction?: (totalCount: number, numberOfNotifications: number) => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     dispatch(getNotifications())
 
     try {
       const { data, status } = await apiService.get<NotificationsDto>(
-        ApiEndpoints.NOTIFICATIONS
+        ApiEndpoints.NOTIFICATIONS,
       )
 
       if (isStatusSuccessful(status)) {
@@ -188,12 +221,15 @@ export function fetchNotificationsAction(
   }
 }
 
-export function unreadNotificationsAction(notification?: { timestamp: number, type: string }) {
+export function unreadNotificationsAction(notification?: {
+  timestamp: number
+  type: string
+}) {
   return async (dispatch: AppDispatch) => {
     try {
       const { data, status } = await apiService.patch(
         ApiEndpoints.NOTIFICATIONS_READ,
-        notification
+        notification,
       )
 
       if (isStatusSuccessful(status)) {
@@ -205,13 +241,12 @@ export function unreadNotificationsAction(notification?: { timestamp: number, ty
   }
 }
 
-export function setNewNotificationAction(
-  data: NotificationsDto,
-) {
+export function setNewNotificationAction(data: NotificationsDto) {
   return (dispatch: AppDispatch, stateInit: () => RootState) => {
     const state = stateInit()
     dispatch(setNewNotificationReceived(data))
-    const toastNotification = state.user.settings.config?.agreements?.notifications
+    const toastNotification = state.user.settings.config?.agreements
+      ?.notifications
       ? data.notifications[0]
       : null
     dispatch(setLastReceivedNotification(toastNotification))

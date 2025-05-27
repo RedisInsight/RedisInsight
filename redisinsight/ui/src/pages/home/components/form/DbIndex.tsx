@@ -2,17 +2,16 @@ import React, { ChangeEvent } from 'react'
 import {
   EuiCheckbox,
   EuiFieldNumber,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
-  EuiSpacer,
-  htmlIdGenerator
+  htmlIdGenerator,
 } from '@elastic/eui'
 import { FormikProps } from 'formik'
 
 import { validateNumber } from 'uiSrc/utils'
 
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -22,7 +21,9 @@ export interface Props {
 const DbIndex = (props: Props) => {
   const { formik } = props
 
-  const handleChangeDbIndexCheckbox = (e: ChangeEvent<HTMLInputElement>): void => {
+  const handleChangeDbIndexCheckbox = (
+    e: ChangeEvent<HTMLInputElement>,
+  ): void => {
     const isChecked = e.target.checked
     if (!isChecked) {
       // Reset db field to initial value
@@ -33,13 +34,8 @@ const DbIndex = (props: Props) => {
 
   return (
     <>
-      <EuiFlexGroup
-        responsive={false}
-        gutterSize="xs"
-      >
-        <EuiFlexItem
-          grow={false}
-        >
+      <Row gap="s">
+        <FlexItem>
           <EuiFormRow>
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db`}
@@ -50,14 +46,14 @@ const DbIndex = (props: Props) => {
               data-testid="showDb"
             />
           </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
 
       {formik.values.showDb && (
         <>
-          <EuiSpacer />
-          <EuiFlexGroup>
-            <EuiFlexItem className={styles.dbInput}>
+          <Spacer />
+          <Row gap="m" responsive>
+            <FlexItem grow className={styles.dbInput}>
               <EuiFormRow label="Database Index">
                 <EuiFieldNumber
                   name="db"
@@ -69,16 +65,16 @@ const DbIndex = (props: Props) => {
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     formik.setFieldValue(
                       e.target.name,
-                      validateNumber(e.target.value.trim())
+                      validateNumber(e.target.value.trim()),
                     )
                   }}
                   type="text"
                   min={0}
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-            <EuiFlexItem />
-          </EuiFlexGroup>
+            </FlexItem>
+            <FlexItem grow />
+          </Row>
         </>
       )}
     </>

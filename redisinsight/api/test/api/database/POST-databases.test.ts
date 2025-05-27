@@ -7,7 +7,11 @@ import {
   requirements,
   validateApiCall,
   after,
-  generateInvalidDataTestCases, validateInvalidDataTestCase, getMainCheckFn, serverConfig, before,
+  generateInvalidDataTestCases,
+  validateInvalidDataTestCase,
+  getMainCheckFn,
+  serverConfig,
+  before,
 } from '../deps';
 import { databaseSchema } from './constants';
 import { ServerService } from 'src/modules/server/server.service';
@@ -26,7 +30,9 @@ const dataSchema = Joi.object({
   username: Joi.string().allow(null),
   password: Joi.string().allow(null),
   timeout: Joi.number().integer().allow(null),
-  compressor: Joi.string().valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY').allow(null),
+  compressor: Joi.string()
+    .valid('NONE', 'LZ4', 'GZIP', 'ZSTD', 'SNAPPY')
+    .allow(null),
   tls: Joi.boolean().allow(null),
   tlsServername: Joi.string().allow(null),
   verifyServerCert: Joi.boolean().allow(null),
@@ -44,9 +50,11 @@ const dataSchema = Joi.object({
     privateKey: Joi.string().allow(null),
     passphrase: Joi.string().allow(null),
   }).allow(null),
-}).messages({
-  'any.required': '{#label} should not be empty',
-}).strict(true);
+})
+  .messages({
+    'any.required': '{#label} should not be empty',
+  })
+  .strict(true);
 
 const validInputData = {
   name: constants.getRandomString(),
@@ -62,22 +70,28 @@ const baseDatabaseData = {
   compressor: constants.TEST_REDIS_COMPRESSOR,
   username: constants.TEST_REDIS_USER || undefined,
   password: constants.TEST_REDIS_PASSWORD || undefined,
-}
+};
 
 const baseSentinelData = {
   name: constants.TEST_SENTINEL_MASTER_GROUP,
   username: constants.TEST_SENTINEL_MASTER_USER || null,
   password: constants.TEST_SENTINEL_MASTER_PASS || null,
-}
+};
 
-const responseSchema = databaseSchema.keys({
-  isPreSetup: Joi.boolean().allow(null),
-}).required().strict(true);
+const responseSchema = databaseSchema
+  .keys({
+    isPreSetup: Joi.boolean().allow(null),
+  })
+  .required()
+  .strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
 describe('POST /databases', () => {
-  let existingCACertId, existingClientCertId, existingCACertName, existingClientCertName;
+  let existingCACertId,
+    existingClientCertId,
+    existingCACertName,
+    existingClientCertName;
 
   describe('Validation', function () {
     generateInvalidDataTestCases(dataSchema, validInputData).map(
@@ -107,11 +121,21 @@ describe('POST /databases', () => {
           error: 'Bad Request',
         },
         checkFn: ({ body }) => {
-          expect(body.message).to.contain('caCert.property name should not exist');
-          expect(body.message).to.contain('caCert.property certificate should not exist');
-          expect(body.message).to.contain('clientCert.property name should not exist');
-          expect(body.message).to.contain('clientCert.property certificate should not exist');
-          expect(body.message).to.contain('clientCert.property key should not exist');
+          expect(body.message).to.contain(
+            'caCert.property name should not exist',
+          );
+          expect(body.message).to.contain(
+            'caCert.property certificate should not exist',
+          );
+          expect(body.message).to.contain(
+            'clientCert.property name should not exist',
+          );
+          expect(body.message).to.contain(
+            'clientCert.property certificate should not exist',
+          );
+          expect(body.message).to.contain(
+            'clientCert.property key should not exist',
+          );
         },
       },
     ].map(mainCheckFn);
@@ -172,7 +196,9 @@ describe('POST /databases', () => {
                   // RedisJSON: { loaded: false },
                   // RedisTimeSeries: { loaded: false },
                   // customModules: [],
-                  buildType: ServerService.getAppType(serverConfig.get('server').buildType),
+                  buildType: ServerService.getAppType(
+                    serverConfig.get('server').buildType,
+                  ),
                 },
               });
             },
@@ -213,7 +239,7 @@ describe('POST /databases', () => {
               name: dbName,
               host: constants.TEST_REDIS_HOST,
               port: constants.TEST_REDIS_PORT,
-              db: constants.TEST_REDIS_DB_INDEX
+              db: constants.TEST_REDIS_DB_INDEX,
             },
           });
         });
@@ -248,44 +274,59 @@ describe('POST /databases', () => {
             },
             checkFn: ({ body }) => {
               addedId = body.id;
-            }
+            },
           });
 
           // Create string using Browser API to particular db index
           await validateApiCall({
-            endpoint: () => request(server).post(`/${constants.API.DATABASES}/${addedId}/string`),
+            endpoint: () =>
+              request(server).post(
+                `/${constants.API.DATABASES}/${addedId}/string`,
+              ),
             statusCode: 201,
             data: {
               keyName: browserKeyName,
-              value: 'somevalue'
+              value: 'somevalue',
             },
           });
 
           // Create client for CLI
           await validateApiCall({
-            endpoint: () => request(server).patch(`/${constants.API.DATABASES}/${addedId}/cli/${cliUuid}`),
+            endpoint: () =>
+              request(server).patch(
+                `/${constants.API.DATABASES}/${addedId}/cli/${cliUuid}`,
+              ),
             statusCode: 200,
           });
 
           // Create string using CLI API to 0 db index
           await validateApiCall({
-            endpoint: () => request(server).post(`/${constants.API.DATABASES}/${addedId}/cli/${cliUuid}/send-command`),
+            endpoint: () =>
+              request(server).post(
+                `/${constants.API.DATABASES}/${addedId}/cli/${cliUuid}/send-command`,
+              ),
             statusCode: 200,
             data: {
               command: `set ${cliKeyName} somevalue`,
             },
           });
 
-
           // check data created by db index
-          await rte.data.executeCommand('select', `${constants.TEST_REDIS_DB_INDEX}`);
-          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(1)
-          expect(await rte.data.executeCommand('exists', browserKeyName)).to.eql(1)
+          await rte.data.executeCommand(
+            'select',
+            `${constants.TEST_REDIS_DB_INDEX}`,
+          );
+          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(1);
+          expect(
+            await rte.data.executeCommand('exists', browserKeyName),
+          ).to.eql(1);
 
           // check data created by db index
           await rte.data.executeCommand('select', '0');
-          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(0)
-          expect(await rte.data.executeCommand('exists', browserKeyName)).to.eql(0)
+          expect(await rte.data.executeCommand('exists', cliKeyName)).to.eql(0);
+          expect(
+            await rte.data.executeCommand('exists', browserKeyName),
+          ).to.eql(0);
         });
       });
     });
@@ -318,7 +359,7 @@ describe('POST /databases', () => {
           },
         });
 
-        const db = await localDb.getInstanceByName(dbName)
+        const db = await localDb.getInstanceByName(dbName);
         expect(db).to.be.an('object');
         expect(db.new).to.eql(true);
       });
@@ -326,14 +367,16 @@ describe('POST /databases', () => {
     });
     describe('Cloud details', function () {
       before(async () => {
-        await localDb.initLocalDb(deps.rte, deps.server)
+        await localDb.initLocalDb(deps.rte, deps.server);
       });
       describe('Cloud details without pass and TLS', function () {
         requirements('!rte.tls');
         it('Should throw an error if request with cloudDetails and the same connection already exists', async () => {
           const dbName = constants.getRandomString();
           // preconditions
-          expect(await localDb.getInstanceById(constants.TEST_INSTANCE_ID)).to.be.an('object');
+          expect(
+            await localDb.getInstanceById(constants.TEST_INSTANCE_ID),
+          ).to.be.an('object');
 
           await validateApiCall({
             endpoint,
@@ -356,8 +399,9 @@ describe('POST /databases', () => {
               errorCode: CustomErrorCodes.DatabaseAlreadyExists,
             },
             checkFn: async ({ body }) => {
-              const database = await (await localDb.getRepository(localDb.repositories.DATABASE))
-                .findOneBy({ host: constants.TEST_REDIS_HOST });
+              const database = await (
+                await localDb.getRepository(localDb.repositories.DATABASE)
+              ).findOneBy({ host: constants.TEST_REDIS_HOST });
 
               expect(body.resource.databaseId).to.eq(database.id);
             },
@@ -371,7 +415,9 @@ describe('POST /databases', () => {
           const newClientCertName = constants.getRandomString();
           const newCaName = constants.getRandomString();
           // preconditions
-          expect(await localDb.getInstanceById(constants.TEST_INSTANCE_ID)).to.be.an('object');
+          expect(
+            await localDb.getInstanceById(constants.TEST_INSTANCE_ID),
+          ).to.be.an('object');
 
           await validateApiCall({
             endpoint,
@@ -404,8 +450,9 @@ describe('POST /databases', () => {
               errorCode: CustomErrorCodes.DatabaseAlreadyExists,
             },
             checkFn: async ({ body }) => {
-              const database = await (await localDb.getRepository(localDb.repositories.DATABASE))
-                .findOneBy({ host: constants.TEST_REDIS_HOST });
+              const database = await (
+                await localDb.getRepository(localDb.repositories.DATABASE)
+              ).findOneBy({ host: constants.TEST_REDIS_HOST });
 
               expect(body.resource.databaseId).to.eq(database.id);
             },
@@ -478,10 +525,15 @@ describe('POST /databases', () => {
             expect(body.caCert.name).to.eq(newCaName);
             expect(body.caCert.certificate).to.be.undefined;
 
-            const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-              .findOneBy({ id: body.caCert.id });
+            const ca: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CA_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.caCert.id });
 
-            expect(ca.certificate).to.eql(localDb.encryptData(constants.TEST_REDIS_TLS_CA));
+            expect(ca.certificate).to.eql(
+              localDb.encryptData(constants.TEST_REDIS_TLS_CA),
+            );
           },
         });
 
@@ -507,7 +559,7 @@ describe('POST /databases', () => {
             statusCode: 400,
             // todo: verify error handling because right now messages are different
             // message: 'Could not connect to',
-            error: 'Bad Request'
+            error: 'Bad Request',
           },
         });
 
@@ -529,14 +581,14 @@ describe('POST /databases', () => {
             verifyServerCert: true,
             caCert: {
               name: dbName,
-              certificate: 'invalid'
+              certificate: 'invalid',
             },
           },
           responseBody: {
             statusCode: 400,
             // todo: verify error handling because right now messages are different
             // message: 'Could not connect to',
-            error: 'Bad Request'
+            error: 'Bad Request',
           },
         });
 
@@ -546,13 +598,13 @@ describe('POST /databases', () => {
     describe('TLS AUTH', function () {
       requirements('rte.tls', 'rte.tlsAuth');
 
-
       after(localDb.initAgreements);
 
       it('Create standalone instance and verify users certs (new certificates)', async () => {
         const dbName = constants.getRandomString();
-        const newCaName = existingCACertName = constants.getRandomString();
-        const newClientCertName = existingClientCertName = constants.getRandomString();
+        const newCaName = (existingCACertName = constants.getRandomString());
+        const newClientCertName = (existingClientCertName =
+          constants.getRandomString());
         // preconditions
         expect(await localDb.getInstanceByName(dbName)).to.eql(null);
 
@@ -594,16 +646,28 @@ describe('POST /databases', () => {
             expect(body.clientCert.certificate).to.be.undefined;
             expect(body.clientCert.key).to.be.undefined;
 
-            const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-              .findOneBy({ id: body.caCert.id });
+            const ca: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CA_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.caCert.id });
 
-            expect(ca.certificate).to.eql(localDb.encryptData(constants.TEST_REDIS_TLS_CA));
+            expect(ca.certificate).to.eql(
+              localDb.encryptData(constants.TEST_REDIS_TLS_CA),
+            );
 
-            const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
-              .findOneBy({ id: body.clientCert.id });
+            const clientPair: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CLIENT_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.clientCert.id });
 
-            expect(clientPair.certificate).to.eql(localDb.encryptData(constants.TEST_USER_TLS_CERT));
-            expect(clientPair.key).to.eql(localDb.encryptData(constants.TEST_USER_TLS_KEY));
+            expect(clientPair.certificate).to.eql(
+              localDb.encryptData(constants.TEST_USER_TLS_CERT),
+            );
+            expect(clientPair.key).to.eql(
+              localDb.encryptData(constants.TEST_USER_TLS_KEY),
+            );
           },
         });
 
@@ -774,13 +838,19 @@ describe('POST /databases', () => {
             expect(body.clientCert.certificate).to.be.undefined;
             expect(body.clientCert.key).to.be.undefined;
 
-            const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-              .findOneBy({ id: body.caCert.id });
+            const ca: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CA_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.caCert.id });
 
             expect(ca.certificate).to.eql(constants.TEST_REDIS_TLS_CA);
 
-            const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
-              .findOneBy({ id: body.clientCert.id });
+            const clientPair: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CLIENT_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.clientCert.id });
 
             expect(clientPair.certificate).to.eql(constants.TEST_USER_TLS_CERT);
             expect(clientPair.key).to.eql(constants.TEST_USER_TLS_KEY);
@@ -796,14 +866,18 @@ describe('POST /databases', () => {
     describe('TLS AUTH', function () {
       requirements('rte.tls', 'rte.tlsAuth');
 
-      let existingCACertId, existingClientCertId, existingCACertName, existingClientCertName;
+      let existingCACertId,
+        existingClientCertId,
+        existingCACertName,
+        existingClientCertName;
 
       after(localDb.initAgreements);
 
       it('Create standalone instance and verify users certs + ssh (basic)', async () => {
         const dbName = constants.getRandomString();
-        const newCaName = existingCACertName = constants.getRandomString();
-        const newClientCertName = existingClientCertName = constants.getRandomString();
+        const newCaName = (existingCACertName = constants.getRandomString());
+        const newClientCertName = (existingClientCertName =
+          constants.getRandomString());
         // preconditions
         expect(await localDb.getInstanceByName(dbName)).to.eql(null);
 
@@ -848,7 +922,7 @@ describe('POST /databases', () => {
               username: constants.TEST_SSH_USER,
               // hide security fields (password, sshOptions.password, sshOptions.passphrase)
               password: true,
-            }
+            },
           },
           checkFn: async ({ body }) => {
             expect(body.caCert.id).to.be.a('string');
@@ -860,22 +934,41 @@ describe('POST /databases', () => {
             expect(body.clientCert.certificate).to.be.undefined;
             expect(body.clientCert.key).to.be.undefined;
 
-            const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-              .findOneBy({ id: body.caCert.id });
+            const ca: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CA_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.caCert.id });
 
-            expect(ca.certificate).to.eql(localDb.encryptData(constants.TEST_REDIS_TLS_CA));
+            expect(ca.certificate).to.eql(
+              localDb.encryptData(constants.TEST_REDIS_TLS_CA),
+            );
 
-            const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
-              .findOneBy({ id: body.clientCert.id });
+            const clientPair: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CLIENT_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.clientCert.id });
 
-            expect(clientPair.certificate).to.eql(localDb.encryptData(constants.TEST_USER_TLS_CERT));
-            expect(clientPair.key).to.eql(localDb.encryptData(constants.TEST_USER_TLS_KEY));
+            expect(clientPair.certificate).to.eql(
+              localDb.encryptData(constants.TEST_USER_TLS_CERT),
+            );
+            expect(clientPair.key).to.eql(
+              localDb.encryptData(constants.TEST_USER_TLS_KEY),
+            );
 
-            const sshOptions: any = await (await localDb.getRepository(localDb.repositories.SSH_OPTIONS_REPOSITORY))
-              .findOneBy({ id: body.sshOptions.id });
+            const sshOptions: any = await (
+              await localDb.getRepository(
+                localDb.repositories.SSH_OPTIONS_REPOSITORY,
+              )
+            ).findOneBy({ id: body.sshOptions.id });
 
-            expect(sshOptions.username).to.eql(localDb.encryptData(constants.TEST_SSH_USER));
-            expect(sshOptions.password).to.eql(localDb.encryptData(constants.TEST_SSH_PASSWORD));
+            expect(sshOptions.username).to.eql(
+              localDb.encryptData(constants.TEST_SSH_USER),
+            );
+            expect(sshOptions.password).to.eql(
+              localDb.encryptData(constants.TEST_SSH_PASSWORD),
+            );
           },
         });
 
@@ -910,7 +1003,7 @@ describe('POST /databases', () => {
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
               privateKey: constants.TEST_SSH_PRIVATE_KEY,
-            }
+            },
           },
           responseSchema,
           responseBody: {
@@ -927,7 +1020,7 @@ describe('POST /databases', () => {
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
               privateKey: constants.TEST_SSH_PRIVATE_KEY,
-            }
+            },
           },
           checkFn: async ({ body }) => {
             expect(body.caCert.name).to.be.a('string');
@@ -939,11 +1032,18 @@ describe('POST /databases', () => {
             expect(body.clientCert.certificate).to.be.undefined;
             expect(body.clientCert.key).to.be.undefined;
 
-            const sshOptions: any = await (await localDb.getRepository(localDb.repositories.SSH_OPTIONS_REPOSITORY))
-              .findOneBy({ id: body.sshOptions.id });
+            const sshOptions: any = await (
+              await localDb.getRepository(
+                localDb.repositories.SSH_OPTIONS_REPOSITORY,
+              )
+            ).findOneBy({ id: body.sshOptions.id });
 
-            expect(sshOptions.username).to.eql(localDb.encryptData(constants.TEST_SSH_USER));
-            expect(sshOptions.privateKey).to.eql(localDb.encryptData(constants.TEST_SSH_PRIVATE_KEY));
+            expect(sshOptions.username).to.eql(
+              localDb.encryptData(constants.TEST_SSH_USER),
+            );
+            expect(sshOptions.privateKey).to.eql(
+              localDb.encryptData(constants.TEST_SSH_PRIVATE_KEY),
+            );
           },
         });
 
@@ -975,7 +1075,7 @@ describe('POST /databases', () => {
               username: constants.TEST_SSH_USER,
               privateKey: constants.TEST_SSH_PRIVATE_KEY_P,
               passphrase: constants.TEST_SSH_PASSPHRASE,
-            }
+            },
           },
           responseSchema,
           responseBody: {
@@ -993,7 +1093,7 @@ describe('POST /databases', () => {
               username: constants.TEST_SSH_USER,
               privateKey: true,
               passphrase: true,
-            }
+            },
           },
           checkFn: async ({ body }) => {
             expect(body.caCert.name).to.be.a('string');
@@ -1005,12 +1105,21 @@ describe('POST /databases', () => {
             expect(body.clientCert.certificate).to.be.undefined;
             expect(body.clientCert.key).to.be.undefined;
 
-            const sshOptions: any = await (await localDb.getRepository(localDb.repositories.SSH_OPTIONS_REPOSITORY))
-              .findOneBy({ id: body.sshOptions.id });
+            const sshOptions: any = await (
+              await localDb.getRepository(
+                localDb.repositories.SSH_OPTIONS_REPOSITORY,
+              )
+            ).findOneBy({ id: body.sshOptions.id });
 
-            expect(sshOptions.username).to.eql(localDb.encryptData(constants.TEST_SSH_USER));
-            expect(sshOptions.privateKey).to.eql(localDb.encryptData(constants.TEST_SSH_PRIVATE_KEY_P));
-            expect(sshOptions.passphrase).to.eql(localDb.encryptData(constants.TEST_SSH_PASSPHRASE));
+            expect(sshOptions.username).to.eql(
+              localDb.encryptData(constants.TEST_SSH_USER),
+            );
+            expect(sshOptions.privateKey).to.eql(
+              localDb.encryptData(constants.TEST_SSH_PRIVATE_KEY_P),
+            );
+            expect(sshOptions.passphrase).to.eql(
+              localDb.encryptData(constants.TEST_SSH_PASSPHRASE),
+            );
           },
         });
 
@@ -1050,7 +1159,7 @@ describe('POST /databases', () => {
               port: constants.TEST_SSH_PORT,
               username: constants.TEST_SSH_USER,
               password: constants.TEST_SSH_PASSWORD,
-            }
+            },
           },
           responseSchema,
           responseBody: {
@@ -1068,7 +1177,7 @@ describe('POST /databases', () => {
               username: constants.TEST_SSH_USER,
               // hide security fields (password, sshOptions.password, sshOptions.passphrase)
               password: true,
-            }
+            },
           },
           checkFn: async ({ body }) => {
             expect(body.caCert.id).to.be.a('string');
@@ -1080,13 +1189,19 @@ describe('POST /databases', () => {
             expect(body.clientCert.certificate).to.be.undefined;
             expect(body.clientCert.key).to.be.undefined;
 
-            const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-              .findOneBy({ id: body.caCert.id });
+            const ca: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CA_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.caCert.id });
 
             expect(ca.certificate).to.eql(constants.TEST_REDIS_TLS_CA);
 
-            const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
-              .findOneBy({ id: body.clientCert.id });
+            const clientPair: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CLIENT_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.clientCert.id });
 
             expect(clientPair.certificate).to.eql(constants.TEST_USER_TLS_CERT);
             expect(clientPair.key).to.eql(constants.TEST_USER_TLS_KEY);
@@ -1130,7 +1245,7 @@ describe('POST /databases', () => {
             name: dbName,
             host: constants.TEST_REDIS_HOST,
             port: constants.TEST_REDIS_PORT,
-            db: constants.TEST_REDIS_DB_INDEX
+            db: constants.TEST_REDIS_DB_INDEX,
           },
         });
       });
@@ -1194,7 +1309,7 @@ describe('POST /databases', () => {
     requirements('rte.type=SENTINEL');
     describe('COMMON', function () {
       requirements('!rte.tls');
-      it('Should always throw an Invalid Data error for sentinel', async() => {
+      it('Should always throw an Invalid Data error for sentinel', async () => {
         await validateApiCall({
           endpoint,
           data: {
@@ -1207,7 +1322,7 @@ describe('POST /databases', () => {
           responseBody: {
             statusCode: 400,
             error: 'SENTINEL_PARAMS_REQUIRED',
-            message: 'Sentinel master name must be specified.'
+            message: 'Sentinel master name must be specified.',
           },
         });
       });
@@ -1252,8 +1367,9 @@ describe('POST /databases', () => {
       requirements('rte.tls', 'rte.tlsAuth');
       it('Create sentinel with tls pk', async () => {
         const dbName = constants.getRandomString();
-        const newCaName = existingCACertName = constants.getRandomString();
-        const newClientCertName = existingClientCertName = constants.getRandomString();
+        const newCaName = (existingCACertName = constants.getRandomString());
+        const newClientCertName = (existingClientCertName =
+          constants.getRandomString());
 
         // preconditions
         expect(await localDb.getInstanceByName(dbName)).to.eql(null);
@@ -1302,16 +1418,28 @@ describe('POST /databases', () => {
             expect(body.clientCert.certificate).to.be.undefined;
             expect(body.clientCert.key).to.be.undefined;
 
-            const ca: any = await (await localDb.getRepository(localDb.repositories.CA_CERT_REPOSITORY))
-              .findOneBy({ id: body.caCert.id });
+            const ca: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CA_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.caCert.id });
 
-            expect(ca.certificate).to.eql(localDb.encryptData(constants.TEST_REDIS_TLS_CA));
+            expect(ca.certificate).to.eql(
+              localDb.encryptData(constants.TEST_REDIS_TLS_CA),
+            );
 
-            const clientPair: any = await (await localDb.getRepository(localDb.repositories.CLIENT_CERT_REPOSITORY))
-              .findOneBy({ id: body.clientCert.id });
+            const clientPair: any = await (
+              await localDb.getRepository(
+                localDb.repositories.CLIENT_CERT_REPOSITORY,
+              )
+            ).findOneBy({ id: body.clientCert.id });
 
-            expect(clientPair.certificate).to.eql(localDb.encryptData(constants.TEST_USER_TLS_CERT));
-            expect(clientPair.key).to.eql(localDb.encryptData(constants.TEST_USER_TLS_KEY));
+            expect(clientPair.certificate).to.eql(
+              localDb.encryptData(constants.TEST_USER_TLS_CERT),
+            );
+            expect(clientPair.key).to.eql(
+              localDb.encryptData(constants.TEST_USER_TLS_KEY),
+            );
           },
         });
 

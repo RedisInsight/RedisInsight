@@ -1,9 +1,5 @@
-import {
-  mockStandaloneRedisInfoReply,
-} from 'src/__mocks__';
-import {
-  convertRedisInfoReplyToObject,
-} from './redis-reply-converter';
+import { mockStandaloneRedisInfoReply } from 'src/__mocks__';
+import { convertRedisInfoReplyToObject } from './redis-reply-converter';
 
 const mockRedisServerInfoDto = {
   redis_version: '6.0.5',

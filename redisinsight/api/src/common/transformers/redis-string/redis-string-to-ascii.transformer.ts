@@ -3,7 +3,7 @@ import { getASCIISafeStringFromBuffer } from 'src/utils/cli-helper';
 import { RedisStringTransformOptions } from 'src/common/constants';
 import { Transform } from 'class-transformer';
 
-const SingleRedisStringToASCII = (value) => {
+const SingleRedisStringToASCII = ({ value }) => {
   if (value instanceof Buffer) {
     return getASCIISafeStringFromBuffer(value);
   }
@@ -12,15 +12,17 @@ const SingleRedisStringToASCII = (value) => {
   return value;
 };
 
-const ArrayRedisStringToASCII = (value) => {
+const ArrayRedisStringToASCII = ({ value }) => {
   if (isArray(value)) {
-    return value.map(SingleRedisStringToASCII);
+    return value.map((val) => SingleRedisStringToASCII({ value: val }));
   }
 
   return value;
 };
 
-export const RedisStringToASCIITransformer = (opts?: RedisStringTransformOptions) => {
+export const RedisStringToASCIITransformer = (
+  opts?: RedisStringTransformOptions,
+) => {
   if (opts?.each === true) {
     return Transform(ArrayRedisStringToASCII, opts);
   }

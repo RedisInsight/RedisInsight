@@ -3,16 +3,24 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { toggleOpenWBResult } from 'uiSrc/slices/workbench/wb-results'
 import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
-import { cleanup, clearStoreActions, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  clearStoreActions,
+  fireEvent,
+  mockedStore,
+  render,
+} from 'uiSrc/utils/test-utils'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import QueryCard, { Props, getSummaryText } from './QueryCard'
 
 const mockedProps = mock<Props>()
 
-const mockResult = [{
-  response: 'response',
-  status: 'success'
-}]
+const mockResult = [
+  {
+    response: 'response',
+    status: 'success',
+  },
+]
 
 let store: typeof mockedStore
 beforeEach(() => {
@@ -32,7 +40,7 @@ jest.mock('uiSrc/services', () => ({
 jest.mock('uiSrc/slices/app/plugins', () => ({
   ...jest.requireActual('uiSrc/slices/app/plugins'),
   appPluginsSelector: jest.fn().mockReturnValue({
-    visualizations: []
+    visualizations: [],
   }),
 }))
 
@@ -53,11 +61,9 @@ describe('QueryCard', () => {
   it('Cli result should in the document when "isOpen = true"', () => {
     const cliResultTestId = 'query-cli-result'
 
-    const { queryByTestId } = render(<QueryCard
-      {...instance(mockedProps)}
-      isOpen
-      result={mockResult}
-    />)
+    const { queryByTestId } = render(
+      <QueryCard {...instance(mockedProps)} isOpen result={mockResult} />,
+    )
 
     const cliResultEl = queryByTestId(cliResultTestId)
 
@@ -67,11 +73,13 @@ describe('QueryCard', () => {
   it('Cli result should not in the document when "isOpen = false"', () => {
     const cliResultTestId = 'query-cli-result'
 
-    const { queryByTestId } = render(<QueryCard
-      {...instance(mockedProps)}
-      isOpen={false}
-      result={mockResult}
-    />)
+    const { queryByTestId } = render(
+      <QueryCard
+        {...instance(mockedProps)}
+        isOpen={false}
+        result={mockResult}
+      />,
+    )
 
     const cliResultEl = queryByTestId(cliResultTestId)
 
@@ -81,12 +89,14 @@ describe('QueryCard', () => {
   it('Should be in the document when resultsMode === ResultsMode.GroupMode', () => {
     const cliResultTestId = 'query-cli-result'
 
-    const { queryByTestId } = render(<QueryCard
-      {...instance(mockedProps)}
-      isOpen={false}
-      result={mockResult}
-      resultsMode={ResultsMode.GroupMode}
-    />)
+    const { queryByTestId } = render(
+      <QueryCard
+        {...instance(mockedProps)}
+        isOpen={false}
+        result={mockResult}
+        resultsMode={ResultsMode.GroupMode}
+      />,
+    )
 
     const cliResultEl = queryByTestId(cliResultTestId)
 
@@ -97,20 +107,18 @@ describe('QueryCard', () => {
     const cardHeaderTestId = 'query-card-open'
     const mockId = '123'
 
-    const { queryByTestId } = render(<QueryCard
-      {...instance(mockedProps)}
-      id={mockId}
-      result={mockResult}
-    />)
+    const { queryByTestId } = render(
+      <QueryCard {...instance(mockedProps)} id={mockId} result={mockResult} />,
+    )
 
     const cardHeaderTestEl = queryByTestId(cardHeaderTestId)
 
     fireEvent.click(cardHeaderTestEl)
 
     const expectedActions = [toggleOpenWBResult(mockId)]
-    expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
-      clearStoreActions(expectedActions)
-    )
+    expect(
+      clearStoreActions(store.getActions().slice(0, expectedActions.length)),
+    ).toEqual(clearStoreActions(expectedActions))
   })
 
   it('Should return correct summary string', () => {
@@ -130,7 +138,7 @@ describe('QueryCard', () => {
         result={null}
         isOpen
         command={null}
-      />
+      />,
     )
     const queryCommonResultEl = queryByTestId('query-common-result-wrapper')
     const queryCliResultEl = queryByTestId('query-cli-result-wrapper')
@@ -144,14 +152,16 @@ describe('QueryCard', () => {
       <QueryCard
         {...instance(mockedProps)}
         resultsMode={ResultsMode.GroupMode}
-        result={[{
-          status: CommandExecutionStatus.Success,
-          response: 'Any message about size limit threshold exceeded',
-          sizeLimitExceeded: true
-        }]}
+        result={[
+          {
+            status: CommandExecutionStatus.Success,
+            response: 'Any message about size limit threshold exceeded',
+            sizeLimitExceeded: true,
+          },
+        ]}
         isOpen
         command={null}
-      />
+      />,
     )
     const queryCliResultEl = queryByTestId('query-cli-result')
 
@@ -163,13 +173,15 @@ describe('QueryCard', () => {
       <QueryCard
         {...instance(mockedProps)}
         resultsMode={ResultsMode.GroupMode}
-        result={[{
-          status: CommandExecutionStatus.Success,
-          response: 1,
-        }]}
+        result={[
+          {
+            status: CommandExecutionStatus.Success,
+            response: 1,
+          },
+        ]}
         isOpen
         command="del key"
-      />
+      />,
     )
     const queryCliResultEl = getByTestId('query-cli-result')
 
@@ -181,13 +193,16 @@ describe('QueryCard', () => {
       <QueryCard
         {...instance(mockedProps)}
         resultsMode={ResultsMode.GroupMode}
-        result={[{
-          status: CommandExecutionStatus.Success,
-          response: 'Results have been deleted since they exceed 1 MB. Re-run the command to see new results.',
-        }]}
+        result={[
+          {
+            status: CommandExecutionStatus.Success,
+            response:
+              'Results have been deleted since they exceed 1 MB. Re-run the command to see new results.',
+          },
+        ]}
         isOpen
         command={null}
-      />
+      />,
     )
     const queryCliResultEl = queryByTestId('query-cli-result')
 

@@ -37,9 +37,8 @@ export class LocalInitService extends InitService {
 
   async initAnalytics(firstStart: boolean) {
     const sessionMetadata = this.constantsProvider.getSystemSessionMetadata();
-    const {
-      id, sessionId, appType, appVersion,
-    } = await this.serverService.getInfo(sessionMetadata);
+    const { id, sessionId, appType, appVersion } =
+      await this.serverService.getInfo(sessionMetadata);
 
     await this.analyticsService.init({
       anonymousId: id,

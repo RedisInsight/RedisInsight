@@ -14,7 +14,7 @@ describe('getRouterLinkProps', () => {
         data-testid="link"
       >
         Text
-      </EuiLink>
+      </EuiLink>,
     )
     fireEvent.click(screen.getByTestId('link'))
 

@@ -1,4 +1,7 @@
-import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
+import {
+  GetKeyInfoResponse,
+  RedisDataType,
+} from 'src/modules/browser/keys/dto';
 import {
   BrowserToolKeysCommands,
   BrowserToolListCommands,
@@ -16,15 +19,12 @@ export class ListKeyInfoStrategy extends KeyInfoStrategy {
   ): Promise<GetKeyInfoResponse> {
     this.logger.debug(`Getting ${RedisDataType.List} type info.`);
     if (includeSize !== false) {
-      const [
-        [, ttl = null],
-        [, length = null],
-        [, size = null],
-      ] = await client.sendPipeline([
-        [BrowserToolKeysCommands.Ttl, key],
-        [BrowserToolListCommands.LLen, key],
-        [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-      ]) as [any, number][];
+      const [[, ttl = null], [, length = null], [, size = null]] =
+        (await client.sendPipeline([
+          [BrowserToolKeysCommands.Ttl, key],
+          [BrowserToolListCommands.LLen, key],
+          [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
+        ])) as [any, number][];
 
       return {
         name: key,
@@ -35,19 +35,16 @@ export class ListKeyInfoStrategy extends KeyInfoStrategy {
       };
     }
 
-    const [
-      [, ttl = null],
-      [, length = null],
-    ] = await client.sendPipeline([
+    const [[, ttl = null], [, length = null]] = (await client.sendPipeline([
       [BrowserToolKeysCommands.Ttl, key],
       [BrowserToolListCommands.LLen, key],
-    ]) as [any, number][];
+    ])) as [any, number][];
 
     let size = -1;
     if (length < 50_000) {
-      const sizeData = await client.sendPipeline([
+      const sizeData = (await client.sendPipeline([
         [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
-      ]) as [any, number][];
+      ])) as [any, number][];
       size = sizeData && sizeData[0] && sizeData[0][1];
     }
 

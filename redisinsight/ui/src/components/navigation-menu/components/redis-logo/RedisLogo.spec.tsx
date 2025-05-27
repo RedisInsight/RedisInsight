@@ -16,34 +16,28 @@ beforeEach(() => {
 })
 
 describe('RedisLogo', () => {
-  it('should have link if envDependant feature is on', () => {
+  it('should have link if envDependent feature is on', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: true }
+      { flag: true },
     )
-    render(
-      <RedisLogo isRdiWorkspace={false} />,
-      {
-        store: mockStore(initialStoreState)
-      }
-    )
+    render(<RedisLogo isRdiWorkspace={false} />, {
+      store: mockStore(initialStoreState),
+    })
 
     expect(screen.getByTestId('redis-logo-link')).toBeInTheDocument()
   })
 
-  it('should not have link if envDependant feature is off', () => {
+  it('should not have link if envDependent feature is off', () => {
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: false }
+      { flag: false },
     )
-    render(
-      <RedisLogo isRdiWorkspace={false} />,
-      {
-        store: mockStore(initialStoreState)
-      }
-    )
+    render(<RedisLogo isRdiWorkspace={false} />, {
+      store: mockStore(initialStoreState),
+    })
 
     expect(screen.queryByTestId('redis-logo-link')).not.toBeInTheDocument()
   })

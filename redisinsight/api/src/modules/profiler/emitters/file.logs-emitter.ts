@@ -20,10 +20,14 @@ export class FileLogsEmitter implements ILogsEmitter {
         return;
       }
 
-      const text = items.map((item) => {
-        const args = (item.args.map((arg) => `${JSON.stringify(arg)}`)).join(' ');
-        return `${item.time} [${item.database} ${item.source}] ${args}`;
-      }).join('\n');
+      const text = items
+        .map((item) => {
+          const args = item.args
+            .map((arg) => `${JSON.stringify(arg)}`)
+            .join(' ');
+          return `${item.time} [${item.database} ${item.source}] ${args}`;
+        })
+        .join('\n');
 
       this.logFile.getWriteStream().write(`${text}\n`);
     } catch (e) {

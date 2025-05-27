@@ -36,7 +36,8 @@ export class ClaimPendingEntryDto extends KeyDto {
   consumerName: RedisString;
 
   @ApiProperty({
-    description: 'Claim only if its idle time is greater the minimum idle time ',
+    description:
+      'Claim only if its idle time is greater the minimum idle time ',
     type: Number,
     minimum: 0,
     default: 0,
@@ -60,7 +61,8 @@ export class ClaimPendingEntryDto extends KeyDto {
   entries: string[];
 
   @ApiPropertyOptional({
-    description: 'Set the idle time (last time it was delivered) of the message',
+    description:
+      'Set the idle time (last time it was delivered) of the message',
     type: Number,
     minimum: 0,
   })
@@ -71,8 +73,9 @@ export class ClaimPendingEntryDto extends KeyDto {
   idle?: number;
 
   @ApiPropertyOptional({
-    description: 'This is the same as IDLE but instead of a relative amount of milliseconds, '
-      + 'it sets the idle time to a specific Unix time (in milliseconds)',
+    description:
+      'This is the same as IDLE but instead of a relative amount of milliseconds, ' +
+      'it sets the idle time to a specific Unix time (in milliseconds)',
     type: Number,
   })
   @NotEquals(null)
@@ -81,11 +84,12 @@ export class ClaimPendingEntryDto extends KeyDto {
   time?: number;
 
   @ApiPropertyOptional({
-    description: 'Set the retry counter to the specified value. '
-      + 'This counter is incremented every time a message is delivered again. '
-      + 'Normally XCLAIM does not alter this counter, which is just served to clients when the XPENDING command '
-      + 'is called: this way clients can detect anomalies, like messages that are never processed '
-      + 'for some reason after a big number of delivery attempts',
+    description:
+      'Set the retry counter to the specified value. ' +
+      'This counter is incremented every time a message is delivered again. ' +
+      'Normally XCLAIM does not alter this counter, which is just served to clients when the XPENDING command ' +
+      'is called: this way clients can detect anomalies, like messages that are never processed ' +
+      'for some reason after a big number of delivery attempts',
     type: Number,
     minimum: 0,
   })
@@ -96,8 +100,9 @@ export class ClaimPendingEntryDto extends KeyDto {
   retryCount?: number;
 
   @ApiPropertyOptional({
-    description: 'Creates the pending message entry in the PEL even if certain specified IDs are not already '
-      + 'in the PEL assigned to a different client',
+    description:
+      'Creates the pending message entry in the PEL even if certain specified IDs are not already ' +
+      'in the PEL assigned to a different client',
     type: Boolean,
   })
   @NotEquals(null)

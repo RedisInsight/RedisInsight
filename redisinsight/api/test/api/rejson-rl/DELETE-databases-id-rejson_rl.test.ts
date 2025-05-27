@@ -9,7 +9,8 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn
+  validateApiCall,
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -30,9 +31,11 @@ const validInputData = {
   path: '$',
 };
 
-const responseSchema = Joi.object().keys({
-  affected: Joi.number().integer().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    affected: Joi.number().integer().required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -63,12 +66,26 @@ describe('DELETE /databases/:instanceId/rejson-rl', () => {
           affected: 1,
         },
         before: async () => {
-          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_3, '$'));
-          expect(json[0].object).to.have.property('field')
+          const json = JSON.parse(
+            await rte.data.executeCommand(
+              'json.get',
+              constants.TEST_REJSON_KEY_3,
+              '$',
+            ),
+          );
+          expect(json[0].object).to.have.property('field');
         },
         after: async () => {
-          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_3, '$'));
-          expect(json[0]).to.deep.eql(_.omit(constants.TEST_REJSON_VALUE_3, 'object.field'))
+          const json = JSON.parse(
+            await rte.data.executeCommand(
+              'json.get',
+              constants.TEST_REJSON_KEY_3,
+              '$',
+            ),
+          );
+          expect(json[0]).to.deep.eql(
+            _.omit(constants.TEST_REJSON_VALUE_3, 'object.field'),
+          );
         },
       },
       {
@@ -82,11 +99,23 @@ describe('DELETE /databases/:instanceId/rejson-rl', () => {
           affected: 1,
         },
         before: async () => {
-          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_3, '$'));
+          const json = JSON.parse(
+            await rte.data.executeCommand(
+              'json.get',
+              constants.TEST_REJSON_KEY_3,
+              '$',
+            ),
+          );
           expect(json[0].array.length).to.eql(3);
         },
         after: async () => {
-          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_3, '$'));
+          const json = JSON.parse(
+            await rte.data.executeCommand(
+              'json.get',
+              constants.TEST_REJSON_KEY_3,
+              '$',
+            ),
+          );
           expect(json[0].array.length).to.eql(2);
         },
       },
@@ -112,7 +141,9 @@ describe('DELETE /databases/:instanceId/rejson-rl', () => {
           affected: 1,
         },
         after: async () => {
-          expect(await rte.client.exists(constants.TEST_REJSON_KEY_3)).to.eql(0);
+          expect(await rte.client.exists(constants.TEST_REJSON_KEY_3)).to.eql(
+            0,
+          );
         },
       },
       {
@@ -130,7 +161,13 @@ describe('DELETE /databases/:instanceId/rejson-rl', () => {
         },
         after: async () => {
           // check that value was not overwritten
-          const json = JSON.parse(await rte.data.executeCommand('json.get', constants.TEST_REJSON_KEY_1, '$'))
+          const json = JSON.parse(
+            await rte.data.executeCommand(
+              'json.get',
+              constants.TEST_REJSON_KEY_1,
+              '$',
+            ),
+          );
           expect(json[0]).to.deep.eql(constants.TEST_REJSON_VALUE_1);
         },
       },
@@ -163,7 +200,7 @@ describe('DELETE /databases/:instanceId/rejson-rl', () => {
           statusCode: 403,
           error: 'Forbidden',
         },
-        before: () => rte.data.setAclUserRules('~* +@all -json.del')
+        before: () => rte.data.setAclUserRules('~* +@all -json.del'),
       },
     ].map(mainCheckFn);
   });

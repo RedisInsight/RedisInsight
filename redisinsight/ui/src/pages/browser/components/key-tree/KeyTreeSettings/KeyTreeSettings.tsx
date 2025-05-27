@@ -5,19 +5,20 @@ import { useParams } from 'react-router-dom'
 import {
   EuiButton,
   EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
+  EuiComboBox,
+  EuiComboBoxOptionOption,
   EuiIcon,
   EuiPopover,
   EuiSuperSelect,
-  EuiText,
-  EuiComboBox,
-  EuiComboBoxOptionOption,
 } from '@elastic/eui'
 import { isEqual } from 'lodash'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { DEFAULT_DELIMITER, DEFAULT_TREE_SORTING, SortOrder } from 'uiSrc/constants'
+import {
+  DEFAULT_DELIMITER,
+  DEFAULT_TREE_SORTING,
+  SortOrder,
+} from 'uiSrc/constants'
 import {
   appContextDbConfig,
   resetBrowserTree,
@@ -27,6 +28,7 @@ import {
 import TreeViewSort from 'uiSrc/assets/img/browser/treeViewSort.svg?react'
 import { comboBoxToArray } from 'uiSrc/utils'
 
+import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -35,7 +37,9 @@ export interface Props {
 const sortOptions = [SortOrder.ASC, SortOrder.DESC].map((value) => ({
   value,
   inputDisplay: (
-    <span data-testid={`tree-view-sorting-item-${value}`}>Key name {value}</span>
+    <span data-testid={`tree-view-sorting-item-${value}`}>
+      Key name {value}
+    </span>
   ),
 }))
 
@@ -46,7 +50,8 @@ const KeyTreeSettings = ({ loading }: Props) => {
     treeViewSort = DEFAULT_TREE_SORTING,
   } = useSelector(appContextDbConfig)
   const [sorting, setSorting] = useState<SortOrder>(treeViewSort)
-  const [delimiters, setDelimiters] = useState<EuiComboBoxOptionOption[]>(treeViewDelimiter)
+  const [delimiters, setDelimiters] =
+    useState<EuiComboBoxOptionOption[]>(treeViewDelimiter)
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
@@ -60,7 +65,8 @@ const KeyTreeSettings = ({ loading }: Props) => {
     setDelimiters(treeViewDelimiter)
   }, [treeViewDelimiter])
 
-  const onButtonClick = () => setIsPopoverOpen((isPopoverOpen) => !isPopoverOpen)
+  const onButtonClick = () =>
+    setIsPopoverOpen((isPopoverOpen) => !isPopoverOpen)
   const closePopover = () => {
     setIsPopoverOpen(false)
     setTimeout(() => {
@@ -86,7 +92,9 @@ const KeyTreeSettings = ({ loading }: Props) => {
 
   const handleApply = () => {
     if (!isEqual(delimiters, treeViewDelimiter)) {
-      const delimitersValue = delimiters.length ? delimiters : [DEFAULT_DELIMITER]
+      const delimitersValue = delimiters.length
+        ? delimiters
+        : [DEFAULT_DELIMITER]
 
       dispatch(setBrowserTreeDelimiter(delimitersValue))
       sendEventTelemetry({
@@ -94,8 +102,8 @@ const KeyTreeSettings = ({ loading }: Props) => {
         eventData: {
           databaseId: instanceId,
           from: comboBoxToArray(treeViewDelimiter),
-          to: comboBoxToArray(delimitersValue)
-        }
+          to: comboBoxToArray(delimitersValue),
+        },
       })
 
       dispatch(resetBrowserTree())
@@ -109,7 +117,7 @@ const KeyTreeSettings = ({ loading }: Props) => {
         eventData: {
           databaseId: instanceId,
           sorting: sorting || DEFAULT_TREE_SORTING,
-        }
+        },
       })
 
       dispatch(resetBrowserTree())
@@ -133,9 +141,9 @@ const KeyTreeSettings = ({ loading }: Props) => {
         closePopover={closePopover}
         button={button}
       >
-        <EuiFlexGroup gutterSize="s" direction="column">
-          <EuiFlexItem className={styles.row} />
-          <EuiFlexItem className={styles.row}>
+        <Col gap="s">
+          <FlexItem grow className={styles.row} />
+          <FlexItem grow className={styles.row}>
             <div className={styles.label}>Delimiter</div>
             <EuiComboBox
               noSuggestions
@@ -143,13 +151,15 @@ const KeyTreeSettings = ({ loading }: Props) => {
               placeholder=":"
               delimiter=" "
               selectedOptions={delimiters}
-              onCreateOption={(del) => setDelimiters([...delimiters, { label: del }])}
+              onCreateOption={(del) =>
+                setDelimiters([...delimiters, { label: del }])
+              }
               onChange={(selectedOptions) => setDelimiters(selectedOptions)}
               className={styles.combobox}
               data-testid="delimiter-combobox"
             />
-          </EuiFlexItem>
-          <EuiFlexItem className={styles.row}>
+          </FlexItem>
+          <FlexItem className={styles.row}>
             <div className={styles.label}>
               <EuiIcon type={TreeViewSort} className={styles.sortIcon} />
               Sort by
@@ -162,8 +172,8 @@ const KeyTreeSettings = ({ loading }: Props) => {
               onChange={(value: SortOrder) => onChangeSort(value)}
               data-testid="tree-view-sorting-select"
             />
-          </EuiFlexItem>
-          <EuiFlexItem className={styles.row}>
+          </FlexItem>
+          <FlexItem className={styles.row}>
             <div className={styles.footer}>
               <EuiButton
                 size="s"
@@ -183,8 +193,8 @@ const KeyTreeSettings = ({ loading }: Props) => {
                 Apply
               </EuiButton>
             </div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Col>
       </EuiPopover>
     </div>
   )

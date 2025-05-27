@@ -9,9 +9,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-  ApiBody, ApiOkResponse, ApiOperation, ApiTags,
-} from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { KeysService } from 'src/modules/browser/keys/keys.service';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { BrowserClientMetadata } from 'src/modules/browser/decorators/browser-client-metadata.decorator';
@@ -27,7 +25,8 @@ import {
   RenameKeyDto,
   RenameKeyResponse,
   UpdateKeyTtlDto,
-  KeyTtlResponse, GetKeysInfoDto,
+  KeyTtlResponse,
+  GetKeysInfoDto,
 } from 'src/modules/browser/keys/dto';
 import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 
@@ -36,7 +35,7 @@ import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 @Controller('keys')
 @UsePipes(new ValidationPipe({ transform: true }))
 export class KeysController {
-  constructor(private keysService: KeysService) { }
+  constructor(private keysService: KeysService) {}
 
   @Post('')
   @HttpCode(200)
@@ -86,7 +85,11 @@ export class KeysController {
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
     @Body() dto: GetKeyInfoDto,
   ): Promise<GetKeyInfoResponse> {
-    return await this.keysService.getKeyInfo(clientMetadata, dto.keyName, dto.includeSize);
+    return await this.keysService.getKeyInfo(
+      clientMetadata,
+      dto.keyName,
+      dto.includeSize,
+    );
   }
 
   @Delete('')

@@ -1,7 +1,11 @@
 import log from 'electron-log'
 import { parse } from 'url'
 import {
-  cloudDeepLinkHandler, focusWindow, getWindows, windowFactory, WindowType
+  cloudDeepLinkHandler,
+  focusWindow,
+  getWindows,
+  windowFactory,
+  WindowType,
 } from 'desktopSrc/lib'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { IpcOnEvent } from 'uiSrc/electron/constants'
@@ -12,7 +16,9 @@ export interface IParsedDeepLink {
   from?: string
 }
 
-export const deepLinkHandler = async (from?: string): Promise<undefined | IParsedDeepLink> => {
+export const deepLinkHandler = async (
+  from?: string,
+): Promise<undefined | IParsedDeepLink> => {
   if (from) {
     try {
       const url = parse(from, true)
@@ -35,7 +41,9 @@ export const deepLinkHandler = async (from?: string): Promise<undefined | IParse
   return undefined
 }
 
-export const deepLinkWindowHandler = async (parsedDeepLink?: IParsedDeepLink) => {
+export const deepLinkWindowHandler = async (
+  parsedDeepLink?: IParsedDeepLink,
+) => {
   // tbd: implement mechanism to find current window
   const [currentWindow] = getWindows().values()
 

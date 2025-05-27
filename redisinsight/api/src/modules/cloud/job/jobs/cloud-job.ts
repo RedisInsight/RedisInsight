@@ -1,14 +1,21 @@
 import { v4 as uuidv4 } from 'uuid';
 import config from 'src/utils/config';
-import { CloudJobInfo, CloudJobStatus, CloudJobStep } from 'src/modules/cloud/job/models/cloud-job-info';
+import {
+  CloudJobInfo,
+  CloudJobStatus,
+  CloudJobStep,
+} from 'src/modules/cloud/job/models/cloud-job-info';
 import { HttpException, Logger } from '@nestjs/common';
-import { CloudJobAbortedException, wrapCloudJobError } from 'src/modules/cloud/job/exceptions';
+import {
+  CloudJobAbortedException,
+  wrapCloudJobError,
+} from 'src/modules/cloud/job/exceptions';
 import { SessionMetadata } from 'src/common/models';
 import { CloudJobName } from 'src/modules/cloud/job/constants';
 import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 import { debounce } from 'lodash';
 import { CloudCapiAuthDto } from 'src/modules/cloud/common/dto';
-import { ClassType } from 'class-transformer/ClassTransformer';
+import { ClassConstructor } from 'class-transformer/types/interfaces';
 
 const cloudConfig = config.get('cloud');
 
@@ -58,11 +65,15 @@ export abstract class CloudJob {
       this.options.stateCallbacks = [];
     }
 
-    this.debounce = debounce(() => {
-      this.triggerChangeStateCallbacks();
-    }, 1_000, {
-      maxWait: 2_000,
-    });
+    this.debounce = debounce(
+      () => {
+        this.triggerChangeStateCallbacks();
+      },
+      1_000,
+      {
+        maxWait: 2_000,
+      },
+    );
   }
 
   private triggerChangeStateCallbacks() {
@@ -86,10 +97,11 @@ export abstract class CloudJob {
 
         this.changeState({ step: CloudJobStep.Credentials });
 
-        this.options.capiCredentials = await this.dependencies.cloudCapiKeyService.getCapiCredentials(
-          this.options.sessionMetadata,
-          this.options.utm,
-        );
+        this.options.capiCredentials =
+          await this.dependencies.cloudCapiKeyService.getCapiCredentials(
+            this.options.sessionMetadata,
+            this.options.utm,
+          );
       }
 
       return await this.iteration(sessionMetadata);
@@ -123,13 +135,19 @@ export abstract class CloudJob {
       name: this.options?.name || this.name,
       status: this.status,
       result: this.result,
-      error: this.error ? wrapCloudJobError(this.error).getResponse() : undefined,
+      error: this.error
+        ? wrapCloudJobError(this.error).getResponse()
+        : undefined,
       child: this.child?.getState(),
       step: this.step,
     };
   }
 
-  public createChildJob<T>(TargetJob: ClassType<T>, data: {}, options = {}): T {
+  public createChildJob<T>(
+    TargetJob: ClassConstructor<T>,
+    data: {},
+    options = {},
+  ): T {
     return new TargetJob(
       {
         ...this.options,
@@ -144,7 +162,7 @@ export abstract class CloudJob {
 
   public async runChildJob(
     sessionMetadata: SessionMetadata,
-    TargetJob: ClassType<CloudJob>,
+    TargetJob: ClassConstructor<CloudJob>,
     data: {},
     options: CloudJobOptions,
   ): Promise<any> {
@@ -164,7 +182,9 @@ export abstract class CloudJob {
   }
 
   protected changeState(state = {}) {
-    Object.entries(state).forEach(([key, value]) => { this[key] = value; });
+    Object.entries(state).forEach(([key, value]) => {
+      this[key] = value;
+    });
 
     if (this.options.child) {
       this.triggerChangeStateCallbacks();

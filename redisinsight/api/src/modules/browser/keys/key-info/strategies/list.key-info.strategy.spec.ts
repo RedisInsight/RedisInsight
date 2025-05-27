@@ -1,14 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { when } from 'jest-when';
-import {
-  mockStandaloneRedisClient,
-} from 'src/__mocks__';
+import { mockStandaloneRedisClient } from 'src/__mocks__';
 import {
   BrowserToolKeysCommands,
   BrowserToolListCommands,
 } from 'src/modules/browser/constants/browser-tool-commands';
 import { ReplyError } from 'src/models';
-import { GetKeyInfoResponse, RedisDataType } from 'src/modules/browser/keys/dto';
+import {
+  GetKeyInfoResponse,
+  RedisDataType,
+} from 'src/modules/browser/keys/dto';
 import { ListKeyInfoStrategy } from 'src/modules/browser/keys/key-info/strategies/list.key-info.strategy';
 
 const getKeyInfoResponse: GetKeyInfoResponse = {
@@ -24,9 +25,7 @@ describe('ListKeyInfoStrategy', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ListKeyInfoStrategy,
-      ],
+      providers: [ListKeyInfoStrategy],
     }).compile();
 
     strategy = module.get(ListKeyInfoStrategy);
@@ -76,9 +75,7 @@ describe('ListKeyInfoStrategy', () => {
           .calledWith([
             [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
           ])
-          .mockResolvedValueOnce([
-            [null, 50],
-          ]);
+          .mockResolvedValueOnce([[null, 50]]);
 
         const result = await strategy.getInfo(
           mockStandaloneRedisClient,
@@ -111,9 +108,7 @@ describe('ListKeyInfoStrategy', () => {
           .calledWith([
             [BrowserToolKeysCommands.MemoryUsage, key, 'samples', '0'],
           ])
-          .mockResolvedValueOnce([
-            [replyError, null],
-          ]);
+          .mockResolvedValueOnce([[replyError, null]]);
 
         const result = await strategy.getInfo(
           mockStandaloneRedisClient,
@@ -146,7 +141,7 @@ describe('ListKeyInfoStrategy', () => {
         expect(result).toEqual({
           ...getKeyInfoResponse,
           length: 50000,
-          size: -1
+          size: -1,
         });
       });
     });

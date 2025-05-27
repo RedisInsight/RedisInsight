@@ -92,9 +92,9 @@ describe('ConsentsPrivacy', () => {
       })
 
       const expectedActions = [updateUserConfigSettings()]
-      expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
-        clearStoreActions(expectedActions)
-      )
+      expect(
+        clearStoreActions(store.getActions().slice(0, expectedActions.length)),
+      ).toEqual(clearStoreActions(expectedActions))
     })
   })
 })

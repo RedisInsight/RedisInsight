@@ -17,7 +17,7 @@ export class Analytics extends EventEmitter {
         this.emit('batch', batchMessages);
         return true;
       })
-      .reply(200, {})
+      .reply(200, {});
 
     scope.persist();
   }
@@ -34,13 +34,21 @@ export class Analytics extends EventEmitter {
         const exists = this.findEvent(event, batch);
 
         if (!exists) {
-          rej(new Error(`Unable to find event:\n${JSON.stringify(event)}\nin the events batch:\n${JSON.stringify(batch)}`));
+          rej(
+            new Error(
+              `Unable to find event:\n${JSON.stringify(event)}\nin the events batch:\n${JSON.stringify(batch)}`,
+            ),
+          );
         }
 
         res(exists);
       });
 
-      setTimeout(() => rej(new Error(`No event ${JSON.stringify(event)} received in 10s`)), 10000);
+      setTimeout(
+        () =>
+          rej(new Error(`No event ${JSON.stringify(event)} received in 10s`)),
+        10000,
+      );
     });
   }
 }
@@ -51,4 +59,4 @@ export const getAnalytics = () => {
 
 export const createAnalytics = () => {
   return new Analytics();
-}
+};

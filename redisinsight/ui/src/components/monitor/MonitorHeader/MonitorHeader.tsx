@@ -2,14 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiButtonIcon,
-  EuiText,
-  EuiToolTip,
-  EuiIcon,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiText, EuiToolTip, EuiIcon } from '@elastic/eui'
 
 import {
   monitorSelector,
@@ -23,6 +16,7 @@ import BanIcon from 'uiSrc/assets/img/monitor/ban.svg'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -38,7 +32,7 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
     isStarted,
     items = [],
     error,
-    loadingPause
+    loadingPause,
   } = useSelector(monitorSelector)
   const isErrorShown = !!error && !isRunning
   const disabledPause = isErrorShown || isResumeLocked || loadingPause
@@ -48,12 +42,12 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
     if (isRunning) {
       sendEventTelemetry({
         event: TelemetryEvent.PROFILER_STOPPED,
-        eventData: { databaseId: instanceId }
+        eventData: { databaseId: instanceId },
       })
     }
     sendEventTelemetry({
       event: TelemetryEvent.PROFILER_CLOSED,
-      eventData: { databaseId: instanceId }
+      eventData: { databaseId: instanceId },
     })
     dispatch(setMonitorInitialState())
   }
@@ -61,7 +55,7 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
   const handleHideMonitor = () => {
     sendEventTelemetry({
       event: TelemetryEvent.PROFILER_MINIMIZED,
-      eventData: { databaseId: instanceId }
+      eventData: { databaseId: instanceId },
     })
 
     dispatch(toggleMonitor())
@@ -71,21 +65,15 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
   const handleClearMonitor = () => {
     sendEventTelemetry({
       event: TelemetryEvent.PROFILER_CLEARED,
-      eventData: { databaseId: instanceId }
+      eventData: { databaseId: instanceId },
     })
     dispatch(resetMonitorItems())
   }
 
   return (
     <div className={styles.container} data-testid="monitor-header">
-      <EuiFlexGroup
-        justifyContent="spaceBetween"
-        gutterSize="none"
-        alignItems="center"
-        responsive={false}
-        style={{ height: '100%' }}
-      >
-        <EuiFlexItem grow={false} className={styles.title}>
+      <Row justify="between" align="center" style={{ height: '100%' }}>
+        <FlexItem className={styles.title}>
           <EuiIcon type="inspect" size="m" />
           <OnboardingTour
             options={ONBOARDING_FEATURES.BROWSER_PROFILER}
@@ -94,15 +82,27 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
           >
             <EuiText>Profiler</EuiText>
           </OnboardingTour>
-        </EuiFlexItem>
+        </FlexItem>
         {isStarted && (
-          <EuiFlexItem grow={false} className={styles.actions}>
+          <FlexItem className={styles.actions}>
             <EuiToolTip
-              content={(isErrorShown || isResumeLocked) ? '' : (!isPaused ? 'Pause' : 'Resume')}
+              content={
+                isErrorShown || isResumeLocked
+                  ? ''
+                  : !isPaused
+                    ? 'Pause'
+                    : 'Resume'
+              }
               anchorClassName="inline-flex"
             >
               <EuiButtonIcon
-                iconType={(isErrorShown || isResumeLocked) ? BanIcon : (!isPaused ? 'pause' : 'play')}
+                iconType={
+                  isErrorShown || isResumeLocked
+                    ? BanIcon
+                    : !isPaused
+                      ? 'pause'
+                      : 'play'
+                }
                 onClick={() => handleRunMonitor()}
                 aria-label="start/stop monitor"
                 data-testid="toggle-run-monitor"
@@ -110,8 +110,12 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
               />
             </EuiToolTip>
             <EuiToolTip
-              content={!isStarted || !items.length ? '' : 'Clear Profiler Window'}
-              anchorClassName={cx('inline-flex', { transparent: !isStarted || !items.length })}
+              content={
+                !isStarted || !items.length ? '' : 'Clear Profiler Window'
+              }
+              anchorClassName={cx('inline-flex', {
+                transparent: !isStarted || !items.length,
+              })}
             >
               <EuiButtonIcon
                 iconType="eraser"
@@ -120,10 +124,10 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
                 data-testid="clear-monitor"
               />
             </EuiToolTip>
-          </EuiFlexItem>
+          </FlexItem>
         )}
-        <EuiFlexItem grow />
-        <EuiFlexItem grow={false}>
+        <FlexItem grow />
+        <FlexItem>
           <EuiToolTip
             content="Minimize"
             position="top"
@@ -140,8 +144,8 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
               onClick={handleHideMonitor}
             />
           </EuiToolTip>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem>
           <EuiToolTip
             content="Close"
             position="top"
@@ -158,8 +162,8 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
               onClick={handleCloseMonitor}
             />
           </EuiToolTip>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </div>
   )
 }

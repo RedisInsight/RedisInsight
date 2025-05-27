@@ -5,7 +5,8 @@ import { Dirent, Stats } from 'fs';
 import { join } from 'path';
 import {
   mockCustomTutorial,
-  mockCustomTutorialManifest, mockCustomTutorialManifestJson,
+  mockCustomTutorialManifest,
+  mockCustomTutorialManifestJson,
 } from 'src/__mocks__';
 import * as Utils from 'src/utils/path';
 
@@ -20,9 +21,7 @@ describe('CustomTutorialManifestProvider', () => {
     jest.mock('fs-extra', () => mFs);
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        CustomTutorialManifestProvider,
-      ],
+      providers: [CustomTutorialManifestProvider],
     }).compile();
 
     service = await module.get(CustomTutorialManifestProvider);
@@ -45,9 +44,13 @@ describe('CustomTutorialManifestProvider', () => {
 
   describe('getManifestJson', () => {
     it('should return null in case of an error', async () => {
-      jest.spyOn(service as any, 'getManifestJsonFile').mockRejectedValueOnce(new Error('any error'));
+      jest
+        .spyOn(service as any, 'getManifestJsonFile')
+        .mockRejectedValueOnce(new Error('any error'));
 
-      const result = await service.getManifestJson(mockCustomTutorial.absolutePath);
+      const result = await service.getManifestJson(
+        mockCustomTutorial.absolutePath,
+      );
 
       expect(result).toEqual(null);
     });
@@ -57,7 +60,9 @@ describe('CustomTutorialManifestProvider', () => {
     it('should return empty array for empty folder', async () => {
       mFs.readdir.mockResolvedValueOnce([]);
 
-      const result = await service['generateManifestEntry'](mockCustomTutorial.absolutePath);
+      const result = await service['generateManifestEntry'](
+        mockCustomTutorial.absolutePath,
+      );
 
       expect(result).toEqual([]);
     });
@@ -96,16 +101,18 @@ describe('CustomTutorialManifestProvider', () => {
         .mockResolvedValueOnce(mockSubSubFolderEntries);
 
       mFs.lstat
-        .mockResolvedValueOnce(({ isDirectory: () => false }) as Stats) // intro.md
-        .mockResolvedValueOnce(({ isDirectory: () => true }) as Stats) // subfolder/
-        .mockResolvedValueOnce(({ isDirectory: () => false }) as Stats) // subfolder/file.md
-        .mockResolvedValueOnce(({ isDirectory: () => false }) as Stats) // subfolder/file2.md
-        .mockResolvedValueOnce(({ isDirectory: () => true }) as Stats) // subfolder/subsubfolder/
-        .mockResolvedValueOnce(({ isDirectory: () => false }) as Stats) // subfolder/subsubfolder/file.md
-        .mockResolvedValueOnce(({ isDirectory: () => false }) as Stats) // subfolder/subsubfolder/file2.md
-        .mockResolvedValueOnce(({ isDirectory: () => false }) as Stats); // manifest.json
+        .mockResolvedValueOnce({ isDirectory: () => false } as Stats) // intro.md
+        .mockResolvedValueOnce({ isDirectory: () => true } as Stats) // subfolder/
+        .mockResolvedValueOnce({ isDirectory: () => false } as Stats) // subfolder/file.md
+        .mockResolvedValueOnce({ isDirectory: () => false } as Stats) // subfolder/file2.md
+        .mockResolvedValueOnce({ isDirectory: () => true } as Stats) // subfolder/subsubfolder/
+        .mockResolvedValueOnce({ isDirectory: () => false } as Stats) // subfolder/subsubfolder/file.md
+        .mockResolvedValueOnce({ isDirectory: () => false } as Stats) // subfolder/subsubfolder/file2.md
+        .mockResolvedValueOnce({ isDirectory: () => false } as Stats); // manifest.json
 
-      const result = await service['generateManifestEntry'](mockCustomTutorial.absolutePath);
+      const result = await service['generateManifestEntry'](
+        mockCustomTutorial.absolutePath,
+      );
 
       expect(result).toEqual([
         {
@@ -169,9 +176,13 @@ describe('CustomTutorialManifestProvider', () => {
 
   describe('getManifest', () => {
     it('should successfully get manifest', async () => {
-      mFs.readFile.mockResolvedValueOnce(Buffer.from(JSON.stringify(mockCustomTutorialManifestJson)));
+      mFs.readFile.mockResolvedValueOnce(
+        Buffer.from(JSON.stringify(mockCustomTutorialManifestJson)),
+      );
 
-      const result = await service.getManifestJson(mockCustomTutorial.absolutePath);
+      const result = await service.getManifestJson(
+        mockCustomTutorial.absolutePath,
+      );
 
       expect(result).toEqual(mockCustomTutorialManifestJson);
     });
@@ -179,7 +190,9 @@ describe('CustomTutorialManifestProvider', () => {
     it('should return null when no manifest found', async () => {
       mFs.readFile.mockRejectedValueOnce(new Error('No file'));
 
-      const result = await service.getManifestJson(mockCustomTutorial.absolutePath);
+      const result = await service.getManifestJson(
+        mockCustomTutorial.absolutePath,
+      );
 
       expect(result).toEqual(null);
     });
@@ -187,7 +200,9 @@ describe('CustomTutorialManifestProvider', () => {
 
   describe('generateTutorialManifest', () => {
     it('should successfully generate manifest', async () => {
-      mFs.readFile.mockResolvedValueOnce(Buffer.from(JSON.stringify(mockCustomTutorialManifestJson)));
+      mFs.readFile.mockResolvedValueOnce(
+        Buffer.from(JSON.stringify(mockCustomTutorialManifestJson)),
+      );
 
       const result = await service.generateTutorialManifest(mockCustomTutorial);
 

@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react'
 
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiLink,
-  EuiSpacer,
-  EuiText,
-  EuiTitle,
-  EuiButton,
-  EuiPopover,
-} from '@elastic/eui'
+import { EuiButton, EuiLink, EuiPopover, EuiText, EuiTitle } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { getCapiKeysAction, oauthCapiKeysSelector, removeAllCapiKeysAction } from 'uiSrc/slices/oauth/cloud'
+import {
+  getCapiKeysAction,
+  oauthCapiKeysSelector,
+  removeAllCapiKeysAction,
+} from 'uiSrc/slices/oauth/cloud'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import UserApiKeysTable from './components/user-api-keys-table'
 
 import styles from './styles.module.scss'
@@ -37,11 +34,13 @@ const CloudSettings = () => {
 
   const handleDeleteAllKeys = () => {
     setIsDeleteOpen(false)
-    dispatch(removeAllCapiKeysAction(() => {
-      sendEventTelemetry({
-        event: TelemetryEvent.SETTINGS_CLOUD_API_KEYS_REMOVED,
-      })
-    }))
+    dispatch(
+      removeAllCapiKeysAction(() => {
+        sendEventTelemetry({
+          event: TelemetryEvent.SETTINGS_CLOUD_API_KEYS_REMOVED,
+        })
+      }),
+    )
   }
 
   return (
@@ -49,11 +48,12 @@ const CloudSettings = () => {
       <EuiTitle className={styles.title} size="xxs">
         <span>API user keys</span>
       </EuiTitle>
-      <EuiSpacer size="s" />
-      <EuiFlexGroup>
-        <EuiFlexItem>
+      <Spacer size="s" />
+      <Row gap="m" responsive>
+        <FlexItem grow>
           <EuiText size="s" className={styles.smallText} color="subdued">
-            The list of API user keys that are stored locally in Redis Insight. <br />
+            The list of API user keys that are stored locally in Redis Insight.{' '}
+            <br />
             API user keys grant programmatic access to Redis Cloud. <br />
             {'To delete API keys from Redis Cloud, '}
             <EuiLink
@@ -66,8 +66,8 @@ const CloudSettings = () => {
             </EuiLink>
             {' and delete them manually.'}
           </EuiText>
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
+        </FlexItem>
+        <FlexItem grow={false}>
           <EuiPopover
             anchorPosition="downCenter"
             ownFocus
@@ -75,7 +75,7 @@ const CloudSettings = () => {
             closePopover={() => setIsDeleteOpen(false)}
             panelPaddingSize="l"
             panelClassName={styles.deletePopover}
-            button={(
+            button={
               <EuiButton
                 fill
                 size="s"
@@ -86,13 +86,11 @@ const CloudSettings = () => {
               >
                 Remove all API keys
               </EuiButton>
-            )}
+            }
           >
             <div className={styles.popoverDeleteContainer}>
               <EuiText size="m">
-                <h4>
-                  All API user keys will be removed from Redis Insight.
-                </h4>
+                <h4>All API user keys will be removed from Redis Insight.</h4>
                 {'To delete API keys from Redis Cloud, '}
                 <EuiLink
                   target="_blank"
@@ -105,7 +103,7 @@ const CloudSettings = () => {
                 </EuiLink>
                 {' and delete them manually.'}
               </EuiText>
-              <EuiSpacer />
+              <Spacer />
               <div className={styles.popoverFooter}>
                 <EuiButton
                   fill
@@ -121,9 +119,9 @@ const CloudSettings = () => {
               </div>
             </div>
           </EuiPopover>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-      <EuiSpacer size="l" />
+        </FlexItem>
+      </Row>
+      <Spacer />
       <UserApiKeysTable items={data} loading={loading} />
     </div>
   )

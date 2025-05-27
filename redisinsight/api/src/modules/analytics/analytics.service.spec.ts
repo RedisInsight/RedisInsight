@@ -23,15 +23,12 @@ import {
 
 let mockAnalyticsTrack;
 let mockAnalyticsPage;
-jest.mock(
-  '@segment/analytics-node',
-  () => ({
-    Analytics: jest.fn().mockImplementation(() => ({
-      track: mockAnalyticsTrack,
-      page: mockAnalyticsPage,
-    })),
-  }),
-);
+jest.mock('@segment/analytics-node', () => ({
+  Analytics: jest.fn().mockImplementation(() => ({
+    track: mockAnalyticsTrack,
+    page: mockAnalyticsPage,
+  })),
+}));
 
 const mockAnonymousId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805';
 
@@ -82,9 +79,12 @@ describe('AnalyticsService', () => {
 
       expect(anonymousId).toEqual(mockAnonymousId);
       expect(sendEventSpy).toHaveBeenCalledTimes(1);
-      expect(sendEventSpy).toHaveBeenCalledWith(mockSessionMetadata, expect.objectContaining({
-        event: TelemetryEvents.ApplicationStarted,
-      }));
+      expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        expect.objectContaining({
+          event: TelemetryEvents.ApplicationStarted,
+        }),
+      );
     });
     it('should NOT send application started event since sessionMetadata was not provided', () => {
       service.init({
@@ -118,9 +118,12 @@ describe('AnalyticsService', () => {
 
       expect(anonymousId).toEqual(mockAnonymousId);
       expect(sendEventSpy).toHaveBeenCalledTimes(1);
-      expect(sendEventSpy).toHaveBeenCalledWith(mockSessionMetadata, expect.objectContaining({
-        event: TelemetryEvents.ApplicationFirstStart,
-      }));
+      expect(sendEventSpy).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        expect.objectContaining({
+          event: TelemetryEvents.ApplicationFirstStart,
+        }),
+      );
     });
   });
 
@@ -137,7 +140,9 @@ describe('AnalyticsService', () => {
       });
 
       expect(service.getAnonymousId()).toEqual(mockAnonymousId);
-      expect(service.getAnonymousId(mockSessionMetadata)).toEqual(mockAnonymousId);
+      expect(service.getAnonymousId(mockSessionMetadata)).toEqual(
+        mockAnonymousId,
+      );
     });
     it('should return anonymousId from sessionMetadata or "unknown"', () => {
       service.init({
@@ -150,7 +155,9 @@ describe('AnalyticsService', () => {
       });
 
       expect(service.getAnonymousId()).toEqual('unknown');
-      expect(service.getAnonymousId(mockSessionMetadata)).toEqual(mockSessionMetadata.userId);
+      expect(service.getAnonymousId(mockSessionMetadata)).toEqual(
+        mockSessionMetadata.userId,
+      );
     });
   });
 
@@ -178,8 +185,9 @@ describe('AnalyticsService', () => {
       });
 
       expect(service.getSessionId()).toEqual(-1);
-      expect(service.getSessionId(mockSessionMetadata))
-        .toEqual(convertAnyStringToPositiveInteger(mockSessionMetadata.sessionId));
+      expect(service.getSessionId(mockSessionMetadata)).toEqual(
+        convertAnyStringToPositiveInteger(mockSessionMetadata.sessionId),
+      );
     });
   });
 
@@ -198,14 +206,11 @@ describe('AnalyticsService', () => {
     it('should send event with anonymousId if permission are granted', async () => {
       settingsService.getAppSettings.mockResolvedValue(mockAppSettings);
 
-      await service.sendEvent(
-        mockSessionMetadata,
-        {
-          event: TelemetryEvents.ApplicationStarted,
-          eventData: {},
-          nonTracking: false,
-        },
-      );
+      await service.sendEvent(mockSessionMetadata, {
+        event: TelemetryEvents.ApplicationStarted,
+        eventData: {},
+        nonTracking: false,
+      });
 
       expect(mockAnalyticsTrack).toHaveBeenCalledWith({
         anonymousId: mockAnonymousId,
@@ -226,32 +231,30 @@ describe('AnalyticsService', () => {
       });
     });
     it('should not send event if permission are not granted', async () => {
-      settingsService.getAppSettings.mockResolvedValue(mockAppSettingsWithoutPermissions);
+      settingsService.getAppSettings.mockResolvedValue(
+        mockAppSettingsWithoutPermissions,
+      );
       mockAnalyticsTrack.mockReset(); // reset invocation during init()
 
-      await service.sendEvent(
-        mockSessionMetadata,
-        {
-          event: 'SOME_EVENT',
-          eventData: {},
-          nonTracking: false,
-        },
-      );
+      await service.sendEvent(mockSessionMetadata, {
+        event: 'SOME_EVENT',
+        eventData: {},
+        nonTracking: false,
+      });
 
       expect(mockAnalyticsTrack).not.toHaveBeenCalled();
     });
     it('should send event for non tracking events event if permission are not granted', async () => {
-      settingsService.getAppSettings.mockResolvedValue(mockAppSettingsWithoutPermissions);
+      settingsService.getAppSettings.mockResolvedValue(
+        mockAppSettingsWithoutPermissions,
+      );
       mockAnalyticsTrack.mockReset(); // reset invocation during init()
 
-      await service.sendEvent(
-        mockSessionMetadata,
-        {
-          event: TelemetryEvents.ApplicationStarted,
-          eventData: {},
-          nonTracking: true,
-        },
-      );
+      await service.sendEvent(mockSessionMetadata, {
+        event: TelemetryEvents.ApplicationStarted,
+        eventData: {},
+        nonTracking: true,
+      });
 
       expect(mockAnalyticsTrack).toHaveBeenCalledWith({
         anonymousId: NON_TRACKING_ANONYMOUS_ID,
@@ -275,14 +278,11 @@ describe('AnalyticsService', () => {
       settingsService.getAppSettings.mockResolvedValue(mockAppSettings);
       mockAnalyticsTrack.mockReset(); // reset invocation during init()
 
-      await service.sendEvent(
-        mockSessionMetadata,
-        {
-          event: TelemetryEvents.ApplicationStarted,
-          eventData: {},
-          nonTracking: true,
-        },
-      );
+      await service.sendEvent(mockSessionMetadata, {
+        event: TelemetryEvents.ApplicationStarted,
+        eventData: {},
+        nonTracking: true,
+      });
 
       expect(mockAnalyticsTrack).toHaveBeenCalledWith({
         anonymousId: mockAnonymousId,
@@ -349,7 +349,9 @@ describe('AnalyticsService', () => {
       });
     });
     it('should not send page if permission are not granted', async () => {
-      settingsService.getAppSettings.mockResolvedValue(mockAppSettingsWithoutPermissions);
+      settingsService.getAppSettings.mockResolvedValue(
+        mockAppSettingsWithoutPermissions,
+      );
 
       await service.sendPage(mockSessionMetadata, {
         event: 'SOME_EVENT',
@@ -360,7 +362,9 @@ describe('AnalyticsService', () => {
       expect(mockAnalyticsPage).not.toHaveBeenCalled();
     });
     it('should send page for non tracking events event if permission are not granted', async () => {
-      settingsService.getAppSettings.mockResolvedValue(mockAppSettingsWithoutPermissions);
+      settingsService.getAppSettings.mockResolvedValue(
+        mockAppSettingsWithoutPermissions,
+      );
 
       await service.sendPage(mockSessionMetadata, {
         event: TelemetryEvents.ApplicationStarted,

@@ -7,7 +7,7 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -19,7 +19,7 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
   ttl: Joi.number().integer().max(2147483647).required().messages({
-    'any.required': '{#label} should not be empty'
+    'any.required': '{#label} should not be empty',
   }),
 }).strict();
 
@@ -28,9 +28,11 @@ const validInputData = {
   ttl: 12,
 };
 
-const responseSchema = Joi.object().keys({
-  ttl: Joi.number().integer().required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    ttl: Joi.number().integer().required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -55,7 +57,9 @@ describe('PATCH /databases/:instanceId/keys/ttl', () => {
         },
         responseSchema,
         after: async () => {
-          expect(await rte.client.ttl(constants.TEST_STRING_KEY_BIN_BUFFER_1)).to.gte(300 - 5)
+          expect(
+            await rte.client.ttl(constants.TEST_STRING_KEY_BIN_BUFFER_1),
+          ).to.gte(300 - 5);
         },
       },
       {
@@ -66,7 +70,9 @@ describe('PATCH /databases/:instanceId/keys/ttl', () => {
         },
         responseSchema,
         after: async () => {
-          expect(await rte.client.ttl(constants.TEST_STRING_KEY_BIN_BUFFER_1)).to.gte(600 - 5)
+          expect(
+            await rte.client.ttl(constants.TEST_STRING_KEY_BIN_BUFFER_1),
+          ).to.gte(600 - 5);
         },
       },
       {
@@ -93,8 +99,10 @@ describe('PATCH /databases/:instanceId/keys/ttl', () => {
         },
         responseSchema,
         after: async () => {
-          expect(await rte.client.ttl(constants.TEST_STRING_KEY_2)).to.gte(300 - 5)
-        }
+          expect(await rte.client.ttl(constants.TEST_STRING_KEY_2)).to.gte(
+            300 - 5,
+          );
+        },
       },
       {
         name: 'Should remove ttl for key',
@@ -104,8 +112,8 @@ describe('PATCH /databases/:instanceId/keys/ttl', () => {
         },
         responseSchema,
         after: async () => {
-          expect(await rte.client.ttl(constants.TEST_STRING_KEY_2)).to.eql(-1)
-        }
+          expect(await rte.client.ttl(constants.TEST_STRING_KEY_2)).to.eql(-1);
+        },
       },
       {
         name: 'Should return NotFound error for not existing key error',
@@ -151,8 +159,8 @@ describe('PATCH /databases/:instanceId/keys/ttl', () => {
           ttl: 10,
         },
         after: async () => {
-          expect(await rte.client.ttl(constants.TEST_STRING_KEY_1)).to.eql(10)
-        }
+          expect(await rte.client.ttl(constants.TEST_STRING_KEY_1)).to.eql(10);
+        },
       },
       {
         name: 'Should throw error if no permissions for "persist" command',

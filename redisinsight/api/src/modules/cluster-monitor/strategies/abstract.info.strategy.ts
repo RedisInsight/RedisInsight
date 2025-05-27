@@ -1,8 +1,11 @@
 import { IClusterInfo } from 'src/modules/cluster-monitor/strategies/cluster.info.interface';
 import { convertStringToNumber } from 'src/utils';
 import { get, map, sum } from 'lodash';
-import { ClusterDetails, ClusterNodeDetails } from 'src/modules/cluster-monitor/models';
-import { plainToClass } from 'class-transformer';
+import {
+  ClusterDetails,
+  ClusterNodeDetails,
+} from 'src/modules/cluster-monitor/models';
+import { plainToInstance } from 'class-transformer';
 import { convertMultilineReplyToObject } from 'src/modules/redis/utils';
 import { RedisClient } from 'src/modules/redis/client';
 
@@ -21,13 +24,13 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
 
     clusterDetails = {
       ...clusterDetails,
-      ...(AbstractInfoStrategy.calculateAdditionalClusterMetrics(client, nodes)),
+      ...AbstractInfoStrategy.calculateAdditionalClusterMetrics(client, nodes),
       nodes: AbstractInfoStrategy.createClusterHierarchy(nodes),
       version: get(nodes, '0.version'),
       mode: get(nodes, '0.mode'),
     };
 
-    return plainToClass(ClusterDetails, clusterDetails);
+    return plainToInstance(ClusterDetails, clusterDetails);
   }
 
   /**
@@ -36,23 +39,30 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    * @param nodes
    * @private
    */
-  private async getClusterNodesInfo(client: RedisClient, nodes): Promise<ClusterNodeDetails[]> {
+  private async getClusterNodesInfo(
+    client: RedisClient,
+    nodes,
+  ): Promise<ClusterNodeDetails[]> {
     const clientNodes = await client.nodes();
-    return await Promise.all(nodes.map((node) => {
-      const clientNode = clientNodes.find(
-        (n) => (
-          n.options?.host === node.host && n.options?.port === node.port
-        ) || (
-          n.options?.natHost === node.host && n.options?.natPort === node.port
-        ),
-      );
+    return await Promise.all(
+      nodes
+        .map((node) => {
+          const clientNode = clientNodes.find(
+            (n) =>
+              (n.options?.host === node.host &&
+                n.options?.port === node.port) ||
+              (n.options?.natHost === node.host &&
+                n.options?.natPort === node.port),
+          );
 
-      if (clientNode) {
-        return this.getClusterNodeInfo(clientNode, node);
-      }
+          if (clientNode) {
+            return this.getClusterNodeInfo(clientNode, node);
+          }
 
-      return undefined;
-    }).filter((n) => n));
+          return undefined;
+        })
+        .filter((n) => n),
+    );
   }
 
   /**
@@ -62,28 +72,50 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    * @param node
    * @private
    */
-  private async getClusterNodeInfo(nodeClient: RedisClient, node): Promise<ClusterNodeDetails> {
+  private async getClusterNodeInfo(
+    nodeClient: RedisClient,
+    node,
+  ): Promise<ClusterNodeDetails> {
     const info = await nodeClient.getInfo();
 
     return {
       ...node,
-      totalKeys: sum(map(get(info, 'keyspace', {}), (dbKeys): number => {
-        const { keys } = convertMultilineReplyToObject(dbKeys, ',', '=');
-        return parseInt(keys, 10);
-      })),
+      totalKeys: sum(
+        map(get(info, 'keyspace', {}), (dbKeys): number => {
+          const { keys } = convertMultilineReplyToObject(dbKeys, ',', '=');
+          return parseInt(keys, 10);
+        }),
+      ),
       usedMemory: convertStringToNumber(get(info, 'memory.used_memory')),
-      opsPerSecond: convertStringToNumber(get(info, 'stats.instantaneous_ops_per_sec')),
-      connectionsReceived: convertStringToNumber(get(info, 'stats.total_connections_received')),
-      connectedClients: convertStringToNumber(get(info, 'clients.connected_clients')),
-      commandsProcessed: convertStringToNumber(get(info, 'stats.total_commands_processed')),
-      networkInKbps: convertStringToNumber(get(info, 'stats.instantaneous_input_kbps')),
-      networkOutKbps: convertStringToNumber(get(info, 'stats.instantaneous_output_kbps')),
+      opsPerSecond: convertStringToNumber(
+        get(info, 'stats.instantaneous_ops_per_sec'),
+      ),
+      connectionsReceived: convertStringToNumber(
+        get(info, 'stats.total_connections_received'),
+      ),
+      connectedClients: convertStringToNumber(
+        get(info, 'clients.connected_clients'),
+      ),
+      commandsProcessed: convertStringToNumber(
+        get(info, 'stats.total_commands_processed'),
+      ),
+      networkInKbps: convertStringToNumber(
+        get(info, 'stats.instantaneous_input_kbps'),
+      ),
+      networkOutKbps: convertStringToNumber(
+        get(info, 'stats.instantaneous_output_kbps'),
+      ),
       cacheHitRatio: AbstractInfoStrategy.calculateCacheHitRatio(
         convertStringToNumber(get(info, 'stats.keyspace_hits'), 0),
         convertStringToNumber(get(info, 'stats.keyspace_misses'), 0),
       ),
-      replicationOffset: convertStringToNumber(get(info, 'replication.master_repl_offset')),
-      uptimeSec: convertStringToNumber(get(info, 'server.uptime_in_seconds'), 0),
+      replicationOffset: convertStringToNumber(
+        get(info, 'replication.master_repl_offset'),
+      ),
+      uptimeSec: convertStringToNumber(
+        get(info, 'server.uptime_in_seconds'),
+        0,
+      ),
       version: get(info, 'server.redis_version'),
       mode: get(info, 'server.redis_mode'),
     };
@@ -93,11 +125,14 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
    * Get bunch of fields from CLUSTER INFO command
    * @param client
    */
-  static async getClusterInfo(client: RedisClient): Promise<Partial<ClusterDetails>> {
-    const info = convertMultilineReplyToObject(await client.sendCommand(
-      ['cluster', 'info'],
-      { replyEncoding: 'utf8' },
-    ) as string);
+  static async getClusterInfo(
+    client: RedisClient,
+  ): Promise<Partial<ClusterDetails>> {
+    const info = convertMultilineReplyToObject(
+      (await client.sendCommand(['cluster', 'info'], {
+        replyEncoding: 'utf8',
+      })) as string,
+    );
 
     const slotsState = {
       slotsAssigned: convertStringToNumber(info.cluster_slots_assigned, 0),
@@ -110,8 +145,14 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
       state: info.cluster_state,
       ...slotsState,
       slotsUnassigned: 16384 - slotsState.slotsAssigned,
-      statsMessagesSent: convertStringToNumber(info.cluster_stats_messages_sent, 0),
-      statsMessagesReceived: convertStringToNumber(info.cluster_stats_messages_received, 0),
+      statsMessagesSent: convertStringToNumber(
+        info.cluster_stats_messages_sent,
+        0,
+      ),
+      statsMessagesReceived: convertStringToNumber(
+        info.cluster_stats_messages_received,
+        0,
+      ),
       currentEpoch: convertStringToNumber(info.cluster_current_epoch, 0),
       myEpoch: convertStringToNumber(info.cluster_my_epoch, 0),
       size: convertStringToNumber(info.cluster_size, 0),
@@ -140,7 +181,8 @@ export abstract class AbstractInfoStrategy implements IClusterInfo {
     // also calculate replicationLag
     nodes.forEach((node) => {
       if (node.primary && primaryNodes[node.primary]) {
-        const replicationLag = primaryNodes[node.primary].replicationOffset - node.replicationOffset;
+        const replicationLag =
+          primaryNodes[node.primary].replicationOffset - node.replicationOffset;
         primaryNodes[node.primary].replicas.push({
           ...node,
           replicationLag: replicationLag > -1 ? replicationLag : 0,

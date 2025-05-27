@@ -12,7 +12,11 @@ export const getTotalKeysFromInfo = async (client: RedisClient) => {
       return 0;
     }
 
-    const { keys } = convertMultilineReplyToObject(dbInfo[`db${currentDbIndex}`], ',', '=');
+    const { keys } = convertMultilineReplyToObject(
+      dbInfo[`db${currentDbIndex}`],
+      ',',
+      '=',
+    );
     return parseInt(keys, 10);
   } catch (err) {
     return -1;
@@ -20,9 +24,9 @@ export const getTotalKeysFromInfo = async (client: RedisClient) => {
 };
 
 export const getTotalKeysFromDBSize = async (client: RedisClient) => {
-  const total = await client.sendCommand(['dbsize'], {
+  const total = (await client.sendCommand(['dbsize'], {
     replyEncoding: 'utf8',
-  }) as string;
+  })) as string;
   return parseInt(total, 10);
 };
 

@@ -2,7 +2,6 @@ import {
   EuiButton,
   EuiForm,
   EuiFormRow,
-  EuiSpacer,
   EuiSuperSelect,
   EuiText,
   EuiToolTip,
@@ -21,6 +20,7 @@ import {
 } from 'uiSrc/slices/rdi/pipeline'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces/rdi'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { NO_TEMPLATE_VALUE, NO_OPTIONS, INGEST_OPTION } from './constants'
 
 import styles from './styles.module.scss'
@@ -32,7 +32,10 @@ export interface Props {
   value: string
 }
 
-export const getTooltipContent = (value: string, isNoTemplateOptions: boolean) => {
+export const getTooltipContent = (
+  value: string,
+  isNoTemplateOptions: boolean,
+) => {
   if (isNoTemplateOptions) {
     return (
       <>
@@ -57,8 +60,11 @@ const TemplateForm = (props: Props) => {
 
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
-  const [pipelineTypeOptions, setPipelineTypeOptions] = useState<EuiSuperSelectOption<string>[]>([])
-  const [dbTypeOptions, setDbTypeOptions] = useState<EuiSuperSelectOption<string>[]>(NO_OPTIONS)
+  const [pipelineTypeOptions, setPipelineTypeOptions] = useState<
+    EuiSuperSelectOption<string>[]
+  >([])
+  const [dbTypeOptions, setDbTypeOptions] =
+    useState<EuiSuperSelectOption<string>[]>(NO_OPTIONS)
   const [selectedDbType, setSelectedDbType] = useState<string>('')
   const [selectedPipelineType, setSelectedPipelineType] = useState<string>('')
 
@@ -75,7 +81,14 @@ const TemplateForm = (props: Props) => {
 
   const handleApply = () => {
     if (source === RdiPipelineTabs.Config) {
-      dispatch(fetchConfigTemplate(rdiInstanceId, selectedPipelineType, selectedDbType, onSuccess))
+      dispatch(
+        fetchConfigTemplate(
+          rdiInstanceId,
+          selectedPipelineType,
+          selectedDbType,
+          onSuccess,
+        ),
+      )
     }
     if (source === RdiPipelineTabs.Jobs) {
       dispatch(fetchJobTemplate(rdiInstanceId, selectedPipelineType, onSuccess))
@@ -86,13 +99,15 @@ const TemplateForm = (props: Props) => {
         id: rdiInstanceId,
         page: source,
         mode: selectedPipelineType,
-      }
+      },
     })
   }
 
-  const isNoTemplateOptions = source === RdiPipelineTabs.Config
-    ? selectedDbType === NO_TEMPLATE_VALUE || selectedPipelineType === NO_TEMPLATE_VALUE
-    : selectedPipelineType === NO_TEMPLATE_VALUE
+  const isNoTemplateOptions =
+    source === RdiPipelineTabs.Config
+      ? selectedDbType === NO_TEMPLATE_VALUE ||
+        selectedPipelineType === NO_TEMPLATE_VALUE
+      : selectedPipelineType === NO_TEMPLATE_VALUE
 
   useEffect(() => {
     if (!selectedPipelineType || !data.length) {
@@ -102,10 +117,14 @@ const TemplateForm = (props: Props) => {
       return
     }
 
-    const selectedStrategy = data
-      .find(({ strategy }) => strategy === selectedPipelineType)
+    const selectedStrategy = data.find(
+      ({ strategy }) => strategy === selectedPipelineType,
+    )
 
-    const newDbTypeOptions = selectedStrategy?.databases?.map((db) => ({ value: db, inputDisplay: db }))
+    const newDbTypeOptions = selectedStrategy?.databases?.map((db) => ({
+      value: db,
+      inputDisplay: db,
+    }))
 
     if (newDbTypeOptions?.length) {
       setDbTypeOptions(newDbTypeOptions)
@@ -122,12 +141,15 @@ const TemplateForm = (props: Props) => {
       inputDisplay: strategy.strategy,
     }))
 
-    setPipelineTypeOptions(newPipelineTypeOptions.length ? newPipelineTypeOptions : NO_OPTIONS)
+    setPipelineTypeOptions(
+      newPipelineTypeOptions.length ? newPipelineTypeOptions : NO_OPTIONS,
+    )
 
     if (data?.length) {
-      const initialSelectedOption = newPipelineTypeOptions
-        .find((strategy) => strategy.value === INGEST_OPTION)
-          || newPipelineTypeOptions[0]
+      const initialSelectedOption =
+        newPipelineTypeOptions.find(
+          (strategy) => strategy.value === INGEST_OPTION,
+        ) || newPipelineTypeOptions[0]
       setSelectedPipelineType(initialSelectedOption.value)
     } else {
       setSelectedPipelineType(NO_OPTIONS[0].value)
@@ -141,22 +163,22 @@ const TemplateForm = (props: Props) => {
   return (
     <div className={cx(styles.container)}>
       <EuiText className={styles.title}>Select a template</EuiText>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <EuiForm component="form">
-        <EuiSpacer size="xs" />
-        {(pipelineTypeOptions?.length > 1) && (
-        <EuiFormRow className={styles.formRow}>
-          <>
-            <div className={styles.rowLabel}>Pipeline type</div>
-            <EuiSuperSelect
-              options={pipelineTypeOptions}
-              valueOfSelected={selectedPipelineType}
-              onChange={(value) => setSelectedPipelineType(value)}
-              popoverClassName={styles.selectWrapper}
-              data-testid="pipeline-type-select"
-            />
-          </>
-        </EuiFormRow>
+        <Spacer size="xs" />
+        {pipelineTypeOptions?.length > 1 && (
+          <EuiFormRow className={styles.formRow}>
+            <>
+              <div className={styles.rowLabel}>Pipeline type</div>
+              <EuiSuperSelect
+                options={pipelineTypeOptions}
+                valueOfSelected={selectedPipelineType}
+                onChange={(value) => setSelectedPipelineType(value)}
+                popoverClassName={styles.selectWrapper}
+                data-testid="pipeline-type-select"
+              />
+            </>
+          </EuiFormRow>
         )}
         {source === RdiPipelineTabs.Config && (
           <EuiFormRow className={styles.formRow}>

@@ -5,6 +5,8 @@ import MonacoEditor from './MonacoEditor'
 
 describe('MonacoEditor', () => {
   it('should render', () => {
-    expect(render(<MonacoEditor value="val" onChange={jest.fn()} language="val" />)).toBeTruthy()
+    expect(
+      render(<MonacoEditor value="val" onChange={jest.fn()} language="val" />),
+    ).toBeTruthy()
   })
 })

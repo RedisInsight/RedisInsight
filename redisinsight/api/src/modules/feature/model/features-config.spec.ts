@@ -1,8 +1,12 @@
 import {
-  mockFeaturesConfig, mockFeaturesConfigComplex, mockFeaturesConfigEntity, mockFeaturesConfigEntityComplex,
-  mockFeaturesConfigJson, mockFeaturesConfigJsonComplex,
+  mockFeaturesConfig,
+  mockFeaturesConfigComplex,
+  mockFeaturesConfigEntity,
+  mockFeaturesConfigEntityComplex,
+  mockFeaturesConfigJson,
+  mockFeaturesConfigJsonComplex,
 } from 'src/__mocks__';
-import { classToPlain, plainToClass } from 'class-transformer';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { FeaturesConfig } from 'src/modules/feature/model/features-config';
 import { classToClass } from 'src/utils';
 import { FeaturesConfigEntity } from 'src/modules/feature/entities/features-config.entity';
@@ -14,7 +18,10 @@ const testCases = [
       data: { ...mockFeaturesConfigJson },
     },
     model: mockFeaturesConfig,
-    entity: Object.assign(new FeaturesConfigEntity(), { ...mockFeaturesConfigEntity, id: undefined }),
+    entity: Object.assign(new FeaturesConfigEntity(), {
+      ...mockFeaturesConfigEntity,
+      id: undefined,
+    }),
   },
   {
     plain: {
@@ -22,7 +29,10 @@ const testCases = [
       data: { ...mockFeaturesConfigJsonComplex },
     },
     model: mockFeaturesConfigComplex,
-    entity: Object.assign(new FeaturesConfigEntity(), { ...mockFeaturesConfigEntityComplex, id: undefined }),
+    entity: Object.assign(new FeaturesConfigEntity(), {
+      ...mockFeaturesConfigEntityComplex,
+      id: undefined,
+    }),
   },
   {
     plain: {},
@@ -50,9 +60,12 @@ describe('FeaturesConfig', () => {
   describe('transform', () => {
     testCases.forEach((tc) => {
       it(`input ${JSON.stringify(tc.plain)}`, async () => {
-        const modelFromPlain = plainToClass(FeaturesConfig, tc.plain);
-        const plainFromModel = classToPlain(modelFromPlain);
-        const entityFromModel = classToClass(FeaturesConfigEntity, modelFromPlain);
+        const modelFromPlain = plainToInstance(FeaturesConfig, tc.plain);
+        const plainFromModel = instanceToPlain(modelFromPlain);
+        const entityFromModel = classToClass(
+          FeaturesConfigEntity,
+          modelFromPlain,
+        );
         const modelFromEntity = classToClass(FeaturesConfig, entityFromModel);
 
         expect(tc.model).toEqual(modelFromPlain);

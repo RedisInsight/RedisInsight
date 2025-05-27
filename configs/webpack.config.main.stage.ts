@@ -1,10 +1,10 @@
-import webpack from 'webpack';
-import { merge } from 'webpack-merge';
-import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-import mainProdConfig from './webpack.config.main.prod';
-import DeleteSourceMaps from '../scripts/DeleteSourceMaps';
+import webpack from 'webpack'
+import { merge } from 'webpack-merge'
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
+import mainProdConfig from './webpack.config.main.prod'
+import DeleteSourceMaps from '../scripts/DeleteSourceMaps'
 
-DeleteSourceMaps();
+DeleteSourceMaps()
 
 export default merge(mainProdConfig, {
   plugins: [
@@ -18,4 +18,4 @@ export default merge(mainProdConfig, {
       NODE_ENV: 'staging',
     }),
   ],
-});
+})

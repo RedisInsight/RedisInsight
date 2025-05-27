@@ -1,44 +1,32 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiFlexGroup, EuiFlexItem, EuiSpacer, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props<T> {
   items: T[]
-  children: (
-    item: T,
-    index: number
-  ) => React.ReactNode
+  children: (item: T, index: number) => React.ReactNode
   isClearDisabled: (item: T, index?: number) => boolean
   onClickRemove: (item: T, index?: number) => void
   onClickAdd: () => void
 }
 
 const AddMultipleFields = <T,>(props: Props<T>) => {
-  const {
-    items,
-    children,
-    isClearDisabled,
-    onClickRemove,
-    onClickAdd,
-  } = props
+  const { items, children, isClearDisabled, onClickRemove, onClickAdd } = props
 
   const renderItem = (child: React.ReactNode, item: T, index?: number) => (
-    <EuiFlexItem
+    <FlexItem
       key={index}
       className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace', styles.row)}
       grow
     >
-      <EuiFlexGroup alignItems="center" gutterSize="s">
-        <EuiFlexItem grow>
-          {child}
-        </EuiFlexItem>
-        <EuiFlexItem grow={false}>
-          <EuiToolTip
-            content="Remove"
-            position="left"
-          >
+      <Row align="center" gap="s">
+        <FlexItem grow>{child}</FlexItem>
+        <FlexItem>
+          <EuiToolTip content="Remove" position="left">
             <EuiButtonIcon
               iconType="trash"
               isDisabled={isClearDisabled(item, index)}
@@ -48,21 +36,20 @@ const AddMultipleFields = <T,>(props: Props<T>) => {
               data-testid="remove-item"
             />
           </EuiToolTip>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </EuiFlexItem>
+        </FlexItem>
+      </Row>
+    </FlexItem>
   )
 
   return (
     <>
-      {items.map((item, index) => renderItem(children(item, index), item, index))}
-      <EuiSpacer size="s" />
-      <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-        <EuiFlexItem grow={false}>
-          <EuiToolTip
-            content="Add"
-            position="left"
-          >
+      {items.map((item, index) =>
+        renderItem(children(item, index), item, index),
+      )}
+      <Spacer size="s" />
+      <Row align="center" justify="end">
+        <FlexItem>
+          <EuiToolTip content="Add" position="left">
             <EuiButtonIcon
               className={styles.addBtn}
               iconType="plus"
@@ -72,8 +59,8 @@ const AddMultipleFields = <T,>(props: Props<T>) => {
               data-testid="add-item"
             />
           </EuiToolTip>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </>
   )
 }

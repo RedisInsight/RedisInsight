@@ -4,11 +4,11 @@ import { Maybe } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
 export interface Props {
-  appliedValue: string;
-  fieldName: string;
-  prependSearchName: string;
-  onApply?: (value: string) => void;
-  searchValidation?: Maybe<(value: string) => string>;
+  appliedValue: string
+  fieldName: string
+  prependSearchName: string
+  onApply?: (value: string) => void
+  searchValidation?: Maybe<(value: string) => string>
 }
 
 const TableColumnSearch = (props: Props) => {
@@ -48,7 +48,8 @@ const TableColumnSearch = (props: Props) => {
         placeholder="Search"
         value={value || ''}
         onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          handleChangeValue(e.target.value)}
+          handleChangeValue(e.target.value)
+        }
         data-testid="search"
       />
     </div>

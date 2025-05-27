@@ -1,7 +1,10 @@
 import { EuiBasicTableColumn, EuiIcon, EuiToolTip } from '@elastic/eui'
 import React from 'react'
 
-import { IConnections, StatisticsConnectionStatus } from 'uiSrc/slices/interfaces'
+import {
+  IConnections,
+  StatisticsConnectionStatus,
+} from 'uiSrc/slices/interfaces'
 import { formatLongName } from 'uiSrc/utils'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
@@ -22,25 +25,25 @@ const columns: EuiBasicTableColumn<ConnectionData>[] = [
     field: 'status',
     width: '80px',
     render: (status: string) =>
-      (status === StatisticsConnectionStatus.connected ? (
+      status === StatisticsConnectionStatus.connected ? (
         <EuiIcon type="dot" color="var(--buttonSuccessColor)" />
       ) : (
         <EuiIcon type="alert" color="danger" />
-      )),
+      ),
     align: 'center',
-    sortable: true
+    sortable: true,
   },
   {
     name: 'Name',
     field: 'name',
     width: '15%',
-    sortable: true
+    sortable: true,
   },
   {
     name: 'Type',
     field: 'type',
     width: '10%',
-    sortable: true
+    sortable: true,
   },
   {
     name: 'Host:port',
@@ -50,20 +53,20 @@ const columns: EuiBasicTableColumn<ConnectionData>[] = [
       <EuiToolTip content={hostPort}>
         <span>{formatLongName(hostPort, 80, 0, '...')}</span>
       </EuiToolTip>
-    )
+    ),
   },
   {
     name: 'Database',
     field: 'database',
     width: '15%',
-    sortable: true
+    sortable: true,
   },
   {
     name: 'Username',
     field: 'user',
     width: '15%',
-    sortable: true
-  }
+    sortable: true,
+  },
 ]
 
 interface Props {
@@ -76,14 +79,23 @@ const TargetConnections = ({ data }: Props) => {
     return {
       name: key,
       hostPort: `${connection.host}:${connection.port}`,
-      ...connection
+      ...connection,
     }
   })
 
   return (
     <Panel>
-      <Accordion id="target-connections" title="Target connections" hideAutoRefresh>
-        <Table<ConnectionData> id="target-connections" columns={columns} items={connections} initialSortField="name" />
+      <Accordion
+        id="target-connections"
+        title="Target connections"
+        hideAutoRefresh
+      >
+        <Table<ConnectionData>
+          id="target-connections"
+          columns={columns}
+          items={connections}
+          initialSortField="name"
+        />
       </Accordion>
     </Panel>
   )

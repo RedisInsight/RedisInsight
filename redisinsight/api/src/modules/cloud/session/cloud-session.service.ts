@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SessionService } from 'src/modules/session/session.service';
 import { CloudSession } from 'src/modules/cloud/session/models/cloud-session';
-import { classToPlain, plainToClass } from 'class-transformer';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { TransformGroup } from 'src/common/constants';
 import { CloudSessionRepository } from './repositories/cloud.session.repository';
 
@@ -37,12 +37,19 @@ export class CloudSessionService {
   async updateSessionData(id: string, cloud: any): Promise<CloudSession> {
     const session = await this.getSession(id);
 
-    const cloudSession = (await this.sessionService.updateSessionData(id, {
-      cloud: plainToClass(CloudSession, {
-        ...classToPlain(session, { groups: [TransformGroup.Secure] }),
-        ...classToPlain(cloud, { groups: [TransformGroup.Secure] }),
-      }, { groups: [TransformGroup.Secure] }),
-    }))?.data?.cloud || null;
+    const cloudSession =
+      (
+        await this.sessionService.updateSessionData(id, {
+          cloud: plainToInstance(
+            CloudSession,
+            {
+              ...instanceToPlain(session, { groups: [TransformGroup.Secure] }),
+              ...instanceToPlain(cloud, { groups: [TransformGroup.Secure] }),
+            },
+            { groups: [TransformGroup.Secure] },
+          ),
+        })
+      )?.data?.cloud || null;
 
     if (cloudSession && cloud?.refreshToken && cloud?.idpType) {
       try {

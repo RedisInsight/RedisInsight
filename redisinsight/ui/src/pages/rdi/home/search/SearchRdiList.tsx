@@ -1,7 +1,7 @@
-import { EuiFieldSearch } from '@elastic/eui'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
+import { SearchInput } from 'uiSrc/components/base/inputs'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import {
   instancesSelector,
@@ -10,15 +10,13 @@ import {
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { lastConnectionFormat } from 'uiSrc/utils'
 
-import styles from './styles.module.scss'
-
 const SearchRdiList = () => {
   const { data: instances } = useSelector(instancesSelector)
 
   const dispatch = useDispatch()
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
 
     const visibleItems = instances.map((item: RdiInstance) => ({
       ...item,
@@ -42,11 +40,8 @@ const SearchRdiList = () => {
   }
 
   return (
-    <EuiFieldSearch
-      isClearable
-      fullWidth
+    <SearchInput
       placeholder="Endpoint List Search"
-      className={styles.search}
       onChange={onQueryChange}
       aria-label="Search rdi instance list"
       data-testid="search-rdi-instance-list"

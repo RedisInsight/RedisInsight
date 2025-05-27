@@ -8,7 +8,6 @@ import {
   EuiPopover,
   EuiText,
   EuiTitle,
-  EuiFieldSearch,
   EuiFormRow,
   EuiToolTip,
 } from '@elastic/eui'
@@ -26,6 +25,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
+import { SearchInput } from 'uiSrc/components/base/inputs'
 import styles from '../../../styles.module.scss'
 
 export interface Props {
@@ -105,8 +105,8 @@ const SentinelDatabases = ({
       setSelection(selected),
   }
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
 
     const itemsTemp = masters.filter(
       (item: ModifiedSentinelMaster) =>
@@ -220,11 +220,9 @@ const SentinelDatabases = ({
           </FlexItem>
           <FlexItem>
             <EuiFormRow className={styles.searchForm}>
-              <EuiFieldSearch
+              <SearchInput
                 placeholder="Search..."
-                className={styles.search}
                 onChange={onQueryChange}
-                isClearable
                 aria-label="Search"
                 data-testid="search"
               />

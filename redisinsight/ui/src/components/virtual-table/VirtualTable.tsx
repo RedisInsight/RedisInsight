@@ -545,6 +545,7 @@ const VirtualTable = (props: IProps) => {
     onSearch?.(newState)
   }
 
+  console.log('+++test')
   const searchRenderer = (column: ITableColumn) => {
     const columnSearchState = search.find(
       (columnState) => columnState.id === column.id,

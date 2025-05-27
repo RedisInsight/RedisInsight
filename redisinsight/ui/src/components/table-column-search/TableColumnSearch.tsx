@@ -1,6 +1,7 @@
-import React, { ChangeEvent, useState } from 'react'
-import { EuiFieldSearch, keys } from '@elastic/eui'
+import React, { useState } from 'react'
+import { keys } from '@elastic/eui'
 import { Maybe } from 'uiSrc/utils'
+import SearchInput from '../base/inputs/SearchInput'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -15,7 +16,6 @@ const TableColumnSearch = (props: Props) => {
   const {
     fieldName,
     appliedValue,
-    prependSearchName,
     onApply = () => {},
     searchValidation,
   } = props
@@ -40,16 +40,12 @@ const TableColumnSearch = (props: Props) => {
 
   return (
     <div className={styles.search}>
-      <EuiFieldSearch
-        fullWidth
+      <SearchInput
         onKeyDown={onKeyDown}
         name={fieldName}
-        prepend={prependSearchName}
         placeholder="Search"
         value={value || ''}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          handleChangeValue(e.target.value)
-        }
+        onChange={handleChangeValue}
         data-testid="search"
       />
     </div>

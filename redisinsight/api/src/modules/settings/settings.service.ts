@@ -94,10 +94,7 @@ export class SettingsService {
             notifications: false,
           },
           version: (await this.getAgreementsSpec()).version,
-        };
-        
-        // If eula is automatically accepted, also discover databases
-        await this.discoverDatabasesAfterEulaAccepted(sessionMetadata);
+        };     
       }
 
       const agreements = await this.agreementRepository.getOrCreate(sessionMetadata, defaultOptions);
@@ -106,6 +103,10 @@ export class SettingsService {
         'Succeed to get application settings.',
         sessionMetadata,
       );
+
+      if (SERVER_CONFIG.acceptTermsAndConditions) {
+        await this.discoverDatabasesAfterEulaAccepted(sessionMetadata);
+      }
 
 
       return classToClass(GetAppSettingsResponse, {

@@ -105,7 +105,9 @@ export class SettingsService {
       );
 
       if (SERVER_CONFIG.acceptTermsAndConditions) {
-        await this.discoverDatabasesAfterEulaAccepted(sessionMetadata);
+        process.nextTick(async () => {
+          await this.discoverDatabasesAfterEulaAccepted(sessionMetadata);
+        });
       }
 
 

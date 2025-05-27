@@ -33,6 +33,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { SettingsIcon } from 'uiSrc/components/base/icons'
+import { ComboBox } from 'uiSrc/components/base/forms/combo-box/ComboBox'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -56,6 +57,12 @@ const KeyTreeSettings = ({ loading }: Props) => {
   const [sorting, setSorting] = useState<SortOrder>(treeViewSort)
   const [delimiters, setDelimiters] =
     useState<EuiComboBoxOptionOption[]>(treeViewDelimiter)
+  const [delimitersCb, setDelimitersCb] = useState([
+    {
+      label: DEFAULT_DELIMITER.label,
+      value: DEFAULT_DELIMITER.value as string,
+    },
+  ])
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
@@ -159,6 +166,28 @@ const KeyTreeSettings = ({ loading }: Props) => {
                 setDelimiters([...delimiters, { label: del }])
               }
               onChange={(selectedOptions) => setDelimiters(selectedOptions)}
+              className={styles.combobox}
+              data-testid="delimiter-combobox"
+            />
+            <ComboBox
+              allowReset={false}
+              placeholder=":"
+              maxVisibleItems={0}
+              searchable
+              delimiter=" "
+              options={delimitersCb}
+              value={delimitersCb.map((item) => item.value)}
+              onCreateOption={(del) =>
+                setDelimitersCb([...delimitersCb, { label: del, value: del }])
+              }
+              onChange={(selectedOptions) =>
+                setDelimitersCb(
+                  selectedOptions.map((item) => ({
+                    label: item,
+                    value: item,
+                  })),
+                )
+              }
               className={styles.combobox}
               data-testid="delimiter-combobox"
             />

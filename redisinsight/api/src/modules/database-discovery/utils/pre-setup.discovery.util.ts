@@ -126,6 +126,7 @@ export const prepareDatabaseFromEnvs = async (
       id: id || '0',
       host: process.env[hostEnv],
       port: parseInt(process.env[`RI_REDIS_PORT${id}`], 10) || 6379,
+      db: parseInt(process.env[`RI_REDIS_DB${id}`], 10) || 0,
       name: process.env[`RI_REDIS_ALIAS${id}`],
       username: process.env[`RI_REDIS_USERNAME${id}`],
       password: process.env[`RI_REDIS_PASSWORD${id}`],

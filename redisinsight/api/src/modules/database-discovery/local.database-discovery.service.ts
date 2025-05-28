@@ -42,29 +42,27 @@ export class LocalDatabaseDiscoveryService extends DatabaseDiscoveryService {
 
     // Mark as running and perform discovery in background
     this.isDiscoveryRunning = true;
-    setImmediate(async () => {
-      try {
-        // check agreements to understand if it is first launch
-        const settings =
-          await this.settingsService.getAppSettings(sessionMetadata);
+    try {
+      // check agreements to understand if it is first launch
+      const settings =
+        await this.settingsService.getAppSettings(sessionMetadata);
 
-        if (!settings?.agreements?.eula) {
-          this.isDiscoveryRunning = false;
-          return;
-        }
-
-        const { discovered } =
-          await this.preSetupDatabaseDiscoveryService.discover(sessionMetadata);
-
-        if (!discovered && firstRun) {
-          await this.autoDatabaseDiscoveryService.discover(sessionMetadata);
-        }
-      } catch (e) {
-        // ignore error
-        this.logger.error('Unable to discover databases', e);
-      } finally {
+      if (!settings?.agreements?.eula) {
         this.isDiscoveryRunning = false;
+        return;
       }
-    });
+
+      const { discovered } =
+        await this.preSetupDatabaseDiscoveryService.discover(sessionMetadata);
+
+      if (!discovered && firstRun) {
+        await this.autoDatabaseDiscoveryService.discover(sessionMetadata);
+      }
+    } catch (e) {
+      // ignore error
+      this.logger.error('Unable to discover databases', e);
+    } finally {
+      this.isDiscoveryRunning = false;
+    }
   }
 }

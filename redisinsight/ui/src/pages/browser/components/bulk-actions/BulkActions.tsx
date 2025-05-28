@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiTitle, EuiToolTip } from '@elastic/eui'
+import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import {
@@ -20,6 +20,7 @@ import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { FullScreen } from 'uiSrc/components'
 
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
+import { Title } from 'uiSrc/components/base/text/Title'
 import BulkUpload from './BulkUpload'
 import BulkDelete from './BulkDelete'
 import BulkActionsTabs from './BulkActionsTabs'
@@ -99,9 +100,9 @@ const BulkActions = (props: Props) => {
     <div className={styles.page}>
       <Col justify="center" className={cx(styles.container, 'relative')}>
         <FlexItem grow style={{ marginBottom: '16px' }}>
-          <EuiTitle size="xs" className={styles.title}>
-            <h4>Bulk Actions</h4>
-          </EuiTitle>
+          <Title size="M" className={styles.title}>
+            Bulk Actions
+          </Title>
           {!arePanelsCollapsed && (
             <FullScreen
               isFullScreen={isFullScreen}

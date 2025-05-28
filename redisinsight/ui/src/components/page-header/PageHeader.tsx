@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiButtonEmpty, EuiTitle } from '@elastic/eui'
+import { EuiButtonEmpty } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
@@ -17,6 +17,7 @@ import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Title } from 'uiSrc/components/base/text/Title'
 import styles from './PageHeader.module.scss'
 
 interface Props {
@@ -57,11 +58,9 @@ const PageHeader = (props: Props) => {
     <div className={cx(styles.pageHeader, className)}>
       <div className={styles.pageHeaderTop}>
         <div>
-          <EuiTitle size="s" className={styles.title} data-testid="page-title">
-            <h1>
-              <b data-testid="page-header-title">{title}</b>
-            </h1>
-          </EuiTitle>
+          <Title size="XXL" className={styles.title} data-testid="page-title">
+            <b data-testid="page-header-title">{title}</b>
+          </Title>
           {subtitle ? <span data-testid="page-subtitle">{subtitle}</span> : ''}
         </div>
         {children ? <>{children}</> : ''}

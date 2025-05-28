@@ -17,7 +17,7 @@ export class LocalAgreementsRepository extends AgreementsRepository {
 
   async getOrCreate(
     sessionMetadata: SessionMetadata,
-    defaultOptions: DefaultAgreementsOptions = {}
+    defaultOptions: DefaultAgreementsOptions = {},
   ): Promise<Agreements> {
     let entity = await this.repository.findOneBy({});
     if (!entity?.data) {

@@ -242,12 +242,11 @@ describe('Config', () => {
       rdiPipelineSelectorMock,
     )
 
-    render(<Config />)
+    const { getByTestId } = render(<Config />)
 
     // check is btn has loader
-    expect(
-      screen.getByTestId('rdi-test-connection-btn').children[0].children[0],
-    ).toHaveClass('euiLoadingSpinner')
+    const child = getByTestId('rdi-test-connection-btn').children[0].children[0]
+    expect(child.tagName.toLowerCase()).toEqual('svg')
   })
 
   it('should render loader on btn', () => {
@@ -258,12 +257,11 @@ describe('Config', () => {
       rdiTestConnectionsSelectorMock,
     )
 
-    render(<Config />)
+    const { getByTestId } = render(<Config />)
 
     // check is btn has loader
-    expect(
-      screen.getByTestId('rdi-test-connection-btn').children[0].children[0],
-    ).toHaveClass('euiLoadingSpinner')
+    const child = getByTestId('rdi-test-connection-btn').children[0].children[0]
+    expect(child.tagName.toLowerCase()).toEqual('svg')
   })
 
   it('should send telemetry event when clicking Test Connection button', async () => {

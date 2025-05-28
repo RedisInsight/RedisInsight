@@ -1,11 +1,12 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiFieldNumber, EuiIcon, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiFieldNumber, EuiIcon, EuiText } from '@elastic/eui'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Title } from 'uiSrc/components/base/text/Title'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -64,9 +65,9 @@ const SettingItem = (props: Props) => {
 
   return (
     <>
-      <EuiTitle className={styles.title} size="xxs">
-        <span>{title}</span>
-      </EuiTitle>
+      <Title className={styles.title} size="XS">
+        {title}
+      </Title>
       <Spacer size="s" />
       <EuiText className={styles.smallText} size="s" color="subdued">
         {summary}
@@ -83,7 +84,6 @@ const SettingItem = (props: Props) => {
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
           onClick={() => setEditing(true)}
-          inline
           style={{ paddingBottom: '1px' }}
         >
           {isEditing || isHovering ? (

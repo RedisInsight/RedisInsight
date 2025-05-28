@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { keys } from '@elastic/eui'
+import { KeyboardKeys as keys } from 'uiSrc/constants/keys'
 import { Maybe } from 'uiSrc/utils'
 import SearchInput from '../base/inputs/SearchInput'
 import styles from './styles.module.scss'

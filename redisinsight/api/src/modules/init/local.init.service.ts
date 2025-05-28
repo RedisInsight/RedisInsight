@@ -32,9 +32,7 @@ export class LocalInitService extends InitService {
     await this.initAnalytics(firstStart);
     await this.featureService.recalculateFeatureFlags(sessionMetadata);
     await this.redisClientFactory.init();
-    process.nextTick(async () => {
-      await this.databaseDiscoveryService.discover(sessionMetadata, firstStart);
-    });
+    await this.databaseDiscoveryService.discover(sessionMetadata, firstStart);
   }
 
   async initAnalytics(firstStart: boolean) {

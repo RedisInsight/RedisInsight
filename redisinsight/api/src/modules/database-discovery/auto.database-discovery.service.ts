@@ -15,6 +15,7 @@ import { ConstantsProvider } from 'src/modules/constants/providers/constants.pro
 @Injectable()
 export class AutoDatabaseDiscoveryService {
   private logger = new Logger('AutoDatabaseDiscoveryService');
+  private isDiscoveryRunning = false;
 
   constructor(
     private redisClientFactory: RedisClientFactory,
@@ -22,14 +23,22 @@ export class AutoDatabaseDiscoveryService {
   ) {}
 
   /**
-   * Try to add standalone databases without auth from processes running on the host machine listening on TCP4
+   * Start discovery process in background without blocking the main thread
    * Database alias will be "host:port"
    */
   async discover(sessionMetadata: SessionMetadata) {
+    // Return immediately to not block the main thread
+    if (this.isDiscoveryRunning) {
+      return;
+    }
+
+    // Perform the actual discovery in background
+    this.isDiscoveryRunning = true;
     try {
       // additional check for existing databases
       // We should not start auto discover if any database already exists
       if ((await this.databaseService.list(sessionMetadata)).length) {
+        this.isDiscoveryRunning = false;
         return;
       }
 
@@ -46,6 +55,8 @@ export class AutoDatabaseDiscoveryService {
       ]);
     } catch (e) {
       this.logger.warn('Unable to discover redis database', e);
+    } finally {
+      this.isDiscoveryRunning = false;
     }
   }
 

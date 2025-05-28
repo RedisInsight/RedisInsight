@@ -29,15 +29,23 @@ export const getRunningProcesses = async (): Promise<string[]> =>
       let stdoutData = '';
       const proc = spawn(...getSpawnArgs());
 
+      // Add timeout to ensure we don't wait forever
+      const timeout = setTimeout(() => {
+        proc.kill();
+        resolve([]); // Return empty array on timeout
+      }, 1000);
+
       proc.stdout.on('data', (data) => {
         stdoutData += data.toString();
       });
 
       proc.on('error', (e) => {
+        clearTimeout(timeout);
         reject(e);
       });
 
       proc.stdout.on('end', () => {
+        clearTimeout(timeout);
         resolve(stdoutData.split('\n'));
       });
     } catch (e) {

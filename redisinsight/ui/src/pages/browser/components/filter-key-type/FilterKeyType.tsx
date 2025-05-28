@@ -1,5 +1,4 @@
 import {
-  EuiHealth,
   EuiModal,
   EuiModalBody,
   EuiSuperSelect,
@@ -29,6 +28,7 @@ import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { AdditionalRedisModule } from 'uiSrc/slices/interfaces'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
+import { Health } from 'uiSrc/components/base/text/Health'
 import { FILTER_KEY_TYPE_OPTIONS } from './constants'
 
 import styles from './styles.module.scss'
@@ -79,14 +79,14 @@ const FilterKeyType = ({ modules }: Props) => {
       return {
         value,
         inputDisplay: (
-          <EuiHealth color={color} className={styles.dropdownDisplay}>
+          <Health color={color} className={styles.dropdownDisplay}>
             {text}
-          </EuiHealth>
+          </Health>
         ),
         dropdownDisplay: (
-          <EuiHealth color={color} className={styles.dropdownDisplay}>
+          <Health color={color} className={styles.dropdownDisplay}>
             {text}
-          </EuiHealth>
+          </Health>
         ),
         'data-test-subj': `filter-option-type-${value}`,
       }

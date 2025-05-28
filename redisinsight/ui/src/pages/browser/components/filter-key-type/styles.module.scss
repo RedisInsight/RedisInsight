@@ -129,12 +129,3 @@
 .dropdownOption {
   padding-left: 6px;
 }
-
-.dropdownDisplay {
-  :global {
-    .euiFlexGroup {
-      margin: 0;
-      line-height: 1;
-    }
-  }
-}

@@ -5,7 +5,6 @@ import {
   EuiBasicTableColumn,
   PropertySort,
   EuiText,
-  EuiTitle,
 } from '@elastic/eui'
 import { FormField } from '@redis-ui/components'
 import {
@@ -22,6 +21,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { SearchInput } from 'uiSrc/components/base/inputs'
+import { Title } from 'uiSrc/components/base/text/Title'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -90,9 +90,9 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
   return (
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
-        <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>Redis Enterprise Databases Added</h1>
-        </EuiTitle>
+        <Title size="XXL" className={styles.title} data-testid="title">
+          Redis Enterprise Databases Added
+        </Title>
         <Flex align="end" gap="s">
           <FlexItem grow>
             <MessageBar opened={!!countSuccessAdded || !!countFailAdded}>

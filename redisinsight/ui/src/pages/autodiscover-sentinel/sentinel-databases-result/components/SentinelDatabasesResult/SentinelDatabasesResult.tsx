@@ -4,7 +4,6 @@ import {
   EuiBasicTableColumn,
   PropertySort,
   EuiText,
-  EuiTitle,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { FormField } from '@redis-ui/components'
@@ -20,6 +19,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -103,9 +103,9 @@ const SentinelDatabasesResult = ({
   return (
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
-        <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>Auto-Discover Redis Sentinel Primary Groups</h1>
-        </EuiTitle>
+        <Title size="XXL" className={styles.title} data-testid="title">
+          Auto-Discover Redis Sentinel Primary Groups
+        </Title>
 
         <Row align="end" gap="s">
           <FlexItem grow>

@@ -1,4 +1,4 @@
-import { EuiText, EuiTitle } from '@elastic/eui'
+import { EuiText } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
@@ -12,6 +12,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from '../styles.module.scss'
 
@@ -48,9 +49,10 @@ const RunConfirmationPopover = ({ onApply }: Props) => {
 
   return (
     <>
-      <EuiTitle size="xxs">
+      {/* // todo: replace with Redis-Ui text when replacing <EuiText */}
+      <Title size="XS">
         <span>Run commands</span>
-      </EuiTitle>
+      </Title>
       <Spacer size="s" />
       <EuiText size="s">
         This tutorial will change data in your database, are you sure you want

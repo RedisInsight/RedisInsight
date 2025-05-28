@@ -7,7 +7,6 @@ import {
   EuiSuperSelectOption,
   EuiText,
   EuiTextColor,
-  EuiTitle,
 } from '@elastic/eui'
 import { toNumber, filter, get, find, first } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
@@ -32,6 +31,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
 import { OAuthProvider, OAuthProviders } from './constants'
 import styles from './styles.module.scss'
@@ -178,9 +178,9 @@ const OAuthSelectPlan = () => {
     >
       <EuiModalBody className={styles.modalBody}>
         <section className={styles.content}>
-          <EuiTitle size="s">
-            <h2 className={styles.title}>Choose a cloud vendor</h2>
-          </EuiTitle>
+          <Title size="XL" className={styles.title}>
+            Choose a cloud vendor
+          </Title>
           <EuiText className={styles.subTitle}>
             Select a cloud vendor and region to complete the final step towards
             your free trial Redis database. No credit card is required.

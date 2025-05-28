@@ -16,7 +16,8 @@ jobs:
                 "${{ github.head_ref }}" != bugfix/* && \
                 "${{ github.head_ref }}" != release/* && \
                 "${{ github.head_ref }}" != dependabot/* && \
+                "${{ github.head_ref }}" != latest && \
                 "${{ github.head_ref }}" != ric/* ]]; then
-            echo "❌ Pull requests to 'main' are only allowed from 'feature/**', 'bugfix/**', 'release/**', 'dependabot/**', or 'ric/**' branches."
+            echo "❌ Pull requests to 'main' are only allowed from 'feature/**', 'bugfix/**', 'release/**', 'dependabot/**', 'latest' or 'ric/**' branches."
             exit 1
           fi

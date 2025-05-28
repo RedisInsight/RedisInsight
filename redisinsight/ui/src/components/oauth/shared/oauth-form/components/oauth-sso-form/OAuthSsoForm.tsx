@@ -3,10 +3,10 @@ import React, { ChangeEvent, useState } from 'react'
 import {
   EuiFieldText,
   EuiForm,
-  EuiFormRow,
   EuiTitle,
   EuiToolTip,
 } from '@elastic/eui'
+import { FormField } from '@redis-ui/components'
 import { FormikErrors, useFormik } from 'formik'
 import { validateEmail, validateField } from 'uiSrc/utils'
 
@@ -95,7 +95,7 @@ const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
       <EuiForm component="form" onSubmit={formik.handleSubmit}>
         <Row>
           <FlexItem>
-            <EuiFormRow className={styles.formRaw} label="Email">
+            <FormField className={styles.formRaw} label="Email">
               <EuiFieldText
                 name="email"
                 id="sso-email"
@@ -110,7 +110,7 @@ const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
                   )
                 }}
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
         <Spacer />

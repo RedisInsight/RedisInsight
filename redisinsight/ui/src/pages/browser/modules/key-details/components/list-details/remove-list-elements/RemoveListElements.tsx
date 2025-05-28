@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { toNumber } from 'lodash'
 import {
-  EuiFormRow,
   EuiFieldText,
   EuiPanel,
   EuiSuperSelect,
@@ -47,6 +46,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { DeleteIcon } from 'uiSrc/components/base/icons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/list/dto'
 
 import {
@@ -263,7 +263,7 @@ const RemoveListElements = (props: Props) => {
         <FlexItem grow>
           <Row align="center">
             <FlexItem style={{ minWidth: '220px' }}>
-              <EuiFormRow fullWidth>
+              <FormField>
                 <EuiSuperSelect
                   className={styles.select}
                   valueOfSelected={destination}
@@ -273,10 +273,10 @@ const RemoveListElements = (props: Props) => {
                   }
                   data-testid="destination-select"
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
             <FlexItem grow style={{ width: '100%' }}>
-              <EuiFormRow fullWidth>
+              <FormField>
                 <EuiFieldText
                   fullWidth
                   name={config.count.name}
@@ -293,7 +293,7 @@ const RemoveListElements = (props: Props) => {
                   disabled={!canRemoveMultiple}
                   append={!canRemoveMultiple ? InfoBoxPopover() : <></>}
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
           </Row>
         </FlexItem>

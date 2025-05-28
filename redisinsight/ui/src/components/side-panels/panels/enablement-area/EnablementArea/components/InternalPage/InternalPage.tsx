@@ -1,9 +1,5 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react'
-import {
-  EuiFlyoutHeader,
-  EuiText,
-  EuiPopover,
-} from '@elastic/eui'
+import { EuiText, EuiPopover } from '@elastic/eui'
 import JsxParser from 'react-jsx-parser'
 import cx from 'classnames'
 import { debounce } from 'lodash'
@@ -168,7 +164,7 @@ const InternalPage = (props: Props) => {
 
   return (
     <div className={styles.container} data-test-subj="internal-page">
-      <EuiFlyoutHeader className={styles.header}>
+      <div className={styles.header}>
         <div style={{ padding: 0 }}>
           <EuiPopover
             initialFocus={false}
@@ -214,7 +210,7 @@ const InternalPage = (props: Props) => {
             {title?.toUpperCase()}
           </EuiText>
         </div>
-      </EuiFlyoutHeader>
+      </div>
       <div
         ref={containerRef}
         className={cx(styles.content, 'jsx-markdown')}

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
   EuiBasicTableColumn,
-  EuiFormRow,
   EuiInMemoryTable,
   EuiPopover,
   EuiTableSelectionType,
@@ -27,6 +26,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -167,14 +167,14 @@ const RedisClusterDatabases = ({
             )}
           </FlexItem>
           <FlexItem>
-            <EuiFormRow className={styles.searchForm}>
+            <FormField className={styles.searchForm}>
               <SearchInput
                 placeholder="Search..."
                 onChange={onQueryChange}
                 aria-label="Search"
                 data-testid="search"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
         <br />

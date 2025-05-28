@@ -1,52 +1,5 @@
 @use "../mixins/eui";
 
-.euiFormRow {
-  .euiSuperSelectControl:not(.euiSuperSelectControl--compressed),
-  .euiSelect:not(.euiSelect--compressed),
-  .euiFormControlLayout:not(.euiFormControlLayout--compressed),
-  .euiFieldText:not(.euiFieldText--compressed),
-  .euiFieldNumber:not(.euiFieldNumber--compressed) {
-    height: 100%;
-  }
-  .euiFormLegend,
-  .euiFormRow__label,
-  .euiRadio__label,
-  .euiCheckbox__label {
-    font-size: 13px;
-    line-height: 18px;
-    font-weight: 400;
-    letter-spacing: -0.13px;
-
-    &:not(.euiFormLabel-isFocused, .euiFormLabel-isInvalid) {
-      color: var(--euiTextSubduedColor);
-    }
-  }
-
-  .euiSuperSelectControl {
-    display: flex;
-    align-items: center;
-    font-size: 13px;
-    line-height: 41px;
-  }
-
-  .euiFormRow__label {
-    padding-bottom: 2px;
-  }
-
-  .euiFieldText:disabled {
-    background-color: initial;
-    color: #b5b6c0;
-  }
-
-  .euiButtonIcon {
-    align-self: center;
-  }
-}
-
-.euiFormLabel.euiFormLabel-isFocused {
-  color: var(--euiColorPrimary);
-}
-
 .euiButton,
 .euiCollapsibleNav,
 .euiHeaderSectionItem__button {
@@ -175,14 +128,6 @@
         border-left: 0 !important;
       }
     }
-  }
-
-  .euiFormRow .euiSuperSelectControl:not(.euiSuperSelectControl--compressed),
-  .euiFormRow .euiSelect:not(.euiSelect--compressed),
-  .euiFormRow .euiFormControlLayout:not(.euiFormControlLayout--compressed),
-  .euiFormRow .euiFieldText:not(.euiFieldText--compressed),
-  .euiFormRow .euiFieldNumber:not(.euiFieldNumber--compressed) {
-    height: 43px;
   }
 }
 

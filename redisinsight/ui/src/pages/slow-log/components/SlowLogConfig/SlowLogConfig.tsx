@@ -1,7 +1,6 @@
 import {
   EuiFieldText,
   EuiForm,
-  EuiFormRow,
   EuiSuperSelect,
   EuiText,
 } from '@elastic/eui'
@@ -35,6 +34,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { convertNumberByUnits } from '../../utils'
 import styles from './styles.module.scss'
 
@@ -176,7 +176,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
       {connectionType !== ConnectionType.Cluster && (
         <>
           <EuiForm component="form">
-            <EuiFormRow className={styles.formRow}>
+            <FormField className={styles.formRow}>
               <>
                 <div className={styles.rowLabel}>slowlog-log-slower-than</div>
                 <div className={styles.rowFields}>
@@ -211,8 +211,8 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
                   </div>
                 </div>
               </>
-            </EuiFormRow>
-            <EuiFormRow className={styles.formRow}>
+            </FormField>
+            <FormField className={styles.formRow}>
               <>
                 <div className={styles.rowLabel}>slowlog-max-len</div>
                 <div className={styles.rowFields}>
@@ -236,7 +236,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
                   </div>
                 </div>
               </>
-            </EuiFormRow>
+            </FormField>
             <Spacer size="m" />
           </EuiForm>
 

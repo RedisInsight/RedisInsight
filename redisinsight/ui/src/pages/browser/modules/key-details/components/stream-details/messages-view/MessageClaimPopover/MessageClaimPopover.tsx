@@ -6,7 +6,6 @@ import {
   EuiSuperSelectOption,
   EuiPopover,
   EuiForm,
-  EuiFormRow,
   EuiFieldNumber,
   EuiSwitch,
   EuiText,
@@ -33,6 +32,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import {
   ClaimPendingEntryDto,
   ClaimPendingEntriesResponse,
@@ -216,7 +216,7 @@ const MessageClaimPopover = (props: Props) => {
       <EuiForm>
         <Row responsive>
           <FlexItem grow>
-            <EuiFormRow label="Consumer">
+            <FormField label="Consumer">
               <EuiSuperSelect
                 fullWidth
                 itemClassName={styles.consumerOption}
@@ -229,10 +229,10 @@ const MessageClaimPopover = (props: Props) => {
                 }
                 data-testid="destination-select"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
           <FlexItem grow className={styles.relative}>
-            <EuiFormRow label="Min Idle Time">
+            <FormField label="Min Idle Time">
               <EuiFieldNumber
                 name="minIdleTime"
                 id="minIdleTime"
@@ -250,7 +250,7 @@ const MessageClaimPopover = (props: Props) => {
                 type="text"
                 min={0}
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
         {isOptionalShow && (
@@ -258,7 +258,7 @@ const MessageClaimPopover = (props: Props) => {
             <Spacer size="m" />
             <Row className={styles.container} align="center">
               <FlexItem grow className={styles.idle}>
-                <EuiFormRow label="Idle Time">
+                <FormField label="Idle Time">
                   <EuiFieldNumber
                     name="timeCount"
                     id="timeCount"
@@ -276,10 +276,10 @@ const MessageClaimPopover = (props: Props) => {
                     type="text"
                     min={0}
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
               <FlexItem grow className={styles.timeSelect}>
-                <EuiFormRow className={styles.hiddenLabel} label="time">
+                <FormField className={styles.hiddenLabel} label="time">
                   <EuiSuperSelect
                     itemClassName={styles.timeOption}
                     valueOfSelected={formik.values.timeOption}
@@ -289,10 +289,10 @@ const MessageClaimPopover = (props: Props) => {
                     onChange={handleChangeTimeFormat}
                     data-testid="time-option-select"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
               <FlexItem grow>
-                <EuiFormRow label="Retry Count">
+                <FormField label="Retry Count">
                   <EuiFieldNumber
                     name="retryCount"
                     id="retryCount"
@@ -309,10 +309,10 @@ const MessageClaimPopover = (props: Props) => {
                     type="text"
                     min={0}
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
               <FlexItem grow={2}>
-                <EuiFormRow className={styles.hiddenLabel} label="force">
+                <FormField className={styles.hiddenLabel} label="force">
                   <EuiCheckbox
                     id="force_claim"
                     name="force"
@@ -323,7 +323,7 @@ const MessageClaimPopover = (props: Props) => {
                     }}
                     data-testid="force-claim-checkbox"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
             </Row>
           </>

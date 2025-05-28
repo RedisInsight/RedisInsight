@@ -69,7 +69,7 @@
       border-color: var(--separatorColor) !important;
     }
 
-    .euiFormRow, .euiFormControlLayout {
+    .euiFormControlLayout {
       max-width: none;
 
       .euiFormControlLayout:not(.euiFormControlLayout--compressed) {

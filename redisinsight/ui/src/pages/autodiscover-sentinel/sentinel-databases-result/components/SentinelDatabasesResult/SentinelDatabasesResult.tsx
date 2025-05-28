@@ -5,11 +5,11 @@ import {
   PropertySort,
   EuiText,
   EuiTitle,
-  EuiFormRow,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
-
+import { FormField } from '@redis-ui/components'
 import { SearchInput } from 'uiSrc/components/base/inputs'
+
 import { sentinelSelector } from 'uiSrc/slices/instances/sentinel'
 import { ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
@@ -115,14 +115,14 @@ const SentinelDatabasesResult = ({
           </FlexItem>
         </Row>
         <FlexItem>
-          <EuiFormRow className={styles.searchForm}>
+          <FormField className={styles.searchForm}>
             <SearchInput
               placeholder="Search..."
               onChange={onQueryChange}
               aria-label="Search"
               data-testid="search"
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
         <br />
         <div className="itemList databaseList sentinelDatabaseListResult">

@@ -6,8 +6,8 @@ import {
   PropertySort,
   EuiText,
   EuiTitle,
-  EuiFormRow,
 } from '@elastic/eui'
+import { FormField } from '@redis-ui/components'
 import {
   InstanceRedisCloud,
   AddRedisDatabaseStatus,
@@ -100,14 +100,14 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
             </MessageBar>
           </FlexItem>
           <FlexItem>
-            <EuiFormRow className={styles.searchForm}>
+            <FormField className={styles.searchForm}>
               <SearchInput
                 placeholder="Search..."
                 onChange={onQueryChange}
                 aria-label="Search"
                 data-testid="search"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Flex>
         <br />

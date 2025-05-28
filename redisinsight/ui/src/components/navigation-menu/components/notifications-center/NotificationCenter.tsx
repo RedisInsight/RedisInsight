@@ -1,4 +1,4 @@
-import { EuiPopover, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiPopover, EuiText } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,6 +9,7 @@ import {
   unreadNotificationsAction,
 } from 'uiSrc/slices/app/notifications'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { Title } from 'uiSrc/components/base/text/Title'
 import Notification from './Notification'
 
 import styles from './styles.module.scss'
@@ -58,9 +59,9 @@ const NotificationCenter = () => {
         className={styles.popoverNotificationCenter}
         data-testid="notification-center"
       >
-        <EuiTitle size="xs" className={styles.title}>
-          <span>Notification Center</span>
-        </EuiTitle>
+        <Title size="S" className={styles.title}>
+          Notification Center
+        </Title>
         {!hasNotifications && (
           <div className={styles.noItemsText}>
             <EuiText color="subdued" data-testid="no-notifications-text">
@@ -81,7 +82,7 @@ const NotificationCenter = () => {
                 })}
                 data-testid={`notification-item-${notification.read ? 'read' : 'unread'}_${notification.timestamp}`}
               >
-                <Notification notification={notification} titleSize="xxs" />
+                <Notification notification={notification} titleSize="XS" />
               </div>
             ))}
           </div>

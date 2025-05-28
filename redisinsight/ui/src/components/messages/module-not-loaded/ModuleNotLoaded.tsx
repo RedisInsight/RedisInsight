@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiText, EuiTextColor, EuiTitle } from '@elastic/eui'
+import { EuiIcon, EuiText, EuiTextColor } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import MobileIcon from 'uiSrc/assets/img/icons/mobile_module_not_loaded.svg?react'
@@ -19,6 +19,7 @@ import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { getDbWithModuleLoaded } from 'uiSrc/utils'
 import { useCapability } from 'uiSrc/services'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { Title } from 'uiSrc/components/base/text/Title'
 import ModuleNotLoadedButton from './ModuleNotLoadedButton'
 import styles from './styles.module.scss'
 
@@ -42,13 +43,11 @@ const MIN_ELEMENT_WIDTH = 1210
 const MAX_ELEMENT_WIDTH = 1440
 
 const renderTitle = (width: number, moduleName?: string) => (
-  <EuiTitle size="m" className={styles.title} data-testid="welcome-page-title">
-    <h4>
-      {`${moduleName?.substring(0, 1).toUpperCase()}${moduleName?.substring(1)} ${[MODULE_TEXT_VIEW.redisgears, MODULE_TEXT_VIEW.bf].includes(moduleName) ? 'are' : 'is'} not available `}
-      {width > MAX_ELEMENT_WIDTH && <br />}
-      for this database
-    </h4>
-  </EuiTitle>
+  <Title size="M" className={styles.title} data-testid="welcome-page-title">
+    {`${moduleName?.substring(0, 1).toUpperCase()}${moduleName?.substring(1)} ${[MODULE_TEXT_VIEW.redisgears, MODULE_TEXT_VIEW.bf].includes(moduleName) ? 'are' : 'is'} not available `}
+    {width > MAX_ELEMENT_WIDTH && <br />}
+    for this database
+  </Title>
 )
 
 const ListItem = ({ item }: { item: string }) => (

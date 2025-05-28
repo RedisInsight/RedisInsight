@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { EuiFieldSearch } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
@@ -10,7 +9,7 @@ import { CONNECTION_TYPE_DISPLAY, Instance } from 'uiSrc/slices/interfaces'
 import { tagsSelector } from 'uiSrc/slices/instances/tags'
 import { lastConnectionFormat } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import styles from './styles.module.scss'
+import { SearchInput } from 'uiSrc/components/base/inputs'
 
 export const instanceHasTags = (
   instance: Instance,
@@ -76,11 +75,9 @@ const SearchDatabasesList = () => {
   }, [value, selectedTags])
 
   return (
-    <EuiFieldSearch
-      isClearable
+    <SearchInput
       placeholder="Database List Search"
-      className={styles.search}
-      onChange={(e) => setValue(e.target.value.toLowerCase())}
+      onChange={(value) => setValue(value.toLowerCase())}
       value={value}
       aria-label="Search database list"
       data-testid="search-database-list"

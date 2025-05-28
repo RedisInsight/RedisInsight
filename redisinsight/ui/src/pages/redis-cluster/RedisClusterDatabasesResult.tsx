@@ -5,7 +5,6 @@ import {
   PropertySort,
   EuiText,
   EuiTitle,
-  EuiFieldSearch,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
@@ -24,6 +23,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { SearchInput } from 'uiSrc/components/base/inputs'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
 
@@ -59,8 +59,8 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
     ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Fail,
   )?.length
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
     const itemsTemp = instances.filter(
       (item: InstanceRedisCluster) =>
         item.name?.toLowerCase().indexOf(value) !== -1 ||
@@ -109,11 +109,10 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
           </FlexItem>
           <FlexItem>
             <FormField className={styles.searchForm}>
-              <EuiFieldSearch
+              <SearchInput
                 placeholder="Search..."
                 className={styles.search}
                 onChange={onQueryChange}
-                isClearable
                 aria-label="Search"
                 data-testid="search"
               />

@@ -41,11 +41,6 @@ $breakpoint-to-wrap-buttons: 660px;
   width: 266px !important;
 }
 
-.search {
-  background-color: var(--euiColorLightestShade) !important;
-  height: 40px !important;
-}
-
 .table {
   @include eui.scrollBar;
   overflow: auto;

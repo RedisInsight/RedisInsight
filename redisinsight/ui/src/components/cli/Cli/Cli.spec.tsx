@@ -1,5 +1,5 @@
 import React from 'react'
-import { keys } from '@elastic/eui'
+import { KeyboardKeys as keys } from 'uiSrc/constants/keys'
 import { fireEvent, render } from 'uiSrc/utils/test-utils'
 import CLI from './Cli'
 

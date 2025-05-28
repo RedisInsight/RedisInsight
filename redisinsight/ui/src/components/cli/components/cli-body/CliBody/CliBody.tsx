@@ -1,5 +1,5 @@
 import React, { Ref, useEffect, useRef, useState } from 'react'
-import { keys } from '@elastic/eui'
+import { KeyboardKeys as keys } from 'uiSrc/constants/keys'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { Nullable, scrollIntoView } from 'uiSrc/utils'

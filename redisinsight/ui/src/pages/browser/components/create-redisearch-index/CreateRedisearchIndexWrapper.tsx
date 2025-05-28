@@ -1,10 +1,11 @@
 import React from 'react'
-import { EuiLink, EuiText, EuiTitle, EuiToolTip } from '@elastic/eui'
+import {  EuiLink, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import CreateRedisearchIndex from './CreateRedisearchIndex'
 
 import styles from './styles.module.scss'
@@ -24,9 +25,9 @@ const CreateRedisearchIndexWrapper = ({
     <Col justify="center" className={cx(styles.container, 'relative')}>
       <div className={styles.headerWrapper}>
         <FlexItem grow style={{ marginBottom: '16px' }}>
-          <EuiTitle size="xs" className={styles.header}>
-            <h4>New Index</h4>
-          </EuiTitle>
+          <Title size="M" className={styles.header}>
+            New Index
+          </Title>
           {!arePanelsCollapsed && (
             <EuiToolTip
               content="Close"

@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import {
-  EuiLink,
-  EuiText,
-  EuiTitle,
-  EuiPopover,
-} from '@elastic/eui'
+import { EuiLink, EuiText, EuiPopover } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { DeleteIcon } from 'uiSrc/components/base/icons'
@@ -21,6 +16,7 @@ import {
   DestructiveButton,
   PrimaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import UserApiKeysTable from './components/user-api-keys-table'
 
 import styles from './styles.module.scss'
@@ -55,9 +51,9 @@ const CloudSettings = () => {
 
   return (
     <div className={styles.container}>
-      <EuiTitle className={styles.title} size="xxs">
-        <span>API user keys</span>
-      </EuiTitle>
+      <Title className={styles.title} size="XS">
+        API user keys
+      </Title>
       <Spacer size="s" />
       <Row gap="m" responsive>
         <FlexItem grow>

@@ -1,4 +1,4 @@
-import { EuiSwitch, EuiTitle } from '@elastic/eui'
+import { EuiSwitch } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
@@ -26,6 +26,7 @@ import {
   dbAnalysisReportsSelector,
   setShowNoExpiryGroup,
 } from 'uiSrc/slices/analytics/dbAnalysis'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import styles from './styles.module.scss'
@@ -109,9 +110,9 @@ const ExpirationGroupsView = (props: Props) => {
     <div className={cx('section', styles.container)} data-testid="analysis-ttl">
       <div className="section-title-wrapper">
         <div className={styles.titleWrapper}>
-          <EuiTitle className="section-title">
-            <h4>MEMORY LIKELY TO BE FREED OVER TIME</h4>
-          </EuiTitle>
+          <Title size="M" className="section-title">
+            MEMORY LIKELY TO BE FREED OVER TIME
+          </Title>
           {extrapolation !== DEFAULT_EXTRAPOLATION && (
             <EuiSwitch
               compressed

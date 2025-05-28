@@ -5,7 +5,6 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
-  OnApplicationBootstrap,
 } from '@nestjs/common';
 import { difference, isEmpty, map, cloneDeep } from 'lodash';
 import { readFile } from 'fs-extra';
@@ -36,10 +35,8 @@ import { EncryptionService } from '../encryption/encryption.service';
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
 @Injectable()
-export class SettingsService implements OnApplicationBootstrap {
+export class SettingsService {
   private logger = new Logger('SettingsService');
-  private triggerAutoDiscoveryDueToEnv = false;
-  private autoDiscoveryDueToEnvTriggered = false;
 
   constructor(
     @Inject(forwardRef(() => DatabaseDiscoveryService))
@@ -54,38 +51,6 @@ export class SettingsService implements OnApplicationBootstrap {
     private eventEmitter: EventEmitter2,
   ) {}
 
-  async onApplicationBootstrap() {
-    // Check if we need to run discovery due to environment variables
-    if (
-      SERVER_CONFIG.acceptTermsAndConditions
-      && this.triggerAutoDiscoveryDueToEnv
-      && !this.autoDiscoveryDueToEnvTriggered
-    ) {
-      this.autoDiscoveryDueToEnvTriggered = true;
-      process.nextTick(() => this.discoverDatabasesAfterEulaAccepted(null));
-    }
-  }
-
-  /**
-   * Discovers databases after EULA has been accepted
-   * @param sessionMetadata
-   * @private
-   */
-  private async discoverDatabasesAfterEulaAccepted(
-    sessionMetadata: SessionMetadata,
-  ): Promise<void> {
-    try {
-      await this.databaseDiscoveryService.discover(sessionMetadata, true);
-    } catch (e) {
-      // ignore error
-      this.logger.error(
-        'Failed discover databases after eula accepted.',
-        e,
-        sessionMetadata,
-      );
-    }
-  }
-
   /**
    * Method to get settings
    */
@@ -99,8 +64,7 @@ export class SettingsService implements OnApplicationBootstrap {
 
       let defaultOptions: object;
       if (SERVER_CONFIG.acceptTermsAndConditions) {
-        this.triggerAutoDiscoveryDueToEnv = true;
-        const isEncryptionAvailable = await this.encryptionService.isEncryptionAvailable();          
+        const isEncryptionAvailable = await this.encryptionService.isEncryptionAvailable();
 
         defaultOptions = {
           data: {
@@ -188,7 +152,16 @@ export class SettingsService implements OnApplicationBootstrap {
 
       // Discover databases from envs or autodiscovery flow when eula accept
       if (!oldAppSettings?.agreements?.eula && results?.agreements?.eula) {
-        await this.discoverDatabasesAfterEulaAccepted(sessionMetadata);
+        try {
+          await this.databaseDiscoveryService.discover(sessionMetadata, true);
+        } catch (e) {
+          // ignore error
+          this.logger.error(
+            'Failed discover databases after eula accepted.',
+            e,
+            sessionMetadata,
+          );
+        }
       }
 
       return results;

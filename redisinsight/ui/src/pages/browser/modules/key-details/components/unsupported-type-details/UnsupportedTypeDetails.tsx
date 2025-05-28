@@ -1,16 +1,15 @@
 import React from 'react'
-import { EuiText, EuiTitle } from '@elastic/eui'
+import { EuiText } from '@elastic/eui'
 
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { Title } from 'uiSrc/components/base/text/Title'
 import TextDetailsWrapper from '../text-details-wrapper/TextDetailsWrapper'
 
 import styles from './styles.module.scss'
 
 const UnsupportedTypeDetails = ({ onClose }: { onClose: () => void }) => (
   <TextDetailsWrapper onClose={onClose} testid="unsupported-type">
-    <EuiTitle>
-      <h4>This key type is not currently supported.</h4>
-    </EuiTitle>
+    <Title size="M">This key type is not currently supported.</Title>
     <EuiText size="s">
       See{' '}
       <a

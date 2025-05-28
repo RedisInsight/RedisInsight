@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
 
-import { EuiTitle } from '@elastic/eui'
 import {
   fetchMastersSentinelAction,
   sentinelSelector,
@@ -25,6 +24,7 @@ import {
 import { ADD_NEW, NO_CA_CERT } from 'uiSrc/pages/home/constants'
 import { InstanceType } from 'uiSrc/slices/interfaces'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
+import { Title } from 'uiSrc/components/base/text/Title'
 import SentinelConnectionForm from './sentinel-connection-form'
 
 export interface Props {
@@ -61,12 +61,7 @@ const SentinelConnectionWrapper = (props: Props) => {
     dispatch(fetchCaCerts())
     dispatch(fetchClientCerts())
 
-    setModalHeader(
-      <EuiTitle size="s">
-        <h4>Redis Sentinel</h4>
-      </EuiTitle>,
-      true,
-    )
+    setModalHeader(<Title size="M">Redis Sentinel</Title>, true)
 
     return () => {
       setModalHeader(null)

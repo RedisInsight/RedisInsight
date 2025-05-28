@@ -8,7 +8,7 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
@@ -19,13 +19,15 @@ const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
 // input data schema
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
-  member: Joi.object().keys({
-    name: Joi.string().required(),
-    // todo: allow(true) - is incorrect but will be transformed to number by BE. Investigate/fix it
-    score: Joi.number().required().allow('inf', '-inf').label('.score'),
-  }).messages({
-    'number.base': '{#lavel} must be a string or a number',
-  }),
+  member: Joi.object()
+    .keys({
+      name: Joi.string().required(),
+      // todo: allow(true) - is incorrect but will be transformed to number by BE. Investigate/fix it
+      score: Joi.number().required().allow('inf', '-inf').label('.score'),
+    })
+    .messages({
+      'number.base': '{#lavel} must be a string or a number',
+    }),
 }).strict();
 
 const validInputData = {
@@ -54,9 +56,13 @@ describe('PATCH /databases/:instanceId/zSet', () => {
           },
         },
         after: async () => {
-          expect(await rte.data.sendCommand('zrange', [constants.TEST_ZSET_KEY_BIN_BUFFER_1, 0, 10], null)).to.deep.eq([
-            constants.TEST_ZSET_MEMBER_BIN_BUFFER_1,
-          ]);
+          expect(
+            await rte.data.sendCommand(
+              'zrange',
+              [constants.TEST_ZSET_KEY_BIN_BUFFER_1, 0, 10],
+              null,
+            ),
+          ).to.deep.eq([constants.TEST_ZSET_MEMBER_BIN_BUFFER_1]);
         },
       },
       {
@@ -69,9 +75,13 @@ describe('PATCH /databases/:instanceId/zSet', () => {
           },
         },
         after: async () => {
-          expect(await rte.data.sendCommand('zrange', [constants.TEST_ZSET_KEY_BIN_BUFFER_1, 0, 10], null)).to.deep.eq([
-            constants.TEST_ZSET_MEMBER_BIN_BUFFER_1,
-          ]);
+          expect(
+            await rte.data.sendCommand(
+              'zrange',
+              [constants.TEST_ZSET_KEY_BIN_BUFFER_1, 0, 10],
+              null,
+            ),
+          ).to.deep.eq([constants.TEST_ZSET_MEMBER_BIN_BUFFER_1]);
         },
       },
     ].map(mainCheckFn);
@@ -95,7 +105,7 @@ describe('PATCH /databases/:instanceId/zSet', () => {
             keyName: constants.TEST_ZSET_KEY_1,
             member: {
               name: constants.getRandomString(),
-              score: 0
+              score: 0,
             },
           },
           statusCode: 404,
@@ -106,11 +116,12 @@ describe('PATCH /databases/:instanceId/zSet', () => {
           },
           after: async () =>
             // check that value was not overwritten
-            expect(await rte.client.zrange(constants.TEST_ZSET_KEY_1, 0, 10))
-              .to.eql([
+            expect(
+              await rte.client.zrange(constants.TEST_ZSET_KEY_1, 0, 10),
+            ).to.eql([
               constants.TEST_ZSET_MEMBER_1,
               constants.TEST_ZSET_MEMBER_2,
-            ])
+            ]),
         },
         {
           name: 'Should return NotFound error if key does not exists',
@@ -118,7 +129,7 @@ describe('PATCH /databases/:instanceId/zSet', () => {
             keyName: constants.getRandomString(),
             member: {
               name: constants.getRandomString(),
-              score: 0
+              score: 0,
             },
           },
           statusCode: 404,
@@ -134,7 +145,7 @@ describe('PATCH /databases/:instanceId/zSet', () => {
             keyName: constants.TEST_STRING_KEY_1,
             member: {
               name: constants.getRandomString(),
-              score: 0
+              score: 0,
             },
           },
           statusCode: 400,
@@ -149,16 +160,18 @@ describe('PATCH /databases/:instanceId/zSet', () => {
             keyName: constants.TEST_ZSET_KEY_1,
             member: {
               name: constants.TEST_ZSET_MEMBER_1,
-              score: 1
+              score: 1,
             },
           },
           statusCode: 200,
           after: async () => {
-            expect(await rte.client.zrange(constants.TEST_ZSET_KEY_1, 0, 10)).to.deep.eql([
+            expect(
+              await rte.client.zrange(constants.TEST_ZSET_KEY_1, 0, 10),
+            ).to.deep.eql([
               constants.TEST_ZSET_MEMBER_2,
               constants.TEST_ZSET_MEMBER_1,
             ]);
-          }
+          },
         },
       ].map(mainCheckFn);
     });
@@ -175,7 +188,7 @@ describe('PATCH /databases/:instanceId/zSet', () => {
             keyName: constants.TEST_ZSET_KEY_1,
             member: {
               name: constants.TEST_ZSET_MEMBER_1,
-              score: 0.1
+              score: 0.1,
             },
           },
           statusCode: 200,
@@ -187,7 +200,7 @@ describe('PATCH /databases/:instanceId/zSet', () => {
             keyName: constants.TEST_ZSET_KEY_1,
             member: {
               name: constants.getRandomString(),
-              score: 0
+              score: 0,
             },
           },
           statusCode: 403,
@@ -195,7 +208,7 @@ describe('PATCH /databases/:instanceId/zSet', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -zadd')
+          before: () => rte.data.setAclUserRules('~* +@all -zadd'),
         },
         {
           name: 'Should throw error if no permissions for "exists" command',
@@ -204,7 +217,7 @@ describe('PATCH /databases/:instanceId/zSet', () => {
             keyName: constants.getRandomString(),
             member: {
               name: constants.getRandomString(),
-              score: 0
+              score: 0,
             },
           },
           statusCode: 403,
@@ -212,7 +225,7 @@ describe('PATCH /databases/:instanceId/zSet', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -exists')
+          before: () => rte.data.setAclUserRules('~* +@all -exists'),
         },
       ].map(mainCheckFn);
     });

@@ -12,6 +12,7 @@ export * from './app-settings';
 export * from './analytics';
 export * from './profiler';
 export * from './user';
+export * from './tags';
 export * from './databases';
 export * from './databases-client';
 export * from './bulk-actions';

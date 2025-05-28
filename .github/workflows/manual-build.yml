@@ -67,15 +67,15 @@ jobs:
     outputs: # Set this to consume the output on other job
       selected: ${{ steps.get-selected.outputs.selected}}
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - id: get-selected
-      uses: joao-zanutto/get-selected@v1.1.1
-      with:
-        format: 'list'
+      - id: get-selected
+        uses: joao-zanutto/get-selected@v1.1.1
+        with:
+          format: 'list'
 
-    - name: echo selected targets
-      run: echo ${{ steps.get-selected.outputs.selected }}
+      - name: echo selected targets
+        run: echo ${{ steps.get-selected.outputs.selected }}
 
   manual-build:
     needs: get-selected
@@ -85,6 +85,7 @@ jobs:
       target: ${{ needs.get-selected.outputs.selected }}
       debug: ${{ inputs.debug }}
       environment: ${{ inputs.environment }}
+      enterprise: false
 
   aws-upload:
     uses: ./.github/workflows/aws-upload-dev.yml
@@ -106,8 +107,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Remove all artifacts
-      uses: ./.github/actions/remove-artifacts
-
-
+      - uses: actions/checkout@v4
+      - name: Remove all artifacts
+        uses: ./.github/actions/remove-artifacts

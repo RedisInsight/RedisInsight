@@ -1,21 +1,21 @@
-import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiText } from '@elastic/eui'
 import React from 'react'
 import iwarning from 'uiSrc/assets/img/icons/warning.svg'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 const UploadWarning = () => (
-  <EuiFlexGroup className={styles.wrapper} gutterSize="xs" responsive={false}>
-    <EuiFlexItem grow={false}>
+  <Row className={styles.wrapper} gap="s">
+    <FlexItem>
       <EuiIcon type={iwarning} />
-    </EuiFlexItem>
-    <EuiFlexItem>
-      <EuiText
-        className={styles.warningMessage}
-      >
-        Use files only from trusted authors to avoid automatic execution of malicious code.
+    </FlexItem>
+    <FlexItem>
+      <EuiText className={styles.warningMessage}>
+        Use files only from trusted authors to avoid automatic execution of
+        malicious code.
       </EuiText>
-    </EuiFlexItem>
-  </EuiFlexGroup>
+    </FlexItem>
+  </Row>
 )
 
 export default UploadWarning

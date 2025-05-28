@@ -1,4 +1,10 @@
-import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react'
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiButton,
@@ -6,8 +12,6 @@ import {
   EuiFormRow,
   EuiTextColor,
   EuiForm,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiPanel,
 } from '@elastic/eui'
 import { toNumber } from 'lodash'
@@ -15,19 +19,20 @@ import {
   isVersionHigherOrEquals,
   Maybe,
   stringToBuffer,
-  validateTTLNumberForAddKey
+  validateTTLNumberForAddKey,
 } from 'uiSrc/utils'
-import {
-  addHashKey,
-  addKeyStateSelector,
-} from 'uiSrc/slices/browser/keys'
+import { addHashKey, addKeyStateSelector } from 'uiSrc/slices/browser/keys'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
 import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { CreateHashWithExpireDto, HashFieldDto } from 'apiSrc/modules/browser/hash/dto'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  CreateHashWithExpireDto,
+  HashFieldDto,
+} from 'apiSrc/modules/browser/hash/dto'
 
 import { IHashFieldState, INITIAL_HASH_FIELD_STATE } from './interfaces'
 import { AddHashFormConfig as config } from '../constants/fields-config'
@@ -43,17 +48,19 @@ const AddKeyHash = (props: Props) => {
   const { keyName = '', keyTTL, onCancel } = props
   const { loading } = useSelector(addKeyStateSelector)
   const { version } = useSelector(connectedInstanceOverviewSelector)
-  const {
-    [FeatureFlags.hashFieldExpiration]: hashFieldExpirationFeature
-  } = useSelector(appFeatureFlagsFeaturesSelector)
+  const { [FeatureFlags.hashFieldExpiration]: hashFieldExpirationFeature } =
+    useSelector(appFeatureFlagsFeaturesSelector)
 
-  const [fields, setFields] = useState<IHashFieldState[]>([{ ...INITIAL_HASH_FIELD_STATE }])
+  const [fields, setFields] = useState<IHashFieldState[]>([
+    { ...INITIAL_HASH_FIELD_STATE },
+  ])
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
   const lastAddedFieldName = useRef<HTMLInputElement>(null)
   const prevCountFields = useRef<number>(0)
 
-  const isTTLAvailable = hashFieldExpirationFeature?.flag
-    && isVersionHigherOrEquals(version, CommandsVersions.HASH_TTL.since)
+  const isTTLAvailable =
+    hashFieldExpirationFeature?.flag &&
+    isVersionHigherOrEquals(version, CommandsVersions.HASH_TTL.since)
 
   const dispatch = useDispatch()
 
@@ -62,7 +69,10 @@ const AddKeyHash = (props: Props) => {
   }, [keyName])
 
   useEffect(() => {
-    if (prevCountFields.current !== 0 && prevCountFields.current < fields.length) {
+    if (
+      prevCountFields.current !== 0 &&
+      prevCountFields.current < fields.length
+    ) {
       lastAddedFieldName.current?.focus()
     }
     prevCountFields.current = fields.length
@@ -74,8 +84,8 @@ const AddKeyHash = (props: Props) => {
       ...fields,
       {
         ...INITIAL_HASH_FIELD_STATE,
-        id: lastField.id + 1
-      }
+        id: lastField.id + 1,
+      },
     ]
     setFields(newState)
   }
@@ -86,13 +96,16 @@ const AddKeyHash = (props: Props) => {
   }
 
   const clearFieldsValues = (id: number) => {
-    const newState = fields.map((item) => (item.id === id
-      ? {
-        ...item,
-        fieldName: '',
-        fieldValue: '',
-        fieldTTL: undefined,
-      } : item))
+    const newState = fields.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            fieldName: '',
+            fieldValue: '',
+            fieldTTL: undefined,
+          }
+        : item,
+    )
     setFields(newState)
   }
 
@@ -105,16 +118,12 @@ const AddKeyHash = (props: Props) => {
     removeField(id)
   }
 
-  const handleFieldChange = (
-    formField: string,
-    id: number,
-    value: any
-  ) => {
+  const handleFieldChange = (formField: string, id: number, value: any) => {
     const newState = fields.map((item) => {
       if (item.id === id) {
         return {
           ...item,
-          [formField]: value
+          [formField]: value,
         }
       }
       return item
@@ -143,7 +152,7 @@ const AddKeyHash = (props: Props) => {
         }
 
         return defaultFields
-      })
+      }),
     }
     if (keyTTL !== undefined) {
       data.expire = keyTTL
@@ -152,7 +161,8 @@ const AddKeyHash = (props: Props) => {
   }
 
   const isClearDisabled = (item: IHashFieldState): boolean =>
-    fields.length === 1 && !(item.fieldName.length || item.fieldValue.length || item.fieldTTL?.length)
+    fields.length === 1 &&
+    !(item.fieldName.length || item.fieldValue.length || item.fieldTTL?.length)
 
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
@@ -163,8 +173,8 @@ const AddKeyHash = (props: Props) => {
         onClickAdd={addField}
       >
         {(item, index) => (
-          <EuiFlexGroup gutterSize="none" alignItems="center">
-            <EuiFlexItem grow={2}>
+          <Row align="center">
+            <FlexItem grow={2}>
               <EuiFormRow fullWidth>
                 <EuiFieldText
                   fullWidth
@@ -174,13 +184,16 @@ const AddKeyHash = (props: Props) => {
                   value={item.fieldName}
                   disabled={loading}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    handleFieldChange('fieldName', item.id, e.target.value)}
-                  inputRef={index === fields.length - 1 ? lastAddedFieldName : null}
+                    handleFieldChange('fieldName', item.id, e.target.value)
+                  }
+                  inputRef={
+                    index === fields.length - 1 ? lastAddedFieldName : null
+                  }
                   data-testid="field-name"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-            <EuiFlexItem grow={2}>
+            </FlexItem>
+            <FlexItem grow={2}>
               <EuiFormRow fullWidth>
                 <EuiFieldText
                   fullWidth
@@ -190,13 +203,14 @@ const AddKeyHash = (props: Props) => {
                   value={item.fieldValue}
                   disabled={loading}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    handleFieldChange('fieldValue', item.id, e.target.value)}
+                    handleFieldChange('fieldValue', item.id, e.target.value)
+                  }
                   data-testid="field-value"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
+            </FlexItem>
             {isTTLAvailable && (
-              <EuiFlexItem grow={1}>
+              <FlexItem grow={1}>
                 <EuiFormRow fullWidth>
                   <EuiFieldText
                     fullWidth
@@ -206,13 +220,18 @@ const AddKeyHash = (props: Props) => {
                     value={item.fieldTTL || ''}
                     disabled={loading}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      handleFieldChange('fieldTTL', item.id, validateTTLNumberForAddKey(e.target.value))}
+                      handleFieldChange(
+                        'fieldTTL',
+                        item.id,
+                        validateTTLNumberForAddKey(e.target.value),
+                      )
+                    }
                     data-testid="hash-ttl"
                   />
                 </EuiFormRow>
-              </EuiFlexItem>
+              </FlexItem>
             )}
-          </EuiFlexGroup>
+          </Row>
         )}
       </AddMultipleFields>
 
@@ -227,8 +246,8 @@ const AddKeyHash = (props: Props) => {
           borderRadius="none"
           style={{ border: 'none' }}
         >
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <EuiButton
                 color="secondary"
                 onClick={() => onCancel(true)}
@@ -236,8 +255,8 @@ const AddKeyHash = (props: Props) => {
               >
                 <EuiTextColor>Cancel</EuiTextColor>
               </EuiButton>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <EuiButton
                 fill
                 size="m"
@@ -250,8 +269,8 @@ const AddKeyHash = (props: Props) => {
               >
                 Add Key
               </EuiButton>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

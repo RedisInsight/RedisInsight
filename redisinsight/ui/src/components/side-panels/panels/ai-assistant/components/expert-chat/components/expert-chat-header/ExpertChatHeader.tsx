@@ -1,21 +1,32 @@
 import React, { useState } from 'react'
-import { EuiButton, EuiButtonEmpty, EuiPopover, EuiSpacer, EuiText, EuiToolTip } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiButtonEmpty,
+  EuiPopover,
+  EuiText,
+  EuiToolTip,
+} from '@elastic/eui'
 import cx from 'classnames'
 
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import BulbIcon from 'uiSrc/assets/img/bulb.svg?react'
 
-import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  sendEventTelemetry,
+  TELEMETRY_EMPTY_VALUE,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import {
   changeSelectedTab,
   changeSidePanel,
   resetExplorePanelSearch,
-  setExplorePanelIsPageOpen
+  setExplorePanelIsPageOpen,
 } from 'uiSrc/slices/panels/sidePanels'
 import { RestartChat } from 'uiSrc/components/side-panels/panels/ai-assistant/components/shared'
 
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -26,7 +37,8 @@ export interface Props {
 }
 
 const ExpertChatHeader = (props: Props) => {
-  const { databaseId, connectedInstanceName, isClearDisabled, onRestart } = props
+  const { databaseId, connectedInstanceName, isClearDisabled, onRestart } =
+    props
   const [isTutorialsPopoverOpen, setIsTutorialsPopoverOpen] = useState(false)
 
   const dispatch = useDispatch()
@@ -47,7 +59,7 @@ const ExpertChatHeader = (props: Props) => {
       eventData: {
         databaseId: databaseId || TELEMETRY_EMPTY_VALUE,
         source: 'chatbot_tutorials_button',
-      }
+      },
     })
   }
 
@@ -58,12 +70,20 @@ const ExpertChatHeader = (props: Props) => {
           content={connectedInstanceName}
           anchorClassName={styles.dbName}
         >
-          <EuiText size="xs" className="truncateText">{connectedInstanceName}</EuiText>
+          <EuiText size="xs" className="truncateText">
+            {connectedInstanceName}
+          </EuiText>
         </EuiToolTip>
-      ) : (<span />)}
+      ) : (
+        <span />
+      )}
       <div className={styles.headerActions}>
         <EuiToolTip
-          content={isTutorialsPopoverOpen ? undefined : 'Open relevant tutorials to learn more'}
+          content={
+            isTutorialsPopoverOpen
+              ? undefined
+              : 'Open relevant tutorials to learn more'
+          }
           anchorClassName={styles.headerBtnAnchor}
           display="block"
           position="bottom"
@@ -72,14 +92,18 @@ const ExpertChatHeader = (props: Props) => {
             ownFocus
             initialFocus={false}
             className={styles.popoverAnchor}
-            panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+            panelClassName={cx(
+              'euiToolTip',
+              'popoverLikeTooltip',
+              styles.popover,
+            )}
             anchorClassName={styles.popoverAnchor}
             anchorPosition="downLeft"
             isOpen={isTutorialsPopoverOpen}
             panelPaddingSize="m"
             closePopover={() => setIsTutorialsPopoverOpen(false)}
             focusTrapProps={{ scrollLock: true }}
-            button={(
+            button={
               <EuiButtonEmpty
                 iconType={BulbIcon}
                 size="xs"
@@ -87,11 +111,13 @@ const ExpertChatHeader = (props: Props) => {
                 className={cx(styles.headerBtn)}
                 data-testid="ai-expert-tutorial-btn"
               />
-            )}
+            }
           >
             <>
-              <EuiText>Open relevant tutorials to learn more about search and query.</EuiText>
-              <EuiSpacer size="s" />
+              <EuiText>
+                Open relevant tutorials to learn more about search and query.
+              </EuiText>
+              <Spacer size="s" />
               <EuiButton
                 fill
                 size="s"
@@ -106,7 +132,7 @@ const ExpertChatHeader = (props: Props) => {
           </EuiPopover>
         </EuiToolTip>
         <RestartChat
-          button={(
+          button={
             <EuiButtonEmpty
               disabled={isClearDisabled}
               iconType="eraser"
@@ -114,7 +140,7 @@ const ExpertChatHeader = (props: Props) => {
               className={styles.headerBtn}
               data-testid="ai-expert-restart-session-btn"
             />
-          )}
+          }
           onConfirm={onRestart}
         />
       </div>

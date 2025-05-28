@@ -1,8 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { MAX_TTL_NUMBER } from 'src/constants';
-import {
-  IsInt, IsOptional, Max, Min,
-} from 'class-validator';
+import { IsInt, IsOptional, Max, Min } from 'class-validator';
 import { KeyDto } from './key.dto';
 
 export class KeyWithExpireDto extends KeyDto {

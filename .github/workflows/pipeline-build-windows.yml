@@ -12,6 +12,10 @@ on:
         default: false
         type: boolean
 
+      enterprise:
+        description: Enterprise build
+        type: boolean
+
 jobs:
   build:
     name: Build windows
@@ -19,48 +23,48 @@ jobs:
     environment: ${{ inputs.environment }}
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    # SSH Debug
-    - name: Enable SSH
-      uses: mxschmitt/action-tmate@v3
-      if: inputs.debug
-      with:
-        detached: true
+      # SSH Debug
+      - name: Enable SSH
+        uses: mxschmitt/action-tmate@v3
+        if: inputs.debug
+        with:
+          detached: true
 
-    - name: Install all libs and dependencies
-      uses: ./.github/actions/install-all-build-libs
+      - name: Install all libs and dependencies
+        uses: ./.github/actions/install-all-build-libs
 
-    - name: Setup certs
-      uses: ./.github/actions/install-windows-certs
-      with:
-        WIN_CSC_PFX_BASE64: ${{ secrets.WIN_CSC_PFX_BASE64 }}
+      - name: Setup certs
+        uses: ./.github/actions/install-windows-certs
+        with:
+          WIN_CSC_PFX_BASE64: ${{ secrets.WIN_CSC_PFX_BASE64 }}
 
-    - name: Install plugins dependencies and build plugins
-      run: yarn build:statics:win
+      - name: Install plugins dependencies and build plugins
+        run: yarn build:statics:win
 
-    - name: Build windows exe (production)
-      if: vars.ENV == 'production'
-      run: |
-        yarn package:prod
-        rm -rf release/win-unpacked
-      shell: bash
+      - name: Build windows exe (production)
+        if: vars.ENV == 'production'
+        run: |
+          yarn package:prod
+          rm -rf release/win-unpacked
+        shell: bash
 
-    - name: Build windows exe (staging)
-      if: (vars.ENV == 'staging' ||  vars.ENV == 'development')
-      run: |
-        yarn package:stage
-        rm -rf release/win-unpacked
-      shell: bash
+      - name: Build windows exe (staging)
+        if: (vars.ENV == 'staging' ||  vars.ENV == 'development')
+        run: |
+          yarn package:stage
+          rm -rf release/win-unpacked
+        shell: bash
 
-    - uses: actions/upload-artifact@v4
-      with:
-        name: windows-builds
-        if-no-files-found: error
-        path: |
-          ./release/Redis-Insight*.exe
-          ./release/Redis-Insight*.exe.blockmap
-          ./release/latest.yml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-builds
+          if-no-files-found: error
+          path: |
+            ./release/Redis-Insight*.exe
+            ./release/Redis-Insight*.exe.blockmap
+            ./release/latest.yml
 
     env:
       WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
@@ -84,3 +88,6 @@ jobs:
       RI_SERVER_TLS_KEY: ${{ secrets.RI_SERVER_TLS_KEY }}
       RI_FEATURES_CONFIG_URL: ${{ secrets.RI_FEATURES_CONFIG_URL }}
       RI_UPGRADES_LINK: ${{ secrets.RI_UPGRADES_LINK }}
+      RI_FEATURES_CLOUD_ADS_DEFAULT_FLAG: ${{ inputs.enterprise == false }}
+      RI_DISABLE_AUTO_UPGRADE: ${{ inputs.enterprise }}
+      RI_APP_TYPE: ${{ inputs.enterprise && 'ELECTRON_ENTERPRISE' || 'ELECTRON' }}

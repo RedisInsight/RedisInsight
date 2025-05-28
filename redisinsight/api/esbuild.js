@@ -9,12 +9,15 @@ const watch = process.argv.includes('--watch');
 
 const outDir = 'dist-minified';
 const define = {
-  'process.env.NODE_ENV': JSON.stringify(production ? 'production' : 'development'),
+  'process.env.NODE_ENV': JSON.stringify(
+    production ? 'production' : 'development',
+  ),
 };
 
 const external = [
   '@nestjs/microservices',
   '@fastify/static',
+  'class-transformer',
   // packages with binaries
   ...Object.keys(dependencies),
 ];
@@ -71,7 +74,9 @@ const esbuildProblemMatcherPlugin = {
     build.onEnd((result) => {
       result.errors.forEach(({ text, location }) => {
         console.error(`✘ [esbuild ERROR] ${text}`);
-        console.error(`    ${location.file}:${location.line}:${location.column}:`);
+        console.error(
+          `    ${location.file}:${location.line}:${location.column}:`,
+        );
       });
       console.debug('[esbuild] build finished');
 

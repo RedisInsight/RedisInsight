@@ -15,7 +15,10 @@ import {
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { RECOMMENDATIONS_DATA_MOCK } from 'uiSrc/mocks/handlers/recommendations/recommendationsHandler'
-import { appContextDbConfig, setRecommendationsShowHidden } from 'uiSrc/slices/app/context'
+import {
+  appContextDbConfig,
+  setRecommendationsShowHidden,
+} from 'uiSrc/slices/app/context'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations'
 
@@ -28,14 +31,16 @@ const mockRecommendationsSelector = {
   ...jest.requireActual('uiSrc/slices/recommendations/recommendations'),
   content: recommendationsContent,
 }
-const mockAppContextDbConfigSelector = jest.requireActual('uiSrc/slices/app/context')
+const mockAppContextDbConfigSelector = jest.requireActual(
+  'uiSrc/slices/app/context',
+)
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
   connectedInstanceSelector: jest.fn().mockReturnValue({
     id: 'instanceId',
     connectionType: 'CLUSTER',
-    provider: 'RE_CLOUD'
+    provider: 'RE_CLOUD',
   }),
 }))
 
@@ -45,7 +50,7 @@ jest.mock('uiSrc/slices/recommendations/recommendations', () => ({
     data: {
       recommendations: [],
       totalUnread: 0,
-    }
+    },
   }),
 }))
 
@@ -79,20 +84,25 @@ describe('LiveTimeRecommendations', () => {
   })
 
   it('should render github icon', () => {
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
-      data: { recommendations: [{ name: 'RTS' }] }
+      data: { recommendations: [{ name: 'RTS' }] },
     }))
 
     render(<LiveTimeRecommendations />)
-    expect(screen.getByTestId('github-repo-btn')).toHaveAttribute('href', EXTERNAL_LINKS.githubRepo)
+    expect(screen.getByTestId('github-repo-btn')).toHaveAttribute(
+      'href',
+      EXTERNAL_LINKS.githubRepo,
+    )
     expect(screen.getByTestId('github-repo-icon')).toBeInTheDocument()
   })
 
   it('should render show hidden checkbox when there are some hidden', () => {
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
-      data: { recommendations: [{ name: 'RTS', hide: true }, { name: 'setPassword' }] }
+      data: {
+        recommendations: [{ name: 'RTS', hide: true }, { name: 'setPassword' }],
+      },
     }))
 
     render(<LiveTimeRecommendations />)
@@ -100,9 +110,14 @@ describe('LiveTimeRecommendations', () => {
   })
 
   it('should not render show hidden checkbox when there are no any hidden', () => {
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
-      data: { recommendations: [{ name: 'RTS', hide: false }, { name: 'setPassword' }] },
+      data: {
+        recommendations: [
+          { name: 'RTS', hide: false },
+          { name: 'setPassword' },
+        ],
+      },
     }))
 
     render(<LiveTimeRecommendations />)
@@ -110,10 +125,11 @@ describe('LiveTimeRecommendations', () => {
   })
 
   it('should properly push history on databaseAnalysis page', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
-
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
         recommendations: [{ name: 'RTS' }],
@@ -124,9 +140,8 @@ describe('LiveTimeRecommendations', () => {
 
     render(<LiveTimeRecommendations />)
 
-    fireEvent.click(screen.getByTestId('footer-db-analysis-link'));
-
-    (async () => {
+    fireEvent.click(screen.getByTestId('footer-db-analysis-link'))
+    ;(async () => {
       await waitForEuiPopoverVisible()
     })()
 
@@ -138,17 +153,18 @@ describe('LiveTimeRecommendations', () => {
       eventData: {
         databaseId: 'instanceId',
         total: 1,
-        provider: 'RE_CLOUD'
-      }
+        provider: 'RE_CLOUD',
+      },
     })
     sendEventTelemetry.mockRestore()
   })
 
   it('should send INSIGHTS_RECOMMENDATION_SHOW_HIDDEN telemetry event', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock);
-
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
+    ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: RECOMMENDATIONS_DATA_MOCK,
     }))
@@ -161,18 +177,19 @@ describe('LiveTimeRecommendations', () => {
       event: TelemetryEvent.INSIGHTS_TIPS_SHOW_HIDDEN,
       eventData: {
         databaseId: 'instanceId',
-        list: RECOMMENDATIONS_DATA_MOCK.recommendations?.map(({ name }) =>
-          recommendationsContent[name].telemetryEvent || name),
+        list: RECOMMENDATIONS_DATA_MOCK.recommendations?.map(
+          ({ name }) => recommendationsContent[name].telemetryEvent || name,
+        ),
         total: 2,
         action: 'show',
-        provider: 'RE_CLOUD'
-      }
+        provider: 'RE_CLOUD',
+      },
     })
     sendEventTelemetry.mockRestore()
   })
 
   it('should render only not hide recommendations is showHiddenRecommendations=false', async () => {
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: RECOMMENDATIONS_DATA_MOCK,
     }))
@@ -183,11 +200,11 @@ describe('LiveTimeRecommendations', () => {
   })
 
   it('should render all recommendations is showHiddenRecommendations=true', async () => {
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: RECOMMENDATIONS_DATA_MOCK,
-    }));
-    (appContextDbConfig as jest.Mock).mockImplementation(() => ({
+    }))
+    ;(appContextDbConfig as jest.Mock).mockImplementation(() => ({
       ...mockAppContextDbConfigSelector,
       showHiddenRecommendations: true,
     }))
@@ -198,11 +215,11 @@ describe('LiveTimeRecommendations', () => {
   })
 
   it('should call "setRecommendationsShowHidden" after click hide/unhide btn', async () => {
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: RECOMMENDATIONS_DATA_MOCK,
-    }));
-    (appContextDbConfig as jest.Mock).mockImplementation(() => ({
+    }))
+    ;(appContextDbConfig as jest.Mock).mockImplementation(() => ({
       ...mockAppContextDbConfigSelector,
       showHiddenRecommendations: true,
     }))
@@ -213,18 +230,23 @@ describe('LiveTimeRecommendations', () => {
     fireEvent.click(queryByTestId('checkbox-show-hidden')!)
 
     const expectedActions = [setRecommendationsShowHidden(false)]
-    expect(store.getActions()).toEqual([...afterRenderActions, ...expectedActions])
+    expect(store.getActions()).toEqual([
+      ...afterRenderActions,
+      ...expectedActions,
+    ])
   })
 
   it('should render WelcomeScreen if no visible recommendations', () => {
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
       data: {
         ...RECOMMENDATIONS_DATA_MOCK,
-        recommendations: RECOMMENDATIONS_DATA_MOCK.recommendations.map((rec) => ({ ...rec, hide: true }))
+        recommendations: RECOMMENDATIONS_DATA_MOCK.recommendations.map(
+          (rec) => ({ ...rec, hide: true }),
+        ),
       },
-    }));
-    (appContextDbConfig as jest.Mock).mockImplementation(() => ({
+    }))
+    ;(appContextDbConfig as jest.Mock).mockImplementation(() => ({
       ...mockAppContextDbConfigSelector,
       showHiddenRecommendations: false,
     }))
@@ -237,35 +259,35 @@ describe('LiveTimeRecommendations', () => {
   })
 
   it('should show feature dependent items when feature flag is on', async () => {
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
-      data: { recommendations: [{ name: 'RTS' }] }
+      data: { recommendations: [{ name: 'RTS' }] },
     }))
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: true }
+      { flag: true },
     )
 
     render(<LiveTimeRecommendations />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
     expect(screen.queryByTestId('github-repo-btn')).toBeInTheDocument()
   })
 
   it('should hide feature dependent items when feature flag is off', async () => {
-    (recommendationsSelector as jest.Mock).mockImplementation(() => ({
+    ;(recommendationsSelector as jest.Mock).mockImplementation(() => ({
       ...mockRecommendationsSelector,
-      data: { recommendations: [{ name: 'RTS' }] }
+      data: { recommendations: [{ name: 'RTS' }] },
     }))
     const initialStoreState = set(
       cloneDeep(initialStateDefault),
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
-      { flag: false }
+      { flag: false },
     )
 
     render(<LiveTimeRecommendations />, {
-      store: mockStore(initialStoreState)
+      store: mockStore(initialStoreState),
     })
     expect(screen.queryByTestId('github-repo-btn')).not.toBeInTheDocument()
   })

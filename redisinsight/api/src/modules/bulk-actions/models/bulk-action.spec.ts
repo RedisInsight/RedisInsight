@@ -17,9 +17,7 @@ import {
   mockBulkActionOverviewMatcher,
   mockSessionMetadata,
 } from 'src/__mocks__';
-import {
-  DeleteBulkActionSimpleRunner,
-} from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
+import { DeleteBulkActionSimpleRunner } from 'src/modules/bulk-actions/models/runners/simple/delete.bulk-action.simple.runner';
 import { BulkAction } from 'src/modules/bulk-actions/models/bulk-action';
 import { BulkActionStatus } from 'src/modules/bulk-actions/constants';
 import { BulkActionsAnalytics } from 'src/modules/bulk-actions/bulk-actions.analytics';
@@ -41,40 +39,62 @@ describe('AbstractBulkActionSimpleRunner', () => {
       mockBulkActionsAnalytics() as any,
     );
 
-    analytics = bulkAction['analytics'] as unknown as MockType<BulkActionsAnalytics>;
+    analytics = bulkAction[
+      'analytics'
+    ] as unknown as MockType<BulkActionsAnalytics>;
   });
 
   describe('prepare', () => {
     it('should generate single runner for standalone', async () => {
       expect(bulkAction['runners']).toEqual([]);
 
-      await bulkAction.prepare(mockStandaloneRedisClient, DeleteBulkActionSimpleRunner);
+      await bulkAction.prepare(
+        mockStandaloneRedisClient,
+        DeleteBulkActionSimpleRunner,
+      );
 
       expect(bulkAction['status']).toEqual(BulkActionStatus.Ready);
       expect(bulkAction['runners'].length).toEqual(1);
-      expect(bulkAction['runners'][0]).toBeInstanceOf(DeleteBulkActionSimpleRunner);
+      expect(bulkAction['runners'][0]).toBeInstanceOf(
+        DeleteBulkActionSimpleRunner,
+      );
       expect(bulkAction['runners'][0]['progress']['total']).toEqual(10_000);
     });
     it('should generate 2 runners for cluster with 2 master nodes', async () => {
-      mockClusterRedisClient.nodes.mockResolvedValueOnce([mockStandaloneRedisClient, mockStandaloneRedisClient]);
+      mockClusterRedisClient.nodes.mockResolvedValueOnce([
+        mockStandaloneRedisClient,
+        mockStandaloneRedisClient,
+      ]);
       expect(bulkAction['runners']).toEqual([]);
 
-      await bulkAction.prepare(mockClusterRedisClient, DeleteBulkActionSimpleRunner);
+      await bulkAction.prepare(
+        mockClusterRedisClient,
+        DeleteBulkActionSimpleRunner,
+      );
 
       expect(bulkAction['status']).toEqual(BulkActionStatus.Ready);
       expect(bulkAction['runners'].length).toEqual(2);
-      expect(bulkAction['runners'][0]).toBeInstanceOf(DeleteBulkActionSimpleRunner);
+      expect(bulkAction['runners'][0]).toBeInstanceOf(
+        DeleteBulkActionSimpleRunner,
+      );
       expect(bulkAction['runners'][0]['progress']['total']).toEqual(10_000);
-      expect(bulkAction['runners'][1]).toBeInstanceOf(DeleteBulkActionSimpleRunner);
+      expect(bulkAction['runners'][1]).toBeInstanceOf(
+        DeleteBulkActionSimpleRunner,
+      );
       expect(bulkAction['runners'][1]['progress']['total']).toEqual(10_000);
     });
     it('should fail when bulk action in inappropriate state', async () => {
       try {
         bulkAction['status'] = BulkActionStatus.Ready;
-        await bulkAction.prepare(mockStandaloneRedisClient, DeleteBulkActionSimpleRunner);
+        await bulkAction.prepare(
+          mockStandaloneRedisClient,
+          DeleteBulkActionSimpleRunner,
+        );
         fail();
       } catch (e) {
-        expect(e.message).toEqual(`Unable to prepare bulk action with "${BulkActionStatus.Ready}" status`);
+        expect(e.message).toEqual(
+          `Unable to prepare bulk action with "${BulkActionStatus.Ready}" status`,
+        );
       }
     });
   });
@@ -82,7 +102,10 @@ describe('AbstractBulkActionSimpleRunner', () => {
   describe('start', () => {
     let runnerRunSpy;
     beforeEach(() => {
-      mockRunner = new DeleteBulkActionSimpleRunner(bulkAction, mockStandaloneRedisClient);
+      mockRunner = new DeleteBulkActionSimpleRunner(
+        bulkAction,
+        mockStandaloneRedisClient,
+      );
       runnerRunSpy = jest.spyOn(mockRunner, 'run');
     });
 
@@ -91,7 +114,9 @@ describe('AbstractBulkActionSimpleRunner', () => {
         await bulkAction.start();
         fail();
       } catch (e) {
-        expect(e.message).toEqual(`Unable to start bulk action with "${BulkActionStatus.Initialized}" status`);
+        expect(e.message).toEqual(
+          `Unable to start bulk action with "${BulkActionStatus.Initialized}" status`,
+        );
       }
     });
     it('should start and run until the end', async () => {
@@ -186,7 +211,10 @@ describe('AbstractBulkActionSimpleRunner', () => {
     beforeEach(() => {
       mockSummary = generateMockBulkActionSummary();
       mockProgress = generateMockBulkActionProgress();
-      mockRunner = new DeleteBulkActionSimpleRunner(bulkAction, mockStandaloneRedisClient);
+      mockRunner = new DeleteBulkActionSimpleRunner(
+        bulkAction,
+        mockStandaloneRedisClient,
+      );
       mockRunner['progress'] = mockProgress;
       mockRunner['summary'] = mockSummary;
       bulkAction['status'] = BulkActionStatus.Completed;
@@ -382,7 +410,9 @@ describe('AbstractBulkActionSimpleRunner', () => {
     });
 
     it('Should not fail on emit error', () => {
-      mockSocket.emit.mockImplementation(() => { throw new Error('some error'); });
+      mockSocket.emit.mockImplementation(() => {
+        throw new Error('some error');
+      });
 
       bulkAction.sendOverview(mockSessionMetadata);
     });
@@ -404,7 +434,10 @@ describe('AbstractBulkActionSimpleRunner', () => {
       expect(sendOverviewSpy).toHaveBeenCalledTimes(1);
       expect(analytics.sendActionFailed).not.toHaveBeenCalled();
       expect(analytics.sendActionStopped).not.toHaveBeenCalled();
-      expect(analytics.sendActionSucceed).toHaveBeenCalledWith(mockSessionMetadata, mockBulkActionOverviewMatcher);
+      expect(analytics.sendActionSucceed).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockBulkActionOverviewMatcher,
+      );
     });
 
     it('Should call sendActionFailed', () => {

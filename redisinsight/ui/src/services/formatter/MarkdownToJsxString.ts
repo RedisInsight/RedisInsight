@@ -39,12 +39,17 @@ class MarkdownToJsxString implements IFormatter {
     })
   }
 
-  private static rehypeWrapSymbols(symbols: string[] = ['{', '}', '>']): (tree: Node) => void {
+  private static rehypeWrapSymbols(
+    symbols: string[] = ['{', '}', '>'],
+  ): (tree: Node) => void {
     return (tree: any) => {
       visit(tree, 'text', (node) => {
         const { value } = node
         if (value) {
-          node.value = value.replace(new RegExp(`[${symbols.join()}]`, 'g'), '{"$&"}')
+          node.value = value.replace(
+            new RegExp(`[${symbols.join()}]`, 'g'),
+            '{"$&"}',
+          )
         }
       })
     }

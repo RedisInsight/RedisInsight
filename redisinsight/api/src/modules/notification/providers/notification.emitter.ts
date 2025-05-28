@@ -1,10 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { SessionMetadata } from 'src/common/models';
-import { NotificationEvents, NotificationServerEvents } from 'src/modules/notification/constants';
+import {
+  NotificationEvents,
+  NotificationServerEvents,
+} from 'src/modules/notification/constants';
 import { NotificationsDto } from 'src/modules/notification/dto';
 import { Notification } from 'src/modules/notification/models/notification';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { NotificationRepository } from '../repositories/notification.repository';
 
 @Injectable()
@@ -17,7 +20,10 @@ export class NotificationEmitter {
   ) {}
 
   @OnEvent(NotificationEvents.NewNotifications)
-  async notification(sessionMetadata: SessionMetadata, notifications: Notification[]) {
+  async notification(
+    sessionMetadata: SessionMetadata,
+    notifications: Notification[],
+  ) {
     try {
       if (!notifications?.length) {
         return;
@@ -25,12 +31,16 @@ export class NotificationEmitter {
 
       this.logger.debug(`${notifications.length} new notification(s) to emit`);
 
-      const totalUnread = await this.notificationRepository.getTotalUnread(sessionMetadata);
+      const totalUnread =
+        await this.notificationRepository.getTotalUnread(sessionMetadata);
 
-      this.eventEmitter.emit(NotificationServerEvents.Notification, plainToClass(NotificationsDto, {
-        notifications,
-        totalUnread,
-      }));
+      this.eventEmitter.emit(
+        NotificationServerEvents.Notification,
+        plainToInstance(NotificationsDto, {
+          notifications,
+          totalUnread,
+        }),
+      );
     } catch (e) {
       this.logger.error('Unable to prepare dto for notifications', e);
       // ignore error

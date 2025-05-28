@@ -1,10 +1,10 @@
-import { defineConfig } from 'vite'
-import { transform } from 'esbuild'
-import react from '@vitejs/plugin-react'
-import svgr from 'vite-plugin-svgr'
-import { ViteEjsPlugin } from 'vite-plugin-ejs'
-import { viteStaticCopy } from 'vite-plugin-static-copy'
-import { resolve } from 'path'
+import { defineConfig } from 'vite';
+import { transform } from 'esbuild';
+import react from '@vitejs/plugin-react';
+import svgr from 'vite-plugin-svgr';
+import { ViteEjsPlugin } from 'vite-plugin-ejs';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
+import { resolve } from 'path';
 
 const riPlugins = [
   { name: 'redisearch', entry: 'src/main.tsx' },
@@ -12,7 +12,7 @@ const riPlugins = [
   { name: 'redisgraph', entry: 'src/main.tsx' },
   { name: 'redistimeseries-app', entry: 'src/main.tsx' },
   { name: 'ri-explain', entry: 'src/main.tsx' },
-]
+];
 
 /**
  * @type {import('vite').UserConfig}
@@ -29,7 +29,7 @@ export default defineConfig({
       targets: riPlugins.map(({ name: pluginDir }) => ({
         src: `./${pluginDir}/public/*`,
         dest: `./${pluginDir}/dist/`,
-      }))
+      })),
     }),
   ],
   resolve: {
@@ -41,9 +41,7 @@ export default defineConfig({
   server: {
     port: 8081,
     fs: {
-      allow: [
-        '..',
-      ],
+      allow: ['..'],
     },
   },
   envPrefix: 'RI_',
@@ -53,7 +51,10 @@ export default defineConfig({
     lib: {
       // Multi entries
       entry: Object.fromEntries(
-        riPlugins.map(({ name: pluginDir, entry }) => [pluginDir, resolve(__dirname, `./${pluginDir}/${entry}`)])
+        riPlugins.map(({ name: pluginDir, entry }) => [
+          pluginDir,
+          resolve(__dirname, `./${pluginDir}/${entry}`),
+        ]),
       ),
     },
 
@@ -79,7 +80,7 @@ export default defineConfig({
     global: 'globalThis',
     'process.env': {},
   },
-})
+});
 
 function minifyEs() {
   return {
@@ -88,10 +89,10 @@ function minifyEs() {
       order: 'post',
       async handler(code, chunk, outputOptions) {
         if (outputOptions.format === 'es' && chunk.fileName.endsWith('.js')) {
-          return transform(code, { minify: true })
+          return transform(code, { minify: true });
         }
-        return code
+        return code;
       },
-    }
-  }
+    },
+  };
 }

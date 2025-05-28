@@ -1,13 +1,10 @@
 import {
   EuiButton,
   EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiPopover,
-  EuiSpacer,
   EuiText,
-  EuiToolTip
+  EuiToolTip,
 } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -19,6 +16,8 @@ import { slowLogSelector } from 'uiSrc/slices/analytics/slowlog'
 import { AutoRefresh } from 'uiSrc/components'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import SlowLogConfig from '../SlowLogConfig'
 import styles from './styles.module.scss'
 
@@ -33,7 +32,13 @@ export interface Props {
 const HIDE_REFRESH_LABEL_WIDTH = 850
 
 const Actions = (props: Props) => {
-  const { isEmptySlowLog, durationUnit, width, onClear = () => { }, onRefresh } = props
+  const {
+    isEmptySlowLog,
+    durationUnit,
+    width,
+    onClear = () => {},
+    onRefresh,
+  } = props
   const { instanceId } = useParams<{ instanceId: string }>()
   const { name = '' } = useSelector(connectedInstanceSelector)
   const { loading, lastRefreshTime } = useSelector(slowLogSelector)
@@ -61,26 +66,32 @@ const Actions = (props: Props) => {
     closePopoverClear()
   }
 
-  const handleEnableAutoRefresh = (enableAutoRefresh: boolean, refreshRate: string) => {
+  const handleEnableAutoRefresh = (
+    enableAutoRefresh: boolean,
+    refreshRate: string,
+  ) => {
     sendEventTelemetry({
       event: enableAutoRefresh
         ? TelemetryEvent.SLOWLOG_AUTO_REFRESH_ENABLED
         : TelemetryEvent.SLOWLOG_AUTO_REFRESH_DISABLED,
       eventData: {
         databaseId: instanceId,
-        refreshRate: enableAutoRefresh ? +refreshRate : undefined
-      }
+        refreshRate: enableAutoRefresh ? +refreshRate : undefined,
+      },
     })
   }
 
-  const handleChangeAutoRefreshRate = (enableAutoRefresh: boolean, refreshRate: string) => {
+  const handleChangeAutoRefreshRate = (
+    enableAutoRefresh: boolean,
+    refreshRate: string,
+  ) => {
     if (enableAutoRefresh) {
       sendEventTelemetry({
         event: TelemetryEvent.SLOWLOG_AUTO_REFRESH_ENABLED,
         eventData: {
           databaseId: instanceId,
-          refreshRate: +refreshRate
-        }
+          refreshRate: +refreshRate,
+        },
       })
     }
   }
@@ -118,8 +129,8 @@ const Actions = (props: Props) => {
   )
 
   return (
-    <EuiFlexGroup className={styles.actions} gutterSize="s" alignItems="center" responsive={false}>
-      <EuiFlexItem grow={5} style={{ alignItems: 'flex-end' }}>
+    <Row className={styles.actions} gap="s" align="center">
+      <FlexItem grow={5} style={{ alignItems: 'flex-end' }}>
         <AutoRefresh
           postfix="slowlog"
           loading={loading}
@@ -131,16 +142,16 @@ const Actions = (props: Props) => {
           onChangeAutoRefreshRate={handleChangeAutoRefreshRate}
           testid="slowlog"
         />
-      </EuiFlexItem>
-      <EuiFlexItem>
+      </FlexItem>
+      <FlexItem grow>
         <EuiPopover
           ownFocus
           anchorPosition="downRight"
           isOpen={isPopoverConfigOpen}
           panelPaddingSize="m"
-          closePopover={() => { }}
+          closePopover={() => {}}
           panelClassName={cx('popover-without-top-tail', styles.configWrapper)}
-          button={(
+          button={
             <EuiButton
               size="s"
               iconType="gear"
@@ -151,20 +162,23 @@ const Actions = (props: Props) => {
             >
               Configure
             </EuiButton>
-          )}
+          }
         >
-          <SlowLogConfig closePopover={closePopoverConfig} onRefresh={onRefresh} />
+          <SlowLogConfig
+            closePopover={closePopoverConfig}
+            onRefresh={onRefresh}
+          />
         </EuiPopover>
-      </EuiFlexItem>
+      </FlexItem>
       {!isEmptySlowLog && (
-        <EuiFlexItem>
+        <FlexItem grow>
           <EuiPopover
             anchorPosition="leftCenter"
             ownFocus
             isOpen={isPopoverClearOpen}
             closePopover={closePopoverClear}
             panelPaddingSize="m"
-            button={(
+            button={
               <EuiToolTip
                 position="left"
                 anchorClassName={styles.icon}
@@ -178,32 +192,39 @@ const Actions = (props: Props) => {
                   data-testid="clear-btn"
                 />
               </EuiToolTip>
-            )}
+            }
           >
             {ToolTipContent}
           </EuiPopover>
-        </EuiFlexItem>
+        </FlexItem>
       )}
-      <EuiFlexItem>
+      <FlexItem grow>
         <EuiToolTip
           title="Slow Log"
           position="bottom"
           anchorClassName={styles.icon}
-          content={(
+          content={
             <span data-testid="slowlog-tooltip-text">
-              Slow Log is a list of slow operations for your Redis instance. These can be used
-              to troubleshoot performance issues.
-              <EuiSpacer size="xs" />
-              Each entry in the list displays the command, duration and timestamp.
-              Any transaction that exceeds <b>slowlog-log-slower-than</b> {durationUnit} are recorded up to a
-              maximum of <b>slowlog-max-len</b> after which older entries are discarded.
+              Slow Log is a list of slow operations for your Redis instance.
+              These can be used to troubleshoot performance issues.
+              <Spacer size="xs" />
+              Each entry in the list displays the command, duration and
+              timestamp. Any transaction that exceeds{' '}
+              <b>slowlog-log-slower-than</b> {durationUnit} are recorded up to a
+              maximum of <b>slowlog-max-len</b> after which older entries are
+              discarded.
             </span>
-          )}
+          }
         >
-          <EuiIcon className={styles.infoIcon} type="iInCircle" style={{ cursor: 'pointer' }} data-testid="slow-log-tooltip-icon" />
+          <EuiIcon
+            className={styles.infoIcon}
+            type="iInCircle"
+            style={{ cursor: 'pointer' }}
+            data-testid="slow-log-tooltip-icon"
+          />
         </EuiToolTip>
-      </EuiFlexItem>
-    </EuiFlexGroup>
+      </FlexItem>
+    </Row>
   )
 }
 

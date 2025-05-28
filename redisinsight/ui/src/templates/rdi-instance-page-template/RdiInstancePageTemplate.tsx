@@ -12,11 +12,8 @@ const RdiInstancePageTemplate = (props: Props) => {
 
   return (
     <div className={styles.content}>
-      <ExplorePanelTemplate>
-        {children}
-      </ExplorePanelTemplate>
+      <ExplorePanelTemplate>{children}</ExplorePanelTemplate>
     </div>
-
   )
 }
 

@@ -1,9 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { EuiFlexItem, EuiPage, EuiPageBody } from '@elastic/eui'
 
-import { getApiErrorMessage, isStatusSuccessful, Nullable, setTitle } from 'uiSrc/utils'
+import {
+  getApiErrorMessage,
+  isStatusSuccessful,
+  Nullable,
+  setTitle,
+} from 'uiSrc/utils'
 import { apiService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { PageHeader, PagePlaceholder } from 'uiSrc/components'
@@ -19,13 +23,15 @@ import { sendEventTelemetry } from 'uiSrc/telemetry'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { contentSelector } from 'uiSrc/slices/content/create-redis-buttons'
 import DatabasePanelDialog from 'uiSrc/pages/home/components/database-panel-dialog'
+import { Page, PageBody } from 'uiSrc/components/base/layout/page'
+import { FlexItem } from 'uiSrc/components/base/layout/flex'
 
 import './styles.scss'
 import styles from './styles.module.scss'
 
 interface IState {
-  loading: boolean;
-  error: string;
+  loading: boolean
+  error: string
   data: Nullable<Instance>
 }
 const DEFAULT_STATE = { loading: true, error: '', data: null }
@@ -55,7 +61,9 @@ const EditConnection = () => {
     try {
       setState(DEFAULT_STATE)
       isApiSubscribed = true
-      const { data, status } = await apiService.get<Instance>(`${ApiEndpoints.DATABASES}/${server.fixedDatabaseId}`)
+      const { data, status } = await apiService.get<Instance>(
+        `${ApiEndpoints.DATABASES}/${server?.fixedDatabaseId}`,
+      )
       if (isStatusSuccessful(status) && isApiSubscribed) {
         setState({ ...state, loading: false, data })
       }
@@ -90,43 +98,44 @@ const EditConnection = () => {
           ...linkStyles,
           backgroundImage: linkStyles?.backgroundImage
             ? `url(${getPathToResource(linkStyles.backgroundImage)})`
-            : undefined
+            : undefined,
         }}
-        onClick={() => sendEventTelemetry({
-          event: HELP_LINKS.cloud.event,
-          eventData: { source: 'Redis Stack' }
-        })}
+        onClick={() =>
+          sendEventTelemetry({
+            event: HELP_LINKS.cloud.event,
+            eventData: { source: 'Redis Stack' },
+          })
+        }
       />
     )
   }
 
-  return (
-    state.loading ? <PagePlaceholder />
-      : (
-        <>
-          <PageHeader title="Redis Stack" />
-          <div />
-          <EuiPage className="homePage redisStackConnection">
-            <EuiPageBody component="div" className={styles.container}>
-              {createDbContent?.cloud && (
-                <EuiFlexItem grow={false} style={{ margin: '20px 0' }}>
-                  <CreateCloudBtn content={createDbContent.cloud} />
-                </EuiFlexItem>
-              )}
-              <div className={styles.formContainer}>
-                <div className={styles.form}>
-                  <DatabasePanelDialog
-                    editMode
-                    editedInstance={state.data}
-                    onDbEdited={onInstanceChanged}
-                    onClose={onClose}
-                  />
-                </div>
-              </div>
-            </EuiPageBody>
-          </EuiPage>
-        </>
-      )
+  return state.loading ? (
+    <PagePlaceholder />
+  ) : (
+    <>
+      <PageHeader title="Redis Stack" />
+      <div />
+      <Page className="homePage redisStackConnection">
+        <PageBody component="div" className={styles.container}>
+          {createDbContent?.cloud && (
+            <FlexItem style={{ margin: '20px 0' }}>
+              <CreateCloudBtn content={createDbContent.cloud} />
+            </FlexItem>
+          )}
+          <div className={styles.formContainer}>
+            <div className={styles.form}>
+              <DatabasePanelDialog
+                editMode
+                editedInstance={state.data}
+                onDbEdited={onInstanceChanged}
+                onClose={onClose}
+              />
+            </div>
+          </div>
+        </PageBody>
+      </Page>
+    </>
   )
 }
 

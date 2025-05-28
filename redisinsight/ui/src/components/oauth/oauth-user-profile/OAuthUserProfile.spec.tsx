@@ -2,14 +2,27 @@ import React from 'react'
 import { mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 import { fireEvent } from '@testing-library/react'
-import { act, cleanup, mockedStore, render, screen,
+import {
+  act,
+  cleanup,
+  mockedStore,
+  render,
+  screen,
   waitForEuiPopoverVisible,
   mockedStoreFn,
 } from 'uiSrc/utils/test-utils'
 
-import { getUserInfo, logoutUser, oauthCloudUserSelector, setInitialLoadingState } from 'uiSrc/slices/oauth/cloud'
+import {
+  getUserInfo,
+  logoutUser,
+  oauthCloudUserSelector,
+  setInitialLoadingState,
+} from 'uiSrc/slices/oauth/cloud'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { loadSubscriptionsRedisCloud, setSSOFlow } from 'uiSrc/slices/instances/cloud'
+import {
+  loadSubscriptionsRedisCloud,
+  setSSOFlow,
+} from 'uiSrc/slices/instances/cloud'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { MOCK_OAUTH_USER_PROFILE } from 'uiSrc/mocks/data/oauth'
 
@@ -24,15 +37,15 @@ jest.mock('uiSrc/slices/oauth/cloud', () => ({
     loading: false,
     data: null,
     error: '',
-    initialLoading: false
+    initialLoading: false,
   }),
 }))
 
 jest.mock('uiSrc/slices/app/info', () => ({
   ...jest.requireActual('uiSrc/slices/app/info'),
   appInfoSelector: jest.fn().mockReturnValue({
-    server: {}
-  })
+    server: {},
+  }),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -54,11 +67,11 @@ describe('OAuthUserProfile', () => {
   })
 
   it('should render loading spinner initially', () => {
-    (oauthCloudUserSelector as jest.Mock).mockReturnValueOnce({
+    ;(oauthCloudUserSelector as jest.Mock).mockReturnValueOnce({
       loading: false,
       data: null,
       error: '',
-      initialLoading: true
+      initialLoading: true,
     })
     render(<OAuthUserProfile {...mockedProps} />)
 
@@ -68,7 +81,7 @@ describe('OAuthUserProfile', () => {
   })
 
   it('should render sign in button if no profile', () => {
-    (oauthCloudUserSelector as jest.Mock).mockReturnValue({
+    ;(oauthCloudUserSelector as jest.Mock).mockReturnValue({
       loading: false,
       data: null,
       error: 'Some error',
@@ -80,10 +93,10 @@ describe('OAuthUserProfile', () => {
   })
 
   it('should not render sign in button if no profile and mas build', () => {
-    (appInfoSelector as jest.Mock).mockReturnValueOnce({
+    ;(appInfoSelector as jest.Mock).mockReturnValueOnce({
       server: {
-        packageType: 'mas'
-      }
+        packageType: 'mas',
+      },
     })
     render(<OAuthUserProfile {...mockedProps} />)
 
@@ -92,8 +105,8 @@ describe('OAuthUserProfile', () => {
   })
 
   it('should render profile button', () => {
-    (oauthCloudUserSelector as jest.Mock).mockReturnValue({
-      data: {}
+    ;(oauthCloudUserSelector as jest.Mock).mockReturnValue({
+      data: {},
     })
     render(<OAuthUserProfile {...mockedProps} />)
 
@@ -102,8 +115,8 @@ describe('OAuthUserProfile', () => {
   })
 
   it('should render profile info', async () => {
-    (oauthCloudUserSelector as jest.Mock).mockReturnValue({
-      data: MOCK_OAUTH_USER_PROFILE
+    ;(oauthCloudUserSelector as jest.Mock).mockReturnValue({
+      data: MOCK_OAUTH_USER_PROFILE,
     })
     render(<OAuthUserProfile {...mockedProps} />, { store })
 
@@ -112,45 +125,49 @@ describe('OAuthUserProfile', () => {
     })
     await waitForEuiPopoverVisible()
 
-    expect(screen.getByTestId('account-full-name')).toHaveTextContent('Bill Russell')
-    expect(screen.getByTestId('profile-account-1-selected')).toHaveTextContent('Bill R #1')
-    expect(screen.getByTestId('profile-account-2')).toHaveTextContent('Bill R 2 #2')
+    expect(screen.getByTestId('account-full-name')).toHaveTextContent(
+      'Bill Russell',
+    )
+    expect(screen.getByTestId('profile-account-1-selected')).toHaveTextContent(
+      'Bill R #1',
+    )
+    expect(screen.getByTestId('profile-account-2')).toHaveTextContent(
+      'Bill R 2 #2',
+    )
   })
 
   it('should call proper action and telemetry after click on import databases', async () => {
-    (oauthCloudUserSelector as jest.Mock).mockReturnValue({
-      data: MOCK_OAUTH_USER_PROFILE
+    ;(oauthCloudUserSelector as jest.Mock).mockReturnValue({
+      data: MOCK_OAUTH_USER_PROFILE,
     })
     render(<OAuthUserProfile {...mockedProps} />, { store })
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('user-profile-btn'))
     })
-    await waitForEuiPopoverVisible();
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+    await waitForEuiPopoverVisible()
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     fireEvent.click(screen.getByTestId('profile-import-cloud-databases'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_IMPORT_DATABASES_SUBMITTED,
       eventData: {
-        source: OAuthSocialSource.UserProfile
-      }
+        source: OAuthSocialSource.UserProfile,
+      },
     })
 
     expect(store.getActions()).toEqual([
       setInitialLoadingState(false),
       setSSOFlow(OAuthSocialAction.Import),
-      loadSubscriptionsRedisCloud()
-    ]);
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      loadSubscriptionsRedisCloud(),
+    ])
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper action and telemetry after click on account', async () => {
-    (oauthCloudUserSelector as jest.Mock).mockReturnValue({
-      data: MOCK_OAUTH_USER_PROFILE
+    ;(oauthCloudUserSelector as jest.Mock).mockReturnValue({
+      data: MOCK_OAUTH_USER_PROFILE,
     })
     render(<OAuthUserProfile {...mockedProps} />, { store })
 
@@ -165,36 +182,36 @@ describe('OAuthUserProfile', () => {
 
     fireEvent.click(screen.getByTestId('profile-account-2'))
 
-    expect(store.getActions()).toEqual([setInitialLoadingState(false), getUserInfo()]);
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+    expect(store.getActions()).toEqual([
+      setInitialLoadingState(false),
+      getUserInfo(),
+    ])
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper action and telemetry after click on cloud link', async () => {
-    (oauthCloudUserSelector as jest.Mock).mockReturnValue({
-      data: MOCK_OAUTH_USER_PROFILE
+    ;(oauthCloudUserSelector as jest.Mock).mockReturnValue({
+      data: MOCK_OAUTH_USER_PROFILE,
     })
     render(<OAuthUserProfile {...mockedProps} />, { store })
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('user-profile-btn'))
     })
-    await waitForEuiPopoverVisible();
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+    await waitForEuiPopoverVisible()
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     fireEvent.click(screen.getByTestId('cloud-console-link'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_CONSOLE_CLICKED,
-    });
-
-    (sendEventTelemetry as jest.Mock).mockRestore()
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper action after click on logout', async () => {
-    (oauthCloudUserSelector as jest.Mock).mockReturnValue({
-      data: MOCK_OAUTH_USER_PROFILE
+    ;(oauthCloudUserSelector as jest.Mock).mockReturnValue({
+      data: MOCK_OAUTH_USER_PROFILE,
     })
     render(<OAuthUserProfile {...mockedProps} />, { store })
 
@@ -206,6 +223,10 @@ describe('OAuthUserProfile', () => {
 
     fireEvent.click(screen.getByTestId('profile-logout'))
 
-    expect(store.getActions()).toEqual([setInitialLoadingState(false), logoutUser(), setSSOFlow()])
+    expect(store.getActions()).toEqual([
+      setInitialLoadingState(false),
+      logoutUser(),
+      setSSOFlow(),
+    ])
   })
 })

@@ -1,7 +1,13 @@
-import { CloudJob, CloudJobOptions } from 'src/modules/cloud/job/jobs/cloud-job';
+import {
+  CloudJob,
+  CloudJobOptions,
+} from 'src/modules/cloud/job/jobs/cloud-job';
 import { CloudSubscriptionType } from 'src/modules/cloud/subscription/models';
 import { CloudDatabaseCapiService } from 'src/modules/cloud/database/cloud-database.capi.service';
-import { CloudDatabase, CloudDatabaseStatus } from 'src/modules/cloud/database/models';
+import {
+  CloudDatabase,
+  CloudDatabaseStatus,
+} from 'src/modules/cloud/database/models';
 import { CloudJobStatus } from 'src/modules/cloud/job/models';
 import {
   CloudDatabaseInFailedStateException,
@@ -16,12 +22,12 @@ export class WaitForActiveDatabaseCloudJob extends CloudJob {
   constructor(
     readonly options: CloudJobOptions,
     private readonly data: {
-      databaseId: number,
-      subscriptionId: number,
-      subscriptionType: CloudSubscriptionType,
+      databaseId: number;
+      subscriptionId: number;
+      subscriptionType: CloudSubscriptionType;
     },
     protected readonly dependencies: {
-      cloudDatabaseCapiService: CloudDatabaseCapiService,
+      cloudDatabaseCapiService: CloudDatabaseCapiService;
     },
   ) {
     super(options);
@@ -34,14 +40,15 @@ export class WaitForActiveDatabaseCloudJob extends CloudJob {
 
     this.logger.debug('Fetching cloud database');
 
-    const database = await this.dependencies.cloudDatabaseCapiService.getDatabase(
-      this.options.capiCredentials,
-      {
-        subscriptionId: this.data.subscriptionId,
-        subscriptionType: this.data.subscriptionType,
-        databaseId: this.data.databaseId,
-      },
-    );
+    const database =
+      await this.dependencies.cloudDatabaseCapiService.getDatabase(
+        this.options.capiCredentials,
+        {
+          subscriptionId: this.data.subscriptionId,
+          subscriptionType: this.data.subscriptionType,
+          databaseId: this.data.databaseId,
+        },
+      );
 
     switch (database?.status) {
       case CloudDatabaseStatus.Active:
@@ -54,7 +61,9 @@ export class WaitForActiveDatabaseCloudJob extends CloudJob {
       case CloudDatabaseStatus.ActiveChangePending:
       case CloudDatabaseStatus.Pending:
       case CloudDatabaseStatus.Draft:
-        this.logger.debug('Cloud database is not in the active state. Scheduling new iteration');
+        this.logger.debug(
+          'Cloud database is not in the active state. Scheduling new iteration',
+        );
 
         return await this.runNextIteration(sessionMetadata);
       case CloudDatabaseStatus.CreationFailed:

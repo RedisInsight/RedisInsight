@@ -44,7 +44,8 @@ describe('Cli TextFormatterStrategy', () => {
           Buffer.from('"quoted key"'),
         ],
       ];
-      const mockResponse = '1) "0"\n2) 1) "key"\n   2) "\\"quoted\\"\\"key\\""\n   3) "\\"quoted key\\""';
+      const mockResponse =
+        '1) "0"\n2) 1) "key"\n   2) "\\"quoted\\"\\"key\\""\n   3) "\\"quoted key\\""';
       const output = strategy.format(input);
 
       expect(output).toEqual(mockResponse);
@@ -54,7 +55,8 @@ describe('Cli TextFormatterStrategy', () => {
         field: Buffer.from('value'),
         secondField: Buffer.from('value'),
       };
-      const mockResponse = '1) "field"\n2) "value"\n3) "secondField"\n4) "value"';
+      const mockResponse =
+        '1) "field"\n2) "value"\n3) "secondField"\n4) "value"';
       const output = strategy.format(input);
 
       expect(output).toEqual(mockResponse);

@@ -8,15 +8,15 @@ import {
   before,
   getMainCheckFn,
   fsExtra,
-} from '../deps'
+} from '../deps';
 import {
   cleanupPreSetupDatabases,
   getRepository,
   initSettings,
   repositories,
-  resetSettings
-} from '../../helpers/local-db'
-import {Repository} from 'typeorm'
+  resetSettings,
+} from '../../helpers/local-db';
+import { Repository } from 'typeorm';
 import {
   cleanupTestEnvs,
   mockDatabaseToImportFromEnvsInput,
@@ -27,27 +27,33 @@ import {
   mockDatabaseToImportWithCertsFromEnvsPrepared,
   mockDatabaseToImportWithCertsFromFileInput,
   mockDatabaseToImportWithCertsFromFilePrepared,
-} from 'src/__mocks__'
-import {classToClass} from 'src/utils'
-import {Database} from 'src/modules/database/models/database'
+} from 'src/__mocks__';
+import { classToClass } from 'src/utils';
+import { Database } from 'src/modules/database/models/database';
 
 const { server, request, constants } = deps;
 
 // endpoint to test
 const endpoint = () => request(server).patch('/settings');
 
-const responseSchema = Joi.object().keys({
-  theme: Joi.string().allow(null).required(),
-  scanThreshold: Joi.number().required(),
-  batchSize: Joi.number().required(),
-  dateFormat: Joi.string().allow(null),
-  timezone: Joi.string().allow(null),
-  agreements: Joi.object().keys({
-    version: Joi.string().required(),
-    eula: Joi.bool().required(),
-    encryption: Joi.bool(),
-  }).pattern(/./, Joi.boolean()).allow(null).required()
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    theme: Joi.string().allow(null).required(),
+    scanThreshold: Joi.number().required(),
+    batchSize: Joi.number().required(),
+    dateFormat: Joi.string().allow(null),
+    timezone: Joi.string().allow(null),
+    agreements: Joi.object()
+      .keys({
+        version: Joi.string().required(),
+        eula: Joi.bool().required(),
+        encryption: Joi.bool(),
+      })
+      .pattern(/./, Joi.boolean())
+      .allow(null)
+      .required(),
+  })
+  .required();
 
 const validInputData = {
   theme: 'DARK',
@@ -86,7 +92,7 @@ describe('Databases discovery', () => {
     cleanupTestEnvs();
     // remove pre setup databases file
     try {
-      fsExtra.unlinkSync(constants.TEST_PRE_SETUP_DATABASES_PATH)
+      fsExtra.unlinkSync(constants.TEST_PRE_SETUP_DATABASES_PATH);
     } catch (e) {
       // ignore error
     }
@@ -109,30 +115,38 @@ describe('Databases discovery', () => {
           process.env.RI_REDIS_ALIAS = mockDatabaseToImportFromEnvsInput.name;
 
           // with base64 certs
-          process.env.RI_REDIS_HOST_1 = mockDatabaseToImportWithCertsFromEnvsInput.host;
+          process.env.RI_REDIS_HOST_1 =
+            mockDatabaseToImportWithCertsFromEnvsInput.host;
           process.env.RI_REDIS_PORT_1 = `${mockDatabaseToImportWithCertsFromEnvsInput.port}`;
-          process.env.RI_REDIS_ALIAS_1 = mockDatabaseToImportWithCertsFromEnvsInput.name;
+          process.env.RI_REDIS_ALIAS_1 =
+            mockDatabaseToImportWithCertsFromEnvsInput.name;
           process.env.RI_REDIS_TLS_1 = 'true';
           process.env.RI_REDIS_TLS_CA_BASE64_1 = Buffer.from(
-            mockDatabaseToImportWithCertsFromEnvsInput.caCert.certificate, 'utf8',
+            mockDatabaseToImportWithCertsFromEnvsInput.caCert.certificate,
+            'utf8',
           ).toString('base64');
           process.env.RI_REDIS_TLS_CERT_BASE64_1 = Buffer.from(
-            mockDatabaseToImportWithCertsFromEnvsInput.clientCert.certificate, 'utf8',
+            mockDatabaseToImportWithCertsFromEnvsInput.clientCert.certificate,
+            'utf8',
           ).toString('base64');
           process.env.RI_REDIS_TLS_KEY_BASE64_1 = Buffer.from(
-            mockDatabaseToImportWithCertsFromEnvsInput.clientCert.key, 'utf8',
+            mockDatabaseToImportWithCertsFromEnvsInput.clientCert.key,
+            'utf8',
           ).toString('base64');
-
         },
         data: validInputData,
         responseSchema,
         checkFn: async () => {
           const allDatabases = await databaseRepository.find();
           // no other databases affected during discovery
-          expect(allDatabases.filter((db) => !db.isPreSetup)).deep.eq(databases);
+          expect(allDatabases.filter((db) => !db.isPreSetup)).deep.eq(
+            databases,
+          );
 
           // verify discovered databases
-          const preSetupDatabases = allDatabases.filter((db) => db.isPreSetup).map((db) => classToClass(Database, db));
+          const preSetupDatabases = allDatabases
+            .filter((db) => db.isPreSetup)
+            .map((db) => classToClass(Database, db));
           expect(preSetupDatabases.length).to.eq(2);
           expect(preSetupDatabases[0]).to.deep.include({
             ...mockDatabaseToImportFromEnvsPrepared,
@@ -154,7 +168,9 @@ describe('Databases discovery', () => {
         checkFn: async () => {
           const allDatabases = await databaseRepository.find();
           // no other databases affected during discovery
-          expect(allDatabases.filter((db) => !db.isPreSetup)).deep.eq(databases);
+          expect(allDatabases.filter((db) => !db.isPreSetup)).deep.eq(
+            databases,
+          );
 
           // verify there are no pre setup databases
           expect(allDatabases.filter((db) => db.isPreSetup).length).to.eq(0);
@@ -179,15 +195,20 @@ describe('Databases discovery', () => {
           await fsExtra.writeFile(
             caPath,
             Buffer.from(
-              mockDatabaseToImportWithCertsFromEnvsInput.caCert.certificate, 'utf8',
+              mockDatabaseToImportWithCertsFromEnvsInput.caCert.certificate,
+              'utf8',
             ),
           );
 
-          const certificatePath = path.join(constants.TEST_DATA_DIR, 'user.crt');
+          const certificatePath = path.join(
+            constants.TEST_DATA_DIR,
+            'user.crt',
+          );
           await fsExtra.writeFile(
             certificatePath,
             Buffer.from(
-              mockDatabaseToImportWithCertsFromEnvsInput.clientCert.certificate, 'utf8',
+              mockDatabaseToImportWithCertsFromEnvsInput.clientCert.certificate,
+              'utf8',
             ),
           );
 
@@ -195,14 +216,17 @@ describe('Databases discovery', () => {
           await fsExtra.writeFile(
             keyPath,
             Buffer.from(
-              mockDatabaseToImportWithCertsFromEnvsInput.clientCert.key, 'utf8',
+              mockDatabaseToImportWithCertsFromEnvsInput.clientCert.key,
+              'utf8',
             ),
           );
 
           // with path certs
-          process.env.RI_REDIS_HOST_1 = mockDatabaseToImportWithCertsFromEnvsInput.host;
+          process.env.RI_REDIS_HOST_1 =
+            mockDatabaseToImportWithCertsFromEnvsInput.host;
           process.env.RI_REDIS_PORT_1 = `${mockDatabaseToImportWithCertsFromEnvsInput.port}`;
-          process.env.RI_REDIS_ALIAS_1 = mockDatabaseToImportWithCertsFromEnvsInput.name;
+          process.env.RI_REDIS_ALIAS_1 =
+            mockDatabaseToImportWithCertsFromEnvsInput.name;
           process.env.RI_REDIS_TLS_1 = 'true';
           process.env.RI_REDIS_TLS_CA_PATH_1 = caPath;
           process.env.RI_REDIS_TLS_CERT_PATH_1 = certificatePath;
@@ -214,10 +238,14 @@ describe('Databases discovery', () => {
           const allDatabases = await databaseRepository.find();
 
           // no other databases affected during discovery
-          expect(allDatabases.filter((db) => !db.isPreSetup)).deep.eq(databases);
+          expect(allDatabases.filter((db) => !db.isPreSetup)).deep.eq(
+            databases,
+          );
 
           // verify discovered databases
-          const preSetupDatabases = allDatabases.filter((db) => db.isPreSetup).map((db) => classToClass(Database, db));
+          const preSetupDatabases = allDatabases
+            .filter((db) => db.isPreSetup)
+            .map((db) => classToClass(Database, db));
           expect(preSetupDatabases.length).to.eq(2);
           expect(preSetupDatabases[0]).to.deep.include({
             ...mockDatabaseToImportFromEnvsPrepared,
@@ -240,7 +268,9 @@ describe('Databases discovery', () => {
         checkFn: async () => {
           const allDatabases = await databaseRepository.find();
           // no other databases affected during discovery
-          expect(allDatabases.filter((db) => !db.isPreSetup)).deep.eq(databases);
+          expect(allDatabases.filter((db) => !db.isPreSetup)).deep.eq(
+            databases,
+          );
 
           // verify there are no pre setup databases
           expect(allDatabases.filter((db) => db.isPreSetup).length).to.eq(2);
@@ -254,7 +284,9 @@ describe('Databases discovery', () => {
           expect(preSetupDatabases.length).deep.eq(2);
 
           // prepare databases json
-          const databasesFilePath = path.join(constants.TEST_PRE_SETUP_DATABASES_PATH);
+          const databasesFilePath = path.join(
+            constants.TEST_PRE_SETUP_DATABASES_PATH,
+          );
           await fsExtra.writeFile(
             databasesFilePath,
             JSON.stringify([
@@ -269,10 +301,14 @@ describe('Databases discovery', () => {
           const allDatabases = await databaseRepository.find();
 
           // no other databases affected during discovery
-          expect(allDatabases.filter((db) => !db.isPreSetup)).deep.eq(databases);
+          expect(allDatabases.filter((db) => !db.isPreSetup)).deep.eq(
+            databases,
+          );
 
           // verify discovered databases
-          const preSetupDatabases = allDatabases.filter((db) => db.isPreSetup).map((db) => classToClass(Database, db));
+          const preSetupDatabases = allDatabases
+            .filter((db) => db.isPreSetup)
+            .map((db) => classToClass(Database, db));
           expect(preSetupDatabases.length).to.eq(2);
           expect(preSetupDatabases[0]).to.deep.include({
             ...mockDatabaseToImportFromFilePrepared,

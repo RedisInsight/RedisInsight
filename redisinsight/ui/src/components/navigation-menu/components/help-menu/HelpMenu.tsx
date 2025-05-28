@@ -1,14 +1,11 @@
 import {
   EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiLink,
   EuiPopover,
-  EuiSpacer,
   EuiText,
   EuiTitle,
-  EuiToolTip
+  EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useState } from 'react'
@@ -16,7 +13,11 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { ReleaseNotesSource } from 'uiSrc/constants/telemetry'
-import { appElectronInfoSelector, setReleaseNotesViewed, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
+import {
+  appElectronInfoSelector,
+  setReleaseNotesViewed,
+  setShortcutsFlyoutState,
+} from 'uiSrc/slices/app/info'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { setOnboarding } from 'uiSrc/slices/app/features'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -27,11 +28,15 @@ import BulbSVG from 'uiSrc/assets/img/bulb.svg?react'
 
 import { FeatureFlags } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
 
 const HelpMenu = () => {
-  const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '' } = useSelector(
+    connectedInstanceSelector,
+  )
   const { isReleaseNotesViewed } = useSelector(appElectronInfoSelector)
   const [isHelpMenuActive, setIsHelpMenuActive] = useState(false)
 
@@ -46,8 +51,8 @@ const HelpMenu = () => {
     sendEventTelemetry({
       event: TelemetryEvent.RELEASE_NOTES_LINK_CLICKED,
       eventData: {
-        source: ReleaseNotesSource.helpCenter
-      }
+        source: ReleaseNotesSource.helpCenter,
+      },
     })
     if (isReleaseNotesViewed === false) {
       dispatch(setReleaseNotesViewed(true))
@@ -62,15 +67,15 @@ const HelpMenu = () => {
       event: TelemetryEvent.ONBOARDING_TOUR_TRIGGERED,
       eventData: {
         databaseId: connectedInstanceId || '-',
-      }
+      },
     })
   }
 
   const HelpMenuButton = () => (
     <EuiButtonIcon
-      className={
-        cx(navStyles.navigationButton, { [navStyles.navigationButtonNotified]: isReleaseNotesViewed === false })
-      }
+      className={cx(navStyles.navigationButton, {
+        [navStyles.navigationButtonNotified]: isReleaseNotesViewed === false,
+      })}
       iconType="questionInCircle"
       iconSize="l"
       aria-label="Help Menu"
@@ -84,9 +89,13 @@ const HelpMenu = () => {
       anchorPosition="rightUp"
       isOpen={isHelpMenuActive}
       anchorClassName={styles.unsupportedInfo}
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popoverWrapper)}
+      panelClassName={cx(
+        'euiToolTip',
+        'popoverLikeTooltip',
+        styles.popoverWrapper,
+      )}
       closePopover={() => setIsHelpMenuActive(false)}
-      button={(
+      button={
         <>
           {!isHelpMenuActive && (
             <EuiToolTip content="Help" position="right" key="help-menu">
@@ -96,22 +105,21 @@ const HelpMenu = () => {
 
           {isHelpMenuActive && HelpMenuButton()}
         </>
-      )}
+      }
     >
       <div className={styles.popover} data-testid="help-center">
         <EuiTitle size="xs" className={styles.helpMenuTitle}>
           <span>Help Center</span>
         </EuiTitle>
-        <EuiSpacer size="l" />
-        <EuiFlexGroup
+        <Spacer size="l" />
+        <Row
           className={styles.helpMenuItems}
-          alignItems="center"
-          justifyContent="spaceBetween"
-          gutterSize="m"
-          responsive={false}
+          align="center"
+          justify="between"
+          gap="l"
         >
           <FeatureFlagComponent name={FeatureFlags.envDependent}>
-            <EuiFlexItem grow={2} className={styles.helpMenuItem}>
+            <FlexItem grow={2} className={styles.helpMenuItem}>
               <EuiLink
                 external={false}
                 className={styles.helpMenuItemLink}
@@ -120,17 +128,18 @@ const HelpMenu = () => {
                 data-testid="submit-bug-btn"
               >
                 <EuiIcon type={GithubHelpCenterSVG} size="xxl" />
-                <EuiSpacer size="m" />
-                <EuiText size="xs" textAlign="center" className={styles.helpMenuText}>
+                <Spacer size="m" />
+                <EuiText
+                  size="xs"
+                  textAlign="center"
+                  className={styles.helpMenuText}
+                >
                   Provide <br /> Feedback
                 </EuiText>
               </EuiLink>
-            </EuiFlexItem>
+            </FlexItem>
           </FeatureFlagComponent>
-          <EuiFlexItem
-            className={styles.helpMenuItemRow}
-            grow={4}
-          >
+          <FlexItem className={styles.helpMenuItemRow} grow={4}>
             <div className={styles.helpMenuItemLink}>
               <EuiIcon type="keyboardShortcut" size="l" />
               <EuiText
@@ -145,7 +154,9 @@ const HelpMenu = () => {
 
             <div className={styles.helpMenuItemLink}>
               <div
-                className={cx({ [styles.helpMenuItemNotified]: isReleaseNotesViewed === false })}
+                className={cx({
+                  [styles.helpMenuItemNotified]: isReleaseNotesViewed === false,
+                })}
                 style={{ display: 'flex' }}
               >
                 <EuiIcon type="package" size="l" />
@@ -158,7 +169,9 @@ const HelpMenu = () => {
                 target="_blank"
                 data-testid="release-notes-btn"
               >
-                <EuiText size="xs" className={styles.helpMenuTextLink}>Release Notes</EuiText>
+                <EuiText size="xs" className={styles.helpMenuTextLink}>
+                  Release Notes
+                </EuiText>
               </EuiLink>
             </div>
             <FeatureFlagComponent name={FeatureFlags.envDependent}>
@@ -174,8 +187,8 @@ const HelpMenu = () => {
                 </EuiText>
               </div>
             </FeatureFlagComponent>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </div>
     </EuiPopover>
   )

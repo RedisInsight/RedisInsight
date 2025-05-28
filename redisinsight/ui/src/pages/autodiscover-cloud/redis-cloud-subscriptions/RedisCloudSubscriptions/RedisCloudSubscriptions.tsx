@@ -11,10 +11,7 @@ import {
   EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
-  EuiLoadingContent,
   EuiToolTip,
-  EuiFlexGroup,
-  EuiFlexItem,
 } from '@elastic/eui'
 import cx from 'classnames'
 import {
@@ -24,25 +21,31 @@ import {
   RedisCloudSubscriptionStatus,
 } from 'uiSrc/slices/interfaces'
 import { Maybe, Nullable } from 'uiSrc/utils'
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from '../styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<RedisCloudSubscription>[];
-  subscriptions: Nullable<RedisCloudSubscription[]>;
-  loading: boolean;
-  account: Nullable<RedisCloudAccount>;
-  error: string;
-  onClose: () => void;
-  onBack: () => void;
-  onSubmit: (subscriptions: Maybe<Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'free'>>[]) => void;
+  columns: EuiBasicTableColumn<RedisCloudSubscription>[]
+  subscriptions: Nullable<RedisCloudSubscription[]>
+  loading: boolean
+  account: Nullable<RedisCloudAccount>
+  error: string
+  onClose: () => void
+  onBack: () => void
+  onSubmit: (
+    subscriptions: Maybe<
+      Pick<InstanceRedisCloud, 'subscriptionId' | 'subscriptionType' | 'free'>
+    >[],
+  ) => void
 }
 
 interface IPopoverProps {
-  isPopoverOpen: boolean;
+  isPopoverOpen: boolean
 }
 
 const loadingMsg = 'loading...'
@@ -77,7 +80,7 @@ const RedisCloudSubscriptions = ({
 
   const countStatusActive = items.filter(
     ({ status, numberOfDatabases }: RedisCloudSubscription) =>
-      status === RedisCloudSubscriptionStatus.Active && numberOfDatabases !== 0
+      status === RedisCloudSubscriptionStatus.Active && numberOfDatabases !== 0,
   )?.length
 
   const countStatusFailed = items.length - countStatusActive
@@ -88,7 +91,13 @@ const RedisCloudSubscriptions = ({
   }
 
   const handleSubmit = () => {
-    onSubmit(map(selection, ({ id, type, free }) => ({ subscriptionId: id, subscriptionType: type, free })))
+    onSubmit(
+      map(selection, ({ id, type, free }) => ({
+        subscriptionId: id,
+        subscriptionType: type,
+        free,
+      })),
+    )
   }
 
   const showPopover = () => {
@@ -102,16 +111,18 @@ const RedisCloudSubscriptions = ({
   const selectionValue: EuiTableSelectionType<RedisCloudSubscription> = {
     selectable: ({ status, numberOfDatabases }) =>
       status === RedisCloudSubscriptionStatus.Active && numberOfDatabases !== 0,
-    onSelectionChange: (selected: RedisCloudSubscription[]) => setSelection(selected),
+    onSelectionChange: (selected: RedisCloudSubscription[]) =>
+      setSelection(selected),
   }
 
   const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e?.target?.value?.toLowerCase()
-    const itemsTemp = subscriptions?.filter(
-      (item: RedisCloudSubscription) =>
-        item.name?.toLowerCase()?.indexOf(value) !== -1
-          || item.id?.toString()?.toLowerCase().indexOf(value) !== -1
-    ) ?? []
+    const itemsTemp =
+      subscriptions?.filter(
+        (item: RedisCloudSubscription) =>
+          item.name?.toLowerCase()?.indexOf(value) !== -1 ||
+          item.id?.toString()?.toLowerCase().indexOf(value) !== -1,
+      ) ?? []
 
     if (!itemsTemp?.length) {
       setMessage(notFoundMsg)
@@ -126,7 +137,7 @@ const RedisCloudSubscriptions = ({
       closePopover={closePopover}
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
-      button={(
+      button={
         <EuiButton
           onClick={showPopover}
           color="secondary"
@@ -135,17 +146,23 @@ const RedisCloudSubscriptions = ({
         >
           Cancel
         </EuiButton>
-      )}
+      }
     >
       <EuiText size="m">
         <p>
-          Your changes have not been saved.&#10;&#13; Do you want to proceed to the list of
-          databases?
+          Your changes have not been saved.&#10;&#13; Do you want to proceed to
+          the list of databases?
         </p>
       </EuiText>
       <br />
       <div>
-        <EuiButton fill size="s" color="warning" onClick={onClose} data-testid="btn-cancel-proceed">
+        <EuiButton
+          fill
+          size="s"
+          color="warning"
+          onClick={onClose}
+          data-testid="btn-cancel-proceed"
+        >
           Proceed
         </EuiButton>
       </div>
@@ -156,10 +173,14 @@ const RedisCloudSubscriptions = ({
     <EuiToolTip
       position="top"
       anchorClassName="euiToolTip__btn-disabled"
-      title={isDisabled ? validationErrors.SELECT_AT_LEAST_ONE('subscription') : null}
+      title={
+        isDisabled ? validationErrors.SELECT_AT_LEAST_ONE('subscription') : null
+      }
       content={
         isDisabled ? (
-          <span className="euiToolTip__content">{validationErrors.NO_SUBSCRIPTIONS_CLOUD}</span>
+          <span className="euiToolTip__content">
+            {validationErrors.NO_SUBSCRIPTIONS_CLOUD}
+          </span>
         ) : null
       }
     >
@@ -184,9 +205,7 @@ const RedisCloudSubscriptions = ({
         <b>Summary: </b>
         {countStatusActive ? (
           <span>
-            Successfully discovered database(s) in
-            {' '}
-            {countStatusActive}
+            Successfully discovered database(s) in {countStatusActive}
             &nbsp;
             {countStatusActive > 1 ? 'subscriptions' : 'subscription'}
             .&nbsp;
@@ -195,9 +214,7 @@ const RedisCloudSubscriptions = ({
 
         {countStatusFailed ? (
           <span>
-            Failed to discover database(s) in
-            {' '}
-            {countStatusFailed}
+            Failed to discover database(s) in {countStatusFailed}
             &nbsp;
             {countStatusFailed > 1 ? 'subscriptions.' : ' subscription.'}
           </span>
@@ -211,25 +228,25 @@ const RedisCloudSubscriptions = ({
       <span className={styles.account_item}>
         <span className={styles.account_item_title}>Account ID:&nbsp;</span>
         <span color="subdued" data-testid="account-id">
-          {account?.accountId ?? <EuiLoadingContent lines={1} />}
+          {account?.accountId ?? <LoadingContent lines={1} />}
         </span>
       </span>
       <span className={styles.account_item}>
         <span className={styles.account_item_title}>Name:&nbsp;</span>
         <span color="subdued" data-testid="account-name">
-          {account?.accountName ?? <EuiLoadingContent lines={1} />}
+          {account?.accountName ?? <LoadingContent lines={1} />}
         </span>
       </span>
       <span className={styles.account_item}>
         <span className={styles.account_item_title}>Owner Name:&nbsp;</span>
         <span color="subdued" data-testid="account-owner-name">
-          {account?.ownerName ?? <EuiLoadingContent lines={1} />}
+          {account?.ownerName ?? <LoadingContent lines={1} />}
         </span>
       </span>
       <span className={styles.account_item}>
         <span className={styles.account_item_title}>Owner Email:&nbsp;</span>
         <span color="subdued" data-testid="account-owner-email">
-          {account?.ownerEmail ?? <EuiLoadingContent lines={1} />}
+          {account?.ownerEmail ?? <LoadingContent lines={1} />}
         </span>
       </span>
     </>
@@ -242,13 +259,13 @@ const RedisCloudSubscriptions = ({
           <h1>Redis Cloud Subscriptions</h1>
         </EuiTitle>
 
-        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
-          <EuiFlexItem>
+        <Row align="end" gap="s">
+          <FlexItem grow>
             <MessageBar opened={countStatusActive + countStatusFailed > 0}>
               <SummaryText />
             </MessageBar>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiFormRow className={styles.searchForm}>
               <EuiFieldSearch
                 placeholder="Search..."
@@ -259,11 +276,13 @@ const RedisCloudSubscriptions = ({
                 data-testid="search"
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
         <br />
 
-        <div className={cx('databaseList', 'itemList', styles.cloudSubscriptions)}>
+        <div
+          className={cx('databaseList', 'itemList', styles.cloudSubscriptions)}
+        >
           <div className={styles.account}>
             <Account />
           </div>
@@ -277,7 +296,9 @@ const RedisCloudSubscriptions = ({
             className={cx(styles.table, { [styles.tableEmpty]: !items.length })}
             isSelectable
           />
-          {!items.length && <EuiText className={styles.noSubscriptions}>{message}</EuiText>}
+          {!items.length && (
+            <EuiText className={styles.noSubscriptions}>{message}</EuiText>
+          )}
         </div>
       </div>
       <div className={cx(styles.footer, 'footerAddDatabase')}>

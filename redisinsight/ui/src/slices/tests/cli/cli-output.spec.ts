@@ -3,7 +3,13 @@ import { cloneDeep, first } from 'lodash'
 import { AxiosError } from 'axios'
 import { SendCommandResponse } from 'src/modules/cli/dto/cli.dto'
 import { AppDispatch, RootState } from 'uiSrc/slices/store'
-import { cleanup, clearStoreActions, initialStateDefault, mockedStore, mockStore, } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  clearStoreActions,
+  initialStateDefault,
+  mockedStore,
+  mockStore,
+} from 'uiSrc/utils/test-utils'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { apiService } from 'uiSrc/services'
 import { cliTexts } from 'uiSrc/components/messages/cli-output/cliOutput'
@@ -29,8 +35,11 @@ jest.mock('uiSrc/services', () => ({
 }))
 jest.mock('uiSrc/slices/cli/cli-settings', () => ({
   ...jest.requireActual('uiSrc/slices/cli/cli-settings'),
-  updateCliClientAction: jest.fn()
-    .mockImplementation((_dispatch: AppDispatch, stateInit: () => RootState) => stateInit())
+  updateCliClientAction: jest
+    .fn()
+    .mockImplementation((_dispatch: AppDispatch, stateInit: () => RootState) =>
+      stateInit(),
+    ),
 }))
 
 let store: typeof mockedStore
@@ -190,9 +199,13 @@ describe('cliOutput slice', () => {
         const expectedActions = [
           sendCliCommand(),
           sendCliCommandSuccess(),
-          concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
+          concatToOutput(
+            cliParseTextResponseWithOffset(data.response, command, data.status),
+          ),
         ]
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(store.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
 
       it('call setCliDbIndex when response status is successed', async () => {
@@ -211,10 +224,14 @@ describe('cliOutput slice', () => {
         const expectedActions = [
           sendCliCommand(),
           sendCliCommandSuccess(),
-          concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
-          setCliDbIndex(dbIndex)
+          concatToOutput(
+            cliParseTextResponseWithOffset(data.response, command, data.status),
+          ),
+          setCliDbIndex(dbIndex),
         ]
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(store.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
 
       it('should not call setCliDbIndex when response status is failed', async () => {
@@ -233,9 +250,13 @@ describe('cliOutput slice', () => {
         const expectedActions = [
           sendCliCommand(),
           sendCliCommandSuccess(),
-          concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
+          concatToOutput(
+            cliParseTextResponseWithOffset(data.response, command, data.status),
+          ),
         ]
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(store.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
 
       it('call both sendCliStandaloneCommandAction and sendCliCommandSuccess when response status is fail', async () => {
@@ -256,16 +277,21 @@ describe('cliOutput slice', () => {
         const expectedActions = [
           sendCliCommand(),
           sendCliCommandSuccess(),
-          concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
+          concatToOutput(
+            cliParseTextResponseWithOffset(data.response, command, data.status),
+          ),
         ]
 
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(store.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
 
       it('call both sendCliStandaloneCommandAction and sendCliCommandFailure when fetch is fail', async () => {
         // Arrange
         const command = 'keys *'
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -283,7 +309,9 @@ describe('cliOutput slice', () => {
           sendCliCommand(),
           sendCliCommandFailure(responsePayload.response.data.message),
         ]
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(store.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
 
       it('call both updateCliClientAction on ClientNotFound error', async () => {
@@ -299,7 +327,10 @@ describe('cliOutput slice', () => {
         apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
         const rootState = Object.assign(initialStateDefault, {
           cli: {
-            settings: { ...initialStateDefault.cli.settings, cliClientUuid: '123' },
+            settings: {
+              ...initialStateDefault.cli.settings,
+              cliClientUuid: '123',
+            },
           },
         })
         const tempStore = mockStore(rootState)
@@ -312,7 +343,9 @@ describe('cliOutput slice', () => {
           sendCliCommand(),
           sendCliCommandFailure(responsePayload.response.data.message),
         ]
-        expect(clearStoreActions(tempStore.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(tempStore.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
     })
 
@@ -335,9 +368,13 @@ describe('cliOutput slice', () => {
         const expectedActions = [
           sendCliCommand(),
           sendCliCommandSuccess(),
-          concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
+          concatToOutput(
+            cliParseTextResponseWithOffset(data.response, command, data.status),
+          ),
         ]
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(store.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
 
       it('call both sendCliClusterCommandAction and sendCliCommandSuccess when response status is fail', async () => {
@@ -358,15 +395,20 @@ describe('cliOutput slice', () => {
         const expectedActions = [
           sendCliCommand(),
           sendCliCommandSuccess(),
-          concatToOutput(cliParseTextResponseWithOffset(data.response, command, data.status)),
+          concatToOutput(
+            cliParseTextResponseWithOffset(data.response, command, data.status),
+          ),
         ]
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(store.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
 
       it('call both sendCliClusterCommandAction and sendCliCommandFailure when fetch is fail', async () => {
         // Arrange
         const command = 'keys *'
-        const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+        const errorMessage =
+          'Could not connect to aoeu:123, please check the connection details.'
         const responsePayload = {
           response: {
             status: 500,
@@ -384,7 +426,9 @@ describe('cliOutput slice', () => {
           sendCliCommand(),
           sendCliCommandFailure(responsePayload.response.data.message),
         ]
-        expect(clearStoreActions(store.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(store.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
 
       it('call both updateCliClientAction on ClientNotFound error', async () => {
@@ -400,7 +444,10 @@ describe('cliOutput slice', () => {
         apiService.post = jest.fn().mockRejectedValueOnce(responsePayload)
         const rootState = Object.assign(initialStateDefault, {
           cli: {
-            settings: { ...initialStateDefault.cli.settings, cliClientUuid: '123' },
+            settings: {
+              ...initialStateDefault.cli.settings,
+              cliClientUuid: '123',
+            },
           },
         })
         const tempStore = mockStore(rootState)
@@ -413,7 +460,9 @@ describe('cliOutput slice', () => {
           sendCliCommand(),
           sendCliCommandFailure(responsePayload.response.data.message),
         ]
-        expect(clearStoreActions(tempStore.getActions())).toEqual(clearStoreActions(expectedActions))
+        expect(clearStoreActions(tempStore.getActions())).toEqual(
+          clearStoreActions(expectedActions),
+        )
       })
     })
   })
@@ -429,13 +478,12 @@ describe('cliOutput slice', () => {
       apiService.get = jest.fn().mockResolvedValue(responsePayload)
 
       // Act
-      await store.dispatch<any>(fetchMonitorLog(fileIdMock, onSuccessActionMock))
+      await store.dispatch<any>(
+        fetchMonitorLog(fileIdMock, onSuccessActionMock),
+      )
 
       // Assert
-      const expectedActions = [
-        sendCliCommand(),
-        sendCliCommandSuccess(),
-      ]
+      const expectedActions = [sendCliCommand(), sendCliCommandSuccess()]
       expect(store.getActions()).toEqual(expectedActions)
       expect(onSuccessActionMock).toBeCalled()
     })
@@ -444,7 +492,8 @@ describe('cliOutput slice', () => {
       // Arrange
       const fileIdMock = 'fileId'
       const onSuccessActionMock = jest.fn()
-      const errorMessage = 'Could not connect to aoeu:123, please check the connection details.'
+      const errorMessage =
+        'Could not connect to aoeu:123, please check the connection details.'
       const responsePayload = {
         response: {
           status: 500,
@@ -455,7 +504,9 @@ describe('cliOutput slice', () => {
       apiService.get = jest.fn().mockRejectedValueOnce(responsePayload)
 
       // Act
-      await store.dispatch<any>(fetchMonitorLog(fileIdMock, onSuccessActionMock))
+      await store.dispatch<any>(
+        fetchMonitorLog(fileIdMock, onSuccessActionMock),
+      )
 
       // Assert
       const expectedActions = [

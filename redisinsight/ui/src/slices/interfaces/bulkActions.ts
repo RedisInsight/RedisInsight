@@ -2,7 +2,8 @@ import { BulkActionsStatus, BulkActionsType } from 'uiSrc/constants'
 import { Nullable } from 'uiSrc/utils'
 import { IBulkActionOverview as IBulkActionOverviewBE } from 'apiSrc/modules/bulk-actions/interfaces/bulk-action-overview.interface'
 
-export interface IBulkActionOverview extends Omit<IBulkActionOverviewBE, 'status'> {
+export interface IBulkActionOverview
+  extends Omit<IBulkActionOverviewBE, 'status'> {
   status: BulkActionsStatus
 }
 

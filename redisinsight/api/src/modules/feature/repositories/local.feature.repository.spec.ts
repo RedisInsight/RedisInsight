@@ -4,7 +4,8 @@ import { Repository } from 'typeorm';
 import {
   mockFeature,
   mockFeatureEntity,
-  mockRepository, mockSessionMetadata,
+  mockRepository,
+  mockSessionMetadata,
   MockType,
 } from 'src/__mocks__';
 import { LocalFeatureRepository } from 'src/modules/feature/repositories/local.feature.repository';
@@ -31,7 +32,11 @@ describe('LocalFeatureRepository', () => {
     service = await module.get(LocalFeatureRepository);
 
     repository.findOneBy.mockResolvedValue(mockFeatureEntity);
-    repository.find.mockResolvedValue([mockFeatureEntity, mockFeatureEntity, mockFeatureEntity]);
+    repository.find.mockResolvedValue([
+      mockFeatureEntity,
+      mockFeatureEntity,
+      mockFeatureEntity,
+    ]);
     repository.upsert.mockResolvedValue({ updated: 1, inserted: 0 });
     repository.delete.mockResolvedValue({ deleted: 1 });
   });
@@ -76,7 +81,10 @@ describe('LocalFeatureRepository', () => {
 
   describe('delete', () => {
     it('should delete and do not return anything', async () => {
-      const result = await service.delete(mockSessionMetadata, mockFeature.name);
+      const result = await service.delete(
+        mockSessionMetadata,
+        mockFeature.name,
+      );
 
       expect(result).toEqual(undefined);
     });

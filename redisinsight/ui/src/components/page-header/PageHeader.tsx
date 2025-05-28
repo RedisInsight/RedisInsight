@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiButtonEmpty, EuiFlexGroup, EuiFlexItem, EuiTitle } from '@elastic/eui'
+import { EuiButtonEmpty, EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
@@ -16,6 +16,7 @@ import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './PageHeader.module.scss'
 
 interface Props {
@@ -33,7 +34,10 @@ const PageHeader = (props: Props) => {
     [FeatureFlags.databaseChat]: databaseChatFeature,
     [FeatureFlags.documentationChat]: documentationChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+  const isAnyChatAvailable = isAnyFeatureEnabled([
+    databaseChatFeature,
+    documentationChatFeature,
+  ])
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -62,19 +66,27 @@ const PageHeader = (props: Props) => {
         </div>
         {children ? <>{children}</> : ''}
         {showInsights ? (
-          <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none" alignItems="center">
+          <Row style={{ flexGrow: 0 }} align="center">
             {isAnyChatAvailable && (
-              <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
+              <FlexItem style={{ marginRight: 12 }}>
                 <CopilotTrigger />
-              </EuiFlexItem>
+              </FlexItem>
             )}
-            <EuiFlexItem><InsightsTrigger source="home page" /></EuiFlexItem>
-            <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-              <EuiFlexItem style={{ marginLeft: 16 }} data-testid="o-auth-user-profile">
+            <FlexItem grow>
+              <InsightsTrigger source="home page" />
+            </FlexItem>
+            <FeatureFlagComponent
+              name={[FeatureFlags.cloudSso, FeatureFlags.cloudAds]}
+            >
+              <FlexItem
+                grow
+                style={{ marginLeft: 16 }}
+                data-testid="o-auth-user-profile"
+              >
                 <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
-              </EuiFlexItem>
+              </FlexItem>
             </FeatureFlagComponent>
-          </EuiFlexGroup>
+          </Row>
         ) : (
           <div className={styles.pageHeaderLogo}>
             <EuiButtonEmpty

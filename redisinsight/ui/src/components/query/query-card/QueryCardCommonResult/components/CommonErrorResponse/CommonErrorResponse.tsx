@@ -7,12 +7,18 @@ import {
   cliParseTextResponse,
   CliPrefix,
   getCommandRepeat,
-  isRepeatCountCorrect
+  isRepeatCountCorrect,
 } from 'uiSrc/utils'
 import { ModuleNotLoaded } from 'uiSrc/components'
 import { cliTexts } from 'uiSrc/components/messages/cli-output/cliOutput'
 import { SelectCommand } from 'uiSrc/constants/cliOutput'
-import { CommandMonitor, CommandPSubscribe, CommandSubscribe, CommandHello3, Pages } from 'uiSrc/constants'
+import {
+  CommandMonitor,
+  CommandPSubscribe,
+  CommandSubscribe,
+  CommandHello3,
+  Pages,
+} from 'uiSrc/constants'
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -21,15 +27,22 @@ import { showMonitor } from 'uiSrc/slices/cli/monitor'
 
 const CommonErrorResponse = (id: string, command = '', result?: any) => {
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const { unsupportedCommands: cliUnsupportedCommands, blockingCommands } = useSelector(cliSettingsSelector)
+  const { unsupportedCommands: cliUnsupportedCommands, blockingCommands } =
+    useSelector(cliSettingsSelector)
   const { modules } = useSelector(connectedInstanceSelector)
   const dispatch = useDispatch()
-  const unsupportedCommands = [SelectCommand.toLowerCase(), ...cliUnsupportedCommands, ...blockingCommands]
+  const unsupportedCommands = [
+    SelectCommand.toLowerCase(),
+    ...cliUnsupportedCommands,
+    ...blockingCommands,
+  ]
   const [commandLine, countRepeat] = getCommandRepeat(command || '')
 
   // Flow if MONITOR command was executed
   if (checkUnsupportedCommand([CommandMonitor.toLowerCase()], commandLine)) {
-    return cliTexts.MONITOR_COMMAND(() => { dispatch(showMonitor()) })
+    return cliTexts.MONITOR_COMMAND(() => {
+      dispatch(showMonitor())
+    })
   }
   // Flow if SUBSCRIBE command was executed
   if (checkUnsupportedCommand([CommandSubscribe.toLowerCase()], commandLine)) {
@@ -45,7 +58,10 @@ const CommonErrorResponse = (id: string, command = '', result?: any) => {
     return cliTexts.HELLO3_COMMAND()
   }
 
-  const unsupportedCommand = checkUnsupportedCommand(unsupportedCommands, commandLine)
+  const unsupportedCommand = checkUnsupportedCommand(
+    unsupportedCommands,
+    commandLine,
+  )
 
   if (result === null) {
     return cliParseTextResponse(

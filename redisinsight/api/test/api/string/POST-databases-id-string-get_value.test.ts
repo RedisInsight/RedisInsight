@@ -6,13 +6,16 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn, JoiRedisString
+  getMainCheckFn,
+  JoiRedisString,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/string/get-value`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/string/get-value`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
@@ -23,10 +26,13 @@ const validInputData = {
   keyName: constants.TEST_STRING_KEY_1,
 };
 
-const responseSchema = Joi.object().keys({
-  keyName: JoiRedisString.required(),
-  value: JoiRedisString.required(),
-}).required().strict(true);
+const responseSchema = Joi.object()
+  .keys({
+    keyName: JoiRedisString.required(),
+    value: JoiRedisString.required(),
+  })
+  .required()
+  .strict(true);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -92,7 +98,7 @@ describe('POST /databases/:instanceId/string/get-value', () => {
         },
         data: {
           keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
-          end: constants.TEST_STRING_KEY_END
+          end: constants.TEST_STRING_KEY_END,
         },
         responseBody: {
           keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
@@ -107,7 +113,7 @@ describe('POST /databases/:instanceId/string/get-value', () => {
         data: {
           keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
           start: constants.TEST_STRING_KEY_START_2,
-          end: constants.TEST_STRING_KEY_END
+          end: constants.TEST_STRING_KEY_END,
         },
         responseBody: {
           keyName: constants.TEST_STRING_KEY_BIN_BUF_OBJ_1,
@@ -152,11 +158,14 @@ describe('POST /databases/:instanceId/string/get-value', () => {
           name: 'Should get part of value',
           data: {
             keyName: constants.TEST_STRING_KEY_1,
-            end: constants.TEST_STRING_KEY_END
+            end: constants.TEST_STRING_KEY_END,
           },
           responseBody: {
             keyName: constants.TEST_STRING_KEY_1,
-            value: constants.TEST_STRING_VALUE_1.slice(constants.TEST_STRING_KEY_START_1, constants.TEST_STRING_KEY_END + 1),
+            value: constants.TEST_STRING_VALUE_1.slice(
+              constants.TEST_STRING_KEY_START_1,
+              constants.TEST_STRING_KEY_END + 1,
+            ),
           },
         },
         {
@@ -175,7 +184,7 @@ describe('POST /databases/:instanceId/string/get-value', () => {
           name: 'Should return an error when incorrect end of string',
           data: {
             keyName: constants.TEST_STRING_KEY_1,
-            end: 0
+            end: 0,
           },
           statusCode: 400,
           responseBody: {
@@ -188,7 +197,7 @@ describe('POST /databases/:instanceId/string/get-value', () => {
           data: {
             keyName: constants.TEST_STRING_KEY_1,
             start: 10,
-            end: 9
+            end: 9,
           },
           statusCode: 400,
           responseBody: {
@@ -237,7 +246,7 @@ describe('POST /databases/:instanceId/string/get-value', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -get')
+          before: () => rte.data.setAclUserRules('~* +@all -get'),
         },
       ].map(mainCheckFn);
     });

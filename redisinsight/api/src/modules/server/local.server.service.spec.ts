@@ -1,3 +1,4 @@
+import { when } from 'jest-when';
 import { TestingModule, Test } from '@nestjs/testing';
 import { InternalServerErrorException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -9,9 +10,7 @@ import {
   mockSessionMetadata,
   MockType,
 } from 'src/__mocks__';
-import {
-  ServerInfoNotFoundException,
-} from 'src/constants';
+import { ServerInfoNotFoundException } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { EncryptionService } from 'src/modules/encryption/encryption.service';
 import { EncryptionStrategy } from 'src/modules/encryption/models';
@@ -19,14 +18,32 @@ import { ServerService } from 'src/modules/server/server.service';
 import { ServerRepository } from 'src/modules/server/repositories/server.repository';
 import { FeaturesConfigService } from 'src/modules/feature/features-config.service';
 import { LocalServerService } from 'src/modules/server/local.server.service';
+import { AppType, BuildType } from 'src/modules/server/models/server';
+import config, { Config } from 'src/utils/config';
+
+jest.mock(
+  'src/utils/config',
+  jest.fn(() => jest.requireActual('src/utils/config') as object),
+);
+
+const mockServerConfig = config.get('server') as Config['server'];
 
 describe('LocalServerService', () => {
   let service: ServerService;
   let serverRepository: MockType<ServerRepository>;
   let eventEmitter: EventEmitter2;
   let encryptionService: MockType<EncryptionService>;
+  let configGetSpy: jest.SpyInstance;
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+
+    configGetSpy = jest.spyOn(config, 'get');
+
+    mockServerConfig.buildType = BuildType.DockerOnPremise;
+    mockServerConfig.appType = AppType.Docker;
+    when(configGetSpy).calledWith('server').mockReturnValue(mockServerConfig);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EventEmitter2,
@@ -105,6 +122,36 @@ describe('LocalServerService', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(InternalServerErrorException);
       }
+    });
+  });
+
+  describe('getAppType', () => {
+    afterEach(async () => {
+      delete process.env.RI_APP_TYPE;
+    });
+
+    it('should return predefined appType via env variable', () => {
+      mockServerConfig.appType = 'ELECTRON_ENTERPRISE';
+
+      expect(ServerService.getAppType(BuildType.Electron)).toEqual(AppType.ElectronEnterprise);
+    });
+
+    it('should return predefined appType via env variable (case insensitive)', () => {
+      mockServerConfig.appType = 'elecTron_enterPrise';
+
+      expect(ServerService.getAppType(BuildType.Electron)).toEqual(AppType.ElectronEnterprise);
+    });
+
+    it('should determine app type based on input when type in app type env', () => {
+      mockServerConfig.appType = 'electron_enterprise1';
+
+      expect(ServerService.getAppType(BuildType.Electron)).toEqual(AppType.Electron);
+    });
+
+    it('should determine app type based on input when no app type env defined', () => {
+      mockServerConfig.appType = undefined;
+
+      expect(ServerService.getAppType(BuildType.Electron)).toEqual(AppType.Electron);
     });
   });
 });

@@ -1,7 +1,7 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { catchAclError } from 'src/utils';
 import { sum } from 'lodash';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { ClientMetadata, SessionMetadata } from 'src/common/models';
 import { BrowserHistoryMode } from 'src/common/constants';
 import {
@@ -29,10 +29,20 @@ export class BrowserHistoryService {
     dto: CreateBrowserHistoryDto,
   ): Promise<BrowserHistory> {
     try {
-      const history = plainToClass(BrowserHistory, { ...dto, databaseId: clientMetadata.databaseId });
-      return this.browserHistoryRepository.create(clientMetadata.sessionMetadata, history);
+      const history = plainToInstance(BrowserHistory, {
+        ...dto,
+        databaseId: clientMetadata.databaseId,
+      });
+      return this.browserHistoryRepository.create(
+        clientMetadata.sessionMetadata,
+        history,
+      );
     } catch (e) {
-      this.logger.error('Unable to create browser history item', e, clientMetadata);
+      this.logger.error(
+        'Unable to create browser history item',
+        e,
+        clientMetadata,
+      );
 
       if (e instanceof HttpException) {
         throw e;
@@ -46,7 +56,10 @@ export class BrowserHistoryService {
    * Get browser history with all fields by id
    * @param id
    */
-  async get(sessionMetadata: SessionMetadata, id: string): Promise<BrowserHistory> {
+  async get(
+    sessionMetadata: SessionMetadata,
+    id: string,
+  ): Promise<BrowserHistory> {
     return this.browserHistoryRepository.get(sessionMetadata, id);
   }
 
@@ -60,7 +73,11 @@ export class BrowserHistoryService {
     databaseId: string,
     mode: BrowserHistoryMode,
   ): Promise<BrowserHistory[]> {
-    return this.browserHistoryRepository.list(sessionMetadata, databaseId, mode);
+    return this.browserHistoryRepository.list(
+      sessionMetadata,
+      databaseId,
+      mode,
+    );
   }
 
   /**
@@ -75,7 +92,12 @@ export class BrowserHistoryService {
     mode: BrowserHistoryMode,
     id: string,
   ): Promise<void> {
-    return this.browserHistoryRepository.delete(sessionMetadata, databaseId, mode, id);
+    return this.browserHistoryRepository.delete(
+      sessionMetadata,
+      databaseId,
+      mode,
+      id,
+    );
   }
 
   /**
@@ -92,17 +114,24 @@ export class BrowserHistoryService {
     mode: BrowserHistoryMode,
     ids: string[],
   ): Promise<DeleteBrowserHistoryItemsResponse> {
-    this.logger.debug(`Deleting many browser history items: ${ids}`, sessionMetadata);
+    this.logger.debug(
+      `Deleting many browser history items: ${ids}`,
+      sessionMetadata,
+    );
 
     return {
-      affected: sum(await Promise.all(ids.map(async (id) => {
-        try {
-          await this.delete(sessionMetadata, databaseId, mode, id);
-          return 1;
-        } catch (e) {
-          return 0;
-        }
-      }))),
+      affected: sum(
+        await Promise.all(
+          ids.map(async (id) => {
+            try {
+              await this.delete(sessionMetadata, databaseId, mode, id);
+              return 1;
+            } catch (e) {
+              return 0;
+            }
+          }),
+        ),
+      ),
     };
   }
 }

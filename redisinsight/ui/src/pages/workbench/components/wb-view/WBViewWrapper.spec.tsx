@@ -18,7 +18,7 @@ import {
   loadWBHistory,
   processWBCommand,
   sendWBCommandAction,
-  workbenchResultsSelector
+  workbenchResultsSelector,
 } from 'uiSrc/slices/workbench/wb-results'
 
 import WBViewWrapper from './WBViewWrapper'
@@ -65,7 +65,7 @@ jest.mock('uiSrc/slices/instances/instances', () => ({
 jest.mock('uiSrc/slices/app/plugins', () => ({
   ...jest.requireActual('uiSrc/slices/app/plugins'),
   appPluginsSelector: jest.fn().mockReturnValue({
-    visualizations: []
+    visualizations: [],
   }),
 }))
 
@@ -76,12 +76,14 @@ jest.mock('uiSrc/slices/workbench/wb-results', () => ({
   updateCliCommandHistory: jest.fn,
   workbenchResultsSelector: jest.fn().mockReturnValue({
     loading: false,
-    items: []
-  })
+    items: [],
+  }),
 }))
 
 jest.mock('uiSrc/slices/workbench/wb-tutorials', () => {
-  const defaultState = jest.requireActual('uiSrc/slices/workbench/wb-tutorials').initialState
+  const defaultState = jest.requireActual(
+    'uiSrc/slices/workbench/wb-tutorials',
+  ).initialState
   return {
     ...jest.requireActual('uiSrc/slices/workbench/wb-tutorials'),
     workbenchTutorialsSelector: jest.fn().mockReturnValue({
@@ -103,41 +105,39 @@ describe('WBViewWrapper', () => {
     render(<WBViewWrapper />)
 
     const expectedActions = [loadWBHistory()]
-    expect(clearStoreActions(store.getActions().slice(0, expectedActions.length))).toEqual(
-      clearStoreActions(expectedActions)
-    )
+    expect(
+      clearStoreActions(store.getActions().slice(0, expectedActions.length)),
+    ).toEqual(clearStoreActions(expectedActions))
   })
 
   it('should call delete command', () => {
-    (workbenchResultsSelector as jest.Mock).mockImplementation(() => ({
-      items: [
-        { id: '1' },
-      ],
+    ;(workbenchResultsSelector as jest.Mock).mockImplementation(() => ({
+      items: [{ id: '1' }],
     }))
     render(<WBViewWrapper />)
 
     fireEvent.click(screen.getByTestId('delete-command'))
-    expect(clearStoreActions(store.getActions().slice(-1))).toEqual(clearStoreActions([processWBCommand('1')]))
+    expect(clearStoreActions(store.getActions().slice(-1))).toEqual(
+      clearStoreActions([processWBCommand('1')]),
+    )
   })
 
   it('should call delete all command', () => {
-    (workbenchResultsSelector as jest.Mock).mockImplementation(() => ({
-      items: [
-        { id: '1' },
-      ],
+    ;(workbenchResultsSelector as jest.Mock).mockImplementation(() => ({
+      items: [{ id: '1' }],
     }))
     render(<WBViewWrapper />)
 
     fireEvent.click(screen.getByTestId('clear-history-btn'))
-    expect(clearStoreActions(store.getActions().slice(-1))).toEqual(clearStoreActions([clearWbResults()]))
+    expect(clearStoreActions(store.getActions().slice(-1))).toEqual(
+      clearStoreActions([clearWbResults()]),
+    )
   })
 
   it('should be disabled button when commands are processing', () => {
-    (workbenchResultsSelector as jest.Mock).mockImplementation(() => ({
-      items: [
-        { id: '1' },
-      ],
-      processing: true
+    ;(workbenchResultsSelector as jest.Mock).mockImplementation(() => ({
+      items: [{ id: '1' }],
+      processing: true,
     }))
     render(<WBViewWrapper />)
 
@@ -145,7 +145,7 @@ describe('WBViewWrapper', () => {
   })
 
   it('should not display clear results when with empty history', () => {
-    (workbenchResultsSelector as jest.Mock).mockImplementation(() => ({
+    ;(workbenchResultsSelector as jest.Mock).mockImplementation(() => ({
       items: [],
     }))
     render(<WBViewWrapper />)
@@ -154,14 +154,16 @@ describe('WBViewWrapper', () => {
   })
 
   it.skip('"onSubmit" for Cluster connection should call "sendWBCommandClusterAction"', async () => {
-    (connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
+    ;(connectedInstanceSelector as jest.Mock).mockImplementation(() => ({
       id: '123',
       connectionType: 'CLUSTER',
     }))
 
-    const sendWBCommandClusterActionMock = jest.fn();
+    const sendWBCommandClusterActionMock = jest.fn()
 
-    (sendWBCommandAction as jest.Mock).mockImplementation(() => sendWBCommandClusterActionMock)
+    ;(sendWBCommandAction as jest.Mock).mockImplementation(
+      () => sendWBCommandClusterActionMock,
+    )
 
     const { queryAllByTestId } = render(<WBViewWrapper />)
 

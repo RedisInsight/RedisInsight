@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiButtonIcon, EuiFlexGroup,
-  EuiFlexItem,
-  EuiTitle
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
 import { Instance } from 'uiSrc/slices/interfaces'
 import { AddDbType } from 'uiSrc/pages/home/constants'
-import { clusterSelector, resetDataRedisCluster } from 'uiSrc/slices/instances/cluster'
-import { cloudSelector, resetDataRedisCloud } from 'uiSrc/slices/instances/cloud'
-import { resetDataSentinel, sentinelSelector } from 'uiSrc/slices/instances/sentinel'
-import { appRedirectionSelector, setUrlHandlingInitialState } from 'uiSrc/slices/app/url-handling'
+import {
+  clusterSelector,
+  resetDataRedisCluster,
+} from 'uiSrc/slices/instances/cluster'
+import {
+  cloudSelector,
+  resetDataRedisCloud,
+} from 'uiSrc/slices/instances/cloud'
+import {
+  resetDataSentinel,
+  sentinelSelector,
+} from 'uiSrc/slices/instances/sentinel'
+import {
+  appRedirectionSelector,
+  setUrlHandlingInitialState,
+} from 'uiSrc/slices/app/url-handling'
 
 import ManualConnectionWrapper from 'uiSrc/pages/home/components/manual-connection'
 import SentinelConnectionWrapper from 'uiSrc/pages/home/components/sentinel-connection'
@@ -24,6 +32,7 @@ import ImportDatabase from 'uiSrc/pages/home/components/import-database'
 import { FormDialog } from 'uiSrc/components'
 import { ModalHeaderProvider } from 'uiSrc/contexts/ModalTitleProvider'
 import ClusterConnectionFormWrapper from 'uiSrc/pages/home/components/cluster-connection'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -36,14 +45,13 @@ export interface Props {
 }
 
 const DatabasePanelDialog = (props: Props) => {
-  const {
-    editMode,
-    onClose,
-  } = props
+  const { editMode, onClose } = props
 
   const [initialValues, setInitialValues] = useState(null)
-  const [connectionType, setConnectionType] = useState<Nullable<AddDbType>>(null)
-  const [modalHeader, setModalHeader] = useState<Nullable<React.ReactNode>>(null)
+  const [connectionType, setConnectionType] =
+    useState<Nullable<AddDbType>>(null)
+  const [modalHeader, setModalHeader] =
+    useState<Nullable<React.ReactNode>>(null)
 
   const { credentials: clusterCredentials } = useSelector(clusterSelector)
   const { credentials: cloudCredentials } = useSelector(cloudSelector)
@@ -80,31 +88,34 @@ const DatabasePanelDialog = (props: Props) => {
     }
   }, [editMode])
 
-  useEffect(() => () => {
-    if (connectionType === AddDbType.manual) return
+  useEffect(
+    () => () => {
+      if (connectionType === AddDbType.manual) return
 
-    switch (connectionType) {
-      case AddDbType.cloud: {
-        dispatch(resetDataRedisCluster())
-        dispatch(resetDataSentinel())
-        break
-      }
+      switch (connectionType) {
+        case AddDbType.cloud: {
+          dispatch(resetDataRedisCluster())
+          dispatch(resetDataSentinel())
+          break
+        }
 
-      case AddDbType.sentinel: {
-        dispatch(resetDataRedisCloud())
-        dispatch(resetDataRedisCluster())
-        break
-      }
+        case AddDbType.sentinel: {
+          dispatch(resetDataRedisCloud())
+          dispatch(resetDataRedisCluster())
+          break
+        }
 
-      case AddDbType.software: {
-        dispatch(resetDataRedisCloud())
-        dispatch(resetDataSentinel())
-        break
+        case AddDbType.software: {
+          dispatch(resetDataRedisCloud())
+          dispatch(resetDataSentinel())
+          break
+        }
+        default:
+          break
       }
-      default:
-        break
-    }
-  }, [connectionType])
+    },
+    [connectionType],
+  )
 
   const changeConnectionType = (connectionType: AddDbType, db: any) => {
     dispatch(setUrlHandlingInitialState())
@@ -134,17 +145,26 @@ const DatabasePanelDialog = (props: Props) => {
       {connectionType === AddDbType.cloud && (
         <CloudConnectionFormWrapper {...props} />
       )}
-      {connectionType === AddDbType.import && (<ImportDatabase onClose={onClose} />)}
-      {connectionType === AddDbType.sentinel && (<SentinelConnectionWrapper {...props} />)}
-      {connectionType === AddDbType.software && (<ClusterConnectionFormWrapper {...props} />)}
+      {connectionType === AddDbType.import && (
+        <ImportDatabase onClose={onClose} />
+      )}
+      {connectionType === AddDbType.sentinel && (
+        <SentinelConnectionWrapper {...props} />
+      )}
+      {connectionType === AddDbType.software && (
+        <ClusterConnectionFormWrapper {...props} />
+      )}
     </>
   )
 
-  const handleSetModalHeader = (content: Nullable<React.ReactNode>, withBack = false) => {
-    const header = withBack && content
-      ? (
-        <EuiFlexGroup responsive={false} alignItems="center" gutterSize="s">
-          <EuiFlexItem grow={false}>
+  const handleSetModalHeader = (
+    content: Nullable<React.ReactNode>,
+    withBack = false,
+  ) => {
+    const header =
+      withBack && content ? (
+        <Row align="center" gap="s">
+          <FlexItem>
             <EuiButtonIcon
               onClick={handleClickBack}
               iconSize="m"
@@ -152,13 +172,12 @@ const DatabasePanelDialog = (props: Props) => {
               aria-label="back"
               data-testid="back-btn"
             />
-          </EuiFlexItem>
-          <EuiFlexItem>
-            {content}
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+          <FlexItem grow>{content}</FlexItem>
+        </Row>
+      ) : (
+        content
       )
-      : content
 
     setModalHeader(header)
   }
@@ -167,12 +186,24 @@ const DatabasePanelDialog = (props: Props) => {
     <FormDialog
       isOpen
       onClose={onClose}
-      header={modalHeader ?? (<EuiTitle size="s"><h4>Add Database</h4></EuiTitle>)}
+      header={
+        modalHeader ?? (
+          <EuiTitle size="s">
+            <h4>Add Database</h4>
+          </EuiTitle>
+        )
+      }
       footer={<div id="footerDatabaseForm" />}
     >
-      <div className={cx(styles.bodyWrapper, 'container relative', { addDbWrapper: !editMode })}>
+      <div
+        className={cx(styles.bodyWrapper, 'container relative', {
+          addDbWrapper: !editMode,
+        })}
+      >
         <div className={styles.formWrapper}>
-          <ModalHeaderProvider value={{ modalHeader, setModalHeader: handleSetModalHeader }}>
+          <ModalHeaderProvider
+            value={{ modalHeader, setModalHeader: handleSetModalHeader }}
+          >
             {Form()}
           </ModalHeaderProvider>
         </div>

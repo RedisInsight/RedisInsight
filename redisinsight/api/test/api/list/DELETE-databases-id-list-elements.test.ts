@@ -7,20 +7,22 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  getMainCheckFn, JoiRedisString
+  getMainCheckFn,
+  JoiRedisString,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).delete(`/${constants.API.DATABASES}/${instanceId}/list/elements`);
+  request(server).delete(
+    `/${constants.API.DATABASES}/${instanceId}/list/elements`,
+  );
 
 // input data schema
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
   destination: Joi.string().required().valid('HEAD', 'TAIL'),
-  count: Joi.number().integer().min(1)
-    .allow(true), // todo: investigate/fix BE payload transform function
+  count: Joi.number().integer().min(1).allow(true), // todo: investigate/fix BE payload transform function
 }).strict();
 
 const validInputData = {
@@ -29,9 +31,11 @@ const validInputData = {
   count: 2,
 };
 
-const responseSchema = Joi.object().keys({
-  elements: Joi.array().items(JoiRedisString).required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    elements: Joi.array().items(JoiRedisString).required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -116,10 +120,14 @@ describe('DELETE /databases/:id/list/elements', () => {
               elements: ['element_100'],
             },
             after: async () => {
-              const elements = await rte.client.lrange(constants.TEST_LIST_KEY_2, 0, 1000);
+              const elements = await rte.client.lrange(
+                constants.TEST_LIST_KEY_2,
+                0,
+                1000,
+              );
               expect(elements.length).to.eql(99);
-              expect(elements[0]).to.eql('element_1')
-              expect(elements[98]).to.eql('element_99')
+              expect(elements[0]).to.eql('element_1');
+              expect(elements[98]).to.eql('element_99');
             },
           },
           {
@@ -134,10 +142,14 @@ describe('DELETE /databases/:id/list/elements', () => {
               elements: ['element_1'],
             },
             after: async () => {
-              const elements = await rte.client.lrange(constants.TEST_LIST_KEY_2, 0, 1000);
+              const elements = await rte.client.lrange(
+                constants.TEST_LIST_KEY_2,
+                0,
+                1000,
+              );
               expect(elements.length).to.eql(98);
-              expect(elements[0]).to.eql('element_2')
-              expect(elements[97]).to.eql('element_99')
+              expect(elements[0]).to.eql('element_2');
+              expect(elements[97]).to.eql('element_99');
             },
           },
           {
@@ -146,7 +158,7 @@ describe('DELETE /databases/:id/list/elements', () => {
             data: {
               keyName: constants.TEST_LIST_KEY_1,
               destination: 'TAIL',
-              count: 1
+              count: 1,
             },
             statusCode: 404,
             responseBody: {
@@ -174,10 +186,14 @@ describe('DELETE /databases/:id/list/elements', () => {
               elements: ['element_100', 'element_99'],
             },
             after: async () => {
-              const elements = await rte.client.lrange(constants.TEST_LIST_KEY_2, 0, 1000);
+              const elements = await rte.client.lrange(
+                constants.TEST_LIST_KEY_2,
+                0,
+                1000,
+              );
               expect(elements.length).to.eql(98);
-              expect(elements[0]).to.eql('element_1')
-              expect(elements[97]).to.eql('element_98')
+              expect(elements[0]).to.eql('element_1');
+              expect(elements[97]).to.eql('element_98');
             },
           },
           {
@@ -188,14 +204,20 @@ describe('DELETE /databases/:id/list/elements', () => {
               count: 10,
             },
             responseBody: {
-              elements: (new Array(10).fill(0)).map((item, i) => `element_${i + 1}`),
+              elements: new Array(10)
+                .fill(0)
+                .map((item, i) => `element_${i + 1}`),
             },
             responseSchema,
             after: async () => {
-              const elements = await rte.client.lrange(constants.TEST_LIST_KEY_2, 0, 1000);
+              const elements = await rte.client.lrange(
+                constants.TEST_LIST_KEY_2,
+                0,
+                1000,
+              );
               expect(elements.length).to.eql(88);
-              expect(elements[0]).to.eql('element_11')
-              expect(elements[87]).to.eql('element_98')
+              expect(elements[0]).to.eql('element_11');
+              expect(elements[87]).to.eql('element_98');
             },
           },
           {
@@ -206,14 +228,20 @@ describe('DELETE /databases/:id/list/elements', () => {
               count: 88,
             },
             responseBody: {
-              elements: (new Array(88).fill(0)).map((item, i) => `element_${i + 11}`),
+              elements: new Array(88)
+                .fill(0)
+                .map((item, i) => `element_${i + 11}`),
             },
             responseSchema,
             before: async () => {
-              expect(await rte.client.exists(constants.TEST_LIST_KEY_2)).to.eql(1);
+              expect(await rte.client.exists(constants.TEST_LIST_KEY_2)).to.eql(
+                1,
+              );
             },
             after: async () => {
-              expect(await rte.client.exists(constants.TEST_LIST_KEY_2)).to.eql(0);
+              expect(await rte.client.exists(constants.TEST_LIST_KEY_2)).to.eql(
+                0,
+              );
             },
           },
         ].map(mainCheckFn);
@@ -231,7 +259,7 @@ describe('DELETE /databases/:id/list/elements', () => {
           data: {
             keyName: constants.TEST_LIST_KEY_1,
             destination: 'TAIL',
-            count: 1
+            count: 1,
           },
           responseSchema,
         },
@@ -241,14 +269,14 @@ describe('DELETE /databases/:id/list/elements', () => {
           data: {
             keyName: constants.TEST_LIST_KEY_1,
             destination: 'HEAD',
-            count: 1
+            count: 1,
           },
           statusCode: 403,
           responseBody: {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -lpop')
+          before: () => rte.data.setAclUserRules('~* +@all -lpop'),
         },
         {
           name: 'Should throw error if no permissions for "rpop" command',
@@ -256,14 +284,14 @@ describe('DELETE /databases/:id/list/elements', () => {
           data: {
             keyName: constants.TEST_LIST_KEY_1,
             destination: 'TAIL',
-            count: 1
+            count: 1,
           },
           statusCode: 403,
           responseBody: {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -rpop')
+          before: () => rte.data.setAclUserRules('~* +@all -rpop'),
         },
       ].map(mainCheckFn);
     });

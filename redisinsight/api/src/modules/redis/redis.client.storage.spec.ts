@@ -3,9 +3,14 @@ import {
   generateMockRedisClient,
   mockDatabase,
   mockInvalidClientMetadataError,
-  mockInvalidSessionMetadataError, mockStandaloneRedisClient,
+  mockInvalidSessionMetadataError,
+  mockStandaloneRedisClient,
 } from 'src/__mocks__';
-import { ClientContext, ClientMetadata, SessionMetadata } from 'src/common/models';
+import {
+  ClientContext,
+  ClientMetadata,
+  SessionMetadata,
+} from 'src/common/models';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import apiConfig from 'src/utils/config';
 import { BadRequestException } from '@nestjs/common';
@@ -51,9 +56,7 @@ describe('RedisClientStorage', () => {
     jest.clearAllMocks();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        RedisClientStorage,
-      ],
+      providers: [RedisClientStorage],
     }).compile();
 
     service = await module.get(RedisClientStorage);
@@ -81,7 +84,8 @@ describe('RedisClientStorage', () => {
     it('should remove client with exceeded time in idle', async () => {
       expect(service['clients'].size).toEqual(5);
       const toDelete = service['clients'].get(mockRedisClient1.id);
-      toDelete['lastTimeUsed'] = Date.now() - REDIS_CLIENTS_CONFIG.maxIdleThreshold - 1;
+      toDelete['lastTimeUsed'] =
+        Date.now() - REDIS_CLIENTS_CONFIG.maxIdleThreshold - 1;
 
       service['syncClients']();
 
@@ -91,8 +95,11 @@ describe('RedisClientStorage', () => {
     it('should remove client with exceeded time in idle and not fail in case of error', async () => {
       expect(service['clients'].size).toEqual(5);
       const toDelete = service['clients'].get(mockRedisClient1.id);
-      toDelete['lastTimeUsed'] = Date.now() - REDIS_CLIENTS_CONFIG.maxIdleThreshold - 1;
-      mockRedisClient1.disconnect.mockRejectedValueOnce(new Error('some error'));
+      toDelete['lastTimeUsed'] =
+        Date.now() - REDIS_CLIENTS_CONFIG.maxIdleThreshold - 1;
+      mockRedisClient1.disconnect.mockRejectedValueOnce(
+        new Error('some error'),
+      );
 
       service['syncClients']();
 
@@ -112,7 +119,9 @@ describe('RedisClientStorage', () => {
       expect(result['lastTimeUsed']).toBeGreaterThan(lastTimeUsed);
     });
     it('should return null when client is is disconnected and client will be removed', async () => {
-      expect(service['clients'].get(mockRedisClient1.id)).not.toEqual(undefined);
+      expect(service['clients'].get(mockRedisClient1.id)).not.toEqual(
+        undefined,
+      );
       mockRedisClient1.isConnected.mockReturnValueOnce(false);
 
       const result = await service.get(mockRedisClient1.id);
@@ -132,7 +141,9 @@ describe('RedisClientStorage', () => {
       // eslint-disable-next-line prefer-destructuring
       const lastTimeUsed = mockRedisClient1['lastTimeUsed'];
 
-      const result = await service.getByMetadata(mockRedisClient1['clientMetadata']);
+      const result = await service.getByMetadata(
+        mockRedisClient1['clientMetadata'],
+      );
 
       expect(result).toEqual(service['clients'].get(mockRedisClient1.id));
       expect(result['lastTimeUsed']).toBeGreaterThan(lastTimeUsed);
@@ -241,29 +252,47 @@ describe('RedisClientStorage', () => {
     });
 
     it('should throw and error if clientMetadata has not required fields', async () => {
-      await expect(service.set(generateMockRedisClient({}))).rejects.toThrow(BadRequestException);
-      await expect(service.set(generateMockRedisClient({
-        databaseId: '1',
-      }))).rejects.toThrow(BadRequestException);
-      await expect(service.set(generateMockRedisClient({
-        databaseId: '1',
-        context: ClientContext.Common,
-      }))).rejects.toThrow(BadRequestException);
-      await expect(service.set(generateMockRedisClient({
-        databaseId: '1',
-        context: ClientContext.Common,
-        sessionMetadata: {
-          userId: '1',
-        } as SessionMetadata,
-      }))).rejects.toThrow(BadRequestException);
-      await expect(service.set(generateMockRedisClient({
-        databaseId: '1',
-        context: ClientContext.Common,
-        sessionMetadata: {
-          userId: '1',
-          sessionId: '1',
-        } as SessionMetadata,
-      }))).resolves.toBeInstanceOf(RedisClient);
+      await expect(service.set(generateMockRedisClient({}))).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(
+        service.set(
+          generateMockRedisClient({
+            databaseId: '1',
+          }),
+        ),
+      ).rejects.toThrow(BadRequestException);
+      await expect(
+        service.set(
+          generateMockRedisClient({
+            databaseId: '1',
+            context: ClientContext.Common,
+          }),
+        ),
+      ).rejects.toThrow(BadRequestException);
+      await expect(
+        service.set(
+          generateMockRedisClient({
+            databaseId: '1',
+            context: ClientContext.Common,
+            sessionMetadata: {
+              userId: '1',
+            } as SessionMetadata,
+          }),
+        ),
+      ).rejects.toThrow(BadRequestException);
+      await expect(
+        service.set(
+          generateMockRedisClient({
+            databaseId: '1',
+            context: ClientContext.Common,
+            sessionMetadata: {
+              userId: '1',
+              sessionId: '1',
+            } as SessionMetadata,
+          }),
+        ),
+      ).resolves.toBeInstanceOf(RedisClient);
     });
   });
 
@@ -282,7 +311,9 @@ describe('RedisClientStorage', () => {
       expect(service['clients'].size).toEqual(5);
     });
     it('should not fail in case when client.disconnect() failed and remove client from the pool', async () => {
-      mockRedisClient1.disconnect.mockRejectedValueOnce(new Error('Can\'t disconnect.'));
+      mockRedisClient1.disconnect.mockRejectedValueOnce(
+        new Error("Can't disconnect."),
+      );
       const result = await service.remove(mockRedisClient1.id);
 
       expect(result).toEqual(1);
@@ -292,7 +323,9 @@ describe('RedisClientStorage', () => {
 
   describe('removeByMetadata', () => {
     it('should remove only one', async () => {
-      const result = await service.removeByMetadata(mockRedisClient1['clientMetadata']);
+      const result = await service.removeByMetadata(
+        mockRedisClient1['clientMetadata'],
+      );
 
       expect(result).toEqual(1);
       expect(service['clients'].size).toEqual(4);
@@ -320,7 +353,9 @@ describe('RedisClientStorage', () => {
 
       expect(result.length).toEqual(4);
       result.forEach((id) => {
-        expect(service['clients'].get(id)['clientMetadata'].databaseId).toEqual(query.databaseId);
+        expect(service['clients'].get(id)['clientMetadata'].databaseId).toEqual(
+          query.databaseId,
+        );
       });
 
       expect(await service.removeManyByMetadata(query)).toEqual(4);
@@ -336,8 +371,12 @@ describe('RedisClientStorage', () => {
 
       expect(result.length).toEqual(1);
       result.forEach((id) => {
-        expect(service['clients'].get(id)['clientMetadata'].databaseId).toEqual(query.databaseId);
-        expect(service['clients'].get(id)['clientMetadata'].context).toEqual(query.context);
+        expect(service['clients'].get(id)['clientMetadata'].databaseId).toEqual(
+          query.databaseId,
+        );
+        expect(service['clients'].get(id)['clientMetadata'].context).toEqual(
+          query.context,
+        );
       });
 
       expect(await service.removeManyByMetadata(query)).toEqual(1);
@@ -353,9 +392,12 @@ describe('RedisClientStorage', () => {
 
       expect(result.length).toEqual(2);
       result.forEach((id) => {
-        expect(service['clients'].get(id)['clientMetadata'].databaseId).toEqual(query.databaseId);
-        expect(service['clients'].get(id)['clientMetadata'].sessionMetadata.userId)
-          .toEqual(query.sessionMetadata.userId);
+        expect(service['clients'].get(id)['clientMetadata'].databaseId).toEqual(
+          query.databaseId,
+        );
+        expect(
+          service['clients'].get(id)['clientMetadata'].sessionMetadata.userId,
+        ).toEqual(query.sessionMetadata.userId);
       });
 
       expect(await service.removeManyByMetadata(query)).toEqual(2);
@@ -370,11 +412,16 @@ describe('RedisClientStorage', () => {
 
       expect(result.length).toEqual(3);
       result.forEach((id) => {
-        expect(service['clients'].get(id)['clientMetadata'].sessionMetadata.userId)
-          .toEqual(query.sessionMetadata.userId);
+        expect(
+          service['clients'].get(id)['clientMetadata'].sessionMetadata.userId,
+        ).toEqual(query.sessionMetadata.userId);
       });
-      expect(service['clients'].get(result[0])['clientMetadata'].databaseId).toEqual(mockDatabase.id);
-      expect(service['clients'].get(result[2])['clientMetadata'].databaseId).toEqual('d2');
+      expect(
+        service['clients'].get(result[0])['clientMetadata'].databaseId,
+      ).toEqual(mockDatabase.id);
+      expect(
+        service['clients'].get(result[2])['clientMetadata'].databaseId,
+      ).toEqual('d2');
 
       expect(await service.removeManyByMetadata(query)).toEqual(3);
       expect(service['clients'].size).toEqual(2);
@@ -389,8 +436,12 @@ describe('RedisClientStorage', () => {
 
       expect(result.length).toEqual(1);
       result.forEach((id) => {
-        expect(service['clients'].get(id)['clientMetadata'].databaseId).toEqual(query.databaseId);
-        expect(service['clients'].get(id)['clientMetadata'].db).toEqual(query.db);
+        expect(service['clients'].get(id)['clientMetadata'].databaseId).toEqual(
+          query.databaseId,
+        );
+        expect(service['clients'].get(id)['clientMetadata'].db).toEqual(
+          query.db,
+        );
       });
 
       expect(await service.removeManyByMetadata(query)).toEqual(1);
@@ -417,7 +468,8 @@ describe('RedisClientStorage', () => {
     });
 
     const CLIENTS_NUMBER = 10;
-    const getGenericValue = (value, defaultValue) => (value === false ? undefined : (value || defaultValue));
+    const getGenericValue = (value, defaultValue) =>
+      value === false ? undefined : value || defaultValue;
 
     const generateNClients = (n: number, options = {}) => {
       const result = [];
@@ -431,7 +483,10 @@ describe('RedisClientStorage', () => {
           sessionMetadata: {
             userId: getGenericValue(options['userId'], `user_${i}`),
             sessionId: getGenericValue(options['sessionId'], `session_${i}`),
-            uniqueId: getGenericValue(options['sessionUId'], `session_unique_${i}`),
+            uniqueId: getGenericValue(
+              options['sessionUId'],
+              `session_unique_${i}`,
+            ),
           },
         });
         result.push([clientMetadata, generateMockRedisClient(clientMetadata)]);
@@ -535,128 +590,23 @@ describe('RedisClientStorage', () => {
         clientMetadata: {},
         error: mockInvalidSessionMetadataError,
       },
-    ] as any)('%# validation and id generation', async ({ clientMetadata, id, error }) => {
-      const mapSetSpy = jest.spyOn(service['clients'], 'set');
+    ] as any)(
+      '%# validation and id generation',
+      async ({ clientMetadata, id, error }) => {
+        const mapSetSpy = jest.spyOn(service['clients'], 'set');
 
-      const client = generateMockRedisClient(clientMetadata);
+        const client = generateMockRedisClient(clientMetadata);
 
-      if (error) {
-        await expect(service.set(client)).rejects.toThrow(error);
-        expect(mapSetSpy).not.toHaveBeenCalled();
-      } else {
-        await expect(service.set(client)).resolves.toEqual(client);
-        expect(mapSetSpy).toHaveBeenCalledTimes(1);
-        expect(mapSetSpy).lastCalledWith(id, client);
-      }
-    });
-
-    it.each([
-      {
-        clientMetadata: {
-          databaseId: 'dbid',
-          context: 'Common',
-          uniqueId: 'unid',
-          db: 0,
-          sessionMetadata: {
-            userId: 'uid',
-            sessionId: 'sid',
-            uniqueId: 'unsid',
-          },
-        },
-        id: 'dbid_Common_unid_0_uid_sid_unsid',
+        if (error) {
+          await expect(service.set(client)).rejects.toThrow(error);
+          expect(mapSetSpy).not.toHaveBeenCalled();
+        } else {
+          await expect(service.set(client)).resolves.toEqual(client);
+          expect(mapSetSpy).toHaveBeenCalledTimes(1);
+          expect(mapSetSpy).lastCalledWith(id, client);
+        }
       },
-      {
-        clientMetadata: {
-          databaseId: 'dbid',
-          context: 'Common',
-          uniqueId: 'unid',
-          sessionMetadata: {
-            userId: 'uid',
-            sessionId: 'sid',
-            uniqueId: 'unsid',
-          },
-        },
-        id: 'dbid_Common_unid_(nil)_uid_sid_unsid',
-      },
-      {
-        clientMetadata: {
-          databaseId: 'dbid',
-          context: 'Common',
-          sessionMetadata: {
-            userId: 'uid',
-            sessionId: 'sid',
-            uniqueId: 'unsid',
-          },
-        },
-        id: 'dbid_Common_(nil)_(nil)_uid_sid_unsid',
-      },
-      {
-        clientMetadata: {
-          databaseId: 'dbid',
-          context: 'Common',
-          sessionMetadata: {
-            userId: 'uid',
-            sessionId: 'sid',
-          },
-        },
-        id: 'dbid_Common_(nil)_(nil)_uid_sid_(nil)',
-      },
-      {
-        clientMetadata: {
-          databaseId: 'dbid',
-          sessionMetadata: {
-            userId: 'uid',
-            sessionId: 'sid',
-          },
-        },
-        error: mockInvalidClientMetadataError,
-      },
-      {
-        clientMetadata: {
-          context: 'Common',
-          sessionMetadata: {
-            userId: 'uid',
-            sessionId: 'sid',
-          },
-        },
-        error: mockInvalidClientMetadataError,
-      },
-      {
-        clientMetadata: {
-          databaseId: 'dbid',
-          context: 'Common',
-          sessionMetadata: {
-            userId: 'uid',
-          },
-        },
-        error: mockInvalidSessionMetadataError,
-      },
-      {
-        clientMetadata: {
-          databaseId: 'dbid',
-          context: 'Common',
-          sessionMetadata: {
-            sessionId: 'sid',
-          },
-        },
-        error: mockInvalidSessionMetadataError,
-      },
-      {
-        clientMetadata: {},
-        error: mockInvalidSessionMetadataError,
-      },
-    ] as any)('%# validation and id generation', async ({ clientMetadata, id, error }) => {
-      const mapGetSpy = jest.spyOn(service['clients'], 'get');
-
-      if (error) {
-        await expect(service.getByMetadata(clientMetadata)).rejects.toThrow(error);
-        expect(mapGetSpy).not.toHaveBeenCalled();
-      } else {
-        await expect(service.getByMetadata(clientMetadata)).resolves.toEqual(undefined);
-        expect(mapGetSpy).toHaveBeenCalledTimes(1);
-        expect(mapGetSpy).lastCalledWith(id);
-      }
-    });
+    );
 
     it.each([
       {
@@ -753,34 +703,160 @@ describe('RedisClientStorage', () => {
         clientMetadata: {},
         error: mockInvalidSessionMetadataError,
       },
-    ] as any)('%# validation and id generation', async ({ clientMetadata, id, error }) => {
-      jest.spyOn(service['clients'], 'get').mockReturnValue(mockStandaloneRedisClient);
-      const mapDeleteSpy = jest.spyOn(service['clients'], 'delete');
+    ] as any)(
+      '%# validation and id generation',
+      async ({ clientMetadata, id, error }) => {
+        const mapGetSpy = jest.spyOn(service['clients'], 'get');
 
-      if (error) {
-        await expect(service.removeByMetadata(clientMetadata)).rejects.toThrow(error);
-        expect(mapDeleteSpy).not.toHaveBeenCalled();
-      } else {
-        await expect(service.removeByMetadata(clientMetadata)).resolves.toEqual(1);
-        expect(mapDeleteSpy).toHaveBeenCalledTimes(1);
-        expect(mapDeleteSpy).lastCalledWith(id);
-      }
-    });
+        if (error) {
+          await expect(service.getByMetadata(clientMetadata)).rejects.toThrow(
+            error,
+          );
+          expect(mapGetSpy).not.toHaveBeenCalled();
+        } else {
+          await expect(service.getByMetadata(clientMetadata)).resolves.toEqual(
+            undefined,
+          );
+          expect(mapGetSpy).toHaveBeenCalledTimes(1);
+          expect(mapGetSpy).lastCalledWith(id);
+        }
+      },
+    );
+
+    it.each([
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          uniqueId: 'unid',
+          db: 0,
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+            uniqueId: 'unsid',
+          },
+        },
+        id: 'dbid_Common_unid_0_uid_sid_unsid',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          uniqueId: 'unid',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+            uniqueId: 'unsid',
+          },
+        },
+        id: 'dbid_Common_unid_(nil)_uid_sid_unsid',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+            uniqueId: 'unsid',
+          },
+        },
+        id: 'dbid_Common_(nil)_(nil)_uid_sid_unsid',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+          },
+        },
+        id: 'dbid_Common_(nil)_(nil)_uid_sid_(nil)',
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+          },
+        },
+        error: mockInvalidClientMetadataError,
+      },
+      {
+        clientMetadata: {
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+            sessionId: 'sid',
+          },
+        },
+        error: mockInvalidClientMetadataError,
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            userId: 'uid',
+          },
+        },
+        error: mockInvalidSessionMetadataError,
+      },
+      {
+        clientMetadata: {
+          databaseId: 'dbid',
+          context: 'Common',
+          sessionMetadata: {
+            sessionId: 'sid',
+          },
+        },
+        error: mockInvalidSessionMetadataError,
+      },
+      {
+        clientMetadata: {},
+        error: mockInvalidSessionMetadataError,
+      },
+    ] as any)(
+      '%# validation and id generation',
+      async ({ clientMetadata, id, error }) => {
+        jest
+          .spyOn(service['clients'], 'get')
+          .mockReturnValue(mockStandaloneRedisClient);
+        const mapDeleteSpy = jest.spyOn(service['clients'], 'delete');
+
+        if (error) {
+          await expect(
+            service.removeByMetadata(clientMetadata),
+          ).rejects.toThrow(error);
+          expect(mapDeleteSpy).not.toHaveBeenCalled();
+        } else {
+          await expect(
+            service.removeByMetadata(clientMetadata),
+          ).resolves.toEqual(1);
+          expect(mapDeleteSpy).toHaveBeenCalledTimes(1);
+          expect(mapDeleteSpy).lastCalledWith(id);
+        }
+      },
+    );
 
     it('check common use cases', async () => {
       expect(service['clients'].size).toEqual(0);
 
       const clients = generateNClients(CLIENTS_NUMBER);
 
-      await Promise.all(clients.map(async ([cm, client]) => {
-        expect(client.clientMetadata).toEqual(cm);
+      await Promise.all(
+        clients.map(async ([cm, client]) => {
+          expect(client.clientMetadata).toEqual(cm);
 
-        // should set each client with expect id
-        await service.set(client);
+          // should set each client with expect id
+          await service.set(client);
 
-        // should get each client with expect id
-        expect(await service.getByMetadata(cm)).toEqual(client);
-      }));
+          // should get each client with expect id
+          expect(await service.getByMetadata(cm)).toEqual(client);
+        }),
+      );
 
       expect(service['clients'].size).toEqual(CLIENTS_NUMBER);
 
@@ -796,12 +872,14 @@ describe('RedisClientStorage', () => {
 
       expect(service['clients'].size).toEqual(CLIENTS_NUMBER - 2);
 
-      await Promise.all(clients.map(async ([cm, client]) => {
-        expect(client.clientMetadata).toEqual(cm);
+      await Promise.all(
+        clients.map(async ([cm, client]) => {
+          expect(client.clientMetadata).toEqual(cm);
 
-        // should set each client with expect id
-        await service.removeByMetadata(cm);
-      }));
+          // should set each client with expect id
+          await service.removeByMetadata(cm);
+        }),
+      );
 
       expect(service['clients'].size).toEqual(0);
     });
@@ -812,11 +890,11 @@ describe('RedisClientStorage', () => {
 
         const clients = generateNClients(100);
 
-        await Promise.all([
-          ...clients,
-        ].map(async ([, client]) => {
-          await service.set(client);
-        }));
+        await Promise.all(
+          [...clients].map(async ([, client]) => {
+            await service.set(client);
+          }),
+        );
 
         expect(service['clients'].size).toEqual(100);
 
@@ -842,11 +920,7 @@ describe('RedisClientStorage', () => {
           { uniqueId: 'not-existing' },
           { uniqueId: 'uuid' },
         ],
-        [
-          { db: 1 },
-          { db: 2 },
-          { db: 1 },
-        ],
+        [{ db: 1 }, { db: 2 }, { db: 1 }],
         [
           { userId: 'uid' },
           { sessionMetadata: { userId: 'not-existing' } },
@@ -860,37 +934,47 @@ describe('RedisClientStorage', () => {
         // compound
         [
           { databaseId: 'db', sessionId: 'sid', userId: 'uid' },
-          { databaseId: 'db', sessionMetadata: { sessionId: 'not-existing', userId: 'uid' } },
-          { databaseId: 'db', sessionMetadata: { sessionId: 'sid', userId: 'uid' } },
+          {
+            databaseId: 'db',
+            sessionMetadata: { sessionId: 'not-existing', userId: 'uid' },
+          },
+          {
+            databaseId: 'db',
+            sessionMetadata: { sessionId: 'sid', userId: 'uid' },
+          },
         ],
-      ] as any)('remove many by %p', async (generate, notExisting, clientMetadata) => {
-        expect(service['clients'].size).toEqual(0);
+      ] as any)(
+        'remove many by %p',
+        async (generate, notExisting, clientMetadata) => {
+          expect(service['clients'].size).toEqual(0);
 
-        const targetClients = generateNClients(100, generate);
-        const clients = generateNClients(100);
+          const targetClients = generateNClients(100, generate);
+          const clients = generateNClients(100);
 
-        await Promise.all([
-          ...targetClients,
-          ...clients,
-        ].map(async ([, client]) => {
-          await service.set(client);
-        }));
+          await Promise.all(
+            [...targetClients, ...clients].map(async ([, client]) => {
+              await service.set(client);
+            }),
+          );
 
-        expect(service['clients'].size).toEqual(200);
+          expect(service['clients'].size).toEqual(200);
 
-        // shouldn't remove since there is no match
-        await service.removeManyByMetadata(notExisting);
+          // shouldn't remove since there is no match
+          await service.removeManyByMetadata(notExisting);
 
-        expect(service['clients'].size).toEqual(200);
+          expect(service['clients'].size).toEqual(200);
 
-        await service.removeManyByMetadata(clientMetadata);
+          await service.removeManyByMetadata(clientMetadata);
 
-        expect(service['clients'].size).toEqual(100);
+          expect(service['clients'].size).toEqual(100);
 
-        await Promise.all(clients.map(async ([cm, client]) => {
-          expect(await service.getByMetadata(cm)).toEqual(client);
-        }));
-      });
+          await Promise.all(
+            clients.map(async ([cm, client]) => {
+              expect(await service.getByMetadata(cm)).toEqual(client);
+            }),
+          );
+        },
+      );
     });
   });
 });

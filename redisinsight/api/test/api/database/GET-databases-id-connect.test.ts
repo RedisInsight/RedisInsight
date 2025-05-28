@@ -1,4 +1,11 @@
-import { describe, it, deps, validateApiCall, before, getMainCheckFn } from '../deps';
+import {
+  describe,
+  it,
+  deps,
+  validateApiCall,
+  before,
+  getMainCheckFn,
+} from '../deps';
 const { localDb, request, server, constants } = deps;
 
 const endpoint = (id = constants.TEST_INSTANCE_ID) =>
@@ -20,7 +27,7 @@ describe(`GET /databases/:id/connect`, () => {
       statusCode: 503,
       responseBody: {
         statusCode: 503,
-        error: 'Service Unavailable'
+        error: 'Service Unavailable',
       },
     },
     {

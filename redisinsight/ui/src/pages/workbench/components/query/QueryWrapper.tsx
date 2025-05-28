@@ -1,10 +1,13 @@
 import React, { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiLoadingContent } from '@elastic/eui'
 
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
-import { fetchRedisearchListAction, redisearchListSelector } from 'uiSrc/slices/browser/redisearch'
+import {
+  fetchRedisearchListAction,
+  redisearchListSelector,
+} from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { mergeRedisCommandsSpecs } from 'uiSrc/utils/transformers/redisCommands'
 import SEARCH_COMMANDS_SPEC from 'uiSrc/pages/workbench/data/supported_commands.json'
@@ -33,16 +36,16 @@ const QueryWrapper = (props: Props) => {
     onKeyDown,
     onSubmit,
     onQueryChangeMode,
-    onChangeGroupMode
+    onChangeGroupMode,
   } = props
-  const { loading: isCommandsLoading, } = useSelector(appRedisCommandsSelector)
+  const { loading: isCommandsLoading } = useSelector(appRedisCommandsSelector)
   const { id: connectedIndstanceId } = useSelector(connectedInstanceSelector)
   const { data: indexes = [] } = useSelector(redisearchListSelector)
   const { spec: COMMANDS_SPEC } = useSelector(appRedisCommandsSelector)
 
   const REDIS_COMMANDS = useMemo(
     () => mergeRedisCommandsSpecs(COMMANDS_SPEC, SEARCH_COMMANDS_SPEC),
-    [COMMANDS_SPEC, SEARCH_COMMANDS_SPEC]
+    [COMMANDS_SPEC, SEARCH_COMMANDS_SPEC],
   )
 
   const dispatch = useDispatch()
@@ -57,7 +60,7 @@ const QueryWrapper = (props: Props) => {
   const Placeholder = (
     <div className={styles.containerPlaceholder}>
       <div>
-        <EuiLoadingContent lines={2} className="fluid" />
+        <LoadingContent lines={2} className="fluid" />
       </div>
     </div>
   )

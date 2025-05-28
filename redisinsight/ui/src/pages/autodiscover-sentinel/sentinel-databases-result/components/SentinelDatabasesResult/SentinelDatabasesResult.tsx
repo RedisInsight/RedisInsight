@@ -9,8 +9,6 @@ import {
   EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
-  EuiFlexGroup,
-  EuiFlexItem,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
@@ -19,14 +17,15 @@ import { ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
-  countSuccessAdded: number;
-  columns: EuiBasicTableColumn<ModifiedSentinelMaster>[];
-  masters: ModifiedSentinelMaster[];
-  onBack: () => void;
-  onViewDatabases: () => void;
+  countSuccessAdded: number
+  columns: EuiBasicTableColumn<ModifiedSentinelMaster>[]
+  masters: ModifiedSentinelMaster[]
+  onBack: () => void
+  onViewDatabases: () => void
 }
 
 const loadingMsg = 'loading...'
@@ -66,12 +65,12 @@ const SentinelDatabasesResult = ({
 
     const itemsTemp = masters.filter(
       (item: ModifiedSentinelMaster) =>
-        item.name?.toLowerCase().includes(value)
-        || item.host?.toLowerCase().includes(value)
-        || item.alias?.toLowerCase().includes(value)
-        || item.username?.toLowerCase().includes(value)
-        || item.port?.toString()?.includes(value)
-        || item.numberOfSlaves?.toString().includes(value)
+        item.name?.toLowerCase().includes(value) ||
+        item.host?.toLowerCase().includes(value) ||
+        item.alias?.toLowerCase().includes(value) ||
+        item.username?.toLowerCase().includes(value) ||
+        item.port?.toString()?.includes(value) ||
+        item.numberOfSlaves?.toString().includes(value),
     )
 
     if (!itemsTemp.length) {
@@ -85,18 +84,14 @@ const SentinelDatabasesResult = ({
       <b>Summary: </b>
       {countSuccessAdded ? (
         <span>
-          Successfully added
-          {' '}
-          {countSuccessAdded}
+          Successfully added {countSuccessAdded}
           {' primary group(s)'}
           {countFailAdded ? '; ' : ' '}
         </span>
       ) : null}
       {countFailAdded ? (
         <span>
-          Failed to add
-          {' '}
-          {countFailAdded}
+          Failed to add {countFailAdded}
           {' primary group(s)'}
         </span>
       ) : null}
@@ -110,16 +105,14 @@ const SentinelDatabasesResult = ({
           <h1>Auto-Discover Redis Sentinel Primary Groups</h1>
         </EuiTitle>
 
-        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
-          <EuiFlexItem>
-            <MessageBar
-              opened={!!countSuccessAdded || !!countFailAdded}
-            >
+        <Row align="end" gap="s">
+          <FlexItem grow>
+            <MessageBar opened={!!countSuccessAdded || !!countFailAdded}>
               <SummaryText />
             </MessageBar>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <EuiFlexItem grow={false}>
+          </FlexItem>
+        </Row>
+        <FlexItem>
           <EuiFormRow className={styles.searchForm}>
             <EuiFieldSearch
               placeholder="Search..."
@@ -130,7 +123,7 @@ const SentinelDatabasesResult = ({
               data-testid="search"
             />
           </EuiFormRow>
-        </EuiFlexItem>
+        </FlexItem>
         <br />
         <div className="itemList databaseList sentinelDatabaseListResult">
           <EuiInMemoryTable

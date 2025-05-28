@@ -1,6 +1,5 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { EuiFlexGroup, EuiFlexItem } from '@elastic/eui'
 
 import { ExplorePanelTemplate } from 'uiSrc/templates'
 import HomeTabs from 'uiSrc/components/home-tabs'
@@ -11,6 +10,7 @@ import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
 
+import { Flex, FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -24,25 +24,36 @@ const HomePageTemplate = (props: Props) => {
     [FeatureFlags.databaseChat]: databaseChatFeature,
     [FeatureFlags.documentationChat]: documentationChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([databaseChatFeature, documentationChatFeature])
+  const isAnyChatAvailable = isAnyFeatureEnabled([
+    databaseChatFeature,
+    documentationChatFeature,
+  ])
 
   return (
     <>
       <div className={styles.pageDefaultHeader}>
         <HomeTabs />
-        <EuiFlexGroup style={{ flexGrow: 0 }} gutterSize="none" alignItems="center">
+        <Flex style={{ flexGrow: 0 }} gap="none" align="center">
           {isAnyChatAvailable && (
-            <EuiFlexItem grow={false} style={{ marginRight: 12 }}>
+            <FlexItem style={{ marginRight: 12 }}>
               <CopilotTrigger />
-            </EuiFlexItem>
+            </FlexItem>
           )}
-          <EuiFlexItem><InsightsTrigger source="home page" /></EuiFlexItem>
-          <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-            <EuiFlexItem style={{ marginLeft: 16 }} data-testid="home-page-sso-profile">
+          <FlexItem grow>
+            <InsightsTrigger source="home page" />
+          </FlexItem>
+          <FeatureFlagComponent
+            name={[FeatureFlags.cloudSso, FeatureFlags.cloudAds]}
+          >
+            <FlexItem
+              grow
+              style={{ marginLeft: 16 }}
+              data-testid="home-page-sso-profile"
+            >
               <OAuthUserProfile source={OAuthSocialSource.UserProfile} />
-            </EuiFlexItem>
+            </FlexItem>
           </FeatureFlagComponent>
-        </EuiFlexGroup>
+        </Flex>
       </div>
       <div className={styles.pageWrapper}>
         <ExplorePanelTemplate panelClassName={styles.explorePanel}>

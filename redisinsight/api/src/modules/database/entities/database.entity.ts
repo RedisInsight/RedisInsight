@@ -5,6 +5,8 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { CaCertificateEntity } from 'src/modules/certificate/entities/ca-certificate.entity';
 import { ClientCertificateEntity } from 'src/modules/certificate/entities/client-certificate.entity';
@@ -14,6 +16,7 @@ import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-maste
 import { SshOptionsEntity } from 'src/modules/ssh/entities/ssh-options.entity';
 import { CloudDatabaseDetailsEntity } from 'src/modules/cloud/database/entities/cloud-database-details.entity';
 import { DatabaseSettingsEntity } from 'src/modules/database-settings/entities/database-setting.entity';
+import { TagEntity } from 'src/modules/tag/entities/tag.entity';
 
 export enum HostingProvider {
   RE_CLUSTER = 'RE_CLUSTER',
@@ -95,37 +98,34 @@ export class DatabaseEntity {
 
   @Expose()
   @Column({ nullable: true })
-  @Transform((_, obj) => (
-    obj?.sentinelMaster?.name
-  ), { toClassOnly: true })
+  @Transform(({ obj }) => obj?.sentinelMaster?.name, { toClassOnly: true })
   sentinelMasterName: string;
 
   @Expose()
   @Column({ nullable: true })
-  @Transform((_, obj) => (
-    obj?.sentinelMaster?.username
-  ), { toClassOnly: true })
+  @Transform(({ obj }) => obj?.sentinelMaster?.username, { toClassOnly: true })
   sentinelMasterUsername: string;
 
   @Expose()
   @Column({ nullable: true })
-  @Transform((_, obj) => (
-    obj?.sentinelMaster?.password
-  ), { toClassOnly: true })
+  @Transform(({ obj }) => obj?.sentinelMaster?.password, { toClassOnly: true })
   sentinelMasterPassword: string;
 
   @Expose()
-  @Transform((_, obj) => {
-    if (obj?.sentinelMasterName) {
-      return {
-        name: obj?.sentinelMasterName,
-        username: obj?.sentinelMasterUsername,
-        password: obj?.sentinelMasterPassword,
-      };
-    }
+  @Transform(
+    ({ obj }) => {
+      if (obj?.sentinelMasterName) {
+        return {
+          name: obj?.sentinelMasterName,
+          username: obj?.sentinelMasterUsername,
+          password: obj?.sentinelMasterPassword,
+        };
+      }
 
-    return undefined;
-  }, { toPlainOnly: true })
+      return undefined;
+    },
+    { toPlainOnly: true },
+  )
   @Transform(() => undefined, { toClassOnly: true })
   sentinelMaster: SentinelMaster;
 
@@ -213,15 +213,11 @@ export class DatabaseEntity {
   ssh: boolean;
 
   @Expose()
-  @OneToOne(
-    () => SshOptionsEntity,
-    (sshOptions) => sshOptions.database,
-    {
-      eager: true,
-      onDelete: 'CASCADE',
-      cascade: true,
-    },
-  )
+  @OneToOne(() => SshOptionsEntity, (sshOptions) => sshOptions.database, {
+    eager: true,
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   @Type(() => SshOptionsEntity)
   sshOptions: SshOptionsEntity;
 
@@ -239,15 +235,11 @@ export class DatabaseEntity {
   cloudDetails: CloudDatabaseDetailsEntity;
 
   @Expose()
-  @OneToOne(
-    () => DatabaseSettingsEntity,
-    (dbSettings) => dbSettings.database,
-    {
-      eager: true,
-      onDelete: 'CASCADE',
-      cascade: true,
-    },
-  )
+  @OneToOne(() => DatabaseSettingsEntity, (dbSettings) => dbSettings.database, {
+    eager: true,
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
   @Type(() => DatabaseSettingsEntity)
   dbSettings: DatabaseSettingsEntity;
 
@@ -265,6 +257,26 @@ export class DatabaseEntity {
   @Expose()
   @Column({ nullable: true })
   forceStandalone: boolean;
+
+  @Expose()
+  @ManyToMany(() => TagEntity, (tag) => tag.databases, {
+    eager: true,
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinTable({
+    name: 'database_tag',
+    joinColumn: {
+      name: 'databaseId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'tagId',
+      referencedColumnName: 'id',
+    },
+  })
+  @Type(() => TagEntity)
+  tags: TagEntity[];
 
   @Expose()
   @Column({ nullable: true })

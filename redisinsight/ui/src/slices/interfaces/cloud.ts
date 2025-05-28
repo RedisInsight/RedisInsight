@@ -39,7 +39,7 @@ export interface StateAppOAuth {
 }
 
 export interface CloudImportDatabaseResources {
-  subscriptionId: number,
+  subscriptionId: number
   databaseId?: number
   region: string
   provider?: string
@@ -78,6 +78,7 @@ export enum OAuthSocialSource {
   BrowserContentMenu = 'browser content menu',
   BrowserFiltering = 'browser filtering',
   BrowserSearch = 'browser search',
+  BrowserRedisJSON = 'browser RedisJSON',
   RediSearch = 'workbench RediSearch',
   RedisJSON = 'workbench RedisJSON',
   RedisTimeSeries = 'workbench RedisTimeSeries',
@@ -100,13 +101,13 @@ export enum OAuthSocialSource {
 export enum OAuthSocialAction {
   Create = 'create',
   Import = 'import',
-  SignIn = 'signIn'
+  SignIn = 'signIn',
 }
 
 export enum OAuthStrategy {
   Google = 'google',
   GitHub = 'github',
-  SSO = 'sso'
+  SSO = 'sso',
 }
 
 export enum CloudSsoUtmCampaign {

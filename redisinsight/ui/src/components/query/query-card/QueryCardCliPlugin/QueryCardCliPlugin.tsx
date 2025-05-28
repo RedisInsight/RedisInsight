@@ -2,23 +2,34 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { v4 as uuidv4 } from 'uuid'
-import { EuiFlexItem, EuiIcon, EuiLoadingContent, EuiTextColor } from '@elastic/eui'
+import { EuiIcon, EuiTextColor } from '@elastic/eui'
 import { pluginApi } from 'uiSrc/services/PluginAPI'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import { getBaseApiUrl, Nullable, formatToText, replaceEmptyValue } from 'uiSrc/utils'
+import {
+  getBaseApiUrl,
+  Nullable,
+  formatToText,
+  replaceEmptyValue,
+} from 'uiSrc/utils'
+import { LoadingContent } from 'uiSrc/components/base/layout'
 import { Theme } from 'uiSrc/constants'
-import { CommandExecutionResult, IPluginVisualization, RunQueryMode } from 'uiSrc/slices/interfaces'
+import {
+  CommandExecutionResult,
+  IPluginVisualization,
+  RunQueryMode,
+} from 'uiSrc/slices/interfaces'
 import { PluginEvents } from 'uiSrc/plugins/pluginEvents'
 import { prepareIframeHtml } from 'uiSrc/plugins/pluginImport'
 import {
   appPluginsSelector,
   getPluginStateAction,
   sendPluginCommandAction,
-  setPluginStateAction
+  setPluginStateAction,
 } from 'uiSrc/slices/app/plugins'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appServerInfoSelector } from 'uiSrc/slices/app/info'
 
+import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -33,12 +44,12 @@ export interface Props {
 enum StylesNamePostfix {
   Dark = '/dark_theme.css',
   Light = '/light_theme.css',
-  Global = '/global_styles.css'
+  Global = '/global_styles.css',
 }
 
 enum ActionTypes {
   Resolve = 'resolve',
-  Reject = 'reject'
+  Reject = 'reject',
 }
 
 const baseUrl = getBaseApiUrl()
@@ -79,11 +90,17 @@ const QueryCardCliPlugin = (props: Props) => {
     sendMessageToPlugin({
       event: 'executeCommand',
       method,
-      data: { command: query, data: result, mode }
+      data: { command: query, data: result, mode },
     })
   }
 
-  const sendRedisCommand = ({ command = '', requestId = '' }: { command: string, requestId: string }) => {
+  const sendRedisCommand = ({
+    command = '',
+    requestId = '',
+  }: {
+    command: string
+    requestId: string
+  }) => {
     const commonOptions = {
       event: PluginEvents.executeRedisCommand,
       requestId,
@@ -95,17 +112,17 @@ const QueryCardCliPlugin = (props: Props) => {
           sendMessageToPlugin({
             ...commonOptions,
             actionType: ActionTypes.Resolve,
-            data: response.result
+            data: response.result,
           })
         },
         onFailAction: (error: any) => {
           sendMessageToPlugin({
             ...commonOptions,
             actionType: ActionTypes.Reject,
-            data: error
+            data: error,
           })
-        }
-      })
+        },
+      }),
     )
   }
 
@@ -122,21 +139,27 @@ const QueryCardCliPlugin = (props: Props) => {
           sendMessageToPlugin({
             ...commonOptions,
             actionType: ActionTypes.Resolve,
-            data: response?.state ?? null
+            data: response?.state ?? null,
           })
         },
         onFailAction: (error: any) => {
           sendMessageToPlugin({
             ...commonOptions,
             actionType: ActionTypes.Reject,
-            data: error
+            data: error,
           })
-        }
-      })
+        },
+      }),
     )
   }
 
-  const setPluginState = ({ requestId, state }: { requestId: string, state: any }) => {
+  const setPluginState = ({
+    requestId,
+    state,
+  }: {
+    requestId: string
+    state: any
+  }) => {
     const commonOptions = {
       event: PluginEvents.setState,
       requestId,
@@ -150,77 +173,116 @@ const QueryCardCliPlugin = (props: Props) => {
           sendMessageToPlugin({
             ...commonOptions,
             actionType: ActionTypes.Resolve,
-            data: state
+            data: state,
           })
         },
         onFailAction: (error: any) => {
           sendMessageToPlugin({
             ...commonOptions,
             actionType: ActionTypes.Reject,
-            data: error
+            data: error,
           })
-        }
-      })
+        },
+      }),
     )
   }
 
-  const formatRedisResponse = (
-    { requestId, data }: { requestId: string, data: { response: any, command: string } }
-  ) => {
+  const formatRedisResponse = ({
+    requestId,
+    data,
+  }: {
+    requestId: string
+    data: { response: any; command: string }
+  }) => {
     try {
-      const reply = formatToText(replaceEmptyValue(data?.response), data.command)
+      const reply = formatToText(
+        replaceEmptyValue(data?.response),
+        data.command,
+      )
 
       sendMessageToPlugin({
         event: PluginEvents.formatRedisReply,
         requestId,
         actionType: ActionTypes.Resolve,
-        data: reply
+        data: reply,
       })
     } catch (e) {
       sendMessageToPlugin({
         event: PluginEvents.formatRedisReply,
         requestId,
         actionType: ActionTypes.Reject,
-        data: e
+        data: e,
       })
     }
   }
 
   useEffect(() => {
     if (currentView === null) return
-    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.heightChanged, (height: string) => {
-      if (pluginIframeRef?.current) {
-        pluginIframeRef.current.height = height || prevPluginHeightRef.current
-        prevPluginHeightRef.current = height
-      }
-    })
+    pluginApi.onEvent(
+      generatedIframeNameRef.current,
+      PluginEvents.heightChanged,
+      (height: string) => {
+        if (pluginIframeRef?.current) {
+          pluginIframeRef.current.height = height || prevPluginHeightRef.current
+          prevPluginHeightRef.current = height
+        }
+      },
+    )
 
-    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.loaded, () => {
-      setIsPluginLoaded(true)
-      setError('')
-      executeCommand(currentView.activationMethod)
-    })
+    pluginApi.onEvent(
+      generatedIframeNameRef.current,
+      PluginEvents.loaded,
+      () => {
+        setIsPluginLoaded(true)
+        setError('')
+        executeCommand(currentView.activationMethod)
+      },
+    )
 
-    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.error, (error: string) => {
-      setIsPluginLoaded(true)
-      setError(error)
-    })
+    pluginApi.onEvent(
+      generatedIframeNameRef.current,
+      PluginEvents.error,
+      (error: string) => {
+        setIsPluginLoaded(true)
+        setError(error)
+      },
+    )
 
-    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.setHeaderText, (text: string) => {
-      setMessage(text)
-    })
+    pluginApi.onEvent(
+      generatedIframeNameRef.current,
+      PluginEvents.setHeaderText,
+      (text: string) => {
+        setMessage(text)
+      },
+    )
 
-    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.executeRedisCommand, sendRedisCommand)
-    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.getState, getPluginState)
-    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.setState, setPluginState)
-    pluginApi.onEvent(generatedIframeNameRef.current, PluginEvents.formatRedisReply, formatRedisResponse)
+    pluginApi.onEvent(
+      generatedIframeNameRef.current,
+      PluginEvents.executeRedisCommand,
+      sendRedisCommand,
+    )
+    pluginApi.onEvent(
+      generatedIframeNameRef.current,
+      PluginEvents.getState,
+      getPluginState,
+    )
+    pluginApi.onEvent(
+      generatedIframeNameRef.current,
+      PluginEvents.setState,
+      setPluginState,
+    )
+    pluginApi.onEvent(
+      generatedIframeNameRef.current,
+      PluginEvents.formatRedisReply,
+      formatRedisResponse,
+    )
   }, [currentView])
 
   const renderPluginIframe = (config: any) => {
     const html = prepareIframeHtml({
       ...config,
       bodyClass: theme === Theme.Dark ? 'theme_DARK' : 'theme_LIGHT',
-      modules
+      modules,
     })
     // @ts-ignore
     pluginIframeRef.current.srcdoc = html
@@ -240,7 +302,9 @@ const QueryCardCliPlugin = (props: Props) => {
   }
 
   useEffect(() => {
-    const view = visualizations.find((visualization: IPluginVisualization) => visualization.uniqId === id)
+    const view = visualizations.find(
+      (visualization: IPluginVisualization) => visualization.uniqId === id,
+    )
     if (view) {
       generatedIframeNameRef.current = `${view.plugin.name}-${uuidv4()}`
       setCurrentView(view)
@@ -263,11 +327,19 @@ const QueryCardCliPlugin = (props: Props) => {
   }, [result, id])
 
   return (
-    <div className={cx('queryResultsContainer', 'pluginStyles', styles.pluginWrapperResult)}>
+    <div
+      className={cx(
+        'queryResultsContainer',
+        'pluginStyles',
+        styles.pluginWrapperResult,
+      )}
+    >
       <div data-testid="query-plugin-result">
         <iframe
           seamless
-          className={cx('pluginIframe', styles.pluginIframe, { [styles.hidden]: !currentPlugin || !isPluginLoaded || !!error })}
+          className={cx('pluginIframe', styles.pluginIframe, {
+            [styles.hidden]: !currentPlugin || !isPluginLoaded || !!error,
+          })}
           title={id}
           ref={pluginIframeRef}
           src="about:blank"
@@ -276,21 +348,25 @@ const QueryCardCliPlugin = (props: Props) => {
           data-testid="pluginIframe"
         />
         {!!error && (
-        <div className={styles.container}>
-          <EuiFlexItem className="query-card-output-response-fail">
-            <span data-testid="query-card-no-module-output">
-              <span className={styles.alertIconWrapper}>
-                  <EuiIcon type="alert" color="danger" style={{ display: 'inline', marginRight: 10 }} />
+          <div className={styles.container}>
+            <FlexItem grow className="query-card-output-response-fail">
+              <span data-testid="query-card-no-module-output">
+                <span className={styles.alertIconWrapper}>
+                  <EuiIcon
+                    type="alert"
+                    color="danger"
+                    style={{ display: 'inline', marginRight: 10 }}
+                  />
+                </span>
+                <EuiTextColor color="danger">{error}</EuiTextColor>
               </span>
-              <EuiTextColor color="danger">{error}</EuiTextColor>
-            </span>
-          </EuiFlexItem>
-        </div>
+            </FlexItem>
+          </div>
         )}
         {!isPluginLoaded && (
-        <div>
-          <EuiLoadingContent lines={5} />
-        </div>
+          <div>
+            <LoadingContent lines={5} />
+          </div>
         )}
       </div>
     </div>

@@ -1,7 +1,11 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import cx from 'classnames'
 import { EuiTextColor } from '@elastic/eui'
-import { ListChildComponentProps, ListOnScrollProps, VariableSizeList as List } from 'react-window'
+import {
+  ListChildComponentProps,
+  ListOnScrollProps,
+  VariableSizeList as List,
+} from 'react-window'
 
 import { DEFAULT_ERROR_MESSAGE, getFormatTime } from 'uiSrc/utils'
 
@@ -36,9 +40,10 @@ const MonitorOutputList = (props: Props) => {
     }
   }, [items])
 
-  const getRowHeight = (index: number) => (
-    rowHeights.current[index] > MIN_ROW_HEIGHT ? (rowHeights.current[index] + 2) : MIN_ROW_HEIGHT
-  )
+  const getRowHeight = (index: number) =>
+    rowHeights.current[index] > MIN_ROW_HEIGHT
+      ? rowHeights.current[index] + 2
+      : MIN_ROW_HEIGHT
 
   const setRowHeight = (index: number, size: number) => {
     listRef.current?.resetAfterIndex(0)
@@ -69,7 +74,10 @@ const MonitorOutputList = (props: Props) => {
       return
     }
 
-    if (e.scrollOffset + outerRef.current.offsetHeight === outerRef.current.scrollHeight) {
+    if (
+      e.scrollOffset + outerRef.current.offsetHeight ===
+      outerRef.current.scrollHeight
+    ) {
       autoScrollRef.current = true
       return
     }
@@ -80,20 +88,31 @@ const MonitorOutputList = (props: Props) => {
   }, [])
 
   const getArgs = (args: string[]): JSX.Element => (
-    <span className={cx(styles.itemArgs, { [styles.itemArgs__compressed]: compressed })}>
+    <span
+      className={cx(styles.itemArgs, {
+        [styles.itemArgs__compressed]: compressed,
+      })}
+    >
       {args?.map((arg, i) => (
         <span key={`${arg + i}`}>
           {i === 0 && (
             <span className={cx(styles.itemCommandFirst)}>{`"${arg}"`}</span>
           )}
-          { i !== 0 && ` "${arg}"`}
+          {i !== 0 && ` "${arg}"`}
         </span>
       ))}
     </span>
   )
 
   const Row = ({ index, style }: ListChildComponentProps) => {
-    const { time = '', args = [], database = '', source = '', isError, message = '' } = items[index]
+    const {
+      time = '',
+      args = [],
+      database = '',
+      source = '',
+      isError,
+      message = '',
+    } = items[index]
     const rowRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -106,14 +125,20 @@ const MonitorOutputList = (props: Props) => {
         {!isError && (
           <div ref={rowRef}>
             {width > MIDDLE_SCREEN_RESOLUTION && (
-              <span className={cx(styles.time)}>{getFormatTime(time)}&nbsp;</span>
+              <span className={cx(styles.time)}>
+                {getFormatTime(time)}&nbsp;
+              </span>
             )}
-            {width > SMALL_SCREEN_RESOLUTION && (<span>{`[${database} ${source}] `}</span>)}
+            {width > SMALL_SCREEN_RESOLUTION && (
+              <span>{`[${database} ${source}] `}</span>
+            )}
             <span>{getArgs(args)}</span>
           </div>
         )}
         {isError && (
-          <EuiTextColor color="danger">{message ?? DEFAULT_ERROR_MESSAGE}</EuiTextColor>
+          <EuiTextColor color="danger">
+            {message ?? DEFAULT_ERROR_MESSAGE}
+          </EuiTextColor>
         )}
       </div>
     )

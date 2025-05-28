@@ -5,7 +5,7 @@ import reducer, {
   initialState,
   fetchCsrfToken,
   fetchCsrfTokenSuccess,
-  fetchCsrfTokenFail
+  fetchCsrfTokenFail,
 } from 'uiSrc/slices/app/csrf'
 import {
   cleanup,
@@ -41,21 +41,24 @@ describe('slices', () => {
       app: {
         ...initialStateDefault.app,
         csrf: nextState,
-      }
+      },
     }
 
     expect(appCsrfSelector(newState).loading).toEqual(true)
   })
 
   it('fetch token success reducer should properly set the state', () => {
-    const nextState = reducer(initialState, fetchCsrfTokenSuccess({ token: 'xyz-456' }))
+    const nextState = reducer(
+      initialState,
+      fetchCsrfTokenSuccess({ token: 'xyz-456' }),
+    )
 
     const newState = {
       ...initialStateDefault,
       app: {
         ...initialStateDefault.app,
         csrf: nextState,
-      }
+      },
     }
 
     expect(appCsrfSelector(newState).token).toEqual('xyz-456')
@@ -63,14 +66,17 @@ describe('slices', () => {
   })
 
   it('fetch token failure reducer should properly set the state', () => {
-    const nextState = reducer(initialState, fetchCsrfTokenFail({ error: 'something went wrong' }))
+    const nextState = reducer(
+      initialState,
+      fetchCsrfTokenFail({ error: 'something went wrong' }),
+    )
 
     const newState = {
       ...initialStateDefault,
       app: {
         ...initialStateDefault.app,
         csrf: nextState,
-      }
+      },
     }
 
     expect(appCsrfSelector(newState).token).toEqual('')
@@ -83,8 +89,8 @@ describe('slices', () => {
 
     apiService.get = jest.fn().mockResolvedValueOnce({
       data: {
-        token: 'xyz-456'
-      }
+        token: 'xyz-456',
+      },
     })
     const successFn = jest.fn()
     const failFn = jest.fn()
@@ -92,7 +98,7 @@ describe('slices', () => {
 
     expect(store.getActions()).toEqual([
       fetchCsrfToken(),
-      fetchCsrfTokenSuccess({ token: 'xyz-456' })
+      fetchCsrfTokenSuccess({ token: 'xyz-456' }),
     ])
     expect(successFn).toHaveBeenCalledWith({ token: 'xyz-456' })
     expect(failFn).not.toHaveBeenCalled()
@@ -101,14 +107,16 @@ describe('slices', () => {
   it('fetchCsrfToken should handle failure', async () => {
     riConfig.api.csrfEndpoint = 'http://localhost'
 
-    apiService.get = jest.fn().mockRejectedValueOnce(new Error('something went wrong'))
+    apiService.get = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('something went wrong'))
     const successFn = jest.fn()
     const failFn = jest.fn()
     await store.dispatch<any>(fetchCsrfTokenAction(successFn, failFn))
 
     expect(store.getActions()).toEqual([
       fetchCsrfToken(),
-      fetchCsrfTokenFail({ error: 'something went wrong' })
+      fetchCsrfTokenFail({ error: 'something went wrong' }),
     ])
     expect(successFn).not.toHaveBeenCalled()
     expect(failFn).toHaveBeenCalled()

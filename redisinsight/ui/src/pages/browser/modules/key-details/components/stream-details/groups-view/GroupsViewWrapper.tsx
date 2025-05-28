@@ -7,7 +7,7 @@ import { lastDeliveredIDTooltipText } from 'uiSrc/constants/texts'
 import {
   selectedKeyDataSelector,
   setSelectedKeyRefreshDisabled,
-  updateSelectedKeyRefreshTime
+  updateSelectedKeyRefreshTime,
 } from 'uiSrc/slices/browser/keys'
 
 import {
@@ -35,7 +35,11 @@ import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import EditablePopover from 'uiSrc/pages/browser/modules/key-details/shared/editable-popover'
 
 import { FormatedDate } from 'uiSrc/components'
-import { ConsumerDto, ConsumerGroupDto, UpdateConsumerGroupDto } from 'apiSrc/modules/browser/stream/dto'
+import {
+  ConsumerDto,
+  ConsumerGroupDto,
+  UpdateConsumerGroupDto,
+} from 'apiSrc/modules/browser/stream/dto'
 
 import GroupsView from './GroupsView'
 
@@ -48,17 +52,17 @@ export interface IConsumerGroup extends ConsumerGroupDto {
 const suffix = '_stream_group'
 const actionsWidth = 48
 
-export interface Props {
-}
+export interface Props {}
 
 const GroupsViewWrapper = (props: Props) => {
   const {
     lastRefreshTime,
     data: loadedGroups = [],
-    loading
+    loading,
   } = useSelector(streamGroupsSelector)
-  const { name: selectedKey, nameString: selectedKeyString } = useSelector(selectedKeyDataSelector)
-    ?? { name: '', nameString: '' }
+  const { name: selectedKey, nameString: selectedKeyString } = useSelector(
+    selectedKeyDataSelector,
+  ) ?? { name: '', nameString: '' }
 
   const dispatch = useDispatch()
 
@@ -75,7 +79,9 @@ const GroupsViewWrapper = (props: Props) => {
   }, [lastRefreshTime])
 
   useEffect(() => {
-    const streamItem: IConsumerGroup[] = loadedGroups?.map((item) => formatItem(item))
+    const streamItem: IConsumerGroup[] = loadedGroups?.map((item) =>
+      formatItem(item),
+    )
 
     setGroups(streamItem)
   }, [loadedGroups, deleting])
@@ -88,22 +94,25 @@ const GroupsViewWrapper = (props: Props) => {
     setIdError('')
   }, [editValue])
 
-  const formatItem = useCallback((item: ConsumerGroupDto): IConsumerGroup => ({
-    ...item,
-    editing: false,
-    name: {
-      ...item.name,
-      viewValue: bufferToString(item.name)
-    },
-    greatestPendingId: {
-      ...item.greatestPendingId,
-      viewValue: bufferToString(item.greatestPendingId)
-    },
-    smallestPendingId: {
-      ...item.smallestPendingId,
-      viewValue: bufferToString(item.smallestPendingId)
-    }
-  }), [])
+  const formatItem = useCallback(
+    (item: ConsumerGroupDto): IConsumerGroup => ({
+      ...item,
+      editing: false,
+      name: {
+        ...item.name,
+        viewValue: bufferToString(item.name),
+      },
+      greatestPendingId: {
+        ...item.greatestPendingId,
+        viewValue: bufferToString(item.greatestPendingId),
+      },
+      smallestPendingId: {
+        ...item.smallestPendingId,
+        viewValue: bufferToString(item.smallestPendingId),
+      },
+    }),
+    [],
+  )
 
   const closePopover = () => {
     setDeleting('')
@@ -118,13 +127,15 @@ const GroupsViewWrapper = (props: Props) => {
       event: TelemetryEvent.STREAM_CONSUMER_GROUP_DELETED,
       eventData: {
         databaseId: instanceId,
-      }
+      },
     })
     closePopover()
   }
 
   const handleDeleteGroup = (name: RedisResponseBuffer) => {
-    dispatch(deleteConsumerGroupsAction(selectedKey, [name], onSuccessDeletedGroup))
+    dispatch(
+      deleteConsumerGroupsAction(selectedKey, [name], onSuccessDeletedGroup),
+    )
   }
 
   const handleRemoveIconClick = () => {
@@ -147,8 +158,8 @@ const GroupsViewWrapper = (props: Props) => {
       event: TelemetryEvent.STREAM_CONSUMERS_LOADED,
       eventData: {
         databaseId: instanceId,
-        length: data.length
-      }
+        length: data.length,
+      },
     })
   }
 
@@ -157,7 +168,7 @@ const GroupsViewWrapper = (props: Props) => {
       event: TelemetryEvent.STREAM_CONSUMER_GROUP_ID_SET,
       eventData: {
         databaseId: instanceId,
-      }
+      },
     })
   }
 
@@ -165,10 +176,7 @@ const GroupsViewWrapper = (props: Props) => {
     dispatch(setSelectedGroup(rowData))
 
     if (!isTruncatedString(rowData?.name)) {
-      dispatch(fetchConsumers(
-        false,
-        onSuccessSelectedGroup,
-      ))
+      dispatch(fetchConsumers(false, onSuccessSelectedGroup))
     } else {
       onSuccessSelectedGroup([])
     }
@@ -179,7 +187,7 @@ const GroupsViewWrapper = (props: Props) => {
       const data: UpdateConsumerGroupDto = {
         keyName: selectedKey,
         name: groupName,
-        lastDeliveredId: editValue
+        lastDeliveredId: editValue,
       }
       dispatch(modifyLastDeliveredIdAction(data, onSuccessApplyEditId))
     }
@@ -187,7 +195,8 @@ const GroupsViewWrapper = (props: Props) => {
 
   const handleEditId = (name: RedisResponseBuffer, lastDeliveredId: string) => {
     const newGroupsState: IConsumerGroup[] = groups?.map((item) =>
-      (isEqualBuffers(item.name, name) ? { ...item, editing: true } : item))
+      isEqualBuffers(item.name, name) ? { ...item, editing: true } : item,
+    )
 
     setGroups(newGroupsState)
     setEditValue(lastDeliveredId)
@@ -195,7 +204,6 @@ const GroupsViewWrapper = (props: Props) => {
   }
 
   const columns: ITableColumn[] = [
-
     {
       id: 'name',
       label: 'Group Name',
@@ -211,7 +219,11 @@ const GroupsViewWrapper = (props: Props) => {
         const tooltipContent = formatLongName(viewName)
         return (
           <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-            <div style={{ display: 'flex' }} className="truncateText" data-testid={`stream-group-name-${viewName}`}>
+            <div
+              style={{ display: 'flex' }}
+              className="truncateText"
+              data-testid={`stream-group-name-${viewName}`}
+            >
               <EuiToolTip
                 className={styles.tooltipName}
                 anchorClassName="truncateText"
@@ -246,7 +258,10 @@ const GroupsViewWrapper = (props: Props) => {
       className: styles.cell,
       headerClassName: 'streamItemHeader',
       headerCellClassName: 'truncateText',
-      render: function P(_name: string, { pending, greatestPendingId, smallestPendingId, name }: IConsumerGroup) {
+      render: function P(
+        _name: string,
+        { pending, greatestPendingId, smallestPendingId, name }: IConsumerGroup,
+      ) {
         const viewName = name?.viewValue ?? ''
         const smallestTimestamp = smallestPendingId?.viewValue?.split('-')?.[0]
         const greatestTimestamp = greatestPendingId?.viewValue?.split('-')?.[0]
@@ -261,7 +276,11 @@ const GroupsViewWrapper = (props: Props) => {
 
         return (
           <EuiText size="s" style={{ maxWidth: '100%' }}>
-            <div style={{ display: 'flex' }} className="truncateText" data-testid={`group-pending-${viewName}`}>
+            <div
+              style={{ display: 'flex' }}
+              className="truncateText"
+              data-testid={`group-pending-${viewName}`}
+            >
               {!!pending && (
                 <EuiToolTip
                   title={`${pending} Pending Messages`}
@@ -289,14 +308,17 @@ const GroupsViewWrapper = (props: Props) => {
       className: cx(styles.cell, 'noPadding'),
       headerClassName: 'streamItemHeader',
       headerCellClassName: 'truncateText',
-      render: function Id(_name: string, { lastDeliveredId: id, name, editing }: IConsumerGroup) {
+      render: function Id(
+        _name: string,
+        { lastDeliveredId: id, name, editing }: IConsumerGroup,
+      ) {
         const timestamp = id?.split('-')?.[0]
         const showIdError = !isIdFocused && idError
         const isTruncatedGroupName = isTruncatedString(name)
 
         return (
           <EditablePopover
-            content={(
+            content={
               <div className={styles.editableCell}>
                 <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
                   <div
@@ -308,12 +330,15 @@ const GroupsViewWrapper = (props: Props) => {
                   </div>
                 </EuiText>
                 <EuiText size="s" style={{ maxWidth: '100%' }}>
-                  <div className="streamItemId" data-testid={`stream-group-id-${id}`}>
+                  <div
+                    className="streamItemId"
+                    data-testid={`stream-group-id-${id}`}
+                  >
                     {id}
                   </div>
                 </EuiText>
               </div>
-              )}
+            }
             field={id}
             prefix="stream-group"
             isOpen={editing}
@@ -337,10 +362,12 @@ const GroupsViewWrapper = (props: Props) => {
                 id="id"
                 placeholder="ID*"
                 value={editValue}
-                onChange={(e: any) => setEditValue(validateConsumerGroupId(e.target.value))}
+                onChange={(e: any) =>
+                  setEditValue(validateConsumerGroupId(e.target.value))
+                }
                 onBlur={() => setIsIdFocused(false)}
                 onFocus={() => setIsIdFocused(true)}
-                append={(
+                append={
                   <EuiToolTip
                     anchorClassName="inputAppendIcon"
                     position="left"
@@ -349,13 +376,21 @@ const GroupsViewWrapper = (props: Props) => {
                   >
                     <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
                   </EuiToolTip>
-                )}
+                }
                 style={{ width: 240 }}
                 autoComplete="off"
                 data-testid="last-id-field"
               />
-              {!showIdError && <span className={styles.idText} data-testid="id-help-text">Timestamp - Sequence Number or $</span>}
-              {showIdError && <span className={styles.error} data-testid="id-error">{idError}</span>}
+              {!showIdError && (
+                <span className={styles.idText} data-testid="id-help-text">
+                  Timestamp - Sequence Number or $
+                </span>
+              )}
+              {showIdError && (
+                <span className={styles.error} data-testid="id-error">
+                  {idError}
+                </span>
+              )}
             </>
           </EditablePopover>
         )
@@ -375,11 +410,12 @@ const GroupsViewWrapper = (props: Props) => {
           <div>
             <PopoverDelete
               header={viewName}
-              text={(
+              text={
                 <>
-                  and all its consumers will be removed from <b>{selectedKeyString}</b>
+                  and all its consumers will be removed from{' '}
+                  <b>{selectedKeyString}</b>
                 </>
-              )}
+              }
               item={viewName}
               suffix={suffix}
               deleting={deleting}

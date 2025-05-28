@@ -10,12 +10,17 @@ import styles from './styles.module.scss'
 import TextDetailsWrapper from '../text-details-wrapper/TextDetailsWrapper'
 
 type ModulesTypeDetailsProps = {
-  moduleName: string, 
-  onClose: () => void,
+  moduleName: string
+  onClose: () => void
 }
-const ModulesTypeDetails = ({ moduleName = 'unsupported', onClose }: ModulesTypeDetailsProps) => {
+const ModulesTypeDetails = ({
+  moduleName = 'unsupported',
+  onClose,
+}: ModulesTypeDetailsProps) => {
   const history = useHistory()
-  const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '' } = useSelector(
+    connectedInstanceSelector,
+  )
 
   const handleGoWorkbenchPage = (e: React.MouseEvent) => {
     e.preventDefault()

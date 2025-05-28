@@ -10,9 +10,7 @@ import { CloudTaskNotFoundException } from 'src/modules/cloud/job/exceptions';
 export class CloudTaskCapiService {
   private logger = new Logger('CloudTaskCapiService');
 
-  constructor(
-    private readonly cloudTaskCapiProvider: CloudTaskCapiProvider,
-  ) {}
+  constructor(private readonly cloudTaskCapiProvider: CloudTaskCapiProvider) {}
 
   async getTask(credentials: CloudCapiAuthDto, id: string): Promise<CloudTask> {
     try {

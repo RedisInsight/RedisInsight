@@ -20,6 +20,6 @@ export interface StatePubSub {
   isSubscribeTriggered: boolean
   isConnected: boolean
   isSubscribed: boolean
-  messages: IMessage[],
+  messages: IMessage[]
   count: number
 }

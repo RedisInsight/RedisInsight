@@ -62,12 +62,15 @@ const convertAnyStringToPositiveIntegerTests = [
   ['1', 49],
   ['4f5daa5e-6139-4e95-8e7c-3283287f4218', 1347108680],
   [
-    (new Array(1000).fill('4f5daa5e-6139-4e95-8e7c-3283287f4218')).join(),
+    new Array(1000).fill('4f5daa5e-6139-4e95-8e7c-3283287f4218').join(),
     229890988,
   ],
 ] as [string, number][];
 describe('convertAnyStringToPositiveInteger', () => {
-  it.each(convertAnyStringToPositiveIntegerTests)('for input: %s, should return: %s', (input, result) => {
-    expect(convertAnyStringToPositiveInteger(input)).toEqual(result);
-  });
+  it.each(convertAnyStringToPositiveIntegerTests)(
+    'for input: %s, should return: %s',
+    (input, result) => {
+      expect(convertAnyStringToPositiveInteger(input)).toEqual(result);
+    },
+  );
 });

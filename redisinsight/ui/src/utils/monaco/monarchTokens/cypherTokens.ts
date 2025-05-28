@@ -1,11 +1,15 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
-import { FUNCTIONS, KEYWORDS, OPERATORS } from 'uiSrc/constants/monaco/cypher/monacoCypher'
+import {
+  FUNCTIONS,
+  KEYWORDS,
+  OPERATORS,
+} from 'uiSrc/constants/monaco/cypher/monacoCypher'
 
 const STRING_DOUBLE = 'string.double'
 const functions = FUNCTIONS.map((f) => f.label)
 
-export const getCypherMonarchTokensProvider = (): monacoEditor.languages.IMonarchLanguage => (
-  {
+export const getCypherMonarchTokensProvider =
+  (): monacoEditor.languages.IMonarchLanguage => ({
     defaultToken: '',
     tokenPostfix: '.cypher',
     ignoreCase: true,
@@ -39,18 +43,8 @@ export const getCypherMonarchTokensProvider = (): monacoEditor.languages.IMonarc
         ],
         { include: '@strings' },
       ],
-      keyword: [
-        [
-          `\\b(${KEYWORDS.join('|')})\\b`,
-          'keyword'
-        ]
-      ],
-      function: [
-        [
-          `\\b(${functions.join('|')})(?=\\s*\\()`,
-          'function'
-        ]
-      ],
+      keyword: [[`\\b(${KEYWORDS.join('|')})\\b`, 'keyword']],
+      function: [[`\\b(${functions.join('|')})(?=\\s*\\()`, 'function']],
       strings: [
         [/'/, { token: 'string', next: '@string' }],
         [/"/, { token: STRING_DOUBLE, next: '@stringDouble' }],
@@ -73,7 +67,6 @@ export const getCypherMonarchTokensProvider = (): monacoEditor.languages.IMonarc
         [/0[xX][0-9a-fA-F]*/, 'number'],
         [/[$][+-]*\d*(\.\d*)?/, 'number'],
         [/((\d+(\.\d*)?)|(\.\d+))([eE][-+]?\d+)?/, 'number'],
-      ]
+      ],
     },
-  }
-)
+  })

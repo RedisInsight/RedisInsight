@@ -5,9 +5,6 @@ import { RedisEnterpriseController } from 'src/modules/redis-enterprise/redis-en
 
 @Module({
   controllers: [RedisEnterpriseController],
-  providers: [
-    RedisEnterpriseService,
-    RedisEnterpriseAnalytics,
-  ],
+  providers: [RedisEnterpriseService, RedisEnterpriseAnalytics],
 })
 export class RedisEnterpriseModule {}

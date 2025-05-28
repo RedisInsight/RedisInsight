@@ -5,8 +5,6 @@ import {
   EuiButton,
   EuiTextColor,
   EuiForm,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiPanel,
   EuiFieldText,
   EuiSuperSelect,
@@ -14,15 +12,19 @@ import {
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
-import { CreateListWithExpireDto, ListElementDestination } from 'apiSrc/modules/browser/list/dto'
-
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import {
-  AddListFormConfig as config,
-} from '../constants/fields-config'
+  CreateListWithExpireDto,
+  ListElementDestination,
+} from 'apiSrc/modules/browser/list/dto'
+
+import { AddListFormConfig as config } from '../constants/fields-config'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import AddMultipleFields from '../../add-multiple-fields'
-import { optionsDestinations, TAIL_DESTINATION } from 'uiSrc/pages/browser/modules/key-details/components/list-details/add-list-elements/AddListElements'
-
+import {
+  optionsDestinations,
+  TAIL_DESTINATION,
+} from 'uiSrc/pages/browser/modules/key-details/components/list-details/add-list-elements/AddListElements'
 
 export interface Props {
   keyName: string
@@ -33,7 +35,8 @@ export interface Props {
 const AddKeyList = (props: Props) => {
   const { keyName = '', keyTTL, onCancel } = props
   const [elements, setElements] = useState<string[]>([''])
-  const [destination, setDestination] = useState<ListElementDestination>(TAIL_DESTINATION)
+  const [destination, setDestination] =
+    useState<ListElementDestination>(TAIL_DESTINATION)
 
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
 
@@ -64,7 +67,8 @@ const AddKeyList = (props: Props) => {
     }
   }
 
-  const isClearDisabled = (item:string) => elements.length === 1 && !item.length
+  const isClearDisabled = (item: string) =>
+    elements.length === 1 && !item.length
 
   const handleElementChange = (value: string, index: number) => {
     const newElements = [...elements]
@@ -107,7 +111,8 @@ const AddKeyList = (props: Props) => {
             value={item}
             disabled={loading}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              handleElementChange(e.target.value, index)}
+              handleElementChange(e.target.value, index)
+            }
             data-testid={`element-${index}`}
           />
         )}
@@ -122,8 +127,8 @@ const AddKeyList = (props: Props) => {
           hasShadow={false}
           borderRadius="none"
         >
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <EuiButton
                 color="secondary"
                 onClick={() => onCancel(true)}
@@ -131,8 +136,8 @@ const AddKeyList = (props: Props) => {
               >
                 <EuiTextColor>Cancel</EuiTextColor>
               </EuiButton>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <EuiButton
                 fill
                 size="m"
@@ -145,8 +150,8 @@ const AddKeyList = (props: Props) => {
               >
                 Add Key
               </EuiButton>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

@@ -3,9 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DatabaseSettingsEntity } from 'src/modules/database-settings/entities/database-setting.entity';
 import { classToClass } from 'src/utils';
-import { InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { DatabaseSettingsRepository } from './database-settings.repository';
 import { DatabaseSettings } from '../models/database-settings';
 
@@ -20,10 +24,13 @@ export class LocalDatabaseSettingsRepository extends DatabaseSettingsRepository 
   }
 
   async createOrUpdate(
-    _sessionMetadata: SessionMetadata, setting: Partial<DatabaseSettings>,
+    _sessionMetadata: SessionMetadata,
+    setting: Partial<DatabaseSettings>,
   ): Promise<DatabaseSettings> {
-    const settingsEntity = plainToClass(DatabaseSettingsEntity, setting);
-    const existing = await this.repository.findOneBy({ databaseId: setting.databaseId });
+    const settingsEntity = plainToInstance(DatabaseSettingsEntity, setting);
+    const existing = await this.repository.findOneBy({
+      databaseId: setting.databaseId,
+    });
 
     if (existing) {
       // update
@@ -33,11 +40,17 @@ export class LocalDatabaseSettingsRepository extends DatabaseSettingsRepository 
     return classToClass(DatabaseSettings, entity);
   }
 
-  async get(sessionMetadata: SessionMetadata, databaseId: string): Promise<DatabaseSettings> {
+  async get(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+  ): Promise<DatabaseSettings> {
     const entity = await this.repository.findOneBy({ databaseId });
 
     if (!entity) {
-      this.logger.error(`Database settings item with id:${databaseId} was not Found`, sessionMetadata);
+      this.logger.error(
+        `Database settings item with id:${databaseId} was not Found`,
+        sessionMetadata,
+      );
       throw new NotFoundException(ERROR_MESSAGES.DATABASE_SETTINGS_NOT_FOUND);
     }
 
@@ -49,11 +62,18 @@ export class LocalDatabaseSettingsRepository extends DatabaseSettingsRepository 
    * @param sessionMetadata
    * @param databaseId
    */
-  async delete(sessionMetadata: SessionMetadata, databaseId: string): Promise<void> {
+  async delete(
+    sessionMetadata: SessionMetadata,
+    databaseId: string,
+  ): Promise<void> {
     try {
       await this.repository.delete({ databaseId });
     } catch (error) {
-      this.logger.error(`Failed to delete database settings item: ${databaseId}`, error, sessionMetadata);
+      this.logger.error(
+        `Failed to delete database settings item: ${databaseId}`,
+        error,
+        sessionMetadata,
+      );
       throw new InternalServerErrorException();
     }
   }

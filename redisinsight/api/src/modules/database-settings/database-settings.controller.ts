@@ -1,6 +1,13 @@
 import {
   Body,
-  Controller, Delete, Get, Param, Post, UseInterceptors, UsePipes, ValidationPipe,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiEndpoint } from 'src/decorators/api-endpoint.decorator';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
@@ -8,9 +15,7 @@ import { BrowserSerializeInterceptor } from 'src/common/interceptors';
 import { ApiRedisParams } from 'src/decorators/api-redis-params.decorator';
 import { SessionMetadata } from 'src/common/models';
 import { RequestSessionMetadata } from 'src/common/decorators';
-import {
-  CreateOrUpdateDatabaseSettingDto,
-} from 'src/modules/database-settings/dto/database-setting.dto';
+import { CreateOrUpdateDatabaseSettingDto } from 'src/modules/database-settings/dto/database-setting.dto';
 import { DatabaseSettingsService } from 'src/modules/database-settings/database-settings.service';
 import { DatabaseSettings } from 'src/modules/database-settings/models/database-settings';
 
@@ -34,7 +39,7 @@ export class DatabaseSettingsController {
   @Get('')
   async get(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Param('dbInstance') databaseId: string,
+    @Param('dbInstance') databaseId: string,
   ): Promise<DatabaseSettings> {
     return this.service.get(sessionMetadata, databaseId);
   }
@@ -53,8 +58,8 @@ export class DatabaseSettingsController {
   @ApiBody({ type: CreateOrUpdateDatabaseSettingDto })
   async create(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Param('dbInstance') databaseId: string,
-      @Body() dto: CreateOrUpdateDatabaseSettingDto,
+    @Param('dbInstance') databaseId: string,
+    @Body() dto: CreateOrUpdateDatabaseSettingDto,
   ): Promise<DatabaseSettings> {
     return this.service.createOrUpdate(sessionMetadata, databaseId, dto);
   }
@@ -67,7 +72,7 @@ export class DatabaseSettingsController {
   })
   async delete(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-      @Param('dbInstance') databaseId: string,
+    @Param('dbInstance') databaseId: string,
   ): Promise<void> {
     await this.service.delete(sessionMetadata, databaseId);
   }

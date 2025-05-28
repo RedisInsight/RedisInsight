@@ -14,12 +14,10 @@ export const mockDatabaseSettings = Object.assign(new DatabaseSettings(), {
     treeViewSort: ':',
   }),
 });
-export const mockDatabaseSettingsEntity = new DatabaseSettingsEntity(
-  {
-    ...mockDatabaseSettings,
-    id: 1,
-  },
-);
+export const mockDatabaseSettingsEntity = new DatabaseSettingsEntity({
+  ...mockDatabaseSettings,
+  id: 1,
+});
 
 export const mockDatabaseSettingsCreateDto = Object.assign(
   new CreateOrUpdateDatabaseSettingDto(),
@@ -29,7 +27,8 @@ export const mockDatabaseSettingsCreateDto = Object.assign(
     },
   },
 );
-export const mockDatabaseSettingsDto = () => classToClass(DatabaseSettings, mockDatabaseSettingsEntity);
+export const mockDatabaseSettingsDto = () =>
+  classToClass(DatabaseSettings, mockDatabaseSettingsEntity);
 
 export const mockDatabaseSettingsRepository = jest.fn(() => ({
   createOrUpdate: jest.fn(),

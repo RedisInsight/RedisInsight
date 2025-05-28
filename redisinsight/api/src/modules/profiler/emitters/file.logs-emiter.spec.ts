@@ -25,7 +25,9 @@ describe('FileLogsEmitter', () => {
     await emitter.emit(items);
     expect(mockWriteStream.write).not.toHaveBeenCalled();
 
-    emitter['logFile']['getWriteStream'] = jest.fn().mockReturnValue(mockWriteStream);
+    emitter['logFile']['getWriteStream'] = jest
+      .fn()
+      .mockReturnValue(mockWriteStream);
     await emitter.emit(items);
     expect(emitter['logFile'].getWriteStream).toHaveBeenCalled();
     expect(mockWriteStream.write).toHaveBeenCalled();
@@ -40,12 +42,16 @@ describe('FileLogsEmitter', () => {
 
   it('addProfilerClient', () => {
     emitter.addProfilerClient(mockProfilerClient.id);
-    expect(emitter['logFile'].addProfilerClient).toHaveBeenCalledWith(mockProfilerClient.id);
+    expect(emitter['logFile'].addProfilerClient).toHaveBeenCalledWith(
+      mockProfilerClient.id,
+    );
   });
 
   it('removeProfilerClient', () => {
     emitter.removeProfilerClient(mockProfilerClient.id);
-    expect(emitter['logFile'].removeProfilerClient).toHaveBeenCalledWith(mockProfilerClient.id);
+    expect(emitter['logFile'].removeProfilerClient).toHaveBeenCalledWith(
+      mockProfilerClient.id,
+    );
   });
 
   it('flushLogs', () => {

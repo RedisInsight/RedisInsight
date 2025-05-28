@@ -1,4 +1,9 @@
-import { EuiFieldText, EuiFieldPassword, EuiIcon, EuiFieldNumber } from '@elastic/eui'
+import {
+  EuiFieldText,
+  EuiFieldPassword,
+  EuiIcon,
+  EuiFieldNumber,
+} from '@elastic/eui'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 import cx from 'classnames'
@@ -14,20 +19,20 @@ export enum SentinelInputFieldType {
 }
 
 export interface Props {
-  name?: string;
-  value?: string;
-  placeholder?: string;
-  inputType?: SentinelInputFieldType;
-  isText?: boolean;
-  isNumber?: boolean;
-  maxLength?: number;
-  min?: number;
-  max?: number;
-  isInvalid?: boolean;
-  disabled?: boolean;
-  className?: string;
-  append?: React.ReactElement;
-  onChangedInput: (name: string, value: string) => void;
+  name?: string
+  value?: string
+  placeholder?: string
+  inputType?: SentinelInputFieldType
+  isText?: boolean
+  isNumber?: boolean
+  maxLength?: number
+  min?: number
+  max?: number
+  isInvalid?: boolean
+  disabled?: boolean
+  className?: string
+  append?: React.ReactElement
+  onChangedInput: (name: string, value: string) => void
 }
 
 const InputFieldSentinel = (props: Props) => {
@@ -85,9 +90,7 @@ const InputFieldSentinel = (props: Props) => {
         <EuiIcon
           color="danger"
           type="alert"
-          className={cx(
-            styles.inputInvalidIcon,
-          )}
+          className={cx(styles.inputInvalidIcon)}
         />
       )}
     </>

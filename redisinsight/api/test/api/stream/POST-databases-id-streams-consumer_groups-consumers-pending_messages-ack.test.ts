@@ -8,24 +8,33 @@ import {
   requirements,
   generateInvalidDataTestCases,
   validateInvalidDataTestCase,
-  validateApiCall, getMainCheckFn
+  validateApiCall,
+  getMainCheckFn,
 } from '../deps';
 const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/streams/consumer-groups/consumers/pending-messages/ack`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/streams/consumer-groups/consumers/pending-messages/ack`,
+  );
 
 const dataSchema = Joi.object({
   keyName: Joi.string().allow('').required(),
   groupName: Joi.string().required().messages({
     'any.required': '{#label} should not be empty',
   }),
-  entries: Joi.array().items(Joi.string().required().label('entries').messages({
-    'any.required': '{#label} should not be empty',
-  })).required().min(1).messages({
-    'array.sparse': 'each value in entries should not be empty',
-  }),
+  entries: Joi.array()
+    .items(
+      Joi.string().required().label('entries').messages({
+        'any.required': '{#label} should not be empty',
+      }),
+    )
+    .required()
+    .min(1)
+    .messages({
+      'array.sparse': 'each value in entries should not be empty',
+    }),
 }).strict();
 
 const validInputData = {
@@ -34,9 +43,11 @@ const validInputData = {
   entries: [constants.TEST_STREAM_ID_1],
 };
 
-const responseSchema = Joi.object().keys({
-  affected: Joi.number().required().min(0),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    affected: Joi.number().required().min(0),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -61,13 +72,13 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
         constants.TEST_STREAM_ID_3,
         constants.TEST_STREAM_FIELD_1,
         constants.TEST_STREAM_VALUE_1,
-      ])
+      ]);
       await rte.data.sendCommand('xadd', [
         constants.TEST_STREAM_KEY_1,
         constants.TEST_STREAM_ID_4,
         constants.TEST_STREAM_FIELD_1,
         constants.TEST_STREAM_VALUE_1,
-      ])
+      ]);
       await rte.data.sendCommand('xreadgroup', [
         'GROUP',
         constants.TEST_STREAM_GROUP_1,
@@ -98,10 +109,12 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
             type: 'Buffer',
             data: [...Buffer.from(constants.TEST_STREAM_GROUP_1)],
           },
-          entries: [{
-            type: 'Buffer',
-            data: [...Buffer.from(constants.TEST_STREAM_ID_3)],
-          }],
+          entries: [
+            {
+              type: 'Buffer',
+              data: [...Buffer.from(constants.TEST_STREAM_ID_3)],
+            },
+          ],
         },
         responseSchema,
         responseBody: { affected: 1 },
@@ -109,16 +122,20 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
           const pendingMessages = await rte.data.sendCommand('xpending', [
             constants.TEST_STREAM_KEY_1,
             constants.TEST_STREAM_GROUP_1,
-            '-', '+', 100,
-          ])
+            '-',
+            '+',
+            100,
+          ]);
           expect(pendingMessages.length).to.eql(2);
         },
         after: async () => {
           const pendingMessages = await rte.data.sendCommand('xpending', [
             constants.TEST_STREAM_KEY_1,
             constants.TEST_STREAM_GROUP_1,
-            '-', '+', 100,
-          ])
+            '-',
+            '+',
+            100,
+          ]);
           expect(pendingMessages.length).to.eql(1);
         },
       },
@@ -135,16 +152,20 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
           const pendingMessages = await rte.data.sendCommand('xpending', [
             constants.TEST_STREAM_KEY_1,
             constants.TEST_STREAM_GROUP_1,
-            '-', '+', 100,
-          ])
+            '-',
+            '+',
+            100,
+          ]);
           expect(pendingMessages.length).to.eql(2);
         },
         after: async () => {
           const pendingMessages = await rte.data.sendCommand('xpending', [
             constants.TEST_STREAM_KEY_1,
             constants.TEST_STREAM_GROUP_1,
-            '-', '+', 100,
-          ])
+            '-',
+            '+',
+            100,
+          ]);
           expect(pendingMessages.length).to.eql(1);
         },
       },
@@ -161,16 +182,20 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
           const pendingMessages = await rte.data.sendCommand('xpending', [
             constants.TEST_STREAM_KEY_1,
             constants.TEST_STREAM_GROUP_1,
-            '-', '+', 100,
-          ])
+            '-',
+            '+',
+            100,
+          ]);
           expect(pendingMessages.length).to.eql(2);
         },
         after: async () => {
           const pendingMessages = await rte.data.sendCommand('xpending', [
             constants.TEST_STREAM_KEY_1,
             constants.TEST_STREAM_GROUP_1,
-            '-', '+', 100,
-          ])
+            '-',
+            '+',
+            100,
+          ]);
           expect(pendingMessages.length).to.eql(2);
         },
       },
@@ -240,7 +265,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
           statusCode: 403,
           error: 'Forbidden',
         },
-        before: () => rte.data.setAclUserRules('~* +@all -exists')
+        before: () => rte.data.setAclUserRules('~* +@all -exists'),
       },
       {
         name: 'Should throw error if no permissions for "xack" command',
@@ -253,7 +278,7 @@ describe('POST /databases/:instanceId/streams/consumer-groups/consumers/pending-
           statusCode: 403,
           error: 'Forbidden',
         },
-        before: () => rte.data.setAclUserRules('~* +@all -xack')
+        before: () => rte.data.setAclUserRules('~* +@all -xack'),
       },
     ].map(mainCheckFn);
   });

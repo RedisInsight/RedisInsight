@@ -40,7 +40,12 @@ export const mockSearchMembersDto: SearchZSetMembersDto = {
 };
 export const mockAddMembersDto: AddMembersToZSetDto = {
   keyName: mockGetMembersDto.keyName,
-  members: [mockZSetMemberDto, mockZSetMemberDto2, mockZSetMemberDto3, mockZSetMemberDto4],
+  members: [
+    mockZSetMemberDto,
+    mockZSetMemberDto2,
+    mockZSetMemberDto3,
+    mockZSetMemberDto4,
+  ],
 };
 export const mockUpdateMemberDto: UpdateMemberInZSetDto = {
   keyName: mockGetMembersDto.keyName,
@@ -58,7 +63,12 @@ export const mockMembersForZAddCommand = [
 ];
 export const mockDeleteMembersDto: DeleteMembersFromZSetDto = {
   keyName: mockAddMembersDto.keyName,
-  members: [mockZSetMemberDto.name, mockZSetMemberDto2.name, mockZSetMemberDto3.name, mockZSetMemberDto4.name],
+  members: [
+    mockZSetMemberDto.name,
+    mockZSetMemberDto2.name,
+    mockZSetMemberDto3.name,
+    mockZSetMemberDto4.name,
+  ],
 };
 export const getZSetMembersInAscResponse = {
   keyName: mockGetMembersDto.keyName,

@@ -5,7 +5,11 @@ import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { findTutorialPath } from 'uiSrc/utils'
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
-import { sendEventTelemetry, TELEMETRY_EMPTY_VALUE, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  sendEventTelemetry,
+  TELEMETRY_EMPTY_VALUE,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
 
 import styles from './styles.module.scss'
 
@@ -32,15 +36,13 @@ const QueryTutorials = ({ tutorials, source }: Props) => {
         path: tutorialPath,
         databaseId: instanceId || TELEMETRY_EMPTY_VALUE,
         source,
-      }
+      },
     })
   }
 
   return (
     <div className={styles.container}>
-      <EuiText className={styles.title}>
-        Tutorials:
-      </EuiText>
+      <EuiText className={styles.title}>Tutorials:</EuiText>
       {tutorials.map(({ id, title }) => (
         <EuiLink
           role="button"

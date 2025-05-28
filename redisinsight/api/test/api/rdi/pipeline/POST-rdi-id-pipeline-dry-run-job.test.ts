@@ -1,44 +1,50 @@
 import { RdiUrl } from 'src/modules/rdi/constants';
 import { sign } from 'jsonwebtoken';
 import { RdiDyRunJobStatus } from 'src/modules/rdi/models';
-import {
-  describe, expect, deps, getMainCheckFn,
-} from '../../deps';
+import { describe, expect, deps, getMainCheckFn } from '../../deps';
 import { Joi, nock } from '../../../helpers/test';
 
-const {
-  localDb, request, server, constants,
-} = deps;
+const { localDb, request, server, constants } = deps;
 
 const testRdiId = 'someTEST_pipeline_dry_run_job';
 const notExistedRdiId = 'notExisted';
 const testRdiUrl = 'http://rdilocal.test';
 
-const endpoint = (id) => request(server).post(`/${constants.API.RDI}/${id || testRdiId}/pipeline/dry-run-job`);
+const endpoint = (id) =>
+  request(server).post(
+    `/${constants.API.RDI}/${id || testRdiId}/pipeline/dry-run-job`,
+  );
 
 const validInputData = {
   input_data: { some: 'data' },
   job: { name: 'job1' },
 };
 
-const responseSchema = Joi.object().keys({
-  transformations: Joi.object().keys({
-    status: Joi.string().allow('success', 'failed').required(),
-    data: Joi.object().keys({
-      connections: Joi.any(),
-      dataStreams: Joi.any(),
-      processingPerformance: Joi.any(),
-      rdiPipelineStatus: Joi.any(),
-      clients: Joi.any(),
-    }).optional(),
-    error: Joi.string().optional(),
-  }),
-  commands: Joi.object().keys({
-    status: Joi.string().allow(RdiDyRunJobStatus.Success, RdiDyRunJobStatus.Fail).required(),
-    data: Joi.any().optional(),
-    error: Joi.any().optional(),
-  }),
-}).required().strict(true);
+const responseSchema = Joi.object()
+  .keys({
+    transformations: Joi.object().keys({
+      status: Joi.string().allow('success', 'failed').required(),
+      data: Joi.object()
+        .keys({
+          connections: Joi.any(),
+          dataStreams: Joi.any(),
+          processingPerformance: Joi.any(),
+          rdiPipelineStatus: Joi.any(),
+          clients: Joi.any(),
+        })
+        .optional(),
+      error: Joi.string().optional(),
+    }),
+    commands: Joi.object().keys({
+      status: Joi.string()
+        .allow(RdiDyRunJobStatus.Success, RdiDyRunJobStatus.Fail)
+        .required(),
+      data: Joi.any().optional(),
+      error: Joi.any().optional(),
+    }),
+  })
+  .required()
+  .strict(true);
 
 const mockResponse = {
   transformations: {
@@ -49,8 +55,10 @@ const mockResponse = {
   },
 };
 
-const mockedAccessToken = sign({ exp: Math.trunc(Date.now() / 1000) + 3600 }, 'test');
-
+const mockedAccessToken = sign(
+  { exp: Math.trunc(Date.now() / 1000) + 3600 },
+  'test',
+);
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -69,7 +77,10 @@ describe('POST /rdi/:id/pipeline/dry-run-job', () => {
         nock(testRdiUrl).post(`/${RdiUrl.Login}`).query(true).reply(200, {
           access_token: mockedAccessToken,
         });
-        nock(testRdiUrl).post(`/${RdiUrl.DryRunJob}`).query(true).reply(200, mockResponse);
+        nock(testRdiUrl)
+          .post(`/${RdiUrl.DryRunJob}`)
+          .query(true)
+          .reply(200, mockResponse);
       },
     },
     {

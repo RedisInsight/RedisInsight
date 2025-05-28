@@ -3,8 +3,6 @@ import cx from 'classnames'
 import { useSelector } from 'react-redux'
 import {
   EuiButtonIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiIcon,
   EuiSuperSelect,
   EuiSuperSelectOption,
@@ -31,9 +29,19 @@ import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { getViewTypeOptions, WBQueryType, getProfileViewTypeOptions, ProfileQueryType, isCommandAllowedForProfile } from 'uiSrc/pages/workbench/constants'
+import {
+  getViewTypeOptions,
+  WBQueryType,
+  getProfileViewTypeOptions,
+  ProfileQueryType,
+  isCommandAllowedForProfile,
+} from 'uiSrc/pages/workbench/constants'
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
-import { RunQueryMode, ResultsMode, ResultsSummary } from 'uiSrc/slices/interfaces/workbench'
+import {
+  RunQueryMode,
+  ResultsMode,
+  ResultsSummary,
+} from 'uiSrc/slices/interfaces/workbench'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { FormatedDate, FullScreen } from 'uiSrc/components'
 
@@ -43,6 +51,7 @@ import ExecutionTimeIcon from 'uiSrc/assets/img/workbench/execution_time.svg?rea
 import GroupModeIcon from 'uiSrc/assets/img/icons/group_mode.svg?react'
 import SilentModeIcon from 'uiSrc/assets/img/icons/silent_mode.svg?react'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import QueryCardTooltip from '../QueryCardTooltip'
 
 import styles from './styles.module.scss'
@@ -78,7 +87,7 @@ const getExecutionTimeString = (value: number): string => {
   if (value < 1) {
     return '0.001 msec'
   }
-  return `${numberWithSpaces((parseFloat((value / 1000).toFixed(3))))} msec`
+  return `${numberWithSpaces(parseFloat((value / 1000).toFixed(3)))} msec`
 }
 
 const getTruncatedExecutionTimeString = (value: number): string => {
@@ -127,14 +136,18 @@ const QueryCardHeader = (props: Props) => {
     event.stopPropagation()
   }
 
-  const sendEvent = (event: TelemetryEvent, query: string, additionalData: object = {}) => {
+  const sendEvent = (
+    event: TelemetryEvent,
+    query: string,
+    additionalData: object = {},
+  ) => {
     sendEventTelemetry({
       event,
       eventData: {
         databaseId: instanceId,
         command: getCommandNameFromQuery(query, COMMANDS_SPEC),
-        ...additionalData
-      }
+        ...additionalData,
+      },
     })
   }
 
@@ -154,18 +167,14 @@ const QueryCardHeader = (props: Props) => {
     const previousView = options.find(({ id }) => id === selectedValue)
     const type = currentView.value
     setSelectedValue(type as WBQueryType, initValue)
-    sendEvent(
-      TelemetryEvent.WORKBENCH_RESULT_VIEW_CHANGED,
-      query,
-      {
-        rawMode: isRawMode(activeMode),
-        group: isGroupMode(activeResultsMode),
-        previousView: previousView?.name,
-        isPreviousViewInternal: !!previousView?.internal,
-        currentView: currentView?.name,
-        isCurrentViewInternal: !!currentView?.internal,
-      }
-    )
+    sendEvent(TelemetryEvent.WORKBENCH_RESULT_VIEW_CHANGED, query, {
+      rawMode: isRawMode(activeMode),
+      group: isGroupMode(activeResultsMode),
+      previousView: previousView?.name,
+      isPreviousViewInternal: !!previousView?.internal,
+      currentView: currentView?.name,
+      isCurrentViewInternal: !!currentView?.internal,
+    })
   }
 
   const handleQueryDelete = (event: React.MouseEvent) => {
@@ -180,29 +189,37 @@ const QueryCardHeader = (props: Props) => {
   }
 
   const handleToggleOpen = () => {
-    if (!isFullScreen && !isSilentModeWithoutError(resultsMode, summary?.fail)) {
+    if (
+      !isFullScreen &&
+      !isSilentModeWithoutError(resultsMode, summary?.fail)
+    ) {
       sendEvent(
-        isOpen ? TelemetryEvent.WORKBENCH_RESULTS_COLLAPSED : TelemetryEvent.WORKBENCH_RESULTS_EXPANDED,
-        query
+        isOpen
+          ? TelemetryEvent.WORKBENCH_RESULTS_COLLAPSED
+          : TelemetryEvent.WORKBENCH_RESULTS_EXPANDED,
+        query,
       )
     }
     toggleOpen()
   }
 
-  const pluginsOptions = getVisualizationsByCommand(query, visualizations)
-    .map((visualization: IPluginVisualization) => ({
+  const pluginsOptions = getVisualizationsByCommand(query, visualizations).map(
+    (visualization: IPluginVisualization) => ({
       id: visualization.uniqId,
       value: WBQueryType.Plugin,
       name: `${visualization.id}__${visualization.name}`,
       text: visualization.name,
-      iconDark: (visualization.plugin.internal && visualization.iconDark)
-        ? urlForAsset(visualization.plugin.baseUrl, visualization.iconDark)
-        : DefaultPluginIconDark,
-      iconLight: (visualization.plugin.internal && visualization.iconLight)
-        ? urlForAsset(visualization.plugin.baseUrl, visualization.iconLight)
-        : DefaultPluginIconLight,
-      internal: visualization.plugin.internal
-    }))
+      iconDark:
+        visualization.plugin.internal && visualization.iconDark
+          ? urlForAsset(visualization.plugin.baseUrl, visualization.iconDark)
+          : DefaultPluginIconDark,
+      iconLight:
+        visualization.plugin.internal && visualization.iconLight
+          ? urlForAsset(visualization.plugin.baseUrl, visualization.iconLight)
+          : DefaultPluginIconLight,
+      internal: visualization.plugin.internal,
+    }),
+  )
 
   const options: any[] = getViewTypeOptions()
   options.push(...pluginsOptions)
@@ -238,12 +255,16 @@ const QueryCardHeader = (props: Props) => {
     }
   })
 
-  const profileOptions: EuiSuperSelectOption<any>[] = (getProfileViewTypeOptions() as any[]).map((item) => {
+  const profileOptions: EuiSuperSelectOption<any>[] = (
+    getProfileViewTypeOptions() as any[]
+  ).map((item) => {
     const { value, id, text } = item
     return {
       value: id ?? value,
       inputDisplay: (
-        <div className={cx(styles.dropdownOption, styles.dropdownProfileOption)}>
+        <div
+          className={cx(styles.dropdownOption, styles.dropdownProfileOption)}
+        >
           <EuiIcon
             className={styles.iconDropdownOption}
             type="visTagCloud"
@@ -252,7 +273,9 @@ const QueryCardHeader = (props: Props) => {
         </div>
       ),
       dropdownDisplay: (
-        <div className={cx(styles.dropdownOption, styles.dropdownProfileOption)}>
+        <div
+          className={cx(styles.dropdownOption, styles.dropdownProfileOption)}
+        >
           <span>{truncateText(text, 20)}</span>
         </div>
       ),
@@ -262,12 +285,15 @@ const QueryCardHeader = (props: Props) => {
 
   const canCommandProfile = isCommandAllowedForProfile(query)
 
-  const indexForSeparator = findIndex(pluginsOptions, (option) => !option.internal)
+  const indexForSeparator = findIndex(
+    pluginsOptions,
+    (option) => !option.internal,
+  )
   if (indexForSeparator > -1) {
     modifiedOptions.splice(indexForSeparator + 1, 0, {
       value: '',
       disabled: true,
-      inputDisplay: (<span className={styles.separator} />)
+      inputDisplay: <span className={styles.separator} />,
     })
   }
 
@@ -276,53 +302,67 @@ const QueryCardHeader = (props: Props) => {
       onClick={handleToggleOpen}
       tabIndex={0}
       onKeyDown={() => {}}
-      className={cx(
-        styles.container,
-        'query-card-header',
-        {
-          [styles.isOpen]: isOpen,
-          [styles.notExpanded]: isSilentModeWithoutError(resultsMode, summary?.fail),
-        },
-      )}
+      className={cx(styles.container, 'query-card-header', {
+        [styles.isOpen]: isOpen,
+        [styles.notExpanded]: isSilentModeWithoutError(
+          resultsMode,
+          summary?.fail,
+        ),
+      })}
       data-testid="query-card-open"
       role="button"
     >
-      <EuiFlexGroup alignItems="center" gutterSize="l" responsive={false} style={{ width: '100%' }}>
-        <EuiFlexItem
-          className={styles.titleWrapper}
-          grow
-        >
+      <Row align="center" gap="l" style={{ width: '100%' }}>
+        <FlexItem className={styles.titleWrapper} grow>
           <div className="copy-btn-wrapper">
-            <EuiTextColor className={styles.title} color="subdued" component="div" data-testid="query-card-command">
-              <QueryCardTooltip query={query} summary={summaryText} db={db} resultsMode={resultsMode} />
+            <EuiTextColor
+              className={styles.title}
+              color="subdued"
+              component="div"
+              data-testid="query-card-command"
+            >
+              <QueryCardTooltip
+                query={query}
+                summary={summaryText}
+                db={db}
+                resultsMode={resultsMode}
+              />
             </EuiTextColor>
             <EuiButtonIcon
               iconType="copy"
               aria-label="Copy query"
               className={cx('copy-btn', styles.copyBtn)}
               disabled={emptyCommand}
-              onClick={(event: React.MouseEvent) => handleCopy(event, query || '')}
+              onClick={(event: React.MouseEvent) =>
+                handleCopy(event, query || '')
+              }
               data-testid="copy-command"
             />
           </div>
-        </EuiFlexItem>
-        <EuiFlexItem className={styles.controls} grow={false}>
-          <EuiFlexGroup alignItems="center" gutterSize="m" responsive={false}>
-            <EuiFlexItem className={styles.time} data-testid="command-execution-date-time" grow={false}>
+        </FlexItem>
+        <FlexItem className={styles.controls}>
+          <Row align="center" gap="m">
+            <FlexItem
+              className={styles.time}
+              data-testid="command-execution-date-time"
+            >
               {!!createdAt && (
                 <EuiTextColor className={styles.timeText} component="div">
                   <FormatedDate date={createdAt} />
                 </EuiTextColor>
               )}
-            </EuiFlexItem>
-            <EuiFlexItem grow={false} className={styles.summaryTextWrapper}>
+            </FlexItem>
+            <FlexItem className={styles.summaryTextWrapper}>
               {!!message && !isOpen && (
                 <EuiTextColor className={styles.summaryText} component="div">
                   {truncateText(message, 13)}
                 </EuiTextColor>
               )}
-            </EuiFlexItem>
-            <EuiFlexItem grow={false} className={styles.executionTime} data-testid="command-execution-time">
+            </FlexItem>
+            <FlexItem
+              className={styles.executionTime}
+              data-testid="command-execution-time"
+            >
               {isNumber(executionTime) && (
                 <EuiToolTip
                   title="Processing Time"
@@ -338,7 +378,10 @@ const QueryCardHeader = (props: Props) => {
                       className={styles.iconExecutingTime}
                     />
                     <EuiTextColor
-                      className={cx(styles.summaryText, styles.executionTimeValue)}
+                      className={cx(
+                        styles.summaryText,
+                        styles.executionTimeValue,
+                      )}
                       data-testid="command-execution-time-value"
                     >
                       {getTruncatedExecutionTimeString(executionTime)}
@@ -346,9 +389,8 @@ const QueryCardHeader = (props: Props) => {
                   </>
                 </EuiToolTip>
               )}
-            </EuiFlexItem>
-            <EuiFlexItem
-              grow={false}
+            </FlexItem>
+            <FlexItem
               className={cx(styles.buttonIcon, styles.viewTypeIcon)}
               onClick={onDropDownViewClick}
             >
@@ -357,18 +399,25 @@ const QueryCardHeader = (props: Props) => {
                   <div className={styles.dropdown}>
                     <EuiSuperSelect
                       options={profileOptions}
-                      itemClassName={cx(styles.changeViewItem, styles.dropdownProfileItem)}
-                      className={cx(styles.changeView, styles.dropdownProfileIcon)}
+                      itemClassName={cx(
+                        styles.changeViewItem,
+                        styles.dropdownProfileItem,
+                      )}
+                      className={cx(
+                        styles.changeView,
+                        styles.dropdownProfileIcon,
+                      )}
                       valueOfSelected={ProfileQueryType.Profile}
-                      onChange={(value: ProfileQueryType) => onQueryProfile(value)}
+                      onChange={(value: ProfileQueryType) =>
+                        onQueryProfile(value)
+                      }
                       data-testid="run-profile-type"
                     />
                   </div>
                 </div>
               )}
-            </EuiFlexItem>
-            <EuiFlexItem
-              grow={false}
+            </FlexItem>
+            <FlexItem
               className={cx(styles.buttonIcon, styles.viewTypeIcon)}
               onClick={onDropDownViewClick}
             >
@@ -386,13 +435,19 @@ const QueryCardHeader = (props: Props) => {
                   </div>
                 </div>
               )}
-            </EuiFlexItem>
-            <EuiFlexItem grow={false} className={styles.buttonIcon} onClick={onDropDownViewClick}>
+            </FlexItem>
+            <FlexItem
+              className={styles.buttonIcon}
+              onClick={onDropDownViewClick}
+            >
               {(isOpen || isFullScreen) && (
-                <FullScreen isFullScreen={isFullScreen} onToggleFullScreen={toggleFullScreen} />
+                <FullScreen
+                  isFullScreen={isFullScreen}
+                  onToggleFullScreen={toggleFullScreen}
+                />
               )}
-            </EuiFlexItem>
-            <EuiFlexItem grow={false} className={styles.buttonIcon}>
+            </FlexItem>
+            <FlexItem className={styles.buttonIcon}>
               <EuiButtonIcon
                 disabled={loading || clearing}
                 iconType="trash"
@@ -400,13 +455,10 @@ const QueryCardHeader = (props: Props) => {
                 data-testid="delete-command"
                 onClick={handleQueryDelete}
               />
-            </EuiFlexItem>
+            </FlexItem>
             {!isFullScreen && (
-              <EuiFlexItem grow={false} className={cx(styles.buttonIcon, styles.playIcon)}>
-                <EuiToolTip
-                  content="Run again"
-                  position="left"
-                >
+              <FlexItem className={cx(styles.buttonIcon, styles.playIcon)}>
+                <EuiToolTip content="Run again" position="left">
                   <EuiButtonIcon
                     disabled={emptyCommand}
                     iconType="play"
@@ -415,38 +467,51 @@ const QueryCardHeader = (props: Props) => {
                     onClick={handleQueryReRun}
                   />
                 </EuiToolTip>
-              </EuiFlexItem>
+              </FlexItem>
             )}
             {!isFullScreen && (
-              <EuiFlexItem grow={false} className={styles.buttonIcon}>
-                {!isSilentModeWithoutError(resultsMode, summary?.fail)
-                  && <EuiButtonIcon iconType={isOpen ? 'arrowUp' : 'arrowDown'} aria-label="toggle collapse" />}
-              </EuiFlexItem>
+              <FlexItem className={styles.buttonIcon}>
+                {!isSilentModeWithoutError(resultsMode, summary?.fail) && (
+                  <EuiButtonIcon
+                    iconType={isOpen ? 'arrowUp' : 'arrowDown'}
+                    aria-label="toggle collapse"
+                  />
+                )}
+              </FlexItem>
             )}
-            <EuiFlexItem grow={false} className={styles.buttonIcon}>
+            <FlexItem className={styles.buttonIcon}>
               {(isRawMode(mode) || isGroupResults(resultsMode)) && (
                 <EuiToolTip
                   className={styles.tooltip}
                   anchorClassName={styles.tooltipAnchor}
-                  content={(
+                  content={
                     <>
                       {isGroupMode(resultsMode) && (
-                        <EuiTextColor className={cx(styles.mode)} data-testid="group-mode-tooltip">
+                        <EuiTextColor
+                          className={cx(styles.mode)}
+                          data-testid="group-mode-tooltip"
+                        >
                           <EuiIcon type={GroupModeIcon} />
                         </EuiTextColor>
                       )}
                       {isSilentMode(resultsMode) && (
-                        <EuiTextColor className={cx(styles.mode)} data-testid="silent-mode-tooltip">
+                        <EuiTextColor
+                          className={cx(styles.mode)}
+                          data-testid="silent-mode-tooltip"
+                        >
                           <EuiIcon type={SilentModeIcon} />
                         </EuiTextColor>
                       )}
                       {isRawMode(mode) && (
-                        <EuiTextColor className={cx(styles.mode)} data-testid="raw-mode-tooltip">
+                        <EuiTextColor
+                          className={cx(styles.mode)}
+                          data-testid="raw-mode-tooltip"
+                        >
                           -r
                         </EuiTextColor>
                       )}
                     </>
-                  )}
+                  }
                   position="bottom"
                   data-testid="parameters-tooltip"
                 >
@@ -457,10 +522,10 @@ const QueryCardHeader = (props: Props) => {
                   />
                 </EuiToolTip>
               )}
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+            </FlexItem>
+          </Row>
+        </FlexItem>
+      </Row>
     </div>
   )
 }

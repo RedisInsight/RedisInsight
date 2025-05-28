@@ -7,11 +7,10 @@ import {
   EuiIcon,
   EuiInMemoryTable,
   EuiLink,
-  EuiSpacer,
   EuiText,
   EuiTitle,
   EuiToolTip,
-  PropertySort
+  PropertySort,
 } from '@elastic/eui'
 import { format } from 'date-fns'
 import cx from 'classnames'
@@ -21,11 +20,16 @@ import { formatLongName, Maybe, Nullable } from 'uiSrc/utils'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
-import { CloudCapiKey, OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
+import {
+  CloudCapiKey,
+  OAuthSocialAction,
+  OAuthSocialSource,
+} from 'uiSrc/slices/interfaces'
 import { removeCapiKeyAction } from 'uiSrc/slices/oauth/cloud'
 
 import CloudStars from 'uiSrc/assets/img/oauth/stars.svg?react'
 
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -34,7 +38,10 @@ export interface Props {
 }
 
 const UserApiKeysTable = ({ items, loading }: Props) => {
-  const [sort, setSort] = useState<Maybe<PropertySort>>({ field: 'createdAt', direction: 'desc' })
+  const [sort, setSort] = useState<Maybe<PropertySort>>({
+    field: 'createdAt',
+    direction: 'desc',
+  })
   const [deleting, setDeleting] = useState('')
 
   const dispatch = useDispatch()
@@ -42,7 +49,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
   const handleCopy = (value: string) => {
     navigator?.clipboard?.writeText(value)
     sendEventTelemetry({
-      event: TelemetryEvent.SETTINGS_CLOUD_API_KEY_NAME_COPIED
+      event: TelemetryEvent.SETTINGS_CLOUD_API_KEY_NAME_COPIED,
     })
   }
 
@@ -56,8 +63,8 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
       event: TelemetryEvent.SETTINGS_CLOUD_API_KEY_SORTED,
       eventData: {
         ...sort,
-        numberOfKeys: items?.length || 0
-      }
+        numberOfKeys: items?.length || 0,
+      },
     })
   }
 
@@ -65,22 +72,24 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
     sendEventTelemetry({
       event: TelemetryEvent.SETTINGS_CLOUD_API_KEY_REMOVE_CLICKED,
       eventData: {
-        source: OAuthSocialSource.SettingsPage
-      }
+        source: OAuthSocialSource.SettingsPage,
+      },
     })
   }
 
   const handleDeleteApiKey = (id: string, name: string) => {
     setDeleting('')
 
-    dispatch(removeCapiKeyAction({ id, name }, () => {
-      sendEventTelemetry({
-        event: TelemetryEvent.CLOUD_API_KEY_REMOVED,
-        eventData: {
-          source: OAuthSocialSource.SettingsPage
-        }
-      })
-    }))
+    dispatch(
+      removeCapiKeyAction({ id, name }, () => {
+        sendEventTelemetry({
+          event: TelemetryEvent.CLOUD_API_KEY_REMOVED,
+          eventData: {
+            source: OAuthSocialSource.SettingsPage,
+          },
+        })
+      }),
+    )
   }
 
   const columns: EuiBasicTableColumn<any>[] = [
@@ -100,18 +109,19 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
                 content="This API key is invalid. Remove it from   and Redis Cloud and create a new one instead."
                 anchorClassName={styles.invalidIconAnchor}
               >
-                <EuiIcon className={styles.invalidIcon} type="alert" color="danger" />
+                <EuiIcon
+                  className={styles.invalidIcon}
+                  type="alert"
+                  color="danger"
+                />
               </EuiToolTip>
             )}
-            <EuiToolTip
-              title="API Key Name"
-              content={tooltipContent}
-            >
+            <EuiToolTip title="API Key Name" content={tooltipContent}>
               <>{value}</>
             </EuiToolTip>
           </div>
         )
-      }
+      },
     },
     {
       name: 'Created',
@@ -120,12 +130,10 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
       truncateText: true,
       width: '120x',
       render: (value: number) => (
-        <EuiToolTip
-          content={format(new Date(value), 'HH:mm:ss d LLL yyyy')}
-        >
+        <EuiToolTip content={format(new Date(value), 'HH:mm:ss d LLL yyyy')}>
           <>{format(new Date(value), 'd MMM yyyy')}</>
         </EuiToolTip>
-      )
+      ),
     },
     {
       name: 'Last used',
@@ -143,7 +151,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
           )}
           {!value && 'Never'}
         </>
-      )
+      ),
     },
     {
       name: '',
@@ -152,7 +160,10 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
       width: '80px',
       render: (_value, { id, name }) => (
         <div>
-          <EuiToolTip content="Copy API Key Name" anchorClassName={styles.copyBtnAnchor}>
+          <EuiToolTip
+            content="Copy API Key Name"
+            anchorClassName={styles.copyBtnAnchor}
+          >
             <EuiButtonIcon
               iconType="copy"
               aria-label="Copy API key"
@@ -162,8 +173,13 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
             />
           </EuiToolTip>
           <PopoverDelete
-            header={(<>{formatLongName(name)} <br /> will be removed from Redis Insight.</>)}
-            text={(
+            header={
+              <>
+                {formatLongName(name)} <br /> will be removed from Redis
+                Insight.
+              </>
+            }
+            text={
               <>
                 {'To delete this API key from Redis Cloud, '}
                 <EuiLink
@@ -177,7 +193,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
                 </EuiLink>
                 {' and delete it manually.'}
               </>
-            )}
+            }
             item={id}
             suffix=""
             deleting={deleting}
@@ -189,7 +205,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
             handleButtonClick={handleClickDeleteApiKey}
           />
         </div>
-      )
+      ),
     },
   ]
 
@@ -205,12 +221,13 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
               <span>The ultimate Redis starting point</span>
             </>
           </EuiTitle>
-          <EuiSpacer size="s" />
+          <Spacer size="s" />
           <EuiText size="s" className={styles.smallText} color="subdued">
-            Cloud API keys will be created and stored when you connect to Redis Cloud to create
-            a free trial Cloud database or autodiscover your Cloud database.
+            Cloud API keys will be created and stored when you connect to Redis
+            Cloud to create a free trial Cloud database or autodiscover your
+            Cloud database.
           </EuiText>
-          <EuiSpacer />
+          <Spacer />
           <div className={styles.actions}>
             <OAuthSsoHandlerDialog>
               {(socialCloudHandlerClick) => (
@@ -218,10 +235,12 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
                   size="s"
                   color="ghost"
                   className={styles.autodiscoverBtn}
-                  onClick={(e: React.MouseEvent) => socialCloudHandlerClick(e, {
-                    source: OAuthSocialSource.SettingsPage,
-                    action: OAuthSocialAction.Import
-                  })}
+                  onClick={(e: React.MouseEvent) =>
+                    socialCloudHandlerClick(e, {
+                      source: OAuthSocialSource.SettingsPage,
+                      action: OAuthSocialAction.Import,
+                    })
+                  }
                   data-testid="autodiscover-btn"
                 >
                   Autodiscover
@@ -234,10 +253,12 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
                   fill
                   size="s"
                   color="secondary"
-                  onClick={(e: React.MouseEvent) => ssoCloudHandlerClick(e, {
-                    source: OAuthSocialSource.SettingsPage,
-                    action: OAuthSocialAction.Create
-                  })}
+                  onClick={(e: React.MouseEvent) =>
+                    ssoCloudHandlerClick(e, {
+                      source: OAuthSocialSource.SettingsPage,
+                      action: OAuthSocialAction.Create,
+                    })
+                  }
                   data-testid="create-cloud-db-btn"
                 >
                   Create Redis Cloud database
@@ -246,7 +267,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
             </OAuthSsoHandlerDialog>
           </div>
         </div>
-        <EuiSpacer />
+        <Spacer />
       </>
     )
   }
@@ -256,7 +277,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
       loading={loading}
       items={items ?? []}
       columns={columns}
-      sorting={sort ? ({ sort }) : true}
+      sorting={sort ? { sort } : true}
       responsive={false}
       message="No Api Keys"
       onTableChange={handleSorting}
@@ -264,7 +285,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
         'inMemoryTableDefault',
         'stickyHeader',
         'noBorders',
-        styles.table
+        styles.table,
       )}
       rowProps={(row) => ({
         'data-testid': `row-${row.name}`,

@@ -1,26 +1,40 @@
 import React from 'react'
-import { EuiButton, EuiButtonEmpty, EuiPopover, EuiSpacer, EuiText, EuiTitle } from '@elastic/eui'
+import {
+  EuiButton,
+  EuiButtonEmpty,
+  EuiPopover,
+  EuiText,
+  EuiTitle,
+} from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
-import { appFeatureOnboardingSelector, setOnboardNextStep, skipOnboarding } from 'uiSrc/slices/app/features'
+import {
+  appFeatureOnboardingSelector,
+  setOnboardNextStep,
+  skipOnboarding,
+} from 'uiSrc/slices/app/features'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 const OnboardingStartPopover = () => {
-  const { id: connectedInstanceId = '' } = useSelector(connectedInstanceSelector)
+  const { id: connectedInstanceId = '' } = useSelector(
+    connectedInstanceSelector,
+  )
   const { isActive, currentStep } = useSelector(appFeatureOnboardingSelector)
   const dispatch = useDispatch()
 
-  const sendTelemetry = (action: string) => sendEventTelemetry({
-    event: TelemetryEvent.ONBOARDING_TOUR_CLICKED,
-    eventData: {
-      databaseId: connectedInstanceId,
-      step: OnboardingStepName.Start,
-      action
-    }
-  })
+  const sendTelemetry = (action: string) =>
+    sendEventTelemetry({
+      event: TelemetryEvent.ONBOARDING_TOUR_CLICKED,
+      eventData: {
+        databaseId: connectedInstanceId,
+        step: OnboardingStepName.Start,
+        action,
+      },
+    })
 
   const handleSkip = () => {
     dispatch(skipOnboarding())
@@ -45,9 +59,10 @@ const OnboardingStartPopover = () => {
       <EuiTitle size="xs">
         <h5>Take a quick tour of Redis Insight?</h5>
       </EuiTitle>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
       <EuiText data-testid="onboarding-start-content">
-        Hi! Redis Insight has many tools that can help you to optimize the development process.
+        Hi! Redis Insight has many tools that can help you to optimize the
+        development process.
         <br />
         Would you like us to show them to you?
       </EuiText>

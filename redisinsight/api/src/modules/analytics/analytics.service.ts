@@ -71,7 +71,9 @@ export class AnalyticsService {
    * @param sessionMetadata
    */
   public getAnonymousId(sessionMetadata?: SessionMetadata): string {
-    return this.anonymousId ?? this.constantsProvider.getAnonymousId(sessionMetadata);
+    return (
+      this.anonymousId ?? this.constantsProvider.getAnonymousId(sessionMetadata)
+    );
   }
 
   /**
@@ -96,7 +98,14 @@ export class AnalyticsService {
 
   public async init(initConfig: ITelemetryInitEvent) {
     const {
-      anonymousId, sessionId, appType, controlNumber, controlGroup, appVersion, firstStart, sessionMetadata,
+      anonymousId,
+      sessionId,
+      appType,
+      controlNumber,
+      controlGroup,
+      appVersion,
+      firstStart,
+      sessionMetadata,
     } = initConfig;
     this.sessionId = sessionId;
     this.anonymousId = anonymousId;
@@ -107,16 +116,19 @@ export class AnalyticsService {
     this.analytics = new Analytics({
       writeKey: ANALYTICS_CONFIG.writeKey,
       flushInterval: ANALYTICS_CONFIG.flushInterval,
-      httpClient: (url, requestInit) => axios.request({
-        ...requestInit,
-        url,
-        data: requestInit.body,
-      }),
+      httpClient: (url, requestInit) =>
+        axios.request({
+          ...requestInit,
+          url,
+          data: requestInit.body,
+        }),
     });
 
     if (ANALYTICS_CONFIG.startEvents && sessionMetadata) {
       this.sendEvent(sessionMetadata, {
-        event: firstStart ? TelemetryEvents.ApplicationFirstStart : TelemetryEvents.ApplicationStarted,
+        event: firstStart
+          ? TelemetryEvents.ApplicationFirstStart
+          : TelemetryEvents.ApplicationStarted,
         eventData: {
           appVersion: SERVER_CONFIG.appVersion,
           osPlatform: process.platform,
@@ -176,25 +188,30 @@ export class AnalyticsService {
     }
   }
 
-  private async prepareEventData(sessionMetadata: SessionMetadata, payload: ITelemetryEvent) {
+  private async prepareEventData(
+    sessionMetadata: SessionMetadata,
+    payload: ITelemetryEvent,
+  ) {
     try {
-      const {
-        eventData,
-        nonTracking,
-        traits = {},
-      } = payload;
-      const isAnalyticsGranted = await this.checkIsAnalyticsGranted(sessionMetadata);
+      const { eventData, nonTracking, traits = {} } = payload;
+      const isAnalyticsGranted =
+        await this.checkIsAnalyticsGranted(sessionMetadata);
 
       if (isAnalyticsGranted || nonTracking) {
         return {
-          anonymousId: !isAnalyticsGranted && nonTracking
-            ? NON_TRACKING_ANONYMOUS_ID
-            : this.getAnonymousId(sessionMetadata),
-          integrations: { Amplitude: { session_id: this.getSessionId(sessionMetadata) } },
+          anonymousId:
+            !isAnalyticsGranted && nonTracking
+              ? NON_TRACKING_ANONYMOUS_ID
+              : this.getAnonymousId(sessionMetadata),
+          integrations: {
+            Amplitude: { session_id: this.getSessionId(sessionMetadata) },
+          },
           context: {
             traits: {
               ...traits,
-              telemetry: isAnalyticsGranted ? Telemetry.Enabled : Telemetry.Disabled,
+              telemetry: isAnalyticsGranted
+                ? Telemetry.Enabled
+                : Telemetry.Disabled,
             },
           },
           properties: {

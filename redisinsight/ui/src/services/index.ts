@@ -11,4 +11,5 @@ export * from './theme'
 export * from './hooks'
 export * from './capability'
 export { apiService, resourcesService }
-export { WorkbenchStorage } from 'uiSrc/services/workbenchStorage';
+export { WorkbenchStorage } from 'uiSrc/services/workbenchStorage'
+export * as instancesService from 'uiSrc/services/database/instancesService'

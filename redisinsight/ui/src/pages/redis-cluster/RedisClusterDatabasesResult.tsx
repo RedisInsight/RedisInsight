@@ -8,8 +8,6 @@ import {
   EuiTitle,
   EuiFieldSearch,
   EuiFormRow,
-  EuiFlexGroup,
-  EuiFlexItem,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
@@ -23,12 +21,13 @@ import { clusterSelector } from 'uiSrc/slices/instances/cluster'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<InstanceRedisCluster>[];
-  onView: (sendEvent?: boolean) => void;
-  onBack: (sendEvent?: boolean) => void;
+  columns: EuiBasicTableColumn<InstanceRedisCluster>[]
+  onView: (sendEvent?: boolean) => void
+  onBack: (sendEvent?: boolean) => void
 }
 
 const loadingMsg = 'loading...'
@@ -50,20 +49,20 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
   }
 
   const countSuccessAdded = instances.filter(
-    ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Success
+    ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Success,
   )?.length
 
   const countFailAdded = instances.filter(
-    ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Fail
+    ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Fail,
   )?.length
 
   const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e?.target?.value?.toLowerCase()
     const itemsTemp = instances.filter(
       (item: InstanceRedisCluster) =>
-        item.name?.toLowerCase().indexOf(value) !== -1
-        || item.dnsName?.toLowerCase().indexOf(value) !== -1
-        || item.port?.toString().indexOf(value) !== -1
+        item.name?.toLowerCase().indexOf(value) !== -1 ||
+        item.dnsName?.toLowerCase().indexOf(value) !== -1 ||
+        item.port?.toString().indexOf(value) !== -1,
     )
 
     if (!itemsTemp.length) {
@@ -77,22 +76,12 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
       <b>Summary: </b>
       {countSuccessAdded ? (
         <span>
-          Successfully added
-          {' '}
-          {countSuccessAdded}
-          {' '}
-          database(s)
+          Successfully added {countSuccessAdded} database(s)
           {countFailAdded ? '. ' : '.'}
         </span>
       ) : null}
       {countFailAdded ? (
-        <span>
-          Failed to add
-          {' '}
-          {countFailAdded}
-          {' '}
-          database(s).
-        </span>
+        <span>Failed to add {countFailAdded} database(s).</span>
       ) : null}
     </EuiText>
   )
@@ -109,15 +98,13 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
             Added
           </h1>
         </EuiTitle>
-        <EuiFlexGroup alignItems="flexEnd" gutterSize="s">
-          <EuiFlexItem>
-            <MessageBar
-              opened={!!countSuccessAdded || !!countFailAdded}
-            >
+        <Row align="end" gap="s">
+          <FlexItem grow>
+            <MessageBar opened={!!countSuccessAdded || !!countFailAdded}>
               <SummaryText />
             </MessageBar>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiFormRow className={styles.searchForm}>
               <EuiFieldSearch
                 placeholder="Search..."
@@ -128,8 +115,8 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
                 data-testid="search"
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
         <br />
         <div className="itemList databaseList clusterDatabaseListResult">
           <EuiInMemoryTable

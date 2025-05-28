@@ -6,7 +6,7 @@ import {
   notificationCenterSelector,
   setIsCenterOpen,
   setIsNotificationOpen,
-  unreadNotificationsAction
+  unreadNotificationsAction,
 } from 'uiSrc/slices/app/notifications'
 import { IGlobalNotification } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -17,9 +17,11 @@ import styles from '../styles.module.scss'
 const CLOSE_NOTIFICATION_TIME = 6000
 
 const PopoverNotification = () => {
-  const { isNotificationOpen, isCenterOpen, lastReceivedNotification } = useSelector(notificationCenterSelector)
+  const { isNotificationOpen, isCenterOpen, lastReceivedNotification } =
+    useSelector(notificationCenterSelector)
   const [isHovering, setIsHovering] = useState(false)
-  const [isShowNotification, setIsShowNotification] = useState(isNotificationOpen)
+  const [isShowNotification, setIsShowNotification] =
+    useState(isNotificationOpen)
 
   const timeOutRef = useRef<NodeJS.Timeout>()
 
@@ -46,7 +48,10 @@ const PopoverNotification = () => {
         return
       }
 
-      timeOutRef.current = setTimeout(onCloseNotification, CLOSE_NOTIFICATION_TIME)
+      timeOutRef.current = setTimeout(
+        onCloseNotification,
+        CLOSE_NOTIFICATION_TIME,
+      )
     }
   }, [isShowNotification, isHovering])
 
@@ -57,13 +62,18 @@ const PopoverNotification = () => {
 
   const handleClickClose = (notification: IGlobalNotification) => {
     onCloseNotification()
-    dispatch(unreadNotificationsAction({ timestamp: notification.timestamp, type: notification.type }))
+    dispatch(
+      unreadNotificationsAction({
+        timestamp: notification.timestamp,
+        type: notification.type,
+      }),
+    )
 
     sendEventTelemetry({
       event: TelemetryEvent.NOTIFICATIONS_MESSAGE_CLOSED,
       eventData: {
-        notificationID: lastReceivedNotification?.timestamp
-      }
+        notificationID: lastReceivedNotification?.timestamp,
+      },
     })
   }
 
@@ -82,7 +92,11 @@ const PopoverNotification = () => {
           isOpen={isShowNotification}
           closePopover={() => {}}
           anchorClassName={styles.popoverAnchor}
-          panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popoverNotificationTooltip)}
+          panelClassName={cx(
+            'euiToolTip',
+            'popoverLikeTooltip',
+            styles.popoverNotificationTooltip,
+          )}
           button={<div className={styles.popoverAnchor} />}
           onMouseUp={onMouseUpPopover}
         >

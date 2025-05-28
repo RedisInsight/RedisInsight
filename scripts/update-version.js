@@ -1,6 +1,6 @@
 /**
  * Script to update the version number in all necessary files
- * 
+ *
  * Usage: node scripts/update-version.js <new-version>
  * Example: node scripts/update-version.js 2.65.0
  */
@@ -19,7 +19,9 @@ const newVersion = process.argv[2];
 const semverRegex = /^\d+\.\d+\.\d+$/;
 
 if (!semverRegex.test(newVersion)) {
-  console.error('Invalid version format. Please use semantic versioning (e.g., 2.65.0).');
+  console.error(
+    'Invalid version format. Please use semantic versioning (e.g., 2.65.0).',
+  );
   process.exit(1);
 }
 
@@ -27,40 +29,43 @@ const filesToUpdate = [
   {
     path: path.join(__dirname, '../redisinsight/package.json'),
     regex: /"version":\s*"([^"]+)"/,
-    replacement: (match, p1) => match.replace(p1, newVersion)
+    replacement: (match, p1) => match.replace(p1, newVersion),
   },
   {
     path: path.join(__dirname, '../redisinsight/api/package.json'),
     regex: /"version":\s*"([^"]+)"/,
-    replacement: (match, p1) => match.replace(p1, newVersion)
+    replacement: (match, p1) => match.replace(p1, newVersion),
   },
   {
     path: path.join(__dirname, '../redisinsight/api/config/default.ts'),
     regex: /appVersion:\s*process\.env\.RI_APP_VERSION\s*\|\|\s*'([^']+)'/,
-    replacement: (match, p1) => match.replace(p1, newVersion)
+    replacement: (match, p1) => match.replace(p1, newVersion),
   },
   {
     path: path.join(__dirname, '../redisinsight/api/config/swagger.ts'),
     regex: /version:\s*'([^']+)'/,
-    replacement: (match, p1) => match.replace(p1, newVersion)
+    replacement: (match, p1) => match.replace(p1, newVersion),
   },
   {
-    path: path.join(__dirname, '../redisinsight/desktop/src/lib/aboutPanel/aboutPanel.ts'),
-    regex: /applicationVersion:\s*`\${app\.getVersion\(\)\s*\|\|\s*'([^']+)'}\${/,
-    replacement: (match, p1) => match.replace(p1, newVersion)
+    path: path.join(
+      __dirname,
+      '../redisinsight/desktop/src/lib/aboutPanel/aboutPanel.ts',
+    ),
+    regex: /app\.getVersion\(\)\s*\|\|\s*'([^']+)'/,
+    replacement: (match, p1) => match.replace(p1, newVersion),
   },
   {
     path: path.join(__dirname, '../.github/build/release-docker.sh'),
     regex: /-v\s*-\s*Semver\s*\(([^)]+)\)/,
-    replacement: (match, p1) => match.replace(p1, newVersion)
-  }
+    replacement: (match, p1) => match.replace(p1, newVersion),
+  },
 ];
 
 let updatedFiles = 0;
 let skippedFiles = 0;
 let errorFiles = 0;
 
-filesToUpdate.forEach(file => {
+filesToUpdate.forEach((file) => {
   try {
     if (!fs.existsSync(file.path)) {
       console.warn(`File not found: ${file.path}`);
@@ -96,7 +101,7 @@ console.log(`  Files with errors: ${errorFiles}`);
 console.log('----------------------------------------\n');
 
 if (updatedFiles === filesToUpdate.length) {
-  console.log('Version updated successfully!')
+  console.log('Version updated successfully!');
 } else if (updatedFiles > 0) {
   console.log('Version updated successfully in SOME files!');
 } else {

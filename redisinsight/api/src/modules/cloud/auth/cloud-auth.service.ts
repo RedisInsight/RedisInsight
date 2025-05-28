@@ -15,19 +15,22 @@ import { wrapHttpError } from 'src/common/utils';
 import {
   CloudOauthCanceledException,
   CloudOauthGithubEmailPermissionException,
-  CloudOauthMisconfigurationException, CloudOauthMissedRequiredDataException,
+  CloudOauthMisconfigurationException,
+  CloudOauthMissedRequiredDataException,
   CloudOauthUnexpectedErrorException,
   CloudOauthUnknownAuthorizationRequestException,
 } from 'src/modules/cloud/auth/exceptions';
-import { CloudAuthRequestInfo, CloudAuthResponse, CloudAuthStatus } from 'src/modules/cloud/auth/models';
+import {
+  CloudAuthRequestInfo,
+  CloudAuthResponse,
+  CloudAuthStatus,
+} from 'src/modules/cloud/auth/models';
 import { CloudAuthAnalytics } from 'src/modules/cloud/auth/cloud-auth.analytics';
 import { CloudSsoFeatureStrategy } from 'src/modules/cloud/cloud-sso.feature.flag';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CloudAuthServerEvent } from 'src/modules/cloud/common/constants';
 import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptions';
-import {
-  CloudOauthSsoUnsupportedEmailException,
-} from 'src/modules/cloud/auth/exceptions/cloud-oauth.sso-unsupported-email.exception';
+import { CloudOauthSsoUnsupportedEmailException } from 'src/modules/cloud/auth/exceptions/cloud-oauth.sso-unsupported-email.exception';
 
 @Injectable()
 export class CloudAuthService {
@@ -44,7 +47,7 @@ export class CloudAuthService {
     private readonly ssoIdpCloudAuthStrategy: SsoIdpCloudAuthStrategy,
     private readonly analytics: CloudAuthAnalytics,
     private readonly eventEmitter: EventEmitter2,
-  ) { }
+  ) {}
 
   static getOAuthHttpRequestHeaders() {
     return {
@@ -55,7 +58,7 @@ export class CloudAuthService {
   }
 
   static getAuthorizationServerRedirectError(
-    query: { error_description: string, error: string },
+    query: { error_description: string; error: string },
     authRequest?: CloudAuthRequest,
   ) {
     if (query?.error_description?.indexOf('canceled') > -1) {
@@ -63,18 +66,16 @@ export class CloudAuthService {
     }
 
     if (
-      query?.error_description?.indexOf('propert') > -1
-      && query?.error_description?.indexOf('required') > -1
-      && query?.error_description?.indexOf('miss') > -1
+      query?.error_description?.indexOf('propert') > -1 &&
+      query?.error_description?.indexOf('required') > -1 &&
+      query?.error_description?.indexOf('miss') > -1
     ) {
-      return (
-        authRequest?.idpType === CloudAuthIdpType.GitHub
-        && query?.error_description?.indexOf('email') > -1
-      )
+      return authRequest?.idpType === CloudAuthIdpType.GitHub &&
+        query?.error_description?.indexOf('email') > -1
         ? new CloudOauthGithubEmailPermissionException(query.error_description)
         : new CloudOauthMissedRequiredDataException(query.error_description, {
-          description: query.error_description,
-        });
+            description: query.error_description,
+          });
     }
 
     return new CloudOauthUnexpectedErrorException(undefined, {
@@ -91,7 +92,9 @@ export class CloudAuthService {
       case CloudAuthIdpType.Sso:
         return this.ssoIdpCloudAuthStrategy;
       default:
-        throw new CloudOauthUnknownAuthorizationRequestException('Unknown cloud auth strategy');
+        throw new CloudOauthUnknownAuthorizationRequestException(
+          'Unknown cloud auth strategy',
+        );
     }
   }
 
@@ -105,8 +108,9 @@ export class CloudAuthService {
     options: CloudAuthRequestOptions,
   ): Promise<string> {
     try {
-      const authRequest: any = await this.getAuthStrategy(options?.strategy)
-        .generateAuthRequest(sessionMetadata, options);
+      const authRequest: any = await this.getAuthStrategy(
+        options?.strategy,
+      ).generateAuthRequest(sessionMetadata, options);
       authRequest.callback = options?.callback;
       authRequest.action = options?.action;
 
@@ -118,11 +122,13 @@ export class CloudAuthService {
 
       return CloudAuthStrategy.generateAuthUrl(authRequest).toString();
     } catch (e) {
+      this.logger.error('Unable to generate authorization url', e);
+
       if (e instanceof CloudOauthSsoUnsupportedEmailException) {
         throw e;
       }
 
-      throw new CloudOauthMisconfigurationException();
+      throw new CloudOauthMisconfigurationException(undefined, { cause: e });
     }
   }
 
@@ -131,13 +137,23 @@ export class CloudAuthService {
    * @param authRequest
    * @param code
    */
-  private async exchangeCode(authRequest: CloudAuthRequest, code: string): Promise<any> {
+  private async exchangeCode(
+    authRequest: CloudAuthRequest,
+    code: string,
+  ): Promise<any> {
     try {
-      const tokenUrl = CloudAuthStrategy.generateExchangeCodeUrl(authRequest, code);
+      const tokenUrl = CloudAuthStrategy.generateExchangeCodeUrl(
+        authRequest,
+        code,
+      );
 
-      const { data } = await axios.post(tokenUrl.toString().split('?')[0], tokenUrl.searchParams, {
-        headers: CloudAuthService.getOAuthHttpRequestHeaders(),
-      });
+      const { data } = await axios.post(
+        tokenUrl.toString().split('?')[0],
+        tokenUrl.searchParams,
+        {
+          headers: CloudAuthService.getOAuthHttpRequestHeaders(),
+        },
+      );
 
       return data;
     } catch (e) {
@@ -190,7 +206,10 @@ export class CloudAuthService {
     if (query?.error) {
       this.logger.error(`Query has error field: query.error: ${query.error},
         query.error_description: ${query.error_description}`);
-      throw CloudAuthService.getAuthorizationServerRedirectError(query, authRequest);
+      throw CloudAuthService.getAuthorizationServerRedirectError(
+        query,
+        authRequest,
+      );
     }
 
     // delete authRequest on this step
@@ -201,30 +220,43 @@ export class CloudAuthService {
 
     const tokens = await this.exchangeCode(authRequest, query.code);
 
-    await this.sessionService.updateSessionData(authRequest.sessionMetadata.sessionId, {
-      accessToken: tokens.access_token,
-      refreshToken: tokens.refresh_token,
-      idpType: authRequest.idpType,
-    });
+    await this.sessionService.updateSessionData(
+      authRequest.sessionMetadata.sessionId,
+      {
+        accessToken: tokens.access_token,
+        refreshToken: tokens.refresh_token,
+        idpType: authRequest.idpType,
+      },
+    );
 
     return authRequest.callback;
   }
 
-  private async revokeRefreshToken(sessionMetadata: SessionMetadata): Promise<void> {
+  private async revokeRefreshToken(
+    sessionMetadata: SessionMetadata,
+  ): Promise<void> {
     try {
-      const session = await this.sessionService.getSession(sessionMetadata.sessionId);
+      const session = await this.sessionService.getSession(
+        sessionMetadata.sessionId,
+      );
       if (!session?.refreshToken) {
         return;
       }
 
       const strategy = this.getAuthStrategy(session.idpType);
 
-      const tokenUrl = strategy.generateRevokeTokensUrl(session.refreshToken, 'refresh_token');
+      const tokenUrl = strategy.generateRevokeTokensUrl(
+        session.refreshToken,
+        'refresh_token',
+      );
 
-      await axios.post(tokenUrl.toString()
-        .split('?')[0], tokenUrl.searchParams, {
-        headers: CloudAuthService.getOAuthHttpRequestHeaders(),
-      });
+      await axios.post(
+        tokenUrl.toString().split('?')[0],
+        tokenUrl.searchParams,
+        {
+          headers: CloudAuthService.getOAuthHttpRequestHeaders(),
+        },
+      );
     } catch (e) {
       // ignore error
       this.logger.error('Unable to revoke tokens', e, sessionMetadata);
@@ -236,8 +268,13 @@ export class CloudAuthService {
    * @param query
    * @param from
    */
-  async handleCallback(query, from = CloudSsoFeatureStrategy.DeepLink): Promise<CloudAuthResponse> {
-    this.logger.log(`Handling a callback with a query having ${Object.keys(query || {}).toString()} keys`);
+  async handleCallback(
+    query,
+    from = CloudSsoFeatureStrategy.DeepLink,
+  ): Promise<CloudAuthResponse> {
+    this.logger.log(
+      `Handling a callback with a query having ${Object.keys(query || {}).toString()} keys`,
+    );
     let result: CloudAuthResponse = {
       status: CloudAuthStatus.Succeed,
       message: 'Successfully authenticated',
@@ -254,7 +291,10 @@ export class CloudAuthService {
         reqInfo?.action,
       );
     } catch (e) {
-      this.logger.error(`Error on ${from} cloud oauth callback: ${e.message}`, e);
+      this.logger.error(
+        `Error on ${from} cloud oauth callback: ${e.message}`,
+        e,
+      );
 
       this.analytics.sendCloudSignInFailed(
         reqInfo?.sessionMetadata,
@@ -273,7 +313,9 @@ export class CloudAuthService {
       if (!callback) {
         this.logger.log('Callback is undefined');
       }
-      callback?.(result)?.catch((e: Error) => this.logger.error('Async callback failed', e));
+      callback?.(result)?.catch((e: Error) =>
+        this.logger.error('Async callback failed', e),
+      );
     } catch (e) {
       this.logger.error('Callback failed', e);
     }
@@ -281,16 +323,23 @@ export class CloudAuthService {
     return result;
   }
 
-  async renewTokens(sessionMetadata: SessionMetadata, idpType: CloudAuthIdpType, refreshToken: string) {
+  async renewTokens(
+    sessionMetadata: SessionMetadata,
+    idpType: CloudAuthIdpType,
+    refreshToken: string,
+  ) {
     try {
       const strategy = this.getAuthStrategy(idpType);
 
       const tokenUrl = strategy.generateRenewTokensUrl(refreshToken);
 
-      const { data } = await axios.post(tokenUrl.toString()
-        .split('?')[0], tokenUrl.searchParams, {
-        headers: CloudAuthService.getOAuthHttpRequestHeaders(),
-      });
+      const { data } = await axios.post(
+        tokenUrl.toString().split('?')[0],
+        tokenUrl.searchParams,
+        {
+          headers: CloudAuthService.getOAuthHttpRequestHeaders(),
+        },
+      );
 
       await this.sessionService.updateSessionData(sessionMetadata.sessionId, {
         accessToken: data.access_token,

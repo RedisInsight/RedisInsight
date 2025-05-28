@@ -1,7 +1,10 @@
 import {
-  mockCapiUnauthorizedError, mockCloudApiBadRequestExceptionResponse, mockCloudApiUnauthorizedExceptionResponse,
+  mockCapiUnauthorizedError,
+  mockCloudApiBadRequestExceptionResponse,
+  mockCloudApiUnauthorizedExceptionResponse,
   mockCloudUserAccount,
-  mockCloudUserSafe, mockSmApiBadRequestError
+  mockCloudUserSafe,
+  mockSmApiBadRequestError,
 } from 'src/__mocks__';
 import {
   describe,
@@ -12,21 +15,28 @@ import {
   expect,
   nock,
 } from '../../deps';
-import {initApiUserProfileNockScope, initSMApiNockScope} from '../constants';
+import { initApiUserProfileNockScope, initSMApiNockScope } from '../constants';
 
 const { request, server } = deps;
 
-const endpoint = (account = mockCloudUserAccount.id) => request(server).put(`/cloud/me/accounts/${account}/current`);
+const endpoint = (account = mockCloudUserAccount.id) =>
+  request(server).put(`/cloud/me/accounts/${account}/current`);
 
-const responseSchema = Joi.object().keys({
-  id: Joi.number().required(),
-  name: Joi.string().required(),
-  currentAccountId: Joi.number().required(),
-  accounts: Joi.array().items(Joi.object().keys({
+const responseSchema = Joi.object()
+  .keys({
     id: Joi.number().required(),
     name: Joi.string().required(),
-  })).required(),
-}).required();
+    currentAccountId: Joi.number().required(),
+    accounts: Joi.array()
+      .items(
+        Joi.object().keys({
+          id: Joi.number().required(),
+          name: Joi.string().required(),
+        }),
+      )
+      .required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -45,7 +55,7 @@ describe('PUT /cloud/me/accounts/:id/current', () => {
         before: () => {
           initSMApiNockScope()
             .post(`/accounts/setcurrent/${mockCloudUserAccount.id}`)
-            .reply(200, {})
+            .reply(200, {});
         },
         responseSchema,
         checkFn: ({ body }) => {
@@ -59,7 +69,7 @@ describe('PUT /cloud/me/accounts/:id/current', () => {
             .post(`/accounts/setcurrent/${mockCloudUserAccount.id}`)
             .reply(401, mockCapiUnauthorizedError)
             .post(`/accounts/setcurrent/${mockCloudUserAccount.id}`)
-            .reply(200, {})
+            .reply(200, {});
         },
         responseSchema,
         checkFn: ({ body }) => {
@@ -73,7 +83,7 @@ describe('PUT /cloud/me/accounts/:id/current', () => {
             .post(`/accounts/setcurrent/${mockCloudUserAccount.id}`)
             .replyWithError(mockCapiUnauthorizedError)
             .post(`/accounts/setcurrent/${mockCloudUserAccount.id}`)
-            .replyWithError(mockCapiUnauthorizedError)
+            .replyWithError(mockCapiUnauthorizedError);
         },
         statusCode: 401,
         checkFn: ({ body }) => {
@@ -85,7 +95,7 @@ describe('PUT /cloud/me/accounts/:id/current', () => {
         before: () => {
           initSMApiNockScope()
             .post(`/accounts/setcurrent/${mockCloudUserAccount.id}`)
-            .replyWithError(mockSmApiBadRequestError)
+            .replyWithError(mockSmApiBadRequestError);
         },
         statusCode: 400,
         checkFn: ({ body }) => {

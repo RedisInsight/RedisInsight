@@ -14,7 +14,11 @@ const GroupBadge = ({ type, name = '', className = '' }: Props) => (
     className={className}
     data-testid={`badge-${type} ${name}`}
   >
-    <EuiText style={{ color: 'var(--euiTextSubduedColorHover)' }} className="text-uppercase" size="xs">
+    <EuiText
+      style={{ color: 'var(--euiTextSubduedColorHover)' }}
+      className="text-uppercase"
+      size="xs"
+    >
       {GROUP_TYPES_DISPLAY[type] ?? type}
     </EuiText>
   </EuiBadge>

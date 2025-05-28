@@ -27,7 +27,7 @@ describe('validatePipeline', () => {
   })
 
   it('should return valid result when config and jobs are valid', () => {
-    (validateYamlSchema as jest.Mock).mockImplementation(() => ({
+    ;(validateYamlSchema as jest.Mock).mockImplementation(() => ({
       valid: true,
       errors: [],
     }))
@@ -52,10 +52,11 @@ describe('validatePipeline', () => {
   })
 
   it('should return invalid result when config is invalid', () => {
-    (validateYamlSchema as jest.Mock).mockImplementation((_, schema) =>
-      (schema === get(mockSchema, 'config', null)
+    ;(validateYamlSchema as jest.Mock).mockImplementation((_, schema) =>
+      schema === get(mockSchema, 'config', null)
         ? { valid: false, errors: ["Missing required property 'name'"] }
-        : { valid: true, errors: [] }))
+        : { valid: true, errors: [] },
+    )
 
     const result = validatePipeline({
       config: 'invalid-config-content',
@@ -73,10 +74,11 @@ describe('validatePipeline', () => {
   })
 
   it('should return invalid result when jobs are invalid', () => {
-    (validateYamlSchema as jest.Mock).mockImplementation((_, schema) =>
-      (schema === get(mockSchema, 'jobs', null)
+    ;(validateYamlSchema as jest.Mock).mockImplementation((_, schema) =>
+      schema === get(mockSchema, 'jobs', null)
         ? { valid: false, errors: ["Missing required property 'task'"] }
-        : { valid: true, errors: [] }))
+        : { valid: true, errors: [] },
+    )
 
     const result = validatePipeline({
       config: 'name: valid-config',
@@ -94,7 +96,7 @@ describe('validatePipeline', () => {
   })
 
   it('should return invalid result when both config and jobs are invalid', () => {
-    (validateYamlSchema as jest.Mock).mockImplementation((_, schema) => {
+    ;(validateYamlSchema as jest.Mock).mockImplementation((_, schema) => {
       if (schema === get(mockSchema, 'config', null)) {
         return { valid: false, errors: ["Missing required property 'name'"] }
       }
@@ -120,7 +122,7 @@ describe('validatePipeline', () => {
   })
 
   it('should filter duplicate errors per job', () => {
-    (validateYamlSchema as jest.Mock).mockImplementation(() => ({
+    ;(validateYamlSchema as jest.Mock).mockImplementation(() => ({
       valid: false,
       errors: ['Duplicate error', 'Duplicate error'], // all the jobs get these errors
     }))

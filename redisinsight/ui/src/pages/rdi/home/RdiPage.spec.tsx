@@ -1,9 +1,26 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 
-import { createInstanceAction, editInstanceAction, instancesSelector } from 'uiSrc/slices/rdi/instances'
-import { TelemetryEvent, TelemetryPageView, sendEventTelemetry, sendPageViewTelemetry } from 'uiSrc/telemetry'
-import { act, cleanup, fireEvent, mockedStore, render, screen, waitForStack } from 'uiSrc/utils/test-utils'
+import {
+  createInstanceAction,
+  editInstanceAction,
+  instancesSelector,
+} from 'uiSrc/slices/rdi/instances'
+import {
+  TelemetryEvent,
+  TelemetryPageView,
+  sendEventTelemetry,
+  sendPageViewTelemetry,
+} from 'uiSrc/telemetry'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+  waitForStack,
+} from 'uiSrc/utils/test-utils'
 
 import { apiService } from 'uiSrc/services'
 import RdiPage from './RdiPage'
@@ -24,16 +41,16 @@ jest.mock('uiSrc/slices/rdi/instances', () => ({
         version: '1.2',
         username: 'user',
         visible: true,
-        error: ''
-      }
-    ]
-  })
+        error: '',
+      },
+    ],
+  }),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
   sendPageViewTelemetry: jest.fn(),
-  sendEventTelemetry: jest.fn()
+  sendEventTelemetry: jest.fn(),
 }))
 
 let storeMock: typeof mockedStore
@@ -42,9 +59,9 @@ describe('RdiPage', () => {
   beforeEach(() => {
     cleanup()
     storeMock = cloneDeep(mockedStore)
-    storeMock.clearActions();
-    (sendEventTelemetry as jest.Mock).mockRestore();
-    (sendPageViewTelemetry as jest.Mock).mockRestore()
+    storeMock.clearActions()
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
+    ;(sendPageViewTelemetry as jest.Mock).mockRestore()
   })
 
   it('should render', () => {
@@ -55,23 +72,27 @@ describe('RdiPage', () => {
     render(<RdiPage />)
 
     expect(screen.getByTestId('rdi-instance-list')).toBeInTheDocument()
-    expect(screen.queryByTestId('empty-rdi-instance-list')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('empty-rdi-instance-list'),
+    ).not.toBeInTheDocument()
   })
 
   it('should render empty panel when initially loading', () => {
-    (instancesSelector as jest.Mock).mockReturnValueOnce({
+    ;(instancesSelector as jest.Mock).mockReturnValueOnce({
       loading: true,
-      data: []
+      data: [],
     })
     render(<RdiPage />)
 
     expect(screen.queryByTestId('rdi-instance-list')).not.toBeInTheDocument()
-    expect(screen.queryByTestId('empty-rdi-instance-list')).not.toBeInTheDocument()
+    expect(
+      screen.queryByTestId('empty-rdi-instance-list'),
+    ).not.toBeInTheDocument()
   })
 
   it('should render empty message when no instances are found', () => {
-    (instancesSelector as jest.Mock).mockReturnValueOnce({
-      data: []
+    ;(instancesSelector as jest.Mock).mockReturnValueOnce({
+      data: [],
     })
     render(<RdiPage />)
 
@@ -89,9 +110,9 @@ describe('RdiPage', () => {
   })
 
   it('should open connection form when using empty message button', async () => {
-    (instancesSelector as jest.Mock).mockReturnValueOnce({
+    ;(instancesSelector as jest.Mock).mockReturnValueOnce({
       loading: false,
-      data: []
+      data: [],
     })
     const { container } = render(<RdiPage />)
 
@@ -128,12 +149,18 @@ describe('RdiPage', () => {
     fireEvent.click(screen.getByTestId('edit-instance-1'))
     await screen.findByTestId('connection-form')
 
-    expect(screen.getByTestId('connection-form-name-input')).toHaveValue('My first integration')
-    expect(screen.getByTestId('connection-form-url-input')).toHaveValue(
-      'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345'
+    expect(screen.getByTestId('connection-form-name-input')).toHaveValue(
+      'My first integration',
     )
-    expect(screen.getByTestId('connection-form-username-input')).toHaveValue('user')
-    expect(screen.getByTestId('connection-form-password-input')).toHaveValue('••••••••••••')
+    expect(screen.getByTestId('connection-form-url-input')).toHaveValue(
+      'redis-12345.c253.us-central1-1.gce.cloud.redislabs.com:12345',
+    )
+    expect(screen.getByTestId('connection-form-username-input')).toHaveValue(
+      'user',
+    )
+    expect(screen.getByTestId('connection-form-password-input')).toHaveValue(
+      '••••••••••••',
+    )
   })
 
   it('should open empty connection form with "default" username value when using header button', async () => {
@@ -147,7 +174,9 @@ describe('RdiPage', () => {
 
     expect(screen.getByTestId('connection-form-name-input')).toHaveValue('')
     expect(screen.getByTestId('connection-form-url-input')).toHaveValue('')
-    expect(screen.getByTestId('connection-form-username-input')).toHaveValue('default')
+    expect(screen.getByTestId('connection-form-username-input')).toHaveValue(
+      'default',
+    )
     expect(screen.getByTestId('connection-form-password-input')).toHaveValue('')
   })
 
@@ -172,11 +201,15 @@ describe('RdiPage', () => {
     await screen.findByTestId('connection-form')
 
     await act(async () => {
-      fireEvent.change(screen.getByTestId('connection-form-name-input'), { target: { value: 'name' } })
+      fireEvent.change(screen.getByTestId('connection-form-name-input'), {
+        target: { value: 'name' },
+      })
 
       // focus input to clear it first
       fireEvent.focus(screen.getByTestId('connection-form-password-input'))
-      fireEvent.change(screen.getByTestId('connection-form-password-input'), { target: { value: 'password2' } })
+      fireEvent.change(screen.getByTestId('connection-form-password-input'), {
+        target: { value: 'password2' },
+      })
 
       // submit form
       fireEvent.click(screen.getByTestId('connection-form-add-button'))
@@ -188,7 +221,7 @@ describe('RdiPage', () => {
         name: 'name',
         password: 'password2',
       },
-      expect.any(Function)
+      expect.any(Function),
     )
   })
 
@@ -201,7 +234,9 @@ describe('RdiPage', () => {
     screen.debug(undefined, 100_000)
 
     await act(() => {
-      fireEvent.change(screen.getByTestId('connection-form-name-input'), { target: { value: 'name' } })
+      fireEvent.change(screen.getByTestId('connection-form-name-input'), {
+        target: { value: 'name' },
+      })
 
       // submit form
       fireEvent.click(screen.getByTestId('connection-form-add-button'))
@@ -212,7 +247,7 @@ describe('RdiPage', () => {
       {
         name: 'name',
       },
-      expect.any(Function)
+      expect.any(Function),
     )
   })
 
@@ -224,13 +259,21 @@ describe('RdiPage', () => {
     await screen.findByTestId('connection-form')
 
     await act(() => {
-      fireEvent.change(screen.getByTestId('connection-form-name-input'), { target: { value: 'name' } })
-      fireEvent.change(screen.getByTestId('connection-form-url-input'), { target: { value: 'url' } })
-      fireEvent.change(screen.getByTestId('connection-form-username-input'), { target: { value: 'username' } })
+      fireEvent.change(screen.getByTestId('connection-form-name-input'), {
+        target: { value: 'name' },
+      })
+      fireEvent.change(screen.getByTestId('connection-form-url-input'), {
+        target: { value: 'url' },
+      })
+      fireEvent.change(screen.getByTestId('connection-form-username-input'), {
+        target: { value: 'username' },
+      })
 
       // focus input to trigger password change flow
       fireEvent.focus(screen.getByTestId('connection-form-password-input'))
-      fireEvent.change(screen.getByTestId('connection-form-password-input'), { target: { value: 'password' } })
+      fireEvent.change(screen.getByTestId('connection-form-password-input'), {
+        target: { value: 'password' },
+      })
 
       // submit form
       fireEvent.click(screen.getByTestId('connection-form-add-button'))
@@ -239,7 +282,7 @@ describe('RdiPage', () => {
     expect(createInstanceAction).toBeCalledWith(
       { name: 'name', url: 'url', username: 'username', password: 'password' },
       expect.any(Function),
-      expect.any(Function)
+      expect.any(Function),
     )
   })
 
@@ -250,7 +293,7 @@ describe('RdiPage', () => {
     fireEvent.click(screen.getByTestId('rdi-instance'))
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.RDI_INSTANCE_ADD_CLICKED
+      event: TelemetryEvent.RDI_INSTANCE_ADD_CLICKED,
     })
   })
 
@@ -261,14 +304,16 @@ describe('RdiPage', () => {
     await screen.findByTestId('connection-form')
 
     await act(() => {
-      fireEvent.change(screen.getByTestId('connection-form-password-input'), { target: { value: 'password3' } })
+      fireEvent.change(screen.getByTestId('connection-form-password-input'), {
+        target: { value: 'password3' },
+      })
 
       // submit form
       fireEvent.click(screen.getByTestId('connection-form-add-button'))
     })
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.RDI_INSTANCE_SUBMITTED
+      event: TelemetryEvent.RDI_INSTANCE_SUBMITTED,
     })
   })
 
@@ -282,7 +327,7 @@ describe('RdiPage', () => {
     fireEvent.click(screen.getByTestId('connection-form-cancel-button'))
 
     expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.RDI_INSTANCE_ADD_CANCELLED
+      event: TelemetryEvent.RDI_INSTANCE_ADD_CANCELLED,
     })
   })
 
@@ -295,8 +340,8 @@ describe('RdiPage', () => {
     expect(sendPageViewTelemetry).toBeCalledWith({
       name: TelemetryPageView.RDI_INSTANCES_PAGE,
       eventData: {
-        instancesCount: 1
-      }
+        instancesCount: 1,
+      },
     })
   })
 })

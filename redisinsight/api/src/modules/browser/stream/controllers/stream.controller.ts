@@ -38,7 +38,7 @@ export class StreamController {
   })
   async createStream(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: CreateStreamDto,
+    @Body() dto: CreateStreamDto,
   ): Promise<void> {
     return this.service.createStream(clientMetadata, dto);
   }
@@ -58,7 +58,7 @@ export class StreamController {
   @ApiQueryRedisStringEncoding()
   async addEntries(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: AddStreamEntriesDto,
+    @Body() dto: AddStreamEntriesDto,
   ): Promise<AddStreamEntriesResponse> {
     return this.service.addEntries(clientMetadata, dto);
   }
@@ -78,7 +78,7 @@ export class StreamController {
   @ApiQueryRedisStringEncoding()
   async getEntries(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: GetStreamEntriesDto,
+    @Body() dto: GetStreamEntriesDto,
   ): Promise<GetStreamEntriesResponse> {
     return this.service.getEntries(clientMetadata, dto);
   }
@@ -97,7 +97,7 @@ export class StreamController {
   })
   async deleteEntries(
     @BrowserClientMetadata() clientMetadata: ClientMetadata,
-      @Body() dto: DeleteStreamEntriesDto,
+    @Body() dto: DeleteStreamEntriesDto,
   ): Promise<DeleteStreamEntriesResponse> {
     return await this.service.deleteEntries(clientMetadata, dto);
   }

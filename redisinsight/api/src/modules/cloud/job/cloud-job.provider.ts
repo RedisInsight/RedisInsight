@@ -12,9 +12,7 @@ import { CloudRequestUtm } from 'src/modules/cloud/common/models';
 export class CloudJobProvider {
   private jobs: Map<string, CloudJob> = new Map();
 
-  constructor(
-    private readonly cloudJobFactory: CloudJobFactory,
-  ) {}
+  constructor(private readonly cloudJobFactory: CloudJobFactory) {}
 
   async addJob(
     sessionMetadata: SessionMetadata,
@@ -22,14 +20,10 @@ export class CloudJobProvider {
     utm: CloudRequestUtm,
   ): Promise<CloudJobInfo> {
     try {
-      const job = await this.cloudJobFactory.create(
-        dto.name,
-        dto.data || {},
-        {
-          sessionMetadata,
-          utm,
-        },
-      );
+      const job = await this.cloudJobFactory.create(dto.name, dto.data || {}, {
+        sessionMetadata,
+        utm,
+      });
 
       // tmp: clear all jobs due to current requirements (1 at time)
       if (this.jobs.size) {
@@ -61,7 +55,8 @@ export class CloudJobProvider {
   async findUserJobs(sessionMetadata: SessionMetadata): Promise<CloudJob[]> {
     return filter(
       [...this.jobs.values()],
-      (job: CloudJob) => job.options?.sessionMetadata?.userId === sessionMetadata.userId,
+      (job: CloudJob) =>
+        job.options?.sessionMetadata?.userId === sessionMetadata.userId,
     );
   }
 }

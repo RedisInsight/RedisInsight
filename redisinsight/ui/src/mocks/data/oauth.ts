@@ -5,7 +5,7 @@ export const OAUTH_CLOUD_CAPI_KEYS_DATA = [
     createdAt: '2023-08-02T09:07:41.680Z',
     lastUsed: '2023-08-02T09:07:41.680Z',
     valid: true,
-  }
+  },
 ]
 
 export const MOCK_OAUTH_USER_PROFILE = {

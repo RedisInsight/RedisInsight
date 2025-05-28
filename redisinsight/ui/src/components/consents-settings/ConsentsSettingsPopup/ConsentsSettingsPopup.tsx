@@ -5,8 +5,6 @@ import {
   EuiModalBody,
   EuiModalHeader,
   EuiIcon,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiTitle,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
@@ -21,6 +19,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import Logo from 'uiSrc/assets/img/logo.svg'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from '../styles.module.scss'
 
 const ConsentsSettingsPopup = () => {
@@ -29,14 +28,18 @@ const ConsentsSettingsPopup = () => {
   const { theme } = useContext(ThemeContext)
 
   const handleSubmitted = () => {
-    if (server && server.buildType === BuildType.RedisStack && server?.fixedDatabaseId) {
+    if (
+      server &&
+      server.buildType === BuildType.RedisStack &&
+      server?.fixedDatabaseId
+    ) {
       history.push(Pages.browser(server.fixedDatabaseId))
     }
   }
 
   useEffect(() => {
     sendEventTelemetry({
-      event: TelemetryEvent.CONSENT_MENU_VIEWED
+      event: TelemetryEvent.CONSENT_MENU_VIEWED,
     })
   }, [])
 
@@ -44,27 +47,31 @@ const ConsentsSettingsPopup = () => {
     <EuiOverlayMask
       className={cx(
         styles.overlay,
-        theme === Theme.Dark
-          ? styles.overlay_dark
-          : styles.overlay_light
+        theme === Theme.Dark ? styles.overlay_dark : styles.overlay_light,
       )}
     >
-      <EuiModal className={styles.consentsPopup} onClose={() => {}} data-testid="consents-settings-popup">
+      <EuiModal
+        className={styles.consentsPopup}
+        onClose={() => {}}
+        data-testid="consents-settings-popup"
+      >
         <EuiModalHeader className={styles.modalHeader}>
-          <EuiFlexGroup justifyContent="spaceBetween">
-            <EuiFlexItem grow={false}>
+          <Row justify="between">
+            <FlexItem>
               <EuiTitle size="s">
-                <h3 className={styles.consentsPopupTitle}>EULA and Privacy Settings</h3>
+                <h3 className={styles.consentsPopupTitle}>
+                  EULA and Privacy Settings
+                </h3>
               </EuiTitle>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <EuiIcon
                 className={styles.redisIcon}
                 size="original"
                 type={Logo}
               />
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiModalHeader>
         <EuiModalBody className={styles.modalBody}>
           <ConsentsSettings onSubmitted={handleSubmitted} />

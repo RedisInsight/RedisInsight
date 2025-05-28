@@ -1,10 +1,24 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import { cleanup, fireEvent, mockedStore, render } from 'uiSrc/utils/test-utils'
-import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
-import { freeInstancesSelector, setDefaultInstance } from 'uiSrc/slices/instances/instances'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+} from 'uiSrc/utils/test-utils'
+import {
+  getRedisModulesSummary,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
+import {
+  freeInstancesSelector,
+  setDefaultInstance,
+} from 'uiSrc/slices/instances/instances'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { setCapability } from 'uiSrc/slices/app/context'
+import { MOCK_ADDITIONAL_INFO } from 'uiSrc/mocks/data/instances'
 import OAuthConnectFreeDb from './OAuthConnectFreeDb'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -21,9 +35,11 @@ jest.mock('uiSrc/slices/oauth/cloud', () => ({
 
 jest.mock('uiSrc/slices/instances/instances', () => ({
   ...jest.requireActual('uiSrc/slices/instances/instances'),
-  freeInstancesSelector: jest.fn().mockReturnValue([{
-    id: 'instanceId',
-  }]),
+  freeInstancesSelector: jest.fn().mockReturnValue([
+    {
+      id: 'instanceId',
+    },
+  ]),
 }))
 
 let store: typeof mockedStore
@@ -40,32 +56,42 @@ describe('OAuthConnectFreeDb', () => {
   })
 
   it('should send telemetry after click on connect btn', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     const { queryByTestId } = render(<OAuthConnectFreeDb id="providedId" />)
 
-    fireEvent.click(queryByTestId('connect-free-db-btn') as HTMLButtonElement)
+    await act(() =>
+      fireEvent.click(
+        queryByTestId('connect-free-db-btn') as HTMLButtonElement,
+      ),
+    )
 
-    expect(sendEventTelemetry).toBeCalledWith({
+    expect(sendEventTelemetry).toHaveBeenCalledWith({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
         databaseId: 'providedId',
         provider: undefined,
         source: OAuthSocialSource.ListOfDatabases,
         ...getRedisModulesSummary(),
-      }
+        ...MOCK_ADDITIONAL_INFO,
+      },
     })
 
     const expectedActions = [
-      setCapability({ source: OAuthSocialSource.ListOfDatabases, tutorialPopoverShown: false }),
+      setCapability({
+        source: OAuthSocialSource.ListOfDatabases,
+        tutorialPopoverShown: false,
+      }),
       setDefaultInstance(),
     ]
     expect(store.getActions()).toEqual(expectedActions)
   })
 
   it('should not render if there is no free cloud db', () => {
-    (freeInstancesSelector as jest.Mock).mockReturnValue(null)
+    ;(freeInstancesSelector as jest.Mock).mockReturnValue(null)
 
     const { queryByTestId } = render(<OAuthConnectFreeDb />)
     expect(queryByTestId('connect-free-db-btn')).not.toBeInTheDocument()

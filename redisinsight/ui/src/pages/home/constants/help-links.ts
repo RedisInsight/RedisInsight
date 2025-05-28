@@ -18,8 +18,8 @@ export const HELP_LINKS = {
       welcome: 'Welcome page',
       databaseList: 'list of databases',
       databaseConnectionList: 'database connection list',
-      redisearch: 'RediSearch is not loaded'
-    }
+      redisearch: 'RediSearch is not loaded',
+    },
   },
   source: {
     event: TelemetryEvent.BUILD_FROM_SOURCE_CLICKED,

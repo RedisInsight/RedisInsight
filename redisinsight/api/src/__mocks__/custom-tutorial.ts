@@ -1,18 +1,24 @@
-import { CustomTutorial, CustomTutorialActions } from 'src/modules/custom-tutorial/models/custom-tutorial';
+import {
+  CustomTutorial,
+  CustomTutorialActions,
+} from 'src/modules/custom-tutorial/models/custom-tutorial';
 import { CustomTutorialEntity } from 'src/modules/custom-tutorial/entities/custom-tutorial.entity';
 import { CustomTutorialManifestType } from 'src/modules/custom-tutorial/models/custom-tutorial.manifest';
 import { MemoryStoredFile } from 'nestjs-form-data';
 import { UploadCustomTutorialDto } from 'src/modules/custom-tutorial/dto/upload.custom-tutorial.dto';
 import AdmZip from 'adm-zip';
 
-export const mockCustomTutorialId = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-ct-id';
+export const mockCustomTutorialId =
+  'a77b23c1-7816-4ea4-b61f-d37795a0f805-ct-id';
 
-export const mockCustomTutorialId2 = 'a77b23c1-7816-4ea4-b61f-d37795a0f805-ct-id-2';
+export const mockCustomTutorialId2 =
+  'a77b23c1-7816-4ea4-b61f-d37795a0f805-ct-id-2';
 
 export const mockCustomTutorialTmpPath = '/tmp/path';
 
 export const mockCustomTutorialsHttpLink = 'https://github.com/archive.zip';
-export const mockCustomTutorialsHttpLink2 = 'https://raw.githubusercontent.com/archive.zip';
+export const mockCustomTutorialsHttpLink2 =
+  'https://raw.githubusercontent.com/archive.zip';
 
 export const mockCustomTutorial = Object.assign(new CustomTutorial(), {
   id: mockCustomTutorialId,
@@ -20,9 +26,12 @@ export const mockCustomTutorial = Object.assign(new CustomTutorial(), {
   createdAt: new Date(),
 });
 
-export const mockCustomTutorialEntity = Object.assign(new CustomTutorialEntity(), {
-  ...mockCustomTutorial,
-});
+export const mockCustomTutorialEntity = Object.assign(
+  new CustomTutorialEntity(),
+  {
+    ...mockCustomTutorial,
+  },
+);
 
 export const mockCustomTutorial2 = Object.assign(new CustomTutorial(), {
   id: mockCustomTutorialId2,
@@ -48,13 +57,19 @@ export const mockCustomTutorialMacosxAdmZipEntry = {
   entryName: '__MACOSX/info.md',
 } as AdmZip.IZipEntry;
 
-export const mockUploadCustomTutorialDto = Object.assign(new UploadCustomTutorialDto(), {
-  file: mockCustomTutorialZipFile,
-});
+export const mockUploadCustomTutorialDto = Object.assign(
+  new UploadCustomTutorialDto(),
+  {
+    file: mockCustomTutorialZipFile,
+  },
+);
 
-export const mockUploadCustomTutorialExternalLinkDto = Object.assign(new UploadCustomTutorialDto(), {
-  link: mockCustomTutorialsHttpLink,
-});
+export const mockUploadCustomTutorialExternalLinkDto = Object.assign(
+  new UploadCustomTutorialDto(),
+  {
+    link: mockCustomTutorialsHttpLink,
+  },
+);
 
 export const mockCustomTutorialManifestJson = {
   type: CustomTutorialManifestType.Group,
@@ -145,14 +160,13 @@ export const globalCustomTutorialManifest = {
     withBorder: true,
     initialIsOpen: false,
   },
-  children: [
-    mockCustomTutorialManifest,
-    mockCustomTutorialManifest2,
-  ],
+  children: [mockCustomTutorialManifest, mockCustomTutorialManifest2],
 };
 
 export const mockCustomTutorialFsProvider = jest.fn(() => ({
-  unzipFromMemoryStoredFile: jest.fn().mockResolvedValue(mockCustomTutorialTmpPath),
+  unzipFromMemoryStoredFile: jest
+    .fn()
+    .mockResolvedValue(mockCustomTutorialTmpPath),
   unzipFromExternalLink: jest.fn().mockResolvedValue(mockCustomTutorialTmpPath),
   unzipToTmpFolder: jest.fn().mockResolvedValue(mockCustomTutorialTmpPath),
   moveFolder: jest.fn(),
@@ -160,9 +174,13 @@ export const mockCustomTutorialFsProvider = jest.fn(() => ({
 }));
 
 export const mockCustomTutorialManifestProvider = jest.fn(() => ({
-  getOriginalManifestJson: jest.fn().mockResolvedValue(mockCustomTutorialManifestJson),
+  getOriginalManifestJson: jest
+    .fn()
+    .mockResolvedValue(mockCustomTutorialManifestJson),
   getManifestJson: jest.fn().mockResolvedValue(mockCustomTutorialManifestJson),
-  generateTutorialManifest: jest.fn().mockResolvedValue(mockCustomTutorialManifest),
+  generateTutorialManifest: jest
+    .fn()
+    .mockResolvedValue(mockCustomTutorialManifest),
   isOriginalManifestExists: jest.fn().mockResolvedValue(true),
 }));
 
@@ -170,10 +188,7 @@ export const mockCustomTutorialRepository = jest.fn(() => ({
   get: jest.fn().mockResolvedValue(mockCustomTutorial),
   create: jest.fn().mockResolvedValue(mockCustomTutorial),
   delete: jest.fn(),
-  list: jest.fn().mockResolvedValue([
-    mockCustomTutorial,
-    mockCustomTutorial2,
-  ]),
+  list: jest.fn().mockResolvedValue([mockCustomTutorial, mockCustomTutorial2]),
 }));
 
 export const mockCustomTutorialAnalytics = jest.fn(() => ({

@@ -8,14 +8,15 @@ import { AiQueryUnauthorizedException } from 'src/modules/ai/query/exceptions';
 
 @Injectable()
 export class LocalAiQueryAuthProvider extends AiQueryAuthProvider {
-  constructor(
-    private readonly cloudUserApiService: CloudUserApiService,
-  ) {
+  constructor(private readonly cloudUserApiService: CloudUserApiService) {
     super();
   }
 
-  async getAuthData(sessionMetadata: SessionMetadata): Promise<AiQueryAuthData> {
-    const session = await this.cloudUserApiService.getUserSession(sessionMetadata);
+  async getAuthData(
+    sessionMetadata: SessionMetadata,
+  ): Promise<AiQueryAuthData> {
+    const session =
+      await this.cloudUserApiService.getUserSession(sessionMetadata);
 
     return {
       sessionId: session.apiSessionId,
@@ -24,12 +25,22 @@ export class LocalAiQueryAuthProvider extends AiQueryAuthProvider {
     };
   }
 
-  async callWithAuthRetry(sessionMetadata: SessionMetadata, fn: () => Promise<any>, retries = 1) {
+  async callWithAuthRetry(
+    sessionMetadata: SessionMetadata,
+    fn: () => Promise<any>,
+    retries = 1,
+  ) {
     try {
       return await fn();
     } catch (e) {
-      if (retries > 0 && (e instanceof CloudApiUnauthorizedException || e instanceof AiQueryUnauthorizedException)) {
-        await this.cloudUserApiService.invalidateApiSession(sessionMetadata).catch(() => {});
+      if (
+        retries > 0 &&
+        (e instanceof CloudApiUnauthorizedException ||
+          e instanceof AiQueryUnauthorizedException)
+      ) {
+        await this.cloudUserApiService
+          .invalidateApiSession(sessionMetadata)
+          .catch(() => {});
         return this.callWithAuthRetry(sessionMetadata, fn, retries - 1);
       }
 

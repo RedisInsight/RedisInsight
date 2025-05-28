@@ -15,7 +15,7 @@ interface Props {
 const emptyMessageContent: { [key in EmptyMessage]: Content } = {
   [EmptyMessage.Reports]: {
     title: 'No Reports found',
-    text: () => 'Run "New Analysis" to generate first report.'
+    text: () => 'Run "New Analysis" to generate first report.',
   },
   [EmptyMessage.Keys]: {
     title: 'No keys to display',
@@ -30,12 +30,13 @@ const emptyMessageContent: { [key in EmptyMessage]: Content } = {
         </EuiLink>
         {' to quickly load the data.'}
       </>
-    )
+    ),
   },
   [EmptyMessage.Encrypt]: {
     title: 'Encrypted data',
-    text: () => 'Unable to decrypt. Check the system keychain or re-run the report generation.'
-  }
+    text: () =>
+      'Unable to decrypt. Check the system keychain or re-run the report generation.',
+  },
 }
 
 const EmptyAnalysisMessage = (props: Props) => {
@@ -49,7 +50,9 @@ const EmptyAnalysisMessage = (props: Props) => {
     <div className={styles.container} data-testid={`empty-analysis-no-${name}`}>
       <div className={styles.content}>
         <EuiText className={styles.title}>{title}</EuiText>
-        <EuiText className={styles.summary}>{text(Pages.workbench(instanceId))}</EuiText>
+        <EuiText className={styles.summary}>
+          {text(Pages.workbench(instanceId))}
+        </EuiText>
       </div>
     </div>
   )

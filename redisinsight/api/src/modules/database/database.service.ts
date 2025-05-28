@@ -1,15 +1,18 @@
 import {
-  Injectable, InternalServerErrorException, Logger, NotFoundException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
 } from '@nestjs/common';
-import {
-  isEmpty, omit, reject, sum, omitBy, isUndefined,
-} from 'lodash';
+import { isEmpty, omit, reject, sum, omitBy, isUndefined } from 'lodash';
 import { Database } from 'src/modules/database/models/database';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import {
-  catchRedisConnectionError, classToClass, getRedisConnectionException,
+  catchRedisConnectionError,
+  classToClass,
+  getRedisConnectionException,
 } from 'src/utils';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
@@ -23,7 +26,10 @@ import { ExportDatabase } from 'src/modules/database/models/export-database';
 import { deepMerge } from 'src/common/utils';
 import { CaCertificate } from 'src/modules/certificate/models/ca-certificate';
 import { ClientCertificate } from 'src/modules/certificate/models/client-certificate';
-import { IRedisConnectionOptions, RedisClientFactory } from 'src/modules/redis/redis.client.factory';
+import {
+  IRedisConnectionOptions,
+  RedisClientFactory,
+} from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 
 @Injectable()
@@ -55,10 +61,7 @@ export class DatabaseService {
     'clientCert',
   ];
 
-  static endpointFields: string[] = [
-    'host',
-    'port',
-  ];
+  static endpointFields: string[] = ['host', 'port'];
 
   constructor(
     private repository: DatabaseRepository,
@@ -71,14 +74,21 @@ export class DatabaseService {
   ) {}
 
   static isConnectionAffected(dto: object) {
-    return Object.keys(omitBy(dto, isUndefined)).some((field) => this.connectionFields.includes(field));
+    return Object.keys(omitBy(dto, isUndefined)).some((field) =>
+      this.connectionFields.includes(field),
+    );
   }
 
   static isEndpointAffected(dto: object) {
-    return Object.keys(omitBy(dto, isUndefined)).some((field) => this.endpointFields.includes(field));
+    return Object.keys(omitBy(dto, isUndefined)).some((field) =>
+      this.endpointFields.includes(field),
+    );
   }
 
-  private async merge(database: Database, dto: UpdateDatabaseDto): Promise<Database> {
+  private async merge(
+    database: Database,
+    dto: UpdateDatabaseDto,
+  ): Promise<Database> {
     const updatedDatabase = database;
     if (dto?.caCert) {
       updatedDatabase.caCert = dto.caCert as CaCertificate;
@@ -87,7 +97,7 @@ export class DatabaseService {
     if (dto?.clientCert) {
       updatedDatabase.clientCert = dto.clientCert as ClientCertificate;
     }
-    return deepMerge(updatedDatabase, dto);
+    return deepMerge(updatedDatabase, dto) as Database;
   }
 
   /**
@@ -96,7 +106,10 @@ export class DatabaseService {
    * @param id
    */
   async exists(sessionMetadata: SessionMetadata, id: string): Promise<boolean> {
-    this.logger.debug(`Checking if database with ${id} exists.`, sessionMetadata);
+    this.logger.debug(
+      `Checking if database with ${id} exists.`,
+      sessionMetadata,
+    );
     return this.repository.exists(sessionMetadata, id);
   }
 
@@ -110,7 +123,11 @@ export class DatabaseService {
       this.logger.debug('Getting databases list', sessionMetadata);
       return await this.repository.list(sessionMetadata);
     } catch (e) {
-      this.logger.error('Failed to get database instance list.', e, sessionMetadata);
+      this.logger.error(
+        'Failed to get database instance list.',
+        e,
+        sessionMetadata,
+      );
       throw new InternalServerErrorException();
     }
   }
@@ -134,7 +151,12 @@ export class DatabaseService {
       throw new NotFoundException(ERROR_MESSAGES.INVALID_DATABASE_INSTANCE_ID);
     }
 
-    const model = await this.repository.get(sessionMetadata, id, ignoreEncryptionErrors, omitFields);
+    const model = await this.repository.get(
+      sessionMetadata,
+      id,
+      ignoreEncryptionErrors,
+      omitFields,
+    );
 
     if (!model) {
       this.logger.error(`Database with ${id} was not Found`, sessionMetadata);
@@ -163,11 +185,11 @@ export class DatabaseService {
       const database = await this.repository.create(
         sessionMetadata,
         {
-          ...await this.databaseFactory.createDatabaseModel(
+          ...(await this.databaseFactory.createDatabaseModel(
             sessionMetadata,
             classToClass(Database, dto),
             options,
-          ),
+          )),
           new: true,
         },
         uniqueCheck,
@@ -183,8 +205,13 @@ export class DatabaseService {
           },
           database,
         );
-        const redisInfo = await this.databaseInfoProvider.getRedisGeneralInfo(client);
-        this.analytics.sendInstanceAddedEvent(sessionMetadata, database, redisInfo);
+        const redisInfo =
+          await this.databaseInfoProvider.getRedisGeneralInfo(client);
+        this.analytics.sendInstanceAddedEvent(
+          sessionMetadata,
+          database,
+          redisInfo,
+        );
         await client.disconnect();
       } catch (e) {
         // ignore error
@@ -227,7 +254,10 @@ export class DatabaseService {
           database.provider = undefined;
         }
 
-        database = await this.databaseFactory.createDatabaseModel(sessionMetadata, database);
+        database = await this.databaseFactory.createDatabaseModel(
+          sessionMetadata,
+          database,
+        );
 
         await this.redisClientStorage.removeManyByMetadata({ databaseId: id });
       }
@@ -244,7 +274,11 @@ export class DatabaseService {
 
       return database;
     } catch (error) {
-      this.logger.error(`Failed to update database instance ${id}`, error, sessionMetadata);
+      this.logger.error(
+        `Failed to update database instance ${id}`,
+        error,
+        sessionMetadata,
+      );
       throw catchRedisConnectionError(error, database);
     }
   }
@@ -263,9 +297,15 @@ export class DatabaseService {
     let database: Database;
 
     if (id) {
-      this.logger.debug('Testing existing database connection', sessionMetadata);
+      this.logger.debug(
+        'Testing existing database connection',
+        sessionMetadata,
+      );
 
-      database = await this.merge(await this.get(sessionMetadata, id, false), dto);
+      database = await this.merge(
+        await this.get(sessionMetadata, id, false),
+        dto,
+      );
     } else {
       this.logger.debug('Testing new database connection', sessionMetadata);
       database = classToClass(Database, dto);
@@ -292,10 +332,18 @@ export class DatabaseService {
    * @param id
    * @param dto
    */
-  public async clone(sessionMetadata: SessionMetadata, id: string, dto: UpdateDatabaseDto): Promise<Database> {
+  public async clone(
+    sessionMetadata: SessionMetadata,
+    id: string,
+    dto: UpdateDatabaseDto,
+  ): Promise<Database> {
     this.logger.debug('Clone existing database', sessionMetadata);
     const database = await this.merge(
-      await this.get(sessionMetadata, id, false, ['id', 'sshOptions.id', 'createdAt']),
+      await this.get(sessionMetadata, id, false, [
+        'id',
+        'sshOptions.id',
+        'createdAt',
+      ]),
       dto,
     );
 
@@ -333,12 +381,19 @@ export class DatabaseService {
       await this.repository.delete(sessionMetadata, id);
       // todo: rethink
       await this.redisClientStorage.removeManyByMetadata({ databaseId: id });
-      this.logger.debug('Succeed to delete database instance.', sessionMetadata);
+      this.logger.debug(
+        'Succeed to delete database instance.',
+        sessionMetadata,
+      );
 
       this.analytics.sendInstanceDeletedEvent(sessionMetadata, database);
       this.eventEmitter.emit(AppRedisInstanceEvents.Deleted, id);
     } catch (error) {
-      this.logger.error(`Failed to delete database: ${id}`, error, sessionMetadata);
+      this.logger.error(
+        `Failed to delete database: ${id}`,
+        error,
+        sessionMetadata,
+      );
       throw new InternalServerErrorException();
     }
   }
@@ -349,18 +404,25 @@ export class DatabaseService {
    * @param sessionMetadata
    * @param ids
    */
-  async bulkDelete(sessionMetadata: SessionMetadata, ids: string[]): Promise<DeleteDatabasesResponse> {
+  async bulkDelete(
+    sessionMetadata: SessionMetadata,
+    ids: string[],
+  ): Promise<DeleteDatabasesResponse> {
     this.logger.debug(`Deleting many database: ${ids}`, sessionMetadata);
 
     return {
-      affected: sum(await Promise.all(ids.map(async (id) => {
-        try {
-          await this.delete(sessionMetadata, id);
-          return 1;
-        } catch (e) {
-          return 0;
-        }
-      }))),
+      affected: sum(
+        await Promise.all(
+          ids.map(async (id) => {
+            try {
+              await this.delete(sessionMetadata, id);
+              return 1;
+            } catch (e) {
+              return 0;
+            }
+          }),
+        ),
+      ),
     };
   }
 
@@ -371,7 +433,11 @@ export class DatabaseService {
    * @param ids
    * @param withSecrets
    */
-  async export(sessionMetadata: SessionMetadata, ids: string[], withSecrets = false): Promise<ExportDatabase[]> {
+  async export(
+    sessionMetadata: SessionMetadata,
+    ids: string[],
+    withSecrets = false,
+  ): Promise<ExportDatabase[]> {
     const paths = !withSecrets ? this.exportSecurityFields : [];
 
     this.logger.debug(`Exporting many database: ${ids}`, sessionMetadata);
@@ -382,20 +448,22 @@ export class DatabaseService {
     }
 
     const entities: ExportDatabase[] = reject(
-      await Promise.all(ids.map(async (id) => {
-        try {
-          return await this.get(sessionMetadata, id);
-        } catch (e) {
-          // ignore
-        }
-      })),
+      await Promise.all(
+        ids.map(async (id) => {
+          try {
+            return await this.get(sessionMetadata, id);
+          } catch (e) {
+            // ignore
+          }
+        }),
+      ),
       isEmpty,
     );
 
-    return entities.map((database) => classToClass(
-      ExportDatabase,
-      omit(database, paths),
-      { groups: ['security'] },
-    ));
+    return entities.map((database) =>
+      classToClass(ExportDatabase, omit(database, paths), {
+        groups: ['security'],
+      }),
+    );
   }
 }

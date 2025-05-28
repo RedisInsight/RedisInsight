@@ -2,9 +2,25 @@ import React from 'react'
 import { loadAsync } from 'jszip'
 import { cloneDeep } from 'lodash'
 
-import { rdiPipelineSelector, setChangedFiles, setConfigValidationErrors, setIsPipelineValid, setJobsValidationErrors, setPipelineConfig, setPipelineJobs } from 'uiSrc/slices/rdi/pipeline'
+import {
+  rdiPipelineSelector,
+  setChangedFiles,
+  setConfigValidationErrors,
+  setIsPipelineValid,
+  setJobsValidationErrors,
+  setPipelineConfig,
+  setPipelineJobs,
+} from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { act, cleanup, fireEvent, mockedStore, render, screen, waitFor } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+  waitFor,
+} from 'uiSrc/utils/test-utils'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
 import { validatePipeline } from 'uiSrc/components/yaml-validator'
 import UploadModal from './UploadModal'
@@ -16,34 +32,34 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
     config: 'value',
     jobs: [
       { name: 'job1', value: 'value' },
-      { name: 'job2', value: 'value' }
-    ]
-  })
+      { name: 'job2', value: 'value' },
+    ],
+  }),
 }))
 
 jest.mock('uiSrc/telemetry', () => ({
   ...jest.requireActual('uiSrc/telemetry'),
-  sendEventTelemetry: jest.fn()
+  sendEventTelemetry: jest.fn(),
 }))
 
 jest.mock('jszip', () => ({
   ...jest.requireActual('jszip'),
   loadAsync: jest.fn().mockReturnValue({
     file: jest.fn().mockReturnValue({
-      async: jest.fn().mockReturnValue('config')
+      async: jest.fn().mockReturnValue('config'),
     }),
     files: {
       'jobs/': {
-        async: jest.fn()
+        async: jest.fn(),
       },
       'jobs/job1.yaml': {
-        async: jest.fn().mockReturnValue('value1')
+        async: jest.fn().mockReturnValue('value1'),
       },
       'jobs/job2.yaml': {
-        async: jest.fn().mockReturnValue('value2')
-      }
-    }
-  })
+        async: jest.fn().mockReturnValue('value2'),
+      },
+    },
+  }),
 }))
 
 jest.mock('uiSrc/components/yaml-validator', () => ({
@@ -70,8 +86,10 @@ describe('UploadModal', () => {
   })
 
   it('should call proper telemetry event when button is clicked', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<UploadModal>{button}</UploadModal>)
 
@@ -82,8 +100,8 @@ describe('UploadModal', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_PIPELINE_UPLOAD_FROM_FILE_CLICKED,
       eventData: {
-        id: 'rdiInstanceId'
-      }
+        id: 'rdiInstanceId',
+      },
     })
   })
 
@@ -96,17 +114,21 @@ describe('UploadModal', () => {
 
     await act(() => {
       fireEvent.change(screen.getByTestId('import-file-modal-filepicker'), {
-        target: { files: ['file'] }
+        target: { files: ['file'] },
       })
       fireEvent.click(screen.getByTestId('submit-btn'))
     })
 
     const expectedActions = [
-      setChangedFiles({ config: FileChangeType.Added, job1: FileChangeType.Added, job2: FileChangeType.Added }),
+      setChangedFiles({
+        config: FileChangeType.Added,
+        job1: FileChangeType.Added,
+        job2: FileChangeType.Added,
+      }),
       setPipelineConfig('config'),
       setPipelineJobs([
         { name: 'job1', value: 'value1' },
-        { name: 'job2', value: 'value2' }
+        { name: 'job2', value: 'value2' },
       ]),
     ]
 
@@ -115,10 +137,16 @@ describe('UploadModal', () => {
 
   it('should call proper telemetry event when file upload is successful', async () => {
     const onUploadedPipelineMock = jest.fn()
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
-    render(<UploadModal onUploadedPipeline={onUploadedPipelineMock}>{button}</UploadModal>)
+    render(
+      <UploadModal onUploadedPipeline={onUploadedPipelineMock}>
+        {button}
+      </UploadModal>,
+    )
 
     await act(() => {
       fireEvent.click(screen.getByTestId('btn'))
@@ -126,7 +154,7 @@ describe('UploadModal', () => {
 
     await act(() => {
       fireEvent.change(screen.getByTestId('import-file-modal-filepicker'), {
-        target: { files: ['file'] }
+        target: { files: ['file'] },
       })
       fireEvent.click(screen.getByTestId('submit-btn'))
     })
@@ -137,21 +165,27 @@ describe('UploadModal', () => {
         id: 'rdiInstanceId',
         jobsNumber: 2,
         source: 'file',
-      }
+      },
     })
     expect(onUploadedPipelineMock).toBeCalled()
   })
 
   it('should call proper telemetry event when file upload has failed', async () => {
-    (loadAsync as jest.Mock).mockImplementation(() => {
+    ;(loadAsync as jest.Mock).mockImplementation(() => {
       throw new Error('error')
     })
 
     const onUploadedPipelineMock = jest.fn()
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
-    render(<UploadModal onUploadedPipeline={onUploadedPipelineMock}>{button}</UploadModal>)
+    render(
+      <UploadModal onUploadedPipeline={onUploadedPipelineMock}>
+        {button}
+      </UploadModal>,
+    )
 
     await act(() => {
       fireEvent.click(screen.getByTestId('btn'))
@@ -159,7 +193,7 @@ describe('UploadModal', () => {
 
     await act(() => {
       fireEvent.change(screen.getByTestId('import-file-modal-filepicker'), {
-        target: { files: ['file'] }
+        target: { files: ['file'] },
       })
       fireEvent.click(screen.getByTestId('submit-btn'))
     })
@@ -169,8 +203,8 @@ describe('UploadModal', () => {
       eventData: {
         id: 'rdiInstanceId',
         errorMessage: 'error',
-        source: 'file'
-      }
+        source: 'file',
+      },
     })
     expect(onUploadedPipelineMock).not.toBeCalled()
   })
@@ -185,15 +219,17 @@ describe('UploadModal', () => {
     })
 
     await act(() => {
-      fireEvent.click(screen.getByRole('button', { name: 'Closes this modal window' }))
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Closes this modal window' }),
+      )
     })
 
     expect(onCloseMock).toBeCalled()
   })
 
   it('should render disabled upload button when loading', () => {
-    (rdiPipelineSelector as jest.Mock).mockImplementation(() => ({
-      loading: true
+    ;(rdiPipelineSelector as jest.Mock).mockImplementation(() => ({
+      loading: true,
     }))
 
     render(<UploadModal>{button}</UploadModal>)
@@ -214,29 +250,27 @@ describe('UploadModal', () => {
   })
 
   it('should call validatePipeline and dispatch validation actions on successful upload', async () => {
-    (validatePipeline as jest.Mock).mockReturnValue({
+    ;(validatePipeline as jest.Mock).mockReturnValue({
       result: true,
       configValidationErrors: [],
       jobsValidationErrors: {},
-    });
-
-    (rdiPipelineSelector as jest.Mock).mockReturnValue({
+    })
+    ;(rdiPipelineSelector as jest.Mock).mockReturnValue({
       loading: false,
       schema: 'mockSchema',
-    });
-
-    (loadAsync as jest.Mock).mockReturnValue({
+    })
+    ;(loadAsync as jest.Mock).mockReturnValue({
       file: jest.fn().mockReturnValue({
-        async: jest.fn().mockReturnValue('mockConfig')
+        async: jest.fn().mockReturnValue('mockConfig'),
       }),
       files: {
         'jobs/': {
-          async: jest.fn()
+          async: jest.fn(),
         },
         'jobs/job1.yaml': {
-          async: jest.fn().mockReturnValue('value')
+          async: jest.fn().mockReturnValue('value'),
         },
-      }
+      },
     })
 
     render(<UploadModal>{button}</UploadModal>)
@@ -259,7 +293,10 @@ describe('UploadModal', () => {
     })
 
     expect(store.getActions()).toEqual([
-      setChangedFiles({ config: FileChangeType.Added, job1: FileChangeType.Added }),
+      setChangedFiles({
+        config: FileChangeType.Added,
+        job1: FileChangeType.Added,
+      }),
       setPipelineConfig('mockConfig'),
       setPipelineJobs([{ name: 'job1', value: 'value' }]),
       setConfigValidationErrors([]),
@@ -292,16 +329,16 @@ describe('UploadModal', () => {
   })
 
   it('should NOT call validatePipeline if jobs are missing', async () => {
-    (loadAsync as jest.Mock).mockReturnValue({
+    ;(loadAsync as jest.Mock).mockReturnValue({
       file: jest.fn().mockReturnValue({
-        async: jest.fn().mockReturnValue('config')
+        async: jest.fn().mockReturnValue('config'),
       }),
       files: {
         'jobs/': {
-          async: jest.fn()
+          async: jest.fn(),
         },
-      // No jobs
-      }
+        // No jobs
+      },
     })
 
     render(<UploadModal>{button}</UploadModal>)
@@ -321,21 +358,21 @@ describe('UploadModal', () => {
   })
 
   it('should NOT call validatePipeline if config is missing', async () => {
-    (loadAsync as jest.Mock).mockReturnValue({
+    ;(loadAsync as jest.Mock).mockReturnValue({
       file: jest.fn().mockReturnValue({
-        async: jest.fn().mockReturnValue(null)
+        async: jest.fn().mockReturnValue(null),
       }),
       files: {
         'jobs/': {
-          async: jest.fn()
+          async: jest.fn(),
         },
         'jobs/job1.yaml': {
-          async: jest.fn().mockReturnValue('value1')
+          async: jest.fn().mockReturnValue('value1'),
         },
         'jobs/job2.yaml': {
-          async: jest.fn().mockReturnValue('value2')
-        }
-      }
+          async: jest.fn().mockReturnValue('value2'),
+        },
+      },
     })
 
     render(<UploadModal>{button}</UploadModal>)

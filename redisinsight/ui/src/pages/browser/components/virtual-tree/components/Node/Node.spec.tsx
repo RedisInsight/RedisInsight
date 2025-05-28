@@ -32,7 +32,10 @@ const mockedDataWithMetadata = {
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
-  useDisposableWebworker: () => ({ result: mockVirtualTreeResult, run: jest.fn() }),
+  useDisposableWebworker: () => ({
+    result: mockVirtualTreeResult,
+    run: jest.fn(),
+  }),
 }))
 
 let store: typeof mockedStore
@@ -44,20 +47,32 @@ beforeEach(() => {
 
 describe('Node', () => {
   it('should render', () => {
-    expect(render(<Node {...instance(mockedProps)} data={mockedData} />)).toBeTruthy()
+    expect(
+      render(<Node {...instance(mockedProps)} data={mockedData} />),
+    ).toBeTruthy()
   })
 
   it('should render arrow and folder icons for Node properly', () => {
     const mockData: TreeData = {
       ...mockedData,
       isLeaf: false,
-      fullName: mockDataFullName
+      fullName: mockDataFullName,
     }
 
-    const { container } = render(<Node {...instance(mockedProps)} data={mockData} />)
+    const { container } = render(
+      <Node {...instance(mockedProps)} data={mockData} />,
+    )
 
-    expect(container.querySelector(`[data-test-subj="node-arrow-icon_${mockDataFullName}"`)).toBeInTheDocument()
-    expect(container.querySelector(`[data-test-subj="node-folder-icon_${mockDataFullName}"`)).toBeInTheDocument()
+    expect(
+      container.querySelector(
+        `[data-test-subj="node-arrow-icon_${mockDataFullName}"`,
+      ),
+    ).toBeInTheDocument()
+    expect(
+      container.querySelector(
+        `[data-test-subj="node-folder-icon_${mockDataFullName}"`,
+      ),
+    ).toBeInTheDocument()
   })
 
   it('"setItems", "updateStatusSelected", "mockGetMetadata" should be called after click on Leaf', () => {
@@ -73,12 +88,14 @@ describe('Node', () => {
       getMetadata: mockGetMetadata,
     }
 
-    render(<Node
-      {...instance(mockedProps)}
-      setOpen={mockSetOpen}
-      isOpen={false}
-      data={mockData}
-    />)
+    render(
+      <Node
+        {...instance(mockedProps)}
+        setOpen={mockSetOpen}
+        isOpen={false}
+        data={mockData}
+      />,
+    )
 
     screen.getByTestId(`node-item_${mockDataFullName}`).click()
 
@@ -101,12 +118,14 @@ describe('Node', () => {
       getMetadata: mockGetMetadata,
     }
 
-    render(<Node
-      {...instance(mockedProps)}
-      setOpen={mockSetOpen}
-      isOpen={false}
-      data={mockData}
-    />)
+    render(
+      <Node
+        {...instance(mockedProps)}
+        setOpen={mockSetOpen}
+        isOpen={false}
+        data={mockData}
+      />,
+    )
 
     screen.getByTestId(`node-item_${mockDataFullName}`).click()
 
@@ -117,13 +136,14 @@ describe('Node', () => {
   })
 
   it('name, ttl and size should be rendered', () => {
-    const { getByTestId } = render(<Node
-      {...instance(mockedProps)}
-      data={mockedDataWithMetadata}
-    />)
+    const { getByTestId } = render(
+      <Node {...instance(mockedProps)} data={mockedDataWithMetadata} />,
+    )
 
     expect(getByTestId(`node-item_${mockDataFullName}`)).toBeInTheDocument()
-    expect(getByTestId(`badge-${mockedDataWithMetadata.type}_${mockDataFullName}`)).toBeInTheDocument()
+    expect(
+      getByTestId(`badge-${mockedDataWithMetadata.type}_${mockDataFullName}`),
+    ).toBeInTheDocument()
     expect(getByTestId(`ttl-${mockDataFullName}`)).toBeInTheDocument()
     expect(getByTestId(`size-${mockDataFullName}`)).toBeInTheDocument()
   })
@@ -142,17 +162,22 @@ describe('Node', () => {
       updateStatusOpen: mockUpdateStatusOpen,
     }
 
-    render(<Node
-      {...instance(mockedProps)}
-      isOpen={false}
-      setOpen={mockSetOpen}
-      data={mockData}
-    />)
+    render(
+      <Node
+        {...instance(mockedProps)}
+        isOpen={false}
+        setOpen={mockSetOpen}
+        data={mockData}
+      />,
+    )
 
     screen.getByTestId(`node-item_${mockDataFullName}`).click()
 
     expect(mockUpdateStatusSelected).not.toBeCalled()
-    expect(mockUpdateStatusOpen).toHaveBeenCalledWith(mockDataFullName, !mockIsOpen)
+    expect(mockUpdateStatusOpen).toHaveBeenCalledWith(
+      mockDataFullName,
+      !mockIsOpen,
+    )
     expect(mockSetOpen).toBeCalledWith(!mockIsOpen)
   })
 
@@ -173,7 +198,10 @@ describe('Node', () => {
 
       screen.getByTestId(`node-item_${mockDataFullName}`).click()
 
-      expect(mockGetMetadata).toBeCalledWith(mockedData.nameBuffer, mockedData.path)
+      expect(mockGetMetadata).toBeCalledWith(
+        mockedData.nameBuffer,
+        mockedData.path,
+      )
       expect(mockUpdateStatusSelected).toBeCalledWith(mockedData.nameBuffer)
       expect(mockUpdateStatusOpen).toBeCalledWith(mockDataFullName, true)
     })
@@ -194,7 +222,9 @@ describe('Node', () => {
 
       screen.getByTestId(`node-item_${mockDataFullName}`).click()
 
-      expect(mockUpdateStatusSelected).toBeCalledWith(mockedDataWithMetadata.nameBuffer)
+      expect(mockUpdateStatusSelected).toBeCalledWith(
+        mockedDataWithMetadata.nameBuffer,
+      )
       expect(mockUpdateStatusOpen).toBeCalledWith(mockDataFullName, true)
       expect(mockGetMetadata).not.toBeCalled()
     })
@@ -209,38 +239,48 @@ describe('Node', () => {
     it('should not render TTL and Size when metadata does not exist', () => {
       render(<Node {...instance(mockedProps)} data={mockedData} />)
 
-      expect(screen.queryByTestId(`ttl-${mockDataFullName}`)).not.toBeInTheDocument()
-      expect(screen.queryByTestId(`size-${mockDataFullName}`)).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId(`ttl-${mockDataFullName}`),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId(`size-${mockDataFullName}`),
+      ).not.toBeInTheDocument()
     })
 
     it.each`
-      description               | initialState                                                | updatedState
-      ${'TTL column'}           | ${{ app: { context: { dbConfig: { shownColumns: [] } } } }} | ${{ app: { context: { dbConfig: { shownColumns: [BrowserColumns.TTL] } } } }}
-      ${'Size column'}          | ${{ app: { context: { dbConfig: { shownColumns: [] } } } }} | ${{ app: { context: { dbConfig: { shownColumns: [BrowserColumns.Size] } } } }}
-    `('should refetch metadata when $description is re-enabled even with existing metadata', ({ initialState, updatedState }) => {
-      const mockGetMetadata = jest.fn()
-      const mockData: TreeData = {
-        ...mockedDataWithMetadata,
-        getMetadata: mockGetMetadata,
-      }
+      description      | initialState                                                | updatedState
+      ${'TTL column'}  | ${{ app: { context: { dbConfig: { shownColumns: [] } } } }} | ${{ app: { context: { dbConfig: { shownColumns: [BrowserColumns.TTL] } } } }}
+      ${'Size column'} | ${{ app: { context: { dbConfig: { shownColumns: [] } } } }} | ${{ app: { context: { dbConfig: { shownColumns: [BrowserColumns.Size] } } } }}
+    `(
+      'should refetch metadata when $description is re-enabled even with existing metadata',
+      ({ initialState, updatedState }) => {
+        const mockGetMetadata = jest.fn()
+        const mockData: TreeData = {
+          ...mockedDataWithMetadata,
+          getMetadata: mockGetMetadata,
+        }
 
-      const store = {
-        getState: () => initialState,
-        subscribe: jest.fn(),
-        dispatch: jest.fn(),
-      }
+        const store = {
+          getState: () => initialState,
+          subscribe: jest.fn(),
+          dispatch: jest.fn(),
+        }
 
-      const { rerender } = render(
-        <Node {...instance(mockedProps)} data={mockData} />,
-        { store }
-      )
+        const { rerender } = render(
+          <Node {...instance(mockedProps)} data={mockData} />,
+          { store },
+        )
 
-      store.getState = () => updatedState
+        store.getState = () => updatedState
 
-      rerender(<Node {...instance(mockedProps)} data={mockData} />)
+        rerender(<Node {...instance(mockedProps)} data={mockData} />)
 
-      expect(mockGetMetadata).toHaveBeenCalledWith(mockData.nameBuffer, mockData.path)
-    })
+        expect(mockGetMetadata).toHaveBeenCalledWith(
+          mockData.nameBuffer,
+          mockData.path,
+        )
+      },
+    )
 
     it.each`
       columns                                      | description
@@ -260,10 +300,10 @@ describe('Node', () => {
           app: {
             context: {
               dbConfig: {
-                shownColumns: columns
-              }
-            }
-          }
+                shownColumns: columns,
+              },
+            },
+          },
         }),
         subscribe: jest.fn(),
         dispatch: jest.fn(),
@@ -271,11 +311,14 @@ describe('Node', () => {
 
       const { container } = render(
         <Node {...instance(mockedProps)} data={mockData} />,
-        { store }
+        { store },
       )
 
-      expect(container.querySelector(`[data-testid="delete-key-btn-${mockData.nameString}"]`))
-        .toBeInTheDocument()
+      expect(
+        container.querySelector(
+          `[data-testid="delete-key-btn-${mockData.nameString}"]`,
+        ),
+      ).toBeInTheDocument()
     })
   })
 })

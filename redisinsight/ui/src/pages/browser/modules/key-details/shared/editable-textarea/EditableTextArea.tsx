@@ -17,8 +17,8 @@ export interface Props {
   isInvalid?: boolean
   isEditDisabled?: boolean
   textAreaMaxHeight?: number
-  disabledTooltipText?: { title: string, content: string }
-  approveText?: { title: string, text: string }
+  disabledTooltipText?: { title: string; content: string }
+  approveText?: { title: string; text: string }
   editToolTipContent?: React.ReactNode
   approveByValidation?: (value: string) => boolean
   onEdit: (isEditing: boolean) => void
@@ -122,7 +122,10 @@ const EditableTextArea = (props: Props) => {
   }
 
   return (
-    <AutoSizer disableHeight onResize={() => setTimeout(updateTextAreaHeight, 0)}>
+    <AutoSizer
+      disableHeight
+      onResize={() => setTimeout(updateTextAreaHeight, 0)}
+    >
       {({ width }) => (
         <div style={{ width }}>
           <StopPropagation>
@@ -163,9 +166,14 @@ const EditableTextArea = (props: Props) => {
                 onChange={handleOnChange}
                 disabled={isLoading}
                 inputRef={textAreaRef}
-                className={cx(styles.textArea, { [styles.areaWarning]: isDisabled })}
+                className={cx(styles.textArea, {
+                  [styles.areaWarning]: isDisabled,
+                })}
                 spellCheck={false}
-                style={{ height: textAreaRef.current?.scrollHeight || 0, maxHeight: textAreaMaxHeight }}
+                style={{
+                  height: textAreaRef.current?.scrollHeight || 0,
+                  maxHeight: textAreaMaxHeight,
+                }}
                 data-testid={`${testIdPrefix}_value-editor-${field}`}
               />
             </InlineItemEditor>

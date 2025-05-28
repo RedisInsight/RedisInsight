@@ -2,7 +2,7 @@ import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 type TreeViewDelimiterType = {
-  label: string
+  label: string;
 };
 
 export class DatabaseSettingsData {

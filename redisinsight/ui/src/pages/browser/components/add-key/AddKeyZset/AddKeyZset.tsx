@@ -1,26 +1,31 @@
-import React, { ChangeEvent, FormEvent, useState, useEffect, useRef } from 'react'
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
 import {
   EuiButton,
   EuiFieldText,
-  EuiFormRow,
-  EuiTextColor,
   EuiForm,
-  EuiFlexGroup,
-  EuiFlexItem,
+  EuiFormRow,
   EuiPanel,
+  EuiTextColor,
 } from '@elastic/eui'
 import { Maybe, stringToBuffer, validateScoreNumber } from 'uiSrc/utils'
 import { isNaNConvertedString } from 'uiSrc/utils/numbers'
-import { addZsetKey, addKeyStateSelector } from 'uiSrc/slices/browser/keys'
+import { addKeyStateSelector, addZsetKey } from 'uiSrc/slices/browser/keys'
 
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 import { ISetMemberState } from 'uiSrc/pages/browser/components/add-key/AddKeySet/interfaces'
 import {
   INITIAL_ZSET_MEMBER_STATE,
-  IZsetMemberState
+  IZsetMemberState,
 } from 'uiSrc/pages/browser/components/add-key/AddKeyZset/interfaces'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/z-set/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import { AddZsetFormConfig as config } from '../constants/fields-config'
@@ -34,7 +39,9 @@ export interface Props {
 const AddKeyZset = (props: Props) => {
   const { keyName = '', keyTTL, onCancel } = props
   const { loading } = useSelector(addKeyStateSelector)
-  const [members, setMembers] = useState<IZsetMemberState[]>([{ ...INITIAL_ZSET_MEMBER_STATE }])
+  const [members, setMembers] = useState<IZsetMemberState[]>([
+    { ...INITIAL_ZSET_MEMBER_STATE },
+  ])
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
   const lastAddedMemberName = useRef<HTMLInputElement>(null)
   const prevCountMembers = useRef<number>(0)
@@ -59,7 +66,10 @@ const AddKeyZset = (props: Props) => {
   }, [keyName, members])
 
   useEffect(() => {
-    if (prevCountMembers.current !== 0 && prevCountMembers.current < members.length) {
+    if (
+      prevCountMembers.current !== 0 &&
+      prevCountMembers.current < members.length
+    ) {
       lastAddedMemberName.current?.focus()
     }
     prevCountMembers.current = members.length
@@ -71,8 +81,8 @@ const AddKeyZset = (props: Props) => {
       ...members,
       {
         ...INITIAL_ZSET_MEMBER_STATE,
-        id: lastMember.id + 1
-      }
+        id: lastMember.id + 1,
+      },
     ]
     setMembers(newState)
   }
@@ -83,12 +93,15 @@ const AddKeyZset = (props: Props) => {
   }
 
   const clearMemberValues = (id: number) => {
-    const newState = members.map((item) => (item.id === id
-      ? {
-        ...item,
-        name: '',
-        score: ''
-      } : item))
+    const newState = members.map((item) =>
+      item.id === id
+        ? {
+            ...item,
+            name: '',
+            score: '',
+          }
+        : item,
+    )
     setMembers(newState)
   }
 
@@ -101,11 +114,7 @@ const AddKeyZset = (props: Props) => {
     removeMember(id)
   }
 
-  const handleMemberChange = (
-    formField: string,
-    id: number,
-    value: any
-  ) => {
+  const handleMemberChange = (formField: string, id: number, value: any) => {
     let validatedValue = value
     if (formField === 'score') {
       validatedValue = validateScore(value)
@@ -114,7 +123,7 @@ const AddKeyZset = (props: Props) => {
       if (item.id === id) {
         return {
           ...item,
-          [formField]: validatedValue
+          [formField]: validatedValue,
         }
       }
       return item
@@ -136,13 +145,13 @@ const AddKeyZset = (props: Props) => {
       if (isNaNConvertedString(score)) {
         return {
           ...currentItem,
-          score: ''
+          score: '',
         }
       }
       if (score.length) {
         return {
           ...currentItem,
-          score: (toNumber(score)).toString()
+          score: toNumber(score).toString(),
         }
       }
       return currentItem
@@ -163,7 +172,7 @@ const AddKeyZset = (props: Props) => {
       members: members.map((item) => ({
         name: stringToBuffer(item.name),
         score: toNumber(item.score),
-      }))
+      })),
     }
     if (keyTTL !== undefined) {
       data.expire = keyTTL
@@ -183,8 +192,8 @@ const AddKeyZset = (props: Props) => {
         onClickAdd={addMember}
       >
         {(item, index) => (
-          <EuiFlexGroup gutterSize="none" alignItems="center">
-            <EuiFlexItem grow>
+          <Row align="center">
+            <FlexItem grow>
               <EuiFormRow fullWidth>
                 <EuiFieldText
                   fullWidth
@@ -193,18 +202,17 @@ const AddKeyZset = (props: Props) => {
                   placeholder={config.member.placeholder}
                   value={item.name}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    handleMemberChange(
-                      'name',
-                      item.id,
-                      e.target.value
-                    )}
-                  inputRef={index === members.length - 1 ? lastAddedMemberName : null}
+                    handleMemberChange('name', item.id, e.target.value)
+                  }
+                  inputRef={
+                    index === members.length - 1 ? lastAddedMemberName : null
+                  }
                   disabled={loading}
                   data-testid="member-name"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-            <EuiFlexItem grow>
+            </FlexItem>
+            <FlexItem grow>
               <EuiFormRow fullWidth>
                 <EuiFieldText
                   fullWidth
@@ -214,18 +222,17 @@ const AddKeyZset = (props: Props) => {
                   placeholder={config.score.placeholder}
                   value={item.score}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    handleMemberChange(
-                      'score',
-                      item.id,
-                      e.target.value
-                    )}
-                  onBlur={() => { handleScoreBlur(item) }}
+                    handleMemberChange('score', item.id, e.target.value)
+                  }
+                  onBlur={() => {
+                    handleScoreBlur(item)
+                  }}
                   disabled={loading}
                   data-testid="member-score"
                 />
               </EuiFormRow>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         )}
       </AddMultipleFields>
 
@@ -240,8 +247,8 @@ const AddKeyZset = (props: Props) => {
           borderRadius="none"
           style={{ border: 'none' }}
         >
-          <EuiFlexGroup justifyContent="flexEnd">
-            <EuiFlexItem grow={false}>
+          <Row justify="end">
+            <FlexItem>
               <div>
                 <EuiButton
                   color="secondary"
@@ -251,8 +258,8 @@ const AddKeyZset = (props: Props) => {
                   <EuiTextColor>Cancel</EuiTextColor>
                 </EuiButton>
               </div>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            </FlexItem>
+            <FlexItem>
               <div>
                 <EuiButton
                   fill
@@ -267,8 +274,8 @@ const AddKeyZset = (props: Props) => {
                   Add Key
                 </EuiButton>
               </div>
-            </EuiFlexItem>
-          </EuiFlexGroup>
+            </FlexItem>
+          </Row>
         </EuiPanel>
       </AddKeyFooter>
     </EuiForm>

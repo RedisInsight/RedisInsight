@@ -14,8 +14,8 @@ export interface CSRFTokenResponse {
 export const initialState: {
   csrfEndpoint: string
   loading: boolean
-  token: string,
-  error: string,
+  token: string
+  error: string
 } = {
   csrfEndpoint: getCsrfEndpoint(),
   loading: false,
@@ -30,19 +30,26 @@ const appCsrfSlice = createSlice({
     fetchCsrfToken: (state) => {
       state.loading = true
     },
-    fetchCsrfTokenSuccess: (state, { payload }: { payload: { token: string } }) => {
+    fetchCsrfTokenSuccess: (
+      state,
+      { payload }: { payload: { token: string } },
+    ) => {
       state.token = payload.token
       state.loading = false
     },
-    fetchCsrfTokenFail: (state, { payload }: { payload: { error: string } }) => {
+    fetchCsrfTokenFail: (
+      state,
+      { payload }: { payload: { error: string } },
+    ) => {
       state.loading = false
       state.token = ''
       state.error = payload.error
     },
-  }
+  },
 })
 
-export const { fetchCsrfToken, fetchCsrfTokenSuccess, fetchCsrfTokenFail } = appCsrfSlice.actions
+export const { fetchCsrfToken, fetchCsrfTokenSuccess, fetchCsrfTokenFail } =
+  appCsrfSlice.actions
 
 export const appCsrfSelector = (state: RootState) => state.app.csrf
 
@@ -50,14 +57,15 @@ export default appCsrfSlice.reducer
 
 export function fetchCsrfTokenAction(
   onSuccessAction?: (data: any) => void,
-  onFailAction?: () => void
+  onFailAction?: () => void,
 ) {
   return async (dispatch: AppDispatch) => {
     try {
       if (getCsrfEndpoint()) {
         dispatch(fetchCsrfToken())
 
-        const { data } = await apiService.get<CSRFTokenResponse>(getCsrfEndpoint())
+        const { data } =
+          await apiService.get<CSRFTokenResponse>(getCsrfEndpoint())
 
         setApiCsrfHeader(data.token)
         setResourceCsrfHeader(data.token)

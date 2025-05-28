@@ -1,16 +1,11 @@
 import React from 'react'
-import {
-  EuiButtonIcon,
-  EuiText,
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiLoadingSpinner,
-} from '@elastic/eui'
+import { EuiButtonIcon, EuiText, EuiLoadingSpinner } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import TestConnectionsLog from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-log'
 import { rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
 
+import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 interface TestConnectionPanelWrapperProps {
@@ -50,25 +45,19 @@ const TestConnectionsPanel = (props: Props) => {
   if (loading) {
     return (
       <TestConnectionPanelWrapper onClose={onClose}>
-        <EuiFlexGroup
-          className={styles.content}
-          alignItems="center"
-          justifyContent="center"
-          direction="column"
-          gutterSize="none"
-        >
-          <EuiFlexItem grow={false}>
+        <Col className={styles.content} centered>
+          <FlexItem>
             <EuiText className={styles.loaderText}>Loading results...</EuiText>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <EuiLoadingSpinner
               data-testid="test-connections-loader"
               className={styles.loaderIcon}
               color="secondary"
               size="xl"
             />
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Col>
       </TestConnectionPanelWrapper>
     )
   }

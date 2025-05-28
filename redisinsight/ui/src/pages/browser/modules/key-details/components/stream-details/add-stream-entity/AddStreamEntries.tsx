@@ -1,16 +1,27 @@
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPanel, EuiTextColor } from '@elastic/eui'
+import { EuiButton, EuiPanel, EuiTextColor } from '@elastic/eui'
 import cx from 'classnames'
 import { toNumber } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { entryIdRegex, stringToBuffer } from 'uiSrc/utils'
-import { selectedKeyDataSelector, keysSelector } from 'uiSrc/slices/browser/keys'
-import { addNewEntriesAction, streamDataSelector } from 'uiSrc/slices/browser/stream'
+import {
+  keysSelector,
+  selectedKeyDataSelector,
+} from 'uiSrc/slices/browser/keys'
+import {
+  addNewEntriesAction,
+  streamDataSelector,
+} from 'uiSrc/slices/browser/stream'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { AddStreamFormConfig as config } from 'uiSrc/pages/browser/components/add-key/constants/fields-config'
 import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-key/AddKeyStream/AddKeyStream'
 import { KeyTypes } from 'uiSrc/constants'
-import { getBasedOnViewTypeEvent, sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import {
+  getBasedOnViewTypeEvent,
+  sendEventTelemetry,
+  TelemetryEvent,
+} from 'uiSrc/telemetry'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { AddStreamEntriesDto } from 'apiSrc/modules/browser/stream/dto'
 
 import StreamEntryFields from './StreamEntryFields/StreamEntryFields'
@@ -23,13 +34,17 @@ export interface Props {
 const AddStreamEntries = (props: Props) => {
   const { closePanel } = props
   const { lastGeneratedId } = useSelector(streamDataSelector)
-  const { name: keyName = '' } = useSelector(selectedKeyDataSelector) ?? { name: undefined }
+  const { name: keyName = '' } = useSelector(selectedKeyDataSelector) ?? {
+    name: undefined,
+  }
   const { viewType } = useSelector(keysSelector)
   const { id: instanceId } = useSelector(connectedInstanceSelector)
 
   const [entryID, setEntryID] = useState<string>('*')
   const [entryIdError, setEntryIdError] = useState('')
-  const [fields, setFields] = useState<any[]>([{ ...INITIAL_STREAM_FIELD_STATE }])
+  const [fields, setFields] = useState<any[]>([
+    { ...INITIAL_STREAM_FIELD_STATE },
+  ])
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
 
   const dispatch = useDispatch()
@@ -67,7 +82,10 @@ const AddStreamEntries = (props: Props) => {
       return
     }
 
-    if (toNumber(lastIdTimestamp) === toNumber(idTimestamp) && (id === '*' || toNumber(id) > toNumber(lastId))) {
+    if (
+      toNumber(lastIdTimestamp) === toNumber(idTimestamp) &&
+      (id === '*' || toNumber(id) > toNumber(lastId))
+    ) {
       setEntryIdError('')
       return
     }
@@ -80,13 +98,13 @@ const AddStreamEntries = (props: Props) => {
       event: getBasedOnViewTypeEvent(
         viewType,
         TelemetryEvent.BROWSER_KEY_VALUE_ADDED,
-        TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED
+        TelemetryEvent.TREE_VIEW_KEY_VALUE_ADDED,
       ),
       eventData: {
         databaseId: instanceId,
         keyType: KeyTypes.Stream,
         numberOfAdded: fields.length,
-      }
+      },
     })
   }
 
@@ -94,10 +112,17 @@ const AddStreamEntries = (props: Props) => {
     if (isFormValid) {
       const data: AddStreamEntriesDto = {
         keyName,
-        entries: [{
-          id: entryID,
-          fields: [...fields.map(({ name, value }) => ({ name: stringToBuffer(name), value: stringToBuffer(value) }))],
-        }]
+        entries: [
+          {
+            id: entryID,
+            fields: [
+              ...fields.map(({ name, value }) => ({
+                name: stringToBuffer(name),
+                value: stringToBuffer(value),
+              })),
+            ],
+          },
+        ],
       }
       dispatch(addNewEntriesAction(data, onSuccessAdded))
     }
@@ -110,7 +135,12 @@ const AddStreamEntries = (props: Props) => {
         hasShadow={false}
         borderRadius="none"
         data-test-subj="add-stream-field-panel"
-        className={cx(styles.content, 'eui-yScroll', 'flexItemNoFullWidth', 'inlineFieldsNoSpace')}
+        className={cx(
+          styles.content,
+          'eui-yScroll',
+          'flexItemNoFullWidth',
+          'inlineFieldsNoSpace',
+        )}
       >
         <StreamEntryFields
           entryIdError={entryIdError}
@@ -126,15 +156,19 @@ const AddStreamEntries = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <EuiFlexGroup justifyContent="flexEnd" gutterSize="l">
-          <EuiFlexItem grow={false}>
+        <Row justify="end" gap="l">
+          <FlexItem>
             <div>
-              <EuiButton color="secondary" onClick={() => closePanel(true)} data-testid="cancel-members-btn">
+              <EuiButton
+                color="secondary"
+                onClick={() => closePanel(true)}
+                data-testid="cancel-members-btn"
+              >
                 <EuiTextColor color="default">Cancel</EuiTextColor>
               </EuiButton>
             </div>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+          <FlexItem>
             <div>
               <EuiButton
                 fill
@@ -147,8 +181,8 @@ const AddStreamEntries = (props: Props) => {
                 Save
               </EuiButton>
             </div>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+        </Row>
       </EuiPanel>
     </>
   )

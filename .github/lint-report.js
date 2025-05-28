@@ -6,9 +6,10 @@ const TARGET = process.env.TARGET || '';
 const file = `${WORKDIR}/${FILENAME}`;
 const outputFile = `${WORKDIR}/slack.${FILENAME}`;
 
-function generateSlackMessage (summary) {
+function generateSlackMessage(summary) {
   const message = {
-    text: `CODE SCAN: *${TARGET}* result (Branch: *${process.env.GITHUB_REF_NAME}*)` +
+    text:
+      `CODE SCAN: *${TARGET}* result (Branch: *${process.env.GITHUB_REF_NAME}*)` +
       `\n<https://github.com/RedisInsight/RedisInsight/actions/runs/${process.env.GITHUB_RUN_ID}|View on Github Actions>`,
     attachments: [],
   };
@@ -29,12 +30,10 @@ function generateSlackMessage (summary) {
       });
     }
   } else {
-    message.attachments.push(
-      {
-        title: 'No issues found',
-        color: 'good'
-      }
-    );
+    message.attachments.push({
+      title: 'No issues found',
+      color: 'good',
+    });
   }
 
   return message;
@@ -46,17 +45,20 @@ async function main() {
     warnings: 0,
   };
   const scanResult = JSON.parse(fs.readFileSync(file));
-  scanResult.forEach(fileResult => {
+  scanResult.forEach((fileResult) => {
     summary.errors += fileResult.errorCount;
     summary.warnings += fileResult.warningCount;
   });
 
   summary.total = summary.errors + summary.warnings;
 
-  fs.writeFileSync(outputFile, JSON.stringify({
-    channel: process.env.SLACK_AUDIT_REPORT_CHANNEL,
-    ...generateSlackMessage(summary),
-  }));
+  fs.writeFileSync(
+    outputFile,
+    JSON.stringify({
+      channel: process.env.SLACK_AUDIT_REPORT_CHANNEL,
+      ...generateSlackMessage(summary),
+    }),
+  );
 }
 
 main();

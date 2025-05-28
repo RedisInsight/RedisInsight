@@ -9,7 +9,14 @@ import {
   deleteChangedFile,
   setPipelineJobs,
 } from 'uiSrc/slices/rdi/pipeline'
-import { act, cleanup, fireEvent, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  cleanup,
+  fireEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 
 import { FileChangeType } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -31,19 +38,22 @@ jest.mock('uiSrc/slices/rdi/pipeline', () => ({
             target:
               type: redis
           `,
-    jobs: [{
-      name: 'jobName',
-      value: `job:
+    jobs: [
+      {
+        name: 'jobName',
+        value: `job:
       transform:
         type: sql
-    `
-    }, {
-      name: 'job2',
-      value: `job2:
+    `,
+      },
+      {
+        name: 'job2',
+        value: `job2:
       transform:
         type: redis
-    `
-    }],
+    `,
+      },
+    ],
   }),
 }))
 
@@ -68,23 +78,30 @@ describe('Job', () => {
       target:
         type: redis
     `,
-      jobs: [{
-        name: 'jobName',
-        value: `job:
+      jobs: [
+        {
+          name: 'jobName',
+          value: `job:
                     transform:
                       type: sql
-                `
-      }, {
-        name: 'job2',
-        value: `job2:
+                `,
+        },
+        {
+          name: 'job2',
+          value: `job2:
                     transform:
                       type: redis
-                    `
-      }],
-    });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+                    `,
+        },
+      ],
+    })
+    ;(rdiPipelineSelector as jest.Mock).mockImplementation(
+      rdiPipelineSelectorMock,
+    )
     const pushMock = jest.fn()
-    reactRouterDom.useHistory = jest.fn().mockReturnValueOnce({ push: pushMock })
+    reactRouterDom.useHistory = jest
+      .fn()
+      .mockReturnValueOnce({ push: pushMock })
 
     render(<Job {...instance(mockedProps)} />)
 
@@ -107,10 +124,7 @@ describe('Job', () => {
     render(<Job {...instance(mockedProps)} name="jobName" />)
 
     const fieldName = screen.getByTestId('rdi-monaco-job')
-    fireEvent.change(
-      fieldName,
-      { target: { value: '123' } }
-    )
+    fireEvent.change(fieldName, { target: { value: '123' } })
 
     const expectedActions = [
       getPipelineStrategies(),
@@ -121,13 +135,16 @@ describe('Job', () => {
   })
 
   it('should set modified file', () => {
-    render(<Job {...instance(mockedProps)} deployedJobValue="value" name="jobName" />)
+    render(
+      <Job
+        {...instance(mockedProps)}
+        deployedJobValue="value"
+        name="jobName"
+      />,
+    )
 
     const fieldName = screen.getByTestId('rdi-monaco-job')
-    fireEvent.change(
-      fieldName,
-      { target: { value: '123' } }
-    )
+    fireEvent.change(fieldName, { target: { value: '123' } })
 
     const expectedActions = [
       getPipelineStrategies(),
@@ -139,25 +156,34 @@ describe('Job', () => {
   })
 
   it('should remove job from modified files', () => {
-    render(<Job {...instance(mockedProps)} deployedJobValue="value" name="jobName" />)
+    render(
+      <Job
+        {...instance(mockedProps)}
+        deployedJobValue="value"
+        name="jobName"
+      />,
+    )
 
     const fieldName = screen.getByTestId('rdi-monaco-job')
-    fireEvent.change(
-      fieldName,
-      { target: { value: 'value' } }
-    )
+    fireEvent.change(fieldName, { target: { value: 'value' } })
 
     const expectedActions = [
       getPipelineStrategies(),
       setPipelineJobs(expect.any(Array)),
-      deleteChangedFile('jobName')
+      deleteChangedFile('jobName'),
     ]
 
     expect(store.getActions()).toEqual(expectedActions)
   })
 
   it('should open dedicated editor', () => {
-    render(<Job {...instance(mockedProps)} deployedJobValue="value" name="jobName" />)
+    render(
+      <Job
+        {...instance(mockedProps)}
+        deployedJobValue="value"
+        name="jobName"
+      />,
+    )
 
     expect(screen.queryByTestId('draggable-area')).not.toBeInTheDocument()
 
@@ -167,8 +193,10 @@ describe('Job', () => {
   })
 
   it('should call proper telemetry events on open dedicated editor', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<Job {...instance(mockedProps)} value="value" rdiInstanceId="id" />)
 
@@ -177,15 +205,17 @@ describe('Job', () => {
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_DEDICATED_EDITOR_OPENED,
       eventData: {
-        rdiInstanceId: 'id'
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+        rdiInstanceId: 'id',
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry events on cancel dedicated editor', () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<Job {...instance(mockedProps)} value="value" rdiInstanceId="id" />)
 
@@ -197,14 +227,16 @@ describe('Job', () => {
       eventData: {
         rdiInstanceId: 'id',
         selectedLanguageSyntax: 'sqliteFunctions',
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should call proper telemetry events on submit dedicated editor', async () => {
-    const sendEventTelemetryMock = jest.fn();
-    (sendEventTelemetry as jest.Mock).mockImplementation(() => sendEventTelemetryMock)
+    const sendEventTelemetryMock = jest.fn()
+    ;(sendEventTelemetry as jest.Mock).mockImplementation(
+      () => sendEventTelemetryMock,
+    )
 
     render(<Job {...instance(mockedProps)} value="value" rdiInstanceId="id" />)
 
@@ -218,16 +250,18 @@ describe('Job', () => {
       eventData: {
         rdiInstanceId: 'id',
         selectedLanguageSyntax: 'sqliteFunctions',
-      }
-    });
-    (sendEventTelemetry as jest.Mock).mockRestore()
+      },
+    })
+    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
   it('should render loading spinner', () => {
     const rdiPipelineSelectorMock = jest.fn().mockReturnValue({
       loading: true,
-    });
-    (rdiPipelineSelector as jest.Mock).mockImplementation(rdiPipelineSelectorMock)
+    })
+    ;(rdiPipelineSelector as jest.Mock).mockImplementation(
+      rdiPipelineSelectorMock,
+    )
 
     render(<Job {...instance(mockedProps)} />)
 

@@ -6,8 +6,4 @@ interface CreateCommandExecutionDto extends CreateCommandExecutionDtoAPI {}
 interface CommandExecution extends CommandExecutionAPI {}
 interface CommandExecutionResult extends CommandExecutionResultAPI {}
 
-export {
-  CommandExecution,
-  CommandExecutionResult,
-  CreateCommandExecutionDto
-}
+export { CommandExecution, CommandExecutionResult, CreateCommandExecutionDto }

@@ -15,10 +15,7 @@ describe('BulkActionsAnalytics', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        BulkActionsAnalytics,
-        EventEmitter2,
-      ],
+      providers: [BulkActionsAnalytics, EventEmitter2],
     }).compile();
 
     service = await module.get(BulkActionsAnalytics);
@@ -51,14 +48,11 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should emit event when action started without progress data and filter as "PATTERN"', () => {
-      service.sendActionStarted(
-        mockSessionMetadata,
-        {
-          ...mockBulkActionOverview,
-          filter: { match: 'some query', type: null },
-          progress: undefined,
-        },
-      );
+      service.sendActionStarted(mockSessionMetadata, {
+        ...mockBulkActionOverview,
+        filter: { match: 'some query', type: null },
+        progress: undefined,
+      });
 
       expect(sendEventSpy).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -76,14 +70,11 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should emit event when action started without progress and filter', () => {
-      service.sendActionStarted(
-        mockSessionMetadata,
-        {
-          ...mockBulkActionOverview,
-          filter: undefined,
-          progress: undefined,
-        },
-      );
+      service.sendActionStarted(mockSessionMetadata, {
+        ...mockBulkActionOverview,
+        filter: undefined,
+        progress: undefined,
+      });
 
       expect(sendEventSpy).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -138,15 +129,12 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should emit event when action paused/stopped without progress, filter and summary', () => {
-      service.sendActionStopped(
-        mockSessionMetadata,
-        {
-          ...mockBulkActionOverview,
-          filter: undefined,
-          progress: undefined,
-          summary: undefined,
-        },
-      );
+      service.sendActionStopped(mockSessionMetadata, {
+        ...mockBulkActionOverview,
+        filter: undefined,
+        progress: undefined,
+        summary: undefined,
+      });
 
       expect(sendEventSpy).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -196,14 +184,11 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should emit event when action succeed without filter and summary', () => {
-      service.sendActionSucceed(
-        mockSessionMetadata,
-        {
-          ...mockBulkActionOverview,
-          filter: undefined,
-          summary: undefined,
-        },
-      );
+      service.sendActionSucceed(mockSessionMetadata, {
+        ...mockBulkActionOverview,
+        filter: undefined,
+        summary: undefined,
+      });
 
       expect(sendEventSpy).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -251,7 +236,10 @@ describe('BulkActionsAnalytics', () => {
 
   describe('sendImportSamplesUploaded', () => {
     it('should emit event when action succeed (without progress)', () => {
-      service.sendImportSamplesUploaded(mockSessionMetadata, mockBulkActionOverview);
+      service.sendImportSamplesUploaded(
+        mockSessionMetadata,
+        mockBulkActionOverview,
+      );
 
       expect(sendEventSpy).toHaveBeenCalledWith(
         mockSessionMetadata,
@@ -272,14 +260,11 @@ describe('BulkActionsAnalytics', () => {
       );
     });
     it('should emit event when action succeed without filter and summary', () => {
-      service.sendImportSamplesUploaded(
-        mockSessionMetadata,
-        {
-          ...mockBulkActionOverview,
-          filter: undefined,
-          summary: undefined,
-        },
-      );
+      service.sendImportSamplesUploaded(mockSessionMetadata, {
+        ...mockBulkActionOverview,
+        filter: undefined,
+        summary: undefined,
+      });
 
       expect(sendEventSpy).toHaveBeenCalledWith(
         mockSessionMetadata,

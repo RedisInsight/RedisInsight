@@ -1,8 +1,12 @@
-import { BrowserStorageItem, Theme, THEME_MATCH_MEDIA_DARK } from 'uiSrc/constants'
+import {
+  BrowserStorageItem,
+  Theme,
+  THEME_MATCH_MEDIA_DARK,
+} from 'uiSrc/constants'
 import { localStorageService } from './storage'
 
 interface Themes {
-  [theme: string]: string;
+  [theme: string]: string
 }
 
 class ThemeService {
@@ -16,7 +20,9 @@ class ThemeService {
     let actualTheme = newTheme
 
     if (newTheme === Theme.System) {
-      actualTheme = window.matchMedia?.(THEME_MATCH_MEDIA_DARK)?.matches ? Theme.Dark : Theme.Light
+      actualTheme = window.matchMedia?.(THEME_MATCH_MEDIA_DARK)?.matches
+        ? Theme.Dark
+        : Theme.Light
     }
 
     const sheet = new CSSStyleSheet()
@@ -24,7 +30,7 @@ class ThemeService {
 
     document.adoptedStyleSheets = [sheet]
 
-    localStorageService.set(BrowserStorageItem.theme, actualTheme)
+    localStorageService.set(BrowserStorageItem.theme, newTheme)
     document.body.classList.value = `theme_${actualTheme}`
   }
 

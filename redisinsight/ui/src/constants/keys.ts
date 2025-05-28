@@ -47,7 +47,7 @@ export const GROUP_TYPES_DISPLAY = Object.freeze({
   [CommandGroup.CuckooFilter]: 'Cuckoo Filter',
 })
 
-export type GroupTypesDisplay = keyof (typeof GROUP_TYPES_DISPLAY)
+export type GroupTypesDisplay = keyof typeof GROUP_TYPES_DISPLAY
 
 // Enums don't allow to use dynamic key
 export const GROUP_TYPES_COLORS = Object.freeze({
@@ -74,7 +74,7 @@ export const GROUP_TYPES_COLORS = Object.freeze({
   [CommandGroup.HyperLogLog]: 'var(--groupHyperLolLogColor)',
 })
 
-export type GroupTypesColors = keyof (typeof GROUP_TYPES_COLORS)
+export type GroupTypesColors = keyof typeof GROUP_TYPES_COLORS
 
 export type KeyTypesActions = {
   [key: string]: {
@@ -93,22 +93,22 @@ export type KeyTypesActions = {
 export const STREAM_ADD_GROUP_VIEW_TYPES = [
   StreamViewType.Groups,
   StreamViewType.Consumers,
-  StreamViewType.Messages
+  StreamViewType.Messages,
 ]
 
 export const STREAM_ADD_ACTION = Object.freeze({
   [StreamViewType.Data]: {
-    name: 'New Entry'
+    name: 'New Entry',
   },
   [StreamViewType.Groups]: {
-    name: 'New Group'
+    name: 'New Group',
   },
   [StreamViewType.Consumers]: {
-    name: 'New Group'
+    name: 'New Group',
   },
   [StreamViewType.Messages]: {
-    name: 'New Group'
-  }
+    name: 'New Group',
+  },
 })
 
 export enum SortOrder {
@@ -123,7 +123,8 @@ export interface LengthNamingByType {
 export const LENGTH_NAMING_BY_TYPE: LengthNamingByType = Object.freeze({
   [ModulesKeyTypes.Graph]: 'Nodes',
   [ModulesKeyTypes.TimeSeries]: 'Samples',
-  [KeyTypes.Stream]: 'Entries'
+  [KeyTypes.Stream]: 'Entries',
+  [KeyTypes.ReJSON]: 'Top-level values',
 })
 
 export interface ModulesKeyTypesNames {
@@ -185,9 +186,9 @@ export const ENDPOINT_BASED_ON_KEY_TYPE = Object.freeze({
   [KeyTypes.Stream]: ApiEndpoints.STREAMS,
 })
 
-export type EndpointBasedOnKeyType = keyof (typeof ENDPOINT_BASED_ON_KEY_TYPE)
+export type EndpointBasedOnKeyType = keyof typeof ENDPOINT_BASED_ON_KEY_TYPE
 
 export enum SearchHistoryMode {
   Pattern = 'pattern',
-  Redisearch = 'redisearch'
+  Redisearch = 'redisearch',
 }

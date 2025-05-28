@@ -1,22 +1,42 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiLoadingContent, keys } from '@elastic/eui'
+import { keys } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
 
-import { DEFAULT_TEXT_VIEW_TYPE, ProfileQueryType, WBQueryType } from 'uiSrc/pages/workbench/constants'
-import { ResultsMode, ResultsSummary, RunQueryMode } from 'uiSrc/slices/interfaces/workbench'
-import { getVisualizationsByCommand, getWBQueryType, isGroupResults, isSilentModeWithoutError, Maybe, } from 'uiSrc/utils'
+import { LoadingContent } from 'uiSrc/components/base/layout'
+import {
+  DEFAULT_TEXT_VIEW_TYPE,
+  ProfileQueryType,
+  WBQueryType,
+} from 'uiSrc/pages/workbench/constants'
+import {
+  ResultsMode,
+  ResultsSummary,
+  RunQueryMode,
+} from 'uiSrc/slices/interfaces/workbench'
+import {
+  getVisualizationsByCommand,
+  getWBQueryType,
+  isGroupResults,
+  isSilentModeWithoutError,
+  Maybe,
+} from 'uiSrc/utils'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
-import { CommandExecutionResult, IPluginVisualization } from 'uiSrc/slices/interfaces'
+import {
+  CommandExecutionResult,
+  IPluginVisualization,
+} from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { toggleOpenWBResult } from 'uiSrc/slices/workbench/wb-results'
 
 import QueryCardHeader from './QueryCardHeader'
 import QueryCardCliResultWrapper from './QueryCardCliResultWrapper'
 import QueryCardCliPlugin from './QueryCardCliPlugin'
-import QueryCardCommonResult, { CommonErrorResponse } from './QueryCardCommonResult'
+import QueryCardCommonResult, {
+  CommonErrorResponse,
+} from './QueryCardCommonResult'
 
 import styles from './styles.module.scss'
 
@@ -44,9 +64,13 @@ export interface Props {
 }
 
 const getDefaultPlugin = (views: IPluginVisualization[], query: string) =>
-  getVisualizationsByCommand(query, views).find((view) => view.default)?.uniqId || DEFAULT_TEXT_VIEW_TYPE.id
+  getVisualizationsByCommand(query, views).find((view) => view.default)
+    ?.uniqId || DEFAULT_TEXT_VIEW_TYPE.id
 
-export const getSummaryText = (summary?: ResultsSummary, mode?: ResultsMode) => {
+export const getSummaryText = (
+  summary?: ResultsSummary,
+  mode?: ResultsMode,
+) => {
   if (summary) {
     const { total, success, fail } = summary
     const summaryText = `${total} Command(s) - ${success} success`
@@ -86,11 +110,14 @@ const QueryCard = (props: Props) => {
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false)
-  const [queryType, setQueryType] = useState<WBQueryType>(getWBQueryType(command, visualizations))
-  const [viewTypeSelected, setViewTypeSelected] = useState<WBQueryType>(queryType)
+  const [queryType, setQueryType] = useState<WBQueryType>(
+    getWBQueryType(command, visualizations),
+  )
+  const [viewTypeSelected, setViewTypeSelected] =
+    useState<WBQueryType>(queryType)
   const [message, setMessage] = useState<string>('')
   const [selectedViewValue, setSelectedViewValue] = useState<string>(
-    getDefaultPlugin(visualizations, command || '') || queryType
+    getDefaultPlugin(visualizations, command || '') || queryType,
   )
 
   const dispatch = useDispatch()
@@ -114,8 +141,8 @@ const QueryCard = (props: Props) => {
         event: TelemetryEvent.WORKBENCH_RESULTS_IN_FULL_SCREEN,
         eventData: {
           databaseId: instanceId,
-          state: isFull ? 'Close' : 'Open'
-        }
+          state: isFull ? 'Close' : 'Open',
+        },
       })
 
       return !isFull
@@ -131,12 +158,15 @@ const QueryCard = (props: Props) => {
       const type = getWBQueryType(command, visualizations)
       setQueryType(type)
       setViewTypeSelected(type)
-      setSelectedViewValue(getDefaultPlugin(visualizations, command) || queryType)
+      setSelectedViewValue(
+        getDefaultPlugin(visualizations, command) || queryType,
+      )
     }
   }, [visualizations])
 
   const toggleOpen = () => {
-    if (isFullScreen || isSilentModeWithoutError(resultsMode, summary?.fail)) return
+    if (isFullScreen || isSilentModeWithoutError(resultsMode, summary?.fail))
+      return
 
     dispatch(toggleOpenWBResult(id))
 
@@ -152,17 +182,22 @@ const QueryCard = (props: Props) => {
 
   const commonError = CommonErrorResponse(id, command, result)
 
-  const isSizeLimitExceededResponse = (result: Maybe<CommandExecutionResult[]>) => {
+  const isSizeLimitExceededResponse = (
+    result: Maybe<CommandExecutionResult[]>,
+  ) => {
     const resultObj = result?.[0]
     // response.includes - to be backward compatible with responses which don't include sizeLimitExceeded flag
-    return resultObj?.sizeLimitExceeded === true || resultObj?.response?.includes?.('Results have been deleted')
+    return (
+      resultObj?.sizeLimitExceeded === true ||
+      resultObj?.response?.includes?.('Results have been deleted')
+    )
   }
 
   return (
     <div
       className={cx(styles.containerWrapper, {
         fullscreen: isFullScreen,
-        [styles.isOpen]: isOpen
+        [styles.isOpen]: isOpen,
       })}
       id={id}
     >
@@ -198,71 +233,73 @@ const QueryCard = (props: Props) => {
         />
         {isOpen && (
           <>
-            {React.isValidElement(commonError) && (!isGroupResults(resultsMode) || isNull(command))
-              ? <QueryCardCommonResult loading={loading} result={commonError} />
-              : (
-                <>
-                  {isSizeLimitExceededResponse(result)
-                    ? (
+            {React.isValidElement(commonError) &&
+              (!isGroupResults(resultsMode) || isNull(command)) ? (
+              <QueryCardCommonResult loading={loading} result={commonError} />
+            ) : (
+              <>
+                {isSizeLimitExceededResponse(result) ? (
+                  <QueryCardCliResultWrapper
+                    loading={loading}
+                    query={command}
+                    resultsMode={resultsMode}
+                    result={result}
+                    isNotStored={isNotStored}
+                    isFullScreen={isFullScreen}
+                  />
+                ) : (
+                  <>
+                    {isGroupResults(resultsMode) && (
                       <QueryCardCliResultWrapper
                         loading={loading}
                         query={command}
+                        db={db}
                         resultsMode={resultsMode}
                         result={result}
                         isNotStored={isNotStored}
                         isFullScreen={isFullScreen}
+                        data-testid="group-mode-card"
                       />
-                    )
-                    : (
+                    )}
+                    {(resultsMode === ResultsMode.Default || !resultsMode) && (
                       <>
-                        {isGroupResults(resultsMode) && (
+                        {viewTypeSelected === WBQueryType.Plugin && (
+                          <>
+                            {!loading && result !== undefined ? (
+                              <QueryCardCliPlugin
+                                id={selectedViewValue}
+                                result={result}
+                                query={command}
+                                mode={mode}
+                                setMessage={setMessage}
+                                commandId={id}
+                              />
+                            ) : (
+                              <div className={styles.loading}>
+                                <LoadingContent
+                                  lines={5}
+                                  data-testid="loading-content"
+                                />
+                              </div>
+                            )}
+                          </>
+                        )}
+                        {viewTypeSelected === WBQueryType.Text && (
                           <QueryCardCliResultWrapper
                             loading={loading}
                             query={command}
-                            db={db}
                             resultsMode={resultsMode}
                             result={result}
                             isNotStored={isNotStored}
                             isFullScreen={isFullScreen}
-                            data-testid="group-mode-card"
                           />
-                        )}
-                        {(resultsMode === ResultsMode.Default || !resultsMode) && (
-                          <>
-                            {viewTypeSelected === WBQueryType.Plugin && (
-                              <>
-                                {!loading && result !== undefined ? (
-                                  <QueryCardCliPlugin
-                                    id={selectedViewValue}
-                                    result={result}
-                                    query={command}
-                                    mode={mode}
-                                    setMessage={setMessage}
-                                    commandId={id}
-                                  />
-                                ) : (
-                                  <div className={styles.loading}>
-                                    <EuiLoadingContent lines={5} data-testid="loading-content" />
-                                  </div>
-                                )}
-                              </>
-                            )}
-                            {(viewTypeSelected === WBQueryType.Text) && (
-                              <QueryCardCliResultWrapper
-                                loading={loading}
-                                query={command}
-                                resultsMode={resultsMode}
-                                result={result}
-                                isNotStored={isNotStored}
-                                isFullScreen={isFullScreen}
-                              />
-                            )}
-                          </>
                         )}
                       </>
                     )}
-                </>
-              )}
+                  </>
+                )}
+              </>
+            )}
           </>
         )}
       </div>

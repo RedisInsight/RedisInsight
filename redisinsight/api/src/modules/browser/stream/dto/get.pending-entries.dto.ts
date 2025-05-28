@@ -1,8 +1,10 @@
-import { ApiProperty, ApiPropertyOptional, IntersectionType } from '@nestjs/swagger';
-import { KeyDto } from 'src/modules/browser/keys/dto';
 import {
-  IsInt, IsNotEmpty, IsString, Min,
-} from 'class-validator';
+  ApiProperty,
+  ApiPropertyOptional,
+  IntersectionType,
+} from '@nestjs/swagger';
+import { KeyDto } from 'src/modules/browser/keys/dto';
+import { IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
 import { IsRedisString, RedisStringType } from 'src/common/decorators';
 import { RedisString } from 'src/common/constants';
 import { GetConsumersDto } from './get.consumers.dto';
@@ -25,8 +27,9 @@ export class PendingEntryDto {
 
   @ApiProperty({
     type: Number,
-    description: 'The number of milliseconds that elapsed since the last time '
-      + 'this message was delivered to this consumer',
+    description:
+      'The number of milliseconds that elapsed since the last time ' +
+      'this message was delivered to this consumer',
     example: 22442,
   })
   idle: number = 0;
@@ -70,8 +73,7 @@ export class GetPendingEntriesDto extends IntersectionType(
   end?: string = '+';
 
   @ApiPropertyOptional({
-    description:
-      'Specifying the number of pending messages to return.',
+    description: 'Specifying the number of pending messages to return.',
     type: Number,
     minimum: 1,
     default: 500,

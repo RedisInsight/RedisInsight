@@ -1,6 +1,6 @@
 import React from 'react'
-import { EuiFlexGroup } from '@elastic/eui'
 
+import { Row } from 'uiSrc/components/base/layout/flex'
 import BadgeIcon from '../badge-icon'
 import { badgesContent } from '../constants'
 import styles from '../styles.module.scss'
@@ -10,11 +10,14 @@ export interface Props {
 }
 
 const RecommendationBadges = ({ badges = [] }: Props) => (
-  <EuiFlexGroup className={styles.badgesContainer} responsive={false} alignItems="center" justifyContent="spaceBetween">
-    {badgesContent.map(({ id, name, icon }) => (
-      badges.includes(id) && <BadgeIcon key={id} id={id} icon={icon} name={name} />
-    ))}
-  </EuiFlexGroup>
+  <Row className={styles.badgesContainer} align="center" justify="between">
+    {badgesContent.map(
+      ({ id, name, icon }) =>
+        badges.includes(id) && (
+          <BadgeIcon key={id} id={id} icon={icon} name={name} />
+        ),
+    )}
+  </Row>
 )
 
 export default RecommendationBadges

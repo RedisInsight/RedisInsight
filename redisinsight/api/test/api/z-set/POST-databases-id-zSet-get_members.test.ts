@@ -13,7 +13,9 @@ const { server, request, constants, rte } = deps;
 
 // endpoint to test
 const endpoint = (instanceId = constants.TEST_INSTANCE_ID) =>
-  request(server).post(`/${constants.API.DATABASES}/${instanceId}/zSet/get-members`);
+  request(server).post(
+    `/${constants.API.DATABASES}/${instanceId}/zSet/get-members`,
+  );
 
 // input data schema todo: investigate BE validation
 const dataSchema = Joi.object({
@@ -34,14 +36,20 @@ const validInputData = {
   sortOrder: 'DESC',
 };
 
-const responseSchema = Joi.object().keys({
-  keyName: JoiRedisString.required(),
-  total: Joi.number().integer().required(),
-  members: Joi.array().items(Joi.object().keys({
-    name: JoiRedisString.required(),
-    score: Joi.number().required().allow('inf', '-inf'),
-  })).required(),
-}).required();
+const responseSchema = Joi.object()
+  .keys({
+    keyName: JoiRedisString.required(),
+    total: Joi.number().integer().required(),
+    members: Joi.array()
+      .items(
+        Joi.object().keys({
+          name: JoiRedisString.required(),
+          score: Joi.number().required().allow('inf', '-inf'),
+        }),
+      )
+      .required(),
+  })
+  .required();
 
 const mainCheckFn = getMainCheckFn(endpoint);
 
@@ -66,10 +74,12 @@ describe('POST /databases/:instanceId/zSet/get-members', () => {
         responseBody: {
           keyName: constants.TEST_ZSET_KEY_BIN_UTF8_1,
           total: 1,
-          members: [{
-            name: constants.TEST_ZSET_MEMBER_BIN_UTF8_1,
-            score: constants.TEST_ZSET_MEMBER_1_SCORE,
-          }],
+          members: [
+            {
+              name: constants.TEST_ZSET_MEMBER_BIN_UTF8_1,
+              score: constants.TEST_ZSET_MEMBER_1_SCORE,
+            },
+          ],
         },
       },
       {
@@ -87,10 +97,12 @@ describe('POST /databases/:instanceId/zSet/get-members', () => {
         responseBody: {
           keyName: constants.TEST_ZSET_KEY_BIN_BUF_OBJ_1,
           total: 1,
-          members: [{
-            name: constants.TEST_ZSET_MEMBER_BIN_BUF_OBJ_1,
-            score: constants.TEST_ZSET_MEMBER_1_SCORE,
-          }],
+          members: [
+            {
+              name: constants.TEST_ZSET_MEMBER_BIN_BUF_OBJ_1,
+              score: constants.TEST_ZSET_MEMBER_1_SCORE,
+            },
+          ],
         },
       },
       {
@@ -108,10 +120,12 @@ describe('POST /databases/:instanceId/zSet/get-members', () => {
         responseBody: {
           keyName: constants.TEST_ZSET_KEY_BIN_ASCII_1,
           total: 1,
-          members: [{
-            name: constants.TEST_ZSET_MEMBER_BIN_ASCII_1,
-            score: constants.TEST_ZSET_MEMBER_1_SCORE,
-          }],
+          members: [
+            {
+              name: constants.TEST_ZSET_MEMBER_BIN_ASCII_1,
+              score: constants.TEST_ZSET_MEMBER_1_SCORE,
+            },
+          ],
         },
       },
     ].map(mainCheckFn);
@@ -140,7 +154,7 @@ describe('POST /databases/:instanceId/zSet/get-members', () => {
           responseBody: {
             keyName: constants.TEST_ZSET_KEY_2,
             total: 100,
-            members: (new Array(15).fill(0)).map((item, i) => {
+            members: new Array(15).fill(0).map((item, i) => {
               return {
                 name: `member_${100 - i}`,
                 score: 100 - i,
@@ -160,7 +174,7 @@ describe('POST /databases/:instanceId/zSet/get-members', () => {
           responseBody: {
             keyName: constants.TEST_ZSET_KEY_2,
             total: 100,
-            members: (new Array(45).fill(0)).map((item, i) => {
+            members: new Array(45).fill(0).map((item, i) => {
               return {
                 name: `member_${i + 1}`,
                 score: i + 1,
@@ -180,7 +194,7 @@ describe('POST /databases/:instanceId/zSet/get-members', () => {
           responseBody: {
             keyName: constants.TEST_ZSET_KEY_2,
             total: 100,
-            members: (new Array(45).fill(0)).map((item, i) => {
+            members: new Array(45).fill(0).map((item, i) => {
               return {
                 name: `member_${i + 45 + 1}`,
                 score: i + 45 + 1,
@@ -252,7 +266,7 @@ describe('POST /databases/:instanceId/zSet/get-members', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -zcard')
+          before: () => rte.data.setAclUserRules('~* +@all -zcard'),
         },
         {
           name: 'Should throw error if no permissions for "zrange" command',
@@ -268,7 +282,7 @@ describe('POST /databases/:instanceId/zSet/get-members', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -zrange')
+          before: () => rte.data.setAclUserRules('~* +@all -zrange'),
         },
         {
           name: 'Should throw error if no permissions for "zrevrange" command',
@@ -284,7 +298,7 @@ describe('POST /databases/:instanceId/zSet/get-members', () => {
             statusCode: 403,
             error: 'Forbidden',
           },
-          before: () => rte.data.setAclUserRules('~* +@all -zrevrange')
+          before: () => rte.data.setAclUserRules('~* +@all -zrevrange'),
         },
       ].map(mainCheckFn);
     });

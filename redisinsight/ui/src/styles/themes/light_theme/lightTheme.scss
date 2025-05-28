@@ -203,4 +203,8 @@
 
   // rdi
   --rdiSecondaryBgColor: #{$rdiSecondaryBgColor};
+
+  // layout
+  --hrBackgroundColor: #{var(--euiColorLightShade)};
+  --loadingContentLightestShade: #{var(--euiColorLightestShade)};
 }

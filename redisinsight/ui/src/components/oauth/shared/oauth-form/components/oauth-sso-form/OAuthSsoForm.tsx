@@ -3,31 +3,31 @@ import React, { ChangeEvent, useState } from 'react'
 import {
   EuiButton,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiForm,
   EuiFormRow,
-  EuiSpacer, EuiTitle, EuiToolTip,
+  EuiTitle,
+  EuiToolTip,
 } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { validateEmail, validateField } from 'uiSrc/utils'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 export interface Props {
-  onBack: () => void,
-  onSubmit: (values: { email: string }) => any,
+  onBack: () => void
+  onSubmit: (values: { email: string }) => any
 }
 
 interface Values {
-  email: string;
+  email: string
 }
 
-const OAuthSsoForm = ({
-  onBack,
-  onSubmit,
-}: Props) => {
-  const [validationErrors, setValidationErrors] = useState<FormikErrors<Values>>({ email: '' })
+const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
+  const [validationErrors, setValidationErrors] = useState<
+    FormikErrors<Values>
+  >({ email: '' })
 
   const validate = (values: Values) => {
     const errs: FormikErrors<Values> = {}
@@ -54,17 +54,22 @@ const OAuthSsoForm = ({
   const SubmitButton = ({
     text,
     disabled,
-  }: { disabled: boolean, text: string }) => (
+  }: {
+    disabled: boolean
+    text: string
+  }) => (
     <EuiToolTip
       position="top"
       anchorClassName="euiToolTip__btn-disabled"
       data-testid="btn-submit-tooltip"
-      content={disabled ? (
-        <>
-          <p>Email must be in the format</p>
-          <p>email@example.com without spaces</p>
-        </>
-      ) : null}
+      content={
+        disabled ? (
+          <>
+            <p>Email must be in the format</p>
+            <p>email@example.com without spaces</p>
+          </>
+        ) : null
+      }
     >
       <EuiButton
         fill
@@ -82,10 +87,12 @@ const OAuthSsoForm = ({
 
   return (
     <div className={styles.container} data-testid="oauth-container-sso-form">
-      <EuiTitle className={styles.title} size="xs"><h4>Single Sign-On</h4></EuiTitle>
+      <EuiTitle className={styles.title} size="xs">
+        <h4>Single Sign-On</h4>
+      </EuiTitle>
       <EuiForm component="form" onSubmit={formik.handleSubmit}>
-        <EuiFlexGroup>
-          <EuiFlexItem>
+        <Row>
+          <FlexItem>
             <EuiFormRow className={styles.formRaw} label="Email">
               <EuiFieldText
                 name="email"
@@ -95,15 +102,18 @@ const OAuthSsoForm = ({
                 value={formik.values.email}
                 autoComplete="off"
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(e.target.name, validateField(e.target.value.trim()))
+                  formik.setFieldValue(
+                    e.target.name,
+                    validateField(e.target.value.trim()),
+                  )
                 }}
               />
             </EuiFormRow>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <EuiSpacer />
-        <EuiFlexGroup justifyContent="flexEnd" responsive={false}>
-          <EuiFlexItem grow={false}>
+          </FlexItem>
+        </Row>
+        <Spacer />
+        <Row justify="end">
+          <FlexItem>
             <EuiButton
               color="secondary"
               type="button"
@@ -113,14 +123,11 @@ const OAuthSsoForm = ({
             >
               Back
             </EuiButton>
-          </EuiFlexItem>
-          <EuiFlexItem grow={false}>
-            <SubmitButton
-              text="Login"
-              disabled={submitIsDisabled()}
-            />
-          </EuiFlexItem>
-        </EuiFlexGroup>
+          </FlexItem>
+          <FlexItem>
+            <SubmitButton text="Login" disabled={submitIsDisabled()} />
+          </FlexItem>
+        </Row>
       </EuiForm>
     </div>
   )

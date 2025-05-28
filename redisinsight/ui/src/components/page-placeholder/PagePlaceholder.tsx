@@ -7,15 +7,20 @@ const riConfig = getConfig()
 
 const PagePlaceholder = () => (
   <>
-    { riConfig.app.env !== 'development' && (
+    {riConfig.app.env !== 'development' && (
       <EuiEmptyPrompt
         data-testid="page-placeholder"
-        icon={<EuiLoadingLogo logo={LogoIcon} size="xl" style={{ fontSize: '40px' }} />}
+        icon={
+          <EuiLoadingLogo
+            logo={LogoIcon}
+            size="xl"
+            style={{ fontSize: '40px' }}
+          />
+        }
         titleSize="s"
       />
     )}
   </>
-
 )
 
 export default PagePlaceholder

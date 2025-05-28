@@ -13,17 +13,30 @@ describe('QueryCardTooltip', () => {
 
   it('should show db index', () => {
     const { queryByTestId } = render(
-      <QueryCardTooltip {...instance(mockedProps)} query={null} summary={null} db={2} />
+      <QueryCardTooltip
+        {...instance(mockedProps)}
+        query={null}
+        summary={null}
+        db={2}
+      />,
     )
 
-    expect(queryByTestId('query-card-tooltip-anchor')).toHaveTextContent('[db2]')
+    expect(queryByTestId('query-card-tooltip-anchor')).toHaveTextContent(
+      '[db2]',
+    )
   })
 
   it(`should show ${EMPTY_COMMAND} if command=null and summary=`, () => {
     const { queryByTestId } = render(
-      <QueryCardTooltip {...instance(mockedProps)} query={null} summary={null} />
+      <QueryCardTooltip
+        {...instance(mockedProps)}
+        query={null}
+        summary={null}
+      />,
     )
 
-    expect(queryByTestId('query-card-tooltip-anchor')).toHaveTextContent(EMPTY_COMMAND)
+    expect(queryByTestId('query-card-tooltip-anchor')).toHaveTextContent(
+      EMPTY_COMMAND,
+    )
   })
 })

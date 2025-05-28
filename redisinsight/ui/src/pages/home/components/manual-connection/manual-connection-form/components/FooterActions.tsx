@@ -1,10 +1,11 @@
 import React from 'react'
-import { EuiButton, EuiButtonEmpty, EuiFlexGroup, EuiFlexItem, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiButtonEmpty, EuiToolTip, } from '@elastic/eui'
 import { FormikErrors } from 'formik'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { getSubmitButtonContent } from 'uiSrc/pages/home/utils'
 import { DbConnectionInfo, ISubmitButton } from 'uiSrc/pages/home/interfaces'
 import { SubmitBtnText } from 'uiSrc/pages/home/constants'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 
 export interface Props {
   submitIsDisable: () => boolean
@@ -24,7 +25,7 @@ const FooterActions = (props: Props) => {
     errors,
     onClickTestConnection,
     onClose,
-    onClickSubmit
+    onClickSubmit,
   } = props
 
   const SubmitButton = ({
@@ -59,13 +60,8 @@ const FooterActions = (props: Props) => {
   )
 
   return (
-    <EuiFlexGroup
-      justifyContent="spaceBetween"
-      alignItems="center"
-      gutterSize="none"
-      responsive={false}
-    >
-      <EuiFlexItem className="btn-back" grow={false}>
+    <Row justify="between" align="center">
+      <FlexItem className="btn-back">
         <EuiToolTip
           position="top"
           anchorClassName="euiToolTip__btn-disabled"
@@ -88,10 +84,10 @@ const FooterActions = (props: Props) => {
             Test Connection
           </EuiButtonEmpty>
         </EuiToolTip>
-      </EuiFlexItem>
+      </FlexItem>
 
-      <EuiFlexItem grow={false}>
-        <EuiFlexGroup responsive={false} gutterSize="none">
+      <FlexItem>
+        <Row>
           {onClose && (
             <EuiButton
               size="s"
@@ -109,9 +105,9 @@ const FooterActions = (props: Props) => {
             text={submitButtonText}
             submitIsDisabled={submitIsDisable()}
           />
-        </EuiFlexGroup>
-      </EuiFlexItem>
-    </EuiFlexGroup>
+        </Row>
+      </FlexItem>
+    </Row>
   )
 }
 

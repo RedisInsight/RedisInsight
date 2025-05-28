@@ -1,24 +1,35 @@
-import { EuiButton, EuiFlexGroup, EuiFlexItem, EuiPopover, EuiSpacer, EuiTitle, EuiToolTip } from '@elastic/eui'
+import { EuiButton, EuiPopover, EuiTitle, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { monaco } from 'react-monaco-editor'
 import parse from 'html-react-parser'
 import { useParams } from 'react-router-dom'
 import { find } from 'lodash'
-import { getCommandsForExecution, getUnsupportedModulesFromQuery, truncateText } from 'uiSrc/utils'
-import { BooleanParams, CodeButtonParams, MonacoLanguage } from 'uiSrc/constants'
+import {
+  getCommandsForExecution,
+  getUnsupportedModulesFromQuery,
+  truncateText,
+} from 'uiSrc/utils'
+import {
+  BooleanParams,
+  CodeButtonParams,
+  MonacoLanguage,
+} from 'uiSrc/constants'
 
 import { CodeBlock } from 'uiSrc/components'
 import { getDBConfigStorageField } from 'uiSrc/services'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
-import { ModuleNotLoadedMinimalized, DatabaseNotOpened } from 'uiSrc/components/messages'
+import {
+  ModuleNotLoadedMinimalized,
+  DatabaseNotOpened,
+} from 'uiSrc/components/messages'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { ButtonLang } from 'uiSrc/utils/formatters/markdown/remarkCode'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
-import {
-  RunConfirmationPopover
-} from './components'
+import { RunConfirmationPopover } from './components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -57,29 +68,34 @@ const CodeButtonBlock = (props: Props) => {
 
   const { instanceId } = useParams<{ instanceId: string }>()
 
-  const isButtonHasConfirmation = params?.run_confirmation === BooleanParams.true
+  const isButtonHasConfirmation =
+    params?.run_confirmation === BooleanParams.true
   const isRunButtonHidden = params?.executable === BooleanParams.false
-  const [notLoadedModule] = isRunButtonHidden ? [] : getUnsupportedModulesFromQuery(modules, content)
+  const [notLoadedModule] = isRunButtonHidden
+    ? []
+    : getUnsupportedModulesFromQuery(modules, content)
 
   useEffect(() => {
     if (!lang) return
 
-    const languageId = lang === ButtonLang.Redis
-      ? MonacoLanguage.Redis
-      : find(monaco.languages?.getLanguages(), ({ id }) => id === lang)?.id
+    const languageId =
+      lang === ButtonLang.Redis
+        ? MonacoLanguage.Redis
+        : find(monaco.languages?.getLanguages(), ({ id }) => id === lang)?.id
 
     if (languageId) {
-      monaco.editor.colorize(content.trim(), languageId, {})
-        .then((data) => {
-          setHighlightedContent(data)
-        })
+      monaco.editor.colorize(content.trim(), languageId, {}).then((data) => {
+        setHighlightedContent(data)
+      })
     }
   }, [])
 
-  const getIsShowConfirmation = () => isShowConfirmation && !getDBConfigStorageField(
-    instanceId,
-    ConfigDBStorageItem.notShowConfirmationRunTutorial
-  )
+  const getIsShowConfirmation = () =>
+    isShowConfirmation &&
+    !getDBConfigStorageField(
+      instanceId,
+      ConfigDBStorageItem.notShowConfirmationRunTutorial,
+    )
 
   const handleCopy = () => {
     const query = getCommandsForExecution(content)?.join('\n') || ''
@@ -97,9 +113,10 @@ const CodeButtonBlock = (props: Props) => {
   }
 
   const handleRunClicked = () => {
-    if (!instanceId
-      || notLoadedModule
-      || (getIsShowConfirmation() && isButtonHasConfirmation)
+    if (
+      !instanceId ||
+      notLoadedModule ||
+      (getIsShowConfirmation() && isButtonHasConfirmation)
     ) {
       setIsPopoverOpen((v) => !v)
       return
@@ -119,7 +136,7 @@ const CodeButtonBlock = (props: Props) => {
 
   const getPopoverMessage = (): React.ReactNode => {
     if (!instanceId) {
-      return (<DatabaseNotOpened />)
+      return <DatabaseNotOpened />
     }
 
     if (notLoadedModule) {
@@ -132,20 +149,24 @@ const CodeButtonBlock = (props: Props) => {
       )
     }
 
-    return (<RunConfirmationPopover onApply={handleApplyRun} />)
+    return <RunConfirmationPopover onApply={handleApplyRun} />
   }
 
   return (
     <div className={styles.wrapper}>
-      <EuiFlexGroup gutterSize="none">
-        <EuiFlexItem>
+      <Row>
+        <FlexItem grow>
           {!!label && (
-            <EuiTitle size="xxxs" className={styles.label} data-testid="code-button-block-label">
+            <EuiTitle
+              size="xxxs"
+              className={styles.label}
+              data-testid="code-button-block-label"
+            >
               <span>{truncateText(label, 86)}</span>
             </EuiTitle>
           )}
-        </EuiFlexItem>
-        <EuiFlexItem grow={false} className={styles.actions}>
+        </FlexItem>
+        <FlexItem className={styles.actions}>
           <EuiButton
             onClick={handleCopy}
             iconType="copy"
@@ -160,19 +181,27 @@ const CodeButtonBlock = (props: Props) => {
               ownFocus
               initialFocus={false}
               className={styles.popoverAnchor}
-              panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+              panelClassName={cx(
+                'euiToolTip',
+                'popoverLikeTooltip',
+                styles.popover,
+              )}
               anchorClassName={styles.popoverAnchor}
               anchorPosition="upLeft"
               isOpen={isPopoverOpen}
               panelPaddingSize="m"
               closePopover={handleClosePopover}
               focusTrapProps={{
-                scrollLock: true
+                scrollLock: true,
               }}
-              button={(
+              button={
                 <EuiToolTip
                   anchorClassName={styles.popoverAnchor}
-                  content={isPopoverOpen ? undefined : 'Open Workbench in the left menu to see the command results.'}
+                  content={
+                    isPopoverOpen
+                      ? undefined
+                      : 'Open Workbench in the left menu to see the command results.'
+                  }
                   data-testid="run-btn-open-workbench-tooltip"
                 >
                   <EuiButton
@@ -190,19 +219,19 @@ const CodeButtonBlock = (props: Props) => {
                     Run
                   </EuiButton>
                 </EuiToolTip>
-              )}
+              }
             >
               {getPopoverMessage()}
             </EuiPopover>
           )}
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
       <div className={styles.content} data-testid="code-button-block-content">
         <CodeBlock className={styles.code}>
           {highlightedContent ? parse(highlightedContent) : content}
         </CodeBlock>
       </div>
-      <EuiSpacer size="s" />
+      <Spacer size="s" />
     </div>
   )
 }

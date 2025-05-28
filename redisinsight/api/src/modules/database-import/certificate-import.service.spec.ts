@@ -30,7 +30,7 @@ import { ClientCertificateEntity } from 'src/modules/certificate/entities/client
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 jest.mock('src/common/utils', () => ({
-  ...jest.requireActual('src/common/utils') as object,
+  ...(jest.requireActual('src/common/utils') as object),
   getPemBodyFromFileSync: jest.fn(),
 }));
 
@@ -63,12 +63,16 @@ describe('CertificateImportService', () => {
 
     service = await module.get(CertificateImportService);
     caRepository = await module.get(getRepositoryToken(CaCertificateEntity));
-    clientRepository = await module.get(getRepositoryToken(ClientCertificateEntity));
+    clientRepository = await module.get(
+      getRepositoryToken(ClientCertificateEntity),
+    );
     encryptionService = await module.get(EncryptionService);
 
-    when(encryptionService.decrypt).calledWith(mockCaCertificateCertificateEncrypted, expect.anything())
+    when(encryptionService.decrypt)
+      .calledWith(mockCaCertificateCertificateEncrypted, expect.anything())
       .mockResolvedValue(mockCaCertificateCertificatePlain);
-    when(encryptionService.encrypt).calledWith(mockCaCertificateCertificatePlain)
+    when(encryptionService.encrypt)
+      .calledWith(mockCaCertificateCertificatePlain)
       .mockResolvedValue({
         data: mockCaCertificateCertificateEncrypted,
         encryption: mockCaCertificateEntity.encryption,
@@ -99,9 +103,15 @@ describe('CertificateImportService', () => {
 
   describe('processCaCertificate', () => {
     beforeEach(() => {
-      getPemBodyFromFileSyncSpy = jest.spyOn(utils as any, 'getPemBodyFromFileSync');
+      getPemBodyFromFileSyncSpy = jest.spyOn(
+        utils as any,
+        'getPemBodyFromFileSync',
+      );
       getPemBodyFromFileSyncSpy.mockReturnValue(mockCaCertificate.certificate);
-      prepareCaCertificateForImportSpy = jest.spyOn(service as any, 'prepareCaCertificateForImport');
+      prepareCaCertificateForImportSpy = jest.spyOn(
+        service as any,
+        'prepareCaCertificateForImport',
+      );
       prepareCaCertificateForImportSpy.mockResolvedValueOnce(mockCaCertificate);
     });
 
@@ -139,7 +149,9 @@ describe('CertificateImportService', () => {
     });
 
     it('should fail when no file found', async () => {
-      getPemBodyFromFileSyncSpy.mockImplementationOnce(() => { throw new Error(); });
+      getPemBodyFromFileSyncSpy.mockImplementationOnce(() => {
+        throw new Error();
+      });
 
       try {
         await service['processCaCertificate']({
@@ -155,11 +167,16 @@ describe('CertificateImportService', () => {
 
   describe('prepareCaCertificateForImport', () => {
     beforeEach(() => {
-      determineAvailableNameSpy = jest.spyOn(CertificateImportService, 'determineAvailableName');
+      determineAvailableNameSpy = jest.spyOn(
+        CertificateImportService,
+        'determineAvailableName',
+      );
     });
 
     it('should return existing certificate', async () => {
-      caRepository.createQueryBuilder().getOne.mockResolvedValueOnce(mockCaCertificate);
+      caRepository
+        .createQueryBuilder()
+        .getOne.mockResolvedValueOnce(mockCaCertificate);
 
       const response = await service['prepareCaCertificateForImport']({
         name: mockCaCertificate.name,
@@ -188,8 +205,12 @@ describe('CertificateImportService', () => {
 
     it('should generate name with prefix', async () => {
       caRepository.createQueryBuilder().getOne.mockResolvedValueOnce(null); // for cert search
-      caRepository.createQueryBuilder().getOne.mockResolvedValueOnce(mockCaCertificate); // for name search 1st attempt
-      caRepository.createQueryBuilder().getOne.mockResolvedValueOnce(mockCaCertificate); // for name search 2nd attempt
+      caRepository
+        .createQueryBuilder()
+        .getOne.mockResolvedValueOnce(mockCaCertificate); // for name search 1st attempt
+      caRepository
+        .createQueryBuilder()
+        .getOne.mockResolvedValueOnce(mockCaCertificate); // for name search 2nd attempt
       caRepository.createQueryBuilder().getOne.mockResolvedValueOnce(null); // for name search 3rd attempt
 
       const response = await service['prepareCaCertificateForImport']({
@@ -207,9 +228,17 @@ describe('CertificateImportService', () => {
 
   describe('processClientCertificate', () => {
     beforeEach(() => {
-      getPemBodyFromFileSyncSpy = jest.spyOn(utils as any, 'getPemBodyFromFileSync');
-      prepareClientCertificateForImportSpy = jest.spyOn(service as any, 'prepareClientCertificateForImport');
-      prepareClientCertificateForImportSpy.mockResolvedValueOnce(mockClientCertificate);
+      getPemBodyFromFileSyncSpy = jest.spyOn(
+        utils as any,
+        'getPemBodyFromFileSync',
+      );
+      prepareClientCertificateForImportSpy = jest.spyOn(
+        service as any,
+        'prepareClientCertificateForImport',
+      );
+      prepareClientCertificateForImportSpy.mockResolvedValueOnce(
+        mockClientCertificate,
+      );
     });
 
     it('should successfully process client certificate', async () => {
@@ -236,7 +265,9 @@ describe('CertificateImportService', () => {
     });
 
     it('should successfully process certificate from file', async () => {
-      getPemBodyFromFileSyncSpy.mockReturnValueOnce(mockClientCertificate.certificate);
+      getPemBodyFromFileSyncSpy.mockReturnValueOnce(
+        mockClientCertificate.certificate,
+      );
       getPemBodyFromFileSyncSpy.mockReturnValueOnce(mockClientCertificate.key);
 
       const response = await service['processClientCertificate']({
@@ -253,7 +284,9 @@ describe('CertificateImportService', () => {
     });
 
     it('should fail when no cert file found', async () => {
-      getPemBodyFromFileSyncSpy.mockImplementationOnce(() => { throw new Error(); });
+      getPemBodyFromFileSyncSpy.mockImplementationOnce(() => {
+        throw new Error();
+      });
 
       try {
         await service['processClientCertificate']({
@@ -268,8 +301,12 @@ describe('CertificateImportService', () => {
     });
 
     it('should fail when no key file found', async () => {
-      getPemBodyFromFileSyncSpy.mockReturnValueOnce(mockClientCertificate.certificate);
-      getPemBodyFromFileSyncSpy.mockImplementationOnce(() => { throw new Error(); });
+      getPemBodyFromFileSyncSpy.mockReturnValueOnce(
+        mockClientCertificate.certificate,
+      );
+      getPemBodyFromFileSyncSpy.mockImplementationOnce(() => {
+        throw new Error();
+      });
 
       try {
         await service['processClientCertificate']({
@@ -286,11 +323,16 @@ describe('CertificateImportService', () => {
 
   describe('prepareClientCertificateForImport', () => {
     beforeEach(() => {
-      determineAvailableNameSpy = jest.spyOn(CertificateImportService, 'determineAvailableName');
+      determineAvailableNameSpy = jest.spyOn(
+        CertificateImportService,
+        'determineAvailableName',
+      );
     });
 
     it('should return existing certificate', async () => {
-      clientRepository.createQueryBuilder().getOne.mockResolvedValueOnce(mockClientCertificate);
+      clientRepository
+        .createQueryBuilder()
+        .getOne.mockResolvedValueOnce(mockClientCertificate);
 
       const response = await service['prepareClientCertificateForImport']({
         name: mockClientCertificate.name,
@@ -321,8 +363,12 @@ describe('CertificateImportService', () => {
 
     it('should generate name with prefix', async () => {
       clientRepository.createQueryBuilder().getOne.mockResolvedValueOnce(null); // for cert search
-      clientRepository.createQueryBuilder().getOne.mockResolvedValueOnce(mockClientCertificate); // name 1st attempt
-      clientRepository.createQueryBuilder().getOne.mockResolvedValueOnce(mockClientCertificate); // name 2nd attempt
+      clientRepository
+        .createQueryBuilder()
+        .getOne.mockResolvedValueOnce(mockClientCertificate); // name 1st attempt
+      clientRepository
+        .createQueryBuilder()
+        .getOne.mockResolvedValueOnce(mockClientCertificate); // name 2nd attempt
       clientRepository.createQueryBuilder().getOne.mockResolvedValueOnce(null); // name 3rd attempt
 
       const response = await service['prepareClientCertificateForImport']({

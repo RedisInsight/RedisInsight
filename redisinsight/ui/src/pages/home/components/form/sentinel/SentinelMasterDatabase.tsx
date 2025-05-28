@@ -2,11 +2,9 @@ import React from 'react'
 import {
   EuiFieldPassword,
   EuiFieldText,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiFormRow,
   EuiText,
-  EuiTextColor
+  EuiTextColor,
 } from '@elastic/eui'
 import { FormikProps } from 'formik'
 
@@ -14,6 +12,7 @@ import { Nullable } from 'uiSrc/utils'
 import { SECURITY_FIELD } from 'uiSrc/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from '../../styles.module.scss'
 
 export interface Props {
@@ -25,10 +24,16 @@ export interface Props {
 }
 
 const SentinelMasterDatabase = (props: Props) => {
-  const { db, isCloneMode, flexGroupClassName = '', flexItemClassName = '', formik } = props
+  const {
+    db,
+    isCloneMode,
+    flexGroupClassName = '',
+    flexItemClassName = '',
+    formik,
+  } = props
   return (
     <>
-      {(!!db && !isCloneMode) && (
+      {!!db && !isCloneMode && (
         <EuiText color="subdued" className={styles.sentinelCollapsedField}>
           Database Index:
           <span style={{ paddingLeft: 5 }}>
@@ -36,8 +41,8 @@ const SentinelMasterDatabase = (props: Props) => {
           </span>
         </EuiText>
       )}
-      <EuiFlexGroup className={flexGroupClassName}>
-        <EuiFlexItem className={flexItemClassName}>
+      <Row gap="m" responsive className={flexGroupClassName}>
+        <FlexItem grow className={flexItemClassName}>
           <EuiFormRow label="Username">
             <EuiFieldText
               name="sentinelMasterUsername"
@@ -50,9 +55,9 @@ const SentinelMasterDatabase = (props: Props) => {
               data-testid="sentinel-mater-username"
             />
           </EuiFormRow>
-        </EuiFlexItem>
+        </FlexItem>
 
-        <EuiFlexItem className={flexItemClassName}>
+        <FlexItem grow className={flexItemClassName}>
           <EuiFormRow label="Password">
             <EuiFieldPassword
               type="password"
@@ -63,22 +68,23 @@ const SentinelMasterDatabase = (props: Props) => {
               className="passwordField"
               maxLength={200}
               placeholder="Enter Password"
-              value={formik.values.sentinelMasterPassword === true ? SECURITY_FIELD : formik.values.sentinelMasterPassword ?? ''}
+              value={
+                formik.values.sentinelMasterPassword === true
+                  ? SECURITY_FIELD
+                  : (formik.values.sentinelMasterPassword ?? '')
+              }
               onChange={formik.handleChange}
               onFocus={() => {
                 if (formik.values.sentinelMasterPassword === true) {
-                  formik.setFieldValue(
-                    'sentinelMasterPassword',
-                    '',
-                  )
+                  formik.setFieldValue('sentinelMasterPassword', '')
                 }
               }}
               dualToggleProps={{ color: 'text' }}
               autoComplete="new-password"
             />
           </EuiFormRow>
-        </EuiFlexItem>
-      </EuiFlexGroup>
+        </FlexItem>
+      </Row>
     </>
   )
 }

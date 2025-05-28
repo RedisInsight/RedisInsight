@@ -3,9 +3,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { getAvailableEndpoints } from 'src/modules/database-discovery/utils/autodiscovery.util';
 import { Database } from 'src/modules/database/models/database';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { ClientContext, ClientMetadata, SessionMetadata } from 'src/common/models';
+import {
+  ClientContext,
+  ClientMetadata,
+  SessionMetadata,
+} from 'src/common/models';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
+import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
 
 @Injectable()
 export class AutoDatabaseDiscoveryService {
@@ -32,7 +37,11 @@ export class AutoDatabaseDiscoveryService {
 
       // Add redis databases or resolve after 1s to not block app startup for a long time
       await Promise.race([
-        Promise.all(endpoints.map((endpoint) => this.addRedisDatabase(sessionMetadata, endpoint))),
+        Promise.all(
+          endpoints.map((endpoint) =>
+            this.addRedisDatabase(sessionMetadata, endpoint),
+          ),
+        ),
         new Promise((resolve) => setTimeout(resolve, 1000)),
       ]);
     } catch (e) {
@@ -46,7 +55,10 @@ export class AutoDatabaseDiscoveryService {
    * @param endpoint
    * @private
    */
-  private async addRedisDatabase(sessionMetadata: SessionMetadata, endpoint: { host: string, port: number }) {
+  private async addRedisDatabase(
+    sessionMetadata: SessionMetadata,
+    endpoint: { host: string; port: number },
+  ) {
     try {
       const client = await this.redisClientFactory.createClient(
         {
@@ -54,20 +66,17 @@ export class AutoDatabaseDiscoveryService {
           context: ClientContext.Common,
           sessionMetadata,
         } as ClientMetadata,
-        plainToClass(Database, endpoint),
+        plainToInstance(Database, endpoint),
         { useRetry: false, connectionName: 'redisinsight-auto-discovery' },
       );
 
       const info = await client.getInfo();
 
       if (info?.server?.redis_mode === 'standalone') {
-        await this.databaseService.create(
-          sessionMetadata,
-          {
-            name: `${endpoint.host}:${endpoint.port}`,
-            ...endpoint,
-          } as Database,
-        );
+        await this.databaseService.create(sessionMetadata, {
+          name: `${endpoint.host}:${endpoint.port}`,
+          ...endpoint,
+        } as Database);
       }
     } catch (e) {
       // ignore error

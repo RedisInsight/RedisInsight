@@ -4,7 +4,12 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { useLocation } from 'react-router-dom'
 import cx from 'classnames'
-import { TelemetryEvent, getRedisModulesSummary, sendEventTelemetry } from 'uiSrc/telemetry'
+import {
+  TelemetryEvent,
+  getRedisModulesSummary,
+  sendEventTelemetry,
+  getRedisInfoSummary,
+} from 'uiSrc/telemetry'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import {
   checkConnectToInstanceAction,
@@ -44,8 +49,9 @@ const OAuthConnectFreeDb = ({
     return null
   }
 
-  const sendTelemetry = () => {
+  const sendTelemetry = async () => {
     const modulesSummary = getRedisModulesSummary(modules)
+    const infoData = await getRedisInfoSummary(targetDatabaseId)
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
@@ -53,7 +59,8 @@ const OAuthConnectFreeDb = ({
         provider,
         source,
         ...modulesSummary,
-      }
+        ...infoData,
+      },
     })
   }
 
@@ -63,16 +70,17 @@ const OAuthConnectFreeDb = ({
     openNewWindowDatabase(Pages.browser(targetDatabaseId) + search)
   }
 
-  const handleCheckConnectToInstance = (
-  ) => {
-    sendTelemetry()
+  const handleCheckConnectToInstance = async () => {
+    await sendTelemetry()
     dispatch(setCapability({ source, tutorialPopoverShown: false }))
-    dispatch(checkConnectToInstanceAction(
-      targetDatabaseId,
-      connectToInstanceSuccess,
-      () => {},
-      false,
-    ))
+    dispatch(
+      checkConnectToInstanceAction(
+        targetDatabaseId,
+        connectToInstanceSuccess,
+        () => {},
+        false,
+      ),
+    )
   }
 
   return (

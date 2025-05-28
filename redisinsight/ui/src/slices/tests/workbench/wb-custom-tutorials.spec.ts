@@ -1,11 +1,21 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
-import { cleanup, initialStateDefault, mockedStore, } from 'uiSrc/utils/test-utils'
-import { IBulkActionOverview, IEnablementAreaItem } from 'uiSrc/slices/interfaces'
+import {
+  cleanup,
+  initialStateDefault,
+  mockedStore,
+} from 'uiSrc/utils/test-utils'
+import {
+  IBulkActionOverview,
+  IEnablementAreaItem,
+} from 'uiSrc/slices/interfaces'
 import { MOCK_CUSTOM_TUTORIALS, MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 
-import { addErrorNotification, addMessageNotification } from 'uiSrc/slices/app/notifications'
+import {
+  addErrorNotification,
+  addMessageNotification,
+} from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { getFileNameFromPath } from 'uiSrc/utils/pathUtil'
 import reducer, {
@@ -58,7 +68,7 @@ describe('slices', () => {
       const loading = true
       const state = {
         ...initialState,
-        loading
+        loading,
       }
 
       // Act
@@ -85,7 +95,10 @@ describe('slices', () => {
       }
 
       // Act
-      const nextState = reducer(initialState, getWBCustomTutorialsSuccess(customTutorials))
+      const nextState = reducer(
+        initialState,
+        getWBCustomTutorialsSuccess(customTutorials),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -106,11 +119,14 @@ describe('slices', () => {
         ...initialState,
         loading: false,
         items: defaultItems,
-        error
+        error,
       }
 
       // Act
-      const nextState = reducer(initialState, getWBCustomTutorialsFailure(error))
+      const nextState = reducer(
+        initialState,
+        getWBCustomTutorialsFailure(error),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -129,7 +145,7 @@ describe('slices', () => {
       const loading = true
       const state = {
         ...initialState,
-        loading
+        loading,
       }
 
       // Act
@@ -152,21 +168,23 @@ describe('slices', () => {
       const items: IEnablementAreaItem[] = MOCK_TUTORIALS_ITEMS
       const currentState = {
         ...initialState,
-        items: defaultItems
+        items: defaultItems,
       }
       const state = {
         ...initialState,
-        items: [{
-          ...defaultItems[0],
-          children: [
-            items[0],
-            ...(defaultItems[0].children as [])
-          ]
-        }],
+        items: [
+          {
+            ...defaultItems[0],
+            children: [items[0], ...(defaultItems[0].children as [])],
+          },
+        ],
       }
 
       // Act
-      const nextState = reducer(currentState, uploadWBCustomTutorialSuccess(items[0]))
+      const nextState = reducer(
+        currentState,
+        uploadWBCustomTutorialSuccess(items[0]),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -186,11 +204,14 @@ describe('slices', () => {
       const state = {
         ...initialState,
         loading: false,
-        error
+        error,
       }
 
       // Act
-      const nextState = reducer(initialState, uploadWBCustomTutorialFailure(error))
+      const nextState = reducer(
+        initialState,
+        uploadWBCustomTutorialFailure(error),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -208,7 +229,7 @@ describe('slices', () => {
       // Arrange
       const state = {
         ...initialState,
-        deleting: true
+        deleting: true,
       }
 
       // Act
@@ -231,18 +252,22 @@ describe('slices', () => {
       const id = 'tutorials'
       const currentState = {
         ...initialState,
-        items: [{
-          ...defaultItems[0],
-          children: MOCK_TUTORIALS_ITEMS
-        }]
+        items: [
+          {
+            ...defaultItems[0],
+            children: MOCK_TUTORIALS_ITEMS,
+          },
+        ],
       }
 
       const state = {
         ...initialState,
-        items: [{
-          ...defaultItems[0],
-          children: currentState.items[0].children.slice(1)
-        }]
+        items: [
+          {
+            ...defaultItems[0],
+            children: currentState.items[0].children.slice(1),
+          },
+        ],
       }
 
       // Act
@@ -266,11 +291,14 @@ describe('slices', () => {
       const state = {
         ...initialState,
         deleting: false,
-        error
+        error,
       }
 
       // Act
-      const nextState = reducer(initialState, deleteWBCustomTutorialFailure(error))
+      const nextState = reducer(
+        initialState,
+        deleteWBCustomTutorialFailure(error),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -290,8 +318,8 @@ describe('slices', () => {
         ...initialState,
         bulkUpload: {
           ...initialState.bulkUpload,
-          pathsInProgress: ['data/data']
-        }
+          pathsInProgress: ['data/data'],
+        },
       }
 
       // Act
@@ -315,20 +343,23 @@ describe('slices', () => {
         ...initialState,
         bulkUpload: {
           ...initialState.bulkUpload,
-          pathsInProgress: ['data/data', 'data/another']
-        }
+          pathsInProgress: ['data/data', 'data/another'],
+        },
       }
 
       const state = {
         ...initialState,
         bulkUpload: {
           ...initialState.bulkUpload,
-          pathsInProgress: ['data/another']
-        }
+          pathsInProgress: ['data/another'],
+        },
       }
 
       // Act
-      const nextState = reducer(currentState, uploadDataBulkSuccess('data/data'))
+      const nextState = reducer(
+        currentState,
+        uploadDataBulkSuccess('data/data'),
+      )
 
       // Assert
       const rootState = Object.assign(initialStateDefault, {
@@ -348,16 +379,16 @@ describe('slices', () => {
         ...initialState,
         bulkUpload: {
           ...initialState.bulkUpload,
-          pathsInProgress: ['data/data']
-        }
+          pathsInProgress: ['data/data'],
+        },
       }
 
       const state = {
         ...initialState,
         bulkUpload: {
           ...initialState.bulkUpload,
-          pathsInProgress: []
-        }
+          pathsInProgress: [],
+        },
       }
 
       // Act
@@ -378,25 +409,29 @@ describe('slices', () => {
         // Arrange
         const currentState = {
           ...initialState,
-          items: [{
-            ...defaultItems[0],
-            args: {
-              initialIsOpen: false
+          items: [
+            {
+              ...defaultItems[0],
+              args: {
+                initialIsOpen: false,
+              },
+              children: MOCK_TUTORIALS_ITEMS,
             },
-            children: MOCK_TUTORIALS_ITEMS
-          }]
+          ],
         }
 
         const state = {
           ...initialState,
-          items: [{
-            ...defaultItems[0],
-            args: {
-              defaultInitialIsOpen: false,
-              initialIsOpen: true
+          items: [
+            {
+              ...defaultItems[0],
+              args: {
+                defaultInitialIsOpen: false,
+                initialIsOpen: true,
+              },
+              children: MOCK_TUTORIALS_ITEMS,
             },
-            children: MOCK_TUTORIALS_ITEMS
-          }]
+          ],
         }
 
         // Act
@@ -416,26 +451,30 @@ describe('slices', () => {
         // Arrange
         const currentState = {
           ...initialState,
-          items: [{
-            ...defaultItems[0],
-            args: {
-              defaultInitialIsOpen: false,
-              initialIsOpen: true
+          items: [
+            {
+              ...defaultItems[0],
+              args: {
+                defaultInitialIsOpen: false,
+                initialIsOpen: true,
+              },
+              children: MOCK_TUTORIALS_ITEMS,
             },
-            children: MOCK_TUTORIALS_ITEMS
-          }]
+          ],
         }
 
         const state = {
           ...initialState,
-          items: [{
-            ...defaultItems[0],
-            args: {
-              defaultInitialIsOpen: false,
-              initialIsOpen: false
+          items: [
+            {
+              ...defaultItems[0],
+              args: {
+                defaultInitialIsOpen: false,
+                initialIsOpen: false,
+              },
+              children: MOCK_TUTORIALS_ITEMS,
             },
-            children: MOCK_TUTORIALS_ITEMS
-          }]
+          ],
         }
 
         // Act
@@ -611,8 +650,11 @@ describe('slices', () => {
         uploadDataBulk(path),
         uploadDataBulkSuccess(path),
         addMessageNotification(
-          successMessages.UPLOAD_DATA_BULK(data as IBulkActionOverview, getFileNameFromPath(path))
-        )
+          successMessages.UPLOAD_DATA_BULK(
+            data as IBulkActionOverview,
+            getFileNameFromPath(path),
+          ),
+        ),
       ]
 
       expect(mockedStore.getActions()).toEqual(expectedActions)

@@ -12,7 +12,9 @@ interface INodeProps {
 function Snippet({ content }: { content: string }) {
   return (
     <div className="FooterCommon Footer">
-      <EuiToolTip delay="long" content={content}><span>{content}</span></EuiToolTip>
+      <EuiToolTip delay="long" content={content}>
+        <span>{content}</span>
+      </EuiToolTip>
     </div>
   )
 }
@@ -28,14 +30,26 @@ export function ExplainNode(props: INodeProps) {
       <div className="Main">
         <div className="Info">
           <div className="InfoData">
-            <EuiToolTip delay="long" content={infoData}><span>{infoData}</span></EuiToolTip>
+            <EuiToolTip delay="long" content={infoData}>
+              <span>{infoData}</span>
+            </EuiToolTip>
           </div>
-          {subType && [EntityType.GEO, EntityType.NUMERIC, EntityType.TEXT, EntityType.TAG, EntityType.FUZZY, EntityType.WILDCARD, EntityType.PREFIX, EntityType.IDS, EntityType.LEXRANGE, EntityType.NUMBER].includes(subType) && <div className="Type">{subType}</div> }
+          {subType &&
+            [
+              EntityType.GEO,
+              EntityType.NUMERIC,
+              EntityType.TEXT,
+              EntityType.TAG,
+              EntityType.FUZZY,
+              EntityType.WILDCARD,
+              EntityType.PREFIX,
+              EntityType.IDS,
+              EntityType.LEXRANGE,
+              EntityType.NUMBER,
+            ].includes(subType) && <div className="Type">{subType}</div>}
         </div>
       </div>
-      {
-        snippet && <Snippet content={snippet} />
-      }
+      {snippet && <Snippet content={snippet} />}
     </div>
   )
 }
@@ -54,11 +68,11 @@ function NodeToolTipContent(props: INodeToolTip) {
     const { items } = props
     return (
       <div className="NodeToolTip">
-        {
-          Object.keys(items).map((k) => (
-            <div className="NodeToolTipItem">{k}: {items[k]}</div>
-          ))
-        }
+        {Object.keys(items).map((k) => (
+          <div className="NodeToolTipItem">
+            {k}: {items[k]}
+          </div>
+        ))}
       </div>
     )
   }
@@ -85,37 +99,52 @@ export function ProfileNode(props: INodeProps) {
     <div className="ProfileContainer" id={`node-${id}`}>
       <div className="Main">
         <div className="InfoData">
-          <EuiToolTip delay="long" content={infoData}><span>{infoData}</span></EuiToolTip>
+          <EuiToolTip delay="long" content={infoData}>
+            <span>{infoData}</span>
+          </EuiToolTip>
         </div>
-        <div className="Type">{[EntityType.GEO, EntityType.NUMERIC, EntityType.TEXT, EntityType.TAG].includes(type) ? type : ''}</div>
+        <div className="Type">
+          {[
+            EntityType.GEO,
+            EntityType.NUMERIC,
+            EntityType.TEXT,
+            EntityType.TAG,
+          ].includes(type)
+            ? type
+            : ''}
+        </div>
       </div>
-      {
-        snippet && <Snippet content={snippet} />
-      }
+      {snippet && <Snippet content={snippet} />}
       <div className="MetaData">
         <EuiToolTip content={<NodeToolTipContent content="Execution Time" />}>
           <div className="Time">
-            <div className="IconContainer"><EuiIcon className="NodeIcon" size="m" type="clock" /></div>
+            <div className="IconContainer">
+              <EuiIcon className="NodeIcon" size="m" type="clock" />
+            </div>
             <div>{time} ms</div>
           </div>
         </EuiToolTip>
         <EuiToolTip
-          content={(
+          content={
             <NodeToolTipContent
               {...{
                 items: recordsProduced === undefined ? items : undefined,
-                content: recordsProduced ? 'Records produced' : undefined
+                content: recordsProduced ? 'Records produced' : undefined,
               }}
             />
-          )}
+          }
         >
           <div className="Size">
-            <div>{
-              counter !== undefined ? counter
-                : size !== undefined ? size : recordsProduced
-}
+            <div>
+              {counter !== undefined
+                ? counter
+                : size !== undefined
+                  ? size
+                  : recordsProduced}
             </div>
-            <div className="IconContainer"><EuiIcon className="NodeIcon" size="m" type="reportingApp" /></div>
+            <div className="IconContainer">
+              <EuiIcon className="NodeIcon" size="m" type="reportingApp" />
+            </div>
           </div>
         </EuiToolTip>
       </div>

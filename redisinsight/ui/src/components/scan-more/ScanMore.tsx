@@ -13,12 +13,13 @@ export interface Props {
   totalItemsCount?: number
   nextCursor?: string
   style?: {
-    [key: string]: string | number;
+    [key: string]: string | number
   }
   loadMoreItems?: (config: any) => void
 }
 
-const WARNING_MESSAGE = 'Scanning additional keys may decrease performance and memory available.'
+const WARNING_MESSAGE =
+  'Scanning additional keys may decrease performance and memory available.'
 
 const ScanMore = ({
   fill = true,
@@ -31,35 +32,34 @@ const ScanMore = ({
   nextCursor,
 }: Props) => (
   <>
-    {((scanned || isNull(totalItemsCount)))
-      && nextCursor !== '0'
-      && (
-        <EuiButton
-          fill={fill}
-          size="s"
-          color="secondary"
-          style={style ?? { marginLeft: 25, height: 26 }}
-          disabled={loading}
-          className={styles.btn}
-          onClick={() =>
-            loadMoreItems?.({
-              stopIndex: SCAN_COUNT_DEFAULT - 1,
-              startIndex: 0,
-            })}
-          data-testid="scan-more"
-        >
-          {withAlert && (
-            <EuiToolTip
-              content={WARNING_MESSAGE}
-              position="top"
-              display="inlineBlock"
-            >
-              <EuiIcon type="iInCircle" />
-            </EuiToolTip>
-          )}
-          Scan more
-        </EuiButton>
-      )}
+    {(scanned || isNull(totalItemsCount)) && nextCursor !== '0' && (
+      <EuiButton
+        fill={fill}
+        size="s"
+        color="secondary"
+        style={style ?? { marginLeft: 25, height: 26 }}
+        disabled={loading}
+        className={styles.btn}
+        onClick={() =>
+          loadMoreItems?.({
+            stopIndex: SCAN_COUNT_DEFAULT - 1,
+            startIndex: 0,
+          })
+        }
+        data-testid="scan-more"
+      >
+        {withAlert && (
+          <EuiToolTip
+            content={WARNING_MESSAGE}
+            position="top"
+            display="inlineBlock"
+          >
+            <EuiIcon type="iInCircle" />
+          </EuiToolTip>
+        )}
+        Scan more
+      </EuiButton>
+    )}
   </>
 )
 

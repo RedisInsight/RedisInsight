@@ -6,17 +6,21 @@ import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 export interface Props {
   url: string
   text: string
+  source: OAuthSocialSource
 }
 
 const CloudLink = (props: Props) => {
-  const { url, text } = props
+  const { url, text, source = OAuthSocialSource.Tutorials } = props
   return (
     <OAuthSsoHandlerDialog>
       {(ssoCloudHandlerClick) => (
         <EuiLink
           color="text"
           onClick={(e) => {
-            ssoCloudHandlerClick(e, { source: OAuthSocialSource.Tutorials, action: OAuthSocialAction.Create })
+            ssoCloudHandlerClick(e, {
+              source,
+              action: OAuthSocialAction.Create,
+            })
           }}
           external={false}
           target="_blank"

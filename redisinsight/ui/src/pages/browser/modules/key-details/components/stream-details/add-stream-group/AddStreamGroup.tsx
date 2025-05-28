@@ -1,10 +1,8 @@
 import {
-  EuiButton,
   EuiFieldText,
   EuiFormRow,
   EuiIcon,
   EuiPanel,
-  EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -22,6 +20,10 @@ import {
 } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/stream/dto'
 
 import styles from './styles.module.scss'
@@ -180,27 +182,23 @@ const AddStreamGroup = (props: Props) => {
         <Row justify="end" gap="l">
           <FlexItem>
             <div>
-              <EuiButton
-                color="secondary"
+              <SecondaryButton
                 onClick={() => closePanel(true)}
                 data-testid="cancel-stream-groups-btn"
               >
-                <EuiTextColor color="default">Cancel</EuiTextColor>
-              </EuiButton>
+                Cancel
+              </SecondaryButton>
             </div>
           </FlexItem>
           <FlexItem>
             <div>
-              <EuiButton
-                fill
-                size="m"
-                color="secondary"
+              <PrimaryButton
                 onClick={submitData}
                 disabled={!isFormValid}
                 data-testid="save-groups-btn"
               >
                 Save
-              </EuiButton>
+              </PrimaryButton>
             </div>
           </FlexItem>
         </Row>

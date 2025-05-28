@@ -2,7 +2,6 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
-  EuiButton,
   EuiTextColor,
   EuiFormRow,
   EuiFieldText,
@@ -30,6 +29,10 @@ import {
 } from 'uiSrc/pages/browser/components/add-key/AddKeySet/interfaces'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
@@ -182,26 +185,22 @@ const AddSetMembers = (props: Props) => {
       >
         <Row justify="end" gap="xl">
           <FlexItem>
-            <EuiButton
-              color="secondary"
+            <SecondaryButton
               onClick={() => closePanel(true)}
               data-testid="cancel-members-btn"
             >
               <EuiTextColor color="default">Cancel</EuiTextColor>
-            </EuiButton>
+            </SecondaryButton>
           </FlexItem>
           <FlexItem>
-            <EuiButton
-              fill
-              size="m"
-              color="secondary"
+            <PrimaryButton
               disabled={loading}
-              isLoading={loading}
+              loading={loading}
               onClick={submitData}
               data-testid="save-members-btn"
             >
               Save
-            </EuiButton>
+            </PrimaryButton>
           </FlexItem>
         </Row>
       </EuiPanel>

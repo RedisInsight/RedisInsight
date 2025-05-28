@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import cx from 'classnames'
 import {
   EuiInMemoryTable,
   EuiBasicTableColumn,
   PropertySort,
-  EuiButton,
   EuiText,
   EuiTitle,
   EuiFieldSearch,
@@ -18,6 +16,10 @@ import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -137,25 +139,24 @@ const SentinelDatabasesResult = ({
           />
         </div>
       </div>
-      <div className={cx(styles.footer, 'footerAddDatabase')}>
-        <EuiButton
-          onClick={onBack}
-          color="secondary"
-          className="btn-cancel btn-back"
-          data-testid="btn-back-to-adding"
-        >
-          Back to adding databases
-        </EuiButton>
-        <EuiButton
-          fill
-          size="m"
-          onClick={handleViewDatabases}
-          color="secondary"
-          data-testid="btn-view-databases"
-        >
-          View Databases
-        </EuiButton>
-      </div>
+      <FlexItem padding={4}>
+        <Row gap="m" justify="between">
+          <SecondaryButton
+            onClick={onBack}
+            className="btn-cancel btn-back"
+            data-testid="btn-back-to-adding"
+          >
+            Back to adding databases
+          </SecondaryButton>
+          <PrimaryButton
+            size="m"
+            onClick={handleViewDatabases}
+            data-testid="btn-view-databases"
+          >
+            View Databases
+          </PrimaryButton>
+        </Row>
+      </FlexItem>
     </AutodiscoveryPageTemplate>
   )
 }

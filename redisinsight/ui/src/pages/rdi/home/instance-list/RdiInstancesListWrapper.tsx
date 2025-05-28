@@ -1,6 +1,5 @@
 import {
   Criteria,
-  EuiButtonIcon,
   EuiTableFieldDataColumnType,
   EuiText,
   EuiToolTip,
@@ -25,6 +24,8 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable, formatLongName, lastConnectionFormat } from 'uiSrc/utils'
 
 import { setAppContextConnectedRdiInstanceId } from 'uiSrc/slices/app/context'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon, EditIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -182,8 +183,9 @@ const RdiInstancesListWrapper = ({
             content="Copy"
             anchorClassName="copyUrlTooltip"
           >
-            <EuiButtonIcon
-              iconType="copy"
+            <IconButton
+              size="L"
+              icon={CopyIcon}
               aria-label="Copy URL"
               className="copyUrlBtn"
               onClick={() => handleCopy(name, id)}
@@ -220,8 +222,8 @@ const RdiInstancesListWrapper = ({
       name: '',
       render: (_act: any, instance: RdiInstance) => (
         <>
-          <EuiButtonIcon
-            iconType="pencil"
+          <IconButton
+            icon={EditIcon}
             className="editInstanceBtn"
             aria-label="Edit instance"
             data-testid={`edit-instance-${instance.id}`}

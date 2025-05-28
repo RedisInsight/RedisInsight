@@ -1,15 +1,10 @@
-import {
-  EuiButtonEmpty,
-  EuiButtonIcon,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiSuperSelect, EuiSuperSelectOption, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { isString } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 
+import styled from 'styled-components'
 import {
   setSelectedIndex,
   redisearchSelector,
@@ -39,6 +34,8 @@ import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
+import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
+import { RefreshIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export const CREATE = 'create'
@@ -178,20 +175,20 @@ const RediSearchIndexesList = (props: Props) => {
             data-testid="select-search-mode"
           />
           {!selectedIndex && (
-            <EuiButtonEmpty
+            <Button
               className={styles.placeholder}
               onClick={() => setIsSelectOpen(true)}
               data-testid="select-index-placeholder"
             >
               Select Index
-            </EuiButtonEmpty>
+            </Button>
           )}
         </div>
         <div className={styles.refresh}>
           <EuiToolTip content="Refresh Indexes">
-            <EuiButtonIcon
-              size="s"
-              iconType="refresh"
+            <IconButton
+              size="S"
+              icon={RefreshIcon}
               disabled={loading}
               className={styles.refreshBtn}
               onClick={handleRefresh}
@@ -204,5 +201,12 @@ const RediSearchIndexesList = (props: Props) => {
     </OutsideClickDetector>
   )
 }
+
+const Button = styled(EmptyButton)`
+  justify-content: flex-start;
+  max-width: 200px;
+  padding-left: 1.275rem;
+  padding-right: 2.4rem;
+`
 
 export default RediSearchIndexesList

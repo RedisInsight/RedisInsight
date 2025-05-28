@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiButton, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 
 import { useParams } from 'react-router-dom'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -9,6 +9,7 @@ import {
   rdiPipelineStrategiesSelector,
 } from 'uiSrc/slices/rdi/pipeline'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces'
+import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import { getTooltipContent } from '../template-form/TemplateForm'
 import { INGEST_OPTION } from '../template-form/constants'
 import styles from './styles.module.scss'
@@ -51,18 +52,18 @@ const TemplateButton = ({ setFieldValue, value }: TemplateButtonProps) => {
       display="inlineBlock"
       anchorClassName="flex-row"
     >
-      <EuiButton
-        fill
+      <SecondaryButton
+        inverted
         size="s"
         className={styles.btn}
         aria-label="Insert template"
-        isLoading={loading}
-        isDisabled={!templateOption || !!value}
+        loading={loading}
+        disabled={!templateOption || !!value}
         onClick={handleApply}
         data-testid="template-btn"
       >
         Insert template
-      </EuiButton>
+      </SecondaryButton>
     </EuiToolTip>
   )
 }

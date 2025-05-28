@@ -2,7 +2,6 @@ import React, { ChangeEvent, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
 import {
-  EuiButton,
   EuiFieldText,
   EuiForm,
   EuiRadioGroup,
@@ -22,8 +21,9 @@ import {
   updateUserConfigSettingsAction,
   userSettingsConfigSelector,
 } from 'uiSrc/slices/user/user-settings'
-import icheck from 'uiSrc/assets/img/icons/check.svg'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon, CheckBoldIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 interface InitialValuesType {
@@ -95,10 +95,10 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
 
   const showError = !!error || !formik.values.customFormat
   const getBtnIconType = () =>
-    showError
-      ? 'iInCircle'
+    !showError
+      ? InfoIcon
       : !formik.isSubmitting && saveFormatSucceed
-        ? icheck
+        ? CheckBoldIcon
         : undefined
 
   const handleFormatCheck = (format = formik.values.format) => {
@@ -220,20 +220,17 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
                   showError ? error || 'This format is not supported' : null
                 }
               >
-                <EuiButton
+                <PrimaryButton
                   aria-label="Save"
-                  isLoading={formik.isSubmitting}
-                  color="secondary"
-                  fill
-                  size="m"
+                  loading={formik.isSubmitting}
                   className={styles.customBtn}
                   onClick={onCustomFormatSubmit}
                   data-testid="datetime-custom-btn"
-                  iconType={getBtnIconType()}
+                  icon={getBtnIconType()}
                   disabled={showError}
                 >
                   Save
-                </EuiButton>
+                </PrimaryButton>
               </EuiToolTip>
             </>
           )}

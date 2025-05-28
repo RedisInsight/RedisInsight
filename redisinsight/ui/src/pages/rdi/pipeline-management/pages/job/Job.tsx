@@ -1,12 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiText,
-  EuiLink,
-  EuiButton,
-  EuiLoadingSpinner,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiText, EuiLink, EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
 import { get, throttle } from 'lodash'
 import cx from 'classnames'
 import { monaco as monacoEditor } from 'react-monaco-editor'
@@ -18,7 +12,6 @@ import {
   fetchPipelineStrategies,
   rdiPipelineSelector,
   setChangedFile,
-  setPipeline,
   setPipelineJobs,
 } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
@@ -36,6 +29,10 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { KeyboardShortcut } from 'uiSrc/components'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import TemplateButton from '../../components/template-button'
 import styles from './styles.module.scss'
 
@@ -198,15 +195,14 @@ const Job = (props: Props) => {
               }
               data-testid="open-dedicated-editor-tooltip"
             >
-              <EuiButton
-                color="secondary"
+              <SecondaryButton
                 size="s"
                 style={{ marginRight: '16px' }}
                 onClick={() => setShouldOpenDedicatedEditor(true)}
                 data-testid="open-dedicated-editor-btn"
               >
                 SQL and JMESPath Editor
-              </EuiButton>
+              </SecondaryButton>
             </EuiToolTip>
             <TemplateButton
               value={value}
@@ -271,16 +267,15 @@ const Job = (props: Props) => {
         )}
 
         <div className="rdi__actions">
-          <EuiButton
-            fill
+          <PrimaryButton
             color="secondary"
             size="s"
             onClick={handleDryRunJob}
-            isDisabled={isPanelOpen}
+            disabled={isPanelOpen}
             data-testid="rdi-job-dry-run"
           >
             Dry Run
-          </EuiButton>
+          </PrimaryButton>
         </div>
       </div>
       {isPanelOpen && (

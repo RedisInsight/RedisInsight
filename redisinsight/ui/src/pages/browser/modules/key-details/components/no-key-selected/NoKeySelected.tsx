@@ -1,11 +1,13 @@
 import React from 'react'
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiText, EuiToolTip } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import ExploreGuides from 'uiSrc/components/explore-guides'
 import { Nullable } from 'uiSrc/utils'
 
 import { toggleBrowserFullScreen } from 'uiSrc/slices/browser/keys'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -46,9 +48,8 @@ export const NoKeySelected = (props: Props) => {
         position="left"
         anchorClassName={styles.closeRightPanel}
       >
-        <EuiButtonIcon
-          iconType="cross"
-          color="primary"
+        <IconButton
+          icon={CancelSlimIcon}
           aria-label="Close panel"
           className={styles.closeBtn}
           onClick={handleClosePanel}

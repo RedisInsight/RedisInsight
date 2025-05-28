@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react'
 import {
-  EuiButton,
   EuiModal,
   EuiModalBody,
   EuiRadioGroup,
@@ -41,6 +40,10 @@ import {
 import { CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
 
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 interface FormValues {
@@ -199,26 +202,24 @@ const OAuthSelectAccountDialog = () => {
           />
         </section>
         <div className={styles.footer}>
-          <EuiButton
+          <SecondaryButton
             className={styles.button}
             onClick={handleOnClose}
             data-testid="close-oauth-select-account-dialog"
             aria-labelledby="close oauth select account dialog"
           >
             Cancel
-          </EuiButton>
-          <EuiButton
-            fill
-            isDisabled={loading || plansLoadings}
-            isLoading={loading || plansLoadings}
-            color="secondary"
+          </SecondaryButton>
+          <PrimaryButton
+            disabled={loading || plansLoadings}
+            loading={loading || plansLoadings}
             className={styles.button}
             onClick={() => formik.handleSubmit()}
             data-testid="submit-oauth-select-account-dialog"
             aria-labelledby="submit oauth select account dialog"
           >
             Select account
-          </EuiButton>
+          </PrimaryButton>
         </div>
       </EuiModalBody>
     </EuiModal>

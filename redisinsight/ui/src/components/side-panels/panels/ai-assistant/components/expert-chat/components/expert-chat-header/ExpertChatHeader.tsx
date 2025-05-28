@@ -1,11 +1,5 @@
 import React, { useState } from 'react'
-import {
-  EuiButton,
-  EuiButtonEmpty,
-  EuiPopover,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiButtonEmpty, EuiPopover, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
 import { useDispatch } from 'react-redux'
@@ -27,6 +21,7 @@ import {
 import { RestartChat } from 'uiSrc/components/side-panels/panels/ai-assistant/components/shared'
 
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -118,16 +113,14 @@ const ExpertChatHeader = (props: Props) => {
                 Open relevant tutorials to learn more about search and query.
               </EuiText>
               <Spacer size="s" />
-              <EuiButton
-                fill
+              <PrimaryButton
                 size="s"
-                color="secondary"
                 onClick={handleOpenTutorials}
                 className={styles.openTutorialsBtn}
                 data-testid="ai-expert-open-tutorials"
               >
                 Open tutorials
-              </EuiButton>
+              </PrimaryButton>
             </>
           </EuiPopover>
         </EuiToolTip>

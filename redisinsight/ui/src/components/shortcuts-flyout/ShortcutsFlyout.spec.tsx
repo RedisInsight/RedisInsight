@@ -11,6 +11,11 @@ beforeEach(() => {
   store.clearActions()
 })
 
+jest.mock('uiSrc/components/base/layout/drawer', () => ({
+  ...jest.requireActual('uiSrc/components/base/layout/drawer'),
+  DrawerHeader: jest.fn().mockReturnValue(null),
+}))
+
 const appInfoSlicesPath = 'uiSrc/slices/app/info'
 
 jest.mock(appInfoSlicesPath, () => ({

@@ -7,17 +7,19 @@ import React, {
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  EuiButton,
   EuiFieldText,
   EuiForm,
   EuiFormRow,
   EuiPanel,
-  EuiTextColor,
 } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addSetKey } from 'uiSrc/slices/browser/keys'
 
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
 
@@ -161,9 +163,9 @@ const AddKeySet = (props: Props) => {
           </Row>
         )}
       </AddMultipleFields>
-      <EuiButton type="submit" fill style={{ display: 'none' }}>
+      <PrimaryButton type="submit" style={{ display: 'none' }}>
         Submit
-      </EuiButton>
+      </PrimaryButton>
       <AddKeyFooter>
         <EuiPanel
           color="transparent"
@@ -174,27 +176,23 @@ const AddKeySet = (props: Props) => {
         >
           <Row justify="end">
             <FlexItem>
-              <EuiButton
-                color="secondary"
+              <SecondaryButton
                 onClick={() => onCancel(true)}
                 className="btn-cancel btn-back"
               >
-                <EuiTextColor>Cancel</EuiTextColor>
-              </EuiButton>
+                Cancel
+              </SecondaryButton>
             </FlexItem>
             <FlexItem>
-              <EuiButton
-                fill
-                size="m"
-                color="secondary"
+              <PrimaryButton
                 className="btn-add"
-                isLoading={loading}
+                loading={loading}
                 onClick={submitData}
                 disabled={!isFormValid || loading}
                 data-testid="add-key-set-btn"
               >
                 Add Key
-              </EuiButton>
+              </PrimaryButton>
             </FlexItem>
           </Row>
         </EuiPanel>

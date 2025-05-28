@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiTitle, EuiImage, EuiButtonEmpty } from '@elastic/eui'
+import { EuiTitle, EuiImage } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
@@ -20,6 +20,7 @@ import { SCAN_TREE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { TutorialsIds } from 'uiSrc/constants'
 
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import LoadSampleData from '../load-sample-data'
 
 import styles from './styles.module.scss'
@@ -69,13 +70,13 @@ const NoKeysFound = (props: Props) => {
       <Spacer />
       <div className={styles.actions}>
         <LoadSampleData onSuccess={onSuccessLoadData} />
-        <EuiButtonEmpty
+        <EmptyButton
           onClick={() => onAddKeyPanel(true)}
           className={styles.addKey}
           data-testid="add-key-msg-btn"
         >
           + Add key manually
-        </EuiButtonEmpty>
+        </EmptyButton>
       </div>
     </div>
   )

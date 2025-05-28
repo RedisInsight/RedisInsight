@@ -2,7 +2,6 @@ import React, { useContext } from 'react'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
 import {
-  EuiButtonIcon,
   EuiIcon,
   EuiSuperSelect,
   EuiSuperSelectOption,
@@ -12,6 +11,13 @@ import {
 import { useParams } from 'react-router-dom'
 import { findIndex, isNumber } from 'lodash'
 
+import {
+  CopyIcon,
+  PlayIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  DeleteIcon,
+} from 'uiSrc/components/base/icons'
 import { Theme } from 'uiSrc/constants'
 import {
   getCommandNameFromQuery,
@@ -52,6 +58,7 @@ import GroupModeIcon from 'uiSrc/assets/img/icons/group_mode.svg?react'
 import SilentModeIcon from 'uiSrc/assets/img/icons/silent_mode.svg?react'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import QueryCardTooltip from '../QueryCardTooltip'
 
 import styles from './styles.module.scss'
@@ -68,7 +75,6 @@ export interface Props {
   activeResultsMode?: ResultsMode
   summary?: ResultsSummary
   summaryText?: string
-  queryType: WBQueryType
   selectedValue: string
   loading?: boolean
   clearing?: boolean
@@ -328,8 +334,8 @@ const QueryCardHeader = (props: Props) => {
                 resultsMode={resultsMode}
               />
             </EuiTextColor>
-            <EuiButtonIcon
-              iconType="copy"
+            <IconButton
+              icon={CopyIcon}
               aria-label="Copy query"
               className={cx('copy-btn', styles.copyBtn)}
               disabled={emptyCommand}
@@ -448,9 +454,9 @@ const QueryCardHeader = (props: Props) => {
               )}
             </FlexItem>
             <FlexItem className={styles.buttonIcon}>
-              <EuiButtonIcon
+              <IconButton
                 disabled={loading || clearing}
-                iconType="trash"
+                icon={DeleteIcon}
                 aria-label="Delete command"
                 data-testid="delete-command"
                 onClick={handleQueryDelete}
@@ -459,9 +465,9 @@ const QueryCardHeader = (props: Props) => {
             {!isFullScreen && (
               <FlexItem className={cx(styles.buttonIcon, styles.playIcon)}>
                 <EuiToolTip content="Run again" position="left">
-                  <EuiButtonIcon
+                  <IconButton
                     disabled={emptyCommand}
-                    iconType="play"
+                    icon={PlayIcon}
                     aria-label="Re-run command"
                     data-testid="re-run-command"
                     onClick={handleQueryReRun}
@@ -472,8 +478,8 @@ const QueryCardHeader = (props: Props) => {
             {!isFullScreen && (
               <FlexItem className={styles.buttonIcon}>
                 {!isSilentModeWithoutError(resultsMode, summary?.fail) && (
-                  <EuiButtonIcon
-                    iconType={isOpen ? 'arrowUp' : 'arrowDown'}
+                  <IconButton
+                    icon={isOpen ? ChevronUpIcon : ChevronDownIcon}
                     aria-label="toggle collapse"
                   />
                 )}

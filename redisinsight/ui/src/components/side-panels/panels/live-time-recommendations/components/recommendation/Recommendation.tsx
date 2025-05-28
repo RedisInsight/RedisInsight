@@ -2,14 +2,12 @@ import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
-  EuiButton,
   EuiText,
   EuiLink,
   EuiPanel,
   EuiAccordion,
   EuiToolTip,
   EuiIcon,
-  EuiButtonIcon,
 } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 import cx from 'classnames'
@@ -37,11 +35,19 @@ import {
 
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
-import SnoozeIcon from 'uiSrc/assets/img/icons/snooze.svg?react'
-import StarsIcon from 'uiSrc/assets/img/icons/stars.svg?react'
+import {
+  SnoozeIcon,
+  StarsIcon,
+  HideIcon,
+  ShowIcon,
+} from 'uiSrc/components/base/icons'
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  IconButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -149,17 +155,16 @@ const Recommendation = ({
   const recommendationContent = () => (
     <EuiText>
       {!isUndefined(tutorialId) && (
-        <EuiButton
-          fill
-          iconType={StarsIcon}
+        <SecondaryButton
+          filled
+          icon={StarsIcon}
           iconSide="right"
           className={styles.btn}
           onClick={handleRedirect}
-          color="secondary"
           data-testid={`${name}-to-tutorial-btn`}
         >
           {tutorialId ? 'Start Tutorial' : 'Workbench'}
-        </EuiButton>
+        </SecondaryButton>
       )}
       <RecommendationBody
         elements={content}
@@ -235,9 +240,8 @@ const Recommendation = ({
             display="inlineBlock"
             anchorClassName="flex-row"
           >
-            <EuiButtonIcon
-              href="#"
-              iconType={SnoozeIcon}
+            <IconButton
+              icon={SnoozeIcon}
               className={styles.snoozeBtn}
               onClick={handleDelete}
               aria-label="snooze tip"
@@ -257,9 +261,8 @@ const Recommendation = ({
             display="inlineBlock"
             anchorClassName="flex-row"
           >
-            <EuiButtonIcon
-              href="#"
-              iconType={hide ? 'eyeClosed' : 'eye'}
+            <IconButton
+              icon={hide ? HideIcon : ShowIcon}
               className={styles.hideBtn}
               onClick={toggleHide}
               aria-label="hide/unhide tip"

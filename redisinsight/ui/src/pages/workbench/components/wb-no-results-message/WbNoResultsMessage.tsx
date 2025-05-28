@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiButton, EuiPanel, EuiText, EuiTitle, } from '@elastic/eui'
+import { EuiPanel, EuiText, EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -13,10 +13,11 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import BulbImg from 'uiSrc/assets/img/workbench/bulb.svg'
 import ArrowToGuidesIcon from 'uiSrc/assets/img/workbench/arrow-to-guides.svg?react'
-import TriggerIcon from 'uiSrc/assets/img/bulb.svg?react'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { LightBulbIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 const WbNoResultsMessage = () => {
@@ -84,16 +85,14 @@ const WbNoResultsMessage = () => {
             </EuiText>
             <Spacer size="xl" />
             <div>
-              <EuiButton
-                fill
-                color="secondary"
-                iconType={TriggerIcon}
+              <PrimaryButton
+                icon={LightBulbIcon}
                 onClick={() => handleOpenInsights()}
                 className={styles.exploreBtn}
                 data-testid="no-results-explore-btn"
               >
                 Explore
-              </EuiButton>
+              </PrimaryButton>
             </div>
             <Spacer size="s" />
             <EuiText color="subdued" textAlign="left" size="xs">

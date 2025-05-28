@@ -1,5 +1,4 @@
 import {
-  EuiButton,
   EuiButtonIcon,
   EuiComboBox,
   EuiFieldText,
@@ -12,7 +11,6 @@ import {
   EuiSuperSelect,
   EuiSuperSelectOption,
   EuiText,
-  EuiTextColor,
 } from '@elastic/eui'
 import { EuiComboBoxOptionOption } from '@elastic/eui/src/components/combo_box/types'
 import cx from 'classnames'
@@ -32,6 +30,10 @@ import { getFieldTypeOptions } from 'uiSrc/utils/redisearch'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
@@ -340,27 +342,25 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
       >
         <Row justify="end">
           <FlexItem>
-            <EuiButton
+            <SecondaryButton
               color="secondary"
               onClick={() => onClosePanel?.()}
               className="btn-cancel btn-back"
               data-testid="create-index-cancel-btn"
             >
-              <EuiTextColor>Cancel</EuiTextColor>
-            </EuiButton>
+              Cancel
+            </SecondaryButton>
           </FlexItem>
           <FlexItem>
-            <EuiButton
-              fill
+            <PrimaryButton
               size="m"
-              color="secondary"
-              isLoading={loading}
-              isDisabled={loading}
+              loading={loading}
+              disabled={loading}
               onClick={submitData}
               data-testid="create-index-btn"
             >
               Create Index
-            </EuiButton>
+            </PrimaryButton>
           </FlexItem>
         </Row>
       </EuiPanel>

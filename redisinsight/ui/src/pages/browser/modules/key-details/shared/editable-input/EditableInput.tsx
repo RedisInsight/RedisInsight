@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 
+import { EditIcon } from 'uiSrc/components/base/icons'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -60,12 +62,11 @@ const EditableInput = (props: Props) => {
             anchorClassName={styles.editBtnAnchor}
             data-testid={`${testIdPrefix}_edit-tooltip-${field}`}
           >
-            <EuiButtonIcon
-              iconType="pencil"
+            <IconButton
+              icon={EditIcon}
               aria-label="Edit field"
               className={cx('editFieldBtn', styles.editBtn)}
-              color="primary"
-              isDisabled={isEditDisabled}
+              disabled={isEditDisabled}
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation()
                 onEdit?.(true)
@@ -89,7 +90,7 @@ const EditableInput = (props: Props) => {
           placeholder={placeholder}
           fieldName={field}
           expandable
-          iconSize="m"
+          iconSize="M"
           onDecline={(event) => {
             onDecline(event)
             onEdit?.(false)

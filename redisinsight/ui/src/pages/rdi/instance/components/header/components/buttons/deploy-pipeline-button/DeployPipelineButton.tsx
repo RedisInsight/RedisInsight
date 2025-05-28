@@ -1,5 +1,4 @@
 import {
-  EuiButton,
   EuiCheckbox,
   EuiIcon,
   EuiPopover,
@@ -12,7 +11,6 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import RocketIcon from 'uiSrc/assets/img/rdi/rocket.svg?react'
 import {
   deployPipelineAction,
   getPipelineStatusAction,
@@ -27,6 +25,8 @@ import { rdiErrorMessages } from 'uiSrc/pages/rdi/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { RiRocketIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -118,18 +118,16 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
           scrollLock: true,
         }}
         button={
-          <EuiButton
-            fill
+          <PrimaryButton
             size="s"
-            color="secondary"
             onClick={handleClickDeploy}
-            iconType={RocketIcon}
+            icon={RiRocketIcon}
             disabled={disabled}
-            isLoading={loading}
+            loading={loading}
             data-testid="deploy-rdi-pipeline"
           >
             Deploy Pipeline
-          </EuiButton>
+          </PrimaryButton>
         }
       >
         <EuiTitle size="xxs">
@@ -170,8 +168,7 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
         </div>
         <Row gap="m" responsive justify="end">
           <FlexItem>
-            <EuiButton
-              fill
+            <PrimaryButton
               size="s"
               color="secondary"
               className={styles.popoverBtn}
@@ -179,7 +176,7 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
               data-testid="deploy-confirm-btn"
             >
               Deploy
-            </EuiButton>
+            </PrimaryButton>
           </FlexItem>
         </Row>
       </EuiPopover>

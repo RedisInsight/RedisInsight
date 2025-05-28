@@ -1,9 +1,9 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { HEAD_DESTINATION } from 'uiSrc/pages/browser/modules/key-details/components/list-details/add-list-elements/AddListElements'
 import AddKeyList, { Props } from './AddKeyList'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
-import { HEAD_DESTINATION } from 'uiSrc/pages/browser/modules/key-details/components/list-details/add-list-elements/AddListElements'
 
 const mockedProps = mock<Props>()
 

@@ -1,6 +1,5 @@
 import React, { Ref, useRef, useState } from 'react'
 import {
-  EuiButton,
   EuiForm,
   EuiPopover,
   EuiText,
@@ -13,9 +12,9 @@ import {
 import cx from 'classnames'
 import { isModifiedEvent } from 'uiSrc/services'
 
-import SendIcon from 'uiSrc/assets/img/icons/send.svg?react'
-
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { SendIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -151,13 +150,11 @@ const ChatForm = (props: Props) => {
             )}
             anchorClassName={styles.popoverAnchor}
             button={
-              <EuiButton
-                fill
+              <PrimaryButton
                 size="s"
-                color="secondary"
                 disabled={!value.length || isDisabled}
                 className={styles.submitBtn}
-                iconType={SendIcon}
+                icon={SendIcon}
                 type="submit"
                 aria-label="submit"
                 data-testid="ai-submit-message-btn"
@@ -167,9 +164,7 @@ const ChatForm = (props: Props) => {
             <>
               {agreements}
               <Spacer size="m" />
-              <EuiButton
-                fill
-                color="secondary"
+              <PrimaryButton
                 size="s"
                 className={styles.agreementsAccept}
                 onClick={submitMessage}
@@ -178,7 +173,7 @@ const ChatForm = (props: Props) => {
                 data-testid="ai-accept-agreements"
               >
                 I accept
-              </EuiButton>
+              </PrimaryButton>
             </>
           </EuiPopover>
         </EuiForm>

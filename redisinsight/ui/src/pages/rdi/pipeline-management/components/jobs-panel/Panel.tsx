@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
 import {
-  EuiButton,
   EuiButtonIcon,
   EuiSuperSelect,
   EuiSuperSelectOption,
@@ -29,6 +28,8 @@ import { createAxiosError, formatLongName, yamlToJson } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { PlayFilledIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -250,19 +251,18 @@ const DryRunJobPanel = (props: Props) => {
                 content={isFormValid ? null : 'Input should have JSON format'}
                 position="top"
               >
-                <EuiButton
+                <EmptyButton
                   onClick={handleDryRun}
-                  iconType="play"
+                  icon={PlayFilledIcon}
                   iconSide="right"
-                  color="success"
-                  size="s"
+                  size="small"
                   disabled={isDryRunning || !isFormValid}
-                  isLoading={isDryRunning}
+                  loading={isDryRunning}
                   className={cx(styles.actionBtn, styles.runBtn)}
                   data-testid="dry-run-btn"
                 >
                   Dry run
-                </EuiButton>
+                </EmptyButton>
               </EuiToolTip>
             </FlexItem>
           </Row>

@@ -1,16 +1,12 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react'
-import {
-  EuiFlyoutHeader,
-  EuiText,
-  EuiButtonEmpty,
-  EuiPopover,
-} from '@elastic/eui'
+import { EuiText, EuiPopover } from '@elastic/eui'
 import JsxParser from 'react-jsx-parser'
 import cx from 'classnames'
 import { debounce } from 'lodash'
 import { useLocation, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
+import { ChevronLeftIcon } from 'uiSrc/components/base/icons'
 import { ExternalLink, HorizontalRule, LoadingContent } from 'uiSrc/components'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import {
@@ -33,6 +29,7 @@ import {
   CloudLink,
   RedisInsightLink,
 } from 'uiSrc/components/markdown'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { getTutorialSection } from '../../utils'
 import { EmptyPrompt, Pagination, Code } from '..'
 
@@ -167,7 +164,7 @@ const InternalPage = (props: Props) => {
 
   return (
     <div className={styles.container} data-test-subj="internal-page">
-      <EuiFlyoutHeader className={styles.header}>
+      <div className={styles.header}>
         <div style={{ padding: 0 }}>
           <EuiPopover
             initialFocus={false}
@@ -182,15 +179,16 @@ const InternalPage = (props: Props) => {
             panelPaddingSize="m"
             closePopover={() => setShowCapabilityPopover(false)}
             button={
-              <EuiButtonEmpty
-                data-testid="enablement-area__page-close"
-                iconType="arrowLeft"
-                onClick={onClose}
-                className={styles.backButton}
-                aria-label="Back"
-              >
-                {backTitle}
-              </EuiButtonEmpty>
+              <div className={styles.backButton}>
+                <EmptyButton
+                  data-testid="enablement-area__page-close"
+                  icon={ChevronLeftIcon}
+                  onClick={onClose}
+                  aria-label="Back"
+                >
+                  {backTitle}
+                </EmptyButton>
+              </div>
             }
           >
             <div data-testid="explore-capability-popover">
@@ -212,7 +210,7 @@ const InternalPage = (props: Props) => {
             {title?.toUpperCase()}
           </EuiText>
         </div>
-      </EuiFlyoutHeader>
+      </div>
       <div
         ref={containerRef}
         className={cx(styles.content, 'jsx-markdown')}

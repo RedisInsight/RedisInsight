@@ -1,4 +1,4 @@
-import { EuiButton, EuiPanel, EuiTextColor } from '@elastic/eui'
+import { EuiPanel } from '@elastic/eui'
 import cx from 'classnames'
 import { toNumber } from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -22,6 +22,10 @@ import {
   TelemetryEvent,
 } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { AddStreamEntriesDto } from 'apiSrc/modules/browser/stream/dto'
 
 import StreamEntryFields from './StreamEntryFields/StreamEntryFields'
@@ -156,22 +160,20 @@ const AddStreamEntries = (props: Props) => {
         hasShadow={false}
         className="flexItemNoFullWidth"
       >
-        <Row justify="end" gap="l">
+        <Row justify="end" gap="m">
           <FlexItem>
             <div>
-              <EuiButton
-                color="secondary"
+              <SecondaryButton
                 onClick={() => closePanel(true)}
                 data-testid="cancel-members-btn"
               >
-                <EuiTextColor color="default">Cancel</EuiTextColor>
-              </EuiButton>
+                Cancel
+              </SecondaryButton>
             </div>
           </FlexItem>
           <FlexItem>
             <div>
-              <EuiButton
-                fill
+              <PrimaryButton
                 size="m"
                 color="secondary"
                 onClick={submitData}
@@ -179,7 +181,7 @@ const AddStreamEntries = (props: Props) => {
                 data-testid="save-elements-btn"
               >
                 Save
-              </EuiButton>
+              </PrimaryButton>
             </div>
           </FlexItem>
         </Row>

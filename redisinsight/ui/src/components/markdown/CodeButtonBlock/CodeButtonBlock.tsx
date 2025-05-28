@@ -1,4 +1,4 @@
-import { EuiButton, EuiPopover, EuiTitle, EuiToolTip } from '@elastic/eui'
+import { EuiPopover, EuiTitle, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { monaco } from 'react-monaco-editor'
@@ -27,6 +27,8 @@ import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { ButtonLang } from 'uiSrc/utils/formatters/markdown/remarkCode'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { PlayIcon, CheckBoldIcon, CopyIcon } from 'uiSrc/components/base/icons'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import { RunConfirmationPopover } from './components'
@@ -167,15 +169,15 @@ const CodeButtonBlock = (props: Props) => {
           )}
         </FlexItem>
         <FlexItem className={styles.actions}>
-          <EuiButton
+          <EmptyButton
             onClick={handleCopy}
-            iconType="copy"
-            size="s"
+            icon={CopyIcon}
+            size="small"
             className={cx(styles.actionBtn, styles.copyBtn)}
             data-testid={`copy-btn-${label}`}
           >
             Copy
-          </EuiButton>
+          </EmptyButton>
           {!isRunButtonHidden && (
             <EuiPopover
               ownFocus
@@ -204,20 +206,19 @@ const CodeButtonBlock = (props: Props) => {
                   }
                   data-testid="run-btn-open-workbench-tooltip"
                 >
-                  <EuiButton
+                  <EmptyButton
                     onClick={handleRunClicked}
-                    iconType={isRunned ? 'check' : 'play'}
+                    icon={isRunned ? CheckBoldIcon : PlayIcon}
                     iconSide="right"
-                    color="success"
-                    size="s"
+                    size="small"
                     disabled={isLoading || isRunned}
-                    isLoading={isLoading}
+                    loading={isLoading}
                     className={cx(styles.actionBtn, styles.runBtn)}
                     {...rest}
                     data-testid={`run-btn-${label}`}
                   >
                     Run
-                  </EuiButton>
+                  </EmptyButton>
                 </EuiToolTip>
               }
             >

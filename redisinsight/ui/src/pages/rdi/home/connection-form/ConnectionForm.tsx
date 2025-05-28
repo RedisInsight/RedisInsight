@@ -1,6 +1,4 @@
 import {
-  EuiButton,
-  EuiFieldPassword,
   EuiFieldText,
   EuiForm,
   EuiFormRow,
@@ -29,6 +27,12 @@ import { RdiInstance } from 'uiSrc/slices/interfaces'
 import { getFormUpdates, Nullable } from 'uiSrc/utils'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
+import { PasswordInput } from 'uiSrc/components/base/inputs'
 import ValidationTooltip from './components/ValidationTooltip'
 
 import styles from './styles.module.scss'
@@ -127,30 +131,27 @@ const ConnectionForm = (props: Props) => {
         <FlexItem>
           <Row gap="m">
             <FlexItem>
-              <EuiButton
+              <SecondaryButton
                 size="s"
-                color="secondary"
                 data-testid="connection-form-cancel-button"
                 onClick={onCancel}
               >
                 Cancel
-              </EuiButton>
+              </SecondaryButton>
             </FlexItem>
             <FlexItem>
               <ValidationTooltip isValid={isValid} errors={errors}>
-                <EuiButton
+                <PrimaryButton
                   data-testid="connection-form-add-button"
                   type="submit"
-                  fill
                   size="s"
-                  color="secondary"
-                  iconType={!isValid ? 'iInCircle' : undefined}
-                  isLoading={isLoading}
+                  icon={!isValid ? InfoIcon : undefined}
+                  loading={isLoading}
                   disabled={!isValid}
                   onClick={onSubmit}
                 >
                   {editInstance ? 'Apply Changes' : 'Add Endpoint'}
-                </EuiButton>
+                </PrimaryButton>
               </ValidationTooltip>
             </FlexItem>
           </Row>
@@ -230,7 +231,14 @@ const ConnectionForm = (props: Props) => {
                     </EuiFormRow>
                   </FlexItem>
                   <FlexItem grow={1}>
-                    <EuiFormRow label="Password">
+                    <EuiFormRow
+                      label={
+                        <>
+                          Password
+                          <AppendInfo content="The RDI REST API authentication is using the RDI Redis username and password." />
+                        </>
+                      }
+                    >
                       <Field name="password">
                         {({
                           field,
@@ -241,13 +249,12 @@ const ConnectionForm = (props: Props) => {
                           form: FormikHelpers<string>
                           meta: FieldMetaProps<string>
                         }) => (
-                          <EuiFieldPassword
+                          <PasswordInput
                             data-testid="connection-form-password-input"
-                            className={styles.passwordField}
-                            fullWidth
                             placeholder="Enter the RDI Redis password"
                             maxLength={500}
                             {...field}
+                            onChangeCapture={field.onChange}
                             value={
                               isNull(field.value) ? SECURITY_FIELD : field.value
                             }
@@ -256,9 +263,6 @@ const ConnectionForm = (props: Props) => {
                                 form.setFieldValue('password', '')
                               }
                             }}
-                            append={
-                              <AppendInfo content="The RDI REST API authentication is using the RDI Redis username and password." />
-                            }
                           />
                         )}
                       </Field>

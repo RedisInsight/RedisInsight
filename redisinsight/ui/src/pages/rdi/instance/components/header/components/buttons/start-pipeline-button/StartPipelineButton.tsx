@@ -1,9 +1,8 @@
 import React from 'react'
-import { EuiButton, EuiToolTip } from '@elastic/eui'
-import cx from 'classnames'
+import { EuiToolTip } from '@elastic/eui'
 
-import StartIcon from 'uiSrc/assets/img/rdi/playFilled.svg?react'
-
+import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
+import { PlayFilledIcon } from 'uiSrc/components/base/icons'
 import { PipelineButtonProps } from '../reset-pipeline-button/ResetPipelineButton'
 import styles from '../styles.module.scss'
 
@@ -16,19 +15,17 @@ const StartPipelineButton = ({
     content="Start the pipeline to resume processing new data arrivals."
     anchorClassName={disabled ? styles.disabled : styles.tooltip}
   >
-    <EuiButton
+    <SecondaryButton
       aria-label="Start running pipeline"
-      type="secondary"
       size="s"
-      iconType={StartIcon}
-      className={cx(styles.pipelineBtn, { [styles.btnDisabled]: disabled })}
+      icon={PlayFilledIcon}
       data-testid="start-pipeline-btn"
-      isDisabled={disabled}
-      isLoading={loading}
+      disabled={disabled}
+      loading={loading}
       onClick={onClick}
     >
       Start Pipeline
-    </EuiButton>
+    </SecondaryButton>
   </EuiToolTip>
 )
 

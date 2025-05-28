@@ -1,6 +1,7 @@
 import React from 'react'
-import { EuiButton, EuiPanel } from '@elastic/eui'
+import { EuiPanel } from '@elastic/eui'
 
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import CreateTutorialLink from '../CreateTutorialLink'
 
 import styles from './styles.module.scss'
@@ -20,16 +21,14 @@ const WelcomeMyTutorials = ({ handleOpenUpload }: Props) => (
       <div className={styles.link}>
         <CreateTutorialLink />
       </div>
-      <EuiButton
+      <PrimaryButton
         className={styles.btnSubmit}
-        color="secondary"
         size="s"
-        fill
         onClick={() => handleOpenUpload()}
         data-testid="upload-tutorial-btn"
       >
         + Upload <span className={styles.hideText}>tutorial</span>
-      </EuiButton>
+      </PrimaryButton>
     </EuiPanel>
   </div>
 )

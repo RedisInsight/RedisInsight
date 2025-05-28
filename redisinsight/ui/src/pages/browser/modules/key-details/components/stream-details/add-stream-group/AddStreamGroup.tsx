@@ -1,6 +1,5 @@
 import {
   EuiFieldText,
-  EuiFormRow,
   EuiIcon,
   EuiPanel,
   EuiToolTip,
@@ -24,6 +23,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/stream/dto'
 
 import styles from './styles.module.scss'
@@ -110,7 +110,7 @@ const AddStreamGroup = (props: Props) => {
             <FlexItem grow>
               <Row align="start">
                 <FlexItem className={styles.groupNameWrapper} grow>
-                  <EuiFormRow fullWidth>
+                  <FormField>
                     <EuiFieldText
                       fullWidth
                       name="group-name"
@@ -123,10 +123,10 @@ const AddStreamGroup = (props: Props) => {
                       autoComplete="off"
                       data-testid="group-name-field"
                     />
-                  </EuiFormRow>
+                  </FormField>
                 </FlexItem>
                 <FlexItem className={styles.timestampWrapper} grow>
-                  <EuiFormRow fullWidth>
+                  <FormField>
                     <EuiFieldText
                       fullWidth
                       name="id"
@@ -156,7 +156,7 @@ const AddStreamGroup = (props: Props) => {
                       autoComplete="off"
                       data-testid="id-field"
                     />
-                  </EuiFormRow>
+                  </FormField>
                   {!showIdError && (
                     <span className={styles.idText} data-testid="id-help-text">
                       Timestamp - Sequence Number or $

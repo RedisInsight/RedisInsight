@@ -1,6 +1,5 @@
 import {
   EuiFieldText,
-  EuiFormRow,
   EuiIcon,
   EuiPopover,
   EuiCheckbox,
@@ -9,6 +8,7 @@ import React, { memo } from 'react'
 
 import FilterSvg from 'uiSrc/assets/img/icons/filter.svg'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { useFilterTags } from './useFilterTags'
 import styles from './styles.module.scss'
 
@@ -52,7 +52,7 @@ export const TagsCellHeader = memo(() => {
         {/* stop propagation to prevent sorting by column header */}
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div style={{ width: 300 }} onClick={(e) => e.stopPropagation()}>
-          <EuiFormRow>
+          <FormField>
             <EuiFieldText
               icon="search"
               role="search"
@@ -64,7 +64,7 @@ export const TagsCellHeader = memo(() => {
                 setTagSearch(e.target.value)
               }}
             />
-          </EuiFormRow>
+          </FormField>
           <Spacer size="m" />
           {Object.keys(groupedTags).map((key) => (
             <div key={key}>

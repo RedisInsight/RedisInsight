@@ -1,10 +1,11 @@
 import React from 'react'
 import { FormikProps } from 'formik'
-import { EuiFormRow, EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
+import { EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
 
 import { KeyValueFormat } from 'uiSrc/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 
 export interface Props {
   formik: FormikProps<DbConnectionInfo>
@@ -27,7 +28,7 @@ const KeyFormatSelector = (props: Props) => {
   return (
     <Row gap="m">
       <FlexItem grow>
-        <EuiFormRow label="Key name format">
+        <FormField label="Key name format">
           <EuiSuperSelect
             name="key-name-format"
             placeholder="Key name format"
@@ -42,7 +43,7 @@ const KeyFormatSelector = (props: Props) => {
             }}
             data-testid="select-key-name-format"
           />
-        </EuiFormRow>
+        </FormField>
       </FlexItem>
       <FlexItem grow />
     </Row>

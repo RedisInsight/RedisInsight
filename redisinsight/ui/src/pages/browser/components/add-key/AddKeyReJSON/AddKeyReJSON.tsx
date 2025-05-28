@@ -1,12 +1,7 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  EuiFormRow,
-  EuiTextColor,
-  EuiForm,
-  EuiPanel,
-} from '@elastic/eui'
+import { EuiTextColor, EuiForm, EuiPanel } from '@elastic/eui'
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addReJSONKey } from 'uiSrc/slices/browser/keys'
@@ -19,6 +14,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/rejson-rl/dto'
 
 import { AddJSONFormConfig as config } from '../constants/fields-config'
@@ -83,7 +79,7 @@ const AddKeyReJSON = (props: Props) => {
 
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
-      <EuiFormRow label={config.value.label} fullWidth>
+      <FormField label={config.value.label}>
         <>
           <MonacoJson
             value={ReJSONValue}
@@ -101,7 +97,7 @@ const AddKeyReJSON = (props: Props) => {
             </FlexItem>
           </Row>
         </>
-      </EuiFormRow>
+      </FormField>
 
       <PrimaryButton type="submit" style={{ display: 'none' }}>
         Submit

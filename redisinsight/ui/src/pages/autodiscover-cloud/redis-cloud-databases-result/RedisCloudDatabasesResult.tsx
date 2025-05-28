@@ -7,8 +7,8 @@ import {
   EuiText,
   EuiTitle,
   EuiFieldSearch,
-  EuiFormRow,
 } from '@elastic/eui'
+import { FormField } from '@redis-ui/components'
 import {
   InstanceRedisCloud,
   AddRedisDatabaseStatus,
@@ -100,7 +100,7 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
             </MessageBar>
           </FlexItem>
           <FlexItem>
-            <EuiFormRow className={styles.searchForm}>
+            <FormField className={styles.searchForm}>
               <EuiFieldSearch
                 placeholder="Search..."
                 className={styles.search}
@@ -109,7 +109,7 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
                 aria-label="Search"
                 data-testid="search"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Flex>
         <br />

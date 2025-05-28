@@ -5,7 +5,6 @@ import { FormikProps } from 'formik'
 import {
   EuiFieldNumber,
   EuiFieldText,
-  EuiFormRow,
   EuiIcon,
   EuiToolTip,
 } from '@elastic/eui'
@@ -23,6 +22,7 @@ import {
 } from 'uiSrc/utils'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { PasswordInput } from 'uiSrc/components/base/inputs'
 
 interface IShowFields {
@@ -96,7 +96,7 @@ const DatabaseForm = (props: Props) => {
       {showFields.alias && (
         <Row gap="m">
           <FlexItem grow>
-            <EuiFormRow label="Database Alias*">
+            <FormField label="Database Alias*">
               <EuiFieldText
                 fullWidth
                 name="name"
@@ -109,7 +109,7 @@ const DatabaseForm = (props: Props) => {
                 onChange={formik.handleChange}
                 disabled={isFieldDisabled('alias')}
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
       )}
@@ -118,7 +118,7 @@ const DatabaseForm = (props: Props) => {
         <Row gap="m">
           {showFields.host && (
             <FlexItem grow={4}>
-              <EuiFormRow label="Host*">
+              <FormField label="Host*">
                 <EuiFieldText
                   autoFocus={autoFocus}
                   name="ip"
@@ -141,12 +141,12 @@ const DatabaseForm = (props: Props) => {
                   append={<AppendHostName />}
                   disabled={isFieldDisabled('host')}
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
           )}
           {isShowPort && (
             <FlexItem grow={2}>
-              <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
+              <FormField label="Port*" additionalText="Should not exceed 65535.">
                 <EuiFieldNumber
                   name="port"
                   id="port"
@@ -167,7 +167,7 @@ const DatabaseForm = (props: Props) => {
                   max={MAX_PORT_NUMBER}
                   disabled={isFieldDisabled('port')}
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
           )}
         </Row>
@@ -175,7 +175,7 @@ const DatabaseForm = (props: Props) => {
 
       <Row gap="m">
         <FlexItem grow>
-          <EuiFormRow label="Username">
+          <FormField label="Username">
             <EuiFieldText
               name="username"
               id="username"
@@ -187,11 +187,11 @@ const DatabaseForm = (props: Props) => {
               onChange={formik.handleChange}
               disabled={isFieldDisabled('username')}
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
 
         <FlexItem grow>
-          <EuiFormRow label="Password">
+          <FormField label="Password">
             <PasswordInput
               name="password"
               id="password"
@@ -212,14 +212,14 @@ const DatabaseForm = (props: Props) => {
               autoComplete="new-password"
               disabled={isFieldDisabled('password')}
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
       </Row>
 
       {showFields.timeout && (
         <Row gap="m" responsive>
           <FlexItem grow>
-            <EuiFormRow label="Timeout (s)">
+            <FormField label="Timeout (s)">
               <EuiFieldNumber
                 name="timeout"
                 id="timeout"
@@ -240,7 +240,7 @@ const DatabaseForm = (props: Props) => {
                 max={MAX_TIMEOUT_NUMBER}
                 disabled={isFieldDisabled('timeout')}
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
           <FlexItem grow />
         </Row>

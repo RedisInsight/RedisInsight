@@ -3,20 +3,6 @@
 }
 
 .formRow {
-  :global(.euiFormRow__fieldWrapper) {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  :global(.euiFormControlLayout__childrenWrapper) {
-    height: 36px;
-  }
-
-  :global(.euiFormRow + .euiFormRow) {
-    margin-top: 8px;
-  }
-
   .selectWrapper {
     width: 155px;
   }

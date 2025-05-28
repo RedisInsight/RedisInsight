@@ -36,8 +36,24 @@ const responseSchema = Joi.object()
         hitRatio: Joi.number().required(),
         cashedScripts: Joi.number(),
         server: Joi.object().required(),
+        stats: Joi.object().keys({
+          instantaneous_ops_per_sec: Joi.string(),
+          instantaneous_input_kbps: Joi.string(),
+          instantaneous_output_kbps: Joi.string(),
+          uptime_in_days: Joi.string(),
+          maxmemory_policy: Joi.string(),
+          numberOfKeysRange: Joi.string(),
+        }),
       }),
     ),
+    stats: Joi.object().keys({
+      instantaneous_ops_per_sec: Joi.string(),
+      instantaneous_input_kbps: Joi.string(),
+      instantaneous_output_kbps: Joi.string(),
+      uptime_in_days: Joi.string(),
+      maxmemory_policy: Joi.string(),
+      numberOfKeysRange: Joi.string(),
+    }),
   })
   .required()
   .strict();

@@ -22,7 +22,9 @@ export const TagSuggestions = ({
   const { data: allTags } = useSelector(tagsSelector)
   const tagsSuggestions: EuiSelectableOption<{ value: string }>[] =
     useMemo(() => {
-      const options = uniqBy(presetTagSuggestions.concat(allTags), 'key')
+      const options = uniqBy(presetTagSuggestions.concat(allTags), (tag) =>
+        targetKey ? tag.value : tag.key,
+      )
         .filter(({ key, value }) => {
           if (targetKey !== undefined) {
             return (

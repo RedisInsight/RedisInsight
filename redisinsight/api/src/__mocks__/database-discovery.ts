@@ -7,7 +7,7 @@ export const mockDefaultDatabaseFields = {
   modules: [],
   caCert: null,
   clientCert: null,
-  db: null,
+  db: 0,
   nameFromProvider: null,
   password: null,
   provider: null,
@@ -24,6 +24,7 @@ export const mockDatabaseToImportFromEnvsInput = {
   host: 'localhost',
   port: 6379,
   name: 'local database',
+  db: 0,
 } as Partial<Database>;
 
 export const mockDatabaseToImportFromEnvsPrepared = {
@@ -45,6 +46,7 @@ export const mockDatabaseToImportWithCertsFromEnvsInput = {
     key: 'User key',
   },
   verifyServerCert: true,
+  db: 0,
 } as Partial<Database>;
 
 export const mockDatabaseToImportWithCertsFromEnvsPrepared = {

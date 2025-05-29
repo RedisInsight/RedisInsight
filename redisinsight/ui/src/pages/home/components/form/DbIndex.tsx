@@ -35,16 +35,14 @@ const DbIndex = (props: Props) => {
       <Row gap="s">
         <FlexItem>
           <FormField>
-            <>
-              <Checkbox
-                id={`${htmlIdGenerator()()} over db`}
-                name="showDb"
-                label="Select Logical Database"
-                checked={!!formik.values.showDb}
-                onChange={handleChangeDbIndexCheckbox}
-                data-testid="showDb"
-              />
-            </>
+            <Checkbox
+              id={`${htmlIdGenerator()()} over db`}
+              name="showDb"
+              label="Select Logical Database"
+              checked={!!formik.values.showDb}
+              onChange={handleChangeDbIndexCheckbox}
+              data-testid="showDb"
+            />
           </FormField>
         </FlexItem>
       </Row>

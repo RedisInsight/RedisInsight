@@ -1,11 +1,13 @@
 import React from 'react'
-import { EuiButtonIcon, EuiText, EuiLoadingSpinner } from '@elastic/eui'
+import { EuiText, EuiLoadingSpinner } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import TestConnectionsLog from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-log'
 import { rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
 
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 interface TestConnectionPanelWrapperProps {
@@ -20,10 +22,8 @@ const TestConnectionPanelWrapper = ({
   <div className={styles.panel} data-testid="test-connection-panel">
     <div className={styles.header}>
       <EuiText className={styles.title}>Connection test results</EuiText>
-      <EuiButtonIcon
-        iconSize="m"
-        iconType="cross"
-        color="primary"
+      <IconButton
+        icon={CancelSlimIcon}
         aria-label="close test connections panel"
         className={styles.closeBtn}
         onClick={onClose}

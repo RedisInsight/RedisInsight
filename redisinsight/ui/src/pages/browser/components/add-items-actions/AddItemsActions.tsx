@@ -1,8 +1,8 @@
 import React from 'react'
-import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
-import { PlusInCircleIcon } from 'uiSrc/components/base/icons'
+import { PlusInCircleIcon, DeleteIcon } from 'uiSrc/components/base/icons'
 
 export interface Props {
   id: number
@@ -55,9 +55,8 @@ const AddItemsActions = (props: Props) => {
                 position="left"
                 anchorClassName={anchorClassName}
               >
-                <EuiButtonIcon
-                  iconType="trash"
-                  color="primary"
+                <IconButton
+                  icon={DeleteIcon}
                   aria-label={length === 1 ? 'Clear Item' : 'Remove Item'}
                   disabled={loading}
                   onClick={handleClick}

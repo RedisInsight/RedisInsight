@@ -1,4 +1,4 @@
-import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,6 +7,9 @@ import {
   setIsCenterOpen,
 } from 'uiSrc/slices/app/notifications'
 
+import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
+import { NotificationsIcon } from 'uiSrc/components/base/icons'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import NotificationCenter from './NotificationCenter'
 import PopoverNotification from './PopoverNotification'
 
@@ -25,16 +28,19 @@ const NavButton = () => {
   }
 
   const Btn = (
-    <EuiButtonIcon
+    <NavigationItemWrapper
       className={cx(navStyles.navigationButton, styles.notificationIcon, {
         [styles.active]: isCenterOpen,
       })}
-      iconType="bell"
-      iconSize="l"
-      aria-label="Notification Menu"
-      onMouseDownCapture={onClickIcon}
-      data-testid="notification-menu-button"
-    />
+    >
+      <IconButton
+        icon={NotificationsIcon}
+        size="L"
+        aria-label="Notification Menu"
+        onMouseDownCapture={onClickIcon}
+        data-testid="notification-menu-button"
+      />
+    </NavigationItemWrapper>
   )
 
   return (

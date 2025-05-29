@@ -31,7 +31,7 @@
 }
 
 .cross {
-  :global(.euiButtonIcon) {
+  :global(button) {
     margin-left: 15px;
   }
   svg {

@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import { EuiButtonEmpty, EuiPopover, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiPopover, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import BulbIcon from 'uiSrc/assets/img/bulb.svg?react'
 
 import {
   sendEventTelemetry,
@@ -21,7 +20,8 @@ import {
 import { RestartChat } from 'uiSrc/components/side-panels/panels/ai-assistant/components/shared'
 
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
-import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { EmptyButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { EraserIcon, LightBulbIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -99,9 +99,9 @@ const ExpertChatHeader = (props: Props) => {
             closePopover={() => setIsTutorialsPopoverOpen(false)}
             focusTrapProps={{ scrollLock: true }}
             button={
-              <EuiButtonEmpty
-                iconType={BulbIcon}
-                size="xs"
+              <EmptyButton
+                icon={LightBulbIcon}
+                size="small"
                 onClick={() => setIsTutorialsPopoverOpen(true)}
                 className={cx(styles.headerBtn)}
                 data-testid="ai-expert-tutorial-btn"
@@ -126,10 +126,10 @@ const ExpertChatHeader = (props: Props) => {
         </EuiToolTip>
         <RestartChat
           button={
-            <EuiButtonEmpty
+            <EmptyButton
               disabled={isClearDisabled}
-              iconType="eraser"
-              size="xs"
+              icon={EraserIcon}
+              size="small"
               className={styles.headerBtn}
               data-testid="ai-expert-restart-session-btn"
             />

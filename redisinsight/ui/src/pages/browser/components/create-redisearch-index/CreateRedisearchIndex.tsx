@@ -1,5 +1,4 @@
 import {
-  EuiButtonIcon,
   EuiComboBox,
   EuiFieldText,
   EuiFormFieldset,
@@ -29,9 +28,11 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import {
+  IconButton,
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { Health } from 'uiSrc/components/base/text/Health'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
@@ -181,9 +182,8 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
       closePopover={() => setIsInfoPopoverOpen(false)}
       initialFocus={false}
       button={
-        <EuiButtonIcon
-          iconType="iInCircle"
-          color="subdued"
+        <IconButton
+          icon={InfoIcon}
           id="identifier-info-icon"
           aria-label="identifier info icon"
           data-testid="identifier-info-icon"

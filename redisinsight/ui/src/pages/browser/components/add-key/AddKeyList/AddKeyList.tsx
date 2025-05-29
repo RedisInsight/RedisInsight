@@ -1,6 +1,5 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
 import { EuiForm, EuiPanel, EuiSuperSelect, EuiFieldText } from '@elastic/eui'
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'

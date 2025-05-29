@@ -23,12 +23,12 @@ type CheckboxLabelProps = Omit<
   React.ComponentProps<typeof Typography.Body>,
   'children' | 'component'
 > & {
-  children: string | React.ReactNode
+  children: React.ReactNode
 }
 
 const CheckboxLabel = ({ children, ...rest }: CheckboxLabelProps) => {
   if (typeof children !== 'string') {
-    return <>children</>
+    return <>{children}</>
   }
   return (
     <Typography.Body {...rest} component="span">

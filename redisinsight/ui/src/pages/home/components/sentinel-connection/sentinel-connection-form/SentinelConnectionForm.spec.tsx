@@ -3,15 +3,6 @@ import { instance, mock } from 'ts-mockito'
 import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import SentinelConnectionForm, { Props } from './SentinelConnectionForm'
 
-// Mock ResizeObserver
-global.ResizeObserver = class ResizeObserver {
-  observe() {}
-
-  disconnect() {}
-
-  unobserve() {}
-}
-
 const mockedProps = mock<Props>()
 
 const mockValues = {

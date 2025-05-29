@@ -3,6 +3,15 @@ import { instance, mock } from 'ts-mockito'
 import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import SentinelConnectionForm, { Props } from './SentinelConnectionForm'
 
+// Mock ResizeObserver
+global.ResizeObserver = class ResizeObserver {
+  observe() {}
+
+  disconnect() {}
+
+  unobserve() {}
+}
+
 const mockedProps = mock<Props>()
 
 const mockValues = {
@@ -23,11 +32,12 @@ describe('SentinelConnectionForm', () => {
       <SentinelConnectionForm
         {...instance(mockedProps)}
         onSubmit={mockSubmit}
+        // @ts-ignore
         initialValues={mockValues}
       />,
     )
 
-    await act(() => {
+    await act(async () => {
       fireEvent.keyDown(screen.getByTestId('form'), {
         key: 'Enter',
         code: 13,
@@ -35,7 +45,7 @@ describe('SentinelConnectionForm', () => {
       })
     })
 
-    expect(mockSubmit).toBeCalled()
+    expect(mockSubmit).toHaveBeenCalled()
   })
 
   it('should render Footer', async () => {

@@ -57,6 +57,17 @@ const HashDetails = (props: Props) => {
       onCloseAddItemPanel()
     }
   }
+  const handleSelectShow = (show: boolean) => {
+    setShowTtl(show)
+
+    sendEventTelemetry({
+      event: TelemetryEvent.SHOW_HASH_TTL_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        action: show ? 'show' : 'hide',
+      },
+    })
+  }
 
   const Actions = ({ width }: { width: number }) => (
     <>
@@ -85,19 +96,6 @@ const HashDetails = (props: Props) => {
       />
     </>
   )
-
-  const handleSelectShow = (show: boolean) => {
-    setShowTtl(show)
-
-    sendEventTelemetry({
-      event: TelemetryEvent.SHOW_HASH_TTL_CLICKED,
-      eventData: {
-        databaseId: instanceId,
-        action: show ? 'show' : 'hide',
-      },
-    })
-  }
-
   return (
     <div className="fluid flex-column relative">
       <KeyDetailsHeader {...props} key="key-details-header" />

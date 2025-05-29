@@ -111,11 +111,7 @@ export interface StateAppContext {
   }
   workbench: {
     script: string
-    panelSizes: {
-      vertical: {
-        [key: string]: number
-      }
-    }
+    panelSizes: number[]
   }
   searchAndQuery: {
     script: string

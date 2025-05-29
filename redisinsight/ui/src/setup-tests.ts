@@ -19,3 +19,9 @@ afterAll(() => {
   // server.printHandlers()
   mswServer.close()
 })
+
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}))

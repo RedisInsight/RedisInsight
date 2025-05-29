@@ -1,6 +1,6 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { render, screen, fireEvent, act } from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
 import { Props, HashDetails } from './HashDetails'
@@ -59,12 +59,17 @@ describe('HashDetails', () => {
       expect(screen.getByText('Show TTL')).toBeInTheDocument()
     })
 
-    it('toggles the show TTL button', () => {
+    it('toggles the show TTL button', async () => {
       render(<HashDetails {...instance(mockedProps)} />)
-      const el = screen.getByTestId('test-check-ttl') as HTMLInputElement
-      expect(el.checked).toBe(true)
-      fireEvent.click(el)
-      expect(el.checked).toBe(false)
+      let el = screen.getByTestId('test-check-ttl') as HTMLInputElement
+      expect(el).toHaveAttribute('aria-checked', 'true')
+      // expect(el.checked).toBe(true)
+      await act(async () => {
+        fireEvent.click(el)
+      })
+      el = screen.getByTestId('test-check-ttl') as HTMLInputElement
+      expect(el).toHaveAttribute('aria-checked', 'false')
+      // expect(el.checked).toBe(false)
     })
 
     it('should call proper telemetry event after click on showTtl', () => {
@@ -77,7 +82,7 @@ describe('HashDetails', () => {
 
       fireEvent.click(screen.getByTestId('test-check-ttl'))
 
-      expect(sendEventTelemetry).toBeCalledWith({
+      expect(sendEventTelemetry).toHaveBeenCalledWith({
         event: TelemetryEvent.SHOW_HASH_TTL_CLICKED,
         eventData: {
           databaseId: INSTANCE_ID_MOCK,
@@ -87,7 +92,7 @@ describe('HashDetails', () => {
 
       fireEvent.click(screen.getByTestId('test-check-ttl'))
 
-      expect(sendEventTelemetry).toBeCalledWith({
+      expect(sendEventTelemetry).toHaveBeenCalledWith({
         event: TelemetryEvent.SHOW_HASH_TTL_CLICKED,
         eventData: {
           databaseId: INSTANCE_ID_MOCK,

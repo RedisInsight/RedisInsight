@@ -1,6 +1,5 @@
 import React, { ChangeEvent } from 'react'
 import {
-  EuiCheckbox,
   EuiSuperSelect,
   EuiSuperSelectOption,
   htmlIdGenerator,
@@ -12,6 +11,7 @@ import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { NONE } from 'uiSrc/pages/home/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 
 export interface Props {
@@ -68,7 +68,7 @@ const DbCompressor = (props: Props) => {
       <Row gap="m" responsive={false}>
         <FlexItem>
           <FormField>
-            <EuiCheckbox
+            <Checkbox
               id={`${htmlIdGenerator()()} over db compressor`}
               name="showCompressor"
               label="Enable Automatic Data Decompression"

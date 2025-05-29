@@ -1,9 +1,6 @@
-import { useFormikContext } from 'formik'
 import { cloneDeep } from 'lodash'
 import React from 'react'
-
-import { MOCK_RDI_PIPELINE_DATA } from 'uiSrc/mocks/data/rdi'
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   cleanup,
   fireEvent,
@@ -60,7 +57,7 @@ describe('DeployPipelineButton', () => {
     it('should call proper telemetry on Deploy', () => {
       fireEvent.click(screen.getByTestId('deploy-rdi-pipeline'))
       fireEvent.click(screen.getByTestId('deploy-confirm-btn'))
-      expect(sendEventTelemetry).toBeCalledWith({
+      expect(sendEventTelemetry).toHaveBeenCalledWith({
         event: TelemetryEvent.RDI_DEPLOY_CLICKED,
         eventData: {
           id: 'rdiInstanceId',
@@ -76,15 +73,15 @@ describe('DeployPipelineButton', () => {
       const el = screen.getByTestId(
         'reset-pipeline-checkbox',
       ) as HTMLInputElement
-      expect(el.checked).toBe(false)
+      expect(el).toHaveAttribute('aria-checked', 'false')
       fireEvent.click(el)
-      expect(el.checked).toBe(true)
+      expect(el).toHaveAttribute('aria-checked', 'true')
       fireEvent.click(screen.getByTestId('deploy-confirm-btn'))
-      expect(sendEventTelemetry).toBeCalledWith({
+      expect(sendEventTelemetry).toHaveBeenCalledWith({
         event: TelemetryEvent.RDI_DEPLOY_CLICKED,
         eventData: {
           id: 'rdiInstanceId',
-          reset: false,
+          reset: true,
           jobsNumber: 2,
         },
       })

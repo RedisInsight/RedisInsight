@@ -1,6 +1,5 @@
 import React, { ChangeEvent } from 'react'
 import {
-  EuiCheckbox,
   EuiIcon,
   EuiToolTip,
   htmlIdGenerator,
@@ -10,6 +9,7 @@ import { FormikProps } from 'formik'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 
 export interface Props {
   formik: FormikProps<DbConnectionInfo>
@@ -51,7 +51,7 @@ const ForceStandalone = (props: Props) => {
     <Row gap="s">
       <FlexItem>
         <FormField>
-          <EuiCheckbox
+          <Checkbox
             id={`${htmlIdGenerator()()} over forceStandalone`}
             name="forceStandalone"
             label={<ForceStandaloneLabel />}

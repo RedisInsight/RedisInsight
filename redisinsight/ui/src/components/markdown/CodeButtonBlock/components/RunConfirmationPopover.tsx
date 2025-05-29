@@ -1,4 +1,4 @@
-import { EuiCheckbox, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiText, EuiTitle } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
@@ -12,6 +12,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from '../styles.module.scss'
 
 interface Props {
@@ -56,7 +57,7 @@ const RunConfirmationPopover = ({ onApply }: Props) => {
         to run commands in this database?
       </EuiText>
       <Spacer size="s" />
-      <EuiCheckbox
+      <Checkbox
         id="showAgain"
         name="showAgain"
         label="Don't show again for this database"

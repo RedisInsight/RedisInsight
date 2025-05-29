@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import {
-  EuiCheckbox,
   EuiIcon,
   EuiPopover,
   EuiText,
@@ -11,6 +10,7 @@ import { formatLongName } from 'uiSrc/utils'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { ExportIcon } from 'uiSrc/components/base/icons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from '../styles.module.scss'
 
 export interface Props<T> {
@@ -64,7 +64,7 @@ const ExportAction = <T extends { id: string; name?: string }>(
         ))}
       </div>
       <FormField style={{ marginTop: 16 }}>
-        <EuiCheckbox
+        <Checkbox
           id="export-passwords"
           name="export-passwords"
           label="Export passwords"

@@ -1,6 +1,5 @@
 import React, { ChangeEvent, useState } from 'react'
 import {
-  EuiCheckbox,
   EuiFieldText,
   EuiSuperSelect,
   EuiSuperSelectOption,
@@ -30,6 +29,7 @@ import { deleteCaCertificateAction } from 'uiSrc/slices/instances/caCerts'
 import { deleteClientCertAction } from 'uiSrc/slices/instances/clientCerts'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from '../styles.module.scss'
 
@@ -175,7 +175,7 @@ const TlsDetails = (props: Props) => {
     <>
       <Row gap="m">
         <FlexItem grow={1}>
-          <EuiCheckbox
+          <Checkbox
             id={`${htmlIdGenerator()()} over ssl`}
             name="tls"
             label="Use TLS"
@@ -191,7 +191,7 @@ const TlsDetails = (props: Props) => {
           <Spacer />
           <Row gap="m">
             <FlexItem grow={1}>
-              <EuiCheckbox
+              <Checkbox
                 id={`${htmlIdGenerator()()} sni`}
                 name="sni"
                 label="Use SNI"
@@ -239,7 +239,7 @@ const TlsDetails = (props: Props) => {
               grow
               className={cx({ [styles.fullWidth]: formik.values.sni })}
             >
-              <EuiCheckbox
+              <Checkbox
                 id={`${htmlIdGenerator()()} verifyServerTlsCert`}
                 name="verifyServerTlsCert"
                 label="Verify TLS Certificate"
@@ -327,7 +327,7 @@ const TlsDetails = (props: Props) => {
       {formik.values.tls && (
         <Row responsive style={{ margin: '20px 0 20px' }}>
           <FlexItem grow>
-            <EuiCheckbox
+            <Checkbox
               id={`${htmlIdGenerator()()} is_tls_client_auth_required`}
               name="tlsClientAuthRequired"
               label="Requires TLS Client Authentication"

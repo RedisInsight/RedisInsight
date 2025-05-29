@@ -2,7 +2,6 @@ import {
   EuiComboBox,
   EuiFieldText,
   EuiFormFieldset,
-  EuiFormRow,
   EuiHealth,
   EuiLink,
   EuiPanel,
@@ -35,6 +34,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
@@ -222,7 +222,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
           <div className={styles.fieldsContainer}>
             <Row className={styles.row}>
               <FlexItem grow>
-                <EuiFormRow label="Index Name" fullWidth>
+                <FormField label="Index Name">
                   <EuiFieldText
                     fullWidth
                     name="Index name"
@@ -233,13 +233,13 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                     autoComplete="off"
                     data-testid="index-name"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
               <FlexItem grow>
                 <EuiFormFieldset
                   legend={{ children: 'Select key type', display: 'hidden' }}
                 >
-                  <EuiFormRow label="Key Type*" fullWidth>
+                  <FormField label="Key Type*">
                     <EuiSuperSelect
                       itemClassName="withColorDefinition"
                       fullWidth
@@ -250,13 +250,13 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                       }
                       data-testid="key-type"
                     />
-                  </EuiFormRow>
+                  </FormField>
                 </EuiFormFieldset>
               </FlexItem>
             </Row>
             <Row className={styles.row} style={{ maxWidth: '100%' }}>
               <FlexItem grow style={{ minWidth: '100%', maxWidth: '100%' }}>
-                <EuiFormRow label="Key Prefixes" fullWidth>
+                <FormField label="Key Prefixes">
                   <EuiComboBox
                     noSuggestions
                     isClearable={false}
@@ -269,7 +269,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                     className={styles.combobox}
                     data-testid="prefix-combobox"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
             </Row>
             <Divider
@@ -290,7 +290,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
               {(item, index) => (
                 <Row align="center">
                   <FlexItem grow>
-                    <EuiFormRow fullWidth>
+                    <FormField>
                       <EuiFieldText
                         fullWidth
                         name={`identifier-${item.id}`}
@@ -312,10 +312,10 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                         autoComplete="off"
                         data-testid={`identifier-${item.id}`}
                       />
-                    </EuiFormRow>
+                    </FormField>
                   </FlexItem>
                   <FlexItem grow>
-                    <EuiFormRow>
+                    <FormField>
                       <EuiSuperSelect
                         itemClassName="withColorDefinition"
                         options={fieldTypeOptions}
@@ -325,7 +325,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                         }
                         data-testid={`field-type-${item.id}`}
                       />
-                    </EuiFormRow>
+                    </FormField>
                   </FlexItem>
                 </Row>
               )}

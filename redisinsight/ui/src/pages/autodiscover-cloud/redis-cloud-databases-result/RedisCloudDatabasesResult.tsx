@@ -6,9 +6,8 @@ import {
   PropertySort,
   EuiText,
   EuiTitle,
-  EuiFieldSearch,
-  EuiFormRow,
 } from '@elastic/eui'
+import { FormField } from '@redis-ui/components'
 import {
   InstanceRedisCloud,
   AddRedisDatabaseStatus,
@@ -22,6 +21,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { SearchInput } from 'uiSrc/components/base/inputs'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -54,8 +54,8 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
     ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Fail,
   )?.length
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
 
     const itemsTemp = instances.filter(
       (item: InstanceRedisCloud) =>
@@ -100,16 +100,14 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
             </MessageBar>
           </FlexItem>
           <FlexItem>
-            <EuiFormRow className={styles.searchForm}>
-              <EuiFieldSearch
+            <FormField className={styles.searchForm}>
+              <SearchInput
                 placeholder="Search..."
-                className={styles.search}
                 onChange={onQueryChange}
-                isClearable
                 aria-label="Search"
                 data-testid="search"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Flex>
         <br />

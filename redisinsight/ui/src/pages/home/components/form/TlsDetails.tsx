@@ -2,7 +2,6 @@ import React, { ChangeEvent, useState } from 'react'
 import {
   EuiCheckbox,
   EuiFieldText,
-  EuiFormRow,
   EuiSuperSelect,
   EuiSuperSelectOption,
   EuiTextArea,
@@ -31,6 +30,7 @@ import { deleteCaCertificateAction } from 'uiSrc/slices/instances/caCerts'
 import { deleteClientCertAction } from 'uiSrc/slices/instances/clientCerts'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from '../styles.module.scss'
 
 const suffix = '_tls_details'
@@ -212,7 +212,7 @@ const TlsDetails = (props: Props) => {
               <Spacer />
               <Row gap="m">
                 <FlexItem grow>
-                  <EuiFormRow label="Server Name*">
+                  <FormField label="Server Name*">
                     <EuiFieldText
                       name="servername"
                       id="servername"
@@ -228,7 +228,7 @@ const TlsDetails = (props: Props) => {
                       }
                       data-testid="sni-servername"
                     />
-                  </EuiFormRow>
+                  </FormField>
                 </FlexItem>
               </Row>
             </>
@@ -256,7 +256,7 @@ const TlsDetails = (props: Props) => {
           <Spacer />
           <Row gap="m" responsive>
             <FlexItem grow>
-              <EuiFormRow
+              <FormField
                 label={`CA Certificate${
                   formik.values.verifyServerTlsCert ? '*' : ''
                 }`}
@@ -276,13 +276,13 @@ const TlsDetails = (props: Props) => {
                   }}
                   data-testid="select-ca-cert"
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
 
             {formik.values.tls &&
               formik.values.selectedCaCertName === ADD_NEW_CA_CERT && (
                 <FlexItem grow>
-                  <EuiFormRow label="Name*">
+                  <FormField label="Name*">
                     <EuiFieldText
                       name="newCaCertName"
                       id="newCaCertName"
@@ -298,7 +298,7 @@ const TlsDetails = (props: Props) => {
                       }
                       data-testid="qa-ca-cert"
                     />
-                  </EuiFormRow>
+                  </FormField>
                 </FlexItem>
               )}
           </Row>
@@ -307,7 +307,7 @@ const TlsDetails = (props: Props) => {
             formik.values.selectedCaCertName === ADD_NEW_CA_CERT && (
               <Row gap="m" responsive>
                 <FlexItem grow>
-                  <EuiFormRow label="Certificate*">
+                  <FormField label="Certificate*">
                     <EuiTextArea
                       name="newCaCert"
                       id="newCaCert"
@@ -318,7 +318,7 @@ const TlsDetails = (props: Props) => {
                       placeholder="Enter CA Certificate"
                       data-testid="new-ca-cert"
                     />
-                  </EuiFormRow>
+                  </FormField>
                 </FlexItem>
               </Row>
             )}
@@ -347,7 +347,7 @@ const TlsDetails = (props: Props) => {
         >
           <Row gap="m" responsive>
             <FlexItem grow>
-              <EuiFormRow label="Client Certificate*">
+              <FormField label="Client Certificate*">
                 <EuiSuperSelect
                   placeholder="Select certificate"
                   valueOfSelected={formik.values.selectedTlsClientCertId}
@@ -357,14 +357,14 @@ const TlsDetails = (props: Props) => {
                   }}
                   data-testid="select-cert"
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
 
             {formik.values.tls &&
               formik.values.tlsClientAuthRequired &&
               formik.values.selectedTlsClientCertId === 'ADD_NEW' && (
                 <FlexItem grow>
-                  <EuiFormRow label="Name*">
+                  <FormField label="Name*">
                     <EuiFieldText
                       name="newTlsCertPairName"
                       id="newTlsCertPairName"
@@ -380,7 +380,7 @@ const TlsDetails = (props: Props) => {
                       }
                       data-testid="new-tsl-cert-pair-name"
                     />
-                  </EuiFormRow>
+                  </FormField>
                 </FlexItem>
               )}
           </Row>
@@ -391,7 +391,7 @@ const TlsDetails = (props: Props) => {
               <>
                 <Row gap="m" responsive>
                   <FlexItem grow>
-                    <EuiFormRow label="Certificate*">
+                    <FormField label="Certificate*">
                       <EuiTextArea
                         name="newTlsClientCert"
                         id="newTlsClientCert"
@@ -403,13 +403,13 @@ const TlsDetails = (props: Props) => {
                         placeholder="Enter Client Certificate"
                         data-testid="new-tls-client-cert"
                       />
-                    </EuiFormRow>
+                    </FormField>
                   </FlexItem>
                 </Row>
 
                 <Row gap="m" responsive>
                   <FlexItem grow>
-                    <EuiFormRow label="Private Key*">
+                    <FormField label="Private Key*">
                       <EuiTextArea
                         placeholder="Enter Private Key"
                         name="newTlsClientKey"
@@ -420,7 +420,7 @@ const TlsDetails = (props: Props) => {
                         fullWidth
                         data-testid="new-tls-client-cert-key"
                       />
-                    </EuiFormRow>
+                    </FormField>
                   </FlexItem>
                 </Row>
               </>

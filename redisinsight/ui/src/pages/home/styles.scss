@@ -18,27 +18,12 @@
     }
   }
 
-  .euiFormRow {
-    max-width: 100% !important;
-    padding-top: 15px;
-  }
-
   .euiRadioGroup__item {
     display: inline-block;
     vertical-align: top !important;
     margin-top: 1px !important;
     margin-bottom: 3px !important;
     margin-right: 30px !important;
-  }
-
-  .euiFormRow__fieldWrapper {
-    position: relative;
-  }
-
-  .euiFormRow__text {
-    position: relative;
-    top: -10px;
-    margin-bottom: -10px;
   }
 
   .euiFormHelpText {

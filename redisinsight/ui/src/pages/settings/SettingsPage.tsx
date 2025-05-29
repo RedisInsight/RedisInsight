@@ -4,7 +4,6 @@ import {
   EuiCallOut,
   EuiCollapsibleNavGroup,
   EuiForm,
-  EuiFormRow,
   EuiLoadingSpinner,
   EuiSuperSelect,
   EuiText,
@@ -41,6 +40,7 @@ import {
   PageHeader,
   PageContentBody,
 } from 'uiSrc/components/base/layout/page'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import {
   AdvancedSettings,
   CloudSettings,
@@ -99,7 +99,7 @@ const SettingsPage = () => {
           <h4>Color Theme</h4>
         </EuiTitle>
         <Spacer size="m" />
-        <EuiFormRow label="Specifies the color theme to be used in Redis Insight:">
+        <FormField label="Specifies the color theme to be used in Redis Insight:">
           <EuiSuperSelect
             options={options}
             valueOfSelected={theme}
@@ -107,7 +107,7 @@ const SettingsPage = () => {
             style={{ marginTop: '12px' }}
             data-test-subj="select-theme"
           />
-        </EuiFormRow>
+        </FormField>
         <Spacer size="xl" />
       </EuiForm>
       <ConsentsNotifications />

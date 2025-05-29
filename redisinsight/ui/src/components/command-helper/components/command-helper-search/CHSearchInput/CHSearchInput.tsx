@@ -1,9 +1,9 @@
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { EuiFieldSearch } from '@elastic/eui'
 
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 
+import { SearchInput } from 'uiSrc/components/base/inputs'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -38,18 +38,14 @@ const CHSearchInput = ({ submitSearch, isLoading = false }: Props) => {
 
   return (
     <div className={styles.container}>
-      <EuiFieldSearch
-        isLoading={isLoading}
+      <SearchInput
+        loading={isLoading}
         disabled={isLoading}
-        fullWidth={false}
         name="search-command"
         placeholder="Search for a command"
         autoComplete="off"
         value={searchValue}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          onChangeSearch(e.target.value)
-        }
-        className={styles.searchInput}
+        onChange={onChangeSearch}
         data-testid="cli-helper-search"
       />
     </div>

@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import {
   EuiTextColor,
-  EuiFormRow,
   EuiFieldText,
   EuiPanel,
 } from '@elastic/eui'
@@ -34,6 +33,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -155,7 +155,7 @@ const AddSetMembers = (props: Props) => {
           {(item, index) => (
             <Row align="center">
               <FlexItem grow>
-                <EuiFormRow fullWidth>
+                <FormField>
                   <EuiFieldText
                     fullWidth
                     name={`member-${item.id}`}
@@ -171,7 +171,7 @@ const AddSetMembers = (props: Props) => {
                     disabled={loading}
                     data-testid="member-name"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
             </Row>
           )}

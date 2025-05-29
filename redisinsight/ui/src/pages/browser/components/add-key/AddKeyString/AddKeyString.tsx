@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { EuiFormRow, EuiForm, EuiPanel, EuiTextArea } from '@elastic/eui'
+import { EuiForm, EuiPanel, EuiTextArea } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 
 import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/browser/keys'
@@ -11,6 +11,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import { AddStringFormConfig as config } from '../constants/fields-config'
@@ -53,7 +54,7 @@ const AddKeyString = (props: Props) => {
 
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
-      <EuiFormRow label={config.value.label} fullWidth>
+      <FormField label={config.value.label}>
         <EuiTextArea
           fullWidth
           name="value"
@@ -67,7 +68,7 @@ const AddKeyString = (props: Props) => {
           disabled={loading}
           data-testid="string-value"
         />
-      </EuiFormRow>
+      </FormField>
       <PrimaryButton type="submit" style={{ display: 'none' }}>
         Submit
       </PrimaryButton>

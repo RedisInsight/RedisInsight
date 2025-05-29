@@ -1,17 +1,12 @@
 import React from 'react'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiBasicTableColumn,
-  EuiFlyout,
-  EuiFlyoutBody,
-  EuiInMemoryTable,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiBasicTableColumn, EuiInMemoryTable, EuiTitle } from '@elastic/eui'
 import { appInfoSelector, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
 import { KeyboardShortcut } from 'uiSrc/components'
 import { BuildType } from 'uiSrc/constants/env'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Drawer, DrawerHeader, DrawerBody } from 'uiSrc/components/base/layout/drawer'
 import { SHORTCUTS, ShortcutGroup, separator } from './schema'
 
 import styles from './styles.module.scss'
@@ -53,29 +48,22 @@ const ShortcutsFlyout = () => {
     </div>
   )
 
-  return isShortcutsFlyoutOpen ? (
-    <EuiFlyout
-      ownFocus
-      size="538px"
-      onClose={() => dispatch(setShortcutsFlyoutState(false))}
+  return (
+    <Drawer
+      open={isShortcutsFlyoutOpen}
+      onOpenChange={(isOpen) => dispatch(setShortcutsFlyoutState(isOpen))}
       data-test-subj="shortcuts-flyout"
+      title="Shortcuts"
     >
-      <EuiFlyoutBody>
-        <EuiTitle
-          size="s"
-          className={styles.title}
-          data-testid="shortcuts-title"
-        >
-          <h4>Shortcuts</h4>
-        </EuiTitle>
-        <Spacer size="m" />
+      <DrawerHeader title="Shortcuts" />
+      <DrawerBody>
         {SHORTCUTS.filter(
           ({ excludeFor }) =>
             !excludeFor || !excludeFor.includes(server?.buildType as BuildType),
         ).map(ShortcutsTable)}
-      </EuiFlyoutBody>
-    </EuiFlyout>
-  ) : null
+      </DrawerBody>
+    </Drawer>
+  )
 }
 
 export default ShortcutsFlyout

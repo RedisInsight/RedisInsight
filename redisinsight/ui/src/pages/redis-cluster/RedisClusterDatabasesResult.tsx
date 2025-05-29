@@ -3,11 +3,8 @@ import {
   EuiInMemoryTable,
   EuiBasicTableColumn,
   PropertySort,
-  EuiButton,
   EuiText,
   EuiTitle,
-  EuiFieldSearch,
-  EuiFormRow,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
@@ -26,6 +23,8 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { SearchInput } from 'uiSrc/components/base/inputs'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -60,8 +59,8 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
     ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Fail,
   )?.length
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
     const itemsTemp = instances.filter(
       (item: InstanceRedisCluster) =>
         item.name?.toLowerCase().indexOf(value) !== -1 ||
@@ -109,16 +108,15 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
             </MessageBar>
           </FlexItem>
           <FlexItem>
-            <EuiFormRow className={styles.searchForm}>
-              <EuiFieldSearch
+            <FormField className={styles.searchForm}>
+              <SearchInput
                 placeholder="Search..."
                 className={styles.search}
                 onChange={onQueryChange}
-                isClearable
                 aria-label="Search"
                 data-testid="search"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
         <br />

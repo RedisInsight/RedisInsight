@@ -4,12 +4,13 @@ import cx from 'classnames'
 import { flatten, isArray, isEmpty, map, uniq } from 'lodash'
 import {
   EuiBasicTableColumn,
-  EuiButtonIcon,
   EuiInMemoryTable,
   EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
 
+import { IconButton } from '../../../../../components/base/forms/buttons'
+import { CopyIcon } from '../../../../../components/base/icons'
 import { CommandArgument, Command } from '../../constants'
 import { formatLongName, replaceSpaces } from '../../utils'
 
@@ -84,11 +85,11 @@ const TableResult = React.memo((props: Props) => {
                 content={formatLongName(value.toString())}
               >
                 <div className="copy-btn-wrapper">
-                  <EuiTextColor className={cx('cell')}>
+                  <EuiTextColor className={cx('cell', 'test')}>
                     {cellContent}
                   </EuiTextColor>
-                  <EuiButtonIcon
-                    iconType="copy"
+                  <IconButton
+                    icon={CopyIcon}
                     aria-label="Copy result"
                     className="copy-near-btn"
                     onClick={(event: React.MouseEvent) =>

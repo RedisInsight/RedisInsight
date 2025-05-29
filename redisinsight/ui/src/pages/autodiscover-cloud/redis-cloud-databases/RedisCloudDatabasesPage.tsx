@@ -1,9 +1,4 @@
-import {
-  EuiBasicTableColumn,
-  EuiButtonIcon,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiBasicTableColumn, EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -33,6 +28,8 @@ import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon } from 'uiSrc/components/base/icons'
 import RedisCloudDatabases from './RedisCloudDatabases'
 
 import styles from './styles.module.scss'
@@ -221,8 +218,8 @@ const RedisCloudDatabasesPage = () => {
               content="Copy"
               anchorClassName="copyPublicEndpointTooltip"
             >
-              <EuiButtonIcon
-                iconType="copy"
+              <IconButton
+                icon={CopyIcon}
                 aria-label="Copy public endpoint"
                 className="copyPublicEndpointBtn"
                 onClick={() => handleCopy(text)}

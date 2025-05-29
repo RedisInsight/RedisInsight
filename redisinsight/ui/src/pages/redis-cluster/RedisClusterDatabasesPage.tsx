@@ -1,6 +1,5 @@
 import {
   EuiBasicTableColumn,
-  EuiButtonIcon,
   EuiIcon,
   EuiText,
   EuiTextColor,
@@ -30,6 +29,8 @@ import {
 import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon } from 'uiSrc/components/base/icons'
 import RedisClusterDatabases from './RedisClusterDatabases'
 import RedisClusterDatabasesResult from './RedisClusterDatabasesResult'
 
@@ -131,8 +132,8 @@ const RedisClusterDatabasesPage = () => {
                 content="Copy"
                 anchorClassName="copyHostPortTooltip"
               >
-                <EuiButtonIcon
-                  iconType="copy"
+                <IconButton
+                  icon={CopyIcon}
                   aria-label="Copy host:port"
                   className="copyHostPortBtn"
                   onClick={() => handleCopy(text)}
@@ -151,7 +152,10 @@ const RedisClusterDatabasesPage = () => {
       align: 'left',
       width: '190px',
       sortable: true,
-      render: function Modules(modules: any[], instance: InstanceRedisCluster) {
+      render: function Modules(
+        _modules: any[],
+        instance: InstanceRedisCluster,
+      ) {
         return (
           <DatabaseListModules
             modules={instance?.modules?.map((name) => ({ name }))}
@@ -167,7 +171,7 @@ const RedisClusterDatabasesPage = () => {
       align: 'left',
       width: '220px',
       sortable: true,
-      render: function Opitions(opts: any[], instance: InstanceRedisCluster) {
+      render: function Opitions(_opts: any[], instance: InstanceRedisCluster) {
         const options = parseInstanceOptionsCluster(
           instance?.uid,
           instances || [],

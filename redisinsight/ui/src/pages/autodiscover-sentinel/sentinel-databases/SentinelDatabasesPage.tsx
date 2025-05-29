@@ -1,10 +1,4 @@
-import {
-  EuiBasicTableColumn,
-  EuiButtonIcon,
-  EuiIcon,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiBasicTableColumn, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { map, pick } from 'lodash'
 import { useHistory } from 'react-router-dom'
@@ -23,6 +17,8 @@ import {
 import { LoadedSentinel, ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
 import { InputFieldSentinel } from 'uiSrc/components'
 import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/InputFieldSentinel'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon } from 'uiSrc/components/base/icons'
 import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
 
 import SentinelDatabases from './components'
@@ -163,8 +159,8 @@ const SentinelDatabasesPage = () => {
               content="Copy"
               anchorClassName="copyPublicEndpointTooltip"
             >
-              <EuiButtonIcon
-                iconType="copy"
+              <IconButton
+                icon={CopyIcon}
                 aria-label="Copy public endpoint"
                 className="copyPublicEndpointBtn"
                 onClick={() => handleCopy(text)}

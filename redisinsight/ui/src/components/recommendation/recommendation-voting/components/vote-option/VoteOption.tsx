@@ -1,14 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import {
-  EuiButtonIcon,
-  EuiText,
-  EuiIcon,
-  EuiLink,
-  EuiPopover,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiText, EuiIcon, EuiLink, EuiPopover, EuiToolTip } from '@elastic/eui'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { putRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -23,7 +16,8 @@ import PetardIcon from 'uiSrc/assets/img/icons/petard.svg?react'
 import GithubSVG from 'uiSrc/assets/img/icons/github-white.svg?react'
 
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
+import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { getVotedText, voteTooltip, iconType } from './utils'
 import styles from './styles.module.scss'
 
@@ -109,9 +103,9 @@ const VoteOption = (props: Props) => {
           position="bottom"
           data-testid={`${voteOption}-vote-tooltip`}
         >
-          <EuiButtonIcon
+          <IconButton
             disabled={!isAnalyticsEnable}
-            iconType={iconType[voteOption] ?? 'default'}
+            icon={iconType[voteOption] ?? 'default'}
             className={cx('vote__btn', { selected: vote === voteOption })}
             aria-label="vote useful"
             data-testid={`${voteOption}-vote-btn`}
@@ -141,9 +135,8 @@ const VoteOption = (props: Props) => {
                 </div>
               </FlexItem>
               <FlexItem>
-                <EuiButtonIcon
-                  iconType="cross"
-                  color="primary"
+                <IconButton
+                  icon={CancelSlimIcon}
                   id="close-voting-popover"
                   aria-label="close popover"
                   data-testid="close-popover"

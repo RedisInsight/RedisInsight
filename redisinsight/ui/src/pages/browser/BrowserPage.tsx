@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import { EuiButton } from '@elastic/eui'
 
 import { isNumber } from 'lodash'
@@ -44,6 +43,7 @@ import {
 import OnboardingStartPopover from 'uiSrc/pages/browser/components/onboarding-start-popover'
 import { sidePanelsSelector } from 'uiSrc/slices/panels/sidePanels'
 import { useStateWithContext } from 'uiSrc/services/hooks'
+import { ResizableContainer, ResizablePanel, ResizablePanelHandle } from 'uiSrc/components/base/layout'
 import BrowserSearchPanel from './components/browser-search-panel'
 import BrowserLeftPanel from './components/browser-left-panel'
 import BrowserRightPanel from './components/browser-right-panel'
@@ -306,8 +306,8 @@ const BrowserPage = () => {
         />
       </div>
       <div className={cx(styles.main)}>
-        <PanelGroup className={styles.panelGroup} direction="horizontal" onLayout={onPanelWidthChange}>
-          <Panel
+        <ResizableContainer className={styles.resizableContainer} direction="horizontal" onLayout={onPanelWidthChange}>
+          <ResizablePanel
             defaultSize={sizes && sizes[0] ? sizes[0] : 50}
             minSize={40}
             id={firstPanelId}
@@ -321,11 +321,11 @@ const BrowserPage = () => {
               removeSelectedKey={handleRemoveSelectedKey}
               handleAddKeyPanel={handleAddKeyPanel}
             />
-          </Panel>
+          </ResizablePanel>
           {!arePanelsCollapsed && !isBrowserFullScreen && (
-            <PanelResizeHandle className={styles.panelSeparator} />
+            <ResizablePanelHandle />
           )}
-          <Panel
+          <ResizablePanel
             defaultSize={sizes && sizes[1] ? sizes[1] : 50}
             minSize={40}
             id={secondPanelId}
@@ -346,8 +346,8 @@ const BrowserPage = () => {
               handleBulkActionsPanel={handleBulkActionsPanel}
               closeRightPanels={closeRightPanels}
             />
-          </Panel>
-        </PanelGroup>
+          </ResizablePanel>
+        </ResizableContainer>
       </div>
       <OnboardingStartPopover />
     </div >

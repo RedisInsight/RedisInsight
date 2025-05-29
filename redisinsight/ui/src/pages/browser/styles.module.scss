@@ -74,21 +74,15 @@ $breakpoint-to-hide-resize-panel: 1280px;
   }
 }
 
-.panelGroup {
+.resizableContainer {
   position: relative;
 
-  .panel {
-    .noVisible{
-      visibility: hidden;
-    }
-
-    .fullWidth {
-      width: 100% !important;
-      min-width: 100% !important;
-    }
+  .noVisible{
+    visibility: hidden;
   }
 
-  .panelSeparator {
-    width: 16px;
+  .fullWidth {
+    width: 100% !important;
+    min-width: 100% !important;
   }
 }

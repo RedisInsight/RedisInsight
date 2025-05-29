@@ -11,7 +11,6 @@ const SERVER_CONFIG = config.get('server') as Config['server'];
 @Injectable()
 export class LocalDatabaseDiscoveryService extends DatabaseDiscoveryService {
   private logger = new Logger('LocalDatabaseDiscoveryService');
-  private isDiscoveryRunning = false;
 
   constructor(
     @Inject(forwardRef(() => SettingsService))
@@ -30,25 +29,17 @@ export class LocalDatabaseDiscoveryService extends DatabaseDiscoveryService {
     sessionMetadata: SessionMetadata,
     firstRun?: boolean,
   ): Promise<void> {
-    // Return immediately if discovery is already in progress
-    if (this.isDiscoveryRunning) {
-      return;
-    }
-
     // No need to auto discover for Redis Stack - quick check
     if (SERVER_CONFIG.buildType === 'REDIS_STACK') {
       return;
     }
 
-    // Mark as running and perform discovery in background
-    this.isDiscoveryRunning = true;
     try {
       // check agreements to understand if it is first launch
       const settings =
         await this.settingsService.getAppSettings(sessionMetadata);
 
       if (!settings?.agreements?.eula) {
-        this.isDiscoveryRunning = false;
         return;
       }
 
@@ -61,8 +52,6 @@ export class LocalDatabaseDiscoveryService extends DatabaseDiscoveryService {
     } catch (e) {
       // ignore error
       this.logger.error('Unable to discover databases', e);
-    } finally {
-      this.isDiscoveryRunning = false;
     }
   }
 }

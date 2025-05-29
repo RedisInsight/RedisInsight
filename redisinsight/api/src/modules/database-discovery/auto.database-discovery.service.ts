@@ -27,6 +27,7 @@ export class AutoDatabaseDiscoveryService {
    * Database alias will be "host:port"
    */
   async discover(sessionMetadata: SessionMetadata) {
+    console.log('AutoDatabaseDiscoveryService discover called', this.isDiscoveryRunning);
     // Return immediately to not block the main thread
     if (this.isDiscoveryRunning) {
       return;

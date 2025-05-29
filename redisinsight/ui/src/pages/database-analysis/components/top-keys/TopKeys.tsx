@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { EuiTitle } from '@elastic/eui'
 import { TableView } from 'uiSrc/pages/database-analysis'
 import { Nullable } from 'uiSrc/utils'
 import { TableLoader } from 'uiSrc/pages/database-analysis/components'
 import { TextBtn } from 'uiSrc/pages/database-analysis/components/base/TextBtn'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import Table from './Table'
@@ -32,14 +32,12 @@ const TopKeys = ({ data, loading }: Props) => {
   return (
     <div className={cx('section', styles.wrapper)}>
       <div className="section-title-wrapper">
-        <EuiTitle className="section-title">
-          <h4 data-testid="top-keys-title">
-            {topKeysLength.length < MAX_TOP_KEYS &&
-            topKeysMemory?.length < MAX_TOP_KEYS
-              ? 'TOP KEYS'
-              : `TOP ${MAX_TOP_KEYS} KEYS`}
-          </h4>
-        </EuiTitle>
+        <Title size="M" className="section-title" data-testid="top-keys-title">
+          {topKeysLength.length < MAX_TOP_KEYS &&
+          topKeysMemory?.length < MAX_TOP_KEYS
+            ? 'TOP KEYS'
+            : `TOP ${MAX_TOP_KEYS} KEYS`}
+        </Title>
         <TextBtn
           $active={tableView === TableView.MEMORY}
           size="small"

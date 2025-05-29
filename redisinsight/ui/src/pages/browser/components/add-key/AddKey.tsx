@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiHealth, EuiTitle, EuiToolTip, EuiButtonIcon } from '@elastic/eui'
+import { EuiHealth, EuiToolTip, EuiButtonIcon } from '@elastic/eui'
 import Divider from 'uiSrc/components/divider/Divider'
 import { KeyTypes } from 'uiSrc/constants'
 import HelpTexts from 'uiSrc/constants/help-texts'
@@ -21,6 +21,7 @@ import { isContainJSONModule, Maybe, stringToBuffer } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { ADD_KEY_TYPE_OPTIONS } from './constants/key-type-options'
 import AddKeyHash from './AddKeyHash'
 import AddKeyZset from './AddKeyZset'
@@ -124,9 +125,7 @@ const AddKey = (props: Props) => {
       >
         <Col justify="center" className={styles.content}>
           <FlexItem grow style={{ marginBottom: '36px' }}>
-            <EuiTitle size="xs">
-              <h4>New Key</h4>
-            </EuiTitle>
+            <Title size="M">New Key</Title>
             {!arePanelsCollapsed && (
               <EuiToolTip
                 content="Close"

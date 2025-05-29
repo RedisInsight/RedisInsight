@@ -5,7 +5,6 @@ import {
   EuiPopover,
   EuiTableSelectionType,
   EuiText,
-  EuiTitle,
   EuiToolTip,
   PropertySort,
 } from '@elastic/eui'
@@ -27,6 +26,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Title } from 'uiSrc/components/base/text/Title'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -150,9 +150,9 @@ const RedisClusterDatabases = ({
   return (
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
-        <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>Auto-Discover Redis Enterprise Databases</h1>
-        </EuiTitle>
+        <Title size="M" className={styles.title} data-testid="title">
+          Auto-Discover Redis Enterprise Databases
+        </Title>
         <Row align="end" responsive gap="s">
           <FlexItem grow>
             {!!items.length && (

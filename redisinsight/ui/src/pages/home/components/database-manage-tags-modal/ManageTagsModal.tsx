@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useCallback, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { EuiIcon, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiIcon, EuiText } from '@elastic/eui'
 import { PlusIcon } from 'uiSrc/components/base/icons'
 import { ConnectionProvider, Instance } from 'uiSrc/slices/interfaces'
 import { FormDialog } from 'uiSrc/components'
@@ -16,6 +16,7 @@ import {
   EmptyButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { VALID_TAG_KEY_REGEX, VALID_TAG_VALUE_REGEX } from './constants'
 import { TagInputField } from './TagInputField'
 import { getInvalidTagErrors } from './utils'
@@ -105,9 +106,7 @@ export const ManageTagsModal = ({
       onClose={onClose}
       header={
         <div className={styles.header}>
-          <EuiTitle size="s">
-            <h4>Manage tags for {instance.name}</h4>
-          </EuiTitle>
+          <Title size="M">Manage tags for {instance.name}</Title>
           <Spacer size="s" />
           <EuiText size="s" color="subdued">
             <p>

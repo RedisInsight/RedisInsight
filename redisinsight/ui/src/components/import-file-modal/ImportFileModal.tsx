@@ -9,7 +9,6 @@ import {
   EuiModalHeaderTitle,
   EuiText,
   EuiTextColor,
-  EuiTitle,
 } from '@elastic/eui'
 import cx from 'classnames'
 import React from 'react'
@@ -22,6 +21,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import styles from './styles.module.scss'
 
 export interface Props<T> {
@@ -72,11 +72,11 @@ const ImportFileModal = <T,>({
     >
       <EuiModalHeader>
         <EuiModalHeaderTitle>
-          <EuiTitle size="xs" data-testid="import-file-modal-title">
+          <Title size="XS" data-testid="import-file-modal-title">
             <span>
               {!data && !error ? title : resultsTitle || 'Import Results'}
             </span>
-          </EuiTitle>
+          </Title>
         </EuiModalHeaderTitle>
       </EuiModalHeader>
 

@@ -5,7 +5,6 @@ import {
   EuiInMemoryTable,
   EuiLink,
   EuiText,
-  EuiTitle,
   EuiToolTip,
   PropertySort,
 } from '@elastic/eui'
@@ -33,6 +32,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Title } from 'uiSrc/components/base/text/Title'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -218,12 +218,10 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
     return (
       <>
         <div className={styles.noKeysMessage} data-testid="no-api-keys-message">
-          <EuiTitle size="xs">
-            <>
-              <EuiIcon className={styles.starsIcon} type={CloudStars} />
-              <span>The ultimate Redis starting point</span>
-            </>
-          </EuiTitle>
+          <Title size="XS">
+            <EuiIcon className={styles.starsIcon} type={CloudStars} />
+            The ultimate Redis starting point
+          </Title>
           <Spacer size="s" />
           <EuiText size="s" className={styles.smallText} color="subdued">
             Cloud API keys will be created and stored when you connect to Redis

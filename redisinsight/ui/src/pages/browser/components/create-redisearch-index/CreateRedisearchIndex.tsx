@@ -2,7 +2,6 @@ import {
   EuiComboBox,
   EuiFieldText,
   EuiFormFieldset,
-  EuiHealth,
   EuiLink,
   EuiPanel,
   EuiPopover,
@@ -35,6 +34,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Health } from 'uiSrc/components/base/text/Health'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
@@ -51,13 +51,13 @@ const keyTypeOptions = KEY_TYPE_OPTIONS.map((item) => {
   return {
     value,
     inputDisplay: (
-      <EuiHealth
+      <Health
         color={color}
         style={{ lineHeight: 'inherit' }}
         data-test-subj={value}
       >
         {text}
-      </EuiHealth>
+      </Health>
     ),
   }
 })

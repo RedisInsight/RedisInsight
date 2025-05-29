@@ -1,5 +1,5 @@
-export const Panel = () => 'MockPanel';
-export const PanelGroup = () => 'MockPanelGroup';
+export const Panel = ({ children }) => children;
+export const PanelGroup = ({ children }) => children;
 export const PanelResizeHandle = () => 'MockPanelResizeHandle';
 
 // Mock utility functions and constants

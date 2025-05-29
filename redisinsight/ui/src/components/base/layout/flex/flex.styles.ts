@@ -174,22 +174,24 @@ export type FlexProps = PropsWithChildren &
     full?: boolean
   }
 
-export const StyledFlex = styled.div<FlexProps>`
+export const StyledFlex = styled.div<
+  Omit<FlexProps, 'direction'> & { $direction?: (typeof dirValues)[number] }
+>`
   display: flex;
   align-items: stretch;
   flex-grow: 1;
   ${({ gap = 'none' }) => (gap ? flexGroupStyles.gapSizes[gap] : '')}
   ${({ align = 'stretch' }) => (align ? flexGroupStyles.align[align] : '')}
-  ${({ direction = 'row' }) =>
-    direction ? flexGroupStyles.direction[direction] : ''}
+  ${({ $direction = 'row' }) =>
+    $direction ? flexGroupStyles.direction[$direction] : ''}
   ${({ justify = 'start' }) =>
     justify ? flexGroupStyles.justify[justify] : ''}
   ${({ centered = false }) => (centered ? flexGroupStyles.centered : '')}
   ${({ responsive = false }) => (responsive ? flexGroupStyles.responsive : '')}
   ${({ wrap = false }) => (wrap ? flexGroupStyles.wrap : '')}
-  ${({ full = false, direction = 'row' }) =>
+  ${({ full = false, $direction = 'row' }) =>
     full
-      ? direction === 'row' || direction === 'rowReverse'
+      ? $direction === 'row' || $direction === 'rowReverse'
         ? 'width: 100%' // if it is row make it full width
         : 'height: 100%;' // else, make it full height
       : ''}

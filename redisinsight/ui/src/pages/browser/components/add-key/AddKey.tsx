@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiHealth, EuiTitle, EuiToolTip, EuiButtonIcon } from '@elastic/eui'
+import { EuiTitle, EuiToolTip, EuiButtonIcon } from '@elastic/eui'
 import Divider from 'uiSrc/components/divider/Divider'
 import { KeyTypes } from 'uiSrc/constants'
 import HelpTexts from 'uiSrc/constants/help-texts'
@@ -21,6 +21,7 @@ import { isContainJSONModule, Maybe, stringToBuffer } from 'uiSrc/utils'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Health } from 'uiSrc/components/base/text/Health'
 import { ADD_KEY_TYPE_OPTIONS } from './constants/key-type-options'
 import AddKeyHash from './AddKeyHash'
 import AddKeyZset from './AddKeyZset'
@@ -61,13 +62,13 @@ const AddKey = (props: Props) => {
     return {
       value,
       inputDisplay: (
-        <EuiHealth
+        <Health
           color={color}
           style={{ lineHeight: 'inherit' }}
           data-test-subj={value}
         >
           {text}
-        </EuiHealth>
+        </Health>
       ),
     }
   })

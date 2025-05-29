@@ -340,7 +340,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
         borderRadius="none"
         className={styles.footer}
       >
-        <Row justify="end">
+        <Row justify="end" gap="m">
           <FlexItem>
             <SecondaryButton
               color="secondary"

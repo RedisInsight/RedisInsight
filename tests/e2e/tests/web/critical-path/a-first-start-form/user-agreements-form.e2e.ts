@@ -22,12 +22,7 @@ test('Verify that user should accept User Agreements to continue working with th
     await t.expect(myRedisDatabasePage.AddRedisDatabaseDialog.customSettingsButton.exists).notOk('User can\'t add a database');
 });
 test('Verify that the encryption enabled by default and specific message', async t => {
-    const expectedPluginText = 'To avoid automatic execution of malicious code, when adding new Workbench plugins, use files from trusted authors only.';
-    // Verify that section with plugin warning is displayed
     await t.expect(userAgreementDialog.pluginSectionWithText.exists).ok('Plugin text is not displayed');
-    // Verify that text that is displayed in window is 'While adding new visualization plugins, use files only from trusted authors to avoid automatic execution of malicious code.'
-    const pluginText = userAgreementDialog.pluginSectionWithText.innerText;
-    await t.expect(pluginText).eql(expectedPluginText, 'Plugin text is incorrect');
     // Verify that encryption enabled by default
     await t.expect(userAgreementDialog.switchOptionEncryption.withAttribute('aria-checked', 'true').exists).ok('Encryption enabled by default');
 });

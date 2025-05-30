@@ -11,7 +11,7 @@
       "since": "1.0.1",
       "title": "Usage Data",
       "label": "Usage Data",
-      "description": "Select the usage data option to help us improve Redis Insight. We use such usage data to understand how Redis Insight features are used, prioritize new features, and enhance the user experience."
+      "description": "Help improve Redis Insight by sharing anonymous usage data. This helps us understand feature usage and make the app better. By enabling this, you agree to our "
     },
     "notifications": {
       "defaultValue": false,

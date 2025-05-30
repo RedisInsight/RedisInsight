@@ -33,10 +33,15 @@
   border-bottom-width: 1px !important;
 }
 
-// 115px is the key details header height
 :global(.key-details-body) {
   position: relative;
-  height: calc(100% - 115px);
+  height: calc(100% - 144px);
+}
+
+// 108px is the key details header height
+:global(.key-details-body-monaco-editor) {
+  position: relative;
+  height: calc(100% - 108px);
 }
 
 :global(.key-details-footer) {

@@ -2,10 +2,15 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import { isNumber } from 'lodash'
-import { BrowserStorageItem, FeatureFlags } from 'uiSrc/constants'
+import { BrowserStorageItem, FeatureFlags, Theme } from 'uiSrc/constants'
 import { BuildType } from 'uiSrc/constants/env'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
-import { localStorageService, setObjectStorage } from 'uiSrc/services'
+import {
+  localStorageService,
+  setObjectStorage,
+  themeService,
+} from 'uiSrc/services'
+
 import {
   appFeatureFlagsFeaturesSelector,
   setFeaturesToHighlight,
@@ -103,6 +108,12 @@ const Config = () => {
   }, [id])
 
   useEffect(() => {
+    if (config) {
+      checkAndSetTheme()
+    }
+  }, [config])
+
+  useEffect(() => {
     if (config && spec && envDependentFeature?.flag) {
       checkSettingsToShowPopup()
     }
@@ -190,12 +201,17 @@ const Config = () => {
   const checkSettingsToShowPopup = () => {
     const specConsents = spec?.agreements
     const appliedConsents = config?.agreements
-
     dispatch(
       setSettingsPopupState(
-        isDifferentConsentsExists(specConsents, appliedConsents),
+        config?.acceptTermsAndConditionsOverwritten ? false : isDifferentConsentsExists(specConsents, appliedConsents),
       ),
     )
+  }
+
+  const checkAndSetTheme = () => {
+    const theme = config?.theme
+    if (theme && localStorageService.get(BrowserStorageItem.theme) !== theme)
+      themeService.applyTheme(theme as Theme)
   }
 
   return null

@@ -73,7 +73,7 @@ export class DatabaseFactory {
         database,
         client,
       );
-    } else if (await isCluster(client)) {
+    } else if (!database.forceStandalone && (await isCluster(client))) {
       model = await this.createClusterDatabaseModel(
         sessionMetadata,
         database,
@@ -123,6 +123,7 @@ export class DatabaseFactory {
    * Fetches cluster nodes
    * Creates cluster client to validate connection. Disconnect after check
    * Creates database model for cluster connection type
+   * @param sessionMetadata
    * @param database
    * @param client
    * @private
@@ -164,6 +165,7 @@ export class DatabaseFactory {
    * Fetches sentinel masters and align with defined one
    * Creates sentinel client to validate connection. Disconnect after check
    * Creates database model for cluster connection type
+   * @param sessionMetadata
    * @param database
    * @param client
    * @private

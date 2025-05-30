@@ -42,14 +42,14 @@ describe('LocalAgreementsRepository', () => {
 
   describe('getOrCreate', () => {
     it('should return agreements', async () => {
-      const result = await service.getOrCreate();
+      const result = await service.getOrCreate(mockSessionMetadata);
 
       expect(result).toEqual(mockAgreements);
     });
     it('should create new agreements', async () => {
       repository.findOneBy.mockResolvedValueOnce(null);
 
-      const result = await service.getOrCreate();
+      const result = await service.getOrCreate(mockSessionMetadata);
 
       expect(result).toEqual({
         ...mockAgreements,
@@ -62,7 +62,7 @@ describe('LocalAgreementsRepository', () => {
       repository.findOneBy.mockResolvedValueOnce(mockAgreements);
       repository.save.mockRejectedValueOnce({ code: 'SQLITE_CONSTRAINT' });
 
-      const result = await service.getOrCreate();
+      const result = await service.getOrCreate(mockSessionMetadata);
 
       expect(result).toEqual(mockAgreements);
     });
@@ -70,7 +70,19 @@ describe('LocalAgreementsRepository', () => {
       repository.findOneBy.mockResolvedValueOnce(null);
       repository.save.mockRejectedValueOnce(new Error());
 
-      await expect(service.getOrCreate()).rejects.toThrow(Error);
+      await expect(service.getOrCreate(mockSessionMetadata)).rejects.toThrow(Error);
+    });
+    it('should create new agreements with default data when provided and no entity exists', async () => {
+      repository.findOneBy.mockResolvedValueOnce(null);
+      const defaultData = { eula: true, analytics: false };
+
+      await service.getOrCreate(mockSessionMetadata, { data: defaultData });
+
+      expect(repository.save).toHaveBeenCalledWith({
+        id: 1,
+        data: JSON.stringify(defaultData),
+      });
+      expect(repository.save).toHaveBeenCalled();
     });
   });
 

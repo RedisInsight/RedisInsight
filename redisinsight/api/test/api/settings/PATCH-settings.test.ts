@@ -24,6 +24,7 @@ const responseSchema = Joi.object()
     batchSize: Joi.number().required(),
     dateFormat: Joi.string().allow(null),
     timezone: Joi.string().allow(null),
+    acceptTermsAndConditionsOverwritten: Joi.bool().required(),
     agreements: Joi.object()
       .keys({
         version: Joi.string().required(),

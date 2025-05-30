@@ -332,4 +332,35 @@ describe('Config', () => {
       ]),
     )
   })
+
+  it('should not show consent popup when acceptTermsAndConditionsOverwritten is true, regardless of consent differences', () => {
+    const userSettingsSelectorMock = jest.fn().mockReturnValue({
+      config: {
+        acceptTermsAndConditionsOverwritten: true,
+        agreements: {}, // Empty agreements - would normally cause a popup
+      },
+      spec: {
+        agreements: {
+          eula: {
+            defaultValue: false,
+            required: true,
+            editable: false,
+            since: '1.0.0',
+            title: 'EULA: Redis Insight License Terms',
+            label: 'Label',
+          },
+        },
+      },
+    })
+    userSettingsSelector.mockImplementation(userSettingsSelectorMock)
+    
+    render(<Config />)
+    
+    // Check that setSettingsPopupState is called with false
+    expect(store.getActions()).toEqual(
+      expect.arrayContaining([
+        setSettingsPopupState(false),
+      ])
+    )
+  })
 })

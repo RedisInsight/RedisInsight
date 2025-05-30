@@ -1,4 +1,4 @@
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateSentinelDatabaseResponse } from 'src/modules/redis-sentinel/dto/create.sentinel.database.response';
 import { CreateSentinelDatabasesDto } from 'src/modules/redis-sentinel/dto/create.sentinel.databases.dto';
@@ -9,7 +9,6 @@ import {
   SessionMetadata,
 } from 'src/common/models';
 import { DatabaseService } from 'src/modules/database/database.service';
-import { getRedisConnectionException } from 'src/utils';
 import { SentinelMaster } from 'src/modules/redis-sentinel/models/sentinel-master';
 import { RedisSentinelAnalytics } from 'src/modules/redis-sentinel/redis-sentinel.analytics';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
@@ -113,7 +112,7 @@ export class RedisSentinelService {
         error,
         sessionMetadata,
       );
-      throw getRedisConnectionException(error, connectionOptions);
+      throw error;
     }
   }
 
@@ -153,12 +152,12 @@ export class RedisSentinelService {
 
       await client.disconnect();
     } catch (error) {
-      const exception: HttpException = getRedisConnectionException(error, dto);
       this.redisSentinelAnalytics.sendGetSentinelMastersFailedEvent(
         sessionMetadata,
-        exception,
+        error,
       );
-      throw exception;
+
+      throw error;
     }
     return result;
   }

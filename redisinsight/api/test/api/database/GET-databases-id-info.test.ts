@@ -74,10 +74,11 @@ describe(`GET /databases/:id/info`, () => {
     {
       endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
       name: 'Should not get info due to misconfiguration',
-      statusCode: 503,
+      statusCode: 424,
       responseBody: {
-        statusCode: 503,
-        error: 'Service Unavailable',
+        statusCode: 424,
+        error: 'RedisConnectionUnavailableException',
+        errorCode: 10904,
       },
     },
     {

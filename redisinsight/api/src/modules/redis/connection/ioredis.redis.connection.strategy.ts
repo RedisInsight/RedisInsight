@@ -17,6 +17,8 @@ import {
 } from 'src/modules/redis/client';
 import { discoverClusterNodes } from 'src/modules/redis/utils';
 import { SshTunnel } from 'src/modules/ssh/models/ssh-tunnel';
+import { getRedisConnectionException } from 'src/utils';
+import { ReplyError } from 'src/models';
 
 const REDIS_CLIENTS_CONFIG = serverConfig.get('redis_clients');
 
@@ -203,13 +205,13 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
             // cover cases when we are connecting to sentinel as to standalone to discover master groups
             db: config.db > 0 && !database.sentinelMaster ? config.db : 0,
           });
-          connection.on('error', (e): void => {
+          connection.on('error', (e: ReplyError): void => {
             this.logger.error(
               'Failed connection to the redis database.',
               e,
               clientMetadata,
             );
-            reject(e);
+            reject(getRedisConnectionException(e, database));
           });
           connection.on('end', (): void => {
             this.logger.warn(
@@ -245,6 +247,8 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
         }
       });
     } catch (e) {
+      this.addConnectionError(e);
+
       tnl?.close?.();
       throw e;
     }
@@ -317,7 +321,10 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
               e,
               clientMetadata,
             );
-            reject(!isEmpty(e.lastNodeError) ? e.lastNodeError : e);
+            reject(getRedisConnectionException(
+              !isEmpty(e.lastNodeError) ? e.lastNodeError : e as ReplyError,
+              database,
+            ));
           });
           cluster.on('end', (): void => {
             this.logger.warn(
@@ -347,6 +354,8 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
         }
       });
     } catch (e) {
+      this.addConnectionError(e);
+
       tnls.forEach((tnl) => tnl?.close?.());
       standaloneClient?.disconnect?.().catch();
       throw e;
@@ -373,13 +382,13 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
     return new Promise((resolve, reject) => {
       try {
         const client = new Redis(config);
-        client.on('error', (e): void => {
+        client.on('error', (e: ReplyError): void => {
           this.logger.error(
             'Failed connection to the redis oss sentinel',
             e,
             clientMetadata,
           );
-          reject(e);
+          reject(getRedisConnectionException(e, database));
         });
         client.on('end', (): void => {
           this.logger.error(
@@ -405,6 +414,8 @@ export class IoredisRedisConnectionStrategy extends RedisConnectionStrategy {
           );
         });
       } catch (e) {
+        this.addConnectionError(e);
+
         reject(e);
       }
     });

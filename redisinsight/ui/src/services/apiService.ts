@@ -93,9 +93,10 @@ export const connectivityErrorsInterceptor = (error: AxiosError) => {
   }
 
   if (
-    response?.status === 503 &&
+    (response?.status === 503 &&
     (responseData.code === 'serviceUnavailable' ||
-      responseData.error === 'Service Unavailable')
+      responseData.error === 'Service Unavailable'))
+    || (response?.status === 424 && responseData.error?.startsWith?.('RedisConnection') )
   ) {
     store?.dispatch<any>(setConnectivityError(ApiErrors.ConnectionLost))
   }

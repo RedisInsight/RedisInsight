@@ -1,4 +1,9 @@
-.handle {
-  width: 16px;
+.horizontal {
   height: 16px;
+  width: 100%;
+}
+
+.vertical {
+  width: 16px;
+  height: 100%;
 }

@@ -309,7 +309,7 @@ const BrowserPage = () => {
         <ResizableContainer className={styles.resizableContainer} direction="horizontal" onLayout={onPanelWidthChange}>
           <ResizablePanel
             defaultSize={sizes && sizes[0] ? sizes[0] : 50}
-            minSize={40}
+            minSize={45}
             id={firstPanelId}
             className={cx({
               [styles.fullWidth]: arePanelsCollapsed || (isBrowserFullScreen && !isRightPanelOpen)
@@ -327,7 +327,7 @@ const BrowserPage = () => {
           )}
           <ResizablePanel
             defaultSize={sizes && sizes[1] ? sizes[1] : 50}
-            minSize={40}
+            minSize={45}
             id={secondPanelId}
             className={cx({
               [styles.keyDetailsOpen]: isRightPanelOpen,

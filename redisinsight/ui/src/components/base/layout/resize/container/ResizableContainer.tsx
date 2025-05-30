@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 
 import {
   ImperativePanelGroupHandle,
@@ -6,12 +6,9 @@ import {
   PanelGroupProps,
 } from 'react-resizable-panels'
 
-interface ResizableContainerProps extends PanelGroupProps {
-  ref?: React.Ref<ImperativePanelGroupHandle>
-}
-
-const ResizableContainer = ({ ref, ...rest }: ResizableContainerProps) => (
-  <PanelGroup ref={ref} {...rest} />
-)
+const ResizableContainer = forwardRef<
+  ImperativePanelGroupHandle,
+  PanelGroupProps
+>((props, ref) => <PanelGroup ref={ref} {...props} />)
 
 export default ResizableContainer

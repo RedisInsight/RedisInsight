@@ -1,9 +1,34 @@
 .horizontal {
   height: 16px;
   width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 .vertical {
   width: 16px;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.handle {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  &.vertical {
+    transform: rotate(90deg);
+  }
+}
+
+.line {
+  width: 12px;
+  height: 1px;
+  background-color: #343741;
 }

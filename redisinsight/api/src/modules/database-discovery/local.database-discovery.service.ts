@@ -21,20 +21,16 @@ export class LocalDatabaseDiscoveryService extends DatabaseDiscoveryService {
     super();
   }
 
-  /**
-   * Non-blocking implementation of database discovery
-   * This returns quickly and performs the actual discovery work in the background
-   */
   async discover(
     sessionMetadata: SessionMetadata,
     firstRun?: boolean,
   ): Promise<void> {
-    // No need to auto discover for Redis Stack - quick check
-    if (SERVER_CONFIG.buildType === 'REDIS_STACK') {
-      return;
-    }
-
     try {
+      // No need to auto discover for Redis Stack - quick check
+      if (SERVER_CONFIG.buildType === 'REDIS_STACK') {
+        return;
+      }
+
       // check agreements to understand if it is first launch
       const settings =
         await this.settingsService.getAppSettings(sessionMetadata);

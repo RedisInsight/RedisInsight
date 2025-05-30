@@ -22,7 +22,7 @@ export class AutoDatabaseDiscoveryService {
   ) {}
 
   /**
-   * Start discovery process in background without blocking the main thread
+   * Try to add standalone databases without auth from processes running on the host machine listening on TCP4
    * Database alias will be "host:port"
    */
   async discover(sessionMetadata: SessionMetadata) {

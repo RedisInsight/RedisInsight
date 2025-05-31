@@ -81,7 +81,7 @@ export const initialState: StateAppContext = {
       isNotRendered: true,
       selectedKey: null,
     },
-    panelSizes: {},
+    panelSizes: [],
     tree: {
       openNodes: {},
       selectedLeaf: null,
@@ -103,9 +103,7 @@ export const initialState: StateAppContext = {
   },
   workbench: {
     script: '',
-    panelSizes: {
-      vertical: {},
-    },
+    panelSizes: [],
   },
   searchAndQuery: {
     script: '',
@@ -281,7 +279,7 @@ const appContextSlice = createSlice({
       state.workbench.script = payload
     },
     setWorkbenchVerticalPanelSizes: (state, { payload }: { payload: any }) => {
-      state.workbench.panelSizes.vertical = payload
+      state.workbench.panelSizes = payload
     },
     setSQVerticalPanelSizes: (state, { payload }: { payload: any }) => {
       state.searchAndQuery.panelSizes.vertical = payload

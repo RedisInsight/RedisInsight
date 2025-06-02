@@ -1,4 +1,3 @@
-import { EuiText } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -22,6 +21,7 @@ import { SortOrder, TEXT_CONSUMER_NAME_TOO_LONG } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { isTruncatedString } from 'uiSrc/utils'
+import { Text } from 'uiSrc/components/base/text'
 import {
   AckPendingEntriesResponse,
   PendingEntryDto,
@@ -124,7 +124,7 @@ const MessagesViewWrapper = (props: Props) => {
         const timestamp = id?.split('-')?.[0]
         return (
           <div>
-            <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+            <Text color="subdued" size="s" style={{ maxWidth: '100%' }}>
               <div
                 className="truncateText streamItem"
                 style={{ display: 'flex' }}
@@ -132,15 +132,15 @@ const MessagesViewWrapper = (props: Props) => {
               >
                 {getFormatTime(timestamp)}
               </div>
-            </EuiText>
-            <EuiText size="s" style={{ maxWidth: '100%' }}>
+            </Text>
+            <Text size="s" style={{ maxWidth: '100%' }}>
               <div
                 className="streamItemId"
                 data-testid={`stream-message-${id}`}
               >
                 {id}
               </div>
-            </EuiText>
+            </Text>
           </div>
         )
       },
@@ -157,14 +157,14 @@ const MessagesViewWrapper = (props: Props) => {
         const timestamp = id?.split('-')?.[0]
         return (
           <div>
-            <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+            <Text color="subdued" size="s" style={{ maxWidth: '100%' }}>
               <div
                 className="truncateText streamItem"
                 data-testid={`stream-message-${id}-idle`}
               >
                 {getFormatTime(`${toNumber(timestamp) + idle}`)}
               </div>
-            </EuiText>
+            </Text>
           </div>
         )
       },

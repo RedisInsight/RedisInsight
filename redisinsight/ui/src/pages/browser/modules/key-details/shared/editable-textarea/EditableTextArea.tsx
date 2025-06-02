@@ -1,10 +1,12 @@
 import React, { ChangeEvent, Ref, useEffect, useRef, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { EuiText, EuiTextArea, EuiToolTip } from '@elastic/eui'
+import { EuiTextArea, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
+
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 
+import { Text } from 'uiSrc/components/base/text'
 import { EditIcon } from 'uiSrc/components/base/icons'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
@@ -91,13 +93,13 @@ const EditableTextArea = (props: Props) => {
         onMouseLeave={() => setIsHovering(false)}
         data-testid={`${testIdPrefix}_content-value-${field}`}
       >
-        <EuiText
+        <Text
           color="subdued"
           size="s"
           style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}
         >
           {children}
-        </EuiText>
+        </Text>
         {isHovering && (
           <EuiToolTip
             content={editToolTipContent}

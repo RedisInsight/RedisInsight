@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiProgress, EuiText, EuiTextArea, EuiToolTip } from '@elastic/eui'
+import { EuiProgress, EuiTextArea, EuiToolTip } from '@elastic/eui'
 
 import {
   bufferToSerializedFormat,
@@ -59,6 +59,7 @@ import { IFetchKeyArgs } from 'uiSrc/constants/prop-types/keys'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { DownloadIcon } from 'uiSrc/components/base/icons'
 import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 const MIN_ROWS = 8
@@ -231,7 +232,7 @@ const StringDetailsValue = (props: Props) => {
 
   const renderValue = (value: string) => {
     const textEl = (
-      <EuiText
+      <Text
         className={styles.stringValue}
         onClick={() => isEditable && setIsEdit(true)}
         style={{ whiteSpace: 'break-spaces' }}
@@ -240,7 +241,7 @@ const StringDetailsValue = (props: Props) => {
         {areaValue !== ''
           ? value
           : !isLoading && <span style={{ fontStyle: 'italic' }}>Empty</span>}
-      </EuiText>
+      </Text>
     )
 
     return (

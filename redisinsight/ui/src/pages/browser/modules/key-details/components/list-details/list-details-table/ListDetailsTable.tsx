@@ -1,4 +1,4 @@
-import { EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiProgress, EuiToolTip } from '@elastic/eui'
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -71,6 +71,7 @@ import {
   EditableTextArea,
   FormattedValue,
 } from 'uiSrc/pages/browser/modules/key-details/shared'
+import { Text } from 'uiSrc/components/base/text'
 import {
   SetListElementDto,
   SetListElementResponse,
@@ -261,7 +262,7 @@ const ListDetailsTable = () => {
         const cellContent = index?.toString().substring(0, 200)
         const tooltipContent = formatLongName(index?.toString())
         return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+          <Text color="subdued" size="s" style={{ maxWidth: '100%' }}>
             <div
               style={{ display: 'flex' }}
               className="truncateText"
@@ -277,7 +278,7 @@ const ListDetailsTable = () => {
                 <>{cellContent}</>
               </EuiToolTip>
             </div>
-          </EuiText>
+          </Text>
         )
       },
     },

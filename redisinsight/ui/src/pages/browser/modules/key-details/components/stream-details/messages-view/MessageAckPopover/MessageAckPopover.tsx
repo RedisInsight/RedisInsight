@@ -1,6 +1,7 @@
 import React from 'react'
-import { EuiText, EuiPopover } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 
+import { Text } from 'uiSrc/components/base/text'
 import {
   DestructiveButton,
   SecondaryButton,
@@ -46,11 +47,11 @@ const AckPopover = (props: Props) => {
       }
     >
       <div className={styles.popover}>
-        <EuiText size="m">
+        <Text size="m">
           <b>{id}</b>
           <br />
           will be acknowledged and removed from the pending messages list
-        </EuiText>
+        </Text>
         <div className={styles.popoverFooter}>
           <DestructiveButton
             size="s"

@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiIcon, EuiText } from '@elastic/eui'
+import { EuiFieldText, EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -13,6 +13,7 @@ import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { MAX_TTL_NUMBER, validateTTLNumber } from 'uiSrc/utils'
 
 import { FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -97,14 +98,9 @@ const KeyDetailsHeaderTTL = ({ onEditTTL }: Props) => {
             data-testid="edit-ttl-grid"
           >
             <FlexItem>
-              <EuiText
-                grow
-                color="subdued"
-                size="s"
-                className={styles.subtitleText}
-              >
+              <Text color="subdued" size="s" className={styles.subtitleText}>
                 TTL:
-              </EuiText>
+              </Text>
             </FlexItem>
             <FlexItem grow inline>
               <InlineItemEditor
@@ -138,8 +134,7 @@ const KeyDetailsHeaderTTL = ({ onEditTTL }: Props) => {
             </FlexItem>
           </Grid>
         )}
-        <EuiText
-          grow
+        <Text
           color="subdued"
           size="s"
           className={cx(styles.subtitleText, {
@@ -151,7 +146,7 @@ const KeyDetailsHeaderTTL = ({ onEditTTL }: Props) => {
           <span className={styles.ttlTextValue}>
             {ttl === '-1' ? 'No limit' : ttl}
           </span>
-        </EuiText>
+        </Text>
       </>
     </FlexItem>
   )

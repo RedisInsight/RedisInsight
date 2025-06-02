@@ -75,7 +75,7 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
   }
 
   const SummaryText = () => (
-    <Text className={styles.subTitle}>
+    <Text>
       <b>Summary: </b>
       {countSuccessAdded ? (
         <span>

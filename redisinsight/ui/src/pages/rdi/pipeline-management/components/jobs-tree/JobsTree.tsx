@@ -2,8 +2,6 @@ import {
   EuiAccordion,
   EuiIcon,
   EuiLoadingSpinner,
-  EuiText,
-  EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -26,6 +24,7 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { isEqualPipelineFile, Nullable } from 'uiSrc/utils'
 import statusErrorIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/status_error.svg?react'
 
+import { Text, ColorText } from 'uiSrc/components/base/text'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { DeleteIcon, EditIcon, PlusIcon } from 'uiSrc/components/base/icons'
 import {
@@ -208,9 +207,9 @@ const JobsTree = (props: IProps) => {
           <ConfirmationPopover
             title={`Delete ${name}`}
             body={
-              <EuiText size="s">
+              <Text size="s">
                 Changes will not be applied until the pipeline is deployed.
-              </EuiText>
+              </Text>
             }
             submitBtn={
               <DestructiveButton
@@ -321,13 +320,13 @@ const JobsTree = (props: IProps) => {
         <FlexItem grow className="truncateText">
           {'Jobs '}
           {!loading && (
-            <EuiTextColor
+            <ColorText
               className={styles.jobsCount}
               component="span"
               data-testid="rdi-jobs-count"
             >
               {jobs?.length ? `(${jobs?.length})` : ''}
-            </EuiTextColor>
+            </ColorText>
           )}
           {loading && (
             <EuiLoadingSpinner

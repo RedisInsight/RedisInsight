@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { EuiIcon, EuiLink, EuiPopover, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiLink, EuiPopover } from '@elastic/eui'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { Text } from 'uiSrc/components/base/text'
 import {
   EXTERNAL_LINKS,
   UTM_CAMPAINGS,
@@ -36,7 +37,7 @@ const ClickableAppendInfo = () => {
       panelPaddingSize="s"
       data-testid="pub-sub-examples"
     >
-      <EuiText color="subdued" size="s">
+      <Text color="subdued" size="s">
         Subscribe to one or more channels or patterns by entering them,
         separated by spaces.
         <br />
@@ -51,7 +52,7 @@ const ClickableAppendInfo = () => {
         >
           here.
         </EuiLink>
-      </EuiText>
+      </Text>
     </EuiPopover>
   )
 }

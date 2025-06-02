@@ -1,8 +1,8 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { EuiText } from '@elastic/eui'
 import { AxiosError } from 'axios'
+
 import {
   act,
   cleanup,
@@ -11,7 +11,7 @@ import {
   render,
   screen,
 } from 'uiSrc/utils/test-utils'
-
+import { Text } from 'uiSrc/components/base/text'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { dryRunJob, rdiDryRunJobSelector } from 'uiSrc/slices/rdi/dryRun'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
@@ -192,10 +192,10 @@ describe('JobsPanel', () => {
           data: {
             message: (
               <>
-                <EuiText>JobName has an invalid structure.</EuiText>
-                <EuiText>
+                <Text>JobName has an invalid structure.</Text>
+                <Text>
                   end of the stream or a document separator is expected
-                </EuiText>
+                </Text>
               </>
             ),
           },

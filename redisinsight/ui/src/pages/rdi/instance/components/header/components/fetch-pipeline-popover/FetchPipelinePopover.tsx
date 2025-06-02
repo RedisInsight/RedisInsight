@@ -1,4 +1,3 @@
-import { EuiText } from '@elastic/eui'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -11,6 +10,7 @@ import {
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import Download from 'uiSrc/pages/rdi/instance/components/download/Download'
 
+import { Text } from 'uiSrc/components/base/text'
 import { DownloadIcon } from 'uiSrc/components/base/icons'
 import { EmptyButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
@@ -48,12 +48,10 @@ const FetchPipelinePopover = ({ onClose }: Props) => {
     <ConfirmationPopover
       title="Download a pipeline from the server"
       body={
-        <>
-          <EuiText size="s">
-            When downloading a new pipeline from the server, it will overwrite
-            the existing one displayed in Redis Insight.
-          </EuiText>
-        </>
+        <Text size="s">
+          When downloading a new pipeline from the server, it will overwrite the
+          existing one displayed in Redis Insight.
+        </Text>
       }
       submitBtn={
         <PrimaryButton size="s" data-testid="upload-confirm-btn">

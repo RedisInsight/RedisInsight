@@ -1,4 +1,4 @@
-import { EuiBadge, EuiText } from '@elastic/eui'
+import { EuiBadge } from '@elastic/eui'
 import React, { ReactElement, useEffect, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -15,6 +15,7 @@ import {
   checkDeprecatedModuleCommand,
 } from 'uiSrc/utils'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
 import CommandHelper from './CommandHelper'
 import CommandHelperHeader from './CommandHelperHeader'
 
@@ -99,13 +100,13 @@ const CommandHelperWrapper = () => {
       <Row justify="between" align="center" className={styles.arg} key={i}>
         <FlexItem>
           <EuiBadge className={styles.badge}>
-            <EuiText
+            <Text
               style={{ color: 'white' }}
               className="text-capitalize"
               size="xs"
             >
               {type}
-            </EuiText>
+            </Text>
           </EuiBadge>
         </FlexItem>
         <FlexItem grow>{arg.generatedName}</FlexItem>

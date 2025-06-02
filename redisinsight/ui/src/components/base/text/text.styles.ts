@@ -48,7 +48,10 @@ export const useColorTextStyles = ({ $color }: MapProps = {}) => {
     string
   >
   const getColorValue = (color?: ColorType) => {
-    if (!color) return 'inherit'
+    if (!color) {
+      console.log({ color })
+      return 'inherit'
+    }
     switch (color) {
       case 'default':
       case 'primary':
@@ -68,7 +71,7 @@ export const useColorTextStyles = ({ $color }: MapProps = {}) => {
       case 'success':
         return colors.text.success600
       default:
-        return 'inherit'
+        return color // any supported color value e.g #fff
     }
   }
 

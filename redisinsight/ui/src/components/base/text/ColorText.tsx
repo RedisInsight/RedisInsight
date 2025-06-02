@@ -15,10 +15,6 @@ export const ColorText = ({
     {...rest}
     component={component}
     $color={color}
-    className={cn(
-      className,
-      { [`color__${color}`]: color !== undefined },
-      'RI-color-text',
-    )}
+    className={cn(className, { [`color__${color}`]: !!color }, 'RI-color-text')}
   />
 )

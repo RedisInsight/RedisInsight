@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { ImperativePanelGroupHandle } from 'react-resizable-panels'
 import InstanceHeader from 'uiSrc/components/instance-header'
 import { ExplorePanelTemplate } from 'uiSrc/templates'
 import BottomGroupComponents from 'uiSrc/components/bottom-group-components/BottomGroupComponents'
@@ -14,6 +13,7 @@ import {
   ResizablePanel,
   ResizablePanelHandle,
 } from 'uiSrc/components/base/layout'
+import { ImperativePanelGroupHandle } from 'uiSrc/components/base/layout/resize'
 
 export const firstPanelId = 'main-component'
 export const secondPanelId = 'cli'

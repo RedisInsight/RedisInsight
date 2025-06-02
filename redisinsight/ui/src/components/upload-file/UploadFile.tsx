@@ -1,6 +1,7 @@
 import React from 'react'
-import { EuiText, EuiIcon } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 
+import { Text } from 'uiSrc/components/base/text'
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
@@ -34,7 +35,7 @@ const UploadFile = (props: Props) => {
         data-testid="upload-file-btn"
       >
         <EuiIcon className={styles.icon} type="folderOpen" />
-        <EuiText className={styles.label}>Upload</EuiText>
+        <Text className={styles.label}>Upload</Text>
         <input
           type="file"
           id={id}

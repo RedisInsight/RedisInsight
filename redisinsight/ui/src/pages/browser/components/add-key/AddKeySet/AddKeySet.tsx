@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiFieldText,
   EuiForm,
-  EuiFormRow,
   EuiPanel,
 } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
@@ -21,6 +20,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
 
 import { INITIAL_SET_MEMBER_STATE, ISetMemberState } from './interfaces'
@@ -142,7 +142,7 @@ const AddKeySet = (props: Props) => {
         {(item, index) => (
           <Row align="center">
             <FlexItem grow>
-              <EuiFormRow fullWidth>
+              <FormField>
                 <EuiFieldText
                   fullWidth
                   name={`member-${item.id}`}
@@ -158,7 +158,7 @@ const AddKeySet = (props: Props) => {
                   disabled={loading}
                   data-testid="member-name"
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
           </Row>
         )}

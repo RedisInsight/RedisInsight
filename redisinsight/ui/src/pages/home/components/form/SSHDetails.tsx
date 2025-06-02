@@ -3,7 +3,6 @@ import {
   EuiCheckbox,
   EuiFieldNumber,
   EuiFieldText,
-  EuiFormRow,
   EuiRadioGroup,
   EuiRadioGroupOption,
   EuiTextArea,
@@ -25,6 +24,7 @@ import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { PasswordInput } from 'uiSrc/components/base/inputs'
 import styles from '../styles.module.scss'
 
@@ -76,7 +76,7 @@ const SSHDetails = (props: Props) => {
         <>
           <Row gap="m" responsive className={flexGroupClassName}>
             <FlexItem grow className={cx(flexItemClassName)}>
-              <EuiFormRow label="Host*">
+              <FormField label="Host*">
                 <EuiFieldText
                   name="sshHost"
                   id="sshHost"
@@ -92,11 +92,11 @@ const SSHDetails = (props: Props) => {
                     )
                   }}
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
 
             <FlexItem grow className={flexItemClassName}>
-              <EuiFormRow label="Port*" helpText="Should not exceed 65535.">
+              <FormField label="Port*" additionalText="Should not exceed 65535.">
                 <EuiFieldNumber
                   name="sshPort"
                   id="sshPort"
@@ -116,13 +116,13 @@ const SSHDetails = (props: Props) => {
                   min={0}
                   max={MAX_PORT_NUMBER}
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
           </Row>
 
           <Row gap="m" responsive className={flexGroupClassName}>
             <FlexItem grow className={cx(flexItemClassName)}>
-              <EuiFormRow label="Username*">
+              <FormField label="Username*">
                 <EuiFieldText
                   name="sshUsername"
                   id="sshUsername"
@@ -138,7 +138,7 @@ const SSHDetails = (props: Props) => {
                     )
                   }}
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
           </Row>
 
@@ -163,7 +163,7 @@ const SSHDetails = (props: Props) => {
           {formik.values.sshPassType === SshPassType.Password && (
             <Row gap="m" responsive className={flexGroupClassName}>
               <FlexItem grow className={flexItemClassName}>
-                <EuiFormRow label="Password">
+                <FormField label="Password">
                   <PasswordInput
                     name="sshPassword"
                     id="sshPassword"
@@ -183,7 +183,7 @@ const SSHDetails = (props: Props) => {
                     }}
                     autoComplete="new-password"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
             </Row>
           )}
@@ -192,7 +192,7 @@ const SSHDetails = (props: Props) => {
             <>
               <Row gap="m" responsive className={flexGroupClassName}>
                 <FlexItem grow className={flexItemClassName}>
-                  <EuiFormRow label="Private Key*">
+                  <FormField label="Private Key*">
                     <EuiTextArea
                       name="sshPrivateKey"
                       id="sshPrivateKey"
@@ -215,12 +215,12 @@ const SSHDetails = (props: Props) => {
                         }
                       }}
                     />
-                  </EuiFormRow>
+                  </FormField>
                 </FlexItem>
               </Row>
               <Row gap="m" responsive className={flexGroupClassName}>
                 <FlexItem grow className={flexItemClassName}>
-                  <EuiFormRow label="Passphrase">
+                  <FormField label="Passphrase">
                     <PasswordInput
                       name="sshPassphrase"
                       id="sshPassphrase"
@@ -240,7 +240,7 @@ const SSHDetails = (props: Props) => {
                       }}
                       autoComplete="new-password"
                     />
-                  </EuiFormRow>
+                  </FormField>
                 </FlexItem>
               </Row>
             </>

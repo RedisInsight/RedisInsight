@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiTitle, EuiToolTip } from '@elastic/eui'
+import { EuiTitle, EuiToolTip } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import {
@@ -20,6 +20,8 @@ import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { FullScreen } from 'uiSrc/components'
 
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import BulkUpload from './BulkUpload'
 import BulkDelete from './BulkDelete'
 import BulkActionsTabs from './BulkActionsTabs'
@@ -118,9 +120,8 @@ const BulkActions = (props: Props) => {
               position="left"
               anchorClassName={styles.anchorTooltip}
             >
-              <EuiButtonIcon
-                iconType="cross"
-                color="primary"
+              <IconButton
+                icon={CancelSlimIcon}
                 aria-label="Close panel"
                 className={styles.closeBtn}
                 data-testid="bulk-close-panel"

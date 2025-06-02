@@ -8,11 +8,10 @@ import {
   EuiPopover,
   EuiText,
   EuiTitle,
-  EuiFieldSearch,
-  EuiFormRow,
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
+import { FormField } from '@redis-ui/components'
 import {
   InstanceRedisCloud,
   RedisCloudAccount,
@@ -32,6 +31,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
+import { SearchInput } from 'uiSrc/components/base/inputs'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -120,8 +120,8 @@ const RedisCloudSubscriptions = ({
       setSelection(selected),
   }
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
     const itemsTemp =
       subscriptions?.filter(
         (item: RedisCloudSubscription) =>
@@ -266,16 +266,15 @@ const RedisCloudSubscriptions = ({
             </MessageBar>
           </FlexItem>
           <FlexItem>
-            <EuiFormRow className={styles.searchForm}>
-              <EuiFieldSearch
+            <FormField className={styles.searchForm}>
+              <SearchInput
                 placeholder="Search..."
                 className={styles.search}
                 onChange={onQueryChange}
-                isClearable
                 aria-label="Search"
                 data-testid="search"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
         <br />

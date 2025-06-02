@@ -5,7 +5,6 @@ import { isEmpty } from 'lodash'
 import {
   EuiFieldText,
   EuiForm,
-  EuiFormRow,
   EuiRadioGroup,
   EuiText,
   EuiToolTip,
@@ -30,6 +29,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'
@@ -184,7 +184,7 @@ const CloudConnectionForm = (props: Props) => {
       <EuiForm component="form" onSubmit={formik.handleSubmit}>
         <Row responsive>
           <FlexItem>
-            <EuiFormRow label="API Account Key*">
+            <FormField label="API Account Key*">
               <EuiFieldText
                 name="accessKey"
                 id="accessKey"
@@ -200,12 +200,12 @@ const CloudConnectionForm = (props: Props) => {
                   )
                 }}
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
         <Row responsive>
           <FlexItem grow>
-            <EuiFormRow label="API User Key*">
+            <FormField label="API User Key*">
               <EuiFieldText
                 name="secretKey"
                 id="secretKey"
@@ -221,7 +221,7 @@ const CloudConnectionForm = (props: Props) => {
                   )
                 }}
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
         <Footer />

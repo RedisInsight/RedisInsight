@@ -2,7 +2,6 @@ import {
   EuiBadge,
   EuiFieldText,
   EuiForm,
-  EuiFormRow,
   EuiIcon,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -26,6 +25,7 @@ import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
 
 const HIDE_BADGE_TIMER = 3000
@@ -94,7 +94,7 @@ const PublishMessage = () => {
       >
         <Row align="center">
           <FlexItem className={styles.channelWrapper} grow>
-            <EuiFormRow fullWidth>
+            <FormField>
               <EuiFieldText
                 fullWidth
                 name="channel"
@@ -107,10 +107,10 @@ const PublishMessage = () => {
                 autoComplete="off"
                 data-testid="field-channel-name"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
           <FlexItem className={styles.messageWrapper} grow>
-            <EuiFormRow fullWidth>
+            <FormField>
               <>
                 <EuiFieldText
                   fullWidth
@@ -148,7 +148,7 @@ const PublishMessage = () => {
                   )}
                 </EuiBadge>
               </>
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
       </FlexItem>

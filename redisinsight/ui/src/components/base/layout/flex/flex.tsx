@@ -51,6 +51,7 @@ export const FlexGroup = ({
   direction,
   responsive,
   centered,
+  direction,
   ...rest
 }: FlexProps) => {
   const classes = classNames('RI-flex-group', className)

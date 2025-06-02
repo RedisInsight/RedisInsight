@@ -6,13 +6,7 @@ import React, {
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiFieldText,
-  EuiFormRow,
-  EuiTextColor,
-  EuiForm,
-  EuiPanel,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiPanel } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import {
   isVersionHigherOrEquals,
@@ -32,6 +26,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import {
   CreateHashWithExpireDto,
   HashFieldDto,
@@ -178,7 +173,7 @@ const AddKeyHash = (props: Props) => {
         {(item, index) => (
           <Row align="center">
             <FlexItem grow={2}>
-              <EuiFormRow fullWidth>
+              <FormField>
                 <EuiFieldText
                   fullWidth
                   name={`fieldName-${item.id}`}
@@ -194,10 +189,10 @@ const AddKeyHash = (props: Props) => {
                   }
                   data-testid="field-name"
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
             <FlexItem grow={2}>
-              <EuiFormRow fullWidth>
+              <FormField>
                 <EuiFieldText
                   fullWidth
                   name={`fieldValue-${item.id}`}
@@ -210,11 +205,11 @@ const AddKeyHash = (props: Props) => {
                   }
                   data-testid="field-value"
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
             {isTTLAvailable && (
               <FlexItem grow={1}>
-                <EuiFormRow fullWidth>
+                <FormField>
                   <EuiFieldText
                     fullWidth
                     name={`fieldTTL-${item.id}`}
@@ -231,7 +226,7 @@ const AddKeyHash = (props: Props) => {
                     }
                     data-testid="hash-ttl"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
             )}
           </Row>

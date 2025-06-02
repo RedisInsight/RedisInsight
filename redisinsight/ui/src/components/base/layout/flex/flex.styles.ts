@@ -180,6 +180,7 @@ export type FlexProps = PropsWithChildren &
     grow?: boolean
     full?: boolean
   }
+
 type StyledFlexProps = Omit<
   FlexProps,
   | 'grow'

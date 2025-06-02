@@ -192,3 +192,20 @@ export enum SearchHistoryMode {
   Pattern = 'pattern',
   Redisearch = 'redisearch',
 }
+
+export enum KeyboardKeys {
+  ENTER = "Enter",
+  SPACE = " ",
+  ESCAPE = "Escape",
+  TAB = "Tab",
+  BACKSPACE = "Backspace",
+  F2 = "F2",
+  ARROW_DOWN = "ArrowDown",
+  ARROW_UP = "ArrowUp",
+  ARROW_LEFT = "ArrowLeft",
+  ARROW_RIGHT = "ArrowRight",
+  PAGE_UP = "PageUp",
+  PAGE_DOWN = "PageDown",
+  END = "End",
+  HOME = "Home"
+}

@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import {
-  EuiText,
-  EuiTourStep,
-  EuiButtonEmpty,
-  EuiButtonIcon,
-} from '@elastic/eui'
+import { EuiText, EuiTourStep } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import cx from 'classnames'
 
@@ -14,7 +9,10 @@ import {
   setOnboardNextStep,
   setOnboardPrevStep,
 } from 'uiSrc/slices/app/features'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import {
+  EmptyButton,
+  IconButton,
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
@@ -82,20 +80,20 @@ const OnboardingTour = (props: Props) => {
   const Header = (
     <div className={styles.header}>
       {!isLastStep ? (
-        <EuiButtonEmpty
+        <EmptyButton
           onClick={handleSkip}
           className={styles.skipTourBtn}
-          size="xs"
+          size="small"
           data-testid="skip-tour-btn"
         >
           Skip tour
-        </EuiButtonEmpty>
+        </EmptyButton>
       ) : (
-        <EuiButtonIcon
-          iconType="cross"
+        <IconButton
+          icon={CancelSlimIcon}
           className={styles.skipTourBtn}
           onClick={handleSkip}
-          size="xs"
+          size="S"
           aria-label="close-tour"
           data-testid="close-tour-btn"
         />

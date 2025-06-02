@@ -7,13 +7,12 @@ import {
   EuiPopover,
   EuiText,
   EuiTitle,
-  EuiFieldSearch,
-  EuiFormRow,
   EuiToolTip,
 } from '@elastic/eui'
 import { map, pick } from 'lodash'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import { FormField } from '@redis-ui/components'
 
 import { cloudSelector } from 'uiSrc/slices/instances/cloud'
 import { InstanceRedisCloud } from 'uiSrc/slices/interfaces'
@@ -28,6 +27,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Pages } from 'uiSrc/constants'
+import { SearchInput } from 'uiSrc/components/base/inputs'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -111,8 +111,8 @@ const RedisCloudDatabasesPage = ({
       setSelection(selected),
   }
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
 
     const itemsTemp =
       instances?.filter(
@@ -214,16 +214,14 @@ const RedisCloudDatabasesPage = ({
           </FlexItem>
         </Row>
         <FlexItem>
-          <EuiFormRow className={styles.searchForm}>
-            <EuiFieldSearch
+          <FormField className={styles.searchForm}>
+            <SearchInput
               placeholder="Search..."
-              className={styles.search}
               onChange={onQueryChange}
-              isClearable
               aria-label="Search"
               data-testid="search"
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
         <br />
 

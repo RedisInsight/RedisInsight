@@ -1,11 +1,11 @@
+/* eslint-disable no-restricted-globals */
 import React, { useEffect, useState, useRef } from 'react'
 import { Model, Graph } from '@antv/x6'
 import { register } from '@antv/x6-react-shape'
 import Hierarchy from '@antv/hierarchy'
 import { formatRedisReply } from 'redisinsight-plugin-sdk'
 
-import { EuiButtonIcon, EuiToolTip, EuiIcon } from '@elastic/eui'
-
+import { EuiToolTip, EuiIcon } from '@elastic/eui'
 import {
   EDGE_COLOR_BODY_DARK,
   EDGE_COLOR_BODY_LIGHT,
@@ -26,6 +26,7 @@ import {
   findFlatProfile,
 } from './parser'
 import { ExplainNode, ProfileNode } from './Node'
+import { IconButton } from '../../../components/base/forms/buttons'
 
 interface IExplain {
   command: string
@@ -44,10 +45,24 @@ function getEdgeColor(isDarkTheme: boolean) {
   return isDarkTheme ? EDGE_COLOR_BODY_DARK : EDGE_COLOR_BODY_LIGHT
 }
 
-export default function Explain(props: IExplain): JSX.Element {
-  const command = props.command.split(' ')[0].toLowerCase()
-  if (command.startsWith('graph')) {
-    const info = props.data[0].response
+export default function Explain({ command, data }: IExplain): JSX.Element {
+  const cmd = command.split(' ')[0].toLowerCase()
+  useEffect(() => {
+    if (cmd === 'ft.profile') {
+      const getParsedResponse = async () => {
+        const formattedResponse = await formatRedisReply(
+          data[0].response,
+          command,
+        )
+        setParsedRedisReply(formattedResponse)
+      }
+      getParsedResponse()
+    }
+  }, [cmd])
+  const [parsedRedisReply, setParsedRedisReply] = useState('')
+
+  if (cmd.startsWith('graph')) {
+    const info = data[0].response
     const resp = ParseGraphV2(info)
 
     let profilingTime: IProfilingTime = {}
@@ -70,24 +85,8 @@ export default function Explain(props: IExplain): JSX.Element {
 
   const module = ModuleType.Search
 
-  const [parsedRedisReply, setParsedRedisReply] = useState('')
-
-  useEffect(() => {
-    if (command === 'ft.profile') {
-      const getParsedResponse = async () => {
-        const formattedResponse = await formatRedisReply(
-          props.data[0].response,
-          props.command,
-        )
-        setParsedRedisReply(formattedResponse)
-      }
-      getParsedResponse()
-    }
-  })
-
   if (command === 'ft.profile') {
     try {
-      const { data } = props
       const isNewResponse = typeof data[0].response[1]?.[0] === 'string'
 
       const [, profiles] = data[0].response || []
@@ -128,12 +127,18 @@ export default function Explain(props: IExplain): JSX.Element {
     }
   }
 
-  const resp = props.data[0].response
+  const resp = data[0].response
 
-  const data = ParseExplain(
+  const explainDrawData = ParseExplain(
     Array.isArray(resp) ? resp.join('\n') : resp.split('\\n').join('\n'),
   )
-  return <ExplainDraw data={data} module={module} type={CoreType.Explain} />
+  return (
+    <ExplainDraw
+      data={explainDrawData}
+      module={module}
+      type={CoreType.Explain}
+    />
+  )
 }
 
 register({
@@ -365,7 +370,7 @@ function ExplainDraw({
               ...targetPort,
             },
             items: [
-              ...data.children.map((c) => ({
+              ...data.children.map((c: { id: string }) => ({
                 id: `${data.id}-${c.id}`,
                 group: portId,
               })),
@@ -425,7 +430,7 @@ function ExplainDraw({
 
   let pos = { top: 0, left: 0, x: 0, y: 0 }
 
-  const mouseMoveHandler = function (e) {
+  const mouseMoveHandler = (e: MouseEvent) => {
     // How far the mouse has been moved
     const dx = e.clientX - pos.x
     const dy = e.clientY - pos.y
@@ -437,12 +442,12 @@ function ExplainDraw({
     }
   }
 
-  const mouseUpHandler = function () {
+  const mouseUpHandler = () => {
     document.removeEventListener('mousemove', mouseMoveHandler)
     document.removeEventListener('mouseup', mouseUpHandler)
   }
 
-  const mouseDownHandler = function (e) {
+  const mouseDownHandler = (e: MouseEvent) => {
     pos = {
       // The current scroll
       left: ele?.scrollLeft || 0,
@@ -456,7 +461,7 @@ function ExplainDraw({
     setTimeout(() => document.addEventListener('mouseup', mouseUpHandler), 100)
   }
 
-  ele?.addEventListener('mousedown', mouseDownHandler)
+  ele?.addEventListener('mousedown', mouseDownHandler as EventListener)
 
   if (type !== CoreType.Profile && collapse) {
     core?.resize(undefined, isFullScreen ? window.outerHeight - 250 : 400)
@@ -532,10 +537,10 @@ function ExplainDraw({
               },
             ].map((item) => (
               <EuiToolTip position="left" content={item.name}>
-                <EuiButtonIcon
+                <IconButton
                   color="text"
                   onClick={item.onClick}
-                  iconType={item.icon}
+                  icon={item.icon}
                   aria-label={item.name}
                 />
               </EuiToolTip>
@@ -564,6 +569,8 @@ function ExplainDraw({
               }
               setCollapse(!collapse)
             }}
+            role="button"
+            tabIndex={-1}
           >
             {collapse ? (
               <>

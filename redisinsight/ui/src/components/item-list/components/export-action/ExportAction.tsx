@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import {
   EuiCheckbox,
-  EuiFormRow,
   EuiIcon,
   EuiPopover,
   EuiText,
 } from '@elastic/eui'
+import { FormField } from '@redis-ui/components'
 import { formatLongName } from 'uiSrc/utils'
 
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
@@ -63,7 +63,7 @@ const ExportAction = <T extends { id: string; name?: string }>(
           </Row>
         ))}
       </div>
-      <EuiFormRow style={{ marginTop: 16 }}>
+      <FormField style={{ marginTop: 16 }}>
         <EuiCheckbox
           id="export-passwords"
           name="export-passwords"
@@ -72,7 +72,7 @@ const ExportAction = <T extends { id: string; name?: string }>(
           onChange={(e) => setWithSecrets(e.target.checked)}
           data-testid="export-passwords"
         />
-      </EuiFormRow>
+      </FormField>
       <div className={styles.popoverFooter}>
         <PrimaryButton
           size="small"

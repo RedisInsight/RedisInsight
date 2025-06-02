@@ -1,6 +1,5 @@
 import {
   EuiForm,
-  EuiFormRow,
   EuiSuperSelect,
   EuiText,
   EuiToolTip,
@@ -24,6 +23,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { NO_TEMPLATE_VALUE, NO_OPTIONS, INGEST_OPTION } from './constants'
 
 import styles from './styles.module.scss'
@@ -170,7 +170,7 @@ const TemplateForm = (props: Props) => {
       <EuiForm component="form">
         <Spacer size="xs" />
         {pipelineTypeOptions?.length > 1 && (
-          <EuiFormRow className={styles.formRow}>
+          <FormField className={styles.formRow}>
             <>
               <div className={styles.rowLabel}>Pipeline type</div>
               <EuiSuperSelect
@@ -181,10 +181,10 @@ const TemplateForm = (props: Props) => {
                 data-testid="pipeline-type-select"
               />
             </>
-          </EuiFormRow>
+          </FormField>
         )}
         {source === RdiPipelineTabs.Config && (
-          <EuiFormRow className={styles.formRow}>
+          <FormField className={styles.formRow}>
             <>
               <div className={styles.rowLabel}>Database type</div>
               <EuiSuperSelect
@@ -195,7 +195,7 @@ const TemplateForm = (props: Props) => {
                 data-testid="db-type-select"
               />
             </>
-          </EuiFormRow>
+          </FormField>
         )}
       </EuiForm>
       <div className={styles.actions}>

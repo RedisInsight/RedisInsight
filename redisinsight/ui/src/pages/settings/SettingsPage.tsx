@@ -1,10 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import cx from 'classnames'
 import {
-  EuiCallOut,
   EuiCollapsibleNavGroup,
   EuiForm,
-  EuiFormRow,
   EuiLoadingSpinner,
   EuiSuperSelect,
   EuiText,
@@ -41,6 +39,8 @@ import {
   PageHeader,
   PageContentBody,
 } from 'uiSrc/components/base/layout/page'
+import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import {
   AdvancedSettings,
   CloudSettings,
@@ -99,7 +99,7 @@ const SettingsPage = () => {
           <h4>Color Theme</h4>
         </EuiTitle>
         <Spacer size="m" />
-        <EuiFormRow label="Specifies the color theme to be used in Redis Insight:">
+        <FormField label="Specifies the color theme to be used in Redis Insight:">
           <EuiSuperSelect
             options={options}
             valueOfSelected={theme}
@@ -107,7 +107,7 @@ const SettingsPage = () => {
             style={{ marginTop: '12px' }}
             data-test-subj="select-theme"
           />
-        </EuiFormRow>
+        </FormField>
         <Spacer size="xl" />
       </EuiForm>
       <ConsentsNotifications />
@@ -157,12 +157,12 @@ const SettingsPage = () => {
           <EuiLoadingSpinner size="xl" />
         </div>
       )}
-      <EuiCallOut className={styles.warning}>
+      <CallOut className={styles.warning}>
         <EuiText size="s" className={styles.smallText}>
           Advanced settings should only be changed if you understand their
           impact.
         </EuiText>
-      </EuiCallOut>
+      </CallOut>
       <AdvancedSettings />
     </div>
   )

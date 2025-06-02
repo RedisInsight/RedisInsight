@@ -1,7 +1,9 @@
 import React, { HTMLAttributes, useMemo } from 'react'
 import cx from 'classnames'
-import { EuiButtonIcon, useInnerText } from '@elastic/eui'
+import { useInnerText } from '@elastic/eui'
 
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props extends HTMLAttributes<HTMLPreElement> {
@@ -29,10 +31,10 @@ const CodeBlock = (props: Props) => {
         {children}
       </pre>
       {isCopyable && (
-        <EuiButtonIcon
+        <IconButton
           onClick={handleCopyClick}
           className={styles.copyBtn}
-          iconType="copy"
+          icon={CopyIcon}
           data-testid="copy-code-btn"
           aria-label="copy code"
         />

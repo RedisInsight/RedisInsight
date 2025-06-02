@@ -1,9 +1,6 @@
 import {
-  EuiButtonIcon,
   EuiFieldText,
   EuiFormFieldset,
-  EuiFormRow,
-  EuiHealth,
   EuiLink,
   EuiPanel,
   EuiPopover,
@@ -30,10 +27,14 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import {
+  IconButton,
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { AutoTag } from 'uiSrc/components/base/forms/combo-box/AutoTag'
+import { InfoIcon } from 'uiSrc/components/base/icons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Health } from 'uiSrc/components/base/text/Health'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
@@ -50,13 +51,13 @@ const keyTypeOptions = KEY_TYPE_OPTIONS.map((item) => {
   return {
     value,
     inputDisplay: (
-      <EuiHealth
+      <Health
         color={color}
         style={{ lineHeight: 'inherit' }}
         data-test-subj={value}
       >
         {text}
-      </EuiHealth>
+      </Health>
     ),
   }
 })
@@ -181,9 +182,8 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
       closePopover={() => setIsInfoPopoverOpen(false)}
       initialFocus={false}
       button={
-        <EuiButtonIcon
-          iconType="iInCircle"
-          color="subdued"
+        <IconButton
+          icon={InfoIcon}
           id="identifier-info-icon"
           aria-label="identifier info icon"
           data-testid="identifier-info-icon"
@@ -222,7 +222,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
           <div className={styles.fieldsContainer}>
             <Row className={styles.row}>
               <FlexItem grow>
-                <EuiFormRow label="Index Name" fullWidth>
+                <FormField label="Index Name">
                   <EuiFieldText
                     fullWidth
                     name="Index name"
@@ -233,13 +233,13 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                     autoComplete="off"
                     data-testid="index-name"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
               <FlexItem grow>
                 <EuiFormFieldset
                   legend={{ children: 'Select key type', display: 'hidden' }}
                 >
-                  <EuiFormRow label="Key Type*" fullWidth>
+                  <FormField label="Key Type*">
                     <EuiSuperSelect
                       itemClassName="withColorDefinition"
                       fullWidth
@@ -250,7 +250,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                       }
                       data-testid="key-type"
                     />
-                  </EuiFormRow>
+                  </FormField>
                 </EuiFormFieldset>
               </FlexItem>
             </Row>
@@ -287,7 +287,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
               {(item, index) => (
                 <Row align="center">
                   <FlexItem grow>
-                    <EuiFormRow fullWidth>
+                    <FormField>
                       <EuiFieldText
                         fullWidth
                         name={`identifier-${item.id}`}
@@ -309,10 +309,10 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                         autoComplete="off"
                         data-testid={`identifier-${item.id}`}
                       />
-                    </EuiFormRow>
+                    </FormField>
                   </FlexItem>
                   <FlexItem grow>
-                    <EuiFormRow>
+                    <FormField>
                       <EuiSuperSelect
                         itemClassName="withColorDefinition"
                         options={fieldTypeOptions}
@@ -322,7 +322,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                         }
                         data-testid={`field-type-${item.id}`}
                       />
-                    </EuiFormRow>
+                    </FormField>
                   </FlexItem>
                 </Row>
               )}
@@ -337,7 +337,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
         borderRadius="none"
         className={styles.footer}
       >
-        <Row justify="end">
+        <Row justify="end" gap="m">
           <FlexItem>
             <SecondaryButton
               color="secondary"

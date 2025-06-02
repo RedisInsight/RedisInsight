@@ -3,9 +3,9 @@ import { toNumber } from 'lodash'
 import {
   EuiFieldText,
   EuiFormFieldset,
-  EuiFormRow,
   EuiSuperSelect,
 } from '@elastic/eui'
+import { FormField } from '@redis-ui/components'
 import { MAX_TTL_NUMBER, Maybe, validateTTLNumberForAddKey } from 'uiSrc/utils'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
@@ -54,7 +54,7 @@ const AddKeyCommonFields = (props: Props) => {
           <EuiFormFieldset
             legend={{ children: 'Select key type', display: 'hidden' }}
           >
-            <EuiFormRow label="Key Type*" fullWidth>
+            <FormField label="Key Type*">
               <EuiSuperSelect
                 itemClassName="withColorDefinition"
                 fullWidth
@@ -64,11 +64,11 @@ const AddKeyCommonFields = (props: Props) => {
                 onChange={(value: string) => onChangeType(value)}
                 data-testid="select-key-type"
               />
-            </EuiFormRow>
+            </FormField>
           </EuiFormFieldset>
         </FlexItem>
         <FlexItem grow>
-          <EuiFormRow label={config.keyTTL.label} fullWidth>
+          <FormField label={config.keyTTL.label}>
             <EuiFieldText
               fullWidth
               name={config.keyTTL.name}
@@ -83,10 +83,10 @@ const AddKeyCommonFields = (props: Props) => {
               autoComplete="off"
               data-testid="ttl"
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
       </Row>
-      <EuiFormRow label={config.keyName.label} fullWidth>
+      <FormField label={config.keyName.label}>
         <EuiFieldText
           fullWidth
           name={config.keyName.name}
@@ -100,7 +100,7 @@ const AddKeyCommonFields = (props: Props) => {
           autoComplete="off"
           data-testid="key"
         />
-      </EuiFormRow>
+      </FormField>
     </div>
   )
 }

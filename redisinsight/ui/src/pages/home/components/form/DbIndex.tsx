@@ -2,7 +2,6 @@ import React, { ChangeEvent } from 'react'
 import {
   EuiCheckbox,
   EuiFieldNumber,
-  EuiFormRow,
   htmlIdGenerator,
 } from '@elastic/eui'
 import { FormikProps } from 'formik'
@@ -12,6 +11,7 @@ import { validateNumber } from 'uiSrc/utils'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -36,7 +36,7 @@ const DbIndex = (props: Props) => {
     <>
       <Row gap="s">
         <FlexItem>
-          <EuiFormRow>
+          <FormField>
             <EuiCheckbox
               id={`${htmlIdGenerator()()} over db`}
               name="showDb"
@@ -45,7 +45,7 @@ const DbIndex = (props: Props) => {
               onChange={handleChangeDbIndexCheckbox}
               data-testid="showDb"
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
       </Row>
 
@@ -54,7 +54,7 @@ const DbIndex = (props: Props) => {
           <Spacer />
           <Row gap="m" responsive>
             <FlexItem grow className={styles.dbInput}>
-              <EuiFormRow label="Database Index">
+              <FormField label="Database Index">
                 <EuiFieldNumber
                   name="db"
                   id="db"
@@ -71,7 +71,7 @@ const DbIndex = (props: Props) => {
                   type="text"
                   min={0}
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
             <FlexItem grow />
           </Row>

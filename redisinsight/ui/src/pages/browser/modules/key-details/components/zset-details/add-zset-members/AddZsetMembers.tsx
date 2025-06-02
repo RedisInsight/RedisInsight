@@ -2,7 +2,7 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
 import cx from 'classnames'
-import { EuiFieldText, EuiFormRow, EuiPanel } from '@elastic/eui'
+import { EuiFieldText, EuiPanel } from '@elastic/eui'
 
 import { stringToBuffer, validateScoreNumber } from 'uiSrc/utils'
 import { isNaNConvertedString } from 'uiSrc/utils/numbers'
@@ -26,6 +26,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -197,7 +198,7 @@ const AddZsetMembers = (props: Props) => {
           {(item, index) => (
             <Row align="center">
               <FlexItem grow>
-                <EuiFormRow fullWidth>
+                <FormField>
                   <EuiFieldText
                     fullWidth
                     name={`member-${item.id}`}
@@ -213,10 +214,10 @@ const AddZsetMembers = (props: Props) => {
                     disabled={loading}
                     data-testid="member-name"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
               <FlexItem grow>
-                <EuiFormRow fullWidth>
+                <FormField>
                   <EuiFieldText
                     fullWidth
                     name={`score-${item.id}`}
@@ -233,7 +234,7 @@ const AddZsetMembers = (props: Props) => {
                     disabled={loading}
                     data-testid="member-score"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
             </Row>
           )}

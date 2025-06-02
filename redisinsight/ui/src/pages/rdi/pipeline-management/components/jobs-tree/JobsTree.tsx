@@ -1,6 +1,5 @@
 import {
   EuiAccordion,
-  EuiButtonIcon,
   EuiIcon,
   EuiLoadingSpinner,
   EuiText,
@@ -28,7 +27,11 @@ import { isEqualPipelineFile, Nullable } from 'uiSrc/utils'
 import statusErrorIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/status_error.svg?react'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { DestructiveButton } from 'uiSrc/components/base/forms/buttons'
+import { DeleteIcon, EditIcon, PlusIcon } from 'uiSrc/components/base/icons'
+import {
+  DestructiveButton,
+  IconButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -186,8 +189,8 @@ const JobsTree = (props: IProps) => {
           display="inlineBlock"
           anchorClassName="flex-row"
         >
-          <EuiButtonIcon
-            iconType="pencil"
+          <IconButton
+            icon={EditIcon}
             onClick={() => {
               setCurrentJobName(name)
               setIsNewJob(false)
@@ -220,8 +223,8 @@ const JobsTree = (props: IProps) => {
             }
             onConfirm={() => handleDeleteClick(name)}
             button={
-              <EuiButtonIcon
-                iconType="trash"
+              <IconButton
+                icon={DeleteIcon}
                 aria-label="delete job"
                 data-testid={`delete-job-${name}`}
               />
@@ -351,8 +354,8 @@ const JobsTree = (props: IProps) => {
           display="inlineBlock"
           anchorClassName="flex-row"
         >
-          <EuiButtonIcon
-            iconType="plus"
+          <IconButton
+            icon={PlusIcon}
             onClick={() => {
               setAccordionState('open')
               setIsNewJob(true)

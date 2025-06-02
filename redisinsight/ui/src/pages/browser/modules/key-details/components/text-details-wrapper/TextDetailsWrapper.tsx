@@ -1,8 +1,10 @@
 import React, { ReactNode } from 'react'
 
-import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 const TextDetailsWrapper = ({
@@ -24,9 +26,8 @@ const TextDetailsWrapper = ({
         position="left"
         anchorClassName={styles.closeRightPanel}
       >
-        <EuiButtonIcon
-          iconType="cross"
-          color="primary"
+        <IconButton
+          icon={CancelSlimIcon}
           aria-label="Close key"
           className={styles.closeBtn}
           onClick={() => onClose()}

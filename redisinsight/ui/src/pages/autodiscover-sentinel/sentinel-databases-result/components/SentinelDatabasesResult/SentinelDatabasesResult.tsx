@@ -5,10 +5,10 @@ import {
   PropertySort,
   EuiText,
   EuiTitle,
-  EuiFieldSearch,
-  EuiFormRow,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
+import { FormField } from '@redis-ui/components'
+import { SearchInput } from 'uiSrc/components/base/inputs'
 
 import { sentinelSelector } from 'uiSrc/slices/instances/sentinel'
 import { ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
@@ -62,8 +62,8 @@ const SentinelDatabasesResult = ({
     onViewDatabases()
   }
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
 
     const itemsTemp = masters.filter(
       (item: ModifiedSentinelMaster) =>
@@ -115,16 +115,14 @@ const SentinelDatabasesResult = ({
           </FlexItem>
         </Row>
         <FlexItem>
-          <EuiFormRow className={styles.searchForm}>
-            <EuiFieldSearch
+          <FormField className={styles.searchForm}>
+            <SearchInput
               placeholder="Search..."
-              className={styles.search}
               onChange={onQueryChange}
-              isClearable
               aria-label="Search"
               data-testid="search"
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
         <br />
         <div className="itemList databaseList sentinelDatabaseListResult">

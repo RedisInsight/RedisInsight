@@ -18,8 +18,8 @@ export type AutoTagProps = Omit<
     isClearable?: boolean
     placeholder?: string
     delimiter?: string
-    options?: any[]
-    selectedOptions?: any[]
+    options?: AutoTagOption[]
+    selectedOptions?: AutoTagOption[]
     onCreateOption?: (value: string, options?: AutoTagOption[]) => void
     onChange?: (value: AutoTagOption[]) => void
     size?: 'S' | 'M'
@@ -39,8 +39,8 @@ export function getTagFromValue(value: string, delimiter: string) {
 
 export function filterOptions(
   selection: AutoTagOption[],
-  value?: string,
-  label?: string,
+  value?: AutoTagOption['value'],
+  label?: AutoTagOption['label'],
 ) {
   // remove option from selection
   return selection.filter((option) => {
@@ -102,7 +102,7 @@ export const AutoTag = ({
       className={cn('RI-combo-box', className)}
       style={{
         ...style,
-        columnGap: '0.6rem',
+        columnGap: '0.5rem',
         width: full ? '100%' : undefined,
       }}
     >
@@ -127,7 +127,7 @@ export const AutoTag = ({
               <Chip
                 size={size}
                 key={key}
-                text={label || value}
+                text={String(label || value || '')}
                 onClose={() => {
                   // remove option from selection
                   const newSelection = filterOptions(selection, value, label)
@@ -156,8 +156,8 @@ export const AutoTag = ({
 
 const StyledWrapper = styled(Row)`
   border: 1px solid ${({ theme }) => theme.semantic.color.border.neutral600};
-  border-radius: 4px;
-  padding: 4px 8px;
+  border-radius: 0.4rem;
+  padding: 0.15rem 0.5rem;
   background-color: ${({ theme }) =>
     theme.semantic.color.background.neutral100};
 `

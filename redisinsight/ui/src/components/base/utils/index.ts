@@ -1,2 +1,2 @@
 export { OutsideClickDetector } from './OutsideClickDetector'
-export { ResizeObserver } from './resize-observer/ResizeObserver'
+export { RIResizeObserver } from './resize-observer/ResizeObserver'

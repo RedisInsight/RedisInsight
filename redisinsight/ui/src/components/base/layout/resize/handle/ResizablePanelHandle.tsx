@@ -1,38 +1,26 @@
 import React from 'react'
 import {
-  PanelResizeHandle,
-  PanelResizeHandleProps,
-} from 'react-resizable-panels'
-import classNames from 'classnames'
-
-import styles from './styles.module.scss'
-
-interface ResizablePanelHandleProps extends PanelResizeHandleProps {
-  direction?: 'horizontal' | 'vertical'
-}
+  HandleContainer,
+  Line,
+  ResizablePanelHandleProps,
+  StyledPanelResizeHandle,
+} from './resizable-panel-handle.styles'
 
 const ResizablePanelHandle = ({
   className,
   direction = 'vertical',
   ...rest
 }: ResizablePanelHandleProps) => (
-  <PanelResizeHandle
-    className={classNames(
-      className,
-      direction === 'vertical' ? styles.vertical : styles.horizontal,
-    )}
+  <StyledPanelResizeHandle
+    $direction={direction}
+    className={className}
     {...rest}
   >
-    <div
-      className={classNames(
-        styles.handle,
-        direction === 'vertical' ? styles.vertical : '',
-      )}
-    >
-      <div className={styles.line} />
-      <div className={styles.line} />
-    </div>
-  </PanelResizeHandle>
+    <HandleContainer $direction={direction}>
+      <Line />
+      <Line />
+    </HandleContainer>
+  </StyledPanelResizeHandle>
 )
 
 export default ResizablePanelHandle

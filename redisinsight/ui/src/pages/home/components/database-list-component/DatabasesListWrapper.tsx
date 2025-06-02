@@ -85,7 +85,7 @@ import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
 
 import { Tag } from 'uiSrc/slices/interfaces/tag'
 import { FeatureFlagComponent } from 'uiSrc/components'
-import { ResizeObserver } from 'uiSrc/components/base/utils'
+import { RIResizeObserver } from 'uiSrc/components/base/utils'
 import DbStatus from '../db-status'
 
 import { TagsCell } from '../tags-cell/TagsCell'
@@ -684,7 +684,7 @@ const DatabasesListWrapper = (props: Props) => {
   )
 
   return (
-    <ResizeObserver onResize={onResize}>
+    <RIResizeObserver onResize={onResize}>
       {(resizeRef) => (
         <div className={styles.container} ref={resizeRef}>
           <ItemList<Instance>
@@ -705,7 +705,7 @@ const DatabasesListWrapper = (props: Props) => {
           />
         </div>
       )}
-    </ResizeObserver>
+    </RIResizeObserver>
   )
 }
 

@@ -18,7 +18,7 @@ import { SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
 import { isEqualBuffers, Maybe, Nullable } from 'uiSrc/utils'
-import { ResizeObserver } from 'uiSrc/components/base/utils'
+import { RIResizeObserver } from 'uiSrc/components/base/utils'
 import {
   ColumnWidthSizes,
   IColumnSearchState,
@@ -581,7 +581,7 @@ const VirtualTable = (props: IProps) => {
   }
 
   return (
-    <ResizeObserver onResize={onResize}>
+    <RIResizeObserver onResize={onResize}>
       {(resizeRef) => (
         <div
           ref={resizeRef}
@@ -701,7 +701,7 @@ const VirtualTable = (props: IProps) => {
           )}
         </div>
       )}
-    </ResizeObserver>
+    </RIResizeObserver>
   )
 }
 

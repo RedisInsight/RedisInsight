@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react'
 
-interface ResizeObserverProps {
+interface RIResizeObserverProps {
   children: (ref: React.Ref<HTMLDivElement>) => React.ReactNode
   onResize: (dimensions: { height: number; width: number }) => void
 }
 
-export const ResizeObserver: React.FC<ResizeObserverProps> = ({
+export const RIResizeObserver: React.FC<RIResizeObserverProps> = ({
   children,
   onResize,
 }) => {
@@ -13,22 +13,22 @@ export const ResizeObserver: React.FC<ResizeObserverProps> = ({
 
   useEffect(() => {
     const element = containerRef.current
-    if (!element) return
+    if (element) {
 
-    const observer = new window.ResizeObserver(([entry]) => {
-      const { width, height } = entry.contentRect
-      onResize({ width, height })
-    })
+      const observer = new window.ResizeObserver(([entry]) => {
+        const { width, height } = entry.contentRect
+        onResize({ width, height })
+      })
 
-    observer.observe(element)
+      observer.observe(element)
 
-    // eslint-disable-next-line consistent-return
-    return () => {
-      observer.disconnect()
+      return () => {
+        observer.disconnect()
+      }
     }
-  }, [onResize])
+  }, [onResize, containerRef.current])
 
   return <>{children(containerRef)}</>
 }
 
-export default ResizeObserver
+export default RIResizeObserver

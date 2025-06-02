@@ -1,8 +1,9 @@
 import React from 'react'
 import cx from 'classnames'
 import { isNull } from 'lodash'
-import { EuiText, EuiTextColor } from '@elastic/eui'
 import { useSelector } from 'react-redux'
+
+import { Text, ColorText } from 'uiSrc/components/base/text'
 
 import { numberWithSpaces, nullableNumberWithSpaces } from 'uiSrc/utils/numbers'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
@@ -53,10 +54,10 @@ const KeysSummary = (props: Props) => {
     <>
       {(!!totalItemsCount || isNull(totalItemsCount)) && (
         <div className={styles.content} data-testid="keys-summary">
-          <EuiText size="xs">
+          <Text size="xs" component="div">
             {!!scanned && (
               <>
-                <EuiTextColor className="eui-alignMiddle">
+                <ColorText>
                   <b>
                     {'Results: '}
                     <span data-testid="keys-number-of-results">
@@ -64,7 +65,7 @@ const KeysSummary = (props: Props) => {
                     </span>
                     {'. '}
                   </b>
-                  <EuiTextColor color="subdued">
+                  <ColorText color="subdued">
                     {'Scanned '}
                     <span data-testid="keys-number-of-scanned">
                       {notAccurateScanned}
@@ -80,8 +81,8 @@ const KeysSummary = (props: Props) => {
                         { [styles.loadingShow]: loading },
                       ])}
                     />
-                  </EuiTextColor>
-                </EuiTextColor>
+                  </ColorText>
+                </ColorText>
                 {showScanMore && (
                   <ScanMore
                     withAlert
@@ -98,23 +99,23 @@ const KeysSummary = (props: Props) => {
             )}
 
             {!scanned && (
-              <EuiText size="xs">
+              <Text size="xs">
                 <b>
                   {'Total: '}
                   {nullableNumberWithSpaces(totalItemsCount)}
                 </b>
-              </EuiText>
+              </Text>
             )}
-          </EuiText>
+          </Text>
           {viewType === KeyViewType.Tree && (
             <KeyTreeSettings loading={loading} />
           )}
         </div>
       )}
       {loading && !totalItemsCount && !isNull(totalItemsCount) && (
-        <EuiText size="xs" data-testid="scanning-text">
+        <Text size="xs" data-testid="scanning-text">
           Scanning...
-        </EuiText>
+        </Text>
       )}
     </>
   )

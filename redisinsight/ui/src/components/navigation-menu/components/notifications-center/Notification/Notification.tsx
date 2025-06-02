@@ -1,4 +1,4 @@
-import { EuiBadge, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiBadge, EuiTitle } from '@elastic/eui'
 import { EuiTitleSize } from '@elastic/eui/src/components/title/title'
 import cx from 'classnames'
 import { format } from 'date-fns'
@@ -10,6 +10,7 @@ import { IGlobalNotification } from 'uiSrc/slices/interfaces'
 import { truncateText } from 'uiSrc/utils'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -30,20 +31,20 @@ const Notification = (props: Props) => {
         <span>{notification.title}</span>
       </EuiTitle>
 
-      <EuiText
+      <Text
         size="s"
         color="subdued"
         className={cx('notificationHTMLBody', styles.notificationBody)}
         data-testid="notification-body"
       >
         {parse(notification.body)}
-      </EuiText>
+      </Text>
 
       <Row className={styles.notificationFooter} align="center" justify="start">
         <FlexItem>
-          <EuiText size="xs" color="subdued" data-testid="notification-date">
+          <Text size="xs" color="subdued" data-testid="notification-date">
             {format(notification.timestamp * 1000, NOTIFICATION_DATE_FORMAT)}
-          </EuiText>
+          </Text>
         </FlexItem>
         {notification.category && (
           <FlexItem>

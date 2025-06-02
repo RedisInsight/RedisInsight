@@ -1,8 +1,9 @@
-import { EuiLink, EuiTextColor } from '@elastic/eui'
 import React, { Fragment } from 'react'
+import { EuiLink } from '@elastic/eui'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { getDbIndex } from 'uiSrc/utils'
 import { FeatureFlagComponent } from 'uiSrc/components'
+import { ColorText } from 'uiSrc/components/base/text'
 import { FeatureFlags } from 'uiSrc/constants/featureFlags'
 
 export const InitOutputText = (
@@ -33,9 +34,9 @@ export const InitOutputText = (
   'Connecting...',
   '\n\n',
   'Pinging Redis server on ',
-  <EuiTextColor color="default" key={Math.random()}>
+  <ColorText color="default" key={Math.random()}>
     {`${host}:${port}${getDbIndex(dbIndex)}`}
-  </EuiTextColor>,
+  </ColorText>,
 ]
 
 export const ConnectionSuccessOutputText = [
@@ -69,11 +70,7 @@ export const cliTexts = {
     </div>
   ),
   USE_PSUBSCRIBE_COMMAND: (path: string = '') => (
-    <EuiTextColor
-      color="danger"
-      key={Date.now()}
-      data-testid="user-pub-sub-link"
-    >
+    <ColorText color="danger" key={Date.now()} data-testid="user-pub-sub-link">
       {'Use '}
       <EuiLink
         {...getRouterLinkProps(path)}
@@ -83,7 +80,7 @@ export const cliTexts = {
         Pub/Sub
       </EuiLink>
       {' to see the messages published to all channels in your database.'}
-    </EuiTextColor>
+    </ColorText>
   ),
   PSUBSCRIBE_COMMAND: (path: string = '') => (
     <FeatureFlagComponent
@@ -106,7 +103,7 @@ export const cliTexts = {
     </div>
   ),
   USE_PROFILER_TOOL: (onClick: () => void) => (
-    <EuiTextColor color="danger" key={Date.now()}>
+    <ColorText color="danger" key={Date.now()}>
       {'Use '}
       <EuiLink
         onClick={onClick}
@@ -117,7 +114,7 @@ export const cliTexts = {
         Profiler
       </EuiLink>
       {' tool to see all the requests processed by the server.'}
-    </EuiTextColor>
+    </ColorText>
   ),
   MONITOR_COMMAND: (onClick: () => void) => (
     <FeatureFlagComponent
@@ -128,11 +125,7 @@ export const cliTexts = {
     </FeatureFlagComponent>
   ),
   USE_PUB_SUB_TOOL: (path: string = '') => (
-    <EuiTextColor
-      color="danger"
-      key={Date.now()}
-      data-testid="user-pub-sub-link"
-    >
+    <ColorText color="danger" key={Date.now()} data-testid="user-pub-sub-link">
       {'Use '}
       <EuiLink
         {...getRouterLinkProps(path)}
@@ -142,7 +135,7 @@ export const cliTexts = {
         Pub/Sub
       </EuiLink>
       {' tool to subscribe to channels.'}
-    </EuiTextColor>
+    </ColorText>
   ),
   SUBSCRIBE_COMMAND_CLI: (path: string = '') => (
     <FeatureFlagComponent
@@ -153,7 +146,7 @@ export const cliTexts = {
     </FeatureFlagComponent>
   ),
   HELLO3_COMMAND: () => (
-    <EuiTextColor color="danger" key={Date.now()}>
+    <ColorText color="danger" key={Date.now()}>
       {'Redis Insight does not support '}
       <EuiLink
         href="https://github.com/redis/redis-specifications/blob/master/protocol/RESP3.md"
@@ -166,14 +159,14 @@ export const cliTexts = {
         RESP3
       </EuiLink>
       {' at the moment, but we are working on it.'}
-    </EuiTextColor>
+    </ColorText>
   ),
   HELLO3_COMMAND_CLI: () => [cliTexts.HELLO3_COMMAND(), '\n'],
   CLI_ERROR_MESSAGE: (message: string) => [
     '\n',
-    <EuiTextColor color="danger" key={Date.now()}>
+    <ColorText color="danger" key={Date.now()}>
       {message}
-    </EuiTextColor>,
+    </ColorText>,
     '\n\n',
   ],
 }

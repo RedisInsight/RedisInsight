@@ -1,8 +1,9 @@
 import React from 'react'
 import { isString } from 'lodash'
 import cx from 'classnames'
-import { EuiBadge, EuiText } from '@elastic/eui'
+import { EuiBadge } from '@elastic/eui'
 
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -27,9 +28,9 @@ const KeyboardShortcut = (props: Props) => {
           <EuiBadge
             className={cx(styles.badge, { [styles.transparent]: transparent })}
           >
-            <EuiText className={badgeTextClassName} size="s">
+            <Text className={badgeTextClassName} size="s">
               {item}
-            </EuiText>
+            </Text>
           </EuiBadge>
         </div>
       ))}

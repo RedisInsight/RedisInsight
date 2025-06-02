@@ -1,4 +1,4 @@
-import { EuiIcon, EuiText } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { format, formatDuration, intervalToDuration } from 'date-fns'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -19,6 +19,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { RefreshIcon, DownloadIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 const PADDINGS_OUTSIDE = 12
@@ -78,7 +79,7 @@ const MonitorLog = () => {
             }}
             data-testid="download-log-panel"
           >
-            <EuiText
+            <Text
               size="xs"
               color="subdued"
               className={styles.time}
@@ -91,7 +92,7 @@ const MonitorLog = () => {
               &nbsp;(
               {duration}
               {width > SMALL_SCREEN_RESOLUTION && ' Running time'})
-            </EuiText>
+            </Text>
             <Row className={styles.actions} justify="between" align="center">
               <FlexItem>
                 {isSaveToFile && (

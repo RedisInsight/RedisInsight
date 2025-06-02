@@ -1,5 +1,6 @@
 import React from 'react'
-import { EuiBadge, EuiText } from '@elastic/eui'
+import { EuiBadge } from '@elastic/eui'
+import { Text } from '../../../../../components/base/text'
 import { GROUP_TYPES_COLORS, GROUP_TYPES_DISPLAY } from '../../constants'
 
 export interface Props {
@@ -14,13 +15,13 @@ const GroupBadge = ({ type, name = '', className = '' }: Props) => (
     className={className}
     data-testid={`badge-${type} ${name}`}
   >
-    <EuiText
+    <Text
       style={{ color: 'var(--euiTextSubduedColorHover)' }}
       className="text-uppercase"
       size="xs"
     >
       {GROUP_TYPES_DISPLAY[type] ?? type}
-    </EuiText>
+    </Text>
   </EuiBadge>
 )
 

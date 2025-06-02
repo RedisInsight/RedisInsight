@@ -1,7 +1,8 @@
 import React, { Ref, useEffect, useRef } from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiTextColor } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 
+import { ColorText } from 'uiSrc/components/base/text'
 import { scrollIntoView } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
@@ -50,13 +51,13 @@ const FieldMessage = ({
           color={color || 'danger'}
         />
       )}
-      <EuiTextColor
+      <ColorText
         className={cx(styles.message)}
         data-testid={testID}
         color={color || 'danger'}
       >
         {children}
-      </EuiTextColor>
+      </ColorText>
     </div>
   )
 }

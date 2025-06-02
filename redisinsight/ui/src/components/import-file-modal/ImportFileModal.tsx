@@ -7,8 +7,6 @@ import {
   EuiModalFooter,
   EuiModalHeader,
   EuiModalHeaderTitle,
-  EuiText,
-  EuiTextColor,
   EuiTitle,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -22,6 +20,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props<T> {
@@ -98,13 +97,13 @@ const ImportFileModal = <T,>({
                   aria-label="Select or drag and drop file"
                 />
                 {isInvalid && (
-                  <EuiTextColor
+                  <ColorText
                     color="danger"
                     className={styles.errorFileMsg}
                     data-testid="input-file-error-msg"
                   >
                     {invalidMessage}
-                  </EuiTextColor>
+                  </ColorText>
                 )}
               </>
             )}
@@ -114,9 +113,9 @@ const ImportFileModal = <T,>({
                 data-testid="file-loading-indicator"
               >
                 <EuiLoadingSpinner size="xl" />
-                <EuiText color="subdued" style={{ marginTop: 12 }}>
+                <Text color="subdued" style={{ marginTop: 12 }}>
                   Uploading...
-                </EuiText>
+                </Text>
               </div>
             )}
             {error && (
@@ -126,10 +125,10 @@ const ImportFileModal = <T,>({
                   size="xxl"
                   color="danger"
                 />
-                <EuiText color="subdued" style={{ marginTop: 16 }}>
+                <Text color="subdued" style={{ marginTop: 16 }}>
                   {errorMessage}
-                </EuiText>
-                <EuiText color="subdued">{error}</EuiText>
+                </Text>
+                <Text color="subdued">{error}</Text>
               </div>
             )}
           </FlexItem>

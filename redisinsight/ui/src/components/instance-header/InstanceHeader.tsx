@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
-import { EuiFieldNumber, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiFieldNumber, EuiIcon, EuiToolTip } from '@elastic/eui'
 
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { selectOnFocus, validateNumber } from 'uiSrc/utils'
@@ -37,6 +37,7 @@ import UserProfile from 'uiSrc/components/instance-header/components/user-profil
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { EditIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import InstancesNavigationPopover from './components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
@@ -147,7 +148,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                       : 'Redis Databases'
                   }
                 >
-                  <EuiText
+                  <Text
                     className={styles.breadCrumbLink}
                     aria-label={
                       server?.buildType === BuildType.RedisStack
@@ -159,7 +160,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                     onKeyDown={goHome}
                   >
                     Databases
-                  </EuiText>
+                  </Text>
                 </EuiToolTip>
               </FeatureFlagComponent>
             </div>
@@ -168,7 +169,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                 <Row align="center">
                   <FeatureFlagComponent name={FeatureFlags.envDependent}>
                     <FlexItem>
-                      <EuiText className={styles.divider}>/</EuiText>
+                      <Text className={styles.divider}>/</Text>
                     </FlexItem>
                   </FeatureFlagComponent>
                   {returnUrlBase && returnUrl && (
@@ -183,14 +184,14 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                             position="bottom"
                             content={returnUrlTooltip || returnUrlLabel}
                           >
-                            <EuiText
+                            <Text
                               className={styles.breadCrumbLink}
                               aria-label={returnUrlTooltip || returnUrlLabel}
                               onClick={goToReturnUrl}
                               onKeyDown={goToReturnUrl}
                             >
                               &#60; {returnUrlLabel}
-                            </EuiText>
+                            </Text>
                           </EuiToolTip>
                         </FlexItem>
                       }

@@ -49,7 +49,6 @@ export const useColorTextStyles = ({ $color }: MapProps = {}) => {
   >
   const getColorValue = (color?: ColorType) => {
     if (!color) {
-      console.log({ color })
       return 'inherit'
     }
     switch (color) {

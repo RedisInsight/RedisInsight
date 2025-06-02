@@ -1,11 +1,12 @@
 import cx from 'classnames'
 import React from 'react'
-import { EuiBadge, EuiText } from '@elastic/eui'
+import { EuiBadge } from '@elastic/eui'
 import { CommandGroup, KeyTypes, GROUP_TYPES_COLORS } from 'uiSrc/constants'
 import { getGroupTypeDisplay } from 'uiSrc/utils'
 
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -35,13 +36,13 @@ const GroupBadge = ({
     data-testid={`badge-${type}_${name}`}
   >
     {!compressed && (
-      <EuiText
+      <Text
         style={{ color: 'var(--euiTextSubduedColorHover)' }}
         className="text-uppercase"
         size="xs"
       >
         {getGroupTypeDisplay(type)}
-      </EuiText>
+      </Text>
     )}
     {onDelete && (
       <IconButton

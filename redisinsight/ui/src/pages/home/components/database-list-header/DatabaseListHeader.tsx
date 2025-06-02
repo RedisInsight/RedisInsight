@@ -145,7 +145,6 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
             description={description}
             url={links?.main?.url}
             testId="promo-btn"
-            icon="arrowRight"
             styles={{
               ...linkStyles,
               backgroundImage: linkStyles?.backgroundImage
@@ -220,15 +219,15 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
                   closePopover={() => setColumnsConfigShown(false)}
                   data-testid="columns-config-popover"
                   button={
-                      <SecondaryButton
-                        icon={ColumnsIcon}
-                        onClick={toggleColumnsConfigVisibility}
-                        className={styles.columnsButton}
-                        data-testid="btn-columns-config"
-                        aria-label="columns"
-                      >
-                        <span>Columns</span>
-                      </SecondaryButton>
+                    <SecondaryButton
+                      icon={ColumnsIcon}
+                      onClick={toggleColumnsConfigVisibility}
+                      className={styles.columnsButton}
+                      data-testid="btn-columns-config"
+                      aria-label="columns"
+                    >
+                      <span>Columns</span>
+                    </SecondaryButton>
                   }
                 >
                   {columnCheckboxes}

@@ -5,8 +5,6 @@ import {
   EuiPopover,
   EuiResizeObserver,
   EuiTableFieldDataColumnType,
-  EuiText,
-  EuiTextColor,
   EuiToolTip,
   PropertySort,
 } from '@elastic/eui'
@@ -24,6 +22,7 @@ import React, {
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useLocation } from 'react-router-dom'
 import AutoSizer from 'react-virtualized-auto-sizer'
+import { Text, ColorText } from 'uiSrc/components/base/text'
 
 import {
   MoreactionsIcon,
@@ -379,9 +378,9 @@ const DatabasesListWrapper = (props: Props) => {
         render: function InstanceCell(name: string = '', instance: Instance) {
           if (isCreateCloudDb(instance.id)) {
             return (
-              <EuiText className={cx(styles.tooltipAnchorColumnName)}>
+              <Text className={cx(styles.tooltipAnchorColumnName)}>
                 {instance.name}
-              </EuiText>
+              </Text>
             )
           }
 
@@ -410,7 +409,7 @@ const DatabasesListWrapper = (props: Props) => {
                 className={styles.tooltipColumnName}
                 content={`${formatLongName(name)} ${getDbIndex(db)}`}
               >
-                <EuiText
+                <Text
                   className={styles.tooltipAnchorColumnName}
                   data-testid={`instance-name-${id}`}
                   onClick={(e: React.MouseEvent) =>
@@ -420,15 +419,15 @@ const DatabasesListWrapper = (props: Props) => {
                     handleCheckConnectToInstance(e, instance)
                   }
                 >
-                  <EuiTextColor
+                  <ColorText
                     className={cx(styles.tooltipColumnNameText, {
                       [styles.withDb]: db,
                     })}
                   >
                     {cellContent}
-                  </EuiTextColor>
-                  <EuiTextColor>{` ${getDbIndex(db)}`}</EuiTextColor>
-                </EuiText>
+                  </ColorText>
+                  <ColorText>{` ${getDbIndex(db)}`}</ColorText>
+                </Text>
               </EuiToolTip>
             </div>
           )
@@ -452,7 +451,7 @@ const DatabasesListWrapper = (props: Props) => {
           const text = `${name}:${port}`
           return (
             <div className="host_port" data-testid="host-port">
-              <EuiText className="copyHostPortText">{text}</EuiText>
+              <Text className="copyHostPortText">{text}</Text>
               <EuiToolTip
                 position="right"
                 content="Copy"
@@ -521,12 +520,12 @@ const DatabasesListWrapper = (props: Props) => {
                             className={styles.tooltipLogo}
                             data-testid="tooltip-redis-stack-icon"
                           />
-                          <EuiText
+                          <Text
                             color="subdued"
                             style={{ marginTop: 4, marginBottom: -4 }}
                           >
                             Includes
-                          </EuiText>
+                          </Text>
                         </>
                       ) : undefined
                     }

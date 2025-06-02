@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState, useEffect, useContext } from 'react'
-import { EuiFieldText, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiIcon, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
@@ -35,6 +35,7 @@ import {
 } from 'uiSrc/slices/app/context'
 import { FlexItem, Grid, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -235,7 +236,7 @@ const DatabaseAlias = (props: Props) => {
                   </FlexItem>
                 </Grid>
               ) : (
-                <EuiText
+                <Text
                   className={cx(styles.alias, {
                     [styles.aliasEditing]: !isCloneMode,
                   })}
@@ -255,7 +256,7 @@ const DatabaseAlias = (props: Props) => {
                       className={cx(styles.aliasEditIcon)}
                     />
                   )}
-                </EuiText>
+                </Text>
               )}
             </FlexItem>
           </Row>

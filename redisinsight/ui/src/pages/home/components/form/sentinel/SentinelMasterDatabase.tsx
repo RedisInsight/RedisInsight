@@ -1,16 +1,12 @@
 import React from 'react'
-import {
-  EuiFieldText,
-  EuiText,
-  EuiTextColor,
-} from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { FormikProps } from 'formik'
 
 import { Nullable } from 'uiSrc/utils'
 import { SECURITY_FIELD } from 'uiSrc/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import { PasswordInput } from 'uiSrc/components/base/inputs'
-
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from '../../styles.module.scss'
@@ -34,12 +30,12 @@ const SentinelMasterDatabase = (props: Props) => {
   return (
     <>
       {!!db && !isCloneMode && (
-        <EuiText color="subdued" className={styles.sentinelCollapsedField}>
+        <Text color="subdued" className={styles.sentinelCollapsedField}>
           Database Index:
           <span style={{ paddingLeft: 5 }}>
-            <EuiTextColor>{db}</EuiTextColor>
+            <ColorText>{db}</ColorText>
           </span>
-        </EuiText>
+        </Text>
       )}
       <Row gap="m" responsive className={flexGroupClassName}>
         <FlexItem grow className={flexItemClassName}>

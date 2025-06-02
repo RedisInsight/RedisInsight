@@ -1,5 +1,5 @@
-import { EuiTextColor } from '@elastic/eui'
 import React from 'react'
+import { ColorText } from 'uiSrc/components/base/text'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 
@@ -10,7 +10,7 @@ export interface Props {
 // TODO: use i18n file for texts
 const DefaultErrorContent = ({ text, onClose = () => {} }: Props) => (
   <>
-    <EuiTextColor color="ghost">{text}</EuiTextColor>
+    <ColorText color="ghost">{text}</ColorText>
     <Spacer />
     <SecondaryButton
       inverted

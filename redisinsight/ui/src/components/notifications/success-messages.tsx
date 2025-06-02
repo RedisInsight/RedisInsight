@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiText } from '@elastic/eui'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import {
   IBulkActionOverview,
@@ -14,6 +13,7 @@ import {
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 // TODO: use i18n file for texts
@@ -208,8 +208,8 @@ export default {
           {fileName ? (
             <>
               <br />
-              <EuiText color="ghost">Commands executed from file:</EuiText>
-              <EuiText color="ghost">{formatLongName(fileName, 34, 5)}</EuiText>
+              <Text color="ghost">Commands executed from file:</Text>
+              <Text color="ghost">{formatLongName(fileName, 34, 5)}</Text>
             </>
           ) : null}
         </>
@@ -217,36 +217,36 @@ export default {
       message: (
         <Row align="start" className={styles.summary}>
           <FlexItem>
-            <EuiText color="ghost" className={styles.summaryValue}>
+            <Text color="ghost" className={styles.summaryValue}>
               {numberWithSpaces(processed)}
-            </EuiText>
-            <EuiText size="xs" className={styles.summaryLabel}>
+            </Text>
+            <Text size="xs" className={styles.summaryLabel}>
               Commands Processed
-            </EuiText>
+            </Text>
           </FlexItem>
           <FlexItem>
-            <EuiText color="ghost" className={styles.summaryValue}>
+            <Text color="ghost" className={styles.summaryValue}>
               {numberWithSpaces(succeed)}
-            </EuiText>
-            <EuiText size="xs" className={styles.summaryLabel}>
+            </Text>
+            <Text size="xs" className={styles.summaryLabel}>
               Success
-            </EuiText>
+            </Text>
           </FlexItem>
           <FlexItem>
-            <EuiText color="ghost" className={styles.summaryValue}>
+            <Text color="ghost" className={styles.summaryValue}>
               {numberWithSpaces(failed)}
-            </EuiText>
-            <EuiText size="xs" className={styles.summaryLabel}>
+            </Text>
+            <Text size="xs" className={styles.summaryLabel}>
               Errors
-            </EuiText>
+            </Text>
           </FlexItem>
           <FlexItem>
-            <EuiText color="ghost" className={styles.summaryValue}>
+            <Text color="ghost" className={styles.summaryValue}>
               {millisecondsFormat(data?.duration || 0, 'H:mm:ss.SSS')}
-            </EuiText>
-            <EuiText size="xs" className={styles.summaryLabel}>
+            </Text>
+            <Text size="xs" className={styles.summaryLabel}>
               Time Taken
-            </EuiText>
+            </Text>
           </FlexItem>
         </Row>
       ),

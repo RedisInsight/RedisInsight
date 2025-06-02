@@ -1,6 +1,6 @@
 import React from 'react'
-import { EuiTextColor } from '@elastic/eui'
 import { Toast } from '@elastic/eui/src/components/toast/global_toast_list'
+import { ColorText } from 'uiSrc/components/base/text'
 import RdiDeployErrorContent from './components/rdi-deploy-error-content'
 import { EncryptionErrorContent, DefaultErrorContent } from './components'
 import CloudCapiUnAuthorizedErrorContent from './components/cloud-capi-unauthorized'
@@ -21,9 +21,9 @@ export default {
     iconType: 'alert',
     onClose,
     title: (
-      <EuiTextColor color="ghost">
+      <ColorText color="ghost">
         <b>{title}</b>
-      </EuiTextColor>
+      </ColorText>
     ),
     text: <DefaultErrorContent text={text} onClose={onClose} />,
   }),
@@ -35,9 +35,9 @@ export default {
     onClose,
     toastLifeTimeMs: TOAST_LIFE_TIME,
     title: (
-      <EuiTextColor color="ghost">
+      <ColorText color="ghost">
         <b>Unable to decrypt</b>
-      </EuiTextColor>
+      </ColorText>
     ),
     text: <EncryptionErrorContent instanceId={instanceId} onClose={onClose} />,
   }),
@@ -60,9 +60,9 @@ export default {
     iconType: 'alert',
     onClose,
     title: (
-      <EuiTextColor color="ghost">
+      <ColorText color="ghost">
         <b>{title}</b>
-      </EuiTextColor>
+      </ColorText>
     ),
     text: (
       <CloudCapiUnAuthorizedErrorContent
@@ -82,9 +82,9 @@ export default {
     iconType: 'alert',
     onClose,
     title: (
-      <EuiTextColor color="ghost">
+      <ColorText color="ghost">
         <b>{title}</b>
-      </EuiTextColor>
+      </ColorText>
     ),
     text: <RdiDeployErrorContent message={message} onClose={onClose} />,
   }),

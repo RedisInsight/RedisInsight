@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiGlobalToastList, EuiTextColor } from '@elastic/eui'
+import { EuiGlobalToastList } from '@elastic/eui'
 import { Toast } from '@elastic/eui/src/components/toast/global_toast_list'
 import cx from 'classnames'
 import {
@@ -21,6 +21,7 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
+import { ColorText } from 'uiSrc/components/base/text'
 import errorMessages from './error-messages'
 import { InfiniteMessagesIds } from './components'
 
@@ -50,7 +51,7 @@ const Notifications = () => {
     group?: string,
   ) => (
     <>
-      <EuiTextColor color="ghost">{text}</EuiTextColor>
+      <ColorText color="ghost">{text}</ColorText>
       <Spacer />
       <Row justify="end">
         <FlexItem>
@@ -74,9 +75,9 @@ const Notifications = () => {
         id,
         iconType: 'iInCircle',
         title: (
-          <EuiTextColor color="ghost">
+          <ColorText color="ghost">
             <b>{title}</b>
-          </EuiTextColor>
+          </ColorText>
         ),
         color: 'success',
         className,

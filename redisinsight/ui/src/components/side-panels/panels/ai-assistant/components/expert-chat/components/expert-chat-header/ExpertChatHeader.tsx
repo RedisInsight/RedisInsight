@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiPopover, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiPopover, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
 import { useDispatch } from 'react-redux'
@@ -22,6 +22,7 @@ import { RestartChat } from 'uiSrc/components/side-panels/panels/ai-assistant/co
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { EmptyButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { EraserIcon, LightBulbIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -65,9 +66,9 @@ const ExpertChatHeader = (props: Props) => {
           content={connectedInstanceName}
           anchorClassName={styles.dbName}
         >
-          <EuiText size="xs" className="truncateText">
+          <Text size="xs" className="truncateText">
             {connectedInstanceName}
-          </EuiText>
+          </Text>
         </EuiToolTip>
       ) : (
         <span />
@@ -109,9 +110,9 @@ const ExpertChatHeader = (props: Props) => {
             }
           >
             <>
-              <EuiText>
+              <Text>
                 Open relevant tutorials to learn more about search and query.
-              </EuiText>
+              </Text>
               <Spacer size="s" />
               <PrimaryButton
                 size="s"

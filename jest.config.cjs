@@ -26,8 +26,6 @@ module.exports = {
     '^uuid$': require.resolve('uuid'),
     msgpackr: require.resolve('msgpackr'),
     'brotli-dec-wasm': '<rootDir>/redisinsight/__mocks__/brotli-dec-wasm.js',
-    'react-resizable-panels':
-      '<rootDir>/redisinsight/__mocks__/react-resizable-panels.js',
   },
   setupFiles: [
     'construct-style-sheets-polyfill',

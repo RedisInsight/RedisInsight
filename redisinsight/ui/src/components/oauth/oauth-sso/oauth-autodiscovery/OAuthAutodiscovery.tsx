@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiText, EuiTitle } from '@elastic/eui'
+import { EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { find } from 'lodash'
@@ -23,6 +23,7 @@ import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -72,13 +73,13 @@ const OAuthAutodiscovery = (props: Props) => {
 
     return (
       <div className={styles.container} data-testid="oauth-container-import">
-        <EuiText className={styles.text} color="subdued">
+        <Text className={styles.text} color="subdued">
           Use{' '}
           <strong>
             {currentAccountName?.name} #{currentAccountId}
           </strong>{' '}
           account to auto-discover subscriptions and add your databases.
-        </EuiText>
+        </Text>
         <PrimaryButton
           onClick={handleClickDiscover}
           disabled={isDiscoverDisabled}
@@ -142,14 +143,14 @@ const OAuthAutodiscovery = (props: Props) => {
       >
         {(form: React.ReactNode) => (
           <>
-            <EuiText className={styles.text} color="subdued">
+            <Text className={styles.text} color="subdued">
               Discover subscriptions and add your databases. A new Redis Cloud
               account will be created for you if you don’t have one.
-            </EuiText>
+            </Text>
             <Spacer size="m" />
             <CreateFreeDb />
             <Spacer size="xl" />
-            <EuiText>Get started with</EuiText>
+            <Text>Get started with</Text>
             <EuiTitle className={styles.title} size="l">
               <h3>Redis Cloud account</h3>
             </EuiTitle>

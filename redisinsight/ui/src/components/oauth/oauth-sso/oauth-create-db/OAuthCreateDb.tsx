@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiText, EuiTitle } from '@elastic/eui'
+import { EuiTitle } from '@elastic/eui'
 import {
   createFreeDbJob,
   fetchPlans,
@@ -31,6 +31,7 @@ import OAuthForm from 'uiSrc/components/oauth/shared/oauth-form'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import {
   OAuthAdvantages,
   OAuthAgreement,
@@ -125,9 +126,7 @@ const OAuthCreateDb = (props: Props) => {
             >
               {(form: React.ReactNode) => (
                 <>
-                  <EuiText className={styles.subTitle}>
-                    Get started with
-                  </EuiText>
+                  <Text className={styles.subTitle}>Get started with</Text>
                   <EuiTitle className={styles.title}>
                     <h2>Free trial Cloud database</h2>
                   </EuiTitle>
@@ -144,15 +143,15 @@ const OAuthCreateDb = (props: Props) => {
             </OAuthForm>
           ) : (
             <>
-              <EuiText className={styles.subTitle}>Get your</EuiText>
+              <Text className={styles.subTitle}>Get your</Text>
               <EuiTitle className={styles.title}>
                 <h2>Free trial Cloud database</h2>
               </EuiTitle>
               <Spacer size="xl" />
-              <EuiText textAlign="center" color="subdued">
+              <Text textAlign="center" color="subdued">
                 The database will be created automatically and can be changed
                 from Redis Cloud.
-              </EuiText>
+              </Text>
               <Spacer size="xl" />
               <OAuthRecommendedSettings
                 value={isRecommended}

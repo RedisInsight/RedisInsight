@@ -1,6 +1,5 @@
 import {
   EuiButtonIcon,
-  EuiComboBox,
   EuiFieldText,
   EuiFormFieldset,
   EuiFormRow,
@@ -34,6 +33,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { AutoTag } from 'uiSrc/components/base/forms/combo-box/AutoTag'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
@@ -256,20 +256,17 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
             </Row>
             <Row className={styles.row} style={{ maxWidth: '100%' }}>
               <FlexItem grow style={{ minWidth: '100%', maxWidth: '100%' }}>
-                <EuiFormRow label="Key Prefixes" fullWidth>
-                  <EuiComboBox
-                    noSuggestions
-                    isClearable={false}
-                    placeholder="Enter Prefix"
-                    selectedOptions={prefixes}
-                    onCreateOption={(searchValue) =>
-                      setPrefixes([...prefixes, { label: searchValue }])
-                    }
-                    onChange={(selectedOptions) => setPrefixes(selectedOptions)}
-                    className={styles.combobox}
-                    data-testid="prefix-combobox"
-                  />
-                </EuiFormRow>
+                <AutoTag
+                  label="Key Prefixes"
+                  placeholder="Enter Prefix"
+                  selectedOptions={prefixes}
+                  onCreateOption={(searchValue) =>
+                    setPrefixes([...prefixes, { label: searchValue }])
+                  }
+                  onChange={(selectedOptions) => setPrefixes(selectedOptions)}
+                  className={styles.combobox}
+                  data-testid="prefix-combobox"
+                />
               </FlexItem>
             </Row>
             <Divider

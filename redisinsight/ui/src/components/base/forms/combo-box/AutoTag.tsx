@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Chip, FormField, Input } from '@redis-ui/components'
 import cn from 'classnames'
 import styled from 'styled-components'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import { CommonProps } from 'uiSrc/components/base/theme/types'
 import { Row } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 
 export type AutoTagOption<T = string | number | string[] | undefined> = {
   label: string
@@ -18,7 +20,6 @@ export type AutoTagProps = Omit<
     isClearable?: boolean
     placeholder?: string
     delimiter?: string
-    options?: AutoTagOption[]
     selectedOptions?: AutoTagOption[]
     onCreateOption?: (value: string, options?: AutoTagOption[]) => void
     onChange?: (value: AutoTagOption[]) => void
@@ -50,11 +51,34 @@ export function filterOptions(
   })
 }
 
+const ClearButton = ({
+  onClick,
+  shouldRender,
+}: {
+  onClick: () => void
+  shouldRender: boolean
+}) => {
+  if (!shouldRender) {
+    return null
+  }
+  return (
+    <IconButton
+      title="Clear"
+      style={{
+        position: 'absolute',
+        right: '4px',
+        top: 'calc(50% - 10px)',
+      }}
+      icon={CancelSlimIcon}
+      onClick={onClick}
+    />
+  )
+}
+
 export const AutoTag = ({
   className,
-  isClearable,
+  isClearable = false,
   placeholder,
-  options,
   selectedOptions,
   onCreateOption,
   delimiter = '',
@@ -64,8 +88,12 @@ export const AutoTag = ({
   full = false,
   ...rest
 }: AutoTagProps) => {
-  const [initialOptions, setInitialOptions] = useState(options || [])
-  const [selection, setSelection] = useState(selectedOptions || [])
+  const [selection, setSelection] = useState<AutoTagOption[]>([])
+  useEffect(() => {
+    if (selectedOptions) {
+      setSelection(selectedOptions)
+    }
+  }, [selectedOptions])
   const [tag, setTag] = useState('')
   const createOption = (value: string) => {
     // create a new option
@@ -74,12 +102,11 @@ export const AutoTag = ({
       value,
     }
     // add the new option to options
-    const newOptions = [...initialOptions, newOption]
     setTag('')
-    setInitialOptions(newOptions)
-    setSelection([...selection, newOption])
+    const newSelection = [...selection, newOption]
+    setSelection(newSelection)
     // add the new option to selection
-    onCreateOption?.(value, newOptions)
+    onCreateOption?.(value, newSelection)
   }
   const handleInputChange = (value: string) => {
     const tag = getTagFromValue(value, delimiter)
@@ -88,6 +115,16 @@ export const AutoTag = ({
       return
     }
     setTag(value)
+  }
+  const handleEnter: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+    // todo: replace when keys constants are in scope
+    if (e.key === 'Enter') {
+      const tag = (e.target as HTMLInputElement).value.trim()
+      if (tag === null || tag.length === 0) {
+        return
+      }
+      createOption(tag)
+    }
   }
 
   function getPlaceholder() {
@@ -132,9 +169,6 @@ export const AutoTag = ({
                   // remove option from selection
                   const newSelection = filterOptions(selection, value, label)
                   setSelection(newSelection)
-                  // remove option from options
-                  const newOptions = filterOptions(initialOptions, value, label)
-                  setInitialOptions(newOptions)
                   // call onChange
                   onChange?.(newSelection)
                 }}
@@ -146,7 +180,19 @@ export const AutoTag = ({
             autoSize
             placeholder={getPlaceholder()}
             onChange={handleInputChange}
+            onKeyUp={handleEnter}
             value={tag}
+          />
+          <ClearButton
+            onClick={() => {
+              setTag('')
+              setSelection([])
+              // call onChange
+              onChange?.([])
+            }}
+            shouldRender={
+              isClearable && (tag.length > 0 || selection.length > 0)
+            }
           />
         </Row>
       </StyledWrapper>
@@ -155,6 +201,7 @@ export const AutoTag = ({
 }
 
 const StyledWrapper = styled(Row)`
+  position: relative;
   border: 1px solid ${({ theme }) => theme.semantic.color.border.neutral600};
   border-radius: 0.4rem;
   padding: 0.15rem 0.5rem;

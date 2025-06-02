@@ -2,10 +2,11 @@ import React, { HTMLAttributes } from 'react'
 import { useTheme } from '@redis-ui/styles'
 import { Typography } from '@redis-ui/components'
 import styled, { css } from 'styled-components'
+import { CommonProps } from 'uiSrc/components/base/theme/types'
 
 export type BodyProps = React.ComponentProps<typeof Typography.Body>
 
-export type EuiColors =
+export type EuiColorNames =
   | 'default'
   | 'subdued'
   | 'danger'
@@ -13,7 +14,7 @@ export type EuiColors =
   | 'accent'
   | 'warning'
   | 'success'
-export type ColorType = BodyProps['color'] | EuiColors | (string & {})
+export type ColorType = BodyProps['color'] | EuiColorNames | (string & {})
 export interface MapProps extends HTMLAttributes<HTMLElement> {
   $color?: ColorType
   $align?: 'left' | 'center' | 'right'
@@ -27,12 +28,16 @@ export type ColorTextProps = Omit<BodyProps, 'color' | 'size' | 'component'> & {
 export type TextProps = Omit<
   React.ComponentProps<typeof Typography.Body>,
   'color' | 'size'
-> & {
-  color?: ColorType
-  className?: string
-  size?: React.ComponentProps<typeof Typography.Body>['size'] | 'm' | 's' | 'xs'
-  textAlign?: 'left' | 'center' | 'right'
-}
+> &
+  CommonProps & {
+    color?: ColorType
+    size?:
+      | React.ComponentProps<typeof Typography.Body>['size']
+      | 'm'
+      | 's'
+      | 'xs'
+    textAlign?: 'left' | 'center' | 'right'
+  }
 
 export const useColorTextStyles = ({ $color }: MapProps = {}) => {
   const theme = useTheme()
@@ -91,4 +96,14 @@ export const StyledColorText = styled(Typography.Body)<MapProps>`
 export const StyledText = styled(Typography.Body)<MapProps>`
   ${useColorTextStyles};
   ${({ $align }) => getAlignValue($align)};
+`
+export const Indicator = styled.div<
+  {
+    $color: ColorType
+  } & CommonProps
+>`
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  background-color: ${({ $color }) => $color || 'inherit'};
 `

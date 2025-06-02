@@ -1,9 +1,10 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
 import { LoadingContent } from 'uiSrc/components/base/layout'
+import { Text } from 'uiSrc/components/base/text'
 import { Maybe, formatBytes } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
@@ -29,19 +30,19 @@ const KeyRowSize = (props: Props) => {
 
   if (!size) {
     return (
-      <EuiText
+      <Text
         color="subdued"
         size="s"
         className={cx(styles.keySize)}
         data-testid={`size-${nameString}`}
       >
         -
-      </EuiText>
+      </Text>
     )
   }
   return (
     <>
-      <EuiText
+      <Text
         color="subdued"
         size="s"
         className={cx(styles.keySize, 'moveOnHoverKey', {
@@ -64,7 +65,7 @@ const KeyRowSize = (props: Props) => {
             <>{formatBytes(size, 0)}</>
           </EuiToolTip>
         </div>
-      </EuiText>
+      </Text>
     </>
   )
 }

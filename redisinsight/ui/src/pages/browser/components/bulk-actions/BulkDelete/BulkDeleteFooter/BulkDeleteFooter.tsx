@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
@@ -26,6 +26,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { RefreshIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import BulkDeleteContent from '../BulkDeleteContent'
 import { isProcessedBulkAction } from '../../utils'
 
@@ -133,7 +134,7 @@ const BulkDeleteFooter = (props: Props) => {
               </PrimaryButton>
             }
           >
-            <EuiText
+            <Text
               color="subdued"
               className={styles.containerPopover}
               data-testid="bulk-action-tooltip"
@@ -153,7 +154,7 @@ const BulkDeleteFooter = (props: Props) => {
               >
                 Delete
               </DestructiveButton>
-            </EuiText>
+            </Text>
           </EuiPopover>
         )}
         {isProcessedBulkAction(status) && (

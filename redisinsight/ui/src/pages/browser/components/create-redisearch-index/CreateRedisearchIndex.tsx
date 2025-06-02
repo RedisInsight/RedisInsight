@@ -7,7 +7,6 @@ import {
   EuiPopover,
   EuiSuperSelect,
   EuiSuperSelectOption,
-  EuiText,
 } from '@elastic/eui'
 import { EuiComboBoxOptionOption } from '@elastic/eui/src/components/combo_box/types'
 import cx from 'classnames'
@@ -34,7 +33,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
-import { Health } from 'uiSrc/components/base/text/Health'
+import { HealthText, Text } from 'uiSrc/components/base/text'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
@@ -51,13 +50,13 @@ const keyTypeOptions = KEY_TYPE_OPTIONS.map((item) => {
   return {
     value,
     inputDisplay: (
-      <Health
+      <HealthText
         color={color}
         style={{ lineHeight: 'inherit' }}
         data-test-subj={value}
       >
         {text}
-      </Health>
+      </HealthText>
     ),
   }
 })
@@ -276,10 +275,10 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
               colorVariable="separatorColor"
               className={styles.controlsDivider}
             />
-            <EuiText color="subdued">
+            <Text color="subdued">
               Identifier
               {IdentifierInfo()}
-            </EuiText>
+            </Text>
 
             <AddMultipleFields
               items={fields}

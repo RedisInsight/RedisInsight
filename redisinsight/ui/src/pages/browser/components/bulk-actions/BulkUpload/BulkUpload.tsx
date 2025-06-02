@@ -1,13 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiFilePicker,
-  EuiIcon,
-  EuiPopover,
-  EuiText,
-  EuiTextColor,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFilePicker, EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
 
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
@@ -34,6 +27,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { RefreshIcon } from 'uiSrc/components/base/icons'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -110,15 +104,15 @@ const BulkUpload = (props: Props) => {
     <div className={styles.container} data-testid="bulk-upload-container">
       {!isCompleted ? (
         <div className={styles.content}>
-          <EuiText color="subdued">
+          <Text color="subdued">
             Upload the text file with the list of Redis commands
             <EuiToolTip
               content={
                 <>
-                  <EuiText size="xs">SET Key0 Value0</EuiText>
-                  <EuiText size="xs">SET Key1 Value1</EuiText>
-                  <EuiText size="xs">...</EuiText>
-                  <EuiText size="xs">SET KeyN ValueN</EuiText>
+                  <Text size="xs">SET Key0 Value0</Text>
+                  <Text size="xs">SET Key1 Value1</Text>
+                  <Text size="xs">...</Text>
+                  <Text size="xs">SET KeyN ValueN</Text>
                 </>
               }
               data-testid="bulk-upload-tooltip-example"
@@ -128,7 +122,7 @@ const BulkUpload = (props: Props) => {
                 style={{ marginLeft: 4, marginBottom: 2 }}
               />
             </EuiToolTip>
-          </EuiText>
+          </Text>
           <Spacer size="l" />
           <EuiFilePicker
             id="bulk-upload-file-input"
@@ -141,13 +135,13 @@ const BulkUpload = (props: Props) => {
             aria-label="Select or drag and drop file"
           />
           {isInvalid && (
-            <EuiTextColor
+            <ColorText
               color="danger"
               className={styles.errorFileMsg}
               data-testid="input-file-error-msg"
             >
               File should not exceed {MAX_MB_FILE} MB
-            </EuiTextColor>
+            </ColorText>
           )}
           <UploadWarning />
           <Spacer size="l" />
@@ -201,7 +195,7 @@ const BulkUpload = (props: Props) => {
               </PrimaryButton>
             }
           >
-            <EuiText
+            <Text
               color="subdued"
               className={styles.containerPopover}
               data-testid="bulk-action-tooltip"
@@ -222,7 +216,7 @@ const BulkUpload = (props: Props) => {
               >
                 Upload
               </PrimaryButton>
-            </EuiText>
+            </Text>
           </EuiPopover>
         ) : (
           <PrimaryButton

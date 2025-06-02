@@ -28,7 +28,7 @@ import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { AdditionalRedisModule } from 'uiSrc/slices/interfaces'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
-import { Health } from 'uiSrc/components/base/text/Health'
+import { HealthText } from 'uiSrc/components/base/text/HealthText'
 import { FILTER_KEY_TYPE_OPTIONS } from './constants'
 
 import styles from './styles.module.scss'
@@ -79,14 +79,14 @@ const FilterKeyType = ({ modules }: Props) => {
       return {
         value,
         inputDisplay: (
-          <Health color={color} className={styles.dropdownDisplay}>
+          <HealthText color={color} className={styles.dropdownDisplay}>
             {text}
-          </Health>
+          </HealthText>
         ),
         dropdownDisplay: (
-          <Health color={color} className={styles.dropdownDisplay}>
+          <HealthText color={color} className={styles.dropdownDisplay}>
             {text}
-          </Health>
+          </HealthText>
         ),
         'data-test-subj': `filter-option-type-${value}`,
       }

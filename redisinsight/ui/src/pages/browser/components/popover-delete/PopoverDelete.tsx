@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiPopover, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiPopover, EuiToolTip } from '@elastic/eui'
 
 import { DeleteIcon } from 'uiSrc/components/base/icons'
 import { RedisString } from 'uiSrc/slices/interfaces'
@@ -10,6 +10,7 @@ import {
   EmptyButton,
   IconButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -105,15 +106,15 @@ const PopoverDelete = (props: Props) => {
       onClick={(e) => e.stopPropagation()}
     >
       <div className={styles.popover}>
-        <EuiText size="m">
+        <Text size="m" component="div">
           {!!header && (
             <h4>
               <b>{header}</b>
             </h4>
           )}
-          <EuiText size="s">{text}</EuiText>
+          <Text size="s">{text}</Text>
           {appendInfo}
-        </EuiText>
+        </Text>
         <div className={styles.popoverFooter}>
           <DestructiveButton
             icon={DeleteIcon}

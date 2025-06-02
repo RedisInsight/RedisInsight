@@ -1,7 +1,7 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiTextColor, EuiForm, EuiPanel } from '@elastic/eui'
+import { EuiForm, EuiPanel } from '@elastic/eui'
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addReJSONKey } from 'uiSrc/slices/browser/keys'
@@ -10,6 +10,7 @@ import { MonacoJson } from 'uiSrc/components/monaco-editor'
 import UploadFile from 'uiSrc/components/upload-file'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { ColorText } from 'uiSrc/components/base/text'
 import {
   PrimaryButton,
   SecondaryButton,
@@ -117,7 +118,7 @@ const AddKeyReJSON = (props: Props) => {
                   onClick={() => onCancel(true)}
                   className="btn-cancel btn-back"
                 >
-                  <EuiTextColor>Cancel</EuiTextColor>
+                  <ColorText>Cancel</ColorText>
                 </SecondaryButton>
               </div>
             </FlexItem>

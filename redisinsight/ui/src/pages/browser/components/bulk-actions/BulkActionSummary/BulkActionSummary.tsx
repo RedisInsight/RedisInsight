@@ -1,9 +1,8 @@
-import { EuiText } from '@elastic/eui'
 import React from 'react'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { millisecondsFormat } from 'uiSrc/utils'
 import { BulkActionsType } from 'uiSrc/constants'
-
+import { Text } from 'uiSrc/components/base/text'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
@@ -25,36 +24,30 @@ const BulkActionSummary = ({
 }: Props) => (
   <Row align="start" className={styles.summary} data-testid={testId}>
     <FlexItem>
-      <EuiText className={styles.summaryValue}>
-        {numberWithSpaces(processed)}
-      </EuiText>
-      <EuiText color="subdued" className={styles.summaryLabel}>
+      <Text className={styles.summaryValue}>{numberWithSpaces(processed)}</Text>
+      <Text color="subdued" className={styles.summaryLabel}>
         {type === BulkActionsType.Delete ? 'Keys' : 'Commands'} Processed
-      </EuiText>
+      </Text>
     </FlexItem>
     <FlexItem>
-      <EuiText className={styles.summaryValue}>
-        {numberWithSpaces(succeed)}
-      </EuiText>
-      <EuiText color="subdued" className={styles.summaryLabel}>
+      <Text className={styles.summaryValue}>{numberWithSpaces(succeed)}</Text>
+      <Text color="subdued" className={styles.summaryLabel}>
         Success
-      </EuiText>
+      </Text>
     </FlexItem>
     <FlexItem>
-      <EuiText className={styles.summaryValue}>
-        {numberWithSpaces(failed)}
-      </EuiText>
-      <EuiText color="subdued" className={styles.summaryLabel}>
+      <Text className={styles.summaryValue}>{numberWithSpaces(failed)}</Text>
+      <Text color="subdued" className={styles.summaryLabel}>
         Errors
-      </EuiText>
+      </Text>
     </FlexItem>
     <FlexItem>
-      <EuiText className={styles.summaryValue}>
+      <Text className={styles.summaryValue}>
         {millisecondsFormat(duration, 'H:mm:ss.SSS')}
-      </EuiText>
-      <EuiText color="subdued" className={styles.summaryLabel}>
+      </Text>
+      <Text color="subdued" className={styles.summaryLabel}>
         Time Taken
-      </EuiText>
+      </Text>
     </FlexItem>
   </Row>
 )

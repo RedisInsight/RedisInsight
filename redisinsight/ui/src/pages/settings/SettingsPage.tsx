@@ -5,7 +5,6 @@ import {
   EuiForm,
   EuiLoadingSpinner,
   EuiSuperSelect,
-  EuiText,
   EuiTitle,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
@@ -41,6 +40,7 @@ import {
 } from 'uiSrc/components/base/layout/page'
 import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Text } from 'uiSrc/components/base/text'
 import {
   AdvancedSettings,
   CloudSettings,
@@ -158,10 +158,10 @@ const SettingsPage = () => {
         </div>
       )}
       <CallOut className={styles.warning}>
-        <EuiText size="s" className={styles.smallText}>
+        <Text size="s" className={styles.smallText}>
           Advanced settings should only be changed if you understand their
           impact.
-        </EuiText>
+        </Text>
       </CallOut>
       <AdvancedSettings />
     </div>

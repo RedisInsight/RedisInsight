@@ -3,7 +3,6 @@ import {
   EuiInMemoryTable,
   EuiBasicTableColumn,
   PropertySort,
-  EuiText,
   EuiTitle,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -25,6 +24,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -75,7 +75,7 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
   }
 
   const SummaryText = () => (
-    <EuiText className={styles.subTitle}>
+    <Text className={styles.subTitle}>
       <b>Summary: </b>
       {countSuccessAdded ? (
         <span>
@@ -86,7 +86,7 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
       {countFailAdded ? (
         <span>Failed to add {countFailAdded} database(s).</span>
       ) : null}
-    </EuiText>
+    </Text>
   )
 
   return (

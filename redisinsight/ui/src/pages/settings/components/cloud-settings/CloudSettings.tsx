@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import {
-  EuiLink,
-  EuiText,
-  EuiTitle,
-  EuiPopover,
-} from '@elastic/eui'
+import { EuiLink, EuiTitle, EuiPopover } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { DeleteIcon } from 'uiSrc/components/base/icons'
@@ -21,6 +16,7 @@ import {
   DestructiveButton,
   PrimaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import UserApiKeysTable from './components/user-api-keys-table'
 
 import styles from './styles.module.scss'
@@ -61,7 +57,7 @@ const CloudSettings = () => {
       <Spacer size="s" />
       <Row gap="m" responsive>
         <FlexItem grow>
-          <EuiText size="s" className={styles.smallText} color="subdued">
+          <Text size="s" className={styles.smallText} color="subdued">
             The list of API user keys that are stored locally in Redis Insight.{' '}
             <br />
             API user keys grant programmatic access to Redis Cloud. <br />
@@ -75,7 +71,7 @@ const CloudSettings = () => {
               sign in to Redis Cloud
             </EuiLink>
             {' and delete them manually.'}
-          </EuiText>
+          </Text>
         </FlexItem>
         <FlexItem grow={false}>
           <EuiPopover
@@ -97,7 +93,7 @@ const CloudSettings = () => {
             }
           >
             <div className={styles.popoverDeleteContainer}>
-              <EuiText size="m">
+              <Text size="m" component="div">
                 <h4>All API user keys will be removed from Redis Insight.</h4>
                 {'To delete API keys from Redis Cloud, '}
                 <EuiLink
@@ -110,7 +106,7 @@ const CloudSettings = () => {
                   sign in to Redis Cloud
                 </EuiLink>
                 {' and delete them manually.'}
-              </EuiText>
+              </Text>
               <Spacer />
               <div className={styles.popoverFooter}>
                 <DestructiveButton

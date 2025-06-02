@@ -3,7 +3,6 @@ import {
   EuiInMemoryTable,
   EuiBasicTableColumn,
   PropertySort,
-  EuiText,
   EuiTitle,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
@@ -20,6 +19,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -82,7 +82,7 @@ const SentinelDatabasesResult = ({
   }
 
   const SummaryText = () => (
-    <EuiText className={styles.subTitle} data-testid="summary">
+    <Text className={styles.subTitle} data-testid="summary">
       <b>Summary: </b>
       {countSuccessAdded ? (
         <span>
@@ -97,7 +97,7 @@ const SentinelDatabasesResult = ({
           {' primary group(s)'}
         </span>
       ) : null}
-    </EuiText>
+    </Text>
   )
 
   return (

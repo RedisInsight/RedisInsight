@@ -6,7 +6,6 @@ import {
   EuiTableSelectionType,
   PropertySort,
   EuiPopover,
-  EuiText,
   EuiTitle,
   EuiToolTip,
 } from '@elastic/eui'
@@ -26,6 +25,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { SearchInput } from 'uiSrc/components/base/inputs'
+import { Text } from 'uiSrc/components/base/text'
 import styles from '../../../styles.module.scss'
 
 export interface Props {
@@ -142,12 +142,10 @@ const SentinelDatabases = ({
         </SecondaryButton>
       }
     >
-      <EuiText size="m">
-        <p>
-          Your changes have not been saved.&#10;&#13; Do you want to proceed to
-          the list of databases?
-        </p>
-      </EuiText>
+      <Text size="m">
+        Your changes have not been saved.&#10;&#13; Do you want to proceed to
+        the list of databases?
+      </Text>
       <br />
       <div>
         <DestructiveButton
@@ -210,13 +208,11 @@ const SentinelDatabases = ({
 
         <Row align="end" gap="s">
           <FlexItem grow>
-            <EuiText color="subdued" className={styles.subTitle}>
-              <span>
-                Redis Sentinel instance found. <br />
-                Here is a list of primary groups your Sentinel instance is
-                managing. Select the primary group(s) you want to add:
-              </span>
-            </EuiText>
+            <Text color="subdued" className={styles.subTitle} component="span">
+              Redis Sentinel instance found. <br />
+              Here is a list of primary groups your Sentinel instance is
+              managing. Select the primary group(s) you want to add:
+            </Text>
           </FlexItem>
           <FlexItem>
             <FormField className={styles.searchForm}>
@@ -245,9 +241,9 @@ const SentinelDatabases = ({
             data-testid="table"
           />
           {!masters.length && (
-            <EuiText className={styles.notFoundMsg} color="subdued">
+            <Text className={styles.notFoundMsg} color="subdued">
               {notMastersMsg}
-            </EuiText>
+            </Text>
           )}
         </div>
       </div>

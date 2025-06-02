@@ -5,7 +5,6 @@ import {
   EuiTableSelectionType,
   PropertySort,
   EuiPopover,
-  EuiText,
   EuiTitle,
   EuiToolTip,
 } from '@elastic/eui'
@@ -28,6 +27,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { Pages } from 'uiSrc/constants'
 import { SearchInput } from 'uiSrc/components/base/inputs'
+import { Text } from 'uiSrc/components/base/text'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -147,12 +147,10 @@ const RedisCloudDatabasesPage = ({
         </SecondaryButton>
       }
     >
-      <EuiText size="m">
-        <p>
-          Your changes have not been saved.&#10;&#13; Do you want to proceed to
-          the list of databases?
-        </p>
-      </EuiText>
+      <Text size="m">
+        Your changes have not been saved.&#10;&#13; Do you want to proceed to
+        the list of databases?
+      </Text>
       <br />
       <div>
         <DestructiveButton
@@ -203,14 +201,12 @@ const RedisCloudDatabasesPage = ({
 
         <Row align="end" gap="s">
           <FlexItem grow>
-            <EuiText color="subdued" className={styles.subTitle}>
-              <span>
-                These are {items.length > 1 ? 'databases ' : 'database '}
-                in your Redis Cloud. Select the
-                {items.length > 1 ? ' databases ' : ' database '} that you want
-                to add.
-              </span>
-            </EuiText>
+            <Text color="subdued" className={styles.subTitle} component="span">
+              These are {items.length > 1 ? 'databases ' : 'database '}
+              in your Redis Cloud. Select the
+              {items.length > 1 ? ' databases ' : ' database '} that you want to
+              add.
+            </Text>
           </FlexItem>
         </Row>
         <FlexItem>

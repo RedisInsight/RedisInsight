@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { isNumber } from 'lodash'
-import { EuiBasicTableColumn, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiBasicTableColumn, EuiToolTip } from '@elastic/eui'
 
 import { Pages } from 'uiSrc/constants'
 import {
@@ -27,6 +27,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { ToastDangerIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import RedisCloudSubscriptions from './RedisCloudSubscriptions/RedisCloudSubscriptions'
 
 import styles from './styles.module.scss'
@@ -182,7 +183,7 @@ const RedisCloudSubscriptionsPage = () => {
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
-              <EuiText>{cellContent}</EuiText>
+              <Text>{cellContent}</Text>
             </EuiToolTip>
           </div>
         )

@@ -6,7 +6,6 @@ import {
   EuiTableSelectionType,
   PropertySort,
   EuiPopover,
-  EuiText,
   EuiTitle,
   EuiToolTip,
 } from '@elastic/eui'
@@ -32,6 +31,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { SearchInput } from 'uiSrc/components/base/inputs'
+import { Text } from 'uiSrc/components/base/text'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -152,12 +152,10 @@ const RedisCloudSubscriptions = ({
         </SecondaryButton>
       }
     >
-      <EuiText size="m">
-        <p>
-          Your changes have not been saved.&#10;&#13; Do you want to proceed to
-          the list of databases?
-        </p>
-      </EuiText>
+      <Text size="m">
+        Your changes have not been saved.&#10;&#13; Do you want to proceed to
+        the list of databases?
+      </Text>
       <br />
       <div>
         <DestructiveButton
@@ -200,27 +198,25 @@ const RedisCloudSubscriptions = ({
   )
 
   const SummaryText = () => (
-    <EuiText className={styles.subTitle}>
-      <>
-        <b>Summary: </b>
-        {countStatusActive ? (
-          <span>
-            Successfully discovered database(s) in {countStatusActive}
-            &nbsp;
-            {countStatusActive > 1 ? 'subscriptions' : 'subscription'}
-            .&nbsp;
-          </span>
-        ) : null}
+    <Text className={styles.subTitle}>
+      <b>Summary: </b>
+      {countStatusActive ? (
+        <span>
+          Successfully discovered database(s) in {countStatusActive}
+          &nbsp;
+          {countStatusActive > 1 ? 'subscriptions' : 'subscription'}
+          .&nbsp;
+        </span>
+      ) : null}
 
-        {countStatusFailed ? (
-          <span>
-            Failed to discover database(s) in {countStatusFailed}
-            &nbsp;
-            {countStatusFailed > 1 ? 'subscriptions.' : ' subscription.'}
-          </span>
-        ) : null}
-      </>
-    </EuiText>
+      {countStatusFailed ? (
+        <span>
+          Failed to discover database(s) in {countStatusFailed}
+          &nbsp;
+          {countStatusFailed > 1 ? 'subscriptions.' : ' subscription.'}
+        </span>
+      ) : null}
+    </Text>
   )
 
   const Account = () => (
@@ -296,7 +292,7 @@ const RedisCloudSubscriptions = ({
             isSelectable
           />
           {!items.length && (
-            <EuiText className={styles.noSubscriptions}>{message}</EuiText>
+            <Text className={styles.noSubscriptions}>{message}</Text>
           )}
         </div>
       </div>

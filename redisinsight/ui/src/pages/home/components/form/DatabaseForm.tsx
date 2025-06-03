@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import { FormikProps } from 'formik'
 
 import {
-  EuiFieldNumber,
   EuiFieldText,
   EuiIcon,
   EuiToolTip,
@@ -17,13 +16,11 @@ import {
   MAX_TIMEOUT_NUMBER,
   selectOnFocus,
   validateField,
-  validatePortNumber,
-  validateTimeoutNumber,
 } from 'uiSrc/utils'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
-import { PasswordInput } from 'uiSrc/components/base/inputs'
+import { NumericInput, PasswordInput } from 'uiSrc/components/base/inputs'
 
 interface IShowFields {
   alias: boolean
@@ -146,25 +143,22 @@ const DatabaseForm = (props: Props) => {
           )}
           {isShowPort && (
             <FlexItem grow={2}>
-              <FormField label="Port*" additionalText="Should not exceed 65535.">
-                <EuiFieldNumber
+              <FormField
+                label="Port*"
+                additionalText={`Should not exceed ${MAX_PORT_NUMBER}.`}
+              >
+                <NumericInput
+                  autoValidate
                   name="port"
                   id="port"
                   data-testid="port"
-                  style={{ width: '100%' }}
                   placeholder="Enter Port"
-                  value={formik.values.port ?? ''}
-                  maxLength={6}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(
-                      e.target.name,
-                      validatePortNumber(e.target.value.trim()),
-                    )
-                  }}
-                  onFocus={selectOnFocus}
-                  type="text"
+                  onChange={(value) => formik.setFieldValue('port', value)}
+                  defaultValue={6379}
+                  value={Number(formik.values.port)}
                   min={0}
                   max={MAX_PORT_NUMBER}
+                  onFocus={selectOnFocus}
                   disabled={isFieldDisabled('port')}
                 />
               </FormField>
@@ -220,24 +214,17 @@ const DatabaseForm = (props: Props) => {
         <Row gap="m" responsive>
           <FlexItem grow>
             <FormField label="Timeout (s)">
-              <EuiFieldNumber
+              <NumericInput
+                autoValidate
                 name="timeout"
                 id="timeout"
                 data-testid="timeout"
-                style={{ width: '100%' }}
                 placeholder="Enter Timeout (in seconds)"
-                value={formik.values.timeout ?? ''}
-                maxLength={7}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(
-                    e.target.name,
-                    validateTimeoutNumber(e.target.value.trim()),
-                  )
-                }}
-                onFocus={selectOnFocus}
-                type="text"
+                onChange={(value) => formik.setFieldValue('timeout', value)}
+                value={Number(formik.values.timeout)}
                 min={1}
                 max={MAX_TIMEOUT_NUMBER}
+                onFocus={selectOnFocus}
                 disabled={isFieldDisabled('timeout')}
               />
             </FormField>

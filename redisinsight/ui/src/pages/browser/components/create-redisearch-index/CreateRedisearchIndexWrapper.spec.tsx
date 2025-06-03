@@ -1,7 +1,6 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { createIndex } from 'uiSrc/slices/browser/redisearch'
-import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import {
   render,
   screen,
@@ -41,7 +40,7 @@ describe('CreateRedisearchIndexWrapper', () => {
     render(<CreateRedisearchIndexWrapper onClosePanel={onClose} />)
 
     fireEvent.click(screen.getByTestId('create-index-close-panel'))
-    expect(onClose).toBeCalled()
+    expect(onClose).toHaveBeenCalled()
     onClose.mockRestore()
   })
 
@@ -49,7 +48,7 @@ describe('CreateRedisearchIndexWrapper', () => {
     render(<CreateRedisearchIndexWrapper onClosePanel={onClose} />)
 
     fireEvent.click(screen.getByTestId('create-index-cancel-btn'))
-    expect(onClose).toBeCalled()
+    expect(onClose).toHaveBeenCalled()
     onClose.mockRestore()
   })
 
@@ -59,7 +58,7 @@ describe('CreateRedisearchIndexWrapper', () => {
     )
 
     const comboboxInput = container.querySelector(
-      '[data-testid="prefix-combobox"] [data-test-subj="comboBoxSearchInput"]',
+      '[data-testid="prefix-combobox"] [data-test-subj="autoTagInput"]',
     ) as HTMLInputElement
 
     fireEvent.change(comboboxInput, { target: { value: 'val1' } })
@@ -67,11 +66,13 @@ describe('CreateRedisearchIndexWrapper', () => {
     fireEvent.keyDown(comboboxInput, { key: 'Enter', code: 13, charCode: 13 })
 
     const containerLabels = container.querySelector(
-      '[data-test-subj="comboBoxInput"]',
+      '[data-test-subj="autoTagWrapper"]',
     )!
     expect(containerLabels.querySelector('[title="val1"]')).toBeInTheDocument()
 
-    fireEvent.click(containerLabels.querySelector('[title^="Remove val1"]')!)
+    fireEvent.click(
+      containerLabels.querySelector('[data-test-subj="autoTagChip"] button')!,
+    )
     expect(
       containerLabels.querySelector('[title="val1"]'),
     ).not.toBeInTheDocument()
@@ -96,13 +97,13 @@ describe('CreateRedisearchIndexWrapper', () => {
     const { queryByText, container } = render(
       <CreateRedisearchIndexWrapper onClosePanel={onClose} />,
     )
+    const comboboxInput = container.querySelector(
+      '[data-testid="prefix-combobox"] [data-test-subj="autoTagInput"]',
+    ) as HTMLInputElement
 
     const containerLabels = container.querySelector(
-      '[data-test-subj="comboBoxInput"]',
+      '[data-test-subj="autoTagWrapper"]',
     )!
-    const comboboxInput = container.querySelector(
-      '[data-testid="prefix-combobox"] [data-test-subj="comboBoxSearchInput"]',
-    ) as HTMLInputElement
 
     fireEvent.change(screen.getByTestId('index-name'), {
       target: { value: 'index' },

@@ -63,6 +63,7 @@ const ClearButton = ({
   }
   return (
     <IconButton
+      data-test-subj="autoTagClearButton"
       title="Clear"
       style={{
         position: 'absolute',
@@ -157,14 +158,18 @@ export const AutoTag = ({
           justify="start"
           grow={false}
           align="center"
+          data-test-subj="autoTagWrapper"
         >
           {selection?.map(({ value, label }, idx) => {
             const key = `${label}-${value}-${idx}`
+            const text = String(label || value || '')
             return (
               <Chip
+                data-test-subj="autoTagChip"
                 size={size}
                 key={key}
-                text={String(label || value || '')}
+                text={text}
+                title={text}
                 onClose={() => {
                   // remove option from selection
                   const newSelection = filterOptions(selection, value, label)
@@ -180,8 +185,9 @@ export const AutoTag = ({
             autoSize
             placeholder={getPlaceholder()}
             onChange={handleInputChange}
-            onKeyUp={handleEnter}
+            onKeyDown={handleEnter}
             value={tag}
+            data-test-subj="autoTagInput"
           />
           <ClearButton
             onClick={() => {

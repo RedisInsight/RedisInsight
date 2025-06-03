@@ -4,13 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
 import { last } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiBadge,
-  EuiIcon,
-  EuiLink,
-  EuiPageSideBar,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon, EuiLink, EuiPageSideBar, EuiToolTip } from '@elastic/eui'
 import HighlightedFeature, {
   Props as HighlightedFeatureProps,
 } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
@@ -53,6 +47,7 @@ import {
   GithubIcon,
 } from 'uiSrc/components/base/icons'
 import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
+import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
 import CreateCloud from './components/create-cloud'
 import HelpMenu from './components/help-menu/HelpMenu'
 import NotificationMenu from './components/notifications-center'
@@ -284,7 +279,7 @@ const NavigationMenu = () => {
                   />
                 </NavigationItemWrapper>
                 {nav.isBeta && (
-                  <EuiBadge className={styles.betaLabel}>BETA</EuiBadge>
+                  <RiBadge className={styles.betaLabel} label="BETA" />
                 )}
               </div>
             </EuiToolTip>

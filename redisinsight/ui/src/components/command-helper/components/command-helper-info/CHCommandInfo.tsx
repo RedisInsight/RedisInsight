@@ -1,11 +1,13 @@
 import React from 'react'
-import { EuiBadge, EuiText, EuiTextColor } from '@elastic/eui'
+import { EuiTextColor } from '@elastic/eui'
 
 import { GroupBadge } from 'uiSrc/components'
 import { CommandGroup } from 'uiSrc/constants'
 
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { ArrowLeftIcon } from 'uiSrc/components/base/icons'
+import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
+import { Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -24,7 +26,11 @@ const CHCommandInfo = (props: Props) => {
   } = props
 
   return (
-    <div className={styles.container} data-testid="cli-helper-title">
+    <Row
+      align="center"
+      className={styles.container}
+      data-testid="cli-helper-title"
+    >
       <IconButton
         icon={ArrowLeftIcon}
         onClick={onBackClick}
@@ -40,20 +46,14 @@ const CHCommandInfo = (props: Props) => {
         {args}
       </EuiTextColor>
       {complexity && (
-        <EuiBadge
+        <RiBadge
+          label={complexity}
+          variant="light"
           className={styles.badge}
           data-testid="cli-helper-complexity-short"
-        >
-          <EuiText
-            style={{ color: 'white' }}
-            className="text-capitalize"
-            size="xs"
-          >
-            {complexity}
-          </EuiText>
-        </EuiBadge>
+        />
       )}
-    </div>
+    </Row>
   )
 }
 

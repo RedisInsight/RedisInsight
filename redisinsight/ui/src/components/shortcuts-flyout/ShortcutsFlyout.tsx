@@ -6,7 +6,11 @@ import { appInfoSelector, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
 import { KeyboardShortcut } from 'uiSrc/components'
 import { BuildType } from 'uiSrc/constants/env'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
-import { Drawer, DrawerHeader, DrawerBody } from 'uiSrc/components/base/layout/drawer'
+import {
+  Drawer,
+  DrawerHeader,
+  DrawerBody,
+} from 'uiSrc/components/base/layout/drawer'
 import { SHORTCUTS, ShortcutGroup, separator } from './schema'
 
 import styles from './styles.module.scss'

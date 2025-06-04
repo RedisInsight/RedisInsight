@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
-import { EuiFieldNumber, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiToolTip } from '@elastic/eui'
 
 import { FeatureFlags, Pages } from 'uiSrc/constants'
-import { selectOnFocus, validateNumber } from 'uiSrc/utils'
+import { selectOnFocus } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { BuildType } from 'uiSrc/constants/env'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
@@ -38,6 +38,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { EditIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
+import { NumericInput } from 'uiSrc/components/base/inputs'
 import InstancesNavigationPopover from './components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
@@ -221,20 +222,15 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                               viewChildrenMode={false}
                               controlsClassName={styles.controls}
                             >
-                              <EuiFieldNumber
+                              <NumericInput
+                                autoSize
                                 onFocus={selectOnFocus}
-                                onChange={(e) =>
-                                  setDbIndex(
-                                    validateNumber(e.target.value.trim()),
-                                  )
+                                onChange={(value) =>
+                                  setDbIndex(value ? value.toString() : '')
                                 }
-                                value={dbIndex}
+                                value={Number(dbIndex)}
                                 placeholder="Database Index"
-                                className={styles.input}
-                                fullWidth={false}
-                                compressed
-                                autoComplete="off"
-                                type="text"
+                                className={styles.dbIndexInput}
                                 data-testid="change-index-input"
                               />
                             </InlineItemEditor>

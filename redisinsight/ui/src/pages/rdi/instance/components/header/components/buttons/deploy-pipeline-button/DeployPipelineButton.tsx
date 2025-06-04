@@ -1,5 +1,4 @@
 import {
-  EuiCheckbox,
   EuiIcon,
   EuiPopover,
   EuiTitle,
@@ -27,6 +26,7 @@ import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { RiRocketIcon } from 'uiSrc/components/base/icons'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -145,7 +145,7 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
         </Text>
         <Spacer size="s" />
         <div className={styles.checkbox}>
-          <EuiCheckbox
+          <Checkbox
             id="resetPipeline"
             name="resetPipeline"
             label="Reset"

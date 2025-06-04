@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { EuiLink, EuiIcon, EuiToolTip, EuiCheckbox } from '@elastic/eui'
+import { EuiLink, EuiIcon, EuiToolTip } from '@elastic/eui'
 import { remove } from 'lodash'
 
 import { FeatureFlags, DEFAULT_DELIMITER, Pages } from 'uiSrc/constants'
@@ -32,6 +32,8 @@ import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import GithubSVG from 'uiSrc/assets/img/github.svg?react'
 import { FeatureFlagComponent, LoadingContent } from 'uiSrc/components'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
+
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import PopoverRunAnalyze from './components/popover-run-analyze'
@@ -181,7 +183,7 @@ const LiveTimeRecommendations = () => {
       </div>
 
       {isShowHiddenDisplayed && (
-        <EuiCheckbox
+        <Checkbox
           id="showHidden"
           name="showHidden"
           label="Show hidden"

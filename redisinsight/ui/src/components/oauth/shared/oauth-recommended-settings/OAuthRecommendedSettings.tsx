@@ -1,8 +1,9 @@
 import React from 'react'
-import { EuiCheckbox, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiToolTip } from '@elastic/eui'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { FeatureFlags } from 'uiSrc/constants'
 
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -16,7 +17,7 @@ const OAuthRecommendedSettings = (props: Props) => {
   return (
     <FeatureFlagComponent name={FeatureFlags.cloudSsoRecommendedSettings}>
       <div className={styles.recommendedSettings}>
-        <EuiCheckbox
+        <Checkbox
           id="ouath-recommended-settings"
           name="recommended-settings"
           label="Use a pre-selected provider and region"

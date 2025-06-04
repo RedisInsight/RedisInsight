@@ -1,7 +1,6 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiGlobalToastList, EuiTextColor } from '@elastic/eui'
-import { Toast } from '@elastic/eui/src/components/toast/global_toast_list'
+import { EuiTextColor } from '@elastic/eui'
 import cx from 'classnames'
 import {
   errorsSelector,
@@ -16,15 +15,16 @@ import { ApiEncryptionErrors } from 'uiSrc/constants/apiErrors'
 import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 import { showOAuthProgress } from 'uiSrc/slices/oauth/cloud'
 import { CustomErrorCodes } from 'uiSrc/constants'
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-
-import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { Spacer } from 'uiSrc/components/base/layout/spacer'
-import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { InfoIcon } from 'uiSrc/components/base/icons'
+import { riToast, RiToaster } from 'uiSrc/components/base/display/toast'
 import errorMessages from './error-messages'
 import { InfiniteMessagesIds } from './components'
 
 import styles from './styles.module.scss'
+
+const ONE_HOUR = 3_600_000
+const DEFAULT_ERROR_TITLE = 'Error'
 
 const Notifications = () => {
   const messagesData = useSelector(messagesSelector)
@@ -32,160 +32,135 @@ const Notifications = () => {
   const infiniteNotifications = useSelector(infiniteNotificationsSelector)
 
   const dispatch = useDispatch()
+  const toastIdsRef = useRef(new Map())
 
-  const removeToast = ({ id }: Toast) => {
+  const removeToast = (id: string) => {
+    if (toastIdsRef.current.has(id)) {
+      riToast.dismiss(toastIdsRef.current.get(id))
+      toastIdsRef.current.delete(id)
+    }
     dispatch(removeMessage(id))
   }
 
-  const onSubmitNotification = ({ id }: Toast, group?: string) => {
+  const onSubmitNotification = (id: string, group?: string) => {
     if (group === 'upgrade') {
       dispatch(setReleaseNotesViewed(true))
     }
     dispatch(removeMessage(id))
   }
 
-  const getSuccessText = (
-    text: string | JSX.Element | JSX.Element[],
-    toast: Toast,
-    group?: string,
-  ) => (
-    <>
-      <EuiTextColor color="ghost">{text}</EuiTextColor>
-      <Spacer />
-      <Row justify="end">
-        <FlexItem>
-          <SecondaryButton
-            filled
-            size="medium"
-            onClick={() => onSubmitNotification(toast, group)}
-            className={styles.toastSuccessBtn}
-            data-testid="submit-tooltip-btn"
-          >
-            Ok
-          </SecondaryButton>
-        </FlexItem>
-      </Row>
-    </>
+  const getSuccessText = (text: string | JSX.Element | JSX.Element[]) => (
+    <EuiTextColor color="success">{text}</EuiTextColor>
   )
 
-  const getSuccessToasts = (data: IMessage[]) =>
-    data.map(({ id = '', title = '', message = '', className, group }) => {
-      const toast: Toast = {
-        id,
-        iconType: 'iInCircle',
-        title: (
-          <EuiTextColor color="ghost">
-            <b>{title}</b>
-          </EuiTextColor>
-        ),
-        color: 'success',
-        className,
-      }
-      toast.text = getSuccessText(message, toast, group)
-      toast.onClose = () => removeToast(toast)
-      return toast
+  const showSuccessToasts = (data: IMessage[]) =>
+    data.forEach(({ id = '', title = '', message = '', className, group }) => {
+      riToast(
+        {
+          className,
+          message: title,
+          description: getSuccessText(message),
+          customIcon: InfoIcon,
+          actions: {
+            primary: {
+              closes: true,
+              label: 'Ok',
+              onClick: () => {
+                onSubmitNotification(id, group)
+                removeToast(id)
+              },
+            },
+          },
+        },
+        { variant: riToast.Variant.Success, autoClose: ONE_HOUR },
+      )
     })
 
-  const getErrorsToasts = (errors: IError[]) =>
-    errors.map(
+  const showErrorsToasts = (errors: IError[]) =>
+    errors.forEach(
       ({
         id = '',
         message = DEFAULT_ERROR_MESSAGE,
         instanceId = '',
         name,
-        title,
+        title = DEFAULT_ERROR_TITLE,
         additionalInfo,
       }) => {
+        let toastId: ReturnType<typeof riToast>
         if (ApiEncryptionErrors.includes(name)) {
-          return errorMessages.ENCRYPTION(
-            id,
-            () => removeToast({ id }),
-            instanceId,
-          )
-        }
-
-        if (
+          toastId = errorMessages.ENCRYPTION(() => removeToast(id), instanceId)
+        } else if (
           additionalInfo?.errorCode ===
           CustomErrorCodes.CloudCapiKeyUnauthorized
         ) {
-          return errorMessages.CLOUD_CAPI_KEY_UNAUTHORIZED(
-            { id, message, title },
+          toastId = errorMessages.CLOUD_CAPI_KEY_UNAUTHORIZED(
+            { message, title },
             additionalInfo,
-            () => removeToast({ id }),
+            () => removeToast(id),
           )
-        }
-
-        if (
+        } else if (
           additionalInfo?.errorCode ===
           CustomErrorCodes.RdiDeployPipelineFailure
         ) {
-          return errorMessages.RDI_DEPLOY_PIPELINE({ id, title, message }, () =>
-            removeToast({ id }),
+          toastId = errorMessages.RDI_DEPLOY_PIPELINE({ title, message }, () =>
+            removeToast(id),
           )
+        } else {
+          toastId = errorMessages.DEFAULT(message, () => removeToast(id), title)
         }
 
-        return errorMessages.DEFAULT(
-          id,
-          message,
-          () => removeToast({ id }),
-          title,
-        )
+        toastIdsRef.current.set(id, toastId)
       },
     )
 
-  const getInfiniteToasts = (data: InfiniteMessage[]): Toast[] =>
-    data.map((message: InfiniteMessage) => {
+  const showInfiniteToasts = (data: InfiniteMessage[]) =>
+    data.forEach((message: InfiniteMessage) => {
       const { id, Inner, className = '' } = message
 
-      return {
-        id,
-        className: cx(styles.infiniteMessage, className),
-        text: Inner,
-        color: 'success',
-        onClose: () => {
-          switch (id) {
-            case InfiniteMessagesIds.oAuthProgress:
-              dispatch(showOAuthProgress(false))
-              break
-            case InfiniteMessagesIds.databaseExists:
-              sendEventTelemetry({
-                event:
-                  TelemetryEvent.CLOUD_IMPORT_EXISTING_DATABASE_FORM_CLOSED,
-              })
-              break
-            case InfiniteMessagesIds.subscriptionExists:
-              sendEventTelemetry({
-                event:
-                  TelemetryEvent.CLOUD_CREATE_DATABASE_IN_SUBSCRIPTION_FORM_CLOSED,
-              })
-              break
-            case InfiniteMessagesIds.appUpdateAvailable:
-              sendEventTelemetry({
-                event: TelemetryEvent.UPDATE_NOTIFICATION_CLOSED,
-              })
-              break
+      riToast(
+        {
+          className: cx(styles.infiniteMessage, className),
+          description: Inner,
+          onClose: () => {
+            switch (id) {
+              case InfiniteMessagesIds.oAuthProgress:
+                dispatch(showOAuthProgress(false))
+                break
+              case InfiniteMessagesIds.databaseExists:
+                sendEventTelemetry({
+                  event:
+                    TelemetryEvent.CLOUD_IMPORT_EXISTING_DATABASE_FORM_CLOSED,
+                })
+                break
+              case InfiniteMessagesIds.subscriptionExists:
+                sendEventTelemetry({
+                  event:
+                    TelemetryEvent.CLOUD_CREATE_DATABASE_IN_SUBSCRIPTION_FORM_CLOSED,
+                })
+                break
+              case InfiniteMessagesIds.appUpdateAvailable:
+                sendEventTelemetry({
+                  event: TelemetryEvent.UPDATE_NOTIFICATION_CLOSED,
+                })
+                break
+              default:
+                break
+            }
 
-            default:
-              break
-          }
-
-          dispatch(removeInfiniteNotification(id))
+            dispatch(removeInfiniteNotification(id))
+          },
         },
-        toastLifeTimeMs: 3_600_000,
-      }
+        { variant: riToast.Variant.Success, autoClose: ONE_HOUR },
+      )
     })
 
-  return (
-    <EuiGlobalToastList
-      toasts={[
-        ...getSuccessToasts(messagesData),
-        ...getErrorsToasts(errorsData),
-        ...getInfiniteToasts(infiniteNotifications),
-      ]}
-      dismissToast={removeToast}
-      toastLifeTimeMs={6000}
-    />
-  )
+  useEffect(() => {
+    showSuccessToasts(messagesData)
+    showErrorsToasts(errorsData)
+    showInfiniteToasts(infiniteNotifications)
+  }, [messagesData, errorsData, infiniteNotifications])
+
+  return <RiToaster />
 }
 
 export default Notifications

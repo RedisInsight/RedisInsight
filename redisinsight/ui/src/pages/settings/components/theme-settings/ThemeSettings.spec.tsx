@@ -42,7 +42,7 @@ describe('ThemeSettings', () => {
     expect(render(<ThemeSettings />)).toBeTruthy()
   })
 
-  it('should render de default theme option selected when there is no previous config', async () => {
+  it('should render the default theme option selected when there is no previous config', async () => {
     render(<ThemeSettings />)
 
     const selectedTheme = THEMES.find((t) => t.value === DEFAULT_THEME)

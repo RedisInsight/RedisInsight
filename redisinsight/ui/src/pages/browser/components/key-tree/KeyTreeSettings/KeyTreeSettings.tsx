@@ -2,13 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  EuiComboBox,
-  EuiComboBoxOptionOption,
-  EuiIcon,
-  EuiPopover,
-  EuiSuperSelect,
-} from '@elastic/eui'
+import { EuiIcon, EuiPopover, EuiSuperSelect } from '@elastic/eui'
 import { isEqual } from 'lodash'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -33,6 +27,10 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { SettingsIcon } from 'uiSrc/components/base/icons'
+import {
+  AutoTag,
+  AutoTagOption,
+} from 'uiSrc/components/base/forms/combo-box/AutoTag'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -55,7 +53,7 @@ const KeyTreeSettings = ({ loading }: Props) => {
   } = useSelector(appContextDbConfig)
   const [sorting, setSorting] = useState<SortOrder>(treeViewSort)
   const [delimiters, setDelimiters] =
-    useState<EuiComboBoxOptionOption[]>(treeViewDelimiter)
+    useState<AutoTagOption[]>(treeViewDelimiter)
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
@@ -148,10 +146,9 @@ const KeyTreeSettings = ({ loading }: Props) => {
         <Col gap="s">
           <FlexItem grow className={styles.row} />
           <FlexItem grow className={styles.row}>
-            <div className={styles.label}>Delimiter</div>
-            <EuiComboBox
-              noSuggestions
-              isClearable={false}
+            <AutoTag
+              layout="horizontal"
+              label="Delimiter"
               placeholder=":"
               delimiter=" "
               selectedOptions={delimiters}

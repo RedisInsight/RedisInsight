@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react'
-import { EuiLink, EuiCheckbox } from '@elastic/eui'
+import { EuiLink } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import cx from 'classnames'
@@ -11,6 +11,7 @@ import {
 } from 'uiSrc/slices/oauth/cloud'
 
 import { enableUserAnalyticsAction } from 'uiSrc/slices/user/user-settings'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -33,7 +34,7 @@ const OAuthAgreement = (props: Props) => {
 
   return (
     <div className={cx(styles.wrapper, { [styles.small]: size === 's' })}>
-      <EuiCheckbox
+      <Checkbox
         id="ouath-agreement"
         name="agreement"
         label="By signing up, you acknowledge that you agree:"

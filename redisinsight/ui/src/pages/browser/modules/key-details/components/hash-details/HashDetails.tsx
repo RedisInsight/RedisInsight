@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux'
 import cx from 'classnames'
 
 import { useParams } from 'react-router-dom'
-import { EuiCheckbox } from '@elastic/eui'
 import { selectedKeySelector } from 'uiSrc/slices/browser/keys'
 import { FeatureFlags, KeyTypes } from 'uiSrc/constants'
 
@@ -17,6 +16,7 @@ import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instan
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import Divider from 'uiSrc/components/divider/Divider'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import AddHashFields from './add-hash-fields/AddHashFields'
 import { HashDetailsTable } from './hash-details-table'
 import { KeyDetailsSubheader } from '../key-details-subheader/KeyDetailsSubheader'
@@ -57,12 +57,23 @@ const HashDetails = (props: Props) => {
       onCloseAddItemPanel()
     }
   }
+  const handleSelectShow = (show: boolean) => {
+    setShowTtl(show)
+
+    sendEventTelemetry({
+      event: TelemetryEvent.SHOW_HASH_TTL_CLICKED,
+      eventData: {
+        databaseId: instanceId,
+        action: show ? 'show' : 'hide',
+      },
+    })
+  }
 
   const Actions = ({ width }: { width: number }) => (
     <>
       {isExpireFieldsAvailable && (
         <>
-          <EuiCheckbox
+          <Checkbox
             id="showTtl"
             name="showTtl"
             label="Show TTL"
@@ -85,19 +96,6 @@ const HashDetails = (props: Props) => {
       />
     </>
   )
-
-  const handleSelectShow = (show: boolean) => {
-    setShowTtl(show)
-
-    sendEventTelemetry({
-      event: TelemetryEvent.SHOW_HASH_TTL_CLICKED,
-      eventData: {
-        databaseId: instanceId,
-        action: show ? 'show' : 'hide',
-      },
-    })
-  }
-
   return (
     <div className="fluid flex-column relative">
       <KeyDetailsHeader {...props} key="key-details-header" />

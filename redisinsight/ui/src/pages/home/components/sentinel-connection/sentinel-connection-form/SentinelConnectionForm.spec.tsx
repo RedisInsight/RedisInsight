@@ -23,11 +23,12 @@ describe('SentinelConnectionForm', () => {
       <SentinelConnectionForm
         {...instance(mockedProps)}
         onSubmit={mockSubmit}
+        // @ts-ignore
         initialValues={mockValues}
       />,
     )
 
-    await act(() => {
+    await act(async () => {
       fireEvent.keyDown(screen.getByTestId('form'), {
         key: 'Enter',
         code: 13,
@@ -35,7 +36,7 @@ describe('SentinelConnectionForm', () => {
       })
     })
 
-    expect(mockSubmit).toBeCalled()
+    expect(mockSubmit).toHaveBeenCalled()
   })
 
   it('should render Footer', async () => {

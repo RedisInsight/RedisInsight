@@ -3,7 +3,10 @@ import { EuiTextColor } from '@elastic/eui'
 import { Link } from 'uiSrc/components/base/link/Link'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
-import { DestructiveButton } from 'uiSrc/components/base/forms/buttons'
+import {
+  DestructiveButton,
+  EmptyButton,
+} from 'uiSrc/components/base/forms/buttons'
 
 export interface Props {
   message: string
@@ -28,19 +31,25 @@ const RdiDeployErrorContent = (props: Props) => {
 
   return (
     <>
-      <EuiTextColor color="ghost">
+      <EuiTextColor color="danger">
         <Col>
           <FlexItem>Review the error log for details.</FlexItem>
           <FlexItem>
-            <DestructiveButton size="s" className="toast-danger-btn">
+            <EmptyButton
+              size="small"
+              variant="destructive"
+              className="toast-danger-btn"
+            >
               <Link
+                variant="small"
+                isExternalLink
                 href={fileUrl}
                 download="error-log.txt"
                 data-testid="donwload-log-file-btn"
               >
                 Download Error Log File
               </Link>
-            </DestructiveButton>
+            </EmptyButton>
           </FlexItem>
         </Col>
       </EuiTextColor>

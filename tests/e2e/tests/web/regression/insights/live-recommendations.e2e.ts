@@ -53,7 +53,7 @@ fixture `Live Recommendations`
         await databaseAPIRequests.addNewStandaloneDatabaseApi(ossStandaloneV6Config);
         await myRedisDatabasePage.reloadPage();
         await myRedisDatabasePage.clickOnDBByName(ossStandaloneV6Config.databaseName);
-    }).only
+    })
     .afterEach(async() => {
         await refreshFeaturesTestData();
         // Delete database
@@ -156,7 +156,7 @@ test
         await recommendationsActions.voteForRecommendation(redisVersionRecom, usefulVoteOption);
         // Verify that user can rate recommendations with one of 2 existing types at the same time
         await recommendationsActions.verifyVoteIsSelected(redisVersionRecom, usefulVoteOption);
-    }).only;
+    });
 test('Verify that user can hide recommendations and checkbox value is saved', async t => {
     const commandToGetRecommendation = 'FT.INFO';
     await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);

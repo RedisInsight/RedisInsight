@@ -35,7 +35,7 @@ test('Verify that user can add Hash Key', async t => {
     await browserPage.searchByKeyName(keyName);
     const isKeyIsDisplayedInTheList = await browserPage.isKeyIsDisplayedInTheList(keyName);
     await t.expect(isKeyIsDisplayedInTheList).ok('The Hash key is not added');
-}).only;
+});
 test('Verify that user can add Set Key', async t => {
     keyName = Common.generateWord(10);
     // Add Set key

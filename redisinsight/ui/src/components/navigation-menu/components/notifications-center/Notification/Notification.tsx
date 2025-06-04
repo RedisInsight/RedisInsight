@@ -1,4 +1,4 @@
-import { EuiBadge, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiText, EuiTitle } from '@elastic/eui'
 import { EuiTitleSize } from '@elastic/eui/src/components/title/title'
 import cx from 'classnames'
 import { format } from 'date-fns'
@@ -10,6 +10,7 @@ import { IGlobalNotification } from 'uiSrc/slices/interfaces'
 import { truncateText } from 'uiSrc/utils'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -47,13 +48,13 @@ const Notification = (props: Props) => {
         </FlexItem>
         {notification.category && (
           <FlexItem>
-            <EuiBadge
+            <RiBadge
+              variant="light"
               className={styles.category}
               style={{ backgroundColor: notification.categoryColor ?? '#666' }}
               data-testid="notification-category"
-            >
-              {truncateText(notification.category, 32)}
-            </EuiBadge>
+              label={truncateText(notification.category, 32)}
+            />
           </FlexItem>
         )}
       </Row>

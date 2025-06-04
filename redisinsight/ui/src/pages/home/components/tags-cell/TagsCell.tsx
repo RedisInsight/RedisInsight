@@ -1,8 +1,9 @@
 /* eslint-disable arrow-body-style */
-import { EuiBadge, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import React from 'react'
 
 import { Tag } from 'uiSrc/slices/interfaces/tag'
+import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
 import styles from './styles.module.scss'
 
 type TagsCellProps = {
@@ -19,9 +20,10 @@ export const TagsCell = ({ tags }: TagsCellProps) => {
 
   return (
     <div className={styles.tagsCell}>
-      <EuiBadge className={`${styles.tagBadge} ${styles.tagBadgeOverflow}`}>
-        {firstTagText}
-      </EuiBadge>
+      <RiBadge
+        className={`${styles.tagBadge} ${styles.tagBadgeOverflow}`}
+        label={firstTagText}
+      />
       {remainingTagsCount > 0 && (
         <EuiToolTip
           position="top"
@@ -35,9 +37,10 @@ export const TagsCell = ({ tags }: TagsCellProps) => {
             </div>
           }
         >
-          <EuiBadge className={styles.tagBadge} title={undefined}>
-            +{remainingTagsCount}
-          </EuiBadge>
+          <RiBadge
+            className={styles.tagBadge}
+            label={`+${remainingTagsCount}`}
+          />
         </EuiToolTip>
       )}
     </div>

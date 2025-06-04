@@ -44,16 +44,10 @@
   user-select: none;
 
   :global {
-    .euiBadge__text, .euiBadge__content {
+    [class*='RedisUI'] {
       cursor: pointer !important;
     }
-
-    .euiBadge__text {
-      display: flex;
-      align-items: center;
-    }
-
-    .euiIcon {
+    svg {
       margin-right: 4px;
     }
   }

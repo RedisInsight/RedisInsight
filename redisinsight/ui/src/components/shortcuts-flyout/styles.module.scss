@@ -18,17 +18,14 @@
     }
   }
 
-  :global(.euiBadge) {
+  :global([class*='Badge-RedisUI']) {
     height: 22px;
     min-width: 34px !important;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: 0 !important;
 
-    :global(.euiText) {
-      font-weight: 500;
-    }
+    font-weight: 500;
 
     :global(.badgeArrowUp), :global(.badgeArrowDown), :global(.shiftSymbol) {
       position: relative;

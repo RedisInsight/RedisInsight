@@ -12,6 +12,7 @@ import {
   DrawerBody,
 } from 'uiSrc/components/base/layout/drawer'
 import { Title } from 'uiSrc/components/base/text/Title'
+
 import { SHORTCUTS, ShortcutGroup, separator } from './schema'
 
 import styles from './styles.module.scss'

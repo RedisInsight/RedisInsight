@@ -42,12 +42,32 @@ export const Grid = ({ children, className, ...rest }: GridProps) => {
 export const FlexGroup = ({
   children,
   className,
+  grow,
+  justify,
+  gap,
+  wrap,
+  full,
+  align,
   direction,
+  responsive,
+  centered,
   ...rest
 }: FlexProps) => {
   const classes = classNames('RI-flex-group', className)
   return (
-    <StyledFlex {...rest} className={classes} $direction={direction}>
+    <StyledFlex
+      {...rest}
+      className={classes}
+      $grow={grow}
+      $justify={justify}
+      $gap={gap}
+      $wrap={wrap}
+      $full={full}
+      $align={align}
+      $direction={direction}
+      $responsive={responsive}
+      $centered={centered}
+    >
       {children}
     </StyledFlex>
   )

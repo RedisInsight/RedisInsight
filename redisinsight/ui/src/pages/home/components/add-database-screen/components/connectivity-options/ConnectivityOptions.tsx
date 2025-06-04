@@ -1,6 +1,6 @@
 import React from 'react'
-import { EuiBadge } from '@elastic/eui'
 import cx from 'classnames'
+
 import { AddDbType } from 'uiSrc/pages/home/constants'
 import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
@@ -15,6 +15,8 @@ import { Col, FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
+
 import { CONNECTIVITY_OPTIONS } from '../../constants'
 
 import styles from './styles.module.scss'
@@ -67,9 +69,7 @@ const ConnectivityOptions = (props: Props) => {
                     }}
                     data-testid="create-free-db-btn"
                   >
-                    <EuiBadge color="subdued" className={styles.freeBadge}>
-                      Free
-                    </EuiBadge>
+                    <RiBadge className={styles.freeBadge} label="Free" />
                     <Col align="center">
                       <RocketIcon
                         className={cx(styles.btnIcon, styles.rocket)}

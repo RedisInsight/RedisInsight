@@ -1,18 +1,16 @@
-import {defineConfig, devices } from '@playwright/test'
-import {Status} from 'allure-js-commons'
-import * as os from 'node:os'
+import { defineConfig, devices } from '@playwright/test'
+import { Status } from 'allure-js-commons'
+import dotenv from 'dotenv'
+import * as os from 'os'
+
+dotenv.config({
+    path: process.env.envPath ?? '.localChromium.env',
+    override: true,
+})
 
 export type TestOptions = {
-    apiUrl: string;
+    apiUrl: string
 }
-
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -26,7 +24,7 @@ export default defineConfig<TestOptions>({
          * Maximum time expect() should wait for the condition to be met.
          * For example in `await expect(locator).toHaveText();`
          */
-        timeout: 5000
+        timeout: 5000,
     },
     /* Run tests in files in parallel */
     fullyParallel: true,
@@ -37,41 +35,46 @@ export default defineConfig<TestOptions>({
     /* Opt out of parallel tests on CI. */
     workers: process.env.CI ? 1 : undefined,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-    reporter: [['line'], ['html'], [
-        'allure-playwright',
-        {
-            resultsDir: 'allure-results',
-            detail: true,
-            suiteTitle: true,
-            links: {
-                issue: {
-                    nameTemplate: 'Issue #%s',
-                    urlTemplate: 'https://issues.example.com/%s',
+    reporter: [
+        ['line'],
+        ['html'],
+        [
+            'allure-playwright',
+            {
+                resultsDir: 'allure-results',
+                detail: true,
+                suiteTitle: true,
+                links: {
+                    issue: {
+                        nameTemplate: 'Issue #%s',
+                        urlTemplate: 'https://issues.example.com/%s',
+                    },
+                    tms: {
+                        nameTemplate: 'TMS #%s',
+                        urlTemplate: 'https://tms.example.com/%s',
+                    },
+                    jira: {
+                        urlTemplate: (v: any) =>
+                            `https://jira.example.com/browse/${v}`,
+                    },
                 },
-                tms: {
-                    nameTemplate: 'TMS #%s',
-                    urlTemplate: 'https://tms.example.com/%s',
-                },
-                jira: {
-                    urlTemplate: (v: any) => `https://jira.example.com/browse/${v}`,
+                categories: [
+                    {
+                        name: 'foo',
+                        messageRegex: 'bar',
+                        traceRegex: 'baz',
+                        matchedStatuses: [Status.FAILED, Status.BROKEN],
+                    },
+                ],
+                environmentInfo: {
+                    os_platform: os.platform(),
+                    os_release: os.release(),
+                    os_version: os.version(),
+                    node_version: process.version,
                 },
             },
-            categories: [
-                {
-                    name: 'foo',
-                    messageRegex: 'bar',
-                    traceRegex: 'baz',
-                    matchedStatuses: [Status.FAILED, Status.BROKEN],
-                },
-            ],
-            environmentInfo: {
-                os_platform: os.platform(),
-                os_release: os.release(),
-                os_version: os.version(),
-                node_version: process.version,
-            },
-        },
-    ]],
+        ],
+    ],
 
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
@@ -83,7 +86,7 @@ export default defineConfig<TestOptions>({
         testIdAttribute: 'data-testid',
         video: {
             mode: 'on',
-            size: {width: 1920, height: 1080}
+            size: { width: 1920, height: 1080 },
         },
     },
 
@@ -94,60 +97,32 @@ export default defineConfig<TestOptions>({
             testMatch: ['**.web.spec.ts'],
             use: {
                 ...devices['Desktop Chrome'],
-                baseURL: process.env.COMMON_URL || 'https://localhost:5540',
-                apiUrl: process.env.API_URL || 'https://localhost:5540/api',
+                baseURL: process.env.COMMON_URL,
+                apiUrl: process.env.API_URL,
                 headless: false,
                 deviceScaleFactor: undefined,
                 viewport: null,
-                launchOptions:{
-                    args: ['--start-maximized',
+                launchOptions: {
+                    args: [
+                        '--start-maximized',
                         '--disable-component-extensions-with-background-pages',
                         '--disable-dev-shm-usage',
                         '--disable-blink-features=AutomationControlled',
-                        '--ignore-certificate-errors'
-                    ]}
+                        '--ignore-certificate-errors',
+                    ],
+                },
             },
         },
         {
             name: 'localElectron',
             testMatch: ['**.electron.spec.ts'],
             use: {
-                baseURL: '/home/tsvetan-tsvetkov/Downloads/Redis-Insight-linux-x86_64.AppImage',
-                apiUrl: 'https://localhost:5530/api',
+                baseURL:
+                    process.env.COMMON_URL,
+                apiUrl: process.env.API_URL,
                 headless: false,
-
             },
         },
-
-        // {
-        //   name: 'firefox',
-        //   use: { ...devices['Desktop Firefox'] },
-        // },
-        //
-        // {
-        //   name: 'webkit',
-        //   use: { ...devices['Desktop Safari'] },
-        // },
-
-        /* Test against mobile viewports. */
-        // {
-        //   name: 'Mobile Chrome',
-        //   use: { ...devices['Pixel 5'] },
-        // },
-        // {
-        //   name: 'Mobile Safari',
-        //   use: { ...devices['iPhone 12'] },
-        // },
-
-        /* Test against branded browsers. */
-        // {
-        //   name: 'Microsoft Edge',
-        //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-        // },
-        // {
-        //   name: 'Google Chrome',
-        //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-        // },
     ],
 
     /* Run your local dev server before starting the tests */

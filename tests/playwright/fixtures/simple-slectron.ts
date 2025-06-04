@@ -1,14 +1,12 @@
+/* eslint-disable no-empty-pattern */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
 import { test as base, ElectronApplication, Page } from '@playwright/test'
 import { _electron as electron } from 'playwright'
 import log from 'node-color-log'
-import * as dotenv from 'dotenv'
-import path from 'node:path'
 import { ossStandaloneConfig } from '../helpers/conf'
 
-dotenv.config({ path: path.resolve(__dirname, '..', '.desktop.env') })
 // Define shared state for worker scope
 type WorkerSharedState = {
     apiUrl: string
@@ -88,11 +86,12 @@ export const test = base.extend<
     { workerState: WorkerSharedState }
 >({
     workerState: [
-        async (_, use, testInfo) => {
+        async ({}, use, testInfo) => {
             log.info(
                 `🚀 Setting up worker state for worker ${testInfo.workerIndex}`,
             )
             const workerState: WorkerSharedState = {
+                // @ts-expect-error
                 apiUrl: testInfo.project.use.apiUrl,
                 dbConfig: ossStandaloneConfig,
                 baseUrl: testInfo.project.use.baseURL || '',

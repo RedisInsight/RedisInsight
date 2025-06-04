@@ -1,12 +1,13 @@
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiFieldNumber, EuiIcon, EuiTitle } from '@elastic/eui'
+import { EuiIcon, EuiTitle } from '@elastic/eui'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Text } from 'uiSrc/components/base/text'
+import { NumericInput } from 'uiSrc/components/base/inputs'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -54,12 +55,6 @@ const SettingItem = (props: Props) => {
     setHovering(false)
   }
 
-  const onChange = ({
-    currentTarget: { value },
-  }: ChangeEvent<HTMLInputElement>) => {
-    isEditing && setValue(validation(value))
-  }
-
   const appendEditing = () =>
     !isEditing ? <EuiIcon type="pencil" color="subdued" /> : ''
 
@@ -94,19 +89,20 @@ const SettingItem = (props: Props) => {
               onDecline={handleDeclineChanges}
               declineOnUnmount={false}
             >
-              <EuiFieldNumber
-                onChange={onChange}
-                value={value}
+              <NumericInput
+                autoValidate
+                onChange={(value) =>
+                  isEditing &&
+                  setValue(validation(value ? value.toString() : ''))
+                }
+                value={Number(value)}
                 placeholder={placeholder}
                 aria-label={testid?.replaceAll?.('-', ' ')}
+                append={appendEditing()}
                 className={cx(styles.input, {
                   [styles.inputEditing]: isEditing,
+                  [styles.inputHover]: isHovering,
                 })}
-                append={appendEditing()}
-                fullWidth={false}
-                compressed
-                autoComplete="off"
-                type="text"
                 readOnly={!isEditing}
                 data-testid={`${testid}-input`}
               />

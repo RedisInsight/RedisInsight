@@ -13,6 +13,7 @@ import { CancelIcon } from 'uiSrc/components/base/icons'
 
 type RiToastProps = React.ComponentProps<typeof Toast>
 export const RiToast = (props: RiToastProps) => <Toast {...props} />
+
 const StyledMessage = styled.div<{ theme: Theme }>`
   margin-bottom: ${({ theme }) => theme.core.space.space100};
 `
@@ -71,7 +72,7 @@ export const riToast = (
     delay: 100,
     closeOnClick: false,
   }
-  return toast(toastContent, toastOptions)
+  return toast(<RiToast {...toastContent} />, toastOptions)
 }
 riToast.Variant = toast.Variant
 riToast.Position = toast.Position

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import cx from 'classnames'
-import { EuiBadge, EuiIcon } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -25,6 +25,12 @@ import { FeatureFlags } from 'uiSrc/constants'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { HideFor, ShowFor } from 'uiSrc/components/base/utils/ShowHide'
+import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
+import {
+  CliIcon,
+  DocumentationIcon,
+  ProfilerIcon,
+} from 'uiSrc/components/base/icons'
 import styles from '../../styles.module.scss'
 
 const BottomGroupMinimized = () => {
@@ -92,28 +98,30 @@ const BottomGroupMinimized = () => {
           onClick={handleExpandCli}
           data-testid="expand-cli"
         >
-          <EuiBadge
+          <RiBadge
+            icon={CliIcon}
+            withIcon
+            label="CLI"
+            variant="light"
             className={cx(styles.componentBadge, {
               [styles.active]: isShowCli || cliClientUuid,
             })}
-          >
-            <EuiIcon type="console" size="m" />
-            <span>CLI</span>
-          </EuiBadge>
+          />
         </FlexItem>
+
         <FlexItem
           className={styles.componentBadgeItem}
           onClick={handleExpandHelper}
           data-testid="expand-command-helper"
         >
-          <EuiBadge
+          <RiBadge
+            withIcon
+            icon={DocumentationIcon}
             className={cx(styles.componentBadge, {
               [styles.active]: isShowHelper || isMinimizedHelper,
             })}
-          >
-            <EuiIcon type="documents" size="m" />
-            <span>Command Helper</span>
-          </EuiBadge>
+            label="Command Helper"
+          />
         </FlexItem>
         <FeatureFlagComponent name={FeatureFlags.envDependent}>
           <FlexItem
@@ -121,14 +129,14 @@ const BottomGroupMinimized = () => {
             onClick={handleExpandMonitor}
             data-testid="expand-monitor"
           >
-            <EuiBadge
+            <RiBadge
+              withIcon
+              icon={ProfilerIcon}
               className={cx(styles.componentBadge, {
                 [styles.active]: isShowMonitor || isMinimizedMonitor,
               })}
-            >
-              <EuiIcon type="inspect" size="m" />
-              <span>Profiler</span>
-            </EuiBadge>
+              label="Profiler"
+            />
           </FlexItem>
         </FeatureFlagComponent>
       </Row>

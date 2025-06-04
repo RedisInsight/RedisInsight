@@ -81,6 +81,12 @@ const flexGroupStyles = {
   wrap: css`
     flex-wrap: wrap;
   `,
+  grow: css`
+    flex-grow: 1;
+  `,
+  noGrow: css`
+    flex-grow: 0;
+  `,
   centered: css`
     justify-content: center;
     align-items: center;
@@ -171,26 +177,49 @@ export type FlexProps = PropsWithChildren &
     centered?: boolean
     responsive?: boolean
     wrap?: boolean
+    grow?: boolean
     full?: boolean
   }
 
-export const StyledFlex = styled.div<
-  Omit<FlexProps, 'direction'> & { $direction?: (typeof dirValues)[number] }
->`
+type StyledFlexProps = Omit<
+  FlexProps,
+  | 'grow'
+  | 'full'
+  | 'gap'
+  | 'align'
+  | 'direction'
+  | 'justify'
+  | 'centered'
+  | 'responsive'
+  | 'wrap'
+> & {
+  $grow?: boolean
+  $gap?: GapSizeType
+  $align?: FlexProps['align']
+  $direction?: FlexProps['direction']
+  $justify?: FlexProps['justify']
+  $centered?: boolean
+  $responsive?: boolean
+  $wrap?: boolean
+  $full?: boolean
+}
+export const StyledFlex = styled.div<StyledFlexProps>`
   display: flex;
   align-items: stretch;
-  flex-grow: 1;
-  ${({ gap = 'none' }) => (gap ? flexGroupStyles.gapSizes[gap] : '')}
-  ${({ align = 'stretch' }) => (align ? flexGroupStyles.align[align] : '')}
+  ${({ $grow = true }) =>
+    $grow ? flexGroupStyles.grow : flexGroupStyles.noGrow}
+  ${({ $gap = 'none' }) => ($gap ? flexGroupStyles.gapSizes[$gap] : '')}
+  ${({ $align = 'stretch' }) => ($align ? flexGroupStyles.align[$align] : '')}
   ${({ $direction = 'row' }) =>
     $direction ? flexGroupStyles.direction[$direction] : ''}
-  ${({ justify = 'start' }) =>
-    justify ? flexGroupStyles.justify[justify] : ''}
-  ${({ centered = false }) => (centered ? flexGroupStyles.centered : '')}
-  ${({ responsive = false }) => (responsive ? flexGroupStyles.responsive : '')}
-  ${({ wrap = false }) => (wrap ? flexGroupStyles.wrap : '')}
-  ${({ full = false, $direction = 'row' }) =>
-    full
+  ${({ $justify = 'start' }) =>
+    $justify ? flexGroupStyles.justify[$justify] : ''}
+  ${({ $centered = false }) => ($centered ? flexGroupStyles.centered : '')}
+  ${({ $responsive = false }) =>
+    $responsive ? flexGroupStyles.responsive : ''}
+  ${({ $wrap = false }) => ($wrap ? flexGroupStyles.wrap : '')}
+  ${({ $full = false, $direction = 'row' }) =>
+    $full
       ? $direction === 'row' || $direction === 'rowReverse'
         ? 'width: 100%' // if it is row make it full width
         : 'height: 100%;' // else, make it full height

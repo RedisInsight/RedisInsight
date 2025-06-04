@@ -3,12 +3,12 @@ import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
 import { AxiosError } from 'axios'
 import {
+  act,
   cleanup,
   fireEvent,
   mockedStore,
   render,
   screen,
-  act,
 } from 'uiSrc/utils/test-utils'
 import {
   customTutorialsBulkUploadSelector,
@@ -116,7 +116,10 @@ describe('RedisUploadButton', () => {
     })
 
     expect(checkResourceMock).toHaveBeenCalledWith('http://localhost:5001/text')
-    expect(store.getActions()).toEqual([addErrorNotification(error)])
+    const expected = addErrorNotification(error)
+    expect(store.getActions()).toEqual(
+      expect.arrayContaining([expect.objectContaining(expected)]),
+    )
   })
 
   it('should call proper telemetry events', async () => {

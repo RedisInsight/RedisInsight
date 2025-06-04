@@ -89,7 +89,7 @@ $sideBarWidth: 60px;
     transition: transform 250ms ease-in-out;
     pointer-events: none;
 
-    :global(.euiBadge__content) {
+    :global([class*='RedisUI']) {
       min-height: 12px !important;
     }
   }

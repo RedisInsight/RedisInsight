@@ -7,8 +7,7 @@ import {
 } from '@redis-ui/components'
 import { EuiTextColor } from '@elastic/eui'
 import styled from 'styled-components'
-import { Theme } from '@redis-ui/styles'
-import { CommonProps } from 'uiSrc/components/base/theme/types'
+import { CommonProps, Theme } from 'uiSrc/components/base/theme/types'
 import { CancelIcon } from 'uiSrc/components/base/icons'
 
 type RiToastProps = React.ComponentProps<typeof Toast>

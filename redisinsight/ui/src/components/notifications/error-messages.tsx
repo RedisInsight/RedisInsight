@@ -22,7 +22,7 @@ export default {
           },
         },
       },
-      { variant: riToast.Variant.Danger, autoClose: false },
+      { variant: riToast.Variant.Danger },
     ),
   ENCRYPTION: (onClose = () => {}, instanceId = '') =>
     riToast(
@@ -78,6 +78,6 @@ export default {
           <RdiDeployErrorContent message={message} onClose={onClose} />
         ),
       },
-      { variant: riToast.Variant.Danger, autoClose: 30000 },
+      { variant: riToast.Variant.Danger },
     ),
 }

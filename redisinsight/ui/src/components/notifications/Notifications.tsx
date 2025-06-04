@@ -72,7 +72,7 @@ const Notifications = () => {
             },
           },
         },
-        { variant: riToast.Variant.Success, autoClose: ONE_HOUR },
+        { variant: riToast.Variant.Success },
       )
     })
 
@@ -150,7 +150,7 @@ const Notifications = () => {
             dispatch(removeInfiniteNotification(id))
           },
         },
-        { variant: riToast.Variant.Success, autoClose: ONE_HOUR },
+        { variant: riToast.Variant.Notice, autoClose: ONE_HOUR },
       )
     })
 

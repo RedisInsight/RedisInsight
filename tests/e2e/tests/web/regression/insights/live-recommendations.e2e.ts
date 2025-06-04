@@ -44,8 +44,7 @@ const setPasswordRecom = RecommendationIds.setPassword;
 fixture `Live Recommendations`
     .meta({ type: 'regression', rte: rte.standalone })
     .page(commonUrl)
-    .beforeEach(async(t) => {
-        await t.debug()
+    .beforeEach(async() => {
         await databaseHelper.acceptLicenseTerms();
         await refreshFeaturesTestData();
         await modifyFeaturesConfigJson(featuresConfig);

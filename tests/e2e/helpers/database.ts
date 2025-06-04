@@ -208,7 +208,6 @@ export class DatabaseHelper {
         );
         // Reload Page to see the new added database through api
         await myRedisDatabasePage.reloadPage();
-
         // Connect to DB
         await myRedisDatabasePage.clickOnDBByName(
             databaseParameters.databaseName!

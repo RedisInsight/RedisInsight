@@ -107,7 +107,7 @@ Runs the end-to-end tests (all projects):
 Runs the tests only on Desktop Chrome.
 
 ```shell
-  yarn test:chromium
+  yarn test:chromium:docker
 ```
 
 To run Electron tests:
@@ -120,7 +120,7 @@ To run Electron tests:
 Runs the tests in framework debug mode.
 
 ```
-yarn playwright test --project=localChromium  --debug
+yarn playwright test --project=DockerBuild  --debug
 ```
 
 Runs the tests in a specific file:

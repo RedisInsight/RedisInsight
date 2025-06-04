@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import * as os from 'os'
 
 dotenv.config({
-    path: process.env.envPath ?? '.localChromium.env',
+    path: process.env.envPath ?? 'env/.local-web.env',
     override: true,
 })
 

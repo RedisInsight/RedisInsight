@@ -75,6 +75,6 @@ describe('InputFieldSentinel', () => {
     fireEvent.change(screen.getByTestId(inputNumberTestId), {
       target: { value: 'val13' },
     })
-    expect(screen.getByTestId(inputNumberTestId)).toHaveValue('13')
+    expect(screen.getByTestId(inputNumberTestId)).toHaveValue('0')
   })
 })

@@ -6,7 +6,6 @@ import { omit } from 'lodash'
 import React, { useState } from 'react'
 import cx from 'classnames'
 import { useDebouncedEffect } from 'uiSrc/services'
-import { validateNumber } from 'uiSrc/utils'
 import { NumericInput, PasswordInput } from 'uiSrc/components/base/inputs'
 
 import styles from './styles.module.scss'
@@ -77,8 +76,9 @@ const InputFieldSentinel = (props: Props) => {
       {inputType === SentinelInputFieldType.Number && (
         <NumericInput
           {...clearProp}
-          value={value}
-          onChange={(value) => handleChange(validateNumber(value))}
+          autoValidate
+          value={Number(value)}
+          onChange={(value) => handleChange(value ? value.toString() : '')}
           data-testid="sentinel-input-number"
         />
       )}

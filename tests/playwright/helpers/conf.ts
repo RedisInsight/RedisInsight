@@ -19,8 +19,8 @@ export const fileDownloadPath = joinPath(os.homedir(), 'Downloads')
 const uniqueId = faker.string.alphanumeric({ length: 10 })
 
 export const ossStandaloneConfig = {
-    host: process.env.OSS_STANDALONE_HOST,
-    port: process.env.OSS_STANDALONE_PORT,
+    host: process.env.OSS_STANDALONE_HOST!,
+    port: process.env.OSS_STANDALONE_PORT!,
     databaseName: `${process.env.OSS_STANDALONE_DATABASE_NAME || 'test_standalone'}-${uniqueId}`,
     databaseUsername: process.env.OSS_STANDALONE_USERNAME,
     databasePassword: process.env.OSS_STANDALONE_PASSWORD,

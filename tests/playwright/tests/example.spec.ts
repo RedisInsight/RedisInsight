@@ -1,40 +1,41 @@
-import { test, expect } from '../fixtures/simple-slectron'
+/* eslint-disable no-empty-pattern */
 import { Common } from '../helpers/common'
 import { BrowserPage } from '../pageObjects/browser-page'
 import { DatabaseHelper } from '../helpers/database'
 import { APIKeyRequests } from '../helpers/api/api-keys'
 import { DatabaseAPIRequests } from '../helpers/api/api-databases'
+import { test, expect } from '../fixtures/test'
+import { ossStandaloneConfig } from '../helpers/conf'
 
 let keyName: string
 let browserPage: BrowserPage
 let databaseHelper: DatabaseHelper
 
-test.beforeEach(async ({ electronPage, workerState }) => {
+test.beforeEach(async ({ page }, testInfo) => {
     // await electronPage.getByText('Add Redis').click()
-    browserPage = new BrowserPage(electronPage)
-    databaseHelper = new DatabaseHelper(electronPage, workerState.apiUrl)
+    browserPage = new BrowserPage(page)
+    databaseHelper = new DatabaseHelper(page, testInfo.project.use.apiUrl)
     await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(
-        workerState.dbConfig,
-        electronPage,
-        workerState.apiUrl,
+        ossStandaloneConfig,
+        page,
+        testInfo.project.use.apiUrl,
     )
     keyName = Common.generateAlphanumeric(5)
 })
 
-test.afterEach(async ({ workerState }) => {
-    const apiKeyClient = new APIKeyRequests(workerState.apiUrl)
-    const dbApi = new DatabaseAPIRequests(workerState.apiUrl)
+test.afterEach(async ({}, testInfo) => {
+    const apiKeyClient = new APIKeyRequests(testInfo.project.use.apiUrl)
+    const dbApi = new DatabaseAPIRequests(testInfo.project.use.apiUrl)
 
     await apiKeyClient.deleteKeyByNameApi(
         keyName,
-        workerState.dbConfig.databaseName,
+        ossStandaloneConfig.databaseName,
         await browserPage.getWindowId(),
     )
     await dbApi.deleteStandaloneDatabaseApi(
-        workerState.dbConfig,
+        ossStandaloneConfig,
         await browserPage.getWindowId(),
     )
-    await workerState.electronApp.close()
 })
 
 test('basic test', async () => {

@@ -72,6 +72,7 @@ jobs:
       backend: ${{ steps.filter.outputs.backend }}
       desktop: ${{ steps.filter.outputs.desktop }}
       e2e: ${{ steps.filter.outputs.e2e }}
+      e2ePlaywright: ${{ steps.filter.outputs.e2ePlaywright }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3.0.2
@@ -87,6 +88,8 @@ jobs:
               - 'redisinsight/desktop/**'
             e2e:
               - 'tests/e2e/**'
+            e2ePlaywright:
+              - 'tests/playwright/**'
 
   frontend-tests:
     needs: changes
@@ -155,6 +158,7 @@ jobs:
       for_e2e_tests: true
 
   e2e-docker-tests:
+    if: inputs.group_tests == 'never'
     needs: build-docker
     uses: ./.github/workflows/tests-e2e-docker.yml
     secrets: inherit

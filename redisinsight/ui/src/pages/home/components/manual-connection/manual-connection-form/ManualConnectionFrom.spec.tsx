@@ -304,7 +304,7 @@ describe('InstanceForm', () => {
 
     await act(async () => {
       fireEvent.change(screen.getByTestId('db'), {
-        target: { value: '12' },
+        target: { value: 12 },
       })
     })
 
@@ -1064,7 +1064,7 @@ describe('InstanceForm', () => {
       })
 
       fireEvent.change(screen.getByTestId('sshPort'), {
-        target: { value: '1771' },
+        target: { value: 1771 },
       })
 
       fireEvent.change(screen.getByTestId('sshUsername'), {
@@ -1119,7 +1119,7 @@ describe('InstanceForm', () => {
       })
 
       fireEvent.change(screen.getByTestId('sshPort'), {
-        target: { value: '1771' },
+        target: { value: 1771 },
       })
 
       fireEvent.change(screen.getByTestId('sshUsername'), {

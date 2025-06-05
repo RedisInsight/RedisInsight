@@ -101,7 +101,6 @@ const SSHDetails = (props: Props) => {
                   name="sshPort"
                   id="sshPort"
                   data-testid="sshPort"
-                  style={{ width: '100%' }}
                   placeholder="Enter SSH Port"
                   value={Number(formik.values.sshPort)}
                   onChange={(value) => formik.setFieldValue('sshPort', value)}

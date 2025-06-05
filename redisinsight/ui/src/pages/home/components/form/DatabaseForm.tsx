@@ -2,11 +2,7 @@ import React, { ChangeEvent } from 'react'
 import { useSelector } from 'react-redux'
 import { FormikProps } from 'formik'
 
-import {
-  EuiFieldText,
-  EuiIcon,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFieldText, EuiIcon, EuiToolTip } from '@elastic/eui'
 import { BuildType } from 'uiSrc/constants/env'
 import { SECURITY_FIELD } from 'uiSrc/constants'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
@@ -154,7 +150,6 @@ const DatabaseForm = (props: Props) => {
                   data-testid="port"
                   placeholder="Enter Port"
                   onChange={(value) => formik.setFieldValue('port', value)}
-                  defaultValue={6379}
                   value={Number(formik.values.port)}
                   min={0}
                   max={MAX_PORT_NUMBER}

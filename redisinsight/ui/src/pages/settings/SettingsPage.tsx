@@ -5,7 +5,6 @@ import {
   EuiForm,
   EuiLoadingSpinner,
   EuiSuperSelect,
-  EuiTitle,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -40,6 +39,7 @@ import {
 } from 'uiSrc/components/base/layout/page'
 import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import {
   AdvancedSettings,
@@ -95,9 +95,7 @@ const SettingsPage = () => {
   const Appearance = () => (
     <>
       <EuiForm component="form">
-        <EuiTitle size="xs">
-          <h4>Color Theme</h4>
-        </EuiTitle>
+        <Title size="XS">Color Theme</Title>
         <Spacer size="m" />
         <FormField label="Specifies the color theme to be used in Redis Insight:">
           <EuiSuperSelect
@@ -171,9 +169,9 @@ const SettingsPage = () => {
     <Page className={styles.container}>
       <PageBody component="div">
         <PageHeader>
-          <EuiTitle size="l">
-            <h1 className={styles.title}>Settings</h1>
-          </EuiTitle>
+          <Title size="XXL" className={styles.title}>
+            Settings
+          </Title>
         </PageHeader>
 
         <PageContentBody style={{ maxWidth: 792 }}>

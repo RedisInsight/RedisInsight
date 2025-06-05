@@ -1,5 +1,10 @@
 import React, { useState } from 'react'
-import { EuiIcon, EuiModal, EuiModalBody, EuiTitle, keys } from '@elastic/eui'
+import {
+  EuiIcon,
+  EuiModal,
+  EuiModalBody,
+  keys,
+} from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -15,6 +20,7 @@ import {
 } from 'uiSrc/slices/app/context'
 import UploadModal from 'uiSrc/pages/rdi/pipeline-management/components/upload-modal/UploadModal'
 import UploadIcon from 'uiSrc/assets/img/rdi/upload_from_server.svg?react'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 
 import { FileChangeType } from 'uiSrc/slices/interfaces'
@@ -101,9 +107,9 @@ const SourcePipelineDialog = () => {
     >
       <EuiModalBody>
         <div className={styles.content}>
-          <EuiTitle size="s">
-            <h3 className={styles.title}>Start with your pipeline</h3>
-          </EuiTitle>
+          <Title size="L" className={styles.title}>
+            Start with your pipeline
+          </Title>
           <div className={styles.actions}>
             <div
               role="button"

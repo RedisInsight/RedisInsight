@@ -6,7 +6,6 @@ import {
   EuiTableSelectionType,
   PropertySort,
   EuiPopover,
-  EuiTitle,
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -30,6 +29,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { SearchInput } from 'uiSrc/components/base/inputs'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from '../styles.module.scss'
@@ -251,9 +251,9 @@ const RedisCloudSubscriptions = ({
   return (
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
-        <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>Redis Cloud Subscriptions</h1>
-        </EuiTitle>
+        <Title size="XXL" className={styles.title} data-testid="title">
+          Redis Cloud Subscriptions
+        </Title>
 
         <Row align="end" gap="s">
           <FlexItem grow>

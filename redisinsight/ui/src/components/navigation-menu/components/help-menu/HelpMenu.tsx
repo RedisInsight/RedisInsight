@@ -2,7 +2,6 @@ import {
   EuiIcon,
   EuiLink,
   EuiPopover,
-  EuiTitle,
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -28,6 +27,7 @@ import { FeatureFlags } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { SupportIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
@@ -113,9 +113,9 @@ const HelpMenu = () => {
       }
     >
       <div className={styles.popover} data-testid="help-center">
-        <EuiTitle size="xs" className={styles.helpMenuTitle}>
-          <span>Help Center</span>
-        </EuiTitle>
+        <Title size="XS" className={styles.helpMenuTitle}>
+          Help Center
+        </Title>
         <Spacer size="l" />
         <Row
           className={styles.helpMenuItems}

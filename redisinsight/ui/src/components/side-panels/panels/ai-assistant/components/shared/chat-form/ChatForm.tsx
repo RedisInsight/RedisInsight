@@ -3,7 +3,6 @@ import {
   EuiForm,
   EuiPopover,
   EuiTextArea,
-  EuiTitle,
   EuiToolTip,
   keys,
 } from '@elastic/eui'
@@ -14,6 +13,7 @@ import { isModifiedEvent } from 'uiSrc/services'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { SendIcon } from 'uiSrc/components/base/icons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
@@ -103,9 +103,7 @@ const ChatForm = (props: Props) => {
               <div>
                 {validation.title && (
                   <>
-                    <EuiTitle size="xxs">
-                      <span>{validation.title}</span>
-                    </EuiTitle>
+                    <Title size="XS">{validation.title}</Title>
                     <Spacer size="s" />
                   </>
                 )}

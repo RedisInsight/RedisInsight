@@ -2,7 +2,6 @@ import {
   EuiFieldText,
   EuiForm,
   EuiIcon,
-  EuiTitle,
   EuiToolTip,
   EuiToolTipProps,
   ToolTipPositions,
@@ -33,6 +32,7 @@ import {
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { PasswordInput } from 'uiSrc/components/base/inputs'
+import { Title } from 'uiSrc/components/base/text/Title'
 import ValidationTooltip from './components/ValidationTooltip'
 
 import styles from './styles.module.scss'
@@ -88,9 +88,9 @@ const ConnectionForm = (props: Props) => {
   useEffect(() => {
     setInitialFormValues(getInitialValues(editInstance))
     setModalHeader(
-      <EuiTitle size="s">
-        <h4>{editInstance ? 'Edit endpoint' : 'Add RDI endpoint'}</h4>
-      </EuiTitle>,
+      <Title size="M">
+        {editInstance ? 'Edit endpoint' : 'Add RDI endpoint'}
+      </Title>,
     )
   }, [editInstance])
 
@@ -177,10 +177,7 @@ const ConnectionForm = (props: Props) => {
             data-testid="connection-form"
           >
             <div className={cx('container relative')}>
-              <FormField
-                label="RDI Alias*"
-                className={styles.withoutPadding}
-              >
+              <FormField label="RDI Alias*" className={styles.withoutPadding}>
                 <Field name="name">
                   {({ field }: { field: FieldInputProps<string> }) => (
                     <EuiFieldText

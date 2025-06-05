@@ -1,4 +1,4 @@
-import { EuiPopover, EuiTitle, EuiToolTip } from '@elastic/eui'
+import { EuiPopover, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { monaco } from 'react-monaco-editor'
@@ -29,6 +29,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { PlayIcon, CheckBoldIcon, CopyIcon } from 'uiSrc/components/base/icons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import { RunConfirmationPopover } from './components'
@@ -159,13 +160,14 @@ const CodeButtonBlock = (props: Props) => {
       <Row>
         <FlexItem grow>
           {!!label && (
-            <EuiTitle
-              size="xxxs"
+            // todo: replace with Redis-Ui text when replacing <EuiText
+            <Title
+              size="XS"
               className={styles.label}
               data-testid="code-button-block-label"
             >
               <span>{truncateText(label, 86)}</span>
-            </EuiTitle>
+            </Title>
           )}
         </FlexItem>
         <FlexItem className={styles.actions}>

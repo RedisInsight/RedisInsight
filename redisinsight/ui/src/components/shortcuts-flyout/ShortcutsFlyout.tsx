@@ -1,7 +1,7 @@
 import React from 'react'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiBasicTableColumn, EuiInMemoryTable, EuiTitle } from '@elastic/eui'
+import { EuiBasicTableColumn, EuiInMemoryTable } from '@elastic/eui'
 import { appInfoSelector, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
 import { KeyboardShortcut } from 'uiSrc/components'
 import { BuildType } from 'uiSrc/constants/env'
@@ -11,6 +11,8 @@ import {
   DrawerHeader,
   DrawerBody,
 } from 'uiSrc/components/base/layout/drawer'
+import { Title } from 'uiSrc/components/base/text/Title'
+
 import { SHORTCUTS, ShortcutGroup, separator } from './schema'
 
 import styles from './styles.module.scss'
@@ -38,9 +40,9 @@ const ShortcutsFlyout = () => {
 
   const ShortcutsTable = ({ name, items }: ShortcutGroup) => (
     <div key={name}>
-      <EuiTitle size="xxs" data-test-subj={`shortcuts-section-${name}`}>
-        <h6>{name}</h6>
-      </EuiTitle>
+      <Title size="XS" data-test-subj={`shortcuts-section-${name}`}>
+        {name}
+      </Title>
       <Spacer size="m" />
       <EuiInMemoryTable
         className={cx('inMemoryTableDefault', styles.table)}

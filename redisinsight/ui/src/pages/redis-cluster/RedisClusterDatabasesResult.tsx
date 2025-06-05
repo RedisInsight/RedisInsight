@@ -3,7 +3,6 @@ import {
   EuiInMemoryTable,
   EuiBasicTableColumn,
   PropertySort,
-  EuiTitle,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
@@ -24,6 +23,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
@@ -92,15 +92,13 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
   return (
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
-        <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>
-            Redis Enterprise
-            {countSuccessAdded + countFailAdded > 1
-              ? ' Databases '
-              : ' Database '}
-            Added
-          </h1>
-        </EuiTitle>
+        <Title size="XXL" className={styles.title} data-testid="title">
+          Redis Enterprise
+          {countSuccessAdded + countFailAdded > 1
+            ? ' Databases '
+            : ' Database '}
+          Added
+        </Title>
         <Row align="end" gap="s">
           <FlexItem grow>
             <MessageBar opened={!!countSuccessAdded || !!countFailAdded}>

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
-import { EuiTitle } from '@elastic/eui'
 import { Pages } from 'uiSrc/constants'
 import {
   cloudSelector,
@@ -13,6 +12,7 @@ import { resetErrors } from 'uiSrc/slices/app/notifications'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
+import { Title } from 'uiSrc/components/base/text/Title'
 import CloudConnectionForm from './cloud-connection-form'
 
 export interface Props {
@@ -33,12 +33,7 @@ const CloudConnectionFormWrapper = ({ onClose }: Props) => {
   const { setModalHeader } = useModalHeader()
 
   useEffect(() => {
-    setModalHeader(
-      <EuiTitle size="s">
-        <h4>Discover Cloud databases</h4>
-      </EuiTitle>,
-      true,
-    )
+    setModalHeader(<Title size="M">Discover Cloud databases</Title>, true)
 
     return () => {
       setModalHeader(null)

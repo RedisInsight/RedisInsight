@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash'
 import React, { ChangeEvent, useState } from 'react'
-import { EuiFieldText, EuiForm, EuiTitle, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiToolTip } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { validateEmail, validateField } from 'uiSrc/utils'
 
@@ -11,6 +11,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
 
@@ -84,9 +85,9 @@ const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
 
   return (
     <div className={styles.container} data-testid="oauth-container-sso-form">
-      <EuiTitle className={styles.title} size="xs">
-        <h4>Single Sign-On</h4>
-      </EuiTitle>
+      <Title className={styles.title} size="S">
+        Single Sign-On
+      </Title>
       <EuiForm component="form" onSubmit={formik.handleSubmit}>
         <Row>
           <FlexItem>

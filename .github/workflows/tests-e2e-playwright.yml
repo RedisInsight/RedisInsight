@@ -59,7 +59,7 @@ jobs:
           TEST_BIG_DB_DUMP=$TEST_BIG_DB_DUMP \
           docker compose -p e2e-rte \
           -f tests/e2e/rte.docker-compose.yml \
-          up --abort-on-container-exit --force-recreate
+          up --detach --force-recreate
 
       - name: Set up RI docker image
         run: |
@@ -68,7 +68,7 @@ jobs:
           RI_SERVER_TLS_KEY="$RI_SERVER_TLS_KEY" \
           docker compose -p e2e-ri-docker \
           -f tests/e2e/docker.web.docker-compose.yml \
-          up --abort-on-container-exit --force-recreate
+          up --detach --force-recreate
 
       - name: Run Playwright tests
         timeout-minutes: 80

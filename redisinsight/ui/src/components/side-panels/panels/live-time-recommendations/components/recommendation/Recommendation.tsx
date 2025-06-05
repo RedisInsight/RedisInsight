@@ -1,23 +1,16 @@
 import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import {
-  EuiLink,
-  EuiPanel,
-  EuiAccordion,
-  EuiToolTip,
-  EuiIcon,
-} from '@elastic/eui'
+import { EuiIcon, EuiLink, EuiPanel, EuiToolTip } from '@elastic/eui'
 import { isUndefined } from 'lodash'
-import cx from 'classnames'
 
-import { Nullable, Maybe, findTutorialPath } from 'uiSrc/utils'
+import { findTutorialPath, Maybe, Nullable } from 'uiSrc/utils'
 import { FeatureFlags, Pages, Theme } from 'uiSrc/constants'
 import {
-  RecommendationVoting,
-  RecommendationCopyComponent,
-  RecommendationBody,
   FeatureFlagComponent,
+  RecommendationBody,
+  RecommendationCopyComponent,
+  RecommendationVoting,
 } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -28,17 +21,17 @@ import {
 } from 'uiSrc/slices/recommendations/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import {
-  IRecommendationsStatic,
   IRecommendationParams,
+  IRecommendationsStatic,
 } from 'uiSrc/slices/interfaces/recommendations'
 
 import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
 import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import {
-  SnoozeIcon,
-  StarsIcon,
   HideIcon,
   ShowIcon,
+  SnoozeIcon,
+  StarsIcon,
 } from 'uiSrc/components/base/icons'
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
@@ -48,6 +41,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiAccordion } from 'uiSrc/components/base/display/accordion/RiAccordion'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -196,13 +190,9 @@ const Recommendation = ({
     </Text>
   )
 
-  const renderButtonContent = (
-    redisStack: Maybe<boolean>,
-    title: string,
-    id: string,
-  ) => (
-    <Row className={styles.fullWidth} align="center" justify="between">
-      <Row className={styles.fullWidth} align="center">
+  const renderButtonContent = (redisStack: Maybe<boolean>, id: string) => (
+    <Row className={styles.fullWidth}>
+      <Row className={styles.fullWidth} align="center" gap="l">
         <FlexItem>
           {redisStack && (
             <EuiLink
@@ -228,9 +218,6 @@ const Recommendation = ({
               </EuiToolTip>
             </EuiLink>
           )}
-        </FlexItem>
-        <FlexItem grow className="truncateText">
-          {title}
         </FlexItem>
         <FlexItem>
           <EuiToolTip
@@ -279,29 +266,22 @@ const Recommendation = ({
   }
 
   return (
-    <div
-      className={cx(styles.recommendationAccordion, { [styles.read]: isRead })}
-      data-testid={`${name}-recommendation`}
-    >
-      <EuiAccordion
+    <div data-testid={`${name}-recommendation`}>
+      <RiAccordion
+        collapsible
         id={name}
-        initialIsOpen={!isRead}
-        arrowDisplay="right"
-        buttonContent={renderButtonContent(
-          redisStack,
-          recommendationTitle,
-          name,
-        )}
-        buttonClassName={styles.accordionBtn}
-        buttonProps={{ 'data-test-subj': `${name}-button` }}
-        className={styles.accordion}
+        defaultOpen={!isRead}
+        onAction={() => {}}
+        actionButtonText={renderButtonContent(redisStack, name)}
+        label={recommendationTitle}
         data-testid={`${name}-accordion`}
         aria-label={`${name}-accordion`}
-      >
-        <EuiPanel className={styles.accordionContent} color="subdued">
-          {recommendationContent()}
-        </EuiPanel>
-      </EuiAccordion>
+        content={
+          <EuiPanel className={styles.accordionContent} color="subdued">
+            {recommendationContent()}
+          </EuiPanel>
+        }
+      />
     </div>
   )
 }

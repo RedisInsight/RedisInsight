@@ -5,13 +5,12 @@
   "license": "MIT",
   "devDependencies": {
     "@faker-js/faker": "^9.6.0",
-    "@playwright/test": "^1.51.0",
+    "@playwright/test": "^1.52.0",
     "@types/node": "^22.15.29",
     "allure-commandline": "^2.33.0",
     "allure-js-commons": "^3.2.0",
     "allure-playwright": "^3.2.0",
-    "cross-env": "^7.0.3",
-    "playwright": "^1.52.0"
+    "cross-env": "^7.0.3"
   },
   "scripts": {
     "removeReportDirs": "rm -rf allure-results playwright-report test-results",

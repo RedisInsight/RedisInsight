@@ -40,9 +40,9 @@ jobs:
         with:
           dir-path: './tests/playwright'
 
-      # - name: Install Playwright Browsers
-      #   working-directory: ./tests/playwright
-      #   run: yarn playwright install --with-deps
+      - name: Install Playwright Browsers
+        working-directory: ./tests/playwright
+        run: yarn playwright install --with-deps
 
       - name: Download Docker Artifacts
         uses: actions/download-artifact@v4

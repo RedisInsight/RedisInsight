@@ -1,9 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  EuiContextMenuPanel,
-  EuiContextMenuItem,
-  EuiPopover,
-} from '@elastic/eui'
 import cx from 'classnames'
 import { isNil } from 'lodash'
 import { ChevronLeftIcon, ChevronRightIcon } from 'uiSrc/components/base/icons'
@@ -12,6 +7,7 @@ import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementArea
 
 import { Nullable } from 'uiSrc/utils'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Menu, MenuContent, MenuDropdownArrow, MenuItem, MenuTrigger } from 'uiSrc/components/base/layout/menu'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -60,44 +56,28 @@ const Pagination = ({
     }
   }
 
-  const pages = items.map((item, index) => (
-    <EuiContextMenuItem
-      className={cx(styles.pagesItem, {
-        [styles.pagesItemActive]: index === activePage,
-      })}
-      key={item.id}
-      onClick={() => handleOpenPage(index)}
-    >
-      <span>{item.label}</span>
-    </EuiContextMenuItem>
-  ))
-
   const PagesControl = () => (
-    <EuiPopover
-      id="enablementAreaPagesMenu"
-      button={
+    <Menu open={isPopoverOpen} data-testid="enablement-area__toggle-pagination-menu">
+      <MenuTrigger>
         <button
-          data-testid="enablement-area__pagination-popover-btn"
-          className={styles.popoverButton}
+          data-testid="enablement-area__toggle-pagination-menu-btn"
           type="button"
           onClick={togglePopover}
         >
           {`${activePage + 1} of ${items.length}`}
         </button>
-      }
-      isOpen={isPopoverOpen}
-      closePopover={closePopover}
-      panelClassName={styles.popover}
-      panelPaddingSize="none"
-    >
-      <EuiContextMenuPanel
-        data-testid="enablement-area__pagination-popover"
-        style={{ minWidth: !compressed ? '280px' : 'none' }}
-        className={styles.panel}
-        size="s"
-        items={pages}
-      />
-    </EuiPopover>
+      </MenuTrigger>
+      <MenuContent placement="top">
+        {items.map((item, index) => (
+          <MenuItem
+            key={item.id}
+            onClick={() => handleOpenPage(index)}
+            text={item.label}
+          />
+        ))}
+        <MenuDropdownArrow />
+      </MenuContent>
+    </Menu>
   )
 
   const size = compressed ? 'small' : 'medium'

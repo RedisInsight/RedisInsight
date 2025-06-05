@@ -83,3 +83,17 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+
+      - name: Clean up redis test environments
+        if: always()
+        run: |
+          docker compose -p e2e-rte \
+          -f tests/e2e/rte.docker-compose.yml \
+          down --volumes --remove-orphans
+
+      - name: Clean up RI docker image
+        if: always()
+        run: |
+          docker compose -p e2e-ri-docker \
+          -f tests/e2e/docker.web.docker-compose.yml \
+          down --volumes --remove-orphans

@@ -304,7 +304,7 @@ describe('InstanceForm', () => {
 
     await act(async () => {
       fireEvent.change(screen.getByTestId('db'), {
-        target: { value: 12 },
+        target: { value: '12' },
       })
     })
 
@@ -317,7 +317,7 @@ describe('InstanceForm', () => {
     expect(handleTestConnection).toHaveBeenCalledWith(
       expect.objectContaining({
         showDb: true,
-        db: '12',
+        db: 12,
       }),
     )
     await act(async () => {
@@ -327,7 +327,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
         showDb: true,
-        db: '12',
+        db: 12,
       }),
     )
   })
@@ -1083,7 +1083,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
         sshHost: 'localhost',
-        sshPort: '1771',
+        sshPort: 1771,
         sshUsername: 'username',
         sshPassword: '123',
       }),
@@ -1142,7 +1142,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
         sshHost: 'localhost',
-        sshPort: '1771',
+        sshPort: 1771,
         sshUsername: 'username',
         sshPrivateKey: '123444',
         sshPassphrase: '123444',

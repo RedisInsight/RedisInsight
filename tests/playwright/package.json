@@ -10,22 +10,19 @@
     "allure-commandline": "^2.33.0",
     "allure-js-commons": "^3.2.0",
     "allure-playwright": "^3.2.0",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "playwright": "^1.52.0"
   },
   "scripts": {
     "removeReportDirs": "rm -rf allure-results playwright-report test-results",
     "allTests": "playwright test",
     "generateReports": "allure generate --clean",
-
     "test:chromium:docker": "cross-env envPath=env/.docker.env yarn playwright test --project=localChromium",
     "test:chromium:docker:debug": "yarn test:chromium:docker --debug",
-
     "test:chromium:local-web": "cross-env envPath=env/.local-web.env yarn playwright test --project=localChromium",
     "test:chromium:local-web:debug": "yarn test:chromium:local-web --debug",
-
     "test:electron": "cross-env envPath=env/.desktop.env yarn playwright test --project=localElectron",
     "test:electron:debug": "yarn test:electron --debug",
-
     "clean:results": "rm -rf allure-results",
     "prep:history": "if [ -d allure-report/history ]; then cp -R allure-report/history allure-results; fi",
     "test:allureHistoryReport": "yarn run prep:history && yarn allTests && yarn allure generate --clean -o allure-report allure-results",

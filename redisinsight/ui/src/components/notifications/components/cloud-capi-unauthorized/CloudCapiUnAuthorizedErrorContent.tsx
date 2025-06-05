@@ -48,7 +48,8 @@ const CloudCapiUnAuthorizedErrorContent = ({
 
   return (
     <>
-      <ColorText color="ghost">{text}</ColorText>
+
+      <ColorText color="danger">{text}</ColorText>
       <Spacer />
       <Row justify="end">
         <FlexItem>

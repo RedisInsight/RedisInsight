@@ -10,11 +10,13 @@ import {
   Maybe,
   Nullable,
 } from 'uiSrc/utils'
+import { NotificationsDto } from 'apiSrc/modules/notification/dto'
 import {
-  NotificationsDto,
-  NotificationDto,
-} from 'apiSrc/modules/notification/dto'
-import { IError, InfiniteMessage, StateAppNotifications } from '../interfaces'
+  IError,
+  IGlobalNotification,
+  InfiniteMessage,
+  StateAppNotifications,
+} from '../interfaces'
 
 import { AppDispatch, RootState } from '../store'
 
@@ -35,6 +37,12 @@ export const initialState: StateAppNotifications = {
 
 export interface IAddInstanceErrorPayload extends AxiosError {
   instanceId?: string
+  response?: AxiosError['response'] & {
+    data: {
+      title?: string
+      additionalInfo?: Record<string, any>
+    }
+  }
 }
 // A slice for recipes
 const notificationsSlice = createSlice({
@@ -125,7 +133,7 @@ const notificationsSlice = createSlice({
     },
     setLastReceivedNotification: (
       state,
-      { payload }: { payload: Nullable<NotificationDto> },
+      { payload }: { payload: Nullable<IGlobalNotification> },
     ) => {
       state.notificationCenter.lastReceivedNotification = payload
     },

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiAccordion, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiToolTip } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
@@ -13,7 +13,8 @@ import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-cust
 import { EAItemActions } from 'uiSrc/constants'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { OnboardingTour } from 'uiSrc/components'
-import { Text } from 'uiSrc/components/base/text'
+import { RiAccordion } from 'uiSrc/components/base/display/accordion/RiAccordion'
+import { Col } from 'uiSrc/components/base/layout/flex'
 import DeleteTutorialButton from '../DeleteTutorialButton'
 
 import './styles.scss'
@@ -22,19 +23,15 @@ export interface Props {
   id: string
   label: string
   actions?: string[]
-  isShowActions?: boolean
-  isShowFolder?: boolean
   onCreate?: () => void
   onDelete?: (id: string) => void
   children: React.ReactNode
   withBorder?: boolean
   initialIsOpen?: boolean
   forceState?: 'open' | 'closed'
-  arrowDisplay?: 'left' | 'right' | 'none'
   onToggle?: (isOpen: boolean) => void
-  triggerStyle?: any
-  buttonClassName?: string
   isPageOpened?: boolean
+  isShowActions?: boolean
 }
 
 const Group = (props: Props) => {
@@ -46,14 +43,10 @@ const Group = (props: Props) => {
     id,
     forceState,
     withBorder = false,
-    arrowDisplay = 'right',
-    isShowFolder = true,
     initialIsOpen = false,
     onToggle,
     onCreate,
     onDelete,
-    triggerStyle,
-    buttonClassName,
     isPageOpened,
   } = props
   const { deleting: deletingCustomTutorials } = useSelector(
@@ -120,39 +113,27 @@ const Group = (props: Props) => {
     </>
   )
 
-  const buttonContent = (
-    <div className="group-header-wrapper">
-      <Text className="group-header" size="m">
-        {isShowFolder && (
-          <EuiIcon type={isGroupOpen ? 'folderOpen' : 'folderClosed'} />
-        )}
-        {label}
-      </Text>
-      {isShowActions && actionsContent}
-    </div>
-  )
-
-  const buttonProps: any = {
-    'data-testid': `accordion-button-${id}`,
-    style: triggerStyle,
-    className: buttonClassName,
-  }
-
   return (
-    <EuiAccordion
+    <RiAccordion
+      collapsible
       id={id}
       data-testid={`accordion-${id}`}
-      buttonContent={buttonContent}
-      buttonProps={buttonProps}
-      forceState={forceState}
-      arrowDisplay={arrowDisplay}
-      onToggle={handleOpen}
-      initialIsOpen={initialIsOpen}
-      style={{ whiteSpace: 'nowrap', width: 'auto' }}
-      className={[withBorder ? 'withBorder' : ''].join(' ')}
-    >
-      {children}
-    </EuiAccordion>
+      content={
+        <Col gap="l">
+          {isShowActions && actionsContent}
+          {children}
+        </Col>
+      }
+      defaultOpen={initialIsOpen}
+      open={forceState === 'open' || isGroupOpen}
+      label={label}
+      onOpenChange={handleOpen}
+      style={{
+        whiteSpace: 'nowrap',
+        width: 'auto',
+      }}
+      className={cx({ withBorder })}
+    />
   )
 }
 

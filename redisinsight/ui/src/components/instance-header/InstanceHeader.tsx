@@ -224,6 +224,8 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                             >
                               <NumericInput
                                 autoSize
+                                autoValidate
+                                min={0}
                                 onFocus={selectOnFocus}
                                 onChange={(value) =>
                                   setDbIndex(value ? value.toString() : '')

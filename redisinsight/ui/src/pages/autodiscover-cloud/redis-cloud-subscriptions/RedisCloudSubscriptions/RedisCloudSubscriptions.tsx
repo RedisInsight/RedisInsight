@@ -10,7 +10,6 @@ import {
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
-import { FormField } from '@redis-ui/components'
 import {
   InstanceRedisCloud,
   RedisCloudAccount,
@@ -32,6 +31,7 @@ import {
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Text } from 'uiSrc/components/base/text'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from '../styles.module.scss'
 
 export interface Props {

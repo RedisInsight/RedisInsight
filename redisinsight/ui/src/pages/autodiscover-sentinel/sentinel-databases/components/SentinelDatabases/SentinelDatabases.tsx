@@ -11,7 +11,6 @@ import {
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
-import { FormField } from '@redis-ui/components'
 import { sentinelSelector } from 'uiSrc/slices/instances/sentinel'
 import { ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
 import validationErrors from 'uiSrc/constants/validationErrors'
@@ -26,6 +25,7 @@ import {
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Text } from 'uiSrc/components/base/text'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from '../../../styles.module.scss'
 
 export interface Props {

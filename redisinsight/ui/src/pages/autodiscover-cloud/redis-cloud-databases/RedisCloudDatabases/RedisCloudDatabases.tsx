@@ -11,7 +11,6 @@ import {
 import { map, pick } from 'lodash'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { FormField } from '@redis-ui/components'
 
 import { cloudSelector } from 'uiSrc/slices/instances/cloud'
 import { InstanceRedisCloud } from 'uiSrc/slices/interfaces'
@@ -28,6 +27,7 @@ import {
 import { Pages } from 'uiSrc/constants'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Text } from 'uiSrc/components/base/text'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from '../styles.module.scss'
 
 export interface Props {

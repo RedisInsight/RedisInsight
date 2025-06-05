@@ -6,7 +6,6 @@ import {
   EuiTitle,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
-import { FormField } from '@redis-ui/components'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 
 import { sentinelSelector } from 'uiSrc/slices/instances/sentinel'
@@ -20,6 +19,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
 
 export interface Props {

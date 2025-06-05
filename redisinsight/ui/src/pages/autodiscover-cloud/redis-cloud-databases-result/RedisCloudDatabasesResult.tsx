@@ -6,7 +6,6 @@ import {
   PropertySort,
   EuiTitle,
 } from '@elastic/eui'
-import { FormField } from '@redis-ui/components'
 import {
   InstanceRedisCloud,
   AddRedisDatabaseStatus,
@@ -22,6 +21,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Text } from 'uiSrc/components/base/text'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
 
 export interface Props {

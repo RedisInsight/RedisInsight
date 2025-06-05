@@ -64,13 +64,13 @@ const SettingItem = (props: Props) => {
         <span>{title}</span>
       </EuiTitle>
       <Spacer size="s" />
-      <Text className={styles.smallText} size="s" color="subdued">
+      <Text className={styles.smallText} size="s">
         {summary}
       </Text>
       <Spacer size="m" />
       <Row align="center" className={styles.container}>
         <FlexItem style={{ marginRight: '4px' }}>
-          <Text size="xs" color="subdued" className={styles.inputLabel}>
+          <Text size="xs" className={styles.inputLabel}>
             {label}
           </Text>
         </FlexItem>

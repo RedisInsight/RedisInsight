@@ -1,6 +1,7 @@
-import { EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiToolTip } from '@elastic/eui'
 import React from 'react'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
+import { Text } from 'uiSrc/components/base/text'
 
 import styles from './styles.module.scss'
 
@@ -16,9 +17,9 @@ const PatternsInfo = ({ channels }: PatternsInfoProps) => {
 
   return (
     <div className={styles.patternsContainer}>
-      <EuiText color="subdued" size="s" data-testid="patterns-count">
+      <Text color="subdued" size="s" data-testid="patterns-count">
         Patterns:&nbsp;{getChannelsCount()}{' '}
-      </EuiText>
+      </Text>
       <EuiToolTip
         anchorClassName={styles.appendIcon}
         position="right"

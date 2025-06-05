@@ -1,16 +1,15 @@
 import React, { useState } from 'react'
-import {
-  EuiIcon,
-  EuiPopover,
-  EuiText,
-} from '@elastic/eui'
-import { FormField } from '@redis-ui/components'
+
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import { formatLongName } from 'uiSrc/utils'
 
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { ExportIcon } from 'uiSrc/components/base/icons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+
+import { Text } from 'uiSrc/components/base/text'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from '../styles.module.scss'
 
 export interface Props<T> {
@@ -48,9 +47,9 @@ const ExportAction = <T extends { id: string; name?: string }>(
       panelPaddingSize="l"
       data-testid="export-popover"
     >
-      <EuiText size="m">
-        <p className={styles.popoverSubTitle}>{subTitle}</p>
-      </EuiText>
+      <Text size="m" className={styles.popoverSubTitle}>
+        {subTitle}
+      </Text>
       <div className={styles.boxSection}>
         {selection.map((select) => (
           <Row key={select.id} gap="s" className={styles.nameList}>

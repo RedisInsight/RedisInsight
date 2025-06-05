@@ -1,9 +1,9 @@
 import React from 'react'
-import { EuiText, EuiTextColor } from '@elastic/eui'
-
 import { capitalize } from 'lodash'
+
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { Nullable } from 'uiSrc/utils'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import {
   Group as ListGroup,
   Item as ListGroupItem,
@@ -27,24 +27,24 @@ const DbInfoSentinel = (props: Props) => {
     <ListGroup className={styles.dbInfoGroup} flush>
       <ListGroupItem
         label={
-          <EuiText color="subdued" size="s">
+          <Text color="subdued" size="s">
             Connection Type:
-            <EuiTextColor color="default" className={styles.dbInfoListValue}>
+            <ColorText color="default" className={styles.dbInfoListValue}>
               {capitalize(connectionType)}
-            </EuiTextColor>
-          </EuiText>
+            </ColorText>
+          </Text>
         }
       />
 
       {sentinelMaster?.name && (
         <ListGroupItem
           label={
-            <EuiText color="subdued" size="s">
+            <Text color="subdued" size="s">
               Primary Group Name:
-              <EuiTextColor color="default" className={styles.dbInfoListValue}>
+              <ColorText color="default" className={styles.dbInfoListValue}>
                 {sentinelMaster?.name}
-              </EuiTextColor>
-            </EuiText>
+              </ColorText>
+            </Text>
           }
         />
       )}
@@ -52,12 +52,12 @@ const DbInfoSentinel = (props: Props) => {
       {nameFromProvider && (
         <ListGroupItem
           label={
-            <EuiText color="subdued" size="s">
+            <Text color="subdued" size="s">
               Database Name from Provider:
-              <EuiTextColor color="default" className={styles.dbInfoListValue}>
+              <ColorText color="default" className={styles.dbInfoListValue}>
                 {nameFromProvider}
-              </EuiTextColor>
-            </EuiText>
+              </ColorText>
+            </Text>
           }
         />
       )}

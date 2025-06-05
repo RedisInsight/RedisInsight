@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { EuiIcon, EuiLink, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiLink } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import RedisDbBlueIcon from 'uiSrc/assets/img/icons/redis_db_blue.svg'
 
@@ -18,7 +18,7 @@ import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
 import { FeatureFlags } from 'uiSrc/constants'
-
+import { Text } from 'uiSrc/components/base/text'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
@@ -44,16 +44,14 @@ const FilterNotAvailable = ({ onClose }: { onClose?: () => void }) => {
       >
         Upgrade your Redis database to version 6 or above
       </Title>
-      <EuiText>
-        Filtering by data type is supported in Redis 6 and above.
-      </EuiText>
+      <Text>Filtering by data type is supported in Redis 6 and above.</Text>
       <Spacer size="m" />
       {!!freeInstances.length && (
         <>
-          <EuiText color="subdued">
+          <Text color="subdued">
             Use your free trial all-in-one Redis Cloud database to start
             exploring these capabilities.
-          </EuiText>
+          </Text>
           <Spacer />
           <OAuthConnectFreeDb
             id={freeInstances[0].id}
@@ -64,10 +62,10 @@ const FilterNotAvailable = ({ onClose }: { onClose?: () => void }) => {
       )}
       {!freeInstances.length && (
         <FeatureFlagComponent name={FeatureFlags.cloudAds}>
-          <EuiText color="subdued">
+          <Text color="subdued">
             Create a free trial Redis Stack database that supports filtering and
             extends the core capabilities of your Redis.
-          </EuiText>
+          </Text>
           <Spacer size="l" />
           <div className={styles.linksWrapper}>
             <OAuthSsoHandlerDialog>

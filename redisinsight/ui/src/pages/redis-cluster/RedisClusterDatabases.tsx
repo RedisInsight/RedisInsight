@@ -4,7 +4,6 @@ import {
   EuiInMemoryTable,
   EuiPopover,
   EuiTableSelectionType,
-  EuiText,
   EuiToolTip,
   PropertySort,
 } from '@elastic/eui'
@@ -27,6 +26,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -128,12 +128,10 @@ const RedisClusterDatabases = ({
         </SecondaryButton>
       }
     >
-      <EuiText size="m">
-        <p>
-          Your changes have not been saved.&#10;&#13; Do you want to proceed to
-          the list of databases?
-        </p>
-      </EuiText>
+      <Text size="m">
+        Your changes have not been saved.&#10;&#13; Do you want to proceed to
+        the list of databases?
+      </Text>
       <br />
       <div>
         <DestructiveButton
@@ -156,14 +154,12 @@ const RedisClusterDatabases = ({
         <Row align="end" responsive gap="s">
           <FlexItem grow>
             {!!items.length && (
-              <EuiText color="subdued" className={styles.subTitle}>
-                <span>
-                  These are the {items.length > 1 ? 'databases ' : 'database '}
-                  in your Redis Enterprise Cluster. Select the
-                  {items.length > 1 ? ' databases ' : ' database '} that you
-                  want to add.
-                </span>
-              </EuiText>
+              <Text color="subdued" className={styles.subTitle}>
+                These are the {items.length > 1 ? 'databases ' : 'database '}
+                in your Redis Enterprise Cluster. Select the
+                {items.length > 1 ? ' databases ' : ' database '} that you want
+                to add.
+              </Text>
             )}
           </FlexItem>
           <FlexItem>
@@ -196,7 +192,7 @@ const RedisClusterDatabases = ({
             isSelectable
           />
           {!items.length && (
-            <EuiText className={styles.noDatabases}>{message}</EuiText>
+            <Text className={styles.noDatabases}>{message}</Text>
           )}
         </div>
       </div>

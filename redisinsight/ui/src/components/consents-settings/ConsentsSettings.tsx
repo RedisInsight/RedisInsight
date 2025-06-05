@@ -4,7 +4,6 @@ import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, forEach } from 'lodash'
 import {
   EuiSwitch,
-  EuiText,
   EuiToolTip,
   EuiForm,
   EuiLink,
@@ -25,6 +24,7 @@ import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
+import { Text } from 'uiSrc/components/base/text'
 import ConsentOption from './ConsentOption'
 
 import styles from './styles.module.scss'
@@ -224,14 +224,14 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         {consents.length > 1 && (
           <>
             <CallOut variant="attention">
-              <EuiText
+              <Text
                 size="s"
                 className={styles.smallText}
                 data-testid="plugin-section"
               >
                 To avoid automatic execution of malicious code, when adding new
                 Workbench plugins, use files from trusted authors only.
-              </EuiText>
+              </Text>
             </CallOut>
             <Spacer />
             <FlexItem>
@@ -247,17 +247,15 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
                   />
                 </FlexItem>
                 <FlexItem>
-                  <EuiText className={styles.label}>
-                    Use recommended settings
-                  </EuiText>
-                  <EuiText
+                  <Text className={styles.label}>Use recommended settings</Text>
+                  <Text
                     size="s"
                     className={styles.smallText}
                     color="subdued"
                     style={{ marginTop: '12px' }}
                   >
                     Select to activate all listed options.
-                  </EuiText>
+                  </Text>
                 </FlexItem>
               </Row>
             </FlexItem>
@@ -276,9 +274,9 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
               Privacy Settings
             </Title>
             <Spacer size="m" />
-            <EuiText className={styles.smallText} size="s" color="subdued">
+            <Text className={styles.smallText} size="s" color="subdued">
               To optimize your experience, Redis Insight uses third-party tools.
-            </EuiText>
+            </Text>
             <Spacer />
           </>
         )}
@@ -312,7 +310,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         <>
           <HorizontalRule margin="l" className={styles.requiredHR} />
           <Spacer size="m" />
-          <EuiText color="subdued" size="s" className={styles.smallText}>
+          <Text color="subdued" size="s" className={styles.smallText}>
             To use Redis Insight, please accept the terms and conditions:{' '}
             <EuiLink
               external={false}
@@ -321,7 +319,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             >
               Server Side Public License
             </EuiLink>
-          </EuiText>
+          </Text>
           <Spacer size="m" />
         </>
       ) : (

@@ -1,4 +1,4 @@
-import { EuiIcon, EuiProgress, EuiResizeObserver, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiProgress, EuiResizeObserver } from '@elastic/eui'
 import cx from 'classnames'
 import { findIndex, isNumber, sumBy, xor } from 'lodash'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -18,6 +18,7 @@ import { SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
 import { isEqualBuffers, Maybe, Nullable } from 'uiSrc/utils'
+import { Text } from 'uiSrc/components/base/text'
 import {
   ColumnWidthSizes,
   IColumnSearchState,
@@ -379,14 +380,14 @@ const VirtualTable = (props: IProps) => {
           className={styles.tableRowCell}
           style={{ justifyContent: column.alignment, whiteSpace: 'normal' }}
         >
-          <EuiText color="subdued" style={{ maxWidth: '100%' }}>
+          <Text color="subdued" style={{ maxWidth: '100%' }}>
             <div
               style={{ display: 'flex' }}
               className={column.truncateText ? 'truncateText' : ''}
             >
               {cellData}
             </div>
-          </EuiText>
+          </Text>
         </div>
       </CellMeasurer>
     )
@@ -432,9 +433,9 @@ const VirtualTable = (props: IProps) => {
               data-testid="score-button"
               style={{ justifyContent: column.alignment }}
             >
-              <EuiText size="m" className={cellClass}>
+              <Text size="m" className={cellClass}>
                 <span>{column.label}</span>
-              </EuiText>
+              </Text>
             </button>
           </div>
         )}
@@ -450,9 +451,9 @@ const VirtualTable = (props: IProps) => {
                 flex: '1',
               }}
             >
-              <EuiText size="m" className={cellClass}>
+              <Text size="m" className={cellClass}>
                 <span>{column.label}</span>
-              </EuiText>
+              </Text>
             </div>
             {column.isSearchable && searchRenderer(column)}
           </div>
@@ -493,9 +494,9 @@ const VirtualTable = (props: IProps) => {
     <>
       {noItemsMessage && (
         <div className={styles.placeholder}>
-          <EuiText textAlign="center" grow color="subdued" size="m">
+          <Text textAlign="center" color="subdued" size="m">
             <div>{loading ? 'loading...' : noItemsMessage}</div>
-          </EuiText>
+          </Text>
         </div>
       )}
     </>

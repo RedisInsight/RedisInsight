@@ -1,4 +1,4 @@
-import { EuiPopover, EuiText } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 
@@ -21,6 +21,7 @@ import {
   DestructiveButton,
   IconButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -79,12 +80,12 @@ const KeyDetailsHeaderDelete = ({ onDelete }: Props) => {
       }
     >
       <div className={styles.popoverDeleteContainer}>
-        <EuiText size="m">
+        <Text size="m" component="div">
           <h4 style={{ wordBreak: 'break-all' }}>
             <b>{tooltipContent}</b>
           </h4>
-          <EuiText size="s">will be deleted.</EuiText>
-        </EuiText>
+          <Text size="s">will be deleted.</Text>
+        </Text>
         <div className={styles.popoverFooter}>
           <DestructiveButton
             size="small"

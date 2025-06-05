@@ -1,7 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { EuiText } from '@elastic/eui'
 
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
 import {
@@ -29,6 +28,7 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
 import {
   MODULE_CAPABILITY_TEXT_NOT_AVAILABLE,
   MODULE_CAPABILITY_TEXT_NOT_AVAILABLE_ENTERPRISE,
@@ -68,9 +68,9 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
           name={FeatureFlags.cloudAds}
           otherwise={
             <>
-              <EuiText color="subdued" size="s">
+              <Text color="subdued" size="s">
                 {moduleText?.text}
-              </EuiText>
+              </Text>
               <Spacer size="s" />
               <PrimaryButton
                 size="s"
@@ -86,9 +86,9 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
         >
           {!freeDbWithModule ? (
             <>
-              <EuiText color="subdued" size="s">
+              <Text color="subdued" size="s">
                 {moduleText?.text}
-              </EuiText>
+              </Text>
               <Spacer size="s" />
               <OAuthSsoHandlerDialog>
                 {(ssoCloudHandlerClick) => (
@@ -117,10 +117,10 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
             </>
           ) : (
             <>
-              <EuiText color="subdued" size="s">
+              <Text color="subdued" size="s">
                 Use your free trial all-in-one Redis Cloud database to start
                 exploring these capabilities.
-              </EuiText>
+              </Text>
               <Spacer size="s" />
               <OAuthConnectFreeDb
                 id={freeDbWithModule.id}

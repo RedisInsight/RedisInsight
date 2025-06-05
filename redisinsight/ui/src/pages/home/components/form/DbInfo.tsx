@@ -1,8 +1,10 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { EuiIcon, EuiText, EuiTextColor, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiToolTip } from '@elastic/eui'
 import { capitalize } from 'lodash'
 import cx from 'classnames'
+
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import { DatabaseListModules } from 'uiSrc/components'
 import { BuildType } from 'uiSrc/constants/env'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
@@ -51,9 +53,9 @@ const DbInfo = (props: Props) => {
         <ul className={styles.endpointsList}>
           {nodes?.map(({ host: eHost, port: ePort }) => (
             <li key={host + port}>
-              <EuiText>
+              <Text>
                 {eHost}:{ePort};
-              </EuiText>
+              </Text>
             </li>
           ))}
         </ul>
@@ -73,16 +75,16 @@ const DbInfo = (props: Props) => {
       {!isFromCloud && (
         <ListGroupItem
           label={
-            <EuiText color="subdued" size="s">
+            <Text color="subdued" size="s">
               Connection Type:
-              <EuiTextColor
+              <ColorText
                 color="default"
                 className={styles.dbInfoListValue}
                 data-testid="connection-type"
               >
                 {capitalize(connectionType)}
-              </EuiTextColor>
-            </EuiText>
+              </ColorText>
+            </Text>
           }
         />
       )}
@@ -90,12 +92,12 @@ const DbInfo = (props: Props) => {
       {nameFromProvider && (
         <ListGroupItem
           label={
-            <EuiText color="subdued" size="s">
+            <Text color="subdued" size="s">
               Database Name from Provider:
-              <EuiTextColor color="default" className={styles.dbInfoListValue}>
+              <ColorText color="default" className={styles.dbInfoListValue}>
                 {nameFromProvider}
-              </EuiTextColor>
-            </EuiText>
+              </ColorText>
+            </Text>
           }
         />
       )}
@@ -103,32 +105,32 @@ const DbInfo = (props: Props) => {
         label={
           <>
             {!!nodes?.length && <AppendEndpoints />}
-            <EuiText color="subdued" size="s">
+            <Text color="subdued" size="s">
               Host:
-              <EuiTextColor
+              <ColorText
                 color="default"
                 className={styles.dbInfoListValue}
                 data-testid="db-info-host"
               >
                 {host}
-              </EuiTextColor>
-            </EuiText>
+              </ColorText>
+            </Text>
           </>
         }
       />
       {(server?.buildType === BuildType.RedisStack || isFromCloud) && (
         <ListGroupItem
           label={
-            <EuiText color="subdued" size="s">
+            <Text color="subdued" size="s">
               Port:
-              <EuiTextColor
+              <ColorText
                 color="default"
                 className={styles.dbInfoListValue}
                 data-testid="db-info-port"
               >
                 {port}
-              </EuiTextColor>
-            </EuiText>
+              </ColorText>
+            </Text>
           }
         />
       )}
@@ -136,12 +138,12 @@ const DbInfo = (props: Props) => {
       {!!db && (
         <ListGroupItem
           label={
-            <EuiText color="subdued" size="s">
+            <Text color="subdued" size="s">
               Database Index:
-              <EuiTextColor color="default" className={styles.dbInfoListValue}>
+              <ColorText color="default" className={styles.dbInfoListValue}>
                 {db}
-              </EuiTextColor>
-            </EuiText>
+              </ColorText>
+            </Text>
           }
         />
       )}
@@ -150,15 +152,15 @@ const DbInfo = (props: Props) => {
         <ListGroupItem
           className={styles.dbInfoModulesLabel}
           label={
-            <EuiText color="subdued" size="s">
+            <Text color="subdued" size="s">
               Capabilities:
-              <EuiTextColor
+              <ColorText
                 color="default"
                 className={cx(styles.dbInfoListValue, styles.dbInfoModules)}
               >
                 <DatabaseListModules modules={modules} />
-              </EuiTextColor>
-            </EuiText>
+              </ColorText>
+            </Text>
           }
         />
       )}

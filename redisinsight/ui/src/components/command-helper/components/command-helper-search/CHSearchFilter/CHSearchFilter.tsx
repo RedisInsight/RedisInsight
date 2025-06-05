@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import {
-  EuiIcon,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiText,
-} from '@elastic/eui'
+import { EuiIcon, EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import { GROUP_TYPES_DISPLAY } from 'uiSrc/constants'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
+import { Text } from 'uiSrc/components/base/text'
 
 import styles from './styles.module.scss'
 
@@ -50,14 +46,11 @@ const CHSearchFilter = ({ submitFilter, isLoading }: Props) => {
     return {
       value,
       inputDisplay: (
-        <EuiText
-          className={cx(styles.selectedType, 'text-capitalize')}
-          size="s"
-        >
+        <Text className={cx(styles.selectedType, 'text-capitalize')} size="s">
           {text}
-        </EuiText>
+        </Text>
       ),
-      dropdownDisplay: <EuiText className="text-capitalize">{text}</EuiText>,
+      dropdownDisplay: <Text className="text-capitalize">{text}</Text>,
       'data-test-subj': `filter-option-group-type-${value}`,
     }
   })

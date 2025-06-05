@@ -1,8 +1,6 @@
 import {
   EuiBasicTableColumn,
   EuiLoadingSpinner,
-  EuiTextColor,
-  EuiText,
   EuiIcon,
   EuiToolTip,
 } from '@elastic/eui'
@@ -32,6 +30,7 @@ import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/In
 
 import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon, CopyIcon } from 'uiSrc/components/base/icons'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import SentinelDatabasesResult from './components'
 
 import styles from '../styles.module.scss'
@@ -129,14 +128,14 @@ const SentinelDatabasesResultPage = () => {
           <div data-testid={`status_${name}_${status}`}>
             {loading && <EuiLoadingSpinner />}
             {!loading && status === AddRedisDatabaseStatus.Success && (
-              <EuiText>{message}</EuiText>
+              <Text>{message}</Text>
             )}
             {!loading && status !== AddRedisDatabaseStatus.Success && (
               <EuiToolTip position="right" title="Error" content={message}>
-                <EuiTextColor color="danger" style={{ cursor: 'pointer' }}>
+                <ColorText color="danger" style={{ cursor: 'pointer' }}>
                   Error&nbsp;
                   <EuiIcon type="alert" color="danger" />
-                </EuiTextColor>
+                </ColorText>
               </EuiToolTip>
             )}
           </div>
@@ -201,7 +200,7 @@ const SentinelDatabasesResultPage = () => {
         const text = `${host}:${port}`
         return (
           <div className="host_port">
-            <EuiText className="copyHostPortText">{text}</EuiText>
+            <Text className="copyHostPortText">{text}</Text>
             <EuiToolTip
               position="right"
               content="Copy"

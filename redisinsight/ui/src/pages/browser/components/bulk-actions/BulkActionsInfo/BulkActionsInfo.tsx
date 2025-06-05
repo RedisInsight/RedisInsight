@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiText } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 import cx from 'classnames'
 
@@ -8,6 +7,7 @@ import Divider from 'uiSrc/components/divider/Divider'
 import { BulkActionsStatus, KeyTypes } from 'uiSrc/constants'
 import GroupBadge from 'uiSrc/components/group-badge/GroupBadge'
 import { isProcessedBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -40,10 +40,10 @@ const BulkActionsInfo = (props: Props) => {
   return (
     <div className={styles.container} data-testid="bulk-actions-info">
       <div className={styles.header}>
-        <EuiText color="subdued" className={styles.title}>
+        <Text color="subdued" className={styles.title}>
           {title}
-        </EuiText>
-        <EuiText color="subdued" className={styles.subTitle}>
+        </Text>
+        <Text color="subdued" className={styles.subTitle}>
           {subTitle}
           {filter && (
             <div
@@ -63,42 +63,42 @@ const BulkActionsInfo = (props: Props) => {
               <span className={styles.match}>{` ${search}`}</span>
             </div>
           )}
-        </EuiText>
+        </Text>
         {!isUndefined(status) && !isProcessedBulkAction(status) && (
-          <EuiText
+          <Text
             color="subdued"
             className={styles.progress}
             data-testid="bulk-status-progress"
           >
             In progress:
             <span>{` ${getApproximatePercentage(total, scanned)}`}</span>
-          </EuiText>
+          </Text>
         )}
         {status === BulkActionsStatus.Aborted && (
-          <EuiText
+          <Text
             color="danger"
             className={styles.progress}
             data-testid="bulk-status-stopped"
           >
             Stopped: {getApproximatePercentage(total, scanned)}
-          </EuiText>
+          </Text>
         )}
         {status === BulkActionsStatus.Completed && (
-          <EuiText
+          <Text
             className={cx(styles.progress, styles.progressCompleted)}
             data-testid="bulk-status-completed"
           >
             Action completed
-          </EuiText>
+          </Text>
         )}
         {status === BulkActionsStatus.Disconnected && (
-          <EuiText
+          <Text
             color="danger"
             className={styles.progress}
             data-testid="bulk-status-disconnected"
           >
             Connection Lost: {getApproximatePercentage(total, scanned)}
-          </EuiText>
+          </Text>
         )}
       </div>
       <Divider colorVariable="separatorColor" className={styles.divider} />

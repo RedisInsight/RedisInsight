@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import {
-  EuiLink,
-  EuiText,
-  EuiIcon,
-  EuiToolTip,
-  EuiTextColor,
-} from '@elastic/eui'
+import { EuiLink, EuiIcon, EuiToolTip } from '@elastic/eui'
 import { remove } from 'lodash'
 
 import { FeatureFlags, DEFAULT_DELIMITER, Pages } from 'uiSrc/constants'
@@ -37,7 +31,9 @@ import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import GithubSVG from 'uiSrc/assets/img/github.svg?react'
 import { FeatureFlagComponent, LoadingContent } from 'uiSrc/components'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
+
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import PopoverRunAnalyze from './components/popover-run-analyze'
@@ -140,7 +136,7 @@ const LiveTimeRecommendations = () => {
   const renderHeader = () => (
     <div className={styles.actions}>
       <div>
-        <EuiTextColor className={styles.boldText}>Our Tips</EuiTextColor>
+        <ColorText className={styles.boldText}>Our Tips</ColorText>
         <EuiToolTip
           position="bottom"
           anchorClassName={styles.tooltipAnchor}
@@ -217,7 +213,7 @@ const LiveTimeRecommendations = () => {
         <FeatureFlagComponent name={FeatureFlags.envDependent}>
           <div className={styles.footer}>
             <EuiIcon className={styles.footerIcon} size="m" type={InfoIcon} />
-            <EuiText className={styles.text}>
+            <Text className={styles.text}>
               {'Run '}
               <PopoverRunAnalyze
                 isShowPopover={isShowApproveRun}
@@ -238,7 +234,7 @@ const LiveTimeRecommendations = () => {
                 </EuiLink>
               </PopoverRunAnalyze>
               {' to get more tips'}
-            </EuiText>
+            </Text>
           </div>
         </FeatureFlagComponent>
       )}

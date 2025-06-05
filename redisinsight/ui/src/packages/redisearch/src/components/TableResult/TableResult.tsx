@@ -2,13 +2,9 @@ import React, { ReactElement, useEffect, useState } from 'react'
 import parse from 'html-react-parser'
 import cx from 'classnames'
 import { flatten, isArray, isEmpty, map, uniq } from 'lodash'
-import {
-  EuiBasicTableColumn,
-  EuiInMemoryTable,
-  EuiTextColor,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiBasicTableColumn, EuiInMemoryTable, EuiToolTip } from '@elastic/eui'
 
+import { ColorText } from '../../../../../components/base/text/ColorText'
 import { IconButton } from '../../../../../components/base/forms/buttons'
 import { CopyIcon } from '../../../../../components/base/icons'
 import { CommandArgument, Command } from '../../constants'
@@ -85,9 +81,9 @@ const TableResult = React.memo((props: Props) => {
                 content={formatLongName(value.toString())}
               >
                 <div className="copy-btn-wrapper">
-                  <EuiTextColor className={cx('cell', 'test')}>
+                  <ColorText className={cx('cell', 'test')}>
                     {cellContent}
-                  </EuiTextColor>
+                  </ColorText>
                   <IconButton
                     icon={CopyIcon}
                     aria-label="Copy result"

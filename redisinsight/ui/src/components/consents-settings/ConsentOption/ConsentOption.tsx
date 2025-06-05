@@ -1,9 +1,10 @@
 import React from 'react'
-import { EuiSwitch, EuiText } from '@elastic/eui'
+import { EuiSwitch } from '@elastic/eui'
 import parse from 'html-react-parser'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Text } from 'uiSrc/components/base/text'
 import { IConsent } from '../ConsentsSettings'
 
 import styles from '../styles.module.scss'
@@ -28,14 +29,14 @@ const ConsentOption = (props: Props) => {
     <FlexItem key={consent.agreementName} grow>
       {isSettingsPage && consent.description && (
         <>
-          <EuiText
+          <Text
             size="s"
             className={styles.smallText}
             color="subdued"
             style={{ marginTop: '12px' }}
           >
             {parse(consent.description)}
-          </EuiText>
+          </Text>
           <Spacer size="m" />
         </>
       )}
@@ -54,16 +55,16 @@ const ConsentOption = (props: Props) => {
           />
         </FlexItem>
         <FlexItem>
-          <EuiText className={styles.smallText}>{parse(consent.label)}</EuiText>
+          <Text className={styles.smallText}>{parse(consent.label)}</Text>
           {!isSettingsPage && consent.description && (
-            <EuiText
+            <Text
               size="s"
               className={styles.smallText}
               color="subdued"
               style={{ marginTop: '12px' }}
             >
               {parse(consent.description)}
-            </EuiText>
+            </Text>
           )}
         </FlexItem>
       </Row>

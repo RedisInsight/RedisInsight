@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 
 import cx from 'classnames'
-import { EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import { ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
 import { KEYBOARD_SHORTCUTS } from 'uiSrc/constants'
 import { KeyboardShortcut } from 'uiSrc/components'
@@ -16,6 +16,7 @@ import {
 import Divider from 'uiSrc/components/divider/Divider'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -42,9 +43,9 @@ const QueryActions = (props: Props) => {
 
   const KeyBoardTooltipContent = KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
     <>
-      <EuiText className={styles.tooltipText} size="s">
+      <Text className={styles.tooltipText} size="s">
         {KEYBOARD_SHORTCUTS.workbench.runQuery?.label}:
-      </EuiText>
+      </Text>
       <Spacer size="s" />
       <KeyboardShortcut
         badgeTextClassName={styles.tooltipText}

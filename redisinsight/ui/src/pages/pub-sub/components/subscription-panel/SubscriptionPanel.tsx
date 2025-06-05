@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiIcon, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -25,6 +25,7 @@ import {
   DeleteIcon,
 } from 'uiSrc/components/base/icons'
 import { Button, IconButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import PatternsInfo from './components/patternsInfo'
 import ClickableAppendInfo from './components/clickable-append-info'
 import styles from './styles.module.scss'
@@ -83,13 +84,9 @@ const SubscriptionPanel = () => {
             />
           </FlexItem>
           <FlexItem>
-            <EuiText
-              color="subdued"
-              size="s"
-              data-testid="subscribe-status-text"
-            >
+            <Text color="subdued" size="s" data-testid="subscribe-status-text">
               You are {!isSubscribed && 'not'} subscribed
-            </EuiText>
+            </Text>
           </FlexItem>
           {isSubscribed && (
             <FlexItem style={{ marginLeft: 12 }}>
@@ -98,9 +95,9 @@ const SubscriptionPanel = () => {
           )}
           {displayMessages && (
             <FlexItem style={{ marginLeft: 12 }}>
-              <EuiText color="subdued" size="s" data-testid="messages-count">
+              <Text color="subdued" size="s" data-testid="messages-count">
                 Messages: {count}
-              </EuiText>
+              </Text>
             </FlexItem>
           )}
         </Row>

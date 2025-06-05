@@ -5,11 +5,11 @@ import {
   EuiIcon,
   EuiSuperSelect,
   EuiSuperSelectOption,
-  EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 import { findIndex, isNumber } from 'lodash'
+import { ColorText } from 'uiSrc/components/base/text'
 
 import {
   CopyIcon,
@@ -321,7 +321,7 @@ const QueryCardHeader = (props: Props) => {
       <Row align="center" gap="l" style={{ width: '100%' }}>
         <FlexItem className={styles.titleWrapper} grow>
           <div className="copy-btn-wrapper">
-            <EuiTextColor
+            <ColorText
               className={styles.title}
               color="subdued"
               component="div"
@@ -333,7 +333,7 @@ const QueryCardHeader = (props: Props) => {
                 db={db}
                 resultsMode={resultsMode}
               />
-            </EuiTextColor>
+            </ColorText>
             <IconButton
               icon={CopyIcon}
               aria-label="Copy query"
@@ -353,16 +353,16 @@ const QueryCardHeader = (props: Props) => {
               data-testid="command-execution-date-time"
             >
               {!!createdAt && (
-                <EuiTextColor className={styles.timeText} component="div">
+                <ColorText className={styles.timeText} component="div">
                   <FormatedDate date={createdAt} />
-                </EuiTextColor>
+                </ColorText>
               )}
             </FlexItem>
             <FlexItem className={styles.summaryTextWrapper}>
               {!!message && !isOpen && (
-                <EuiTextColor className={styles.summaryText} component="div">
+                <ColorText className={styles.summaryText} component="div">
                   {truncateText(message, 13)}
-                </EuiTextColor>
+                </ColorText>
               )}
             </FlexItem>
             <FlexItem
@@ -383,7 +383,7 @@ const QueryCardHeader = (props: Props) => {
                       data-testid="command-execution-time-icon"
                       className={styles.iconExecutingTime}
                     />
-                    <EuiTextColor
+                    <ColorText
                       className={cx(
                         styles.summaryText,
                         styles.executionTimeValue,
@@ -391,7 +391,7 @@ const QueryCardHeader = (props: Props) => {
                       data-testid="command-execution-time-value"
                     >
                       {getTruncatedExecutionTimeString(executionTime)}
-                    </EuiTextColor>
+                    </ColorText>
                   </>
                 </EuiToolTip>
               )}
@@ -493,28 +493,28 @@ const QueryCardHeader = (props: Props) => {
                   content={
                     <>
                       {isGroupMode(resultsMode) && (
-                        <EuiTextColor
+                        <ColorText
                           className={cx(styles.mode)}
                           data-testid="group-mode-tooltip"
                         >
                           <EuiIcon type={GroupModeIcon} />
-                        </EuiTextColor>
+                        </ColorText>
                       )}
                       {isSilentMode(resultsMode) && (
-                        <EuiTextColor
+                        <ColorText
                           className={cx(styles.mode)}
                           data-testid="silent-mode-tooltip"
                         >
                           <EuiIcon type={SilentModeIcon} />
-                        </EuiTextColor>
+                        </ColorText>
                       )}
                       {isRawMode(mode) && (
-                        <EuiTextColor
+                        <ColorText
                           className={cx(styles.mode)}
                           data-testid="raw-mode-tooltip"
                         >
                           -r
-                        </EuiTextColor>
+                        </ColorText>
                       )}
                     </>
                   }

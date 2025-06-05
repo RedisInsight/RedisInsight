@@ -1,7 +1,6 @@
 import {
   EuiBasicTableColumn,
   EuiInMemoryTable,
-  EuiTextColor,
   EuiToolTip,
   PropertySort,
 } from '@elastic/eui'
@@ -10,6 +9,8 @@ import { isNil } from 'lodash'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
+
+import { ColorText } from 'uiSrc/components/base/text'
 import { GroupBadge } from 'uiSrc/components'
 import { Pages } from 'uiSrc/constants'
 import {
@@ -155,20 +156,20 @@ const Table = (props: Props) => {
       render: (value: number, { name }) => {
         if (isNil(value)) {
           return (
-            <EuiTextColor
+            <ColorText
               color="subdued"
               style={{ maxWidth: '100%' }}
               data-testid={`ttl-empty-${value}`}
             >
               -
-            </EuiTextColor>
+            </ColorText>
           )
         }
         if (value === -1) {
           return (
-            <EuiTextColor color="subdued" data-testid={`ttl-no-limit-${name}`}>
+            <ColorText color="subdued" data-testid={`ttl-no-limit-${name}`}>
               No limit
-            </EuiTextColor>
+            </ColorText>
           )
         }
 
@@ -202,13 +203,13 @@ const Table = (props: Props) => {
       render: (value: number, { type }) => {
         if (isNil(value)) {
           return (
-            <EuiTextColor
+            <ColorText
               color="subdued"
               style={{ maxWidth: '100%' }}
               data-testid={`size-empty-${value}`}
             >
               -
-            </EuiTextColor>
+            </ColorText>
           )
         }
         const [number, size] = formatBytes(value, 3, true)
@@ -251,13 +252,13 @@ const Table = (props: Props) => {
       render: (value: number, { name, type }) => {
         if (isNil(value)) {
           return (
-            <EuiTextColor
+            <ColorText
               color="subdued"
               style={{ maxWidth: '100%' }}
               data-testid={`length-empty-${name}`}
             >
               -
-            </EuiTextColor>
+            </ColorText>
           )
         }
 

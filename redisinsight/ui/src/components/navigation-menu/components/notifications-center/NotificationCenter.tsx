@@ -1,4 +1,4 @@
-import { EuiPopover, EuiText } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,6 +10,7 @@ import {
 } from 'uiSrc/slices/app/notifications'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
 import Notification from './Notification'
 
 import styles from './styles.module.scss'
@@ -64,9 +65,9 @@ const NotificationCenter = () => {
         </Title>
         {!hasNotifications && (
           <div className={styles.noItemsText}>
-            <EuiText color="subdued" data-testid="no-notifications-text">
+            <Text color="subdued" data-testid="no-notifications-text">
               No notifications to display.
-            </EuiText>
+            </Text>
           </div>
         )}
         {hasNotifications && (

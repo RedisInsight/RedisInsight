@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { EuiIcon, EuiPopover, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 
 import { formatLongName } from 'uiSrc/utils'
 
 import { DestructiveButton } from 'uiSrc/components/base/forms/buttons'
 import { DeleteIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -43,12 +44,12 @@ const DeleteTutorialButton = (props: Props) => {
       data-testid={`delete-tutorial-popover-${id}`}
     >
       <div className={styles.popoverDeleteContainer}>
-        <EuiText size="m">
+        <Text size="m" component="div">
           <h4 style={{ wordBreak: 'break-all' }}>
             <b>{formatLongName(label)}</b>
           </h4>
-          <EuiText size="s">will be deleted.</EuiText>
-        </EuiText>
+          <Text size="s">will be deleted.</Text>
+        </Text>
         <div className={styles.popoverFooter}>
           <DestructiveButton
             size="s"

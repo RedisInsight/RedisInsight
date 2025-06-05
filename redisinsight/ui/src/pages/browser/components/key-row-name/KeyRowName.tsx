@@ -1,8 +1,9 @@
 import React from 'react'
-import { EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
 import { LoadingContent } from 'uiSrc/components/base/layout'
+import { Text } from 'uiSrc/components/base/text'
 import { Maybe, formatLongName, replaceSpaces } from 'uiSrc/utils'
 import styles from './styles.module.scss'
 
@@ -30,7 +31,7 @@ const KeyRowName = (props: Props) => {
 
   return (
     <div className={styles.keyName}>
-      <EuiText
+      <Text
         color="subdued"
         size="s"
         style={{ maxWidth: '100%', display: 'flex' }}
@@ -50,7 +51,7 @@ const KeyRowName = (props: Props) => {
             <>{nameContent}</>
           </EuiToolTip>
         </div>
-      </EuiText>
+      </Text>
     </div>
   )
 }

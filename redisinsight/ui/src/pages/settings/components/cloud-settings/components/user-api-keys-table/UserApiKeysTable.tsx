@@ -4,7 +4,6 @@ import {
   EuiIcon,
   EuiInMemoryTable,
   EuiLink,
-  EuiText,
   EuiToolTip,
   PropertySort,
 } from '@elastic/eui'
@@ -12,6 +11,7 @@ import { format } from 'date-fns'
 import cx from 'classnames'
 import { useDispatch } from 'react-redux'
 import { isNull } from 'lodash'
+
 import { formatLongName, Maybe, Nullable } from 'uiSrc/utils'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -22,6 +22,7 @@ import {
   OAuthSocialSource,
 } from 'uiSrc/slices/interfaces'
 import { removeCapiKeyAction } from 'uiSrc/slices/oauth/cloud'
+import { Text } from 'uiSrc/components/base/text'
 
 import CloudStars from 'uiSrc/assets/img/oauth/stars.svg?react'
 
@@ -223,11 +224,11 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
             The ultimate Redis starting point
           </Title>
           <Spacer size="s" />
-          <EuiText size="s" className={styles.smallText} color="subdued">
+          <Text size="s" className={styles.smallText} color="subdued">
             Cloud API keys will be created and stored when you connect to Redis
             Cloud to create a free trial Cloud database or autodiscover your
             Cloud database.
-          </EuiText>
+          </Text>
           <Spacer />
           <div className={styles.actions}>
             <OAuthSsoHandlerDialog>

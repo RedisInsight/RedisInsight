@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiPopover, EuiText } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   appFeatureOnboardingSelector,
@@ -13,6 +13,7 @@ import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { EmptyButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 const OnboardingStartPopover = () => {
@@ -54,12 +55,12 @@ const OnboardingStartPopover = () => {
     >
       <Title size="S">Take a quick tour of Redis Insight?</Title>
       <Spacer size="s" />
-      <EuiText data-testid="onboarding-start-content">
+      <Text data-testid="onboarding-start-content">
         Hi! Redis Insight has many tools that can help you to optimize the
         development process.
         <br />
         Would you like us to show them to you?
-      </EuiText>
+      </Text>
       <div className={styles.onboardingActions}>
         <EmptyButton
           onClick={handleSkip}

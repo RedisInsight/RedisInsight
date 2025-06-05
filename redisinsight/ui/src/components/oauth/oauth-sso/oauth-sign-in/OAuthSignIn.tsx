@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiText } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { OAuthAdvantages, OAuthAgreement } from 'uiSrc/components/oauth/shared'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
@@ -9,6 +8,7 @@ import { Nullable } from 'uiSrc/utils'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
 import OAuthForm from '../../shared/oauth-form/OAuthForm'
 import styles from './styles.module.scss'
 
@@ -48,7 +48,7 @@ const OAuthSignIn = (props: Props) => {
           >
             {(form: React.ReactNode) => (
               <>
-                <EuiText className={styles.subTitle}>Get started with</EuiText>
+                <Text className={styles.subTitle}>Get started with</Text>
                 <Title size="XL" className={styles.title}>
                   Redis Cloud account
                 </Title>

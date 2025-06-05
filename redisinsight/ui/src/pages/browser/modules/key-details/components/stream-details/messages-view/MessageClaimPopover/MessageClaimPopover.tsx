@@ -8,7 +8,6 @@ import {
   EuiForm,
   EuiFieldNumber,
   EuiSwitch,
-  EuiText,
   EuiToolTip,
 } from '@elastic/eui'
 import { useFormik } from 'formik'
@@ -25,6 +24,7 @@ import {
   getDefaultConsumer,
   ClaimTimeOptions,
 } from 'uiSrc/utils/streamUtils'
+import { Text } from 'uiSrc/components/base/text'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
@@ -45,18 +45,21 @@ const getConsumersOptions = (consumers: ConsumerDto[]) =>
   consumers.map((consumer) => ({
     value: consumer.name?.viewValue,
     inputDisplay: (
-      <EuiText size="m" className={styles.option} data-testid="consumer-option">
-        <EuiText className={styles.consumerName}>
-          {consumer.name?.viewValue}
-        </EuiText>
-        <EuiText
+      <Text
+        size="m"
+        className={styles.option}
+        data-testid="consumer-option"
+        component="div"
+      >
+        <Text className={styles.consumerName}>{consumer.name?.viewValue}</Text>
+        <Text
           size="s"
           className={styles.pendingCount}
           data-testid="pending-count"
         >
           {`pending: ${consumer.pending}`}
-        </EuiText>
-      </EuiText>
+        </Text>
+      </Text>
     ),
   }))
 

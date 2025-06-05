@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { EuiText, EuiIcon } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   resetCliHelperSettings,
@@ -13,6 +13,7 @@ import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
 import { WindowControlGroup } from 'uiSrc/components/base/shared/WindowControlGroup'
 import styles from './styles.module.scss'
 
@@ -51,7 +52,7 @@ const CommandHelperHeader = () => {
             anchorPosition="upLeft"
             panelClassName={styles.helperOnboardPanel}
           >
-            <EuiText>Command Helper</EuiText>
+            <Text>Command Helper</Text>
           </OnboardingTour>
         </FlexItem>
         <FlexItem grow />

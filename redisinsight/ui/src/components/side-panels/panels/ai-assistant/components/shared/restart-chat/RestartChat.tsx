@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { EuiPopover, EuiText } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -45,10 +46,10 @@ const RestartChat = (props: Props) => {
       <>
         <Title size="S">Restart session</Title>
         <Spacer size="s" />
-        <EuiText size="xs">
+        <Text size="xs">
           This will delete the current message history and initiate a new
           session.
-        </EuiText>
+        </Text>
         <Spacer size="s" />
         <PrimaryButton
           size="s"

@@ -1,11 +1,8 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import {
-  EuiTextColor,
-  EuiFieldText,
-  EuiPanel,
-} from '@elastic/eui'
+import { EuiFieldText, EuiPanel } from '@elastic/eui'
+import { ColorText } from 'uiSrc/components/base/text'
 
 import {
   selectedKeyDataSelector,
@@ -189,7 +186,7 @@ const AddSetMembers = (props: Props) => {
               onClick={() => closePanel(true)}
               data-testid="cancel-members-btn"
             >
-              <EuiTextColor color="default">Cancel</EuiTextColor>
+              <ColorText color="default">Cancel</ColorText>
             </SecondaryButton>
           </FlexItem>
           <FlexItem>

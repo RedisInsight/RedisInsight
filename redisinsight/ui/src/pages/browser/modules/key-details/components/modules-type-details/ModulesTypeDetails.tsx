@@ -1,8 +1,8 @@
 import React from 'react'
-import { EuiText } from '@elastic/eui'
 import { useHistory } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
+import { Text } from 'uiSrc/components/base/text'
 import { Pages } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { Title } from 'uiSrc/components/base/text/Title'
@@ -31,7 +31,7 @@ const ModulesTypeDetails = ({
   return (
     <TextDetailsWrapper onClose={onClose} testid="modules-type">
       <Title size="M">{`This is a ${moduleName} key.`}</Title>
-      <EuiText size="s">
+      <Text size="S">
         {'Use Redis commands in the '}
         <a
           tabIndex={0}
@@ -45,7 +45,7 @@ const ModulesTypeDetails = ({
           Workbench
         </a>
         {' tool to view the value.'}
-      </EuiText>
+      </Text>
     </TextDetailsWrapper>
   )
 }

@@ -1,7 +1,6 @@
 import {
   Criteria,
   EuiTableFieldDataColumnType,
-  EuiText,
   EuiToolTip,
   PropertySort,
 } from '@elastic/eui'
@@ -24,6 +23,7 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable, formatLongName, lastConnectionFormat } from 'uiSrc/utils'
 
 import { setAppContextConnectedRdiInstanceId } from 'uiSrc/slices/app/context'
+import { Text } from 'uiSrc/components/base/text'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon, EditIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
@@ -159,12 +159,12 @@ const RdiInstancesListWrapper = ({
       sortable: ({ name }) => name?.toLowerCase(),
       width: '30%',
       render: (_, { name, id }) => (
-        <EuiText
+        <Text
           data-testid={`rdi-alias-${id}`}
           onClick={() => handleCheckConnectToInstance(id)}
         >
           {name}
-        </EuiText>
+        </Text>
       ),
     },
     {
@@ -177,7 +177,7 @@ const RdiInstancesListWrapper = ({
       sortable: ({ url }) => url?.toLowerCase(),
       render: (name: string, { id }) => (
         <div className="url" data-testid="url">
-          <EuiText className="copyUrlText">{name}</EuiText>
+          <Text className="copyUrlText">{name}</Text>
           <EuiToolTip
             position="right"
             content="Copy"

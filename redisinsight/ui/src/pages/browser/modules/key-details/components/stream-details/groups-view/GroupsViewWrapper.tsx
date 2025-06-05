@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiIcon, EuiToolTip } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -35,6 +35,7 @@ import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import EditablePopover from 'uiSrc/pages/browser/modules/key-details/shared/editable-popover'
 
 import { FormatedDate } from 'uiSrc/components'
+import { Text } from 'uiSrc/components/base/text'
 import {
   ConsumerDto,
   ConsumerGroupDto,
@@ -218,7 +219,7 @@ const GroupsViewWrapper = (props: Props) => {
         const cellContent = viewName.substring(0, 200)
         const tooltipContent = formatLongName(viewName)
         return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+          <Text color="subdued" size="s" style={{ maxWidth: '100%' }}>
             <div
               style={{ display: 'flex' }}
               className="truncateText"
@@ -233,7 +234,7 @@ const GroupsViewWrapper = (props: Props) => {
                 <>{cellContent}</>
               </EuiToolTip>
             </div>
-          </EuiText>
+          </Text>
         )
       },
     },
@@ -275,7 +276,7 @@ const GroupsViewWrapper = (props: Props) => {
         )
 
         return (
-          <EuiText size="s" style={{ maxWidth: '100%' }}>
+          <Text size="s" style={{ maxWidth: '100%' }}>
             <div
               style={{ display: 'flex' }}
               className="truncateText"
@@ -294,7 +295,7 @@ const GroupsViewWrapper = (props: Props) => {
               )}
               {!pending && pending}
             </div>
-          </EuiText>
+          </Text>
         )
       },
     },
@@ -320,7 +321,12 @@ const GroupsViewWrapper = (props: Props) => {
           <EditablePopover
             content={
               <div className={styles.editableCell}>
-                <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+                <Text
+                  color="subdued"
+                  size="s"
+                  style={{ maxWidth: '100%' }}
+                  component="div"
+                >
                   <div
                     className="truncateText streamItem"
                     style={{ display: 'flex', maxWidth: '190px' }}
@@ -328,15 +334,15 @@ const GroupsViewWrapper = (props: Props) => {
                   >
                     <FormatedDate date={timestamp} />
                   </div>
-                </EuiText>
-                <EuiText size="s" style={{ maxWidth: '100%' }}>
+                </Text>
+                <Text size="s" style={{ maxWidth: '100%' }} component="div">
                   <div
                     className="streamItemId"
                     data-testid={`stream-group-id-${id}`}
                   >
                     {id}
                   </div>
-                </EuiText>
+                </Text>
               </div>
             }
             field={id}

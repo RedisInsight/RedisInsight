@@ -7,7 +7,6 @@ import {
   EuiIcon,
   EuiLink,
   EuiPanel,
-  EuiText,
   EuiToolTip,
 } from '@elastic/eui'
 
@@ -36,6 +35,7 @@ import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { findTutorialPath } from 'uiSrc/utils'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
@@ -147,10 +147,10 @@ const Recommendations = () => {
           className={styles.noRecommendationsIcon}
           data-testid="no=recommendations-icon"
         />
-        <EuiText className={styles.bigText}>AMAZING JOB!</EuiText>
-        <EuiText size="m">No Tips at the moment,</EuiText>
+        <Text className={styles.bigText}>AMAZING JOB!</Text>
+        <Text size="m">No Tips at the moment,</Text>
         <br />
-        <EuiText size="m">keep up the good work!</EuiText>
+        <Text size="m">keep up the good work!</Text>
       </div>
     )
   }

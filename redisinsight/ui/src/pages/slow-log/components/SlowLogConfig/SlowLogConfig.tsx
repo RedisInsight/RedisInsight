@@ -1,9 +1,4 @@
-import {
-  EuiFieldText,
-  EuiForm,
-  EuiSuperSelect,
-  EuiText,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiSuperSelect } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import React, { ChangeEvent, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -33,6 +28,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { convertNumberByUnits } from '../../utils'
@@ -121,7 +117,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
 
   const clusterContent = () => (
     <>
-      <EuiText color="subdued" className={styles.clusterText}>
+      <Text color="subdued" className={styles.clusterText}>
         Each node can have different Slow Log configuration in a clustered
         database.
         <Spacer size="s" />
@@ -130,7 +126,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
         {' or '}
         <code>CONFIG SET slowlog-max-len</code>
         {' for a specific node in redis-cli to configure it.'}
-      </EuiText>
+      </Text>
 
       <Spacer size="xs" />
       <PrimaryButton

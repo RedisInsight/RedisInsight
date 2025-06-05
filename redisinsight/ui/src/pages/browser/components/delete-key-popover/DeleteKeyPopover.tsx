@@ -1,4 +1,4 @@
-import { EuiPopover, EuiText } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 
 import React from 'react'
 
@@ -12,6 +12,7 @@ import {
   IconButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { DeleteIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 
 export interface DeleteProps {
   nameString: string
@@ -51,12 +52,12 @@ export const DeleteKeyPopover = ({
     onClick={(e) => e.stopPropagation()}
   >
     <>
-      <EuiText size="m">
+      <Text size="m" component="div">
         <h4 style={{ wordBreak: 'break-all' }}>
           <b>{formatLongName(nameString)}</b>
         </h4>
-        <EuiText size="s">will be deleted.</EuiText>
-      </EuiText>
+        <Text size="s">will be deleted.</Text>
+      </Text>
       <Spacer size="m" />
       <DestructiveButton
         size="small"

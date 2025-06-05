@@ -1,14 +1,10 @@
 import React from 'react'
 import cx from 'classnames'
-import {
-  EuiLoadingContent,
-  EuiText,
-  EuiTextColor,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
 import { LoadingContent } from 'uiSrc/components/base/layout'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import {
   Maybe,
   truncateNumberToDuration,
@@ -38,7 +34,7 @@ const KeyRowTTL = (props: Props) => {
   }
   if (ttl === -1) {
     return (
-      <EuiTextColor
+      <ColorText
         className={cx(styles.keyTTL, 'moveOnHoverKey', {
           hide: deletePopoverId === rowId,
         })}
@@ -46,11 +42,11 @@ const KeyRowTTL = (props: Props) => {
         data-testid={`ttl-${nameString}`}
       >
         No limit
-      </EuiTextColor>
+      </ColorText>
     )
   }
   return (
-    <EuiText
+    <Text
       className={cx(styles.keyTTL, 'moveOnHoverKey', {
         hide: deletePopoverId === rowId,
       })}
@@ -78,7 +74,7 @@ const KeyRowTTL = (props: Props) => {
           <>{truncateNumberToFirstUnit(ttl)}</>
         </EuiToolTip>
       </div>
-    </EuiText>
+    </Text>
   )
 }
 

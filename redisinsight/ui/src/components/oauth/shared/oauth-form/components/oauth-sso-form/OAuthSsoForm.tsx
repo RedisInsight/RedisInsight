@@ -1,7 +1,6 @@
 import { isEmpty } from 'lodash'
 import React, { ChangeEvent, useState } from 'react'
 import { EuiFieldText, EuiForm, EuiToolTip } from '@elastic/eui'
-import { FormField } from '@redis-ui/components'
 import { FormikErrors, useFormik } from 'formik'
 import { validateEmail, validateField } from 'uiSrc/utils'
 
@@ -13,6 +12,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
 
 export interface Props {

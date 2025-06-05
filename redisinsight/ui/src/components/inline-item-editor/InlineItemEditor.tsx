@@ -6,7 +6,6 @@ import {
   EuiForm,
   EuiToolTip,
   EuiPopover,
-  EuiText,
   keys,
 } from '@elastic/eui'
 
@@ -19,6 +18,7 @@ import {
   DestructiveButton,
   IconButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 
 import styles from './styles.module.scss'
 
@@ -270,20 +270,20 @@ const InlineItemEditor = (props: Props) => {
                         className={styles.popover}
                         data-testid="approve-popover"
                       >
-                        <EuiText size="m">
+                        <Text size="m" component="div">
                           {!!approveText?.title && (
                             <h4>
                               <b>{approveText?.title}</b>
                             </h4>
                           )}
-                          <EuiText
+                          <Text
                             size="s"
                             color="subdued"
                             className={styles.approveText}
                           >
                             {approveText?.text}
-                          </EuiText>
-                        </EuiText>
+                          </Text>
+                        </Text>
                         <div className={styles.popoverFooter}>
                           <DestructiveButton
                             aria-label="Save"

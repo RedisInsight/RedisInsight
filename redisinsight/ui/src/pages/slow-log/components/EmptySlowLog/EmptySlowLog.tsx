@@ -1,9 +1,9 @@
-import { EuiText } from '@elastic/eui'
 import React from 'react'
 import { DurationUnits } from 'uiSrc/constants'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { convertNumberByUnits } from 'uiSrc/pages/slow-log/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import { Text } from 'uiSrc/components/base/text'
 
 import styles from '../styles.module.scss'
 
@@ -21,7 +21,7 @@ const EmptySlowLog = (props: Props) => {
         <Title size="M" className={styles.noFoundTitle}>
           No Slow Logs found
         </Title>
-        <EuiText color="subdued">
+        <Text color="subdued">
           Either no commands exceeding&nbsp;
           {numberWithSpaces(
             convertNumberByUnits(slowlogLogSlowerThan, durationUnit),
@@ -31,7 +31,7 @@ const EmptySlowLog = (props: Props) => {
             ? DurationUnits.mSeconds
             : DurationUnits.microSeconds}
           &nbsp;were found or Slow Log is disabled on the server.
-        </EuiText>
+        </Text>
       </div>
     </div>
   )

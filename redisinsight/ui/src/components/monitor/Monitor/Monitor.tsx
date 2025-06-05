@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiSwitch, EuiTextColor, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiSwitch, EuiToolTip } from '@elastic/eui'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
@@ -9,6 +9,7 @@ import BanIcon from 'uiSrc/assets/img/monitor/ban.svg?react'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { PlayFilledIcon } from 'uiSrc/components/base/icons'
+import { ColorText } from 'uiSrc/components/base/text'
 import MonitorLog from '../MonitorLog'
 import MonitorOutputList from '../MonitorOutputList'
 
@@ -65,7 +66,7 @@ const Monitor = (props: Props) => {
             />
           </FlexItem>
           <FlexItem>
-            <EuiTextColor
+            <ColorText
               color="warning"
               className="warning--light"
               style={{ paddingLeft: 4 }}
@@ -73,7 +74,7 @@ const Monitor = (props: Props) => {
             >
               Running Profiler will decrease throughput, avoid running it in
               production databases.
-            </EuiTextColor>
+            </ColorText>
           </FlexItem>
         </Row>
       </div>
@@ -109,13 +110,13 @@ const Monitor = (props: Props) => {
             />
           </FlexItem>
           <FlexItem grow>
-            <EuiTextColor
+            <ColorText
               color="danger"
               style={{ paddingLeft: 4 }}
               data-testid="monitor-error-message"
             >
               {error}
-            </EuiTextColor>
+            </ColorText>
           </FlexItem>
         </Row>
       </div>

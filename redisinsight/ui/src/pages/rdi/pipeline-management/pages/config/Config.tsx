@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiText, EuiLink, EuiLoadingSpinner } from '@elastic/eui'
+import { EuiLink, EuiLoadingSpinner } from '@elastic/eui'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 import { get, throttle } from 'lodash'
@@ -34,6 +34,8 @@ import { createAxiosError, isEqualPipelineFile, yamlToJson } from 'uiSrc/utils'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
+
 import styles from './styles.module.scss'
 
 const Config = () => {
@@ -145,9 +147,7 @@ const Config = () => {
         })}
       >
         <div className="rdi__content-header">
-          <EuiText className="rdi__title">
-            Target database configuration
-          </EuiText>
+          <Text className="rdi__title">Target database configuration</Text>
           <TemplatePopover
             isPopoverOpen={isPopoverOpen && !isOpenDialog}
             setIsPopoverOpen={setIsPopoverOpen}
@@ -157,7 +157,7 @@ const Config = () => {
             source={RdiPipelineTabs.Config}
           />
         </div>
-        <EuiText className="rdi__text" color="subdued">
+        <Text className="rdi__text" color="subdued">
           {'Provide '}
           <EuiLink
             external={false}
@@ -173,15 +173,15 @@ const Config = () => {
           {
             ' for source and target databases and other collector configurations, such as tables and columns to track.'
           }
-        </EuiText>
+        </Text>
         {pipelineLoading ? (
           <div
             className={cx('rdi__editorWrapper', 'rdi__loading')}
             data-testid="rdi-config-loading"
           >
-            <EuiText color="subdued" style={{ marginBottom: 12 }}>
+            <Text color="subdued" style={{ marginBottom: 12 }}>
               Loading data...
-            </EuiText>
+            </Text>
             <EuiLoadingSpinner color="secondary" size="l" />
           </div>
         ) : (

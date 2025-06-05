@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiLoadingSpinner, EuiText } from '@elastic/eui'
+import { EuiLoadingSpinner } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { checkConnectToRdiInstanceAction } from 'uiSrc/slices/rdi/instances'
@@ -19,6 +19,7 @@ import {
   Group as ListGroup,
   Item as ListGroupItem,
 } from 'uiSrc/components/base/layout/list'
+import { Text } from 'uiSrc/components/base/text'
 import { InstancesTabs } from '../../InstancesNavigationPopover'
 import styles from '../../styles.module.scss'
 
@@ -135,12 +136,15 @@ const InstancesList = ({
             isDisabled={loading}
             key={instance.id}
             label={
-              <EuiText style={{ display: 'flex', alignItems: 'center' }}>
+              <Text
+                style={{ display: 'flex', alignItems: 'center' }}
+                component="div"
+              >
                 {loading && instance?.id === selected && (
                   <EuiLoadingSpinner size="s" className={styles.loading} />
                 )}
                 {instance.name} {getDbIndex(instance.db)}
-              </EuiText>
+              </Text>
             }
             onClick={() => {
               setSelected(instance.id)

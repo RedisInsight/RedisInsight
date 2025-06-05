@@ -7,7 +7,6 @@ import {
   EuiRadioGroup,
   EuiRadioGroupOption,
   EuiSuperSelect,
-  EuiText,
   EuiToolTip,
 } from '@elastic/eui'
 import { checkDateTimeFormat, formatTimestamp } from 'uiSrc/utils'
@@ -24,6 +23,7 @@ import {
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon, CheckBoldIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 interface InitialValuesType {
@@ -173,9 +173,9 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
       label: (
         <div className={styles.radioLabelWrapper}>
           <div className={styles.radioLabelTextContainer}>
-            <EuiText color="subdued" className={styles.radioLabelText}>
+            <Text color="subdued" className={styles.radioLabelText}>
               Pre-selected formats
-            </EuiText>
+            </Text>
           </div>
           <EuiSuperSelect
             className={styles.datetimeInput}
@@ -199,9 +199,9 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
       label: (
         <div className={styles.radioLabelWrapper}>
           <div className={styles.radioLabelTextContainer}>
-            <EuiText color="subdued" className={styles.radioLabelText}>
+            <Text color="subdued" className={styles.radioLabelText}>
               Custom
-            </EuiText>
+            </Text>
           </div>
           {formik.values.selectedRadioOption === DatetimeRadioOption.Custom && (
             <>

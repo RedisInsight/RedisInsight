@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import cx from 'classnames'
-import { EuiTextColor } from '@elastic/eui'
 import {
   ListChildComponentProps,
   ListOnScrollProps,
   VariableSizeList as List,
 } from 'react-window'
 
+import { ColorText } from 'uiSrc/components/base/text'
 import { DEFAULT_ERROR_MESSAGE, getFormatTime } from 'uiSrc/utils'
 
 import styles from 'uiSrc/components/monitor/Monitor/styles.module.scss'
@@ -136,9 +136,9 @@ const MonitorOutputList = (props: Props) => {
           </div>
         )}
         {isError && (
-          <EuiTextColor color="danger">
+          <ColorText color="danger">
             {message ?? DEFAULT_ERROR_MESSAGE}
-          </EuiTextColor>
+          </ColorText>
         )}
       </div>
     )

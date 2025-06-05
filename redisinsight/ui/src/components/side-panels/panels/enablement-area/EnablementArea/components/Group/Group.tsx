@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiAccordion, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiAccordion, EuiIcon, EuiToolTip } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
@@ -13,6 +13,7 @@ import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-cust
 import { EAItemActions } from 'uiSrc/constants'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { OnboardingTour } from 'uiSrc/components'
+import { Text } from 'uiSrc/components/base/text'
 import DeleteTutorialButton from '../DeleteTutorialButton'
 
 import './styles.scss'
@@ -121,12 +122,12 @@ const Group = (props: Props) => {
 
   const buttonContent = (
     <div className="group-header-wrapper">
-      <EuiText className="group-header" size="m">
+      <Text className="group-header" size="m">
         {isShowFolder && (
           <EuiIcon type={isGroupOpen ? 'folderOpen' : 'folderClosed'} />
         )}
         {label}
-      </EuiText>
+      </Text>
       {isShowActions && actionsContent}
     </div>
   )

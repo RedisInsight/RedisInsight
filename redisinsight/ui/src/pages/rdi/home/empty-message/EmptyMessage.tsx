@@ -1,4 +1,4 @@
-import { EuiIcon, EuiImage, EuiLink, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiImage, EuiLink } from '@elastic/eui'
 import React, { useContext } from 'react'
 
 import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
@@ -9,6 +9,7 @@ import NewTabIcon from 'uiSrc/assets/img/rdi/new_tab.svg'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { Theme } from 'uiSrc/constants'
 
+import { Text } from 'uiSrc/components/base/text'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
@@ -29,13 +30,13 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => {
       data-testid="empty-rdi-instance-list"
     >
       <Spacer size="xl" />
-      <EuiText className={styles.title}>Redis Data Integration</EuiText>
+      <Text className={styles.title}>Redis Data Integration</Text>
       <EuiImage
         src={theme === Theme.Dark ? EmptyListDarkIcon : EmptyListLightIcon}
         className={styles.icon}
         alt="empty"
       />
-      <EuiText className={styles.subTitle}>{subTitleText}</EuiText>
+      <Text className={styles.subTitle}>{subTitleText}</Text>
       <Row align="center" gap="m" responsive style={{ lineHeight: '20px' }}>
         <FlexItem grow>
           <PrimaryButton

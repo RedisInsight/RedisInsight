@@ -1,11 +1,12 @@
 import React from 'react'
-import {  EuiLink, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiLink, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
 import CreateRedisearchIndex from './CreateRedisearchIndex'
 
 import styles from './styles.module.scss'
@@ -45,7 +46,7 @@ const CreateRedisearchIndexWrapper = ({
           )}
         </FlexItem>
         <FlexItem grow className={styles.header}>
-          <EuiText size="s">
+          <Text size="s">
             Use CLI or Workbench to create more advanced indexes. See more
             details in the{' '}
             <EuiLink
@@ -59,7 +60,7 @@ const CreateRedisearchIndexWrapper = ({
             >
               documentation.
             </EuiLink>
-          </EuiText>
+          </Text>
         </FlexItem>
       </div>
       <CreateRedisearchIndex

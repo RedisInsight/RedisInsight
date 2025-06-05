@@ -1,12 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiIcon,
-  EuiLink,
-  EuiLoadingSpinner,
-  EuiPopover,
-  EuiText,
-} from '@elastic/eui'
+import { EuiIcon, EuiLink, EuiLoadingSpinner, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import { useHistory } from 'react-router-dom'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
@@ -26,6 +20,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { getConfig } from 'uiSrc/config'
+import { Text } from 'uiSrc/components/base/text'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import styles from './styles.module.scss'
 
@@ -139,20 +134,17 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
             <FeatureFlagComponent
               name={FeatureFlags.envDependent}
               otherwise={
-                <EuiText
+                <Text
                   className={styles.optionTitle}
                   data-testid="profile-title"
                 >
                   Account
-                </EuiText>
+                </Text>
               }
             >
-              <EuiText
-                className={styles.optionTitle}
-                data-testid="profile-title"
-              >
+              <Text className={styles.optionTitle} data-testid="profile-title">
                 Redis Cloud account
-              </EuiText>
+              </Text>
             </FeatureFlagComponent>
             <div
               className={styles.accounts}
@@ -171,9 +163,9 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                   onClick={() => handleClickSelectAccount?.(id)}
                   data-testid={`profile-account-${id}${id === currentAccountId ? '-selected' : ''}`}
                 >
-                  <EuiText className={styles.accountNameId}>
+                  <Text className={styles.accountNameId}>
                     <span className={styles.accountName}>{name}</span> #{id}
-                  </EuiText>
+                  </Text>
                   {id === currentAccountId && (
                     <EuiIcon
                       type="check"
@@ -200,7 +192,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                   href={riDesktopLink}
                   data-testid="open-ri-desktop-link"
                 >
-                  <EuiText>Open in Redis Insight Desktop version</EuiText>
+                  <Text>Open in Redis Insight Desktop version</Text>
                 </EuiLink>
                 <EuiLink
                   external={false}
@@ -209,7 +201,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                   href={riConfig.app.smConsoleRedirect}
                   data-testid="cloud-admin-console-link"
                 >
-                  <EuiText>Back to Redis Cloud Admin console</EuiText>
+                  <Text>Back to Redis Cloud Admin console</Text>
                   <EuiIcon
                     type={CloudIcon}
                     style={{ fill: 'none' }}
@@ -228,9 +220,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
               onClick={handleClickImport}
               data-testid="profile-import-cloud-databases"
             >
-              <EuiText className={styles.optionTitle}>
-                Import Cloud databases
-              </EuiText>
+              <Text className={styles.optionTitle}>Import Cloud databases</Text>
               {isImportLoading ? (
                 <EuiLoadingSpinner className={styles.loadingSpinner} size="m" />
               ) : (
@@ -248,13 +238,13 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
               data-testid="cloud-console-link"
             >
               <div className={styles.optionTitleWrapper}>
-                <EuiText className={styles.optionTitle}>Cloud Console</EuiText>
-                <EuiText
+                <Text className={styles.optionTitle}>Cloud Console</Text>
+                <Text
                   className={cx('truncateText', styles.accountFullName)}
                   data-testid="account-full-name"
                 >
                   {name}
-                </EuiText>
+                </Text>
               </div>
               <EuiIcon
                 type={CloudIcon}
@@ -269,7 +259,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
               onClick={handleClickLogout}
               data-testid="profile-logout"
             >
-              <EuiText className={styles.optionTitle}>Logout</EuiText>
+              <Text className={styles.optionTitle}>Logout</Text>
               <EuiIcon type="exit" />
             </div>
           </FeatureFlagComponent>

@@ -3,10 +3,8 @@ import {
   EuiInMemoryTable,
   EuiBasicTableColumn,
   PropertySort,
-  EuiText,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
-import { FormField } from '@redis-ui/components'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 
 import { sentinelSelector } from 'uiSrc/slices/instances/sentinel'
@@ -20,6 +18,8 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -82,7 +82,7 @@ const SentinelDatabasesResult = ({
   }
 
   const SummaryText = () => (
-    <EuiText className={styles.subTitle} data-testid="summary">
+    <Text className={styles.subTitle} data-testid="summary">
       <b>Summary: </b>
       {countSuccessAdded ? (
         <span>
@@ -97,7 +97,7 @@ const SentinelDatabasesResult = ({
           {' primary group(s)'}
         </span>
       ) : null}
-    </EuiText>
+    </Text>
   )
 
   return (

@@ -1,4 +1,3 @@
-import { EuiText } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
@@ -13,6 +12,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from '../styles.module.scss'
 
@@ -54,10 +54,10 @@ const RunConfirmationPopover = ({ onApply }: Props) => {
         <span>Run commands</span>
       </Title>
       <Spacer size="s" />
-      <EuiText size="s">
+      <Text size="s">
         This tutorial will change data in your database, are you sure you want
         to run commands in this database?
-      </EuiText>
+      </Text>
       <Spacer size="s" />
       <Checkbox
         id="showAgain"

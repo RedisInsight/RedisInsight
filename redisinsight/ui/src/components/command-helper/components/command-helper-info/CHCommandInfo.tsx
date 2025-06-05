@@ -1,13 +1,15 @@
 import React from 'react'
-import { EuiTextColor } from '@elastic/eui'
+
 
 import { GroupBadge } from 'uiSrc/components'
 import { CommandGroup } from 'uiSrc/constants'
 
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { ArrowLeftIcon } from 'uiSrc/components/base/icons'
+import { ColorText } from 'uiSrc/components/base/text'
 import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
 import { Row } from 'uiSrc/components/base/layout/flex'
+
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -38,13 +40,13 @@ const CHCommandInfo = (props: Props) => {
         style={{ marginRight: '4px' }}
       />
       <GroupBadge type={group} className={styles.groupBadge} />
-      <EuiTextColor
+      <ColorText
         className={styles.title}
         color="subdued"
         data-testid="cli-helper-title-args"
       >
         {args}
-      </EuiTextColor>
+      </ColorText>
       {complexity && (
         <RiBadge
           label={complexity}

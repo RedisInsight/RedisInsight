@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiText, EuiIcon } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 
 import {
   toggleCli,
@@ -16,6 +16,7 @@ import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
 import { WindowControlGroup } from 'uiSrc/components/base/shared/WindowControlGroup'
 import styles from './styles.module.scss'
 
@@ -70,7 +71,7 @@ const CliHeader = () => {
             anchorPosition="upLeft"
             panelClassName={styles.cliOnboardPanel}
           >
-            <EuiText>CLI</EuiText>
+            <Text>CLI</Text>
           </OnboardingTour>
         </FlexItem>
         <FlexItem grow />

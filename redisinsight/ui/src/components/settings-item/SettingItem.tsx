@@ -1,12 +1,13 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiFieldNumber, EuiIcon, EuiText } from '@elastic/eui'
+import { EuiFieldNumber, EuiIcon } from '@elastic/eui'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -69,15 +70,15 @@ const SettingItem = (props: Props) => {
         {title}
       </Title>
       <Spacer size="s" />
-      <EuiText className={styles.smallText} size="s" color="subdued">
+      <Text className={styles.smallText} size="s" color="subdued">
         {summary}
-      </EuiText>
+      </Text>
       <Spacer size="m" />
       <Row align="center" className={styles.container}>
         <FlexItem style={{ marginRight: '4px' }}>
-          <EuiText size="xs" color="subdued" className={styles.inputLabel}>
+          <Text size="xs" color="subdued" className={styles.inputLabel}>
             {label}
-          </EuiText>
+          </Text>
         </FlexItem>
 
         <FlexItem
@@ -112,9 +113,9 @@ const SettingItem = (props: Props) => {
               />
             </InlineItemEditor>
           ) : (
-            <EuiText className={styles.value} data-testid={`${testid}-value`}>
+            <Text className={styles.value} data-testid={`${testid}-value`}>
               {value}
-            </EuiText>
+            </Text>
           )}
         </FlexItem>
       </Row>

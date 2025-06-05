@@ -1,10 +1,4 @@
-import {
-  EuiBasicTableColumn,
-  EuiIcon,
-  EuiText,
-  EuiTextColor,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiBasicTableColumn, EuiIcon, EuiToolTip } from '@elastic/eui'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -32,6 +26,7 @@ import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import RedisCloudDatabasesResult from './RedisCloudDatabasesResult'
 
 import styles from './styles.module.scss'
@@ -84,7 +79,7 @@ const RedisCloudDatabasesResultPage = () => {
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
-              <EuiText>{cellContent}</EuiText>
+              <Text>{cellContent}</Text>
             </EuiToolTip>
           </div>
         )
@@ -117,7 +112,7 @@ const RedisCloudDatabasesResultPage = () => {
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
-              <EuiText>{cellContent}</EuiText>
+              <Text>{cellContent}</Text>
             </EuiToolTip>
           </div>
         )
@@ -156,7 +151,7 @@ const RedisCloudDatabasesResultPage = () => {
         const text = publicEndpoint
         return (
           <div className="public_endpoint">
-            <EuiText className="copyPublicEndpointText">{text}</EuiText>
+            <Text className="copyPublicEndpointText">{text}</Text>
             <EuiToolTip
               position="right"
               content="Copy"
@@ -220,7 +215,7 @@ const RedisCloudDatabasesResultPage = () => {
         return (
           <>
             {statusAdded === AddRedisDatabaseStatus.Success ? (
-              <EuiText>{messageAdded}</EuiText>
+              <Text>{messageAdded}</Text>
             ) : (
               <EuiToolTip position="left" title="Error" content={messageAdded}>
                 <Row align="center" gap="s">
@@ -229,12 +224,12 @@ const RedisCloudDatabasesResultPage = () => {
                   </FlexItem>
 
                   <FlexItem>
-                    <EuiTextColor
+                    <ColorText
                       color="danger"
                       className="flex-row euiTextAlign--center"
                     >
                       Error
-                    </EuiTextColor>
+                    </ColorText>
                   </FlexItem>
                 </Row>
               </EuiToolTip>

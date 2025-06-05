@@ -4,8 +4,6 @@ import {
   EuiIcon,
   EuiSuperSelect,
   EuiSuperSelectOption,
-  EuiText,
-  EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
@@ -34,6 +32,7 @@ import FormattersLight from 'uiSrc/assets/img/icons/formatter_light.svg'
 import FormattersDark from 'uiSrc/assets/img/icons/formatter_dark.svg'
 import { stringDataSelector } from 'uiSrc/slices/browser/string'
 import { isFullStringLoaded } from 'uiSrc/utils'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import { getKeyValueFormatterOptions } from './constants'
 import styles from './styles.module.scss'
 
@@ -80,9 +79,9 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
           >
             <>
               {width > MIDDLE_SCREEN_RESOLUTION && (
-                <EuiTextColor color="subdued" className={styles.optionText}>
+                <ColorText color="subdued" className={styles.optionText}>
                   {text}
-                </EuiTextColor>
+                </ColorText>
               )}
               {width <= MIDDLE_SCREEN_RESOLUTION && (
                 <EuiIcon
@@ -95,9 +94,9 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
           </EuiToolTip>
         ),
         dropdownDisplay: (
-          <EuiText size="s" className={styles.dropdownDisplay}>
+          <Text size="s" className={styles.dropdownDisplay}>
             {text}
-          </EuiText>
+          </Text>
         ),
         'data-test-subj': `format-option-${value}`,
       }))

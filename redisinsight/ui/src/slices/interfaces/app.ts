@@ -242,7 +242,7 @@ export interface IGlobalNotification {
   timestamp: number
   title: string
   body: string
-  read: boolean
+  read?: boolean
   category?: string
   categoryColor?: string
 }

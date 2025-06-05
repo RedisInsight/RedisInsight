@@ -4,9 +4,7 @@ import {
   EuiInMemoryTable,
   EuiBasicTableColumn,
   PropertySort,
-  EuiText,
 } from '@elastic/eui'
-import { FormField } from '@redis-ui/components'
 import {
   InstanceRedisCloud,
   AddRedisDatabaseStatus,
@@ -22,6 +20,8 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -73,7 +73,7 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
   }
 
   const SummaryText = () => (
-    <EuiText className={styles.subTitle}>
+    <Text className={styles.subTitle}>
       <b>Summary: </b>
       {countSuccessAdded ? (
         <span>
@@ -84,7 +84,7 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
       {countFailAdded ? (
         <span>Failed to add {countFailAdded} database(s).</span>
       ) : null}
-    </EuiText>
+    </Text>
   )
 
   return (

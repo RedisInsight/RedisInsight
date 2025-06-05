@@ -1,4 +1,4 @@
-import { EuiBasicTableColumn, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiBasicTableColumn, EuiIcon, EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { map, pick } from 'lodash'
 import { useHistory } from 'react-router-dom'
@@ -19,6 +19,7 @@ import { InputFieldSentinel } from 'uiSrc/components'
 import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/InputFieldSentinel'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
 
 import SentinelDatabases from './components'
@@ -153,7 +154,7 @@ const SentinelDatabasesPage = () => {
         const text = `${host}:${port}`
         return (
           <div className="host_port">
-            <EuiText className="copyHostPortText">{text}</EuiText>
+            <Text className="copyHostPortText">{text}</Text>
             <EuiToolTip
               position="right"
               content="Copy"

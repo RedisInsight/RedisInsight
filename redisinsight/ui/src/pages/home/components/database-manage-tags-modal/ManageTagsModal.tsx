@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useCallback, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { EuiIcon, EuiText } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { PlusIcon } from 'uiSrc/components/base/icons'
 import { ConnectionProvider, Instance } from 'uiSrc/slices/interfaces'
 import { FormDialog } from 'uiSrc/components'
@@ -17,6 +17,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
 import { VALID_TAG_KEY_REGEX, VALID_TAG_VALUE_REGEX } from './constants'
 import { TagInputField } from './TagInputField'
 import { getInvalidTagErrors } from './utils'
@@ -108,11 +109,9 @@ export const ManageTagsModal = ({
         <div className={styles.header}>
           <Title size="M">Manage tags for {instance.name}</Title>
           <Spacer size="s" />
-          <EuiText size="s" color="subdued">
-            <p>
-              Tags are key-value pairs that let you categorize your databases.
-            </p>
-          </EuiText>
+          <Text size="s" color="subdued">
+            Tags are key-value pairs that let you categorize your databases.
+          </Text>
         </div>
       }
       footer={
@@ -120,10 +119,10 @@ export const ManageTagsModal = ({
           {(isCloudDb || isClusterDb) && (
             <div className={styles.warning}>
               <EuiIcon type={WarningIcon} color="warning" size="m" />
-              <EuiText size="m">
+              <Text size="m">
                 Tag changes in Redis Insight apply locally and are not synced
                 with Redis {isCloudDb ? 'Cloud' : 'Software'}.
-              </EuiText>
+              </Text>
             </div>
           )}
           <div className={styles.footer}>

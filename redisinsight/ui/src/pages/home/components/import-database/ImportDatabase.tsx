@@ -4,8 +4,6 @@ import {
   EuiFilePicker,
   EuiIcon,
   EuiLoadingSpinner,
-  EuiText,
-  EuiTextColor,
   EuiToolTip,
 } from '@elastic/eui'
 import ReactDOM from 'react-dom'
@@ -27,6 +25,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import ResultsLog from './components/ResultsLog'
 
 import styles from './styles.module.scss'
@@ -177,11 +176,11 @@ const ImportDatabase = (props: Props) => {
           <FlexItem grow>
             {isShowForm && (
               <>
-                <EuiText color="subdued" size="s">
+                <Text color="subdued" size="s">
                   Use a JSON file to import your database connections. Ensure
                   that you only use files from trusted sources to prevent the
                   risk of automatically executing malicious code.
-                </EuiText>
+                </Text>
                 <Spacer />
                 <EuiFilePicker
                   id="import-file-modal-filepicker"
@@ -194,13 +193,13 @@ const ImportDatabase = (props: Props) => {
                   aria-label="Select or drag and drop file"
                 />
                 {isInvalid && (
-                  <EuiTextColor
+                  <ColorText
                     color="danger"
                     className={styles.errorFileMsg}
                     data-testid="input-file-error-msg"
                   >
                     {`File should not exceed ${MAX_MB_FILE} MB`}
-                  </EuiTextColor>
+                  </ColorText>
                 )}
               </>
             )}
@@ -210,9 +209,9 @@ const ImportDatabase = (props: Props) => {
                 data-testid="file-loading-indicator"
               >
                 <EuiLoadingSpinner size="xl" />
-                <EuiText color="subdued" style={{ marginTop: 12 }}>
+                <Text color="subdued" style={{ marginTop: 12 }}>
                   Uploading...
-                </EuiText>
+                </Text>
               </div>
             )}
             {error && (
@@ -222,10 +221,10 @@ const ImportDatabase = (props: Props) => {
                   size="xxl"
                   color="danger"
                 />
-                <EuiText color="subdued" style={{ marginTop: 16 }}>
+                <Text color="subdued" style={{ marginTop: 16 }}>
                   Failed to add database connections
-                </EuiText>
-                <EuiText color="subdued">{error}</EuiText>
+                </Text>
+                <Text color="subdued">{error}</Text>
               </div>
             )}
           </FlexItem>

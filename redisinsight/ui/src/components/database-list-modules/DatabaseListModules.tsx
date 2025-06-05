@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/no-nested-template-literals */
 import React, { useContext } from 'react'
-import { EuiIcon, EuiTextColor, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
 import { Theme } from 'uiSrc/constants'
@@ -11,6 +11,7 @@ import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { DEFAULT_MODULES_INFO } from 'uiSrc/constants/modules'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { UnknownDarkIcon, UnknownLightIcon } from 'uiSrc/components/base/icons'
+import { ColorText } from 'uiSrc/components/base/text'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import styles from './styles.module.scss'
@@ -19,7 +20,6 @@ export interface Props {
   content?: JSX.Element
   modules: AdditionalRedisModule[]
   inCircle?: boolean
-  dark?: boolean
   highlight?: boolean
   maxViewModules?: number
   tooltipTitle?: React.ReactNode
@@ -89,17 +89,17 @@ const DatabaseListModules = React.memo((props: Props) => {
       <div className={styles.tooltipItem} key={content || abbreviation}>
         {!!icon && <EuiIcon type={icon} style={{ marginRight: 10 }} />}
         {!icon && (
-          <EuiTextColor
+          <ColorText
             className={cx(styles.icon, styles.abbr)}
             style={{ marginRight: 10 }}
           >
             {abbreviation}
-          </EuiTextColor>
+          </ColorText>
         )}
         {!!content && (
-          <EuiTextColor className={cx(styles.tooltipItemText)}>
+          <ColorText className={cx(styles.tooltipItemText)}>
             {content}
-          </EuiTextColor>
+          </ColorText>
         )}
         <br />
       </div>
@@ -122,7 +122,7 @@ const DatabaseListModules = React.memo((props: Props) => {
           aria-labelledby={`${content}_module`}
         />
       ) : (
-        <EuiTextColor
+        <ColorText
           className={cx(styles.icon, styles.abbr, {
             [styles.circle]: inCircle,
           })}
@@ -131,7 +131,7 @@ const DatabaseListModules = React.memo((props: Props) => {
           aria-labelledby={`${content}_module`}
         >
           {abbreviation}
-        </EuiTextColor>
+        </ColorText>
       )}
     </span>
   )

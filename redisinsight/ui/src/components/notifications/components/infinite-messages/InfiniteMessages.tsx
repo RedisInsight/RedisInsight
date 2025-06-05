@@ -1,5 +1,9 @@
 import React from 'react'
-import { EuiIcon, EuiLink, EuiLoadingSpinner, EuiText } from '@elastic/eui'
+import {
+  EuiIcon,
+  EuiLink,
+  EuiLoadingSpinner,
+} from '@elastic/eui'
 import { find } from 'lodash'
 import cx from 'classnames'
 import { CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
@@ -12,6 +16,7 @@ import { CloudSuccessResult } from 'uiSrc/slices/interfaces'
 
 import { Maybe } from 'uiSrc/utils'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { Text } from 'uiSrc/components/base/text'
 import {
   EXTERNAL_LINKS,
   UTM_CAMPAINGS,
@@ -55,9 +60,9 @@ export const INFINITE_MESSAGES = {
           </FlexItem>
           <FlexItem grow>
             <Title className="infiniteMessage__title">Authenticating…</Title>
-            <EuiText size="xs">
+            <Text size="xs">
               This may take several seconds, but it is totally worth it!
-            </EuiText>
+            </Text>
           </FlexItem>
         </Row>
       </div>
@@ -86,14 +91,14 @@ export const INFINITE_MESSAGES = {
                   'Importing a free trial Cloud database…'}
               </span>
             </Title>
-            <EuiText size="xs">
+            <Text size="xs">
               This may take several minutes, but it is totally worth it!
-            </EuiText>
+            </Text>
             <Spacer size="m" />
-            <EuiText size="xs">
+            <Text size="xs">
               You can continue working in Redis Insight, and we will notify you
               once done.
-            </EuiText>
+            </Text>
           </FlexItem>
         </Row>
       </div>
@@ -132,12 +137,12 @@ export const INFINITE_MESSAGES = {
             </FlexItem>
             <FlexItem grow>
               <Title className="infiniteMessage__title">Congratulations!</Title>
-              <EuiText size="xs">
+              <Text size="xs">
                 {text}
                 <Spacer size="s" />
                 <b>Notice:</b> the database will be deleted after 15 days of
                 inactivity.
-              </EuiText>
+              </Text>
               {!!details && (
                 <>
                   <Spacer size="m" />
@@ -145,30 +150,30 @@ export const INFINITE_MESSAGES = {
                   <Spacer size="m" />
                   <Row className={styles.detailsRow} justify="between">
                     <FlexItem>
-                      <EuiText size="xs">Plan</EuiText>
+                      <Text size="xs">Plan</Text>
                     </FlexItem>
                     <FlexItem data-testid="notification-details-plan">
-                      <EuiText size="xs">Free</EuiText>
+                      <Text size="xs">Free</Text>
                     </FlexItem>
                   </Row>
                   <Row className={styles.detailsRow} justify="between">
                     <FlexItem>
-                      <EuiText size="xs">Cloud Vendor</EuiText>
+                      <Text size="xs">Cloud Vendor</Text>
                     </FlexItem>
                     <FlexItem
                       className={styles.vendorLabel}
                       data-testid="notification-details-vendor"
                     >
                       {!!vendor?.icon && <EuiIcon type={vendor?.icon} />}
-                      <EuiText size="xs">{vendor?.label}</EuiText>
+                      <Text size="xs">{vendor?.label}</Text>
                     </FlexItem>
                   </Row>
                   <Row className={styles.detailsRow} justify="between">
                     <FlexItem>
-                      <EuiText size="xs">Region</EuiText>
+                      <Text size="xs">Region</Text>
                     </FlexItem>
                     <FlexItem data-testid="notification-details-region">
-                      <EuiText size="xs">{details.region}</EuiText>
+                      <Text size="xs">{details.region}</Text>
                     </FlexItem>
                   </Row>
                 </>
@@ -210,9 +215,9 @@ export const INFINITE_MESSAGES = {
         <Title className="infiniteMessage__title">
           You already have a free trial Redis Cloud subscription.
         </Title>
-        <EuiText size="xs">
+        <Text size="xs">
           Do you want to import your existing database into Redis Insight?
-        </EuiText>
+        </Text>
         <Spacer size="m" />
         <Row justify="between">
           <FlexItem>
@@ -254,7 +259,7 @@ export const INFINITE_MESSAGES = {
         <Title className="infiniteMessage__title">
           Unable to import Cloud database.
         </Title>
-        <EuiText size="xs">
+        <Text size="xs">
           Adding your Redis Cloud database to Redis Insight is disabled due to a
           setting restricting database connection management.
           <Spacer size="m" />
@@ -269,7 +274,7 @@ export const INFINITE_MESSAGES = {
             Redis Cloud
           </EuiLink>{' '}
           to check your database.
-        </EuiText>
+        </Text>
         <Spacer size="m" />
         <Row justify="end">
           <FlexItem>
@@ -301,10 +306,10 @@ export const INFINITE_MESSAGES = {
         <Title className="infiniteMessage__title">
           Your subscription does not have a free trial Redis Cloud database.
         </Title>
-        <EuiText size="xs">
+        <Text size="xs">
           Do you want to create a free trial database in your existing
           subscription?
-        </EuiText>
+        </Text>
         <Spacer size="m" />
         <Row justify="between">
           <FlexItem>
@@ -344,9 +349,9 @@ export const INFINITE_MESSAGES = {
             <Title className="infiniteMessage__title">
               Connecting to your database
             </Title>
-            <EuiText size="xs">
+            <Text size="xs">
               This may take several minutes, but it is totally worth it!
-            </EuiText>
+            </Text>
           </FlexItem>
         </Row>
       </div>
@@ -368,7 +373,7 @@ export const INFINITE_MESSAGES = {
         <Title className="infiniteMessage__title">
           New version is now available
         </Title>
-        <EuiText size="s">
+        <Text size="s">
           <>
             With Redis Insight
             {` ${version} `}
@@ -376,7 +381,7 @@ export const INFINITE_MESSAGES = {
             <br />
             Restart Redis Insight to install updates.
           </>
-        </EuiText>
+        </Text>
         <br />
         <PrimaryButton
           size="s"
@@ -408,11 +413,11 @@ export const INFINITE_MESSAGES = {
           </FlexItem>
           <FlexItem grow>
             <Title className="infiniteMessage__title">Congratulations!</Title>
-            <EuiText size="xs">
+            <Text size="xs">
               Deployment completed successfully!
               <br />
               Check out the pipeline statistics page.
-            </EuiText>
+            </Text>
             <Spacer size="m" />
             {/* // TODO remove display none when statistics page will be available */}
             <Row style={{ display: 'none' }} justify="end" align="center">

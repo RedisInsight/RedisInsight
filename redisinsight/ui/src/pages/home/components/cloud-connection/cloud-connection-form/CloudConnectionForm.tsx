@@ -6,7 +6,6 @@ import {
   EuiFieldText,
   EuiForm,
   EuiRadioGroup,
-  EuiText,
   EuiToolTip,
   keys,
 } from '@elastic/eui'
@@ -30,6 +29,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Text } from 'uiSrc/components/base/text'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'
@@ -234,9 +234,9 @@ const CloudConnectionForm = (props: Props) => {
       <FeatureFlagComponent name={FeatureFlags.cloudSso}>
         <Col gap="s">
           <FlexItem grow>
-            <EuiText color="subdued" size="s">
+            <Text color="subdued" size="s">
               Connect with:
-            </EuiText>
+            </Text>
           </FlexItem>
           <FlexItem grow>
             <EuiRadioGroup

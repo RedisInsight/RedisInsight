@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { EuiIcon, EuiText } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { useHistory } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -10,6 +10,7 @@ import Robot from 'uiSrc/assets/img/robot.svg?react'
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 const NotFoundErrorPage = () => {
@@ -45,7 +46,7 @@ const NotFoundErrorPage = () => {
                 <br />
                 This Page Is an Empty Set
               </Title>
-              <EuiText>
+              <Text component="div">
                 <p
                   className={styles.errorSubtext}
                   style={{ marginBottom: '.8rem' }}
@@ -60,7 +61,7 @@ const NotFoundErrorPage = () => {
                 >
                   Databases page
                 </PrimaryButton>
-              </EuiText>
+              </Text>
             </FlexItem>
           </Col>
         </FlexItem>

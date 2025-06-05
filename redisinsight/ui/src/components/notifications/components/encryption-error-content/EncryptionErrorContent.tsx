@@ -1,14 +1,14 @@
 import React from 'react'
-import { EuiTextColor } from '@elastic/eui'
 import { matchPath, useHistory, useLocation } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { Pages } from 'uiSrc/constants'
+import { ColorText } from 'uiSrc/components/base/text'
 import { updateUserConfigSettingsAction } from 'uiSrc/slices/user/user-settings'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
   DestructiveButton,
-  SecondaryButton,
+  EmptyButton,
 } from 'uiSrc/components/base/forms/buttons'
 
 export interface Props {
@@ -18,7 +18,7 @@ export interface Props {
 
 // TODO: use i18n file for texts
 const EncryptionErrorContent = (props: Props) => {
-  const { onClose } = props
+  const { onClose, instanceId } = props
   const { pathname } = useLocation()
   const history = useHistory()
   const dispatch = useDispatch()
@@ -31,12 +31,12 @@ const EncryptionErrorContent = (props: Props) => {
   }
 
   const disableEncryption = () => {
-    const instanceId = props.instanceId || getInstanceIdFromUrl()
+    const iId = instanceId || getInstanceIdFromUrl()
     dispatch(
       updateUserConfigSettingsAction({ agreements: { encryption: false } }),
     )
     if (instanceId) {
-      history.push(Pages.homeEditInstance(instanceId))
+      history.push(Pages.homeEditInstance(iId))
     }
     if (onClose) {
       onClose()
@@ -44,15 +44,15 @@ const EncryptionErrorContent = (props: Props) => {
   }
   return (
     <>
-      <EuiTextColor color="ghost">
+      <ColorText color="danger">
         <b>Check the system keychain or disable encryption to proceed.</b>
-      </EuiTextColor>
+      </ColorText>
       <Spacer />
-      <EuiTextColor color="ghost" style={{ fontWeight: 300 }}>
+      <ColorText color="danger" style={{ fontWeight: 300 }}>
         Disabling encryption will result in storing sensitive information
         locally in plain text. Re-enter database connection information to work
         with databases.
-      </EuiTextColor>
+      </ColorText>
       <Spacer />
       <Row justify="end" gap="m">
         <FlexItem>
@@ -67,16 +67,14 @@ const EncryptionErrorContent = (props: Props) => {
           </div>
         </FlexItem>
         <FlexItem>
-          <div>
-            <SecondaryButton
-              inverted
-              onClick={onClose}
-              data-testid="toast-cancel-btn"
-              className="toast-danger-btn"
-            >
-              Cancel
-            </SecondaryButton>
-          </div>
+          <EmptyButton
+            variant="destructive"
+            onClick={onClose}
+            data-testid="toast-cancel-btn"
+            className="toast-danger-btn"
+          >
+            Cancel
+          </EmptyButton>
         </FlexItem>
       </Row>
     </>

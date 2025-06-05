@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { EuiText, EuiTourStep } from '@elastic/eui'
+import { EuiTourStep } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import cx from 'classnames'
 
@@ -16,6 +16,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import { Props as OnboardingWrapperProps } from './OnboardingTourWrapper'
 
 import styles from './styles.module.scss'
@@ -107,14 +108,14 @@ const OnboardingTour = (props: Props) => {
   const StepContent = (
     <>
       <div className={styles.content}>
-        <EuiText>
+        <Text>
           <div data-testid="step-content">{content}</div>
-        </EuiText>
+        </Text>
       </div>
       <div className={styles.footer}>
-        <EuiText color="subdued" className={styles.stepCount}>
+        <Text color="subdued" className={styles.stepCount}>
           {currentStep} of {totalSteps}
-        </EuiText>
+        </Text>
         <div className={styles.backNext}>
           {currentStep > 1 && (
             <SecondaryButton

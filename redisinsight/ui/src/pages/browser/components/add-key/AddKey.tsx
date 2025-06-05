@@ -25,7 +25,7 @@ import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
-import { Health } from 'uiSrc/components/base/text/Health'
+import { HealthText } from 'uiSrc/components/base/text/HealthText'
 import { ADD_KEY_TYPE_OPTIONS } from './constants/key-type-options'
 import AddKeyHash from './AddKeyHash'
 import AddKeyZset from './AddKeyZset'
@@ -66,13 +66,13 @@ const AddKey = (props: Props) => {
     return {
       value,
       inputDisplay: (
-        <Health
+        <HealthText
           color={color}
           style={{ lineHeight: 'inherit' }}
           data-test-subj={value}
         >
           {text}
-        </Health>
+        </HealthText>
       ),
     }
   })

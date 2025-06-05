@@ -5,7 +5,6 @@ import {
   EuiPopover,
   EuiTab,
   EuiTabs,
-  EuiText,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
@@ -21,6 +20,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { localStorageService } from 'uiSrc/services'
 import { filterAndSort } from 'uiSrc/utils'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Text } from 'uiSrc/components/base/text'
 import InstancesList from './components/instances-list'
 import styles from './styles.module.scss'
 
@@ -107,7 +107,7 @@ const InstancesNavigationPopover = ({ name }: Props) => {
       isOpen={isPopoverOpen}
       closePopover={() => showPopover()}
       button={
-        <EuiText
+        <Text
           className={styles.showPopoverBtn}
           onClick={() => showPopover()}
           data-testid="nav-instance-popover-btn"
@@ -116,7 +116,7 @@ const InstancesNavigationPopover = ({ name }: Props) => {
           <span>
             <EuiIcon color="primaryText" type={Down} />
           </span>
-        </EuiText>
+        </Text>
       }
     >
       <div className={styles.wrapper}>
@@ -166,9 +166,9 @@ const InstancesNavigationPopover = ({ name }: Props) => {
             <Spacer size="m" />
             <Divider />
             <div className={styles.footerContainer}>
-              <EuiText className={styles.homePageLink} onClick={goHome}>
+              <Text className={styles.homePageLink} onClick={goHome}>
                 {btnLabel}
-              </EuiText>
+              </Text>
             </div>
           </div>
         </div>

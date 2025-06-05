@@ -2,14 +2,9 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 import cx from 'classnames'
 import { toUpper, flatten, isArray, isEmpty, map, uniq } from 'lodash'
-import {
-  EuiBasicTableColumn,
-  EuiIcon,
-  EuiInMemoryTable,
-  EuiText,
-  EuiTextColor,
-} from '@elastic/eui'
+import { EuiBasicTableColumn, EuiIcon, EuiInMemoryTable } from '@elastic/eui'
 
+import { ColorText, Text } from '../../../../../components/base/text'
 import { LoadingContent } from '../../../../../components/base/layout'
 import GroupBadge from '../GroupBadge'
 import { InfoAttributesBoolean } from '../../constants'
@@ -67,7 +62,7 @@ const TableInfoResult = React.memo((props: Props) => {
           )
         }
 
-        return <EuiText>{initValue}</EuiText>
+        return <Text>{initValue}</Text>
       },
     }),
   )
@@ -76,7 +71,7 @@ const TableInfoResult = React.memo((props: Props) => {
     <div>
       {result ? (
         <>
-          <EuiText className="row" size="s" color="subdued">
+          <Text className="row" size="s" color="subdued">
             Indexing
             <GroupBadge
               type={result?.index_definition?.key_type?.toLowerCase()}
@@ -86,17 +81,17 @@ const TableInfoResult = React.memo((props: Props) => {
             {result?.index_definition?.prefixes
               ?.map((prefix: any) => `"${prefix}"`)
               .join(',')}
-          </EuiText>
-          <EuiText className="row" size="s" color="subdued">
+          </Text>
+          <Text className="row" size="s" color="subdued">
             Options:{' '}
             {result?.index_options?.length ? (
-              <EuiTextColor style={{ color: 'var(--euiColorFullShade)' }}>
+              <ColorText style={{ color: 'var(--euiColorFullShade)' }}>
                 {result?.index_options?.join(', ')}
-              </EuiTextColor>
+              </ColorText>
             ) : (
               <span className="italic">{noOptionsMessage}</span>
             )}
-          </EuiText>
+          </Text>
         </>
       ) : (
         <LoadingContent lines={2} />
@@ -106,11 +101,11 @@ const TableInfoResult = React.memo((props: Props) => {
   const Footer = () => (
     <div>
       {result ? (
-        <EuiText className="row" size="s" color="subdued">
+        <Text className="row" size="s" color="subdued">
           {`Number of docs: ${result?.num_docs || '0'} (max ${result?.max_doc_id || '0'}) | `}
           {`Number of records: ${result?.num_records || '0'} | `}
           {`Number of terms: ${result?.num_terms || '0'}`}
-        </EuiText>
+        </Text>
       ) : (
         <LoadingContent lines={1} />
       )}

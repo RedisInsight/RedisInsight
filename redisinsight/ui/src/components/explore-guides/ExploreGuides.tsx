@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiIcon, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiIcon, EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { guideLinksSelector } from 'uiSrc/slices/content/guide-links'
@@ -11,6 +11,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { findTutorialPath } from 'uiSrc/utils'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 const ExploreGuides = () => {
@@ -42,9 +43,9 @@ const ExploreGuides = () => {
       <EuiTitle size="xs">
         <span>Here&apos;s a good starting point</span>
       </EuiTitle>
-      <EuiText>
+      <Text>
         Explore the amazing world of Redis Stack with our interactive guides
-      </EuiText>
+      </Text>
       <Spacer size="xl" />
       {!!data.length && (
         <div className={styles.guides}>

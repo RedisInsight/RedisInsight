@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react'
-import { EuiLink, EuiText } from '@elastic/eui'
+import { EuiLink } from '@elastic/eui'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import LoadSampleData from 'uiSrc/pages/browser/components/load-sample-data'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -22,13 +23,13 @@ const NoIndexesInitialMessage = (props: Props) => {
 
   return (
     <div data-testid="no-indexes-chat-message">
-      <EuiText size="xs">Hi!</EuiText>
-      <EuiText size="xs">
+      <Text size="xs">Hi!</Text>
+      <Text size="xs">
         I am here to help you get started with data querying. I noticed that you
         have no indexes created.
-      </EuiText>
+      </Text>
       <Spacer />
-      <EuiText size="xs">
+      <Text size="xs">
         Would you like to load the sample data and indexes (from this{' '}
         <EuiLink
           color="subdued"
@@ -40,7 +41,7 @@ const NoIndexesInitialMessage = (props: Props) => {
           tutorial
         </EuiLink>
         ) to see what Redis Copilot can help you do?
-      </EuiText>
+      </Text>
       <Spacer />
       <LoadSampleData
         anchorClassName={styles.anchorClassName}

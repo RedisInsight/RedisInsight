@@ -5,7 +5,6 @@ import {
   EuiSuperSelectOption,
   EuiTab,
   EuiTabs,
-  EuiText,
   EuiToolTip,
   keys,
 } from '@elastic/eui'
@@ -26,6 +25,7 @@ import DryRunJobTransformations from 'uiSrc/pages/rdi/pipeline-management/compon
 import { createAxiosError, formatLongName, yamlToJson } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
+import { Text } from 'uiSrc/components/base/text'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
 import {
@@ -135,8 +135,8 @@ const DryRunJobPanel = (props: Props) => {
           createAxiosError({
             message: (
               <>
-                <EuiText>{`${upperFirst(name)} has an invalid structure.`}</EuiText>
-                <EuiText>{msg}</EuiText>
+                <Text>{`${upperFirst(name)} has an invalid structure.`}</Text>
+                <Text>{msg}</Text>
               </>
             ),
           }),
@@ -169,12 +169,12 @@ const DryRunJobPanel = (props: Props) => {
         >
           <EuiToolTip
             content={
-              <EuiText color="subdued" size="s">
+              <Text color="subdued" size="s">
                 Displays the results of the transformations you defined. The
                 data is presented in JSON format.
                 <br />
                 No data is written to the target database.
-              </EuiText>
+              </Text>
             }
             data-testid="transformation-output-tooltip"
           >
@@ -189,12 +189,12 @@ const DryRunJobPanel = (props: Props) => {
         >
           <EuiToolTip
             content={
-              <EuiText color="subdued" size="s">
+              <Text color="subdued" size="s">
                 Displays the list of Redis commands that will be generated based
                 on your job details.
                 <br />
                 No data is written to the target database.
-              </EuiText>
+              </Text>
             }
             data-testid="job-output-tooltip"
           >
@@ -213,7 +213,7 @@ const DryRunJobPanel = (props: Props) => {
     >
       <div className={styles.panelInner}>
         <div className={styles.header}>
-          <EuiText className={styles.title}>Test transformation logic</EuiText>
+          <Text className={styles.title}>Test transformation logic</Text>
           <div>
             <IconButton
               icon={isFullScreen ? ShrinkIcon : ExtendIcon}
@@ -232,11 +232,11 @@ const DryRunJobPanel = (props: Props) => {
           </div>
         </div>
         <div className={styles.body}>
-          <EuiText className={styles.text}>
+          <Text className={styles.text}>
             Add input data to test the transformation logic.
-          </EuiText>
+          </Text>
           <div className={styles.codeLabel}>
-            <EuiText>Input</EuiText>
+            <Text>Input</Text>
           </div>
           <MonacoJson
             value={input}

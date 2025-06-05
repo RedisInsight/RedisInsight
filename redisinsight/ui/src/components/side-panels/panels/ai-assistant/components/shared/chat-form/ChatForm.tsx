@@ -2,7 +2,6 @@ import React, { Ref, useRef, useState } from 'react'
 import {
   EuiForm,
   EuiPopover,
-  EuiText,
   EuiTextArea,
   EuiTitle,
   EuiToolTip,
@@ -15,6 +14,7 @@ import { isModifiedEvent } from 'uiSrc/services'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { SendIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -110,7 +110,7 @@ const ChatForm = (props: Props) => {
                   </>
                 )}
                 {validation.content && (
-                  <EuiText size="xs">{validation.content}</EuiText>
+                  <Text size="xs">{validation.content}</Text>
                 )}
               </div>
               {validation.icon}
@@ -178,10 +178,10 @@ const ChatForm = (props: Props) => {
           </EuiPopover>
         </EuiForm>
       </EuiToolTip>
-      <EuiText textAlign="center" size="xs" className={styles.agreementText}>
+      <Text textAlign="center" size="xs" className={styles.agreementText}>
         Verify the accuracy of any information provided by Redis Copilot before
         using it
-      </EuiText>
+      </Text>
     </div>
   )
 }

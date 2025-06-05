@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {
-  EuiIcon,
-  EuiPopover,
-  EuiSwitch,
-  EuiTextColor,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon, EuiPopover, EuiSwitch, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { ChevronDownIcon, RefreshIcon } from 'uiSrc/components/base/icons'
 import {
@@ -18,6 +12,7 @@ import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { ColorText } from 'uiSrc/components/base/text'
 import {
   DEFAULT_REFRESH_RATE,
   DURATION_FIRST_REFRESH_TIME,
@@ -209,7 +204,7 @@ const AutoRefresh = ({
       })}
       data-testid={getDataTestid('auto-refresh-container')}
     >
-      <EuiTextColor className={styles.summary}>
+      <ColorText className={styles.summary}>
         {displayText && (
           <span data-testid={getDataTestid('refresh-message-label')}>
             {enableAutoRefresh ? 'Auto refresh:' : 'Last refresh:'}
@@ -225,7 +220,7 @@ const AutoRefresh = ({
             {` ${enableAutoRefresh ? refreshRateMessage : refreshMessage}`}
           </span>
         )}
-      </EuiTextColor>
+      </ColorText>
 
       <EuiToolTip
         title={!disabled && 'Last Refresh'}
@@ -282,7 +277,7 @@ const AutoRefresh = ({
         <div className={styles.inputContainer}>
           <div className={styles.inputLabel}>Refresh rate:</div>
           {!editingRate && (
-            <EuiTextColor
+            <ColorText
               color="subdued"
               className={styles.refreshRateText}
               onClick={() => setEditingRate(true)}
@@ -292,7 +287,7 @@ const AutoRefresh = ({
               <div className={styles.refreshRatePencil}>
                 <EuiIcon type="pencil" />
               </div>
-            </EuiTextColor>
+            </ColorText>
           )}
           {editingRate && (
             <>
@@ -311,7 +306,7 @@ const AutoRefresh = ({
                   onApply={(value) => handleApplyAutoRefreshRate(value)}
                 />
               </div>
-              <EuiTextColor color="subdued">{' s'}</EuiTextColor>
+              <ColorText color="subdued">{' s'}</ColorText>
             </>
           )}
         </div>

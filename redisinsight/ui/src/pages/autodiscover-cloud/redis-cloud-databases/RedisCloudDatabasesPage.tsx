@@ -1,4 +1,4 @@
-import { EuiBasicTableColumn, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiBasicTableColumn, EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -30,6 +30,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import RedisCloudDatabases from './RedisCloudDatabases'
 
 import styles from './styles.module.scss'
@@ -137,7 +138,7 @@ const RedisCloudDatabasesPage = () => {
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
-              <EuiText>{cellContent}</EuiText>
+              <Text>{cellContent}</Text>
             </EuiToolTip>
           </div>
         )
@@ -173,7 +174,7 @@ const RedisCloudDatabasesPage = () => {
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
-              <EuiText>{cellContent}</EuiText>
+              <Text>{cellContent}</Text>
             </EuiToolTip>
           </div>
         )
@@ -212,7 +213,7 @@ const RedisCloudDatabasesPage = () => {
         const text = publicEndpoint
         return (
           <div className="public_endpoint">
-            <EuiText className="copyPublicEndpointText">{text}</EuiText>
+            <Text className="copyPublicEndpointText">{text}</Text>
             <EuiToolTip
               position="right"
               content="Copy"

@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
 import { oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
@@ -11,6 +11,7 @@ import SsoIcon from 'uiSrc/assets/img/oauth/sso.svg?react'
 
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { FlexItem } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -75,7 +76,7 @@ const OAuthSocialButtons = (props: Props) => {
           >
             <FlexItem direction={inline ? 'row' : 'column'}>
               <EuiIcon type={icon} />
-              <EuiText className={styles.label}>{text}</EuiText>
+              <Text className={styles.label}>{text}</Text>
             </FlexItem>
           </EmptyButton>
         </EuiToolTip>

@@ -1,6 +1,7 @@
 import React from 'react'
-import { EuiIcon, EuiImage, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiIcon, EuiImage, EuiTitle } from '@elastic/eui'
 import RedisLogo from 'uiSrc/assets/img/logo.svg'
+import { Text } from 'uiSrc/components/base/text'
 import { OAUTH_ADVANTAGES_ITEMS } from './constants'
 
 import styles from './styles.module.scss'
@@ -13,12 +14,16 @@ const OAuthAdvantages = () => (
     </EuiTitle>
     <div className={styles.advantages}>
       {OAUTH_ADVANTAGES_ITEMS.map(({ title }) => (
-        <EuiText className={styles.advantage} key={title?.toString()}>
+        <Text
+          component="div"
+          className={styles.advantage}
+          key={title?.toString()}
+        >
           <EuiIcon type="check" className={styles.advantageIcon} />
-          <EuiText className={styles.advantageTitle} color="subdued">
+          <Text className={styles.advantageTitle} color="subdued">
             {title}
-          </EuiText>
-        </EuiText>
+          </Text>
+        </Text>
       ))}
     </div>
   </div>

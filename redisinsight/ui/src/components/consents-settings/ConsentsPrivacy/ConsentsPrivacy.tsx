@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
 import { has } from 'lodash'
-import { EuiForm, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiForm, EuiTitle } from '@elastic/eui'
 
 import { compareConsents } from 'uiSrc/utils'
 import {
@@ -10,6 +10,7 @@ import {
   userSettingsSelector,
 } from 'uiSrc/slices/user/user-settings'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Text } from 'uiSrc/components/base/text'
 import ConsentOption from '../ConsentOption'
 import { ConsentCategories, IConsent } from '../ConsentsSettings'
 
@@ -83,9 +84,9 @@ const ConsentsPrivacy = () => {
       data-testid="consents-settings-form"
     >
       <div className={styles.consentsWrapper}>
-        <EuiText size="s" className={styles.smallText} color="subdued">
+        <Text size="s" className={styles.smallText} color="subdued">
           To optimize your experience, Redis Insight uses third-party tools.
-        </EuiText>
+        </Text>
         <Spacer />
         <EuiTitle size="xs">
           <h4>Usage Data</h4>

@@ -1,7 +1,6 @@
 import {
   EuiForm,
   EuiSuperSelect,
-  EuiText,
   EuiToolTip,
   EuiSuperSelectOption,
 } from '@elastic/eui'
@@ -24,6 +23,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Text } from 'uiSrc/components/base/text'
 import { NO_TEMPLATE_VALUE, NO_OPTIONS, INGEST_OPTION } from './constants'
 
 import styles from './styles.module.scss'
@@ -165,7 +165,7 @@ const TemplateForm = (props: Props) => {
 
   return (
     <div className={cx(styles.container)}>
-      <EuiText className={styles.title}>Select a template</EuiText>
+      <Text className={styles.title}>Select a template</Text>
       <Spacer size="s" />
       <EuiForm component="form">
         <Spacer size="xs" />

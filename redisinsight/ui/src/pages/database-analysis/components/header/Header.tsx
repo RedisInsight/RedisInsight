@@ -5,7 +5,6 @@ import {
   EuiSuperSelectOption,
   EuiToolTip,
   EuiIcon,
-  EuiText,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -29,6 +28,7 @@ import { DEFAULT_DELIMITER } from 'uiSrc/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { HideFor } from 'uiSrc/components/base/utils/ShowHide'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analysis-progress'
 
@@ -96,9 +96,9 @@ const Header = (props: Props) => {
             <Row align="center" wrap>
               <HideFor sizes={['xs', 's']}>
                 <FlexItem>
-                  <EuiText className={styles.text} size="s">
+                  <Text className={styles.text} size="s">
                     Report generated on:
-                  </EuiText>
+                  </Text>
                 </FlexItem>
               </HideFor>
               <FlexItem grow>
@@ -114,7 +114,7 @@ const Header = (props: Props) => {
               </FlexItem>
               {!!progress && (
                 <FlexItem>
-                  <EuiText
+                  <Text
                     className={cx(
                       styles.progress,
                       styles.text,
@@ -123,7 +123,8 @@ const Header = (props: Props) => {
                     size="s"
                     data-testid="bulk-delete-summary"
                   >
-                    <EuiText
+                    <Text
+                      component="span"
                       color={
                         progress.total === progress.processed
                           ? undefined
@@ -138,11 +139,11 @@ const Header = (props: Props) => {
                         progress.total,
                         progress.processed,
                       )}
-                    </EuiText>
+                    </Text>
                     {` (${numberWithSpaces(progress.processed)}`}/
                     {numberWithSpaces(progress.total)}
                     {' keys) '}
-                  </EuiText>
+                  </Text>
                 </FlexItem>
               )}
             </Row>

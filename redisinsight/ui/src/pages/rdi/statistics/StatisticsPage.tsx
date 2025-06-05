@@ -2,8 +2,9 @@ import { get } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiLoadingSpinner, EuiText } from '@elastic/eui'
+import { EuiLoadingSpinner } from '@elastic/eui'
 
+import { Text } from 'uiSrc/components/base/text'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import {
   getPipelineStatusAction,
@@ -115,9 +116,9 @@ const StatisticsPage = () => {
   // todo add interface
   if (statisticsResults.status === 'failed') {
     return (
-      <EuiText style={{ margin: '20px auto' }}>
+      <Text style={{ margin: '20px auto' }}>
         Unexpected error in your RDI endpoint, please refresh the page
-      </EuiText>
+      </Text>
     )
   }
 

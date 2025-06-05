@@ -1,14 +1,10 @@
 import React, { ChangeEvent } from 'react'
 import { toNumber } from 'lodash'
-import {
-  EuiFieldText,
-  EuiFormFieldset,
-  EuiSuperSelect,
-} from '@elastic/eui'
-import { FormField } from '@redis-ui/components'
+import { EuiFieldText, EuiFormFieldset, EuiSuperSelect } from '@elastic/eui'
 import { MAX_TTL_NUMBER, Maybe, validateTTLNumberForAddKey } from 'uiSrc/utils'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { AddCommonFieldsFormConfig as config } from '../constants/fields-config'
 
 import styles from './styles.module.scss'

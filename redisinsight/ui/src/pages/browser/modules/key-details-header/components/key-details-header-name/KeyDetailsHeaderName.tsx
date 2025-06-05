@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiIcon, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { isNull } from 'lodash'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
@@ -30,6 +30,7 @@ import {
 import { FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -220,7 +221,7 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
           </FlexItem>
         </Grid>
       )}
-      <EuiText
+      <Text
         className={cx(styles.key, {
           [styles.hidden]: keyIsEditing || keyIsHovering,
         })}
@@ -229,7 +230,7 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
         <b className="truncateText">
           {replaceSpaces(keyProp?.substring(0, 200))}
         </b>
-      </EuiText>
+      </Text>
     </FlexItem>
   )
 }

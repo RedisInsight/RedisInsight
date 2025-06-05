@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiText, EuiLink, EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
+import { EuiLink, EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
 import { get, throttle } from 'lodash'
 import cx from 'classnames'
 import { monaco as monacoEditor } from 'react-monaco-editor'
@@ -33,6 +33,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import TemplateButton from '../../components/template-button'
 import styles from './styles.module.scss'
 
@@ -177,7 +178,7 @@ const Job = (props: Props) => {
     <>
       <div className={cx('content', { isSidePanelOpen: isPanelOpen })}>
         <div className="rdi__content-header">
-          <EuiText className={cx('rdi__title', 'line-clamp-2')}>{name}</EuiText>
+          <Text className={cx('rdi__title', 'line-clamp-2')}>{name}</Text>
           <div className={styles.actionContainer}>
             <EuiToolTip
               position="top"
@@ -185,7 +186,7 @@ const Job = (props: Props) => {
               content={
                 KEYBOARD_SHORTCUTS?.rdi?.openDedicatedEditor && (
                   <div className={styles.tooltipContent}>
-                    <EuiText size="s">{`${KEYBOARD_SHORTCUTS.rdi.openDedicatedEditor?.description}\u00A0\u00A0`}</EuiText>
+                    <Text size="s">{`${KEYBOARD_SHORTCUTS.rdi.openDedicatedEditor?.description}\u00A0\u00A0`}</Text>
                     <KeyboardShortcut
                       separator={KEYBOARD_SHORTCUTS?._separator}
                       items={KEYBOARD_SHORTCUTS.rdi.openDedicatedEditor.keys}
@@ -218,7 +219,7 @@ const Job = (props: Props) => {
             />
           </div>
         </div>
-        <EuiText className="rdi__text" color="subdued">
+        <Text className="rdi__text" color="subdued">
           {'Create a job per source table to filter, transform, and '}
           <EuiLink
             external={false}
@@ -232,15 +233,15 @@ const Job = (props: Props) => {
             map data
           </EuiLink>
           {' to Redis.'}
-        </EuiText>
+        </Text>
         {loading ? (
           <div
             className={cx('rdi__editorWrapper', 'rdi__loading')}
             data-testid="rdi-job-loading"
           >
-            <EuiText color="subdued" style={{ marginBottom: 12 }}>
+            <Text color="subdued" style={{ marginBottom: 12 }}>
               Loading data...
-            </EuiText>
+            </Text>
             <EuiLoadingSpinner color="secondary" size="l" />
           </div>
         ) : (

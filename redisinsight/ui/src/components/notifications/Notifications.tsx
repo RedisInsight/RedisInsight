@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiTextColor } from '@elastic/eui'
 import cx from 'classnames'
 import {
   errorsSelector,
@@ -16,8 +15,10 @@ import { DEFAULT_ERROR_MESSAGE } from 'uiSrc/utils'
 import { showOAuthProgress } from 'uiSrc/slices/oauth/cloud'
 import { CustomErrorCodes } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { ColorText } from 'uiSrc/components/base/text'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { riToast, RiToaster } from 'uiSrc/components/base/display/toast'
+
 import errorMessages from './error-messages'
 import { InfiniteMessagesIds } from './components'
 
@@ -50,7 +51,7 @@ const Notifications = () => {
   }
 
   const getSuccessText = (text: string | JSX.Element | JSX.Element[]) => (
-    <EuiTextColor color="success">{text}</EuiTextColor>
+    <ColorText color="success">{text}</ColorText>
   )
 
   const showSuccessToasts = (data: IMessage[]) =>

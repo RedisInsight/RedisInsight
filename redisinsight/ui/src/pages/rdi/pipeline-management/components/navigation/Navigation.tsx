@@ -1,9 +1,10 @@
-import { EuiTextColor, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 
 import cx from 'classnames'
+import { ColorText } from 'uiSrc/components/base/text'
 import { PageNames, Pages } from 'uiSrc/constants'
 import JobsTree from 'uiSrc/pages/rdi/pipeline-management/components/jobs-tree'
 import Tab from 'uiSrc/pages/rdi/pipeline-management/components/tab'
@@ -106,7 +107,7 @@ const Navigation = () => {
   return (
     <div className={styles.wrapper}>
       <div className={styles.title}>
-        <EuiTextColor component="div">Pipeline Management</EuiTextColor>
+        <ColorText component="div">Pipeline Management</ColorText>
       </div>
       <div className={styles.tabs} data-testid="rdi-pipeline-tabs">
         {renderTabs()}

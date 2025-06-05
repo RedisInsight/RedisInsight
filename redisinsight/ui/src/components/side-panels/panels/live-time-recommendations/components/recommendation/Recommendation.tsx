@@ -2,7 +2,6 @@ import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
-  EuiText,
   EuiLink,
   EuiPanel,
   EuiAccordion,
@@ -48,6 +47,7 @@ import {
   IconButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -153,7 +153,7 @@ const Recommendation = ({
   }
 
   const recommendationContent = () => (
-    <EuiText>
+    <Text>
       {!isUndefined(tutorialId) && (
         <SecondaryButton
           filled
@@ -193,7 +193,7 @@ const Recommendation = ({
           />
         </div>
       </FeatureFlagComponent>
-    </EuiText>
+    </Text>
   )
 
   const renderButtonContent = (

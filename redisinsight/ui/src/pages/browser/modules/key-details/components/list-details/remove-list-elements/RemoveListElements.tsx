@@ -7,11 +7,11 @@ import {
   EuiPanel,
   EuiSuperSelect,
   EuiSuperSelectOption,
-  EuiText,
   EuiPopover,
   EuiIcon,
 } from '@elastic/eui'
 
+import { Text } from 'uiSrc/components/base/text'
 import { KeyTypes } from 'uiSrc/constants'
 import {
   validateCountNumber,
@@ -188,26 +188,26 @@ const RemoveListElements = (props: Props) => {
       }
     >
       <div className={styles.popover}>
-        <EuiText size="m">
+        <Text size="m" component="div">
           <h4 style={{ marginTop: 0 }}>
             <b>{count}</b> Element(s)
           </h4>
-          <EuiText size="s">
+          <Text size="s">
             will be removed from the {destination.toLowerCase()} of{' '}
             <b>{formatNameShort(bufferToString(selectedKey))}</b>
-          </EuiText>
+          </Text>
           {(!length || length <= +count) && (
             <div className={styles.appendInfo}>
               <EuiIcon
                 type="alert"
                 style={{ marginRight: '1rem', marginTop: '4px' }}
               />
-              <EuiText size="s">
+              <Text size="s">
                 If you remove all Elements, the whole Key will be deleted.
-              </EuiText>
+              </Text>
             </div>
           )}
-        </EuiText>
+        </Text>
         <Spacer />
         <DestructiveButton
           size="small"

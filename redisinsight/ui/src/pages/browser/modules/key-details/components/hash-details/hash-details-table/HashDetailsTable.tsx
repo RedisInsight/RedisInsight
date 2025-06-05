@@ -1,10 +1,11 @@
-import { EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiProgress, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { CellMeasurerCache } from 'react-virtualized'
 
 import { isNumber, toNumber } from 'lodash'
+import { Text } from 'uiSrc/components/base/text'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import {
@@ -382,10 +383,11 @@ const HashDetailsTable = (props: Props) => {
         )
 
         return (
-          <EuiText
+          <Text
             color="subdued"
             size="s"
             style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}
+            component="div"
           >
             <div
               style={{ display: 'flex' }}
@@ -402,7 +404,7 @@ const HashDetailsTable = (props: Props) => {
                 tooltipContent={tooltipContent}
               />
             </div>
-          </EuiText>
+          </Text>
         )
       },
     },

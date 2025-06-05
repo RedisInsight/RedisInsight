@@ -1,4 +1,4 @@
-import { EuiIcon, EuiLink, EuiPopover, EuiText } from '@elastic/eui'
+import { EuiIcon, EuiLink, EuiPopover } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
@@ -28,6 +28,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { PlayFilledIcon, ContractsIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -131,7 +132,7 @@ const RedisUploadButton = ({ label, path }: Props) => {
         }
       >
         {instanceId ? (
-          <EuiText
+          <Text
             color="subdued"
             className={styles.containerPopover}
             data-testid="upload-data-bulk-tooltip"
@@ -166,7 +167,7 @@ const RedisUploadButton = ({ label, path }: Props) => {
                 Execute
               </PrimaryButton>
             </div>
-          </EuiText>
+          </Text>
         ) : (
           <DatabaseNotOpened />
         )}

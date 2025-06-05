@@ -1,5 +1,7 @@
 import React from 'react'
-import { EuiText, EuiTextColor, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
+
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import styles from '../../styles.module.scss'
@@ -17,10 +19,10 @@ const SentinelHostPort = (props: Props) => {
   }
 
   return (
-    <EuiText color="subdued" className={styles.sentinelCollapsedField}>
+    <Text color="subdued" className={styles.sentinelCollapsedField}>
       Sentinel Host & Port:
       <div className={styles.hostPort}>
-        <EuiTextColor>{`${host}:${port}`}</EuiTextColor>
+        <ColorText>{`${host}:${port}`}</ColorText>
         <EuiToolTip
           position="right"
           content="Copy"
@@ -34,7 +36,7 @@ const SentinelHostPort = (props: Props) => {
           />
         </EuiToolTip>
       </div>
-    </EuiText>
+    </Text>
   )
 }
 

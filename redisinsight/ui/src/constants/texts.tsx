@@ -1,50 +1,50 @@
 import React from 'react'
-import { EuiText } from '@elastic/eui'
+import { Text } from 'uiSrc/components/base/text'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 
 export const NoResultsFoundText = (
-  <EuiText size="m" data-testid="no-result-found-only">
+  <Text size="m" data-testid="no-result-found-only">
     No results found.
-  </EuiText>
+  </Text>
 )
 
 export const LoadingText = (
-  <EuiText size="m" data-testid="loading-keys" style={{ lineHeight: 1.4 }}>
+  <Text size="m" data-testid="loading-keys" style={{ lineHeight: 1.4 }}>
     loading...
-  </EuiText>
+  </Text>
 )
 
 export const NoSelectedIndexText = (
-  <EuiText size="m" data-testid="no-result-select-index">
+  <Text size="m" data-testid="no-result-select-index">
     Select an index and enter a query to search per values of keys.
-  </EuiText>
+  </Text>
 )
 
 export const FullScanNoResultsFoundText = (
   <>
-    <EuiText size="m" data-test-subj="no-result-found">
+    <Text size="m" data-test-subj="no-result-found">
       No results found.
-    </EuiText>
+    </Text>
     <Spacer size="m" />
-    <EuiText size="s" data-test-subj="search-advices">
+    <Text size="s" data-test-subj="search-advices">
       Check the spelling.
       <br />
       Check upper and lower cases.
       <br />
       Use an asterisk (*) in your request for more generic results.
-    </EuiText>
+    </Text>
   </>
 )
 export const ScanNoResultsFoundText = (
   <>
-    <EuiText size="m" data-testid="scan-no-results-found">
+    <Text size="m" data-testid="scan-no-results-found">
       No results found.
-    </EuiText>
+    </Text>
     <br />
-    <EuiText size="s">
+    <Text size="s">
       Use &quot;Scan more&quot; button to proceed or filter per exact Key Name
       to scan more efficiently.
-    </EuiText>
+    </Text>
   </>
 )
 

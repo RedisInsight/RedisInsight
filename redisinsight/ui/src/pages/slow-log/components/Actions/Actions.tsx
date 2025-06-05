@@ -1,4 +1,4 @@
-import { EuiIcon, EuiPopover, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -17,6 +17,8 @@ import {
   IconButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
+
 import SlowLogConfig from '../SlowLogConfig'
 import styles from './styles.module.scss'
 
@@ -99,17 +101,17 @@ const Actions = (props: Props) => {
     <div className={styles.popoverContainer}>
       <EuiIcon type="alert" color="danger" className={styles.warningIcon} />
       <div>
-        <EuiText size="m">
+        <Text size="m" component="div">
           <h4 className={styles.popoverTitle}>
             <b>Clear Slow Log?</b>
           </h4>
-          <EuiText size="xs" color="subdued">
+          <Text size="xs" color="subdued">
             Slow Log will be cleared for&nbsp;
             <span className={styles.popoverDBName}>{name}</span>
             <br />
             NOTE: This is server configuration
-          </EuiText>
-        </EuiText>
+          </Text>
+        </Text>
         <div className={styles.popoverFooter}>
           <DestructiveButton
             size="small"

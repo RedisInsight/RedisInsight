@@ -3,6 +3,7 @@ import { isString } from 'lodash'
 import cx from 'classnames'
 
 import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
+
 import styles from './styles.module.scss'
 
 export interface Props {

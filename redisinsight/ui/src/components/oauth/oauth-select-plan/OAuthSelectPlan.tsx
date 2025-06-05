@@ -5,8 +5,6 @@ import {
   EuiModalBody,
   EuiSuperSelect,
   EuiSuperSelectOption,
-  EuiText,
-  EuiTextColor,
   EuiTitle,
 } from '@elastic/eui'
 import { toNumber, filter, get, find, first } from 'lodash'
@@ -32,6 +30,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
 import { OAuthProvider, OAuthProviders } from './constants'
 import styles from './styles.module.scss'
@@ -124,18 +123,18 @@ const OAuthSelectPlan = () => {
       find(rsRegions, { provider })?.regions || []
 
     return (
-      <EuiText color="subdued" size="s" data-testid={`option-${region}`}>
+      <Text color="subdued" size="s" data-testid={`option-${region}`}>
         {`${countryName} (${cityName})`}
-        <EuiTextColor className={styles.regionName}>{region}</EuiTextColor>
+        <ColorText className={styles.regionName}>{region}</ColorText>
         {rsProviderRegions?.includes(region) && (
-          <EuiTextColor
+          <ColorText
             className={styles.rspreview}
             data-testid={`rs-text-${region}`}
           >
             (Redis 7.2)
-          </EuiTextColor>
+          </ColorText>
         )}
-      </EuiText>
+      </Text>
     )
   }
 
@@ -181,10 +180,10 @@ const OAuthSelectPlan = () => {
           <EuiTitle size="s">
             <h2 className={styles.title}>Choose a cloud vendor</h2>
           </EuiTitle>
-          <EuiText className={styles.subTitle}>
+          <Text className={styles.subTitle}>
             Select a cloud vendor and region to complete the final step towards
             your free trial Redis database. No credit card is required.
-          </EuiText>
+          </Text>
           <section className={styles.providers}>
             {OAuthProviders.map(({ icon, id, label }) => (
               <div className={styles.provider} key={id}>
@@ -201,12 +200,12 @@ const OAuthSelectPlan = () => {
                     [styles.activeProvider]: id === providerSelected,
                   })}
                 />
-                <EuiText className={styles.providerLabel}>{label}</EuiText>
+                <Text className={styles.providerLabel}>{label}</Text>
               </div>
             ))}
           </section>
           <section className={styles.region}>
-            <EuiText className={styles.regionLabel}>Region</EuiText>
+            <Text className={styles.regionLabel}>Region</Text>
             <EuiSuperSelect
               fullWidth
               itemClassName={styles.regionSelectItem}
@@ -219,12 +218,12 @@ const OAuthSelectPlan = () => {
               data-testid="select-oauth-region"
             />
             {!regionOptions.length && (
-              <EuiText
+              <Text
                 className={styles.selectDescription}
                 data-testid="select-region-select-description"
               >
                 No regions available, try another vendor.
-              </EuiText>
+              </Text>
             )}
           </section>
           <footer className={styles.footer}>

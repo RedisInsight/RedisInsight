@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { EuiText } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import { isUndefined } from 'lodash'
+import { Text } from 'uiSrc/components/base/text'
 import {
   bulkActionsDeleteOverviewSelector,
   bulkActionsDeleteSelector,
@@ -61,7 +61,7 @@ const BulkDelete = (props: Props) => {
           >
             <BulkDeleteSummary />
 
-            {true && (
+            {isCompleted && (
               <div className={styles.bulkDeleteSummaryButtonWrapper}>
                 <BulkDeleteSummaryButton
                   deletedKeys={deletedKeys}
@@ -84,12 +84,12 @@ const BulkDelete = (props: Props) => {
           className={styles.placeholder}
           data-testid="bulk-actions-placeholder"
         >
-          <EuiText color="subdued" className={styles.placeholderTitle}>
+          <Text color="subdued" className={styles.placeholderTitle}>
             No pattern or key type set
-          </EuiText>
-          <EuiText color="subdued" className={styles.placeholderSummary}>
+          </Text>
+          <Text color="subdued" className={styles.placeholderSummary}>
             To perform a bulk action, set the pattern or select the key type
-          </EuiText>
+          </Text>
         </div>
       )}
     </>

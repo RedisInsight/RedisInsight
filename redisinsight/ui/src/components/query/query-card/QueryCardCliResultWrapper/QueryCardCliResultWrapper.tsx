@@ -1,6 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiText } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { isArray } from 'lodash'
 
 import { LoadingContent } from 'uiSrc/components/base/layout'
@@ -15,6 +15,7 @@ import {
 } from 'uiSrc/utils'
 
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
+import { Text } from 'uiSrc/components/base/text'
 import QueryCardCliDefaultResult from '../QueryCardCliDefaultResult'
 import QueryCardCliGroupResult from '../QueryCardCliGroupResult'
 import styles from './styles.module.scss'
@@ -48,11 +49,11 @@ const QueryCardCliResultWrapper = (props: Props) => {
       {!loading && (
         <div data-testid="query-cli-result" className={cx(styles.content)}>
           {isNotStored && (
-            <EuiText className={styles.alert} data-testid="query-cli-warning">
+            <Text className={styles.alert} data-testid="query-cli-warning">
               <EuiIcon type="alert" className={styles.alertIcon} />
               The result is too big to be saved. It will be deleted after the
               application is closed.
-            </EuiText>
+            </Text>
           )}
           {isGroupResults(resultsMode) && isArray(result[0]?.response) ? (
             <QueryCardCliGroupResult
@@ -66,16 +67,16 @@ const QueryCardCliResultWrapper = (props: Props) => {
               items={
                 result[0]?.status === CommandExecutionStatus.Success
                   ? formatToText(
-                    replaceEmptyValue(result[0]?.response),
-                    query,
-                  ).split('\n')
-                  : [
-                    cliParseTextResponse(
                       replaceEmptyValue(result[0]?.response),
-                      '',
-                      result[0]?.status,
-                    ),
-                  ]
+                      query,
+                    ).split('\n')
+                  : [
+                      cliParseTextResponse(
+                        replaceEmptyValue(result[0]?.response),
+                        '',
+                        result[0]?.status,
+                      ),
+                    ]
               }
             />
           )}

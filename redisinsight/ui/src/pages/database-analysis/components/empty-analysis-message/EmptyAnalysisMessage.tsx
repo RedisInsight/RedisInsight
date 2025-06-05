@@ -1,6 +1,7 @@
 import React from 'react'
-import { EuiText, EuiLink } from '@elastic/eui'
+import { EuiLink } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
+import { Text } from 'uiSrc/components/base/text'
 
 import { Pages } from 'uiSrc/constants'
 import { EmptyMessage, Content } from 'uiSrc/pages/database-analysis/constants'
@@ -49,10 +50,10 @@ const EmptyAnalysisMessage = (props: Props) => {
   return (
     <div className={styles.container} data-testid={`empty-analysis-no-${name}`}>
       <div className={styles.content}>
-        <EuiText className={styles.title}>{title}</EuiText>
-        <EuiText className={styles.summary}>
+        <Text className={styles.title}>{title}</Text>
+        <Text className={styles.summary}>
           {text(Pages.workbench(instanceId))}
-        </EuiText>
+        </Text>
       </div>
     </div>
   )

@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import {
-  EuiFieldText,
-  EuiForm,
-  keys,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm, keys } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import { rejsonDataSelector } from 'uiSrc/slices/browser/rejson'
@@ -101,7 +97,7 @@ const AddItem = (props: Props) => {
               noValidate
             >
               {isPair && (
-                <FlexItem grow inline>
+                <FlexItem grow>
                   <EuiFieldText
                     name="newRootKey"
                     value={key}
@@ -114,7 +110,7 @@ const AddItem = (props: Props) => {
                   />
                 </FlexItem>
               )}
-              <FlexItem grow inline>
+              <FlexItem grow>
                 <EuiFieldText
                   name="newValue"
                   value={value}

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiText, EuiIcon, EuiLink, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiLink, EuiPopover, EuiToolTip } from '@elastic/eui'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { putRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -16,6 +16,7 @@ import PetardIcon from 'uiSrc/assets/img/icons/petard.svg?react'
 import GithubSVG from 'uiSrc/assets/img/icons/github-white.svg?react'
 
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { getVotedText, voteTooltip, iconType } from './utils'
@@ -126,12 +127,12 @@ const VoteOption = (props: Props) => {
               </FlexItem>
               <FlexItem grow>
                 <div>
-                  <EuiText className={styles.text} data-testid="common-text">
+                  <Text className={styles.text} data-testid="common-text">
                     Thank you for the feedback.
-                  </EuiText>
-                  <EuiText className={styles.text} data-testid="custom-text">
+                  </Text>
+                  <Text className={styles.text} data-testid="custom-text">
                     {getVotedText(voteOption)}
-                  </EuiText>
+                  </Text>
                 </div>
               </FlexItem>
               <FlexItem>

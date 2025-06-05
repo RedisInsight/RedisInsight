@@ -93,7 +93,6 @@ const EditConnection = () => {
         description={description}
         url={links?.main?.url}
         testId="promo-btn"
-        icon="arrowRight"
         styles={{
           ...linkStyles,
           backgroundImage: linkStyles?.backgroundImage

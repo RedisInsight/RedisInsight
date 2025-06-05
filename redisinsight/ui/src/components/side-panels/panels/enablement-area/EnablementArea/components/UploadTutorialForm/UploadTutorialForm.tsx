@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiFieldText, EuiFilePicker, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiFilePicker, EuiToolTip } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { FormikErrors } from 'formik/dist/types'
 import { isEmpty } from 'lodash'
@@ -13,6 +13,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import CreateTutorialLink from '../CreateTutorialLink'
 import styles from './styles.module.scss'
 
@@ -77,7 +78,7 @@ const UploadTutorialForm = (props: Props) => {
   return (
     <div className={styles.outerWrapper}>
       <div className={styles.wrapper} data-testid="upload-tutorial-form">
-        <EuiText>Add new Tutorial</EuiText>
+        <Text>Add new Tutorial</Text>
         <Spacer size="m" />
         <div>
           <div className={styles.uploadFileWrapper}>

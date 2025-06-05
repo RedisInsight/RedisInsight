@@ -1,4 +1,4 @@
-import { EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -18,6 +18,7 @@ import {
 } from 'uiSrc/slices/interfaces'
 import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
 import { clusterDetailsSelector } from 'uiSrc/slices/analytics/clusterDetails'
+import { Text } from 'uiSrc/components/base/text'
 
 import styles from './styles.module.scss'
 
@@ -108,10 +109,10 @@ const ClusterDetailsHeader = () => {
               key={label}
               data-testid={`cluster-details-item-${label}`}
             >
-              <EuiText color="subdued" className={styles.value}>
+              <Text color="subdued" className={styles.value}>
                 {value}
-              </EuiText>
-              <EuiText className={styles.label}>{label}</EuiText>
+              </Text>
+              <Text className={styles.label}>{label}</Text>
             </div>
           ))}
         </div>

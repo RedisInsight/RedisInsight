@@ -4,8 +4,6 @@ import {
   EuiModalBody,
   EuiRadioGroup,
   EuiRadioGroupOption,
-  EuiText,
-  EuiTextColor,
   EuiTitle,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
@@ -44,6 +42,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 interface FormValues {
@@ -172,10 +171,10 @@ const OAuthSelectAccountDialog = () => {
   const radios: EuiRadioGroupOption[] = accounts.map(({ id, name = '' }) => ({
     id: `${id}`,
     label: (
-      <EuiTextColor className={styles.label}>
+      <ColorText className={styles.label}>
         {name}
         <span>{id}</span>
-      </EuiTextColor>
+      </ColorText>
     ),
   }))
 
@@ -190,9 +189,9 @@ const OAuthSelectAccountDialog = () => {
           <EuiTitle size="s">
             <h3 className={styles.title}>Connect to Redis Cloud</h3>
           </EuiTitle>
-          <EuiText className={styles.subTitle}>
+          <Text className={styles.subTitle}>
             Select an account to connect to:
-          </EuiText>
+          </Text>
           <EuiRadioGroup
             options={radios}
             className={styles.radios}

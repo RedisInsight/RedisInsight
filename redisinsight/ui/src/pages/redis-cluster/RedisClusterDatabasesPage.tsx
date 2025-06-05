@@ -1,10 +1,4 @@
-import {
-  EuiBasicTableColumn,
-  EuiIcon,
-  EuiText,
-  EuiTextColor,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiBasicTableColumn, EuiIcon, EuiToolTip } from '@elastic/eui'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -31,6 +25,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import RedisClusterDatabases from './RedisClusterDatabases'
 import RedisClusterDatabasesResult from './RedisClusterDatabasesResult'
 
@@ -94,7 +89,7 @@ const RedisClusterDatabasesPage = () => {
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
-              <EuiText>{cellContent}</EuiText>
+              <Text>{cellContent}</Text>
             </EuiToolTip>
           </div>
         )
@@ -126,7 +121,7 @@ const RedisClusterDatabasesPage = () => {
         return (
           !!dnsName && (
             <div className="host_port">
-              <EuiText className="copyHostPortText">{text}</EuiText>
+              <Text className="copyHostPortText">{text}</Text>
               <EuiToolTip
                 position="right"
                 content="Copy"
@@ -196,7 +191,7 @@ const RedisClusterDatabasesPage = () => {
       return (
         <>
           {statusAdded === AddRedisDatabaseStatus.Success ? (
-            <EuiText>{messageAdded}</EuiText>
+            <Text>{messageAdded}</Text>
           ) : (
             <EuiToolTip position="left" title="Error" content={messageAdded}>
               <Row align="center" gap="s">
@@ -205,12 +200,12 @@ const RedisClusterDatabasesPage = () => {
                 </FlexItem>
 
                 <FlexItem>
-                  <EuiTextColor
+                  <ColorText
                     color="danger"
                     className="flex-row euiTextAlign--center"
                   >
                     Error
-                  </EuiTextColor>
+                  </ColorText>
                 </FlexItem>
               </Row>
             </EuiToolTip>

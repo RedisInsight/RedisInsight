@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
-import { EuiText, EuiToolTip, EuiIcon } from '@elastic/eui'
+import { EuiToolTip, EuiIcon } from '@elastic/eui'
 
 import {
   monitorSelector,
@@ -16,6 +16,7 @@ import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import {
   PlayIcon,
@@ -87,7 +88,7 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
             anchorPosition="upLeft"
             panelClassName={styles.profilerOnboardPanel}
           >
-            <EuiText>Profiler</EuiText>
+            <Text>Profiler</Text>
           </OnboardingTour>
         </FlexItem>
         {isStarted && (

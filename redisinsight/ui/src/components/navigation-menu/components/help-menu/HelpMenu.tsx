@@ -2,7 +2,6 @@ import {
   EuiIcon,
   EuiLink,
   EuiPopover,
-  EuiText,
   EuiTitle,
   EuiToolTip,
 } from '@elastic/eui'
@@ -31,6 +30,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { SupportIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
 import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
@@ -134,27 +134,27 @@ const HelpMenu = () => {
               >
                 <EuiIcon type={GithubHelpCenterSVG} size="xxl" />
                 <Spacer size="m" />
-                <EuiText
+                <Text
                   size="xs"
                   textAlign="center"
                   className={styles.helpMenuText}
                 >
                   Provide <br /> Feedback
-                </EuiText>
+                </Text>
               </EuiLink>
             </FlexItem>
           </FeatureFlagComponent>
           <FlexItem className={styles.helpMenuItemRow} grow={4}>
             <div className={styles.helpMenuItemLink}>
               <EuiIcon type="keyboardShortcut" size="l" />
-              <EuiText
+              <Text
                 size="xs"
                 className={styles.helpMenuTextLink}
                 onClick={() => onKeyboardShortcutClick()}
                 data-testid="shortcuts-btn"
               >
                 Keyboard Shortcuts
-              </EuiText>
+              </Text>
             </div>
 
             <div className={styles.helpMenuItemLink}>
@@ -174,22 +174,22 @@ const HelpMenu = () => {
                 target="_blank"
                 data-testid="release-notes-btn"
               >
-                <EuiText size="xs" className={styles.helpMenuTextLink}>
+                <Text size="xs" className={styles.helpMenuTextLink}>
                   Release Notes
-                </EuiText>
+                </Text>
               </EuiLink>
             </div>
             <FeatureFlagComponent name={FeatureFlags.envDependent}>
               <div className={styles.helpMenuItemLink}>
                 <EuiIcon type={BulbSVG} size="l" />
-                <EuiText
+                <Text
                   size="xs"
                   className={styles.helpMenuTextLink}
                   onClick={() => onResetOnboardingClick()}
                   data-testid="reset-onboarding-btn"
                 >
                   Reset Onboarding
-                </EuiText>
+                </Text>
               </div>
             </FeatureFlagComponent>
           </FlexItem>

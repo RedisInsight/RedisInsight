@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiLink, EuiText, EuiTextColor } from '@elastic/eui'
+import { EuiLink } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import { generateArgsNames } from 'uiSrc/utils'
@@ -10,6 +10,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -44,25 +45,25 @@ const CHSearchOutput = ({ searchedCommands }: Props) => {
         args,
       ).join(' ')
       return (
-        <EuiText
+        <Text
           size="s"
           color="subdued"
           className={styles.description}
           data-testid={`cli-helper-output-args-${command}`}
         >
           {argString}
-        </EuiText>
+        </Text>
       )
     }
     return (
-      <EuiText
+      <Text
         size="s"
         color="subdued"
         className={cx(styles.description, styles.summary)}
         data-testid={`cli-helper-output-summary-${command}`}
       >
         {ALL_REDIS_COMMANDS[command].summary}
-      </EuiText>
+      </Text>
     )
   }
 
@@ -73,7 +74,7 @@ const CHSearchOutput = ({ searchedCommands }: Props) => {
           {searchedCommands.map((command: string) => (
             <Row gap="m" key={command}>
               <FlexItem style={{ flexShrink: 0 }}>
-                <EuiText key={command} size="s">
+                <Text key={command} size="s">
                   <EuiLink
                     color="text"
                     onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -84,7 +85,7 @@ const CHSearchOutput = ({ searchedCommands }: Props) => {
                   >
                     {command}
                   </EuiLink>
-                </EuiText>
+                </Text>
               </FlexItem>
               <FlexItem style={{ flexDirection: 'row', overflow: 'hidden' }}>
                 {renderDescription(command)}
@@ -95,9 +96,9 @@ const CHSearchOutput = ({ searchedCommands }: Props) => {
       )}
       {searchedCommands.length === 0 && (
         <div className={styles.defaultScreen}>
-          <EuiTextColor color="subdued" data-testid="search-cmds-no-results">
+          <ColorText color="subdued" data-testid="search-cmds-no-results">
             No results found.
-          </EuiTextColor>
+          </ColorText>
         </div>
       )}
     </>

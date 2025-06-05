@@ -1,6 +1,7 @@
 import React from 'react'
-import { EuiText, EuiTitle } from '@elastic/eui'
+import { EuiTitle } from '@elastic/eui'
 
+import { Text } from 'uiSrc/components/base/text'
 import TextDetailsWrapper from '../text-details-wrapper/TextDetailsWrapper'
 
 const TooLongKeyNameDetails = ({ onClose }: { onClose: () => void }) => (
@@ -8,7 +9,7 @@ const TooLongKeyNameDetails = ({ onClose }: { onClose: () => void }) => (
     <EuiTitle>
       <h4>The key name is too long</h4>
     </EuiTitle>
-    <EuiText size="s">Details cannot be displayed.</EuiText>
+    <Text size="s">Details cannot be displayed.</Text>
   </TextDetailsWrapper>
 )
 

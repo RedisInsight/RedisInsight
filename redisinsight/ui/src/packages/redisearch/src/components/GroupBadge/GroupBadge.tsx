@@ -1,6 +1,8 @@
 import React from 'react'
 import cx from 'classnames'
+
 import { RiBadge } from '../../../../../components/base/display/badge/RiBadge'
+
 import { GROUP_TYPES_COLORS, GROUP_TYPES_DISPLAY } from '../../constants'
 
 export interface Props {

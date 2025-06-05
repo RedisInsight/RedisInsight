@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import cx from 'classnames'
-import { EuiText } from '@elastic/eui'
 
 import { DEFAULT_DELIMITER, FeatureFlags, Pages } from 'uiSrc/constants'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
@@ -19,6 +18,7 @@ import {
 } from 'uiSrc/constants/recommendations'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import PopoverRunAnalyze from '../popover-run-analyze'
 
 import styles from './styles.module.scss'
@@ -53,24 +53,24 @@ const NoRecommendationsScreen = () => {
 
   return (
     <div className={styles.container} data-testid="no-recommendations-screen">
-      <EuiText className={styles.bigText}>Welcome to</EuiText>
-      <EuiText className={styles.hugeText}>Tips!</EuiText>
-      <EuiText className={styles.mediumText}>
+      <Text className={styles.bigText}>Welcome to</Text>
+      <Text className={styles.hugeText}>Tips!</Text>
+      <Text className={styles.mediumText}>
         Where we help improve your database.
-      </EuiText>
-      <EuiText className={cx(styles.text, styles.bigMargin)}>
+      </Text>
+      <Text className={cx(styles.text, styles.bigMargin)}>
         New tips appear while you work with your database, including how to
         improve performance and optimize memory usage.
-      </EuiText>
+      </Text>
       <WelcomeIcon className={styles.icon} />
       {instanceId ? (
         <FeatureFlagComponent name={FeatureFlags.envDependent}>
-          <EuiText
+          <Text
             className={styles.text}
             data-testid="no-recommendations-analyse-text"
           >
             Eager for more tips? Run Database Analysis to get started.
-          </EuiText>
+          </Text>
 
           <PopoverRunAnalyze
             isShowPopover={isShowInfo}
@@ -92,12 +92,12 @@ const NoRecommendationsScreen = () => {
           </PopoverRunAnalyze>
         </FeatureFlagComponent>
       ) : (
-        <EuiText
+        <Text
           className={styles.text}
           data-testid="no-recommendations-analyse-text"
         >
           Eager for tips? Connect to a database to get started.
-        </EuiText>
+        </Text>
       )}
     </div>
   )

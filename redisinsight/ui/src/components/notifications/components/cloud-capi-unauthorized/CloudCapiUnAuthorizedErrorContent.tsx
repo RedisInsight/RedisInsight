@@ -1,7 +1,7 @@
-import { EuiTextColor } from '@elastic/eui'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import { ColorText } from 'uiSrc/components/base/text'
 import { removeCapiKeyAction } from 'uiSrc/slices/oauth/cloud'
 import { Pages } from 'uiSrc/constants'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
@@ -48,7 +48,8 @@ const CloudCapiUnAuthorizedErrorContent = ({
 
   return (
     <>
-      <EuiTextColor color="danger">{text}</EuiTextColor>
+
+      <ColorText color="danger">{text}</ColorText>
       <Spacer />
       <Row justify="end">
         <FlexItem>

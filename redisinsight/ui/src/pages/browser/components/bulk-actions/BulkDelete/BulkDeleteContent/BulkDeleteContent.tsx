@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react'
-import { EuiText } from '@elastic/eui'
 import { ListChildComponentProps, VariableSizeList as List } from 'react-window'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { useSelector } from 'react-redux'
 
 import { MAX_BULK_ACTION_ERRORS_LENGTH } from 'uiSrc/constants'
+import { Text } from 'uiSrc/components/base/text'
 import { bulkActionsDeleteSummarySelector } from 'uiSrc/slices/browser/bulkActions'
 import styles from './styles.module.scss'
 
@@ -56,11 +56,11 @@ const BulkDeleteContent = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <EuiText className={styles.headerTitle}>Error list</EuiText>
+        <Text className={styles.headerTitle}>Error list</Text>
         {errors.length >= MAX_BULK_ACTION_ERRORS_LENGTH && (
-          <EuiText className={styles.headerSummary}>
+          <Text className={styles.headerSummary}>
             last {MAX_BULK_ACTION_ERRORS_LENGTH} errors are shown
-          </EuiText>
+          </Text>
         )}
       </div>
       <div className={styles.list}>

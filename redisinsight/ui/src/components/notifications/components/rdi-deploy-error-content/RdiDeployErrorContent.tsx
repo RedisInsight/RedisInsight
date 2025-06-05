@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo } from 'react'
-import { EuiTextColor } from '@elastic/eui'
 import { Link } from 'uiSrc/components/base/link/Link'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { DestructiveButton } from 'uiSrc/components/base/forms/buttons'
+import { ColorText } from 'uiSrc/components/base/text'
 
 export interface Props {
   message: string
@@ -28,7 +28,7 @@ const RdiDeployErrorContent = (props: Props) => {
 
   return (
     <>
-      <EuiTextColor color="danger">
+      <ColorText color="danger">
         <Col>
           <FlexItem>
             <div>Review the error log for details.</div>
@@ -44,7 +44,7 @@ const RdiDeployErrorContent = (props: Props) => {
             </Link>
           </FlexItem>
         </Col>
-      </EuiTextColor>
+      </ColorText>
 
       <Spacer />
       {/* // TODO remove display none when logs column will be available */}

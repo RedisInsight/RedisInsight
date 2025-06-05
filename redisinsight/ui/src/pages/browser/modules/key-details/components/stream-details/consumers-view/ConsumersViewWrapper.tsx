@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiToolTip, EuiText } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 
 import {
   setStreamViewType,
@@ -26,6 +26,7 @@ import {
 import { formatLongName, isTruncatedString } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { Text } from 'uiSrc/components/base/text'
 import { ConsumerDto } from 'apiSrc/modules/browser/stream/dto'
 import ConsumersView from './ConsumersView'
 
@@ -126,7 +127,7 @@ const ConsumersViewWrapper = (props: Props) => {
         const cellContent = viewName.substring(0, 200)
         const tooltipContent = formatLongName(viewName)
         return (
-          <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+          <Text color="subdued" size="s" style={{ maxWidth: '100%' }}>
             <div
               style={{ display: 'flex' }}
               className="truncateText"
@@ -141,7 +142,7 @@ const ConsumersViewWrapper = (props: Props) => {
                 <>{cellContent}</>
               </EuiToolTip>
             </div>
-          </EuiText>
+          </Text>
         )
       },
     },

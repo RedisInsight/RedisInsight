@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiPanel, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiPanel, EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -18,6 +18,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { LightBulbIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 const WbNoResultsMessage = () => {
@@ -42,12 +43,12 @@ const WbNoResultsMessage = () => {
 
   return (
     <div className={styles.noResults} data-testid="wb_no-results">
-      <EuiText
+      <Text
         className={styles.noResultsTitle}
         data-testid="wb_no-results__title"
       >
         No results to display yet
-      </EuiText>
+      </Text>
       <EuiTitle>
         <span style={{ marginTop: 12, fontSize: 28 }}>
           This is our advanced CLI
@@ -76,13 +77,13 @@ const WbNoResultsMessage = () => {
             />
           </FlexItem>
           <FlexItem grow>
-            <EuiText
+            <Text
               className={styles.noResultsText}
               data-testid="wb_no-results__summary"
             >
               Try Workbench with our interactive Tutorials to learn how Redis
               can solve your use cases.
-            </EuiText>
+            </Text>
             <Spacer size="xl" />
             <div>
               <PrimaryButton
@@ -95,9 +96,9 @@ const WbNoResultsMessage = () => {
               </PrimaryButton>
             </div>
             <Spacer size="s" />
-            <EuiText color="subdued" textAlign="left" size="xs">
+            <Text color="subdued" textAlign="left" size="xs">
               Or click the icon in the top right corner.
-            </EuiText>
+            </Text>
           </FlexItem>
         </Row>
       </EuiPanel>

@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react'
-import { EuiText, EuiPopover } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import JsxParser from 'react-jsx-parser'
 import cx from 'classnames'
 import { debounce } from 'lodash'
@@ -30,6 +30,7 @@ import {
   RedisInsightLink,
 } from 'uiSrc/components/markdown'
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import { getTutorialSection } from '../../utils'
 import { EmptyPrompt, Pagination, Code } from '..'
 
@@ -193,12 +194,12 @@ const InternalPage = (props: Props) => {
           >
             <div data-testid="explore-capability-popover">
               <RocketIcon className={styles.rocketIcon} />
-              <EuiText className={styles.popoverTitle}>Explore Redis</EuiText>
-              <EuiText className={styles.popoverText}>
+              <Text className={styles.popoverTitle}>Explore Redis</Text>
+              <Text className={styles.popoverText}>
                 {'You expressed interest in learning about the '}
                 <b>{tutorialCapability?.name}</b>. Try this tutorial to get
                 started.
-              </EuiText>
+              </Text>
             </div>
           </EuiPopover>
         </div>
@@ -206,9 +207,9 @@ const InternalPage = (props: Props) => {
           <HorizontalRule margin="xs" />
         </div>
         <div>
-          <EuiText className={styles.pageTitle} color="default">
+          <Text className={styles.pageTitle} color="default">
             {title?.toUpperCase()}
-          </EuiText>
+          </Text>
         </div>
       </div>
       <div

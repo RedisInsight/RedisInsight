@@ -2,13 +2,14 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import cx from 'classnames'
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import { isObject, xor } from 'lodash'
-import { EuiProgress, EuiIcon, EuiText } from '@elastic/eui'
+import { EuiProgress, EuiIcon } from '@elastic/eui'
 import InfiniteLoader from 'react-window-infinite-loader'
 import { VariableSizeGrid as Grid, GridChildComponentProps } from 'react-window'
 
 import { Maybe, Nullable } from 'uiSrc/utils'
 import { SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { Text } from 'uiSrc/components/base/text'
 import { IProps } from './interfaces'
 import { getColumnWidth, useInnerElementType } from './utils'
 
@@ -371,9 +372,9 @@ const VirtualGrid = (props: IProps) => {
         </AutoSizer>
       )}
       {items.length === 1 && (
-        <EuiText className={styles.noItems} color="subdued">
+        <Text className={styles.noItems} color="subdued">
           {loading ? loadingMsg : noItemsMessage}
-        </EuiText>
+        </Text>
       )}
     </div>
   )

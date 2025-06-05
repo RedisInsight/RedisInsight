@@ -55,9 +55,6 @@ const SettingItem = (props: Props) => {
     setHovering(false)
   }
 
-  const appendEditing = () =>
-    !isEditing ? <EuiIcon type="pencil" color="subdued" /> : ''
-
   return (
     <>
       <EuiTitle className={styles.title} size="xxs">
@@ -79,7 +76,7 @@ const SettingItem = (props: Props) => {
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
           onClick={() => setEditing(true)}
-          style={{ paddingBottom: '1px' }}
+          style={{ width: '200px' }}
         >
           {isEditing || isHovering ? (
             <InlineItemEditor
@@ -89,23 +86,29 @@ const SettingItem = (props: Props) => {
               onDecline={handleDeclineChanges}
               declineOnUnmount={false}
             >
-              <NumericInput
-                autoValidate
-                onChange={(value) =>
-                  isEditing &&
-                  setValue(validation(value ? value.toString() : ''))
-                }
-                value={Number(value)}
-                placeholder={placeholder}
-                aria-label={testid?.replaceAll?.('-', ' ')}
-                append={appendEditing()}
-                className={cx(styles.input, {
-                  [styles.inputEditing]: isEditing,
+              <div
+                className={cx({
                   [styles.inputHover]: isHovering,
                 })}
-                readOnly={!isEditing}
-                data-testid={`${testid}-input`}
-              />
+              >
+                <NumericInput
+                  autoValidate
+                  onChange={(value) =>
+                    isEditing &&
+                    setValue(validation(value ? value.toString() : ''))
+                  }
+                  value={Number(value)}
+                  placeholder={placeholder}
+                  aria-label={testid?.replaceAll?.('-', ' ')}
+                  className={cx(styles.input, {
+                    [styles.inputEditing]: isEditing,
+                  })}
+                  readOnly={!isEditing}
+                  data-testid={`${testid}-input`}
+                  style={{ width: '100%' }}
+                />
+                {!isEditing && <EuiIcon type="pencil" color="subdued" />}
+              </div>
             </InlineItemEditor>
           ) : (
             <Text className={styles.value} data-testid={`${testid}-value`}>

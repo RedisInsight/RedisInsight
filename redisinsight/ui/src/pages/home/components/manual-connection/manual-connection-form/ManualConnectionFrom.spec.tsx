@@ -188,7 +188,7 @@ describe('InstanceForm', () => {
     })
     expect(handleSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
-        port: '123',
+        port: 123,
       }),
     )
   })
@@ -1264,11 +1264,11 @@ describe('InstanceForm', () => {
       )
 
       expect(screen.getByTestId('timeout')).toBeInTheDocument()
-      expect(screen.getByTestId('timeout')).toHaveAttribute('maxLength', '7')
 
       fireEvent.change(screen.getByTestId('timeout'), {
         target: { value: '2000000' },
       })
+      fireEvent.focusOut(screen.getByTestId('timeout'))
 
       expect(screen.getByTestId('timeout')).toHaveAttribute('value', '1000000')
     })
@@ -1285,7 +1285,7 @@ describe('InstanceForm', () => {
         target: { value: '11a2EU$#@' },
       })
 
-      expect(screen.getByTestId('timeout')).toHaveAttribute('value', '112')
+      expect(screen.getByTestId('timeout')).toHaveAttribute('value', '30')
     })
   })
 

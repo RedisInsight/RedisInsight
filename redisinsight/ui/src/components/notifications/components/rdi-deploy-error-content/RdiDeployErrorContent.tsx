@@ -28,19 +28,20 @@ const RdiDeployErrorContent = (props: Props) => {
 
   return (
     <>
-      <EuiTextColor color="ghost">
+      <EuiTextColor color="danger">
         <Col>
-          <FlexItem>Review the error log for details.</FlexItem>
           <FlexItem>
-            <DestructiveButton size="s" className="toast-danger-btn">
-              <Link
-                href={fileUrl}
-                download="error-log.txt"
-                data-testid="donwload-log-file-btn"
-              >
-                Download Error Log File
-              </Link>
-            </DestructiveButton>
+            <div>Review the error log for details.</div>
+            <Link
+              variant="small"
+              isExternalLink
+              href={fileUrl}
+              download="error-log.txt"
+              data-testid="donwload-log-file-btn"
+              style={{ marginTop: '10px', paddingLeft: 0 }}
+            >
+              Download Error Log File
+            </Link>
           </FlexItem>
         </Col>
       </EuiTextColor>

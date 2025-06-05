@@ -121,3 +121,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.timeWrapper {
+  position: relative;
+
+  .timeUnit {
+    position: absolute;
+    top: 12px;
+    right: 5px;
+    font-size: 12px;
+  }
+}

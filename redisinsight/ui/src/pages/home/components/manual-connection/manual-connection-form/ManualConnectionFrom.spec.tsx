@@ -1273,7 +1273,7 @@ describe('InstanceForm', () => {
       expect(screen.getByTestId('timeout')).toHaveAttribute('value', '1000000')
     })
 
-    it('should put only numbers', () => {
+    it('should default  to previous value when value other than just numbers is provided', () => {
       render(
         <ManualConnectionForm
           {...instance(mockedProps)}

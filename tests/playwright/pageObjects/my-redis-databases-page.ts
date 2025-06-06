@@ -8,26 +8,7 @@ import { Toast } from './components/common/toast'
 import { AddRedisDatabaseDialog } from './dialogs/add-redis-database-dialog'
 import {DatabaseAPIRequests} from '../helpers/api/api-databases';
 // import { DatabaseAPIRequests } from '../helpers/api/api-database'
-
-export type DatabasesForImport = {
-    host?: string,
-    port?: number | string,
-    name?: string,
-    result?: string,
-    username?: string,
-    auth?: string,
-    cluster?: boolean | string,
-    indName?: string,
-    db?: number,
-    ssh_port?: number,
-    timeout_connect?: number,
-    timeout_execute?: number,
-    other_field?: string,
-    ssl?: boolean,
-    ssl_ca_cert_path?: string,
-    ssl_local_cert_path?: string,
-    ssl_private_key_path?: string
-}[]
+import { DatabasesForImport } from '../types'
 
 export class MyRedisDatabasePage extends BaseOverviewPage {
     // // Component Instances

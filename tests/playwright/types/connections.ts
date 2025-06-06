@@ -32,6 +32,6 @@ export type SSHParameters = {
  * @param port The port of the node
  */
 export type ClusterNodes = {
-    host: string,
+    host: string
     port: string
-};
+}

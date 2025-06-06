@@ -60,6 +60,7 @@ export class DatabaseAPIRequests {
                 },
             },
         )
+        console.log('+++added DB', response.data)
         if (response.status !== 201)
             throw new Error(
                 `Database creation failed for ${databaseParameters.databaseName}`,

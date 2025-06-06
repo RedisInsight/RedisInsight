@@ -99,7 +99,7 @@ export default defineConfig<TestOptions>({
                 ...devices['Desktop Chrome'],
                 baseURL: process.env.COMMON_URL,
                 apiUrl: process.env.API_URL,
-                headless: false,
+                headless: true,
                 deviceScaleFactor: undefined,
                 viewport: null,
                 launchOptions: {
@@ -119,7 +119,7 @@ export default defineConfig<TestOptions>({
             use: {
                 // baseURL: process.env.COMMON_URL,
                 apiUrl: process.env.API_URL,
-                headless: false,
+                headless: true,
             },
         },
     ],

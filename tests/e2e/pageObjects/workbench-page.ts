@@ -1,5 +1,6 @@
 import { Selector, t } from 'testcafe';
 import { InstancePage } from './instance-page';
+import { Common } from '../helpers/common';
 
 export class WorkbenchPage extends InstancePage {
     //CSS selectors
@@ -47,6 +48,13 @@ export class WorkbenchPage extends InstancePage {
     queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');
     parametersAnchor = Selector('[data-testid=parameters-anchor]');
     clearResultsBtn = Selector('[data-testid=clear-history-btn]');
+
+    // OVERLAY/LOADING ELEMENTS
+    // Selector for the problematic overlay that obstructs workbench interactions in CI
+    overlayContainer = Selector('.RI-flex-group.RI-flex-row').filter((node) => {
+        const style = node.getAttribute('style');
+        return !!(style && style.includes('height: 100%'));
+    });
 
     //ICONS
     noCommandHistoryIcon = Selector('[data-testid=wb_no-results__icon]');
@@ -144,16 +152,44 @@ export class WorkbenchPage extends InstancePage {
     }
 
     /**
-     * Send a command in Workbench
+     * Send a command in Workbench with retry mechanism for CI overlay issues
      * @param command The command
      * @param speed The speed in seconds. Default is 1
-     * @param paste
+     * @param paste Whether to paste the command. Default is true
      */
     async sendCommandInWorkbench(command: string, speed = 1, paste = true): Promise<void> {
-        await t
-            .click(this.queryInput)
-            .typeText(this.queryInput, command, { replace: true, speed, paste })
-            .click(this.submitCommandButton);
+        const maxRetries = 3;
+        let lastError: Error | null = null;
+
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                // Wait for any loading states to complete before attempting interaction
+                await Common.waitForElementNotVisible(this.runButtonSpinner);
+                await Common.waitForElementNotVisible(this.loadedCommand);
+
+                // Wait for the problematic overlay to disappear (CI-specific issue)
+                await Common.waitForElementNotVisible(this.overlayContainer);
+
+                // Perform the actual workbench interaction
+                await t
+                    .click(this.queryInput)
+                    .typeText(this.queryInput, command, { replace: true, speed, paste })
+                    .click(this.submitCommandButton);
+
+                return; // Success, exit the retry loop
+            } catch (error) {
+                lastError = error as Error;
+                console.warn(`Workbench command attempt ${i + 1}/${maxRetries} failed:`, error);
+
+                if (i === maxRetries - 1) {
+                    // Final attempt failed, throw the error
+                    throw new Error(`Failed to send command "${command}" after ${maxRetries} attempts. Last error: ${lastError.message}`);
+                }
+
+                // Wait before retrying to allow any animations/transitions to complete
+                await t.wait(1000);
+            }
+        }
     }
 
     /**

@@ -19,7 +19,7 @@ const isElectron = process.env.ELECTRON_EXECUTABLE_PATH !== undefined
 
 base.beforeEach(async ({ page }) => {
     if (!isElectron) {
-        await page.goto('/')
+        await page.goto('/', { timeout: 5000 })
     }
 
     await page.waitForSelector('[aria-label="Main navigation"]', {

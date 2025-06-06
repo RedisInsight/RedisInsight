@@ -73,10 +73,25 @@ jobs:
       - name: Debug docker containers
         run: |
           docker ps
+          docker network inspect e2e-ri-docker
+
+      - name: Debug Redis Insight Container
+        run: docker logs $(docker ps -q --filter "name=e2e-ri-docker")
+
+      - name: Debug env variables
+        run: |
+          echo "RI_ENCRYPTION_KEY: $RI_ENCRYPTION_KEY"
+          echo "E2E_RI_ENCRYPTION_KEY: $E2E_RI_ENCRYPTION_KEY"
+          echo "RI_SERVER_TLS_CERT: $RI_SERVER_TLS_CERT"
+          echo "RI_SERVER_TLS_KEY: $RI_SERVER_TLS_KEY"
 
       - name: Test connectivity to Redis Insight
         run: |
           curl -v https://localhost:5540/
+
+      - name: Test connectivity to Redis Insight (no SSL)
+        run: |
+          curl -v -k https://localhost:5540/
 
       - name: Run Playwright tests
         timeout-minutes: 80

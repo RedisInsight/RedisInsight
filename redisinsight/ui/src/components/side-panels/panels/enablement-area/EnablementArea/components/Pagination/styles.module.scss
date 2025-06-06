@@ -38,3 +38,12 @@
     padding: 0 4px 0 12px !important;
   }
 }
+
+.activeMenuItem {
+  background-color: var(--euiColorPrimary) !important;
+  color: var(--euiColorEmptyShade) !important;
+}
+
+.underline {
+  text-decoration: underline;
+}

@@ -14,6 +14,7 @@ import {
   MenuItem,
   MenuTrigger,
 } from 'uiSrc/components/base/layout/menu'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -40,7 +41,7 @@ const Pagination = ({
     }
   }, [activePageKey])
 
-  const togglePopover = () => {
+  const toggleMenuOpen = () => {
     setMenuOpen(!isMenuOpen)
   }
 
@@ -68,21 +69,27 @@ const Pagination = ({
         <button
           data-testid="enablement-area__toggle-pagination-menu-btn"
           type="button"
-          onClick={togglePopover}
+          onClick={toggleMenuOpen}
         >
-          {`${activePage + 1} of ${items.length}`}
+          <Text size="S">
+            <strong
+              className={styles.underline}
+            >{`${activePage + 1} of ${items.length}`}</strong>
+          </Text>
         </button>
       </MenuTrigger>
       <MenuContent
-        placement="top"
         data-testid="enablement-area__pagination-menu"
+        placement="top"
+        onInteractOutside={() => setMenuOpen(false)}
       >
         {items.map((item, index) => (
           <MenuItem
-            data-testid={`menu-item-${item.id}`}
+            data-testid={`menu-item-${index}`}
             key={item.id}
             onClick={() => handleOpenPage(index)}
             text={item.label}
+            className={cx({ [styles.activeMenuItem]: activePage === index })}
           />
         ))}
         <MenuDropdownArrow />

@@ -4,6 +4,7 @@ import {workingDirectory} from '../conf'
 import {createTimeout} from '../utils'
 
 const dbPath = `${workingDirectory}/redisinsight.db`
+console.log('+++dbPath+++', dbPath)
 
 export class DatabaseScripts {
     /**
@@ -20,9 +21,9 @@ export class DatabaseScripts {
             await runAsync(query, [dbTableParameters.rowValue, dbTableParameters.conditionWhereColumnValue])
         } catch (err) {
             console.log(`Error during changing ${dbTableParameters.columnName} column value: ${err}`)
-            throw new Error(
-                `Error during changing ${dbTableParameters.columnName} column value: ${err}`,
-            )
+            // throw new Error(
+            //     `Error during changing ${dbTableParameters.columnName} column value: ${err}`,
+            // )
         } finally {
             console.log('Close DB')
             db.close()

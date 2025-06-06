@@ -17,6 +17,7 @@ export const samlUserPassword = process.env.E2E_SSO_PASSWORD || ''
 export const workingDirectory =
     process.env.RI_APP_FOLDER_ABSOLUTE_PATH ||
     joinPath(os.homedir(), process.env.RI_APP_FOLDER_NAME || '.redis-insight')
+console.log('+++workingDirectory+++', workingDirectory)
 export const fileDownloadPath = joinPath(os.homedir(), 'Downloads')
 const uniqueId = faker.string.alphanumeric({ length: 10 })
 

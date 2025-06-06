@@ -1,4 +1,3 @@
-import { EuiLink } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,6 +15,7 @@ import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Link } from 'uiSrc/components/base/link/Link'
 
 const WorkbenchSettings = () => {
   const { cleanup } = useSelector(userSettingsWBSelector)
@@ -63,15 +63,16 @@ const WorkbenchSettings = () => {
         summary={
           <>
             {'Sets the size of a command batch for the '}
-            <EuiLink
+            <Link
               color="text"
-              external={false}
               href="https://redis.io/docs/latest/develop/use/pipelining/"
               target="_blank"
               data-testid="pipelining-link"
+              isExternalLink={false}
+              style={{ padding: 0 }}
             >
               pipeline
-            </EuiLink>
+            </Link>
             {' mode in Workbench. 0 or 1 pipelines every command.'}
           </>
         }

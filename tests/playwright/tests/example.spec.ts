@@ -5,27 +5,27 @@ import { DatabaseHelper } from '../helpers/database'
 import { APIKeyRequests } from '../helpers/api/api-keys'
 import { DatabaseAPIRequests } from '../helpers/api/api-databases'
 import { test, expect } from '../fixtures/test'
-import { ossStandaloneConfig } from '../helpers/conf'
+import { apiUrl, ossStandaloneConfig } from '../helpers/conf'
 
 let keyName: string
 let browserPage: BrowserPage
 let databaseHelper: DatabaseHelper
 
-test.beforeEach(async ({ page }, testInfo) => {
+test.beforeEach(async ({ page }) => {
     // await electronPage.getByText('Add Redis').click()
     browserPage = new BrowserPage(page)
-    databaseHelper = new DatabaseHelper(page, testInfo.project.use.apiUrl)
+    databaseHelper = new DatabaseHelper(page, apiUrl)
     await databaseHelper.acceptLicenseTermsAndAddDatabaseApi(
         ossStandaloneConfig,
         page,
-        testInfo.project.use.apiUrl,
+        apiUrl,
     )
     keyName = Common.generateAlphanumeric(5)
 })
 
-test.afterEach(async ({}, testInfo) => {
-    const apiKeyClient = new APIKeyRequests(testInfo.project.use.apiUrl)
-    const dbApi = new DatabaseAPIRequests(testInfo.project.use.apiUrl)
+test.afterEach(async ({}) => {
+    const apiKeyClient = new APIKeyRequests(apiUrl)
+    const dbApi = new DatabaseAPIRequests(apiUrl)
 
     await apiKeyClient.deleteKeyByNameApi(
         keyName,

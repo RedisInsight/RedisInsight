@@ -33,7 +33,8 @@ export default defineConfig<TestOptions>({
     /* Retry on CI only */
     retries: process.env.CI ? 2 : 0,
     /* Opt out of parallel tests on CI. */
-    workers: process.env.CI ? 1 : undefined,
+    // workers: process.env.CI ? 1 : undefined,
+    workers: 1,
     /* Reporter to use. See https://playwright.dev/docs/test-reporters */
     reporter: [
         ['line'],
@@ -96,12 +97,11 @@ export default defineConfig<TestOptions>({
     /* Configure projects for major browsers */
     projects: [
         {
-            name: 'localChromium',
+            name: 'Chromium',
             testMatch: ['**.spec.ts'],
             use: {
                 ...devices['Desktop Chrome'],
                 baseURL: process.env.COMMON_URL,
-                apiUrl: process.env.API_URL,
                 // headless: false,
                 launchOptions: {
                     args: [
@@ -112,15 +112,6 @@ export default defineConfig<TestOptions>({
                         '--ignore-certificate-errors',
                     ],
                 },
-            },
-        },
-        {
-            name: 'localElectron',
-            testMatch: ['**.spec.ts'],
-            workers: 1,
-            use: {
-                // baseURL: process.env.COMMON_URL,
-                apiUrl: process.env.API_URL,
             },
         },
     ],

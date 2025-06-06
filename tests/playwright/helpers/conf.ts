@@ -7,6 +7,8 @@ import * as path from 'path'
 // Urls for using in the tests
 export const commonUrl = process.env.COMMON_URL || 'https://localhost:5540'
 export const apiUrl = process.env.API_URL || 'https://localhost:5540/api'
+export const electronExecutablePath = process.env.ELECTRON_EXECUTABLE_PATH
+export const isElectron = electronExecutablePath !== undefined
 export const googleUser = process.env.GOOGLE_USER || ''
 export const googleUserPassword = process.env.GOOGLE_USER_PASSWORD || ''
 export const samlUser = process.env.E2E_SSO_EMAIL || ''

@@ -1,12 +1,5 @@
 /* eslint-disable no-empty-pattern */
 import { test as base, expect } from '@playwright/test'
-import type {
-    Fixtures,
-    PlaywrightTestArgs,
-    PlaywrightTestOptions,
-    PlaywrightWorkerArgs,
-    PlaywrightWorkerOptions,
-} from '@playwright/test'
 import {
     BrowserContext,
     ElectronApplication,
@@ -15,33 +8,36 @@ import {
 } from 'playwright'
 import log from 'node-color-log'
 
-const isElectron = process.env.ELECTRON_EXECUTABLE_PATH !== undefined
+import { isElectron, electronExecutablePath } from '../helpers/conf'
 
-base.beforeEach(async ({ page }) => {
-    if (!isElectron) {
-        await page.goto('/', { timeout: 5000 })
-    }
+const commonTest = base.extend<{ forEachTest: void }>({
+    forEachTest: [
+        async ({ page }, use) => {
+            // before each test:
+            if (!isElectron) {
+                await page.goto('/')
+            }
 
-    await page.waitForSelector('[aria-label="Main navigation"]', {
-        timeout: 10000,
-    })
+            await page.waitForSelector('[aria-label="Main navigation"]', {
+                timeout: 2000,
+            })
+
+            await use()
+
+            // after each test:
+        },
+        { auto: true },
+    ],
 })
 
-type ElectronTestFixtures = {
-    electronApp: ElectronApplication
+const electronTest = commonTest.extend<{
+    electronApp: ElectronApplication | null
     page: Page
     context: BrowserContext
-}
-
-export const electronFixtures: Fixtures<
-    ElectronTestFixtures,
-    {},
-    PlaywrightTestArgs & PlaywrightTestOptions,
-    PlaywrightWorkerArgs & PlaywrightWorkerOptions
-> = {
+}>({
     electronApp: async ({}, use) => {
         const electronApp = await electron.launch({
-            executablePath: process.env.ELECTRON_EXECUTABLE_PATH,
+            executablePath: electronExecutablePath,
             args: ['index.html'],
             timeout: 60000,
         })
@@ -58,20 +54,25 @@ export const electronFixtures: Fixtures<
         await electronApp.close()
     },
     page: async ({ electronApp }, use) => {
-        const page = await electronApp.firstWindow()
+        if (!electronApp) {
+            throw new Error('Electron app is not initialized')
+        }
 
-        await use(page)
+        const electronPage = await electronApp.firstWindow()
+
+        await use(electronPage)
     },
     context: async ({ electronApp }, use) => {
-        const context = electronApp.context()
+        if (!electronApp) {
+            throw new Error('Electron app is not initialized')
+        }
 
-        await use(context)
+        const electronContext = electronApp.context()
+
+        await use(electronContext)
     },
-}
+})
 
-const electronTest = base.extend<ElectronTestFixtures>(electronFixtures)
-const browserTest = base
-
-const test = isElectron ? electronTest : browserTest
+const test = isElectron ? electronTest : commonTest
 
 export { test, expect, isElectron }

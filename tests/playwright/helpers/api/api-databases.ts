@@ -51,6 +51,9 @@ export class DatabaseAPIRequests {
             }
         }
 
+        const databasesResponse = await this.getAllDatabases(xWindowsId)
+        console.log('+++databasesResponse+++', databasesResponse)
+
         const response = await this.apiClient.post(
             ResourcePath.Databases,
             requestBody,

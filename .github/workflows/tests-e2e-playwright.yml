@@ -79,6 +79,7 @@ jobs:
         continue-on-error: true
         run: |
           curl -v -k https://localhost:5540/
+          curl -k https://localhost:5540/api/databases
 
       - name: Run Playwright tests
         timeout-minutes: 80

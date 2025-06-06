@@ -12,6 +12,7 @@ export class HttpClient {
 
     constructor(apiUrl: string) {
         this.apiUrl = apiUrl
+        console.log('+++apiUrl+++', this.apiUrl)
         this.apiClient = axios.create({
             baseURL: this.apiUrl,
             headers: {},

@@ -27,15 +27,19 @@ test.afterEach(async ({}) => {
     const apiKeyClient = new APIKeyRequests(apiUrl)
     const dbApi = new DatabaseAPIRequests(apiUrl)
 
-    await apiKeyClient.deleteKeyByNameApi(
-        keyName,
-        ossStandaloneConfig.databaseName,
-        await browserPage.getWindowId(),
-    )
-    await dbApi.deleteStandaloneDatabaseApi(
-        ossStandaloneConfig,
-        await browserPage.getWindowId(),
-    )
+    try {
+        await apiKeyClient.deleteKeyByNameApi(
+            keyName,
+            ossStandaloneConfig.databaseName,
+            await browserPage.getWindowId(),
+        )
+        await dbApi.deleteStandaloneDatabaseApi(
+            ossStandaloneConfig,
+            await browserPage.getWindowId(),
+        )
+    } catch (error) {
+        console.warn('Error during cleanup:', error)
+    }
 })
 
 test('basic test', async () => {

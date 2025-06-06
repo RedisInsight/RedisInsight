@@ -84,6 +84,7 @@ export class DatabaseAPIRequests {
         if (!databaseName) throw new Error('Error: Missing databaseName')
 
         const allDatabases = await this.getAllDatabases(xWindowsId)
+        console.log('+++databases+++', databaseName, xWindowsId, allDatabases)
         const filteredDb = await asyncFilter(
             allDatabases,
             async (item: databaseParameters) => {

@@ -74,9 +74,6 @@ jobs:
         run: |
           docker ps
 
-      - name: Debug Redis Insight Container
-        run: docker logs $(docker ps -q --filter "name=e2e-ri-docker")
-
       - name: Debug env variables
         run: |
           echo "RI_ENCRYPTION_KEY: $RI_ENCRYPTION_KEY"

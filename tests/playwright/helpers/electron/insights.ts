@@ -34,7 +34,7 @@ export async function modifyFeaturesConfigJson(filePath: string): Promise<void> 
  */
 export async function updateControlNumber(controlNumber: number,  apiUrl: string, xWindowId:string): Promise<void> {
     await syncFeaturesApi(apiUrl, xWindowId)
-    await DatabaseScripts.updateColumnValueInDBTable({ ...dbTableParams, rowValue: controlNumber })
+    // await DatabaseScripts.updateColumnValueInDBTable({ ...dbTableParams, rowValue: controlNumber })
     await syncFeaturesApi(apiUrl, xWindowId)
 
 }

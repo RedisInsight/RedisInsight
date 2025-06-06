@@ -33,7 +33,7 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/install-all-build-libs
+      # - uses: ./.github/actions/install-all-build-libs
 
       - name: Install dependencies for Playwright tests
         uses: ./.github/actions/install-deps
@@ -69,6 +69,14 @@ jobs:
           docker compose -p e2e-ri-docker \
           -f tests/e2e/docker.web.docker-compose.yml \
           up --detach --force-recreate
+
+      - name: Debug docker containers
+        run: |
+          docker ps
+
+      - name: Test connectivity to Redis Insight
+        run: |
+          curl -v https://localhost:5540/
 
       - name: Run Playwright tests
         timeout-minutes: 80

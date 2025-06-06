@@ -22,7 +22,9 @@ base.beforeEach(async ({ page }) => {
         await page.goto('/')
     }
 
-    await page.waitForSelector('[aria-label="Main navigation"]')
+    await page.waitForSelector('[aria-label="Main navigation"]', {
+        timeout: 10000,
+    })
 })
 
 type ElectronTestFixtures = {

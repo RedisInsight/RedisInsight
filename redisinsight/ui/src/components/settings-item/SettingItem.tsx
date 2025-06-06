@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiTitle } from '@elastic/eui'
+import { EuiTitle } from '@elastic/eui'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 
@@ -8,6 +8,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Text } from 'uiSrc/components/base/text'
 import { NumericInput } from 'uiSrc/components/base/inputs'
+import { EditIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -107,7 +108,7 @@ const SettingItem = (props: Props) => {
                   data-testid={`${testid}-input`}
                   style={{ width: '100%' }}
                 />
-                {!isEditing && <EuiIcon type="pencil" color="subdued" />}
+                {!isEditing && <EditIcon />}
               </div>
             </InlineItemEditor>
           ) : (

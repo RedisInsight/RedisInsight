@@ -9,8 +9,6 @@ jest.doMock(
 );
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException } from '@nestjs/common';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import {
   mockConstantsProvider,
   mockDatabaseFactory,
@@ -30,6 +28,9 @@ import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { ConstantsProvider } from 'src/modules/constants/providers/constants.provider';
+import {
+  RedisConnectionIncorrectCertificateException,
+} from 'src/modules/redis/exceptions/connection';
 
 describe('RedisSentinelService', () => {
   let service: RedisSentinelService;
@@ -89,7 +90,7 @@ describe('RedisSentinelService', () => {
       redisClientFactory
         .getConnectionStrategy()
         .createStandaloneClient.mockRejectedValue(
-          new Error(ERROR_MESSAGES.NO_CONNECTION_TO_REDIS_DB),
+          new RedisConnectionIncorrectCertificateException(),
         );
 
       await expect(
@@ -97,7 +98,7 @@ describe('RedisSentinelService', () => {
           mockSessionMetadata,
           mockSentinelDatabaseWithTlsAuth,
         ),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(RedisConnectionIncorrectCertificateException);
     });
   });
 });

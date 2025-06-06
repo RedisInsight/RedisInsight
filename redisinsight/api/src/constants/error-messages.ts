@@ -112,8 +112,9 @@ export default {
   UNDEFINED_WINDOW_ID: 'Undefined window id.',
   LIBRARY_NOT_EXIST: 'This library does not exist.',
 
-  CLOUD_CAPI_KEY_UNAUTHORIZED: 'Unable to authorize such CAPI key',
+  REDIS_CONNECTION_FAILED: 'Unable to connect to the Redis database',
 
+  CLOUD_CAPI_KEY_UNAUTHORIZED: 'Unable to authorize such CAPI key',
   CLOUD_OAUTH_CANCELED: 'Authorization request was canceled.',
   CLOUD_OAUTH_MISCONFIGURATION: 'Authorization server misconfiguration.',
   CLOUD_OAUTH_GITHUB_EMAIL_PERMISSION:

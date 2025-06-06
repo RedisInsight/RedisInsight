@@ -4,7 +4,7 @@ import {
   ConnectionType,
   HostingProvider,
 } from 'src/modules/database/entities/database.entity';
-import { catchRedisConnectionError, getHostingProvider } from 'src/utils';
+import { getHostingProvider } from 'src/utils';
 import { Database } from 'src/modules/database/models/database';
 import { ClientContext, SessionMetadata } from 'src/common/models';
 import ERROR_MESSAGES from 'src/constants/error-messages';
@@ -157,7 +157,8 @@ export class DatabaseFactory {
       return model;
     } catch (error) {
       this.logger.error('Failed to add oss cluster.', error, sessionMetadata);
-      throw catchRedisConnectionError(error, database);
+
+      throw error;
     }
   }
 
@@ -211,7 +212,8 @@ export class DatabaseFactory {
         error,
         sessionMetadata,
       );
-      throw catchRedisConnectionError(error, database);
+
+      throw error;
     }
   }
 }

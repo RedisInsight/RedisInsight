@@ -2,6 +2,7 @@ import { cloneDeep } from 'lodash'
 import { sessionStorageService } from 'uiSrc/services'
 import {
   cloudAuthInterceptor,
+  isConnectivityError,
   requestInterceptor,
 } from 'uiSrc/services/apiService'
 import { ApiEndpoints } from 'uiSrc/constants'
@@ -78,5 +79,70 @@ describe('cloudAuthInterceptor', () => {
     } catch {
       expect(mockedTestStore.getActions()).toEqual([])
     }
+  })
+})
+
+describe('isConnectivityError', () => {
+  it.each<{apiResponse: any, result: boolean}>([
+    {
+      apiResponse: undefined,
+      result: false,
+    },
+    {
+      apiResponse: {
+        status: 424,
+        data: {
+          error: 'RedisConnectionFailedException',
+        },
+      },
+      result: true,
+    },
+    {
+      apiResponse: {
+        status: 500,
+        data: {
+          error: 'RedisConnectionFailedException',
+        },
+      },
+      result: false,
+    },
+    {
+      apiResponse: {
+        status: 503,
+        data: {
+          error: 'Service Unavailable',
+        },
+      },
+      result: true,
+    },
+    {
+      apiResponse: {
+        status: 401,
+        data: {
+          error: 'Service Unavailable',
+        },
+      },
+      result: false,
+    },
+    {
+      apiResponse: {
+        status: 503,
+        data: {
+          code: 'serviceUnavailable',
+        },
+      },
+      result: true,
+    },
+    {
+      apiResponse: {
+        status: 400,
+        data: {
+          code: 'serviceUnavailable',
+        },
+      },
+      result: false,
+    }
+  ])('test %j', ({ apiResponse, result }) => {
+    expect(isConnectivityError(apiResponse?.status, apiResponse?.data)).toEqual(result)
   })
 })

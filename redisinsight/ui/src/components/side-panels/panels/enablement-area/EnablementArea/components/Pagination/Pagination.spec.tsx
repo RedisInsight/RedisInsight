@@ -1,4 +1,3 @@
-import { act } from '@testing-library/react'
 import React from 'react'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { ApiEndpoints, MOCK_TUTORIALS_ITEMS } from 'uiSrc/constants'
@@ -45,10 +44,10 @@ describe('Pagination', () => {
     const menu = queryByTestId('enablement-area__pagination-menu')
 
     expect(menu).toBeInTheDocument()
-    expect(menu?.querySelectorAll('.pagesItem').length).toEqual(
+    expect(menu?.querySelectorAll('[data-testid^="menu-item"]').length).toEqual(
       paginationItems.length,
     )
-    expect(menu?.querySelector('.pagesItemActive')).toHaveTextContent(
+    expect(menu?.querySelector('.activeMenuItem')).toHaveTextContent(
       paginationItems[0].label,
     )
   })
@@ -67,7 +66,7 @@ describe('Pagination', () => {
     )
     fireEvent.click(screen.getByTestId('enablement-area__next-page-btn'))
 
-    expect(openPage).toBeCalledWith({
+    expect(openPage).toHaveBeenCalledWith({
       path:
         ApiEndpoints.GUIDES_PATH + paginationItems[pageIndex + 1]?.args?.path,
       manifestPath: expect.any(String),
@@ -88,7 +87,7 @@ describe('Pagination', () => {
     )
     fireEvent.click(screen.getByTestId('enablement-area__prev-page-btn'))
 
-    expect(openPage).toBeCalledWith({
+    expect(openPage).toHaveBeenCalledWith({
       path:
         ApiEndpoints.GUIDES_PATH + paginationItems[pageIndex - 1]?.args?.path,
       manifestPath: expect.any(String),
@@ -96,31 +95,39 @@ describe('Pagination', () => {
   })
   it('should correctly open by using pagination menu', async () => {
     const openPage = jest.fn()
+    const ACTIVE_PAGE_KEY = '0'
     const { queryByTestId } = render(
       <EnablementAreaProvider value={{ ...defaultValue, openPage }}>
         <Pagination
           sourcePath={ApiEndpoints.GUIDES_PATH}
           items={paginationItems}
-          activePageKey="0"
+          activePageKey={ACTIVE_PAGE_KEY}
         />
       </EnablementAreaProvider>,
     )
 
-    fireEvent.click(
-      screen.getByTestId('enablement-area__toggle-pagination-menu-btn'),
-    )
+    const toggleMenuBtnId = 'enablement-area__toggle-pagination-menu-btn'
+    for (let i = 0; i < paginationItems.length; i++) {
+      const pageItem = paginationItems[i]
 
-    const menu = queryByTestId('enablement-area__pagination-menu')
-    await act(() => {
-      menu
-        ?.querySelectorAll('[data-testid^="menu-item"]')
-        .forEach(async (el) => {
-          fireEvent.click(el)
-        })
-    })
+      if (pageItem._key !== ACTIVE_PAGE_KEY) {
+        // Reopen the menu each time
+        fireEvent.click(screen.getByTestId(toggleMenuBtnId))
 
-    expect(openPage).toBeCalledTimes(paginationItems.length - 1) // -1 because active item should not be clickable
-    expect(openPage).lastCalledWith({
+        const menu = queryByTestId('enablement-area__pagination-menu')
+        expect(menu).not.toBeNull()
+
+        const menuItem = menu?.querySelector(
+          `[data-testid="menu-item-${pageItem._key}"]`,
+        )
+        expect(menuItem).not.toBeNull()
+
+        fireEvent.click(menuItem as Element)
+      }
+    }
+
+    expect(openPage).toHaveBeenCalledTimes(paginationItems.length - 1) // -1 because active item should not be clickable
+    expect(openPage).toHaveBeenLastCalledWith({
       path:
         ApiEndpoints.GUIDES_PATH +
         paginationItems[paginationItems.length - 1]?.args?.path,

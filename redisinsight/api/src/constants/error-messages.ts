@@ -104,7 +104,7 @@ export default {
     `Required ${module} module is not loaded.`,
   APP_SETTINGS_NOT_FOUND: () => 'Could not find application settings.',
   SERVER_INFO_NOT_FOUND: () => 'Could not find server info.',
-  INCREASE_MINIMUM_LIMIT: (count: number) =>
+  INCREASE_MINIMUM_LIMIT: (count?: number) =>
     count
       ? `Set MAXSEARCHRESULTS to at least ${numberWithSpaces(count)}.`
       : 'Increase MAXSEARCHRESULTS value to search more.',

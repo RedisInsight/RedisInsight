@@ -105,11 +105,13 @@ export default defineConfig<TestOptions>({
                 // headless: false,
                 launchOptions: {
                     args: [
+                        '--no-sandbox',
                         '--start-maximized',
-                        '--disable-component-extensions-with-background-pages',
                         '--disable-dev-shm-usage',
-                        '--disable-blink-features=AutomationControlled',
                         '--ignore-certificate-errors',
+                        '--disable-search-engine-choice-screen',
+                        // '--disable-blink-features=AutomationControlled',
+                        // '--disable-component-extensions-with-background-pages',
                     ],
                 },
             },

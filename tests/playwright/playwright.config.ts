@@ -84,6 +84,9 @@ export default defineConfig<TestOptions>({
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: 'on-first-retry',
         testIdAttribute: 'data-testid',
+        headless: true,
+        deviceScaleFactor: undefined,
+        viewport: { width: 1920, height: 1080 },
         video: {
             mode: 'on',
             size: { width: 1920, height: 1080 },
@@ -99,9 +102,7 @@ export default defineConfig<TestOptions>({
                 ...devices['Desktop Chrome'],
                 baseURL: process.env.COMMON_URL,
                 apiUrl: process.env.API_URL,
-                headless: true,
-                deviceScaleFactor: undefined,
-                viewport: null,
+                // headless: false,
                 launchOptions: {
                     args: [
                         '--start-maximized',
@@ -119,7 +120,6 @@ export default defineConfig<TestOptions>({
             use: {
                 // baseURL: process.env.COMMON_URL,
                 apiUrl: process.env.API_URL,
-                headless: true,
             },
         },
     ],

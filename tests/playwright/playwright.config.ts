@@ -117,6 +117,7 @@ export default defineConfig<TestOptions>({
         {
             name: 'localElectron',
             testMatch: ['**.spec.ts'],
+            workers: 1,
             use: {
                 // baseURL: process.env.COMMON_URL,
                 apiUrl: process.env.API_URL,

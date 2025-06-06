@@ -92,9 +92,9 @@ jobs:
         with:
           name: playwright-report
           path: |
-            ./test/playwright/test-results
-            ./test/playwright/allure-results
-            ./test/playwright/playwright-report
+            ./tests/playwright/test-results
+            ./tests/playwright/allure-results
+            ./tests/playwright/playwright-report
           retention-days: 10
 
       - name: Clean up redis test environments

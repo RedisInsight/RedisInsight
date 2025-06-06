@@ -73,7 +73,6 @@ jobs:
       - name: Debug docker containers
         run: |
           docker ps
-          docker network inspect e2e-ri-docker
 
       - name: Debug Redis Insight Container
         run: docker logs $(docker ps -q --filter "name=e2e-ri-docker")

@@ -1,6 +1,5 @@
 import React, { ChangeEvent } from 'react'
 import {
-  EuiFieldNumber,
   EuiFieldText,
   EuiRadioGroup,
   EuiRadioGroupOption,
@@ -10,12 +9,7 @@ import {
 import cx from 'classnames'
 import { FormikProps } from 'formik'
 
-import {
-  MAX_PORT_NUMBER,
-  selectOnFocus,
-  validateField,
-  validatePortNumber,
-} from 'uiSrc/utils'
+import { MAX_PORT_NUMBER, selectOnFocus, validateField } from 'uiSrc/utils'
 import { SECURITY_FIELD } from 'uiSrc/constants'
 
 import { SshPassType } from 'uiSrc/pages/home/constants'
@@ -24,7 +18,7 @@ import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
-import { PasswordInput } from 'uiSrc/components/base/inputs'
+import { NumericInput, PasswordInput } from 'uiSrc/components/base/inputs'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from '../styles.module.scss'
 
@@ -96,25 +90,21 @@ const SSHDetails = (props: Props) => {
             </FlexItem>
 
             <FlexItem grow className={flexItemClassName}>
-              <FormField label="Port*" additionalText="Should not exceed 65535.">
-                <EuiFieldNumber
+              <FormField
+                label="Port*"
+                additionalText="Should not exceed 65535."
+              >
+                <NumericInput
+                  autoValidate
+                  min={0}
+                  max={MAX_PORT_NUMBER}
                   name="sshPort"
                   id="sshPort"
                   data-testid="sshPort"
-                  style={{ width: '100%' }}
                   placeholder="Enter SSH Port"
-                  value={formik.values.sshPort ?? ''}
-                  maxLength={6}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(
-                      e.target.name,
-                      validatePortNumber(e.target.value.trim()),
-                    )
-                  }}
+                  value={Number(formik.values.sshPort)}
+                  onChange={(value) => formik.setFieldValue('sshPort', value)}
                   onFocus={selectOnFocus}
-                  type="text"
-                  min={0}
-                  max={MAX_PORT_NUMBER}
                 />
               </FormField>
             </FlexItem>

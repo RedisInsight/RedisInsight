@@ -1,12 +1,14 @@
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiFieldNumber, EuiIcon, EuiTitle } from '@elastic/eui'
+import { EuiTitle } from '@elastic/eui'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Text } from 'uiSrc/components/base/text'
+import { NumericInput } from 'uiSrc/components/base/inputs'
+import { EditIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -54,28 +56,19 @@ const SettingItem = (props: Props) => {
     setHovering(false)
   }
 
-  const onChange = ({
-    currentTarget: { value },
-  }: ChangeEvent<HTMLInputElement>) => {
-    isEditing && setValue(validation(value))
-  }
-
-  const appendEditing = () =>
-    !isEditing ? <EuiIcon type="pencil" color="subdued" /> : ''
-
   return (
     <>
       <EuiTitle className={styles.title} size="xxs">
         <span>{title}</span>
       </EuiTitle>
       <Spacer size="s" />
-      <Text className={styles.smallText} size="s" color="subdued">
+      <Text className={styles.smallText} size="s">
         {summary}
       </Text>
       <Spacer size="m" />
       <Row align="center" className={styles.container}>
         <FlexItem style={{ marginRight: '4px' }}>
-          <Text size="xs" color="subdued" className={styles.inputLabel}>
+          <Text size="xs" className={styles.inputLabel}>
             {label}
           </Text>
         </FlexItem>
@@ -84,7 +77,7 @@ const SettingItem = (props: Props) => {
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
           onClick={() => setEditing(true)}
-          style={{ paddingBottom: '1px' }}
+          style={{ width: '200px' }}
         >
           {isEditing || isHovering ? (
             <InlineItemEditor
@@ -94,22 +87,29 @@ const SettingItem = (props: Props) => {
               onDecline={handleDeclineChanges}
               declineOnUnmount={false}
             >
-              <EuiFieldNumber
-                onChange={onChange}
-                value={value}
-                placeholder={placeholder}
-                aria-label={testid?.replaceAll?.('-', ' ')}
-                className={cx(styles.input, {
-                  [styles.inputEditing]: isEditing,
+              <div
+                className={cx({
+                  [styles.inputHover]: isHovering,
                 })}
-                append={appendEditing()}
-                fullWidth={false}
-                compressed
-                autoComplete="off"
-                type="text"
-                readOnly={!isEditing}
-                data-testid={`${testid}-input`}
-              />
+              >
+                <NumericInput
+                  autoValidate
+                  onChange={(value) =>
+                    isEditing &&
+                    setValue(validation(value ? value.toString() : ''))
+                  }
+                  value={Number(value)}
+                  placeholder={placeholder}
+                  aria-label={testid?.replaceAll?.('-', ' ')}
+                  className={cx(styles.input, {
+                    [styles.inputEditing]: isEditing,
+                  })}
+                  readOnly={!isEditing}
+                  data-testid={`${testid}-input`}
+                  style={{ width: '100%' }}
+                />
+                {!isEditing && <EditIcon />}
+              </div>
             </InlineItemEditor>
           ) : (
             <Text className={styles.value} data-testid={`${testid}-value`}>

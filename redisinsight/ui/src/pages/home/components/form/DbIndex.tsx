@@ -1,14 +1,13 @@
 import React, { ChangeEvent } from 'react'
-import { EuiFieldNumber,  htmlIdGenerator } from '@elastic/eui'
+import { htmlIdGenerator } from '@elastic/eui'
 import { FormikProps } from 'formik'
-
-import { validateNumber } from 'uiSrc/utils'
 
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { NumericInput } from 'uiSrc/components/base/inputs'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -53,21 +52,15 @@ const DbIndex = (props: Props) => {
           <Row gap="m" responsive>
             <FlexItem grow className={styles.dbInput}>
               <FormField label="Database Index">
-                <EuiFieldNumber
+                <NumericInput
+                  autoValidate
+                  min={0}
                   name="db"
                   id="db"
                   data-testid="db"
                   placeholder="Enter Database Index"
-                  value={formik.values.db ?? '0'}
-                  maxLength={6}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(
-                      e.target.name,
-                      validateNumber(e.target.value.trim()),
-                    )
-                  }}
-                  type="text"
-                  min={0}
+                  value={Number(formik.values.db)}
+                  onChange={(value) => formik.setFieldValue('db', value)}
                 />
               </FormField>
             </FlexItem>

@@ -70,12 +70,6 @@ export const validateEmail = (email: string) => {
   return re.test(String(email).toLowerCase())
 }
 
-export const validatePortNumber = (initValue: string) =>
-  validateNumber(initValue, 0, MAX_PORT_NUMBER)
-
-export const validateTimeoutNumber = (initValue: string) =>
-  validateNumber(initValue, 1, MAX_TIMEOUT_NUMBER)
-
 export const validateNumber = (
   initValue: string,
   minNumber: number = 0,

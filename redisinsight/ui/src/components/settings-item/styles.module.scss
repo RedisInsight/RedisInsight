@@ -7,6 +7,19 @@
   height: 32px !important;
 }
 
+.inputHover {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 10px;
+  padding-bottom: 5px;
+  
+  & > * {
+    line-height: 3.1rem !important;
+  }
+}
+
 .container {
   height: 40px;
 

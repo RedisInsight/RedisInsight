@@ -68,7 +68,6 @@ const WorkbenchSettings = () => {
               href="https://redis.io/docs/latest/develop/use/pipelining/"
               target="_blank"
               data-testid="pipelining-link"
-              isExternalLink={false}
               style={{ padding: 0 }}
             >
               pipeline

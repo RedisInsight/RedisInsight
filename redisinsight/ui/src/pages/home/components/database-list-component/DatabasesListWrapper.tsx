@@ -93,6 +93,7 @@ import DbStatus from '../db-status'
 import { TagsCell } from '../tags-cell/TagsCell'
 import { TagsCellHeader } from '../tags-cell/TagsCellHeader'
 import styles from './styles.module.scss'
+import { Link } from 'uiSrc/components/base/link/Link'
 
 export interface Props {
   instances: Instance[]
@@ -598,9 +599,8 @@ const DatabasesListWrapper = (props: Props) => {
               )}
               {instance.cloudDetails && (
                 <EuiToolTip content="Go to Redis Cloud">
-                  <EuiLink
+                  <Link
                     target="_blank"
-                    external={false}
                     href={EXTERNAL_LINKS.cloudConsole}
                     onClick={handleClickGoToCloud}
                     data-testid={`cloud-link-${instance.id}`}
@@ -609,7 +609,7 @@ const DatabasesListWrapper = (props: Props) => {
                       type={CloudLinkIcon}
                       className={styles.cloudIcon}
                     />
-                  </EuiLink>
+                  </Link>
                 </EuiToolTip>
               )}
               <FeatureFlagComponent name={FeatureFlags.databaseManagement}>

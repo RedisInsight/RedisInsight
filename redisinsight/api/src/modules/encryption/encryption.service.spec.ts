@@ -103,6 +103,44 @@ describe('EncryptionService', () => {
     });
   });
 
+  describe('isEncryptionAvailable', () => {
+    it('should return true when multiple strategies are available (KEYTAR and PLAIN)', async () => {
+      keytarEncryptionStrategy.isAvailable.mockResolvedValueOnce(true);
+      keyEncryptionStrategy.isAvailable.mockResolvedValueOnce(false);
+
+      const result = await service.isEncryptionAvailable();
+
+      expect(result).toBe(true);
+    });
+
+    it('should return true when multiple strategies are available (KEY and PLAIN)', async () => {
+      keytarEncryptionStrategy.isAvailable.mockResolvedValueOnce(false);
+      keyEncryptionStrategy.isAvailable.mockResolvedValueOnce(true);
+
+      const result = await service.isEncryptionAvailable();
+
+      expect(result).toBe(true);
+    });
+
+    it('should return true when all strategies are available (KEY, KEYTAR and PLAIN)', async () => {
+      keytarEncryptionStrategy.isAvailable.mockResolvedValueOnce(true);
+      keyEncryptionStrategy.isAvailable.mockResolvedValueOnce(true);
+
+      const result = await service.isEncryptionAvailable();
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false when only PLAIN strategy is available', async () => {
+      keytarEncryptionStrategy.isAvailable.mockResolvedValueOnce(false);
+      keyEncryptionStrategy.isAvailable.mockResolvedValueOnce(false);
+
+      const result = await service.isEncryptionAvailable();
+
+      expect(result).toBe(false);
+    });
+  });
+
   describe('getEncryptionStrategy', () => {
     it('Should return KEYTAR strategy based on app agreements', async () => {
       expect(await service.getEncryptionStrategy()).toEqual(

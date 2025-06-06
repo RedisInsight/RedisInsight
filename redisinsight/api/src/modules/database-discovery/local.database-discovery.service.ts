@@ -26,7 +26,7 @@ export class LocalDatabaseDiscoveryService extends DatabaseDiscoveryService {
     firstRun?: boolean,
   ): Promise<void> {
     try {
-      // no need to auto discover for Redis Stack
+      // No need to auto discover for Redis Stack - quick check
       if (SERVER_CONFIG.buildType === 'REDIS_STACK') {
         return;
       }

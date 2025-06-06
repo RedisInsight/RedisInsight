@@ -31,7 +31,7 @@ describe('Pagination', () => {
     ).not.toBeInTheDocument()
     expect(queryByTestId('enablement-area__next-page-btn')).toBeInTheDocument()
   })
-  it('should correctly open popover', () => {
+  it('should correctly open menu', () => {
     const { queryByTestId } = render(
       <Pagination
         sourcePath={ApiEndpoints.GUIDES_PATH}
@@ -40,15 +40,15 @@ describe('Pagination', () => {
       />,
     )
     fireEvent.click(
-      screen.getByTestId('enablement-area__pagination-popover-btn'),
+      screen.getByTestId('enablement-area__toggle-pagination-menu-btn'),
     )
-    const popover = queryByTestId('enablement-area__pagination-popover')
+    const menu = queryByTestId('enablement-area__pagination-menu')
 
-    expect(popover).toBeInTheDocument()
-    expect(popover?.querySelectorAll('.pagesItem').length).toEqual(
+    expect(menu).toBeInTheDocument()
+    expect(menu?.querySelectorAll('.pagesItem').length).toEqual(
       paginationItems.length,
     )
-    expect(popover?.querySelector('.pagesItemActive')).toHaveTextContent(
+    expect(menu?.querySelector('.pagesItemActive')).toHaveTextContent(
       paginationItems[0].label,
     )
   })
@@ -94,7 +94,7 @@ describe('Pagination', () => {
       manifestPath: expect.any(String),
     })
   })
-  it('should correctly open by using pagination popover', async () => {
+  it('should correctly open by using pagination menu', async () => {
     const openPage = jest.fn()
     const { queryByTestId } = render(
       <EnablementAreaProvider value={{ ...defaultValue, openPage }}>
@@ -107,13 +107,16 @@ describe('Pagination', () => {
     )
 
     fireEvent.click(
-      screen.getByTestId('enablement-area__pagination-popover-btn'),
+      screen.getByTestId('enablement-area__toggle-pagination-menu-btn'),
     )
-    const popover = queryByTestId('enablement-area__pagination-popover')
+
+    const menu = queryByTestId('enablement-area__pagination-menu')
     await act(() => {
-      popover?.querySelectorAll('.pagesItem').forEach(async (el) => {
-        fireEvent.click(el)
-      })
+      menu
+        ?.querySelectorAll('[data-testid^="menu-item"]')
+        .forEach(async (el) => {
+          fireEvent.click(el)
+        })
     })
 
     expect(openPage).toBeCalledTimes(paginationItems.length - 1) // -1 because active item should not be clickable

@@ -7,7 +7,13 @@ import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementArea
 
 import { Nullable } from 'uiSrc/utils'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
-import { Menu, MenuContent, MenuDropdownArrow, MenuItem, MenuTrigger } from 'uiSrc/components/base/layout/menu'
+import {
+  Menu,
+  MenuContent,
+  MenuDropdownArrow,
+  MenuItem,
+  MenuTrigger,
+} from 'uiSrc/components/base/layout/menu'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -23,7 +29,7 @@ const Pagination = ({
   activePageKey,
   compressed,
 }: Props) => {
-  const [isPopoverOpen, setPopover] = useState(false)
+  const [isMenuOpen, setMenuOpen] = useState(false)
   const [activePage, setActivePage] = useState(0)
   const { openPage } = useContext(EnablementAreaContext)
 
@@ -35,11 +41,11 @@ const Pagination = ({
   }, [activePageKey])
 
   const togglePopover = () => {
-    setPopover(!isPopoverOpen)
+    setMenuOpen(!isMenuOpen)
   }
 
-  const closePopover = () => {
-    setPopover(false)
+  const closeMenu = () => {
+    setMenuOpen(false)
   }
 
   const handleOpenPage = (index: number) => {
@@ -47,7 +53,7 @@ const Pagination = ({
     const groupPath = items[index]?._groupPath
     const key = items[index]?._key
 
-    closePopover()
+    closeMenu()
     if (index !== activePage && openPage && path) {
       openPage({
         path: sourcePath + path,
@@ -57,7 +63,7 @@ const Pagination = ({
   }
 
   const PagesControl = () => (
-    <Menu open={isPopoverOpen} data-testid="enablement-area__toggle-pagination-menu">
+    <Menu open={isMenuOpen}>
       <MenuTrigger>
         <button
           data-testid="enablement-area__toggle-pagination-menu-btn"
@@ -67,9 +73,13 @@ const Pagination = ({
           {`${activePage + 1} of ${items.length}`}
         </button>
       </MenuTrigger>
-      <MenuContent placement="top">
+      <MenuContent
+        placement="top"
+        data-testid="enablement-area__pagination-menu"
+      >
         {items.map((item, index) => (
           <MenuItem
+            data-testid={`menu-item-${item.id}`}
             key={item.id}
             onClick={() => handleOpenPage(index)}
             text={item.label}

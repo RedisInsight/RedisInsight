@@ -75,17 +75,6 @@ jobs:
         run: |
           docker ps
 
-      - name: Wait for Redis Insight to be ready
-        run: |
-          for i in {1..30}; do
-            curl -v -k https://localhost:5540/ && break || sleep 5
-          done
-
-      - name: Test connectivity to Redis Insight
-        continue-on-error: true
-        run: |
-          curl -v https://localhost:5540/
-
       - name: Test connectivity to Redis Insight (no SSL)
         continue-on-error: true
         run: |
@@ -102,8 +91,11 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
-          path: playwright-report/
-          retention-days: 30
+          path: |
+            test-results
+            allure-results
+            playwright-report
+          retention-days: 10
 
       - name: Clean up redis test environments
         if: always()

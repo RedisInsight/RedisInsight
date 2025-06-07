@@ -41,7 +41,7 @@ services:
   app:
     logging:
       driver: none
-    image: redisinsight:arm64
+    image: redisinsight:amd64
     env_file:
       - ./.env
     environment:

@@ -57,9 +57,6 @@ export class DatabaseAPIRequests {
             }
         }
 
-        const databasesResponse = await this.getAllDatabases(xWindowsId)
-        console.log('+++databasesResponse+++', databasesResponse)
-
         const response = await this.apiClient.post(
             ResourcePath.Databases,
             requestBody,
@@ -69,7 +66,6 @@ export class DatabaseAPIRequests {
                 },
             },
         )
-        console.log('+++added DB', response.data)
         if (response.status !== 201)
             throw new Error(
                 `Database creation failed for ${databaseParameters.databaseName}`,
@@ -94,7 +90,6 @@ export class DatabaseAPIRequests {
         if (!databaseName) throw new Error('Error: Missing databaseName')
 
         const allDatabases = await this.getAllDatabases(xWindowsId)
-        console.log('+++databases+++', databaseName, xWindowsId, allDatabases)
         const filteredDb = await asyncFilter(
             allDatabases,
             async (item: databaseParameters) => {

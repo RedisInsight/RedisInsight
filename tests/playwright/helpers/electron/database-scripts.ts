@@ -4,7 +4,6 @@ import {workingDirectory} from '../conf'
 import {createTimeout} from '../utils'
 
 const dbPath = `${workingDirectory}/redisinsight.db`
-console.log('+++dbPath+++', dbPath)
 
 export class DatabaseScripts {
     /**

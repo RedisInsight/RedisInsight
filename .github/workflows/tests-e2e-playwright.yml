@@ -1,11 +1,5 @@
 name: Playwright E2E Tests
 on:
-  # push:
-  #   branches:
-  #     - main
-  # pull_request:
-  #   branches:
-  #     - main
   workflow_call:
 
 env:
@@ -33,7 +27,6 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
-      # - uses: ./.github/actions/install-all-build-libs
 
       - name: Install dependencies for Playwright tests
         uses: ./.github/actions/install-deps
@@ -71,37 +64,12 @@ jobs:
           up --detach --force-recreate
           sleep 30
 
-      - name: Debug docker containers
-        run: |
-          docker ps
-
-      - name: Get Host IP Address
-        run: echo "HOST_IP=$(ip route | awk '/default/ { print $3 }')" >> $GITHUB_ENV
-
-      - name: Test connectivity to Redis Insight (no SSL)
-        continue-on-error: true
-        run: |
-          echo "Testing GET request"
-          curl -k https://localhost:5540/api/databases
-          echo "Testing POST request 1"
-          curl -k -X POST https://localhost:5540/api/databases -d '{"name":"test_standalone-1", "host":"host.docker.internal", "port":8100, "username":"default", "timeout":30000, "tls":false }' -H "Content-Type: application/json"
-          echo "Testing POST request 2"
-          curl -k -X POST https://localhost:5540/api/databases -d '{"name":"test_standalone-2", "host":"$HOST_IP", "port":8100, "username":"default", "timeout":30000, "tls":false }' -H "Content-Type: application/json"
-          echo "Testing GET request"
-          curl -k https://localhost:5540/api/databases
-
       - name: Run Playwright tests
         timeout-minutes: 80
         working-directory: ./tests/playwright
         if: ${{ !cancelled() }}
         run: |
           yarn test:chromium:docker
-
-      - name: Test connectivity to Redis Insight again (no SSL)
-        if: always()
-        continue-on-error: true
-        run: |
-          curl -k https://localhost:5540/api/databases
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

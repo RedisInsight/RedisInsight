@@ -53,6 +53,10 @@ export class DatabaseAPIRequests {
 
         const databasesResponse = await this.getAllDatabases(xWindowsId)
         console.log('+++databasesResponse+++', databasesResponse)
+        console.log('+++requestBody+++', xWindowsId, requestBody)
+
+        // wait 2s
+        await new Promise((resolve) => setTimeout(resolve, 2000))
 
         const response = await this.apiClient.post(
             ResourcePath.Databases,

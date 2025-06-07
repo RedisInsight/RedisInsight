@@ -1,16 +1,6 @@
 name: ✅ E2E Tests
 
 on:
-  # TODO: remove push trigger when workflow is added to main
-  push:
-    branches:
-      - 'fe/**'
-      - 'be/**'
-      - 'fe-be/**'
-      - 'feature/**'
-      - 'bugfix/**'
-      - 'ric/**'
-
   pull_request_review:
     types: [submitted]
 
@@ -18,6 +8,13 @@ on:
     inputs:
       debug:
         description: Enable SSH Debug (IT and E2E)
+        default: false
+        type: boolean
+
+  workflow_call:
+    inputs:
+      debug:
+        description: Enable SSH Debug
         default: false
         type: boolean
 

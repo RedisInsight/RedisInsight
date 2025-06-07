@@ -39,6 +39,8 @@ services:
 
   # Built image
   app:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     logging:
       driver: none
     image: redisinsight:amd64

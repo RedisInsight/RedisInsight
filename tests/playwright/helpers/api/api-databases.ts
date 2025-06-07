@@ -23,8 +23,14 @@ export class DatabaseAPIRequests {
             name: databaseParameters.databaseName,
             host: databaseParameters.host,
             port: Number(databaseParameters.port),
-            username: databaseParameters.databaseUsername,
-            password: databaseParameters.databasePassword,
+        }
+
+        if (databaseParameters.databaseUsername) {
+            requestBody.username = databaseParameters.databaseUsername
+        }
+
+        if (databaseParameters.databasePassword) {
+            requestBody.password = databaseParameters.databasePassword
         }
 
         if (databaseParameters.caCert) {
@@ -53,10 +59,6 @@ export class DatabaseAPIRequests {
 
         const databasesResponse = await this.getAllDatabases(xWindowsId)
         console.log('+++databasesResponse+++', databasesResponse)
-        console.log('+++requestBody+++', xWindowsId, requestBody)
-
-        // wait 2s
-        await new Promise((resolve) => setTimeout(resolve, 2000))
 
         const response = await this.apiClient.post(
             ResourcePath.Databases,

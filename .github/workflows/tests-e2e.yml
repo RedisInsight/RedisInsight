@@ -20,7 +20,7 @@ on:
 
 # Cancel a previous run workflow
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}-e2e
   cancel-in-progress: true
 
 jobs:

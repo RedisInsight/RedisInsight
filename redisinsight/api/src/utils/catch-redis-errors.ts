@@ -170,3 +170,24 @@ export const catchMultiTransactionError = (
     if (err) throw err;
   });
 };
+
+export const catchRedisSearchError = (
+  error: ReplyError,
+  options?: { searchLimit?: number },
+): HttpException => {
+  if (error instanceof HttpException) {
+    throw error;
+  }
+
+  if (error.message?.includes(RedisErrorCodes.RedisearchLimit)) {
+    throw new BadRequestException(
+      ERROR_MESSAGES.INCREASE_MINIMUM_LIMIT(options?.searchLimit),
+    );
+  }
+
+  if (error.message?.includes('Unknown index')) {
+    throw new NotFoundException(error.message);
+  }
+
+  throw catchAclError(error);
+};

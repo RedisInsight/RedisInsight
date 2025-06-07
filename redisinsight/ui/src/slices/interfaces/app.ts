@@ -95,9 +95,7 @@ export interface StateAppContext {
       isNotRendered: boolean
       selectedKey: Nullable<RedisResponseBuffer>
     }
-    panelSizes: {
-      [key: string]: number
-    }
+    panelSizes: number[]
     tree: {
       openNodes: {
         [key: string]: boolean
@@ -113,11 +111,7 @@ export interface StateAppContext {
   }
   workbench: {
     script: string
-    panelSizes: {
-      vertical: {
-        [key: string]: number
-      }
-    }
+    panelSizes: number[]
   }
   searchAndQuery: {
     script: string

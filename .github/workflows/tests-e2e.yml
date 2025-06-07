@@ -1,6 +1,16 @@
 name: ✅ E2E Tests
 
 on:
+  # TODO: remove push trigger when workflow is added to main
+  push:
+    branches:
+      - 'fe/**'
+      - 'be/**'
+      - 'fe-be/**'
+      - 'feature/**'
+      - 'bugfix/**'
+      - 'ric/**'
+
   pull_request_review:
     types: [submitted]
 

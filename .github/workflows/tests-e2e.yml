@@ -30,7 +30,8 @@ jobs:
   # # E2E Approve
   e2e-approve:
     runs-on: ubuntu-latest
-    if: github.event.review.state == 'approved' || github.event_name == 'workflow_dispatch'
+    # TODO: uncomment when on push trigger is removed
+    # if: github.event.review.state == 'approved' || github.event_name == 'workflow_dispatch'
     name: Approve E2E tests
     steps:
       - run: echo "Proceeding with E2E tests"

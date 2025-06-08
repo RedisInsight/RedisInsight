@@ -1,9 +1,7 @@
 import { Page, Locator } from '@playwright/test'
-import {BasePage} from "../base-page"
+import { BasePage } from '../base-page'
 
-export class AddRdiInstanceDialog extends BasePage{
-    readonly page: Page
-
+export class AddRdiInstanceDialog extends BasePage {
     // INPUTS
     readonly rdiAliasInput: Locator
 
@@ -36,7 +34,9 @@ export class AddRdiInstanceDialog extends BasePage{
         this.passwordInput = page.getByTestId('connection-form-password-input')
 
         this.addInstanceButton = page.getByTestId('connection-form-add-button')
-        this.cancelInstanceBtn = page.getByTestId('connection-form-cancel-button')
+        this.cancelInstanceBtn = page.getByTestId(
+            'connection-form-cancel-button',
+        )
         this.connectToRdiForm = page.getByTestId('connection-form')
 
         // Assuming that the two-level parent traversal is needed.
@@ -51,13 +51,4 @@ export class AddRdiInstanceDialog extends BasePage{
             .getByTestId('connection-form-password-input')
             .locator('xpath=ancestor::div[2]//svg')
     }
-}
-
-export type RdiInstance = {
-    alias: string;
-    url: string;
-    version?: string;
-    lastConnection?: string;
-    username?: string;
-    password?: string;
 }

@@ -38,3 +38,47 @@ export type AddNewDatabaseParameters = {
         key?: string
     }
 }
+
+export type DatabaseInstance = {
+    host: string
+    port: number
+    provider?: string
+    id: string
+    connectionType?: string
+    lastConnection?: Date
+    password?: string
+    username?: string
+    name?: string
+    db?: number
+    tls?: boolean
+    ssh?: boolean
+    sshOptions?: {
+        host: string
+        port: number
+        username?: string
+        password?: string | true
+        privateKey?: string
+        passphrase?: string | true
+    }
+    tlsClientAuthRequired?: boolean
+    verifyServerCert?: boolean
+    caCert?: object
+    clientCert?: object
+    authUsername?: string
+    authPass?: string
+    isDeleting?: boolean
+    sentinelMaster?: object
+    modules: object[]
+    version: string
+    isRediStack?: boolean
+    visible?: boolean
+    loading?: boolean
+    isFreeDb?: boolean
+    tags?: {
+        id: string
+        key: string
+        value: string
+        createdAt: string
+        updatedAt: string
+    }[]
+}

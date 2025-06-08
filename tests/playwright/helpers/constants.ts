@@ -23,7 +23,7 @@ export const COMMANDS_TO_CREATE_KEY = Object.freeze({
     [KeyTypesTexts.TimeSeries]: (key: string) => `TS.CREATE ${key}`
 })
 
-export enum rte {
+export enum RTE {
     none = 'none',
     standalone = 'standalone',
     sentinel = 'sentinel',
@@ -32,7 +32,7 @@ export enum rte {
     reCloud = 're-cloud'
 }
 
-export enum env {
+export enum ENV {
     web = 'web',
     desktop = 'desktop'
 }

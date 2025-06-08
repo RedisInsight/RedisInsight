@@ -1,7 +1,11 @@
 name: Playwright E2E Tests
 on:
   workflow_call:
-
+    inputs:
+      debug:
+        description: SSH Debug
+        default: false
+        type: boolean
 env:
   E2E_CLOUD_DATABASE_USERNAME: ${{ secrets.E2E_CLOUD_DATABASE_USERNAME }}
   E2E_CLOUD_DATABASE_PASSWORD: ${{ secrets.E2E_CLOUD_DATABASE_PASSWORD }}

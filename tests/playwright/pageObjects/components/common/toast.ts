@@ -1,16 +1,21 @@
-import {Locator, Page} from '@playwright/test'
-import {BasePage} from '../../base-page'
-import {ToastSelectors} from '../../../selectors'
+import { Locator, Page } from '@playwright/test'
+import { BasePage } from '../../base-page'
+import { ToastSelectors } from '../../../selectors'
 
-export class Toast extends BasePage{
+export class Toast extends BasePage {
+    public readonly toastHeader: Locator
 
-    private readonly toastHeader: Locator
-    private readonly toastBody: Locator
-    private readonly toastSuccess: Locator
-    private readonly toastError: Locator
-    private readonly toastCloseButton: Locator
-    private readonly toastSubmitBtn: Locator
-    private readonly toastCancelBtn: Locator
+    public readonly toastBody: Locator
+
+    public readonly toastSuccess: Locator
+
+    public readonly toastError: Locator
+
+    public readonly toastCloseButton: Locator
+
+    public readonly toastSubmitBtn: Locator
+
+    public readonly toastCancelBtn: Locator
 
     constructor(page: Page) {
         super(page)
@@ -23,16 +28,11 @@ export class Toast extends BasePage{
         this.toastCancelBtn = page.getByTestId(ToastSelectors.toastCancelBtn)
     }
 
-
     async isCloseButtonVisible(): Promise<boolean> {
         return this.isVisible(ToastSelectors.toastCloseButton)
     }
 
     async closeToast(): Promise<void> {
         await this.toastCloseButton.click()
-    }
-
-    async getNotificationMessage(): Promise<string> {
-        return this.toastHeader.textContent()
     }
 }

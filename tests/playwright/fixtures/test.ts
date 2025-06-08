@@ -8,19 +8,50 @@ import {
 } from 'playwright'
 import log from 'node-color-log'
 
-import { isElectron, electronExecutablePath } from '../helpers/conf'
+import { AxiosInstance } from 'axios'
+import { apiUrl, isElectron, electronExecutablePath } from '../helpers/conf'
+import { generateApiClient } from '../helpers/api/http-client'
+import { APIKeyRequests } from '../helpers/api/api-keys'
+import { DatabaseAPIRequests } from '../helpers/api/api-databases'
+import { UserAgreementDialog } from '../pageObjects'
 
-const commonTest = base.extend<{ forEachTest: void }>({
+type CommonFixtures = {
+    forEachTest: void
+    api: {
+        apiClient: AxiosInstance
+        keyService: APIKeyRequests
+        databaseService: DatabaseAPIRequests
+    }
+}
+
+const commonTest = base.extend<CommonFixtures>({
+    api: async ({ page }, use) => {
+        const windowId = await page.evaluate(() => window.windowId)
+
+        const apiClient = generateApiClient(apiUrl, windowId)
+        const databaseService = new DatabaseAPIRequests(apiClient)
+        const keyService = new APIKeyRequests(apiClient, databaseService)
+
+        await use({ apiClient, keyService, databaseService })
+    },
     forEachTest: [
         async ({ page }, use) => {
             // before each test:
             if (!isElectron) {
                 await page.goto('/')
+            } else {
+                await page.locator('[data-testid="home-tab-databases"]').click()
             }
 
-            await page.waitForSelector('[aria-label="Main navigation"]', {
-                timeout: 2000,
+            const userAgreementDialog = new UserAgreementDialog(page)
+            await userAgreementDialog.acceptLicenseTerms()
+
+            const skipTourElement = page.locator('button', {
+                hasText: 'Skip tour',
             })
+            if (await skipTourElement.isVisible()) {
+                skipTourElement.click()
+            }
 
             await use()
 
@@ -46,7 +77,7 @@ const electronTest = commonTest.extend<{
         })
 
         // Wait for window startup
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, 2000))
 
         await use(electronApp)
 

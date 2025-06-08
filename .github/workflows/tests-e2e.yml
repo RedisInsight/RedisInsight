@@ -53,8 +53,8 @@ jobs:
     needs: build-docker
     uses: ./.github/workflows/tests-e2e-playwright.yml
     secrets: inherit
-    # with:
-    #   debug: ${{ inputs.debug || false }}
+    with:
+      debug: ${{ inputs.debug || false }}
 
   # E2E AppImage
   build-appimage:

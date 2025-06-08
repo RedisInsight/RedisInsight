@@ -4,5 +4,5 @@ export const UserAgreementSelectors = {
     switchOptionEula: 'switch-option-eula',
     switchOptionEncryption: 'switch-option-encryption',
     pluginSectionWithText: 'plugin-section',
-    recommendedSwitcher: 'switch-option-recommended'
-};
+    recommendedSwitcher: 'switch-option-recommended',
+}

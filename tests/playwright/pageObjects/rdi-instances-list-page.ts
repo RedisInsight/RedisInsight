@@ -1,11 +1,11 @@
+/* eslint-disable no-await-in-loop */
 import { Page, Locator, expect } from '@playwright/test'
 import { BaseOverviewPage } from './base-overview-page'
-import { AddRdiInstanceDialog, RdiInstance } from './dialogs/add-rdi-instance-dialog'
+import { AddRdiInstanceDialog } from './dialogs/add-rdi-instance-dialog'
+import { RdiInstance } from '../types/rdi'
 
 export class RdiInstancesListPage extends BaseOverviewPage {
-    readonly page: Page
-
-    // readonly AddRdiInstanceDialog: AddRdiInstanceDialog
+    readonly AddRdiInstanceDialog: AddRdiInstanceDialog
 
     readonly addRdiInstanceButton: Locator
 
@@ -44,7 +44,7 @@ export class RdiInstancesListPage extends BaseOverviewPage {
         super(page)
         this.page = page
 
-        // this.AddRdiInstanceDialog = new AddRdiInstanceDialog(page)
+        this.AddRdiInstanceDialog = new AddRdiInstanceDialog(page)
 
         // Use getByTestId for selectors with data-testid
         this.addRdiInstanceButton = page.getByTestId('rdi-instance')
@@ -75,18 +75,24 @@ export class RdiInstancesListPage extends BaseOverviewPage {
         }
     }
 
-    // /**
-    //  * Add Rdi instance.
-    //  * @param instanceValue Rdi instance data
-    //  */
-    // async addRdi(instanceValue: RdiInstance): Promise<void> {
-    //     await this.page.click(this.addRdiInstanceButton)
-    //     await this.page.fill(this.AddRdiInstanceDialog.rdiAliasInput, instanceValue.alias)
-    //     await this.page.fill(this.AddRdiInstanceDialog.urlInput, instanceValue.url)
-    //     await this.page.fill(this.AddRdiInstanceDialog.usernameInput, instanceValue.username)
-    //     await this.page.fill(this.AddRdiInstanceDialog.passwordInput, instanceValue.password)
-    //     await this.page.click(this.AddRdiInstanceDialog.addInstanceButton)
-    // }
+    /**
+     * Add Rdi instance.
+     * @param instanceValue Rdi instance data
+     */
+    async addRdi(instanceValue: RdiInstance): Promise<void> {
+        await this.addRdiInstanceButton.click()
+        await this.AddRdiInstanceDialog.rdiAliasInput.fill(instanceValue.alias)
+        await this.AddRdiInstanceDialog.urlInput.fill(instanceValue.url)
+        if (instanceValue.username) {
+            await this.AddRdiInstanceDialog.usernameInput.fill(instanceValue.username)
+        }
+        if (instanceValue.password) {
+            await this.AddRdiInstanceDialog.passwordInput.fill(instanceValue.password)
+        }
+        await this.AddRdiInstanceDialog.addInstanceButton.click()
+        // Wait for the dialog to close after adding the Rdi instance
+        await this.AddRdiInstanceDialog.connectToRdiForm.waitFor({ state: 'hidden' })
+    }
 
     /**
      * Get Rdi instance values by index.
@@ -115,11 +121,11 @@ export class RdiInstancesListPage extends BaseOverviewPage {
     async deleteRdiByName(dbName: string): Promise<void> {
         const dbNames = this.rdiInstanceRow
         const count = await dbNames.count()
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < count; i += 1) {
             const text = await dbNames.nth(i).innerText()
             if (text.includes(dbName)) {
-                await this.page.click(this.deleteRowButton.nth(i))
-                await this.page.click(this.confirmDeleteButton)
+                await this.deleteRowButton.nth(i).click()
+                await this.confirmDeleteButton.click()
                 break
             }
         }
@@ -132,10 +138,10 @@ export class RdiInstancesListPage extends BaseOverviewPage {
     async clickEditRdiByName(dbName: string): Promise<void> {
         const rdiNames = this.rdiInstanceRow
         const count = await rdiNames.count()
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < count; i += 1) {
             const text = await rdiNames.nth(i).innerText()
             if (text.includes(dbName)) {
-                await this.page.click(this.editRowButton.nth(i))
+                await this.editRowButton.nth(i).click()
                 break
             }
         }
@@ -147,7 +153,7 @@ export class RdiInstancesListPage extends BaseOverviewPage {
      */
     async clickRdiByName(rdiName: string): Promise<void> {
         if (await this.Toast.toastCloseButton.isVisible()) {
-            await this.page.click(this.Toast.toastCloseButton)
+            await this.Toast.toastCloseButton.click()
         }
         // Use getByText with exact match for the Rdi name
         const rdi = this.rdiNameList.getByText(rdiName.trim(), { exact: true })
@@ -160,7 +166,7 @@ export class RdiInstancesListPage extends BaseOverviewPage {
      * @param columnName The name of the column.
      */
     async sortByColumn(columnName: string): Promise<void> {
-        await this.page.click(this.sortBy.filter({ hasText: columnName }))
+        await this.sortBy.filter({ hasText: columnName }).click()
     }
 
     /**
@@ -169,7 +175,7 @@ export class RdiInstancesListPage extends BaseOverviewPage {
     async getAllRdiNames(): Promise<string[]> {
         const rdis: string[] = []
         const count = await this.rdiInstanceRow.count()
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < count; i += 1) {
             const name = await this.rdiInstanceRow.nth(i).locator(this.cssRdiAlias).innerText()
             rdis.push(name)
         }

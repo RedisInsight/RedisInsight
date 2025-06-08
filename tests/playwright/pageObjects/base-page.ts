@@ -1,12 +1,6 @@
-import {Locator, Page, expect} from '@playwright/test'
+import { Locator, Page, expect } from '@playwright/test'
 
-declare global {
-    interface Window {
-        windowId?: string
-    }
-}
-
-export  class BasePage {
+export class BasePage {
     page: Page
 
     constructor(page: Page) {
@@ -33,8 +27,8 @@ export  class BasePage {
         await this.page.fill(selector, value)
     }
 
-    async getText(locator: Locator): Promise<string> {
-        return  locator.textContent()
+    async getText(locator: Locator): Promise<string | null> {
+        return locator.textContent()
     }
 
     async isVisible(selctor: string): Promise<boolean> {
@@ -44,34 +38,26 @@ export  class BasePage {
     async getByTestId(testId: string): Promise<Locator> {
         return this.page.getByTestId(testId)
     }
+
     async waitForLocatorVisible(locator: Locator, timeout = 6000) {
         await expect(locator).toBeVisible({ timeout })
     }
+
     async waitForLocatorNotVisible(locator: Locator, timeout = 6000) {
         await expect(locator).not.toBeVisible({ timeout })
     }
-    async goBackHistor(): Promise<void>{
+
+    async goBackHistor(): Promise<void> {
         await this.page.goBack()
-    };
-    async elementExistsSelector( selector: string): Promise<boolean> {
+    }
+
+    async elementExistsSelector(selector: string): Promise<boolean> {
         const count = await this.page.locator(selector).count()
         return count > 0
     }
 
-    async elementExistsLocator( locator: Locator): Promise<boolean> {
+    async elementExistsLocator(locator: Locator): Promise<boolean> {
         const count = await locator.count()
         return count > 0
-    }
-
-    async waitForLocatorVisible(locator: Locator, timeout = 6000) {
-        await expect(locator).toBeVisible({ timeout })
-    }
-    async waitForLocatorNotVisible(locator: Locator, timeout = 6000) {
-        await expect(locator).not.toBeVisible({ timeout })
-    }
-
-    async getWindowId():Promise<string> {
-        return this.page.evaluate(() => window.windowId)
-
     }
 }

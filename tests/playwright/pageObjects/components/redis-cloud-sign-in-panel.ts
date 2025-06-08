@@ -1,14 +1,20 @@
 import { Locator, Page } from '@playwright/test'
-import {BasePage} from "../base-page";
+import { BasePage } from '../base-page'
 
 export class RedisCloudSigninPanel extends BasePage {
-    private readonly ssoOauthButton: Locator
-    private readonly ssoEmailInput: Locator
-    private readonly submitBtn: Locator
-    private readonly oauthAgreement: Locator
-    private readonly googleOauth: Locator
-    private readonly githubOauth: Locator
-    private readonly ssoOauth: Locator
+    readonly ssoOauthButton: Locator
+
+    readonly ssoEmailInput: Locator
+
+    readonly submitBtn: Locator
+
+    readonly oauthAgreement: Locator
+
+    readonly googleOauth: Locator
+
+    readonly githubOauth: Locator
+
+    readonly ssoOauth: Locator
 
     constructor(page: Page) {
         super(page)

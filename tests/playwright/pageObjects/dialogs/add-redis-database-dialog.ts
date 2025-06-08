@@ -1,92 +1,94 @@
 import { expect, Locator, Page } from '@playwright/test'
 import { TlsCertificates } from '../../helpers/constants'
 import { RedisCloudSigninPanel } from '../components/redis-cloud-sign-in-panel'
-import {SentinelParameters, AddNewDatabaseParameters, SSHParameters } from '../../types'
-import {BasePage} from '../base-page'
+import {
+    SentinelParameters,
+    AddNewDatabaseParameters,
+    SSHParameters,
+} from '../../types'
+import { BasePage } from '../base-page'
 
-
-export class AddRedisDatabaseDialog extends BasePage{
-    private readonly page: Page
-
-    private readonly redisCloudSigninPanel: RedisCloudSigninPanel
+export class AddRedisDatabaseDialog extends BasePage {
+    readonly redisCloudSigninPanel: RedisCloudSigninPanel
 
     // BUTTONS
-    private readonly addDatabaseButton: Locator
+    readonly addDatabaseButton: Locator
 
     readonly addRedisDatabaseButton: Locator
 
-    private readonly customSettingsButton: Locator
+    readonly customSettingsButton: Locator
 
-    private readonly addAutoDiscoverDatabase: Locator
+    readonly addAutoDiscoverDatabase: Locator
 
-    private readonly addCloudDatabaseButton: Locator
+    readonly addCloudDatabaseButton: Locator
 
-    private readonly redisSoftwareButton: Locator
+    readonly redisSoftwareButton: Locator
 
-    private readonly redisSentinelButton: Locator
+    readonly redisSentinelButton: Locator
 
     // TEXT INPUTS
-    private readonly hostInput: Locator
+    readonly hostInput: Locator
 
-    private readonly portInput: Locator
+    readonly portInput: Locator
 
-    private readonly databaseAliasInput: Locator
+    readonly databaseAliasInput: Locator
 
-    private readonly passwordInput: Locator
+    readonly passwordInput: Locator
 
-    private readonly usernameInput: Locator
+    readonly usernameInput: Locator
 
-    private readonly accessKeyInput: Locator
+    readonly accessKeyInput: Locator
 
-    private readonly secretKeyInput: Locator
+    readonly secretKeyInput: Locator
 
-    private readonly databaseIndexInput: Locator
+    readonly databaseIndexInput: Locator
 
     // TABS
-    private readonly generalTab: Locator
+    readonly generalTab: Locator
 
-    private readonly securityTab: Locator
+    readonly securityTab: Locator
 
-    private readonly decompressionTab: Locator
+    readonly decompressionTab: Locator
 
     // DROPDOWNS
-    private readonly caCertField: Locator
+    readonly caCertField: Locator
 
-    private readonly clientCertField: Locator
+    readonly clientCertField: Locator
 
-    private readonly selectCompressor: Locator
+    readonly selectCompressor: Locator
 
     // CHECKBOXES
-    private readonly databaseIndexCheckbox: Locator
+    readonly databaseIndexCheckbox: Locator
 
-    private readonly useSSHCheckbox: Locator
+    readonly useSSHCheckbox: Locator
 
     // RADIO BUTTONS
-    private readonly sshPasswordRadioBtn: Locator
+    readonly sshPasswordRadioBtn: Locator
 
-    private readonly sshPrivateKeyRadioBtn: Locator
+    readonly sshPrivateKeyRadioBtn: Locator
 
     // LABELS
-    private readonly dataCompressorLabel: Locator
+    readonly dataCompressorLabel: Locator
 
     // SSH TEXT INPUTS
-    private readonly sshHostInput: Locator
+    readonly sshHostInput: Locator
 
-    private readonly sshPortInput: Locator
+    readonly sshPortInput: Locator
 
-    private readonly sshUsernameInput: Locator
+    readonly sshUsernameInput: Locator
 
-    private readonly sshPasswordInput: Locator
+    readonly sshPasswordInput: Locator
 
-    private readonly sshPrivateKeyInput: Locator
+    readonly sshPrivateKeyInput: Locator
 
-    private readonly sshPassphraseInput: Locator
+    readonly sshPassphraseInput: Locator
 
     // OTHER
-    private readonly timeoutInput: Locator
+    readonly timeoutInput: Locator
 
     // For certificate removal
     aiChatMessage: Locator
+
     aiCloseMessage: Locator
 
     trashIconMsk(certificate: TlsCertificates): string {
@@ -98,16 +100,19 @@ export class AddRedisDatabaseDialog extends BasePage{
     }
 
     constructor(page: Page) {
-
         super(page)
         this.page = page
         this.redisCloudSigninPanel = new RedisCloudSigninPanel(page)
 
         // BUTTONS
-        this.addDatabaseButton = page.locator('[data-testid^="add-redis-database"]')
+        this.addDatabaseButton = page.locator(
+            '[data-testid^="add-redis-database"]',
+        )
         this.addRedisDatabaseButton = page.getByTestId('btn-submit')
         this.customSettingsButton = page.getByTestId('btn-connection-settings')
-        this.addAutoDiscoverDatabase = page.getByTestId('add-database_tab_software')
+        this.addAutoDiscoverDatabase = page.getByTestId(
+            'add-database_tab_software',
+        )
         this.addCloudDatabaseButton = page.getByTestId('create-free-db-btn')
         this.redisSoftwareButton = page.getByTestId('option-btn-software')
         this.redisSentinelButton = page.getByTestId('option-btn-sentinel')
@@ -125,7 +130,9 @@ export class AddRedisDatabaseDialog extends BasePage{
         // TABS
         this.generalTab = page.getByTestId('manual-form-tab-general')
         this.securityTab = page.getByTestId('manual-form-tab-security')
-        this.decompressionTab = page.getByTestId('manual-form-tab-decompression')
+        this.decompressionTab = page.getByTestId(
+            'manual-form-tab-decompression',
+        )
 
         // DROPDOWNS
         this.caCertField = page.getByTestId('select-ca-cert')
@@ -133,7 +140,9 @@ export class AddRedisDatabaseDialog extends BasePage{
         this.selectCompressor = page.getByTestId('select-compressor')
 
         // CHECKBOXES
-        this.databaseIndexCheckbox = page.locator('[data-testid="showDb"] ~ div')
+        this.databaseIndexCheckbox = page.locator(
+            '[data-testid="showDb"] ~ div',
+        )
         this.useSSHCheckbox = page.locator('[data-testid="use-ssh"] ~ div')
 
         // RADIO BUTTONS
@@ -141,10 +150,13 @@ export class AddRedisDatabaseDialog extends BasePage{
         this.sshPrivateKeyRadioBtn = page.locator('#privateKey ~ div')
 
         // LABELS
-        this.dataCompressorLabel = page.getByTestId('[data-testid="showCompressor"] ~ label')
+        this.dataCompressorLabel = page.getByTestId(
+            '[data-testid="showCompressor"] ~ label',
+        )
         this.aiChatMessage = page.getByTestId('ai-chat-message-btn')
-        this.aiCloseMessage = page.locator('[aria-label="Closes this modal window"]')
-
+        this.aiCloseMessage = page.locator(
+            '[aria-label="Closes this modal window"]',
+        )
 
         // SSH TEXT INPUTS
         this.sshHostInput = page.getByTestId('sshHost')
@@ -158,7 +170,9 @@ export class AddRedisDatabaseDialog extends BasePage{
         this.timeoutInput = page.getByTestId('timeout')
     }
 
-    async addRedisDataBase(parameters: AddNewDatabaseParameters): Promise<void> {
+    async addRedisDataBase(
+        parameters: AddNewDatabaseParameters,
+    ): Promise<void> {
         await expect(this.addDatabaseButton).toBeVisible({ timeout: 10000 })
         await this.addDatabaseButton.click()
         await this.customSettingsButton.click()
@@ -173,7 +187,10 @@ export class AddRedisDatabaseDialog extends BasePage{
         }
     }
 
-    async addLogicalRedisDatabase(parameters: AddNewDatabaseParameters, index: string): Promise<void> {
+    async addLogicalRedisDatabase(
+        parameters: AddNewDatabaseParameters,
+        index: string,
+    ): Promise<void> {
         await this.addDatabaseButton.click()
         await this.customSettingsButton.click()
         await this.hostInput.fill(parameters.host)
@@ -192,13 +209,15 @@ export class AddRedisDatabaseDialog extends BasePage{
 
     async addStandaloneSSHDatabase(
         databaseParameters: AddNewDatabaseParameters,
-        sshParameters: SSHParameters
+        sshParameters: SSHParameters,
     ): Promise<void> {
         await this.addDatabaseButton.click()
         await this.customSettingsButton.click()
         await this.hostInput.fill(databaseParameters.host)
         await this.portInput.fill(databaseParameters.port)
-        await this.databaseAliasInput.fill(databaseParameters.databaseName || '')
+        await this.databaseAliasInput.fill(
+            databaseParameters.databaseName || '',
+        )
         if (databaseParameters.databaseUsername) {
             await this.usernameInput.fill(databaseParameters.databaseUsername)
         }
@@ -226,7 +245,9 @@ export class AddRedisDatabaseDialog extends BasePage{
         await this.addRedisDatabaseButton.click()
     }
 
-    async discoverSentinelDatabases(parameters: SentinelParameters): Promise<void> {
+    async discoverSentinelDatabases(
+        parameters: SentinelParameters,
+    ): Promise<void> {
         await this.addDatabaseButton.click()
         await this.redisSentinelButton.click()
         if (parameters.sentinelHost) {
@@ -240,7 +261,9 @@ export class AddRedisDatabaseDialog extends BasePage{
         }
     }
 
-    async addAutodiscoverREClusterDatabase(parameters: AddNewDatabaseParameters): Promise<void> {
+    async addAutodiscoverREClusterDatabase(
+        parameters: AddNewDatabaseParameters,
+    ): Promise<void> {
         await this.addDatabaseButton.click()
         await this.redisSoftwareButton.click()
         await this.hostInput.fill(parameters.host)
@@ -249,14 +272,19 @@ export class AddRedisDatabaseDialog extends BasePage{
         await this.passwordInput.fill(parameters.databasePassword || '')
     }
 
-    async addAutodiscoverRECloudDatabase(cloudAPIAccessKey: string, cloudAPISecretKey: string): Promise<void> {
+    async addAutodiscoverRECloudDatabase(
+        cloudAPIAccessKey: string,
+        cloudAPISecretKey: string,
+    ): Promise<void> {
         await this.addDatabaseButton.click()
         await this.addCloudDatabaseButton.click()
         await this.accessKeyInput.fill(cloudAPIAccessKey)
         await this.secretKeyInput.fill(cloudAPISecretKey)
     }
 
-    async addOssClusterDatabase(parameters: AddNewDatabaseParameters): Promise<void> {
+    async addOssClusterDatabase(
+        parameters: AddNewDatabaseParameters,
+    ): Promise<void> {
         await this.addDatabaseButton.click()
         await this.customSettingsButton.click()
         if (parameters.ossClusterHost) {
@@ -266,7 +294,9 @@ export class AddRedisDatabaseDialog extends BasePage{
             await this.portInput.fill(parameters.ossClusterPort)
         }
         if (parameters.ossClusterDatabaseName) {
-            await this.databaseAliasInput.fill(parameters.ossClusterDatabaseName)
+            await this.databaseAliasInput.fill(
+                parameters.ossClusterDatabaseName,
+            )
         }
     }
 
@@ -278,10 +308,18 @@ export class AddRedisDatabaseDialog extends BasePage{
         await this.page.locator(`[id="${compressor}"]`).click()
     }
 
-    async removeCertificateButton(certificate: TlsCertificates, name: string): Promise<void> {
+    async removeCertificateButton(
+        certificate: TlsCertificates,
+        name: string,
+    ): Promise<void> {
         await this.securityTab.click()
-        const row = this.page.locator('button').locator('div').filter({ hasText: name })
-        const removeButtonFooter = this.page.locator('[class^="_popoverFooter"]')
+        const row = this.page
+            .locator('button')
+            .locator('div')
+            .filter({ hasText: name })
+        const removeButtonFooter = this.page.locator(
+            '[class^="_popoverFooter"]',
+        )
         if (certificate === TlsCertificates.CA) {
             await this.caCertField.click()
         } else {

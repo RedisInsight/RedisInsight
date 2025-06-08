@@ -308,7 +308,7 @@ export class BrowserPage extends BasePage {
         this.saveMemberButton = page.getByTestId('save-members-btn')
         this.searchButtonInKeyDetails = page.getByTestId('search-button')
         this.addKeyButton = page.locator('button', {
-            hasText: 'Add Key',
+            hasText: /^Add Key$/,
         })
         this.keyTypeDropDown = page.locator(
             'fieldset button.euiSuperSelectControl',

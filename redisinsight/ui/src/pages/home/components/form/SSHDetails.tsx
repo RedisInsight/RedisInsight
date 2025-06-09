@@ -185,7 +185,7 @@ const SSHDetails = (props: Props) => {
             <>
               <Row gap="m" responsive className={flexGroupClassName}>
                 <FlexItem grow className={flexItemClassName}>
-                  <FormField label="Private Key1*">
+                  <FormField label="Private Key*">
                     <TextArea
                       name="sshPrivateKey"
                       id="sshPrivateKey"

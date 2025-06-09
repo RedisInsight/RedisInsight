@@ -11,27 +11,22 @@ on:
         default: false
         type: boolean
 
-  workflow_call:
-    inputs:
-      debug:
-        description: Enable SSH Debug
-        default: false
-        type: boolean
-
 # Cancel a previous run workflow
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-e2e
   cancel-in-progress: true
 
 jobs:
-  # # E2E Approve
+  # E2E Approve
   e2e-approve:
     runs-on: ubuntu-latest
-    # TODO: uncomment when on push trigger is removed
-    # if: github.event.review.state == 'approved' || github.event_name == 'workflow_dispatch'
+    if: github.event.review.state == 'approved' && !contains(github.event.pull_request.labels.*.name, 'e2e-approved') || github.event_name == 'workflow_dispatch'
     name: Approve E2E tests
     steps:
-      - run: echo "Proceeding with E2E tests"
+      - name: Add "e2e-approved" Label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: e2e-approved
 
   # E2E Docker
   build-docker:
@@ -75,22 +70,12 @@ jobs:
   clean:
     uses: ./.github/workflows/clean-deployments.yml
     if: always()
-    needs:
-      [
-        e2e-docker-tests,
-        e2e-appimage-tests,
-        tests-e2e-playwright,
-      ]
+    needs: [e2e-docker-tests, e2e-appimage-tests, tests-e2e-playwright]
 
   # Remove artifacts from github actions
   remove-artifacts:
     name: Remove artifacts
-    needs:
-      [
-        e2e-docker-tests,
-        e2e-appimage-tests,
-        tests-e2e-playwright,
-      ]
+    needs: [e2e-docker-tests, e2e-appimage-tests, tests-e2e-playwright]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

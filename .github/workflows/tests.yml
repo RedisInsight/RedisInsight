@@ -117,14 +117,6 @@ jobs:
       resource_name: integration-coverage
       type: integration
 
-  # TODO: remove this after ✅ E2E Tests workflow is available in main
-  e2e-tests:
-    uses: ./.github/workflows/tests-e2e.yml
-    needs: changes
-    secrets: inherit
-    with:
-      debug: ${{ inputs.debug || false }}
-
   clean:
     uses: ./.github/workflows/clean-deployments.yml
     if: always()

@@ -1,4 +1,3 @@
-import { EuiLink } from '@elastic/eui'
 import { isNull } from 'lodash'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
@@ -18,6 +17,8 @@ import { Nullable } from 'uiSrc/utils'
 import { TextBtn } from 'uiSrc/pages/database-analysis/components/base/TextBtn'
 import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { Text } from 'uiSrc/components/base/text'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import Table from './Table'
 import styles from './styles.module.scss'
@@ -78,13 +79,12 @@ const TopNamespace = (props: Props) => {
             <Title size="XS">No namespaces to display</Title>
             <p>
               {'Configure the delimiter in '}
-              <EuiLink
-                color="text"
+              <Text
                 onClick={handleTreeViewClick}
                 data-testid="tree-view-page-link"
               >
-                Tree View
-              </EuiLink>
+                <Link>Tree View</Link>
+              </Text>
               {' to customize the namespaces displayed.'}
             </p>
           </div>

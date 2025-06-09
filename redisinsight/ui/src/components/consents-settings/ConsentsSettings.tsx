@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, forEach } from 'lodash'
-import { EuiToolTip, EuiForm, EuiLink } from '@elastic/eui'
+import { EuiToolTip, EuiForm } from '@elastic/eui'
 import cx from 'classnames'
 
 import { HorizontalRule } from 'uiSrc/components'
@@ -20,6 +20,7 @@ import { Title } from 'uiSrc/components/base/text/Title'
 import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
 import { Text } from 'uiSrc/components/base/text'
 import { SwitchInput } from 'uiSrc/components/base/inputs'
+import { Link } from 'uiSrc/components/base/link/Link'
 import ConsentOption from './ConsentOption'
 
 import styles from './styles.module.scss'
@@ -304,13 +305,12 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
           <Spacer size="m" />
           <Text color="subdued" size="s" className={styles.smallText}>
             To use Redis Insight, please accept the terms and conditions:{' '}
-            <EuiLink
-              external={false}
+            <Link
               target="_blank"
               href="https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE"
             >
               Server Side Public License
-            </EuiLink>
+            </Link>
           </Text>
           <Spacer size="m" />
         </>
@@ -348,7 +348,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             <PrimaryButton
               className="btn-add"
               type="submit"
-              onClick={() => {}}
+              onClick={() => { }}
               disabled={submitIsDisabled()}
               icon={submitIsDisabled() ? InfoIcon : undefined}
               data-testid="btn-submit"

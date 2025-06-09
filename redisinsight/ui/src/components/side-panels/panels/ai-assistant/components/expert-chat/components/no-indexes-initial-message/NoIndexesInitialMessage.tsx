@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
-import { EuiLink } from '@elastic/eui'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import LoadSampleData from 'uiSrc/pages/browser/components/load-sample-data'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -31,15 +31,14 @@ const NoIndexesInitialMessage = (props: Props) => {
       <Spacer />
       <Text size="xs">
         Would you like to load the sample data and indexes (from this{' '}
-        <EuiLink
+        <Link
           color="subdued"
-          external={false}
           className="defaultLink"
           onClick={onClickTutorial}
           data-testid="tutorial-initial-message-link"
         >
           tutorial
-        </EuiLink>
+        </Link>
         ) to see what Redis Copilot can help you do?
       </Text>
       <Spacer />

@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiIcon, EuiLink, EuiLoadingSpinner, EuiTitle } from '@elastic/eui'
+import { EuiIcon, EuiLoadingSpinner, EuiTitle } from '@elastic/eui'
 import { find } from 'lodash'
 import cx from 'classnames'
 import { CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
@@ -24,6 +24,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
 export enum InfiniteMessagesIds {
@@ -263,15 +264,14 @@ export const INFINITE_MESSAGES = {
           setting restricting database connection management.
           <Spacer size="m" />
           Log in to{' '}
-          <EuiLink
+          <Link
             target="_blank"
             color="text"
-            external={false}
             tabIndex={-1}
             href="https://cloud.redis.io/#/databases?utm_source=redisinsight&utm_medium=main&utm_campaign=disabled_db_management"
           >
             Redis Cloud
-          </EuiLink>{' '}
+          </Link>{' '}
           to check your database.
         </Text>
         <Spacer size="m" />
@@ -427,7 +427,7 @@ export const INFINITE_MESSAGES = {
               <FlexItem>
                 <PrimaryButton
                   size="s"
-                  onClick={() => {}}
+                  onClick={() => { }}
                   data-testid="notification-connect-db"
                 >
                   Statistics

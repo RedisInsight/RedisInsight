@@ -1,7 +1,8 @@
 import React from 'react'
-import { EuiEmptyPrompt, EuiIcon, EuiLink } from '@elastic/eui'
+import { EuiEmptyPrompt, EuiIcon } from '@elastic/eui'
 
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
+import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
 const EmptyPrompt = () => (
@@ -16,7 +17,7 @@ const EmptyPrompt = () => (
           <br />
           <span>
             If the problem persists, please{' '}
-            <EuiLink
+            <Link
               color="ghost"
               href={EXTERNAL_LINKS.githubIssues}
               external={false}
@@ -24,7 +25,7 @@ const EmptyPrompt = () => (
               data-testid="contact-us"
             >
               contact us
-            </EuiLink>
+            </Link>
             .
           </span>
         </p>

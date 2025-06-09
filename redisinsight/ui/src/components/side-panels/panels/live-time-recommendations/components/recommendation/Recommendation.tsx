@@ -2,7 +2,6 @@ import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import {
-  EuiLink,
   EuiPanel,
   EuiAccordion,
   EuiToolTip,
@@ -48,6 +47,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -205,8 +205,7 @@ const Recommendation = ({
       <Row className={styles.fullWidth} align="center">
         <FlexItem>
           {redisStack && (
-            <EuiLink
-              external={false}
+            <Link
               target="_blank"
               href={EXTERNAL_LINKS.redisStack}
               className={styles.redisStackLink}
@@ -226,7 +225,7 @@ const Recommendation = ({
                   data-testid={`${id}-redis-stack-icon`}
                 />
               </EuiToolTip>
-            </EuiLink>
+            </Link>
           )}
         </FlexItem>
         <FlexItem grow className="truncateText">
@@ -252,11 +251,10 @@ const Recommendation = ({
         <FlexItem>
           <EuiToolTip
             title={`${hide ? 'Show' : 'Hide'} tip`}
-            content={`${
-              hide
-                ? 'This tip will be shown in the list.'
-                : 'This tip will be removed from the list and not displayed again.'
-            }`}
+            content={`${hide
+              ? 'This tip will be shown in the list.'
+              : 'This tip will be removed from the list and not displayed again.'
+              }`}
             position="top"
             display="inlineBlock"
             anchorClassName="flex-row"

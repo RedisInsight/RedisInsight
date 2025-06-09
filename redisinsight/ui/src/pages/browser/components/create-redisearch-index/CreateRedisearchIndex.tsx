@@ -1,7 +1,6 @@
 import {
   EuiFieldText,
   EuiFormFieldset,
-  EuiLink,
   EuiPanel,
   EuiPopover,
   EuiSuperSelect,
@@ -34,6 +33,7 @@ import { AutoTag } from 'uiSrc/components/base/forms/combo-box/AutoTag'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { HealthText, Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
@@ -194,8 +194,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
       }
     >
       <>
-        <EuiLink
-          external={false}
+        <Link
           href={getUtmExternalLink(
             'https://redis.io/commands/ft.create/#SCHEMA',
             {
@@ -205,7 +204,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
           target="_blank"
         >
           Declares
-        </EuiLink>
+        </Link>
         {' fields to index. '}
         {keyTypeSelected === RedisearchIndexKeyType.HASH
           ? 'Enter a hash field name.'

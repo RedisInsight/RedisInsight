@@ -102,15 +102,8 @@
 }
 
 .switchOption {
-  :global(.euiSwitch__label) {
-    color: var(--euiTextSubduedColor) !important;
-    font-size: 13px !important;
-  }
-
-  :global(.euiSwitch__button) {
-    width: 28px !important;
-    margin-right: 4px;
-  }
+  align-items: center;
+  padding-bottom: 16px;
 }
 
 .enable {

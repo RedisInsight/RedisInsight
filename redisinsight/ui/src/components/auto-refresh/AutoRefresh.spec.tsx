@@ -1,5 +1,6 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import userEvent from '@testing-library/user-event'
 import { fireEvent, screen, render, act } from 'uiSrc/utils/test-utils'
 import { localStorageService } from 'uiSrc/services'
 import AutoRefresh, { Props } from './AutoRefresh'
@@ -72,7 +73,7 @@ describe('AutoRefresh', () => {
     render(<AutoRefresh {...instance(mockedProps)} displayText />)
 
     fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
-    fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+    await userEvent.click(screen.getByTestId('auto-refresh-switch'))
 
     expect(screen.getByTestId('refresh-message-label')).toHaveTextContent(
       /Auto refresh:/i,
@@ -153,7 +154,7 @@ describe('AutoRefresh', () => {
       render(<AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} />)
 
       fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
-      fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+      await userEvent.click(screen.getByTestId('auto-refresh-switch'))
       fireEvent.click(screen.getByTestId('refresh-rate'))
 
       fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
@@ -259,7 +260,7 @@ describe('AutoRefresh', () => {
     )
 
     fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
-    fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+    await userEvent.click(screen.getByTestId('auto-refresh-switch'))
     fireEvent.click(screen.getByTestId('refresh-rate'))
     fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
       target: { value: '1' },

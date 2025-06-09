@@ -1,7 +1,8 @@
 import React from 'react'
-import { EuiIcon, EuiTextArea, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiToolTip } from '@elastic/eui'
 
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { TextArea } from 'uiSrc/components/base/inputs'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -40,14 +41,12 @@ const ConnectionUrl = ({ value, onChange }: Props) => (
       </div>
     }
   >
-    <EuiTextArea
+    <TextArea
       name="connectionURL"
       id="connectionURL"
       value={value}
-      onChange={onChange}
-      fullWidth
+      onChangeCapture={onChange}
       placeholder="redis://default@127.0.0.1:6379"
-      resize="none"
       style={{ height: 88 }}
       data-testid="connection-url"
     />

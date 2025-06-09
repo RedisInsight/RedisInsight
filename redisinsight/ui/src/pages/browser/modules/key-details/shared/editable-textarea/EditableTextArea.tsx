@@ -1,6 +1,6 @@
 import React, { ChangeEvent, Ref, useEffect, useRef, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { EuiTextArea, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
 import { StopPropagation } from 'uiSrc/components/virtual-table'
@@ -9,6 +9,7 @@ import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { Text } from 'uiSrc/components/base/text'
 import { EditIcon } from 'uiSrc/components/base/icons'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { TextArea } from 'uiSrc/components/base/inputs'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -159,19 +160,14 @@ const EditableTextArea = (props: Props) => {
               approveText={approveText}
               approveByValidation={() => approveByValidation?.(value)}
             >
-              <EuiTextArea
-                fullWidth
+              <TextArea
                 name="value"
                 id="value"
-                resize="none"
                 placeholder="Enter Value"
                 value={value}
-                onChange={handleOnChange}
+                onChangeCapture={handleOnChange}
                 disabled={isLoading}
-                inputRef={textAreaRef}
-                className={cx(styles.textArea, {
-                  [styles.areaWarning]: isDisabled,
-                })}
+                ref={textAreaRef}
                 spellCheck={false}
                 style={{
                   height: textAreaRef.current?.scrollHeight || 0,

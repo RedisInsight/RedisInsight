@@ -1,7 +1,7 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { EuiForm, EuiPanel, EuiTextArea } from '@elastic/eui'
+import { EuiForm, EuiPanel } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 
 import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/browser/keys'
@@ -12,6 +12,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { TextArea } from 'uiSrc/components/base/inputs'
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import { AddStringFormConfig as config } from '../constants/fields-config'
@@ -55,16 +56,12 @@ const AddKeyString = (props: Props) => {
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
       <FormField label={config.value.label}>
-        <EuiTextArea
-          fullWidth
+        <TextArea
           name="value"
           id="value"
-          resize="vertical"
           placeholder={config.value.placeholder}
           value={value}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            setValue(e.target.value)
-          }
+          onChange={setValue}
           disabled={loading}
           data-testid="string-value"
         />

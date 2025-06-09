@@ -1,8 +1,0 @@
-@use "../mixins/eui";
-
-.euiTextArea {
-  @include eui.scrollBar;
-  //&::-webkit-resizer{
-  //  background-image: url("uiSrc/assets/img/resize-corner.svg");
-  //}
-}

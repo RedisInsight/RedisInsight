@@ -54,15 +54,10 @@
     .euiFieldNumber,
     .euiSelect,
     .euiSuperSelectControl,
-    .euiComboBox .euiComboBox__inputWrap,
-    .euiTextArea {
+    .euiComboBox .euiComboBox__inputWrap {
       background-color: var(--browserTableRowEven) !important;
       padding: 12px;
       border-color: var(--separatorColor) !important;
-    }
-
-    .euiTextArea {
-      min-height: 80px;
     }
 
     .euiFormControlLayout--group {

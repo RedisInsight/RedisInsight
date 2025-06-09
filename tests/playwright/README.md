@@ -1,6 +1,14 @@
 # RedisInsight Playwright Tests
 
-This project contains Playwright tests for RedisInsight.
+This project contains Playwright tests for RedisInsight. 
+It supports running tests on Electron, Docker and Web Redisinsight builds.
+
+## Folder structure
+
+- `/env` - contains env configs for the 3 types of builds.
+- `/tests` - Contains the actual tests.
+- `/helpers/api` - ported some api helpers from the tests/e2e project. They are used for setting up data.
+- `/pageObjects` - ported page element locators and logic from the tests/e2e project.
 
 ## Prerequisites
 
@@ -22,14 +30,14 @@ This project contains Playwright tests for RedisInsight.
      ```shell
      docker load -i docker-linux-alpine.amd64.tar
      ```
-   - Navigate to the `tests/e2e` directory and start the container:
-     ```shell
-     docker compose -p e2e-ri-docker -f docker.web.docker-compose.yml up --detach --force-recreate
-     ```
    - Ensure the following environment variables are set in `tests/e2e/.env`:
      - `RI_ENCRYPTION_KEY`
      - `RI_SERVER_TLS_CERT`
      - `RI_SERVER_TLS_KEY`
+   - Navigate to the `tests/e2e` directory and start the container:
+     ```shell
+     docker compose -p e2e-ri-docker -f docker.web.docker-compose.yml up --detach --force-recreate
+     ```
    - Access the app at: `https://localhost:5540`.
 
 3. **For Electron RI Build**  

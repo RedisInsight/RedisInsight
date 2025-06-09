@@ -2,7 +2,7 @@
 import { Page, Locator, expect } from '@playwright/test'
 import { BaseOverviewPage } from './base-overview-page'
 import { AddRdiInstanceDialog } from './dialogs/add-rdi-instance-dialog'
-import { RdiInstance } from '../types/rdi'
+import { RdiInstance } from '../types'
 
 export class RdiInstancesListPage extends BaseOverviewPage {
     readonly AddRdiInstanceDialog: AddRdiInstanceDialog

@@ -3,7 +3,6 @@ import {
   EuiFieldText,
   EuiRadioGroup,
   EuiRadioGroupOption,
-  EuiTextArea,
   htmlIdGenerator,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -18,7 +17,11 @@ import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
-import { NumericInput, PasswordInput } from 'uiSrc/components/base/inputs'
+import {
+  NumericInput,
+  PasswordInput,
+  TextArea,
+} from 'uiSrc/components/base/inputs'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from '../styles.module.scss'
 
@@ -182,12 +185,11 @@ const SSHDetails = (props: Props) => {
             <>
               <Row gap="m" responsive className={flexGroupClassName}>
                 <FlexItem grow className={flexItemClassName}>
-                  <FormField label="Private Key*">
-                    <EuiTextArea
+                  <FormField label="Private Key1*">
+                    <TextArea
                       name="sshPrivateKey"
                       id="sshPrivateKey"
                       data-testid="sshPrivateKey"
-                      fullWidth
                       maxLength={50_000}
                       placeholder="Enter SSH Private Key in PEM format"
                       value={
@@ -198,7 +200,7 @@ const SSHDetails = (props: Props) => {
                               '•',
                             ) ?? '')
                       }
-                      onChange={formik.handleChange}
+                      onChangeCapture={formik.handleChange}
                       onFocus={() => {
                         if (formik.values.sshPrivateKey === true) {
                           formik.setFieldValue('sshPrivateKey', '')

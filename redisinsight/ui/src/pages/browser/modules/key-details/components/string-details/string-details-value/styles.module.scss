@@ -34,13 +34,6 @@ $outer-height-mobile: 340px;
   }
 }
 
-.stringTextArea {
-  &.areaWarning {
-    border-color: var(--euiColorWarningLight) !important;
-    background-image: none !important;
-  }
-}
-
 .tooltipAnchor {
   display: inline-flex !important;
   height: auto;

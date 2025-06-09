@@ -22,29 +22,3 @@
   top: auto !important;
   background-color: var(--euiPageBackgroundColor) !important;
 }
-
-.textArea {
-  background-color: var(--euiPageBackgroundColor) !important;
-  border-color: var(--euiColorPrimary) !important;
-  z-index: 3;
-  padding-left: 20px;
-  padding-bottom: 36px !important;
-  min-width: 100% !important;
-  font: normal normal normal 13px/18px Graphik, sans-serif;
-  min-height: 12px;
-  overflow: auto;
-  overflow-wrap: break-word;
-  resize: none;
-
-  transition: height ease .3s;
-  will-change: height;
-
-  &:focus {
-    background-image: none !important;
-  }
-
-  &.areaWarning {
-    border-color: var(--euiColorWarningLight) !important;
-  }
-}
-

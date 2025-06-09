@@ -14,10 +14,10 @@ export type ChangeEditorTypeButtonProps = {
 const ChangeEditorTypeButton = ({
   mode = ButtonMode.editable,
 }: ChangeEditorTypeButtonProps) => {
-  const { switchEditorType } = useChangeEditorType()
+  const { switchEditorType, isWithinThreshold } = useChangeEditorType()
   const isReadMode = mode === ButtonMode.readOnly
 
-  const isDisabled = isReadMode
+  const isDisabled = isReadMode || !isWithinThreshold
   const tooltip = isReadMode
     ? 'This JSON document is too large to view or edit in full.'
     : 'Edit value in text editor'

@@ -5,7 +5,7 @@ import { EditorType } from 'uiSrc/slices/interfaces'
 
 export const useChangeEditorType = () => {
   const dispatch = useDispatch()
-  const { editorType } = useSelector(rejsonSelector)
+  const { editorType, isWithinThreshold } = useSelector(rejsonSelector)
 
   const switchEditorType = useCallback(() => {
     const opposite =
@@ -13,5 +13,5 @@ export const useChangeEditorType = () => {
     dispatch(setEditorType(opposite))
   }, [dispatch, editorType])
 
-  return { switchEditorType, editorType }
+  return { switchEditorType, editorType, isWithinThreshold }
 }

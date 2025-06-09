@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get, isUndefined } from 'lodash'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
-import { useSelector } from 'react-redux'
 import { apiService, localStorageService } from 'uiSrc/services'
 import {
   ApiEndpoints,
@@ -62,7 +61,12 @@ import {
   refreshZsetMembersAction,
 } from './zset'
 import { fetchSetMembers, refreshSetMembersAction } from './set'
-import { fetchReJSON, setEditorType } from './rejson'
+import {
+  fetchReJSON,
+  JSON_LENGTH_TO_FORCE_RETRIEVE,
+  setEditorType,
+  setIsWithinThreshold,
+} from './rejson'
 import {
   setHashInitialState,
   fetchHashFields,
@@ -808,6 +812,9 @@ export function fetchKeyInfo(
       if (data.type === KeyTypes.ReJSON) {
         dispatch<any>(fetchReJSON(key, '$', data.length, resetData))
         dispatch<any>(setEditorType(EditorType.Default))
+        dispatch<any>(
+          setIsWithinThreshold(data.length <= JSON_LENGTH_TO_FORCE_RETRIEVE),
+        )
       }
       if (data.type === KeyTypes.Stream) {
         const { viewType } = state.browser.stream

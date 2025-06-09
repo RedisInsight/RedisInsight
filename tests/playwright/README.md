@@ -1,23 +1,56 @@
+## Description
+
+Playwright tests project for Redisinsight
+
+## Preconditions for running locally
+
+Note: this relies on docker RTE and RI images and configs from the tests/e2e project
+
+1. spin up the Redis test environment container from tests/e2e/ project:
+```shell 
+  docker compose -p test-docker -f ../e2e/rte.docker-compose.yml up --force-recreate —detach
+```
+2. for the Docker RI build:
+
+- build the image locally or trigger a [GitHub action](https://github.com/RedisInsight/RedisInsight/actions/workflows/manual-build.yml) to do so and download the artifact (docker-linux-alpine.amd64.tar)
+- load the image 
+```shell 
+  docker load -i docker-linux-alpine.amd64.tar
+```
+- compose a container `docker compose -p e2e-ri-docker -f ../e2e/docker.web.docker-compose.yml up --detach --force-recreate`
+  - Note: you need RI_ENCRYPTION_KEY, RI_SERVER_TLS_CERT, RI_SERVER_TLS_KEY environment variables for this step (in tests/e2e/.env)
+- once running you should be able to access the app on https://localhost:5540
+
+3. for Electron RI build:
+
+- build from root project `shell package:prod`. This creates a /release folder.
+- change `ELECTRON_EXECUTABLE_PATH` in tests/playwright/env/.desktop.env to point to the executable file (MacOS by default)
+
+4. for local web build:
+
+- make sure the Docker RI build container from step 2. is stopped as the api shares the same port (5540)
+- start `shell dev:ui` and `shell dev:api` from the root project
+- once running you should be able to access the app on http://localhost:8080
 
 ## Install
-
 
 ```shell
   yarn install
 ```
 
-Install Playwright browsers   
+Install Playwright browsers
+
 ```shell
   yarn playwright install
 ```
 
-Install Playwright operating system dependencies requires sudo / root 
+Install Playwright operating system dependencies requires sudo / root
+
 ```shell
   sudo yarn playwright install-deps
 ```
 
 [More info on running tests](https://playwright.dev/docs/running-tests)
-
 
 ## Extra tooling
 
@@ -33,146 +66,44 @@ Starts the interactive UI mode. This also can be set in the config.
   yarn playwright test --ui
 ```
 
+## Running tests
 
-Allure report display needs JAVA_HOME set  
-and to run the server, JDK version 8 to 11 is required. Otherwise, you get:
-``` 
-Starting web server...
-Exception in thread "main" java.lang.UnsatisfiedLinkError: Can't load library: /usr/lib/jvm/java-17-openjdk-amd64/lib/libawt_xawt.so
-at java.base/java.lang.ClassLoader.loadLibrary(ClassLoader.java:2398)
-at java.base/java.lang.Runtime.load0(Runtime.java:755)
-at java.base/java.lang.System.load(System.java:1970)
-at java.base/jdk.internal.loader.NativeLibraries.load(Native Method) 
-```
-
-However, running the report from a server or IDE also works, so it is up to you.
-
-## Writing test
-Currently, the flow once the run starts is: provide some configuration based on `playwright.config.ts` [test project](https://playwright.dev/docs/test-projects)  
-(project can be viewed as a way to parametrize the tests) to the [fixture](https://playwright.dev/docs/next/test-fixtures#introduction) of the test located in the [fixtures folder](./fixtures).  
-In the folder, there is a base fixture to start the browser that is required. Depending on the required steps, you can do actions even before and after hooks in the tests.  
-A good example is running services, browsers, etc. From the fixture, you can pass down test configuration or any other data required.  
-Once in the test, the run follows any regular unit testing framework flow.
-
-```mermaid
-sequenceDiagram
-        participant Config
-        participant Fixture
-        participant Test        
-        participant Report        
-        Config ->>Fixture: Pass the values from playwrite.config.ts <br/> to fixture
-        Fixture ->>Fixture: Self Config using dotEnv
-        Fixture ->>Test: Setup and trigger everything necessary <br/> for the test and maybe pass init/config if needed
-        Test ->>Report: Report the result, attach logs, artefacts
-        
-```
-Some more useful links for Playwright:  
-https://playwright.dev/docs/locators#quick-guide 
-https://playwright.dev/docs/api/class-electronapplication#electron-application-evaluate
-
-## Running test
-### Preconditions
-
-For RedisApp for Electron, AppImage (path in `playwright.config.js`) is required or change the path to the appropriate build folder on your machine.  
-For Docker testing, you need to load the Docker image for your system (or run the app from your code base):
-
-```shell
-  docker load -i docker-linux-alpine.amd64.tar
-  or
-  docker load -i docker-linux-alpine.arm64.tar
-```
-and change the config in playwright.config,js.
-
-For loading Redis databases and data similar to the other project, you have the [local-docker-environment](./local-docker-environment) folder.  
-Fill the `.env` file similar to [the setup in Confluence](https://redislabs.atlassian.net/wiki/spaces/DX/pages/4906319969/Mac+setup+e2e+tests)  
-and execute:
-
-```shell
- ./local-docker-environment/create_local_environment.sh
-```
-
-To destroy the environment use:
-```shell
- ./local-docker-environment/destroy_local_environment.sh
-```
-
-## Runs
-
-Runs the end-to-end tests (all projects):
-
-``` shell
-  yarn playwright test
-```
-
-Runs the tests only on Desktop Chrome.
+Runs the end-to-end tests for the Docker RI build in Chromium browser (also runs in CI):
 
 ```shell
   yarn test:chromium:docker
 ```
 
-To run Electron tests:
+Runs the end-to-end tests for the Docker RI build in Chromium browser in debug mode:
+
+```shell
+  yarn test:chromium:docker:debug
+```
+
+Runs the end-to-end tests for the Docker RI build in Chromium browser for a specific .spec file:
+
+```shell
+  yarn yarn test:chromium:docker basic-navigation
+```
+
+Runs the end-to-end tests for the Electron RI build.
 
 ```shell
   yarn test:electron
 ```
 
-
-Runs the tests in framework debug mode.
-
-```
-yarn playwright test --project=DockerBuild  --debug
-```
-
-Runs the tests in a specific file:
+Runs the end-to-end tests for the local web environment (client:8080, api:5540).
 
 ```shell
-  yarn playwright test example
+  yarn test:chromium:local-web
 ```
-
-### Electron testing  
-
-Tests and setup are quite similar to browser tests. In the Electron case, `baseURL` is the path on the local file system for a prebuilt/installed app  
-or an AppImage. In my case, I used an AppImage for Linux, so the config was:
-
-```json lines
-use: {
-                baseURL: '/home/tsvetan-tsvetkov/Downloads/Redis-Insight-linux-x86_64.AppImage',
-                apiUrl: 'https://localhost:5530/api',
-                headless: false,
-
-            },
-```
-
-That section for macOS, where I used an installed app, looked like:
-
-```json lines
-use: {
-                baseURL: '/Users/tsvetantsvetkov/Applications/RedisInsight.app/Contents/MacOS/Redis Insight',
-                apiUrl: 'https://localhost:5530/api',
-                headless: false,
-
-            },
-```
-Execution-wise, there were no changes. An interesting project that I came across while investigating starting Electron issues  
-is based on this blog post: [Testing Electron Apps with Playwright](https://dev.to/kubeshop/testing-electron-apps-with-playwright-3f89).  
-The code base [is here](https://github.com/kubeshop/monokle/blob/main/tests/electronHelpers.ts).
-
-They are using this helper for when a new build is created, starting the test automatically by finding the latest build,  
-setting the correct paths, and running the tests. So it might be useful to have something similar implemented.
-
-## Debug 
-
-Add `DEBUG=pw:api` as an environment variable. This will enable the framework debug mode plus will enable log interceptors for the Axios client.
 
 ## Reports
 
-Running:
+Allure report display needs JAVA_HOME set  
+and to run the server, JDK version 8 to 11 is required.
 
-```shell
-  yarn test:chromium
-```
-
-will generate HTML and Allure reports. However, those reports are for a single run. In order to have history, which is more useful, run:
+Running e2e tests will generate HTML and Allure reports. However, those reports are for a single run. In order to have history, which is more useful, run:
 
 ```shell
 yarn test:allureHistoryReport
@@ -183,27 +114,9 @@ added to this report. For more information, see: https://allurereport.org/docs/p
 
 Some rough execution time comparison for the same test:
 
-| Test Name              | Framework  | Browser  | Duration| 
-|------------------------|------------|----------|---------|
-|Verify that user can add Hash Key| TestCafe   | Chromium |27s|
-|Verify that user can add Hash Key| PlayWright | Chromium |10s|
-|Verify that user can add Hash Key| TestCafe   | Eelctron |30s|
-|Verify that user can add Hash Key| PlayWright | Eelctron |18s|
-
-
-## Improvements
-
-Since this was a proof of concept, a small portion of the code was moved to make it work.  
-However, the test code is quite messy, the configuration is scattered, and the naming conventions are confusing.  
-It needs to be:
-- decoupled
-- simplified
-
-This applies to all Page Objects, Actions, and Helpers. For all tests:
-- test scope should be reduced
-- test should start in a known state
-- test state should be cleared
-- test should be able to run in parallel  
-
-(Part of what can help partly with the state management bring up specific environment in the fixture and tear it down after 
-the test is done, group tests that use different states. this will increase execution time but might be with it in terms of stability)
+| Test Name                         | Framework  | Browser  | Duration |
+| --------------------------------- | ---------- | -------- | -------- |
+| Verify that user can add Hash Key | TestCafe   | Chromium | 27s      |
+| Verify that user can add Hash Key | PlayWright | Chromium | 10s      |
+| Verify that user can add Hash Key | TestCafe   | Eelctron | 30s      |
+| Verify that user can add Hash Key | PlayWright | Eelctron | 18s      |

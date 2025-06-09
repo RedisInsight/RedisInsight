@@ -19,7 +19,7 @@ const ChangeEditorTypeButton = ({
 
   const isDisabled = isReadMode
   const tooltip = isReadMode
-    ? 'This JSON is too large to edit'
+    ? 'This JSON document is too large to view or edit in full.'
     : 'Edit value in text editor'
 
   return (

@@ -37,7 +37,7 @@ describe('ChangeEditorTypeButton', () => {
     await userEvent.hover(button)
 
     expect(
-      await screen.findByText('This JSON is too large to edit'),
+      await screen.findByText('This JSON document is too large to view or edit in full.'),
     ).toBeInTheDocument()
   })
 

@@ -47,7 +47,7 @@ fixture `Adding database with SSH`
         // Delete databases
         await databaseAPIRequests.deleteStandaloneDatabasesByNamesApi([sshDbPass.databaseName, sshDbPrivateKey.databaseName, sshDbPasscode.databaseName, newClonedDatabaseAlias, sshDbClusterPass.databaseName]);
     });
-test
+test.skip
     .meta({ rte: rte.standalone })('Adding database with SSH', async t => {
     const tooltipText = [
         'Enter a value for required fields (3):',

@@ -33,7 +33,7 @@ import TargetConnections from './target-connections'
 import styles from './styles.module.scss'
 
 const isPipelineDeployed = (data: Nullable<IPipelineStatus>) =>
-  get(data, ['pipelines', 'default', 'status']) === PipelineStatus.Ready
+  get(data, ['pipelines', 'default', 'status']) === PipelineStatus.Ready || get(data, ['pipelines', 'default', 'status']) === PipelineStatus.NotReady
 
 const StatisticsPage = () => {
   const [pageLoading, setPageLoading] = useState(true)

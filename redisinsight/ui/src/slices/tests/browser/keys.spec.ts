@@ -3,7 +3,6 @@ import { AxiosError } from 'axios'
 import { configureStore } from '@reduxjs/toolkit'
 import {
   BrowserColumns,
-  DEFAULT_SHOWN_COLUMNS,
   KeyTypes,
   KeyValueFormat,
   ModulesKeyTypes,
@@ -19,7 +18,6 @@ import {
   clearStoreActions,
   initialStateDefault,
   mockedStore,
-  mockStore,
 } from 'uiSrc/utils/test-utils'
 import {
   addErrorNotification,
@@ -33,7 +31,11 @@ import {
 } from 'uiSrc/slices/app/context'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import { rootReducer } from 'uiSrc/slices/store'
-import { setEditorType } from 'uiSrc/slices/browser/rejson'
+import {
+  JSON_LENGTH_TO_FORCE_RETRIEVE,
+  setEditorType,
+  setIsWithinThreshold,
+} from 'uiSrc/slices/browser/rejson'
 import { EditorType } from 'uiSrc/slices/interfaces'
 import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/hash/dto'
 import {
@@ -1397,6 +1399,54 @@ describe('keys slice', () => {
         expect(store.getActions()).toEqual(
           expect.arrayContaining([
             expect.objectContaining(setEditorType(EditorType.Default)),
+          ]),
+        )
+      })
+
+      it('should set isWithinThreshold to true when length is within threshold', async () => {
+        // Arrange
+        const data = {
+          name: stringToBuffer('rejson'),
+          type: KeyTypes.ReJSON,
+          ttl: -1,
+          size: 10,
+          length: JSON_LENGTH_TO_FORCE_RETRIEVE - 1,
+        }
+        const responsePayload = { data, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchKeyInfo(data.name))
+
+        // Assert
+        expect(store.getActions()).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining(setIsWithinThreshold(true)),
+          ]),
+        )
+      })
+
+      it('should set isWithinThreshold to false when length exceeds threshold', async () => {
+        // Arrange
+        const data = {
+          name: stringToBuffer('rejson'),
+          type: KeyTypes.ReJSON,
+          ttl: -1,
+          size: 10,
+          length: JSON_LENGTH_TO_FORCE_RETRIEVE + 1,
+        }
+        const responsePayload = { data, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchKeyInfo(data.name))
+
+        // Assert
+        expect(store.getActions()).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining(setIsWithinThreshold(false)),
           ]),
         )
       })

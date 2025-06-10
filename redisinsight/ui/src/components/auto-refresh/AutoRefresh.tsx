@@ -13,6 +13,7 @@ import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { ColorText } from 'uiSrc/components/base/text'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
 import {
   DEFAULT_REFRESH_RATE,
   DURATION_FIRST_REFRESH_TIME,
@@ -21,7 +22,6 @@ import {
   NOW,
 } from './utils'
 
-import SwitchInput from '../base/inputs/SwitchInput'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -193,7 +193,6 @@ const AutoRefresh = ({
   }
 
   const onChangeEnableAutoRefresh = (value: boolean) => {
-    console.log('+++switch auto refresh', value)
     setEnableAutoRefresh(value)
 
     onEnableAutoRefresh?.(value, refreshRate)

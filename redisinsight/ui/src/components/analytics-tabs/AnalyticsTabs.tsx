@@ -109,7 +109,6 @@ const AnalyticsTabs = () => {
       tabs={tabs}
       value={viewTab}
       onChange={handleTabChange}
-      className="tabs-active-borders"
       data-testid="analytics-tabs"
     />
   )

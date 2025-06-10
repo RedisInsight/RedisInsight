@@ -126,7 +126,6 @@ const DatabaseAnalysisTabs = (props: Props) => {
       tabs={tabs}
       value={viewTab}
       onChange={handleTabChange}
-      className="tabs-active-borders"
       data-testid="database-analysis-tabs"
     />
   )

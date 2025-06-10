@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiFieldText, EuiForm, EuiTitle } from '@elastic/eui'
+import { EuiFieldText, EuiForm } from '@elastic/eui'
 import { FormikProps } from 'formik'
 import {
   PrimaryGroupSentinel,
@@ -16,6 +16,7 @@ import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Title } from 'uiSrc/components/base/text/Title'
 import DecompressionAndFormatters from './DecompressionAndFormatters'
 
 import { ManualFormTab } from '../constants'
@@ -51,9 +52,7 @@ const EditSentinelConnection = (props: Props) => {
         variant="fullWidth"
         className="form__divider"
       />
-      <EuiTitle size="xs">
-        <span>Datababase</span>
-      </EuiTitle>
+      <Title size="XS">Database</Title>
       <Spacer size="s" />
       <SentinelMasterDatabase
         formik={formik}
@@ -65,9 +64,7 @@ const EditSentinelConnection = (props: Props) => {
         variant="fullWidth"
         className="form__divider"
       />
-      <EuiTitle size="xs">
-        <span>Sentinel</span>
-      </EuiTitle>
+      <Title size="XS">Sentinel</Title>
       <Spacer size="s" />
       <DatabaseForm
         formik={formik}
@@ -108,9 +105,7 @@ const EditSentinelConnection = (props: Props) => {
         variant="fullWidth"
         className="form__divider"
       />
-      <EuiTitle size="xs">
-        <span>Datababase</span>
-      </EuiTitle>
+      <Title size="XS">Database</Title>
       <Spacer size="s" />
       <SentinelMasterDatabase
         formik={formik}
@@ -122,9 +117,7 @@ const EditSentinelConnection = (props: Props) => {
         variant="fullWidth"
         className="form__divider"
       />
-      <EuiTitle size="xs">
-        <span>Sentinel</span>
-      </EuiTitle>
+      <Title size="XS">Sentinel</Title>
       <Spacer size="s" />
       <DatabaseForm
         formik={formik}

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiTitle } from '@elastic/eui'
 
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import { NumericInput } from 'uiSrc/components/base/inputs'
 import { EditIcon } from 'uiSrc/components/base/icons'
@@ -58,9 +58,9 @@ const SettingItem = (props: Props) => {
 
   return (
     <>
-      <EuiTitle className={styles.title} size="xxs">
-        <span>{title}</span>
-      </EuiTitle>
+      <Title className={styles.title} size="XS">
+        {title}
+      </Title>
       <Spacer size="s" />
       <Text className={styles.smallText} size="s">
         {summary}

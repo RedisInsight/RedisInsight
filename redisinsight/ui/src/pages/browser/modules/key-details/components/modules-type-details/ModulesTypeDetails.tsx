@@ -1,11 +1,11 @@
 import React from 'react'
-import { EuiTitle } from '@elastic/eui'
 import { useHistory } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 import { Text } from 'uiSrc/components/base/text'
 import { Pages } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
+import { Title } from 'uiSrc/components/base/text/Title'
 
 import TextDetailsWrapper from '../text-details-wrapper/TextDetailsWrapper'
 import styles from './styles.module.scss'
@@ -30,10 +30,8 @@ const ModulesTypeDetails = ({
 
   return (
     <TextDetailsWrapper onClose={onClose} testid="modules-type">
-      <EuiTitle>
-        <h4>{`This is a ${moduleName} key.`}</h4>
-      </EuiTitle>
-      <Text size="s">
+      <Title size="M">{`This is a ${moduleName} key.`}</Title>
+      <Text size="S">
         {'Use Redis commands in the '}
         <a
           tabIndex={0}

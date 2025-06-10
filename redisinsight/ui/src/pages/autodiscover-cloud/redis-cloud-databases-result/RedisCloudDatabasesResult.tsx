@@ -4,7 +4,6 @@ import {
   EuiInMemoryTable,
   EuiBasicTableColumn,
   PropertySort,
-  EuiTitle,
 } from '@elastic/eui'
 import {
   InstanceRedisCloud,
@@ -20,6 +19,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { SearchInput } from 'uiSrc/components/base/inputs'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from './styles.module.scss'
@@ -90,9 +90,9 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
   return (
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
-        <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>Redis Enterprise Databases Added</h1>
-        </EuiTitle>
+        <Title size="XXL" className={styles.title} data-testid="title">
+          Redis Enterprise Databases Added
+        </Title>
         <Flex align="end" gap="s">
           <FlexItem grow>
             <MessageBar opened={!!countSuccessAdded || !!countFailAdded}>

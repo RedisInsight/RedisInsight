@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { find } from 'lodash'
@@ -23,6 +22,7 @@ import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
@@ -151,9 +151,9 @@ const OAuthAutodiscovery = (props: Props) => {
             <CreateFreeDb />
             <Spacer size="xl" />
             <Text>Get started with</Text>
-            <EuiTitle className={styles.title} size="l">
-              <h3>Redis Cloud account</h3>
-            </EuiTitle>
+            <Title className={styles.title} size="L">
+              Redis Cloud account
+            </Title>
             <Spacer size="xl" />
             {form}
             <Spacer size="xxl" />

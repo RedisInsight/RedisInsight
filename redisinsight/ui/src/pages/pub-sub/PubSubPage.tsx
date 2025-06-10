@@ -1,4 +1,3 @@
-import { EuiTitle } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -14,6 +13,7 @@ import { formatLongName, getDbIndex, setTitle } from 'uiSrc/utils'
 import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { OnboardingSteps } from 'uiSrc/constants/onboarding'
 import {
   MessagesListWrapper,
@@ -74,9 +74,9 @@ const PubSubPage = () => {
     <div className={styles.main} data-testid="pub-sub-page">
       <div className={styles.contentPanel}>
         <div className={styles.header}>
-          <EuiTitle size="m" className={styles.title}>
-            <h1>Pub/Sub</h1>
-          </EuiTitle>
+          <Title size="XXL" className={styles.title}>
+            Pub/Sub
+          </Title>
           <SubscriptionPanel />
         </div>
         <div className={styles.tableWrapper}>

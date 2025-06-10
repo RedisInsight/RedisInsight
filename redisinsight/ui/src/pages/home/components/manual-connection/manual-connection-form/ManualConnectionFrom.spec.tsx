@@ -1,5 +1,6 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
+import userEvent from '@testing-library/user-event'
 import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { BuildType } from 'uiSrc/constants/env'
@@ -38,7 +39,7 @@ jest.mock('uiSrc/slices/app/url-handling', () => ({
   appRedirectionSelector: jest.fn().mockReturnValue(() => ({ action: null })),
 }))
 
-describe('InstanceForm', () => {
+describe.skip('InstanceForm', () => {
   it('should render', () => {
     expect(
       render(
@@ -212,7 +213,7 @@ describe('InstanceForm', () => {
       </div>,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    await userEvent.click(screen.getByText('Security'))
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('tls'))

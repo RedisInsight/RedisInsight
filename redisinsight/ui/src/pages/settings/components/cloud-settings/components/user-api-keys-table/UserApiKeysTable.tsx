@@ -3,7 +3,6 @@ import {
   EuiBasicTableColumn,
   EuiIcon,
   EuiInMemoryTable,
-  EuiLink,
   EuiTitle,
   EuiToolTip,
   PropertySort,
@@ -34,6 +33,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -186,15 +186,14 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
             text={
               <>
                 {'To delete this API key from Redis Cloud, '}
-                <EuiLink
+                <Link
                   target="_blank"
                   color="text"
-                  external={false}
                   tabIndex={-1}
                   href="https://redis.io/redis-enterprise-cloud/overview/?utm_source=redisinsight&utm_medium=settings&utm_campaign=clear_keys"
                 >
                   sign in to Redis Cloud
-                </EuiLink>
+                </Link>
                 {' and delete it manually.'}
               </>
             }

@@ -1,7 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiLink } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import { generateArgsNames } from 'uiSrc/utils'
@@ -11,6 +10,7 @@ import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -74,17 +74,17 @@ const CHSearchOutput = ({ searchedCommands }: Props) => {
           {searchedCommands.map((command: string) => (
             <Row gap="m" key={command}>
               <FlexItem style={{ flexShrink: 0 }}>
-                <Text key={command} size="s">
-                  <EuiLink
-                    color="text"
-                    onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-                      handleClickCommand(e, command)
-                    }}
-                    className={styles.title}
-                    data-testid={`cli-helper-output-title-${command}`}
-                  >
+                <Text
+                  key={command}
+                  size="s"
+                  data-testid={`cli-helper-output-title-${command}`}
+                  onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+                    handleClickCommand(e, command)
+                  }}
+                >
+                  <Link className={styles.title}>
                     {command}
-                  </EuiLink>
+                  </Link>
                 </Text>
               </FlexItem>
               <FlexItem style={{ flexDirection: 'row', overflow: 'hidden' }}>

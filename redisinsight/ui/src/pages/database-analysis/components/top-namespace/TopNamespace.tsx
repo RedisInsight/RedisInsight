@@ -1,4 +1,4 @@
-import { EuiLink, EuiSwitch, EuiTitle } from '@elastic/eui'
+import { EuiSwitch, EuiTitle } from '@elastic/eui'
 import { isNull } from 'lodash'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
@@ -16,6 +16,8 @@ import { changeKeyViewType } from 'uiSrc/slices/browser/keys'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { Nullable } from 'uiSrc/utils'
 import { TextBtn } from 'uiSrc/pages/database-analysis/components/base/TextBtn'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { Text } from 'uiSrc/components/base/text'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import Table from './Table'
 import styles from './styles.module.scss'
@@ -78,13 +80,12 @@ const TopNamespace = (props: Props) => {
             </EuiTitle>
             <p>
               {'Configure the delimiter in '}
-              <EuiLink
-                color="text"
+              <Text
                 onClick={handleTreeViewClick}
                 data-testid="tree-view-page-link"
               >
-                Tree View
-              </EuiLink>
+                <Link>Tree View</Link>
+              </Text>
               {' to customize the namespaces displayed.'}
             </p>
           </div>

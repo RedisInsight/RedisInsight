@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiLink, EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
+import { EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
 import { get, throttle } from 'lodash'
 import cx from 'classnames'
 import { monaco as monacoEditor } from 'react-monaco-editor'
@@ -34,6 +34,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
 import TemplateButton from '../../components/template-button'
 import styles from './styles.module.scss'
 
@@ -221,8 +222,7 @@ const Job = (props: Props) => {
         </div>
         <Text className="rdi__text" color="subdued">
           {'Create a job per source table to filter, transform, and '}
-          <EuiLink
-            external={false}
+          <Link
             data-testid="rdi-pipeline-transformation-link"
             target="_blank"
             href={getUtmExternalLink(EXTERNAL_LINKS.rdiPipelineTransforms, {
@@ -231,7 +231,7 @@ const Job = (props: Props) => {
             })}
           >
             map data
-          </EuiLink>
+          </Link>
           {' to Redis.'}
         </Text>
         {loading ? (

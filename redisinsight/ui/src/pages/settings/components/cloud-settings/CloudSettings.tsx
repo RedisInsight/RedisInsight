@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { EuiLink, EuiTitle, EuiPopover } from '@elastic/eui'
+import { EuiTitle, EuiPopover } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { DeleteIcon } from 'uiSrc/components/base/icons'
@@ -17,6 +17,7 @@ import {
   PrimaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
 import UserApiKeysTable from './components/user-api-keys-table'
 
 import styles from './styles.module.scss'
@@ -62,14 +63,13 @@ const CloudSettings = () => {
             <br />
             API user keys grant programmatic access to Redis Cloud. <br />
             {'To delete API keys from Redis Cloud, '}
-            <EuiLink
+            <Link
               target="_blank"
               color="text"
-              external={false}
               href="https://redis.io/redis-enterprise-cloud/overview/?utm_source=redisinsight&utm_medium=settings&utm_campaign=clear_keys"
             >
               sign in to Redis Cloud
-            </EuiLink>
+            </Link>
             {' and delete them manually.'}
           </Text>
         </FlexItem>
@@ -96,15 +96,14 @@ const CloudSettings = () => {
               <Text size="m" component="div">
                 <h4>All API user keys will be removed from Redis Insight.</h4>
                 {'To delete API keys from Redis Cloud, '}
-                <EuiLink
+                <Link
                   target="_blank"
                   color="text"
-                  external={false}
                   tabIndex={-1}
                   href="https://redis.io/redis-enterprise-cloud/overview/?utm_source=redisinsight&utm_medium=settings&utm_campaign=clear_keys"
                 >
                   sign in to Redis Cloud
-                </EuiLink>
+                </Link>
                 {' and delete them manually.'}
               </Text>
               <Spacer />

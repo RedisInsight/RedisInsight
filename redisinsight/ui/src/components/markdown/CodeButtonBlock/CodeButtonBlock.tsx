@@ -160,13 +160,12 @@ const CodeButtonBlock = (props: Props) => {
       <Row>
         <FlexItem grow>
           {!!label && (
-            // todo: replace with Redis-Ui text when replacing <EuiText
             <Title
               size="XS"
               className={styles.label}
               data-testid="code-button-block-label"
             >
-              <span>{truncateText(label, 86)}</span>
+              {truncateText(label, 86)}
             </Title>
           )}
         </FlexItem>

@@ -49,10 +49,7 @@ const RunConfirmationPopover = ({ onApply }: Props) => {
 
   return (
     <>
-      {/* // todo: replace with Redis-Ui text when replacing <EuiText */}
-      <Title size="XS">
-        <span>Run commands</span>
-      </Title>
+      <Title size="XS">Run commands</Title>
       <Spacer size="s" />
       <Text size="s">
         This tutorial will change data in your database, are you sure you want

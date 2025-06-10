@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { EuiTitle } from '@elastic/eui'
 import { formatTimestamp } from 'uiSrc/utils'
 import { DATETIME_FORMATTER_DEFAULT, TimezoneOption } from 'uiSrc/constants'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import TimezoneForm from './components/timezone-form/TimezoneForm'
 import DatetimeForm from './components/datetime-form/DatetimeForm'
@@ -27,9 +27,7 @@ const DateTimeFormatter = () => {
 
   return (
     <>
-      <EuiTitle size="xs">
-        <h4>Date and Time Format</h4>
-      </EuiTitle>
+      <Title size="M">Date and Time Format</Title>
       <Spacer size="m" />
       <Text color="subdued" className={styles.dateTimeSubtitle}>
         Specifies the date and time format to be used in Redis Insight:

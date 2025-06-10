@@ -1,6 +1,6 @@
-import { EuiTitle } from '@elastic/eui'
 import React from 'react'
 import { DurationUnits } from 'uiSrc/constants'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { convertNumberByUnits } from 'uiSrc/pages/slow-log/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { Text } from 'uiSrc/components/base/text'
@@ -18,9 +18,9 @@ const EmptySlowLog = (props: Props) => {
   return (
     <div className={styles.noSlowLogWrapper} data-testid="empty-slow-log">
       <div className={styles.noSlowLogText}>
-        <EuiTitle className={styles.noFoundTitle}>
-          <h4>No Slow Logs found</h4>
-        </EuiTitle>
+        <Title size="M" className={styles.noFoundTitle}>
+          No Slow Logs found
+        </Title>
         <Text color="subdued">
           Either no commands exceeding&nbsp;
           {numberWithSpaces(

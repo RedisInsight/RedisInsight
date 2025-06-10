@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, forEach } from 'lodash'
-import { EuiSwitch, EuiTitle, EuiToolTip, EuiForm, EuiLink } from '@elastic/eui'
+import {
+  EuiSwitch,
+  EuiToolTip,
+  EuiForm,
+  EuiLink,
+} from '@elastic/eui'
 import { EuiSwitchEvent } from '@elastic/eui/src/components/form/switch'
 import cx from 'classnames'
 
@@ -17,6 +22,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
 import { Text } from 'uiSrc/components/base/text'
 import ConsentOption from './ConsentOption'
@@ -264,9 +270,9 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         {!!privacyConsents.length && (
           <>
             <Spacer />
-            <EuiTitle size="m">
-              <h1 className={styles.title}>Privacy Settings</h1>
-            </EuiTitle>
+            <Title size="M" className={styles.title}>
+              Privacy Settings
+            </Title>
             <Spacer size="m" />
             <Text className={styles.smallText} size="s" color="subdued">
               To optimize your experience, Redis Insight uses third-party tools.
@@ -285,9 +291,9 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         {!!notificationConsents.length && (
           <>
             <Spacer size="m" />
-            <EuiTitle size="m">
-              <h1 className={styles.title}>Notifications</h1>
-            </EuiTitle>
+            <Title size="M" className={styles.title}>
+              Notifications
+            </Title>
             <Spacer size="m" />
           </>
         )}

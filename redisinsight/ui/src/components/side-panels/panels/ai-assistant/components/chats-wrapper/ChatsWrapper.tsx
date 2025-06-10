@@ -87,14 +87,12 @@ const ChatsWrapper = () => {
   return (
     <div className={styles.wrapper} data-testid="chat-wrapper">
       {chats.length > 1 && (
-        <div className={styles.tabsWrapper}>
-          <Tabs
-            tabs={tabs}
-            value={activeTab}
-            onChange={selectTab}
-            data-testid="ai-tabs"
-          />
-        </div>
+        <Tabs
+          tabs={tabs}
+          value={activeTab}
+          onChange={selectTab}
+          data-testid="ai-tabs"
+        />
       )}
       {chats.length > 0 && (
         <div className={styles.chat}>

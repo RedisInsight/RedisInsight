@@ -3,8 +3,8 @@ import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 
+import userEvent from '@testing-library/user-event'
 import {
-  act,
   cleanup,
   fireEvent,
   mockedStore,
@@ -88,18 +88,18 @@ describe('JobsPanel', () => {
     })
   })
 
-  it('should render proper tab', () => {
+  it('should render proper tab', async () => {
     const { queryByTestId } = render(<JobsPanel {...instance(mockedProps)} />)
 
     expect(queryByTestId('transformations-output')).toBeInTheDocument()
     expect(queryByTestId('commands-output')).not.toBeInTheDocument()
 
-    fireEvent.click(screen.getByTestId('output-tab'))
+    await userEvent.click(screen.getByText('Job output'))
 
     expect(queryByTestId('transformations-output')).not.toBeInTheDocument()
     expect(queryByTestId('commands-output')).toBeInTheDocument()
 
-    fireEvent.click(screen.getByTestId('transformations-tab'))
+    await userEvent.click(screen.getByText('Transformation output'))
 
     expect(queryByTestId('transformations-output')).toBeInTheDocument()
     expect(queryByTestId('commands-output')).not.toBeInTheDocument()
@@ -123,9 +123,7 @@ describe('JobsPanel', () => {
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
 
-    await act(() => {
-      fireEvent.click(screen.getByTestId('output-tab'))
-    })
+    await userEvent.click(screen.getByText('Job output'))
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
   })
@@ -142,9 +140,7 @@ describe('JobsPanel', () => {
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
 
-    await act(() => {
-      fireEvent.click(screen.getByTestId('output-tab'))
-    })
+    await userEvent.click(screen.getByText('Job output'))
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
   })
@@ -164,9 +160,7 @@ describe('JobsPanel', () => {
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
 
-    await act(() => {
-      fireEvent.click(screen.getByTestId('output-tab'))
-    })
+    await userEvent.click(screen.getByText('Job output'))
 
     expect(queryByTestId('target-select')).toBeInTheDocument()
   })

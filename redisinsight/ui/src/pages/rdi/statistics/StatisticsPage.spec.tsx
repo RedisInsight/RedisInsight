@@ -2,6 +2,7 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 
+import userEvent from '@testing-library/user-event'
 import {
   rdiPipelineStatusSelector,
   getPipelineStatus,
@@ -214,7 +215,7 @@ describe('StatisticsPage', () => {
     const testid = 'processing-performance-info'
 
     fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
-    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
+    await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_STATISTICS_AUTO_REFRESH_DISABLED,
@@ -233,8 +234,8 @@ describe('StatisticsPage', () => {
     const testid = 'processing-performance-info'
 
     fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
-    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
-    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // enabled
+    await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
+    await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // enabled
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_STATISTICS_AUTO_REFRESH_ENABLED,

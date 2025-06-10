@@ -1,6 +1,7 @@
 import React from 'react'
+import userEvent from '@testing-library/user-event'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { render, screen } from 'uiSrc/utils/test-utils'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import SettingsPage from './SettingsPage'
 
@@ -100,7 +101,7 @@ describe('Telemetry', () => {
 
     render(<SettingsPage />)
 
-    fireEvent.click(screen.getByTestId('switch-workbench-cleanup'))
+    await userEvent.click(screen.getByTestId('switch-workbench-cleanup'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.SETTINGS_WORKBENCH_EDITOR_CLEAR_CHANGED,

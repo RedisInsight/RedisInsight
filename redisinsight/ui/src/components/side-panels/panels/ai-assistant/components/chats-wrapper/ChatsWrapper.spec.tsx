@@ -1,11 +1,11 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
+import userEvent from '@testing-library/user-event'
 import {
   cleanup,
   mockedStore,
   render,
   screen,
-  fireEvent,
   act,
 } from 'uiSrc/utils/test-utils'
 
@@ -52,40 +52,40 @@ describe('ChatsWrapper', () => {
     expect(render(<ChatsWrapper />)).toBeTruthy()
   })
 
-  it('should call proper dispatch after click on tab', () => {
+  it('should call proper dispatch after click on tab', async () => {
     render(<ChatsWrapper />)
 
-    fireEvent.click(screen.getByTestId('ai-general-chat_tab'))
+    await userEvent.click(screen.getByText('General'))
 
     expect(store.getActions()).toEqual([setSelectedTab(AiChatType.Assistance)])
   })
 
-  it('should call proper dispatch after click on tab', () => {
+  it('should call proper dispatch after click on tab', async () => {
     render(<ChatsWrapper />)
 
-    fireEvent.click(screen.getByTestId('ai-database-chat_tab'))
+    await userEvent.click(screen.getByText('My Data'))
 
     expect(store.getActions()).toEqual([setSelectedTab(AiChatType.Query)])
   })
 
-  it('should render general chat when tab is selected', () => {
+  it('should render general chat when tab is selected', async () => {
     ;(aiChatSelector as jest.Mock).mockReturnValue({
       activeTab: AiChatType.Assistance,
     })
     render(<ChatsWrapper />)
 
-    fireEvent.click(screen.getByTestId('ai-database-chat_tab'))
+    await userEvent.click(screen.getByText('General'))
 
     expect(screen.getByTestId('ai-general-chat')).toBeInTheDocument()
   })
 
-  it('should render database chat when tab is selected', () => {
+  it('should render database chat when tab is selected', async () => {
     ;(aiChatSelector as jest.Mock).mockReturnValue({
       activeTab: AiChatType.Query,
     })
     render(<ChatsWrapper />)
 
-    fireEvent.click(screen.getByTestId('ai-database-chat_tab'))
+    await userEvent.click(screen.getByText('General'))
 
     expect(screen.getByTestId('ai-document-chat')).toBeInTheDocument()
   })

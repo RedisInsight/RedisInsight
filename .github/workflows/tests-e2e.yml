@@ -1,8 +1,8 @@
 name: ✅ E2E Tests
 
 on:
-  pull_request_review:
-    types: [submitted]
+  pull_request:
+    types: [labeled]
 
   workflow_dispatch:
     inputs:
@@ -20,7 +20,7 @@ jobs:
   # E2E Approve
   e2e-approve:
     runs-on: ubuntu-latest
-    if: github.event.review.state == 'approved' && !contains(github.event.pull_request.labels.*.name, 'e2e-approved') || github.event_name == 'workflow_dispatch'
+    if: github.event.action == 'labeled' && contains(github.event.label.name, 'e2e-approved') || github.event_name == 'workflow_dispatch'
     name: Approve E2E tests
     steps:
       - name: Add "e2e-approved" Label

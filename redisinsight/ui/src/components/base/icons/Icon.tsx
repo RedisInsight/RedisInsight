@@ -4,6 +4,7 @@ import { MonochromeIconProps } from 'uiSrc/components/base/icons'
 
 type BaseIconProps = MonochromeIconProps & {
   icon: React.ComponentType<any>
+  color?: keyof ReturnType<typeof useTheme>['semantic']['color']['icon']
 }
 const sizesMap = {
   XS: 8,
@@ -41,8 +42,10 @@ export const Icon = ({
   if (!colorValue && isValidIconColor(theme, color)) {
     colorValue = theme.semantic.color.icon[color]
   }
+  console.log({ theme, colorValue })
+
   const props = {
-    color: colorValue,
+    customColor: colorValue,
     width: sizeValue,
     height: sizeValue,
     ...rest,

@@ -93,7 +93,7 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
               <OAuthSsoHandlerDialog>
                 {(ssoCloudHandlerClick) => (
                   <ExternalLink
-                    iconSize="s"
+                    iconSize="S"
                     href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
                       campaign: UTM_CAMPAINGS[source] ?? source,
                     })}

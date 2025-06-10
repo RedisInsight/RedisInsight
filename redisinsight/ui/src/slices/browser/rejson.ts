@@ -48,7 +48,7 @@ export const initialState: InitialStateRejson = {
     type: '',
   },
   editorType: EditorType.Default,
-  isWithinThreshold: true,
+  isWithinThreshold: false,
 }
 
 // A slice for recipes

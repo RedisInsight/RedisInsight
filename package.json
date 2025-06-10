@@ -234,9 +234,9 @@
   "dependencies": {
     "@elastic/datemath": "^5.0.3",
     "@elastic/eui": "34.6.0",
-    "@redis-ui/components": "^38.1.3",
+    "@redis-ui/components": "^38.1.4",
     "@redis-ui/icons": "^4.16.1",
-    "@redis-ui/styles": "^11.0.2",
+    "@redis-ui/styles": "^11.4.0",
     "@redis-ui/table": "^2.4.0",
     "@reduxjs/toolkit": "^1.6.2",
     "@stablelib/snappy": "^1.0.2",

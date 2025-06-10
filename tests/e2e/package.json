@@ -19,7 +19,9 @@
     "lint": "eslint . --ext .ts,.js,.tsx,.jsx",
     "test:desktop:ci": "ts-node ./desktop.runner.ci.ts",
     "test:desktop:ci:win": "ts-node ./desktop.runner.win.ts",
-    "test:desktop": "ts-node ./desktop.runner.ts"
+    "test:desktop": "node -r ts-node/register --env-file=.desktop.env ./desktop.runner.ts",
+    "test:desktop:ci-simulation": "../../.github/e2e/simulate-ci-locally.sh",
+    "test:desktop:ci-simulation:debug": "../../.github/e2e/simulate-ci-locally.sh --debug"
   },
   "keywords": [],
   "author": "",

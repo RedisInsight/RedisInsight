@@ -1,6 +1,7 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
+import userEvent from '@testing-library/user-event'
 import {
   getRecommendations,
   recommendationsSelector,
@@ -212,8 +213,8 @@ describe('SidePanels', () => {
 
     render(<SidePanels />)
     expect(
-      screen.getByTestId('recommendations-unread-count'),
-    ).toHaveTextContent('7')
+      screen.getByText(/^Tips \(7\)$/),
+    ).toBeVisible()
   })
 
   it('should call proper telemetry events on close panel', () => {
@@ -248,7 +249,7 @@ describe('SidePanels', () => {
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
-  it('should call proper telemetry events on change tab', () => {
+  it('should call proper telemetry events on change tab', async () => {
     const sendEventTelemetryMock = jest.fn()
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
@@ -266,7 +267,7 @@ describe('SidePanels', () => {
 
     render(<SidePanels />)
 
-    fireEvent.click(screen.getByTestId('explore-tab'))
+    await userEvent.click(screen.getByText(/^Tutorials$/))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_PANEL_TAB_CHANGED,

@@ -92,16 +92,6 @@ $animation-duration: 300ms;
       }
     }
 
-    &:global:not(.euiTab-isSelected) {
-      background-color: transparent;
-
-      &:hover {
-        .tabName {
-          text-decoration: underline;
-        }
-      }
-    }
-
     :global {
       .euiTab__content {
         display: flex;

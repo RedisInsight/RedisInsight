@@ -1,21 +1,19 @@
 import React from 'react'
-import { EuiIcon, EuiLink } from '@elastic/eui'
+import { EuiLink } from '@elastic/eui'
 import { EuiLinkProps } from '@elastic/eui/src/components/link/link'
-
-import { IconSize } from '@elastic/eui/src/components/icon/icon'
-import styles from './styles.module.scss'
+import { Icon, ArrowDiagonalIcon, IconProps } from 'uiSrc/components/base/icons'
 
 export type Props = EuiLinkProps & {
   href: string
   iconPosition?: 'left' | 'right'
-  iconSize?: IconSize
+  iconSize?: IconProps['size']
 }
 
 const ExternalLink = (props: Props) => {
-  const { iconPosition = 'right', iconSize = 'm', children, ...rest } = props
+  const { iconPosition = 'right', iconSize = 'M', children, ...rest } = props
 
   const ArrowIcon = () => (
-    <EuiIcon type="sortUp" size={iconSize} className={styles.linkIcon} />
+    <Icon icon={ArrowDiagonalIcon} size={iconSize} color="informative400" />
   )
 
   return (

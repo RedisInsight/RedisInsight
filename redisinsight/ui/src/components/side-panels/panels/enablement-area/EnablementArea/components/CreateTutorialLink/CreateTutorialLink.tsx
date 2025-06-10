@@ -24,7 +24,7 @@ const CreateTutorialLink = () => {
   return (
     <ExternalLink
       color="text"
-      iconSize="s"
+      iconSize="S"
       className={styles.readMoreLink}
       onClick={onClickReadMore}
       href={EXTERNAL_LINKS.guidesRepo}

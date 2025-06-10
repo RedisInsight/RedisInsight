@@ -1,14 +1,12 @@
 import {
   EuiFieldText,
   EuiIcon,
-  EuiFieldNumber,
 } from '@elastic/eui'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 import cx from 'classnames'
 import { useDebouncedEffect } from 'uiSrc/services'
-import { validateNumber } from 'uiSrc/utils'
-import { PasswordInput } from 'uiSrc/components/base/inputs'
+import { NumericInput, PasswordInput } from 'uiSrc/components/base/inputs'
 
 import styles from './styles.module.scss'
 
@@ -76,12 +74,11 @@ const InputFieldSentinel = (props: Props) => {
         />
       )}
       {inputType === SentinelInputFieldType.Number && (
-        <EuiFieldNumber
+        <NumericInput
           {...clearProp}
-          compressed
-          type="text"
-          value={value}
-          onChange={(e) => handleChange(validateNumber(e.target?.value))}
+          autoValidate
+          value={Number(value)}
+          onChange={(value) => handleChange(value ? value.toString() : '')}
           data-testid="sentinel-input-number"
         />
       )}

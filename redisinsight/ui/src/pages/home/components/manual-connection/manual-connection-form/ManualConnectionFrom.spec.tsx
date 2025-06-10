@@ -188,7 +188,7 @@ describe('InstanceForm', () => {
     })
     expect(handleSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
-        port: '123',
+        port: 123,
       }),
     )
   })
@@ -317,7 +317,7 @@ describe('InstanceForm', () => {
     expect(handleTestConnection).toHaveBeenCalledWith(
       expect.objectContaining({
         showDb: true,
-        db: '12',
+        db: 12,
       }),
     )
     await act(async () => {
@@ -327,7 +327,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
         showDb: true,
-        db: '12',
+        db: 12,
       }),
     )
   })
@@ -1064,7 +1064,7 @@ describe('InstanceForm', () => {
       })
 
       fireEvent.change(screen.getByTestId('sshPort'), {
-        target: { value: '1771' },
+        target: { value: 1771 },
       })
 
       fireEvent.change(screen.getByTestId('sshUsername'), {
@@ -1083,7 +1083,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
         sshHost: 'localhost',
-        sshPort: '1771',
+        sshPort: 1771,
         sshUsername: 'username',
         sshPassword: '123',
       }),
@@ -1119,7 +1119,7 @@ describe('InstanceForm', () => {
       })
 
       fireEvent.change(screen.getByTestId('sshPort'), {
-        target: { value: '1771' },
+        target: { value: 1771 },
       })
 
       fireEvent.change(screen.getByTestId('sshUsername'), {
@@ -1142,7 +1142,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
         sshHost: 'localhost',
-        sshPort: '1771',
+        sshPort: 1771,
         sshUsername: 'username',
         sshPrivateKey: '123444',
         sshPassphrase: '123444',
@@ -1264,16 +1264,16 @@ describe('InstanceForm', () => {
       )
 
       expect(screen.getByTestId('timeout')).toBeInTheDocument()
-      expect(screen.getByTestId('timeout')).toHaveAttribute('maxLength', '7')
 
       fireEvent.change(screen.getByTestId('timeout'), {
         target: { value: '2000000' },
       })
+      fireEvent.focusOut(screen.getByTestId('timeout'))
 
       expect(screen.getByTestId('timeout')).toHaveAttribute('value', '1000000')
     })
 
-    it('should put only numbers', () => {
+    it('should default  to previous value when value other than just numbers is provided', () => {
       render(
         <ManualConnectionForm
           {...instance(mockedProps)}
@@ -1285,7 +1285,7 @@ describe('InstanceForm', () => {
         target: { value: '11a2EU$#@' },
       })
 
-      expect(screen.getByTestId('timeout')).toHaveAttribute('value', '112')
+      expect(screen.getByTestId('timeout')).toHaveAttribute('value', '30')
     })
   })
 

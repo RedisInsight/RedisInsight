@@ -6,14 +6,13 @@ import {
   EuiSuperSelectOption,
   EuiPopover,
   EuiForm,
-  EuiFieldNumber,
   EuiSwitch,
   EuiToolTip,
 } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { orderBy, filter } from 'lodash'
 
-import { isTruncatedString, isEqualBuffers, validateNumber } from 'uiSrc/utils'
+import { isTruncatedString, isEqualBuffers } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   selectedGroupSelector,
@@ -33,6 +32,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { NumericInput } from 'uiSrc/components/base/inputs'
 import {
   ClaimPendingEntryDto,
   ClaimPendingEntriesResponse,
@@ -213,7 +213,7 @@ const MessageClaimPopover = (props: Props) => {
       panelPaddingSize="m"
       anchorClassName="claimPendingMessage"
       panelClassName={styles.popoverWrapper}
-      closePopover={() => {}}
+      closePopover={() => { }}
       button={consumerOptions.length < 1 ? buttonTooltip : button}
     >
       <EuiForm>
@@ -236,23 +236,22 @@ const MessageClaimPopover = (props: Props) => {
           </FlexItem>
           <FlexItem grow className={styles.relative}>
             <FormField label="Min Idle Time">
-              <EuiFieldNumber
-                name="minIdleTime"
-                id="minIdleTime"
-                data-testid="min-idle-time"
-                placeholder="0"
-                className={styles.fieldWithAppend}
-                value={formik.values.minIdleTime}
-                append="msec"
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(
-                    e.target.name,
-                    validateNumber(e.target.value.trim()),
-                  )
-                }}
-                type="text"
-                min={0}
-              />
+              <div className={styles.timeWrapper}>
+                <NumericInput
+                  autoValidate
+                  min={0}
+                  name="minIdleTime"
+                  id="minIdleTime"
+                  data-testid="min-idle-time"
+                  placeholder="0"
+                  className={styles.fieldWithAppend}
+                  value={Number(formik.values.minIdleTime)}
+                  onChange={(value) =>
+                    formik.setFieldValue('minIdleTime', value)
+                  }
+                />
+                <div className={styles.timeUnit}>msec</div>
+              </div>
             </FormField>
           </FlexItem>
         </Row>
@@ -262,23 +261,22 @@ const MessageClaimPopover = (props: Props) => {
             <Row className={styles.container} align="center">
               <FlexItem grow className={styles.idle}>
                 <FormField label="Idle Time">
-                  <EuiFieldNumber
-                    name="timeCount"
-                    id="timeCount"
-                    data-testid="time-count"
-                    placeholder="0"
-                    className={styles.fieldWithAppend}
-                    value={formik.values.timeCount}
-                    append="msec"
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                      formik.setFieldValue(
-                        e.target.name,
-                        validateNumber(e.target.value.trim()),
-                      )
-                    }}
-                    type="text"
-                    min={0}
-                  />
+                  <div className={styles.timeWrapper}>
+                    <NumericInput
+                      autoValidate
+                      min={0}
+                      name="timeCount"
+                      id="timeCount"
+                      data-testid="time-count"
+                      placeholder="0"
+                      className={styles.fieldWithAppend}
+                      value={Number(formik.values.timeCount)}
+                      onChange={(value) =>
+                        formik.setFieldValue('timeCount', value)
+                      }
+                    />
+                    <div className={styles.timeUnit}>msec</div>
+                  </div>
                 </FormField>
               </FlexItem>
               <FlexItem grow className={styles.timeSelect}>
@@ -296,21 +294,18 @@ const MessageClaimPopover = (props: Props) => {
               </FlexItem>
               <FlexItem grow>
                 <FormField label="Retry Count">
-                  <EuiFieldNumber
+                  <NumericInput
+                    autoValidate
+                    min={0}
                     name="retryCount"
                     id="retryCount"
                     data-testid="retry-count"
                     placeholder="0"
                     className={styles.retryCountField}
-                    value={formik.values.retryCount}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                      formik.setFieldValue(
-                        e.target.name,
-                        validateNumber(e.target.value.trim()),
-                      )
-                    }}
-                    type="text"
-                    min={0}
+                    value={Number(formik.values.retryCount)}
+                    onChange={(value) =>
+                      formik.setFieldValue('retryCount', value)
+                    }
                   />
                 </FormField>
               </FlexItem>
@@ -331,7 +326,12 @@ const MessageClaimPopover = (props: Props) => {
             </Row>
           </>
         )}
-        <Row responsive className={styles.footer}>
+        <Row
+          responsive
+          className={styles.footer}
+          justify="between"
+          align="center"
+        >
           <FlexItem>
             <EuiSwitch
               label="Optional Parameters"

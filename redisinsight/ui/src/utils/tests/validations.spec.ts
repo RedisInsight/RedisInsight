@@ -1,9 +1,7 @@
 import {
-  MAX_PORT_NUMBER,
   MAX_TTL_NUMBER,
   validateEmail,
   validateField,
-  validatePortNumber,
   validateTTLNumber,
   validateCountNumber,
   validateScoreNumber,
@@ -15,7 +13,6 @@ import {
   errorValidateNegativeInteger,
   validateConsumerGroupId,
   validateNumber,
-  validateTimeoutNumber,
   checkTimestamp,
   checkConvertToDate,
 } from 'uiSrc/utils'
@@ -150,26 +147,6 @@ describe('Validations utils', () => {
     })
   })
 
-  describe('validatePortNumber', () => {
-    it('validatePortNumber should return only numbers between 0 and MAX_PORT_NUMBER', () => {
-      const expectedResponse1 = `${MAX_PORT_NUMBER}`
-      const expectedResponse2 = '12312'
-      const expectedResponse4 = ''
-      const expectedResponse5 = ''
-      const expectedResponse6 = '2323'
-      const expectedResponse7 = `${MAX_PORT_NUMBER}`
-      const expectedResponse8 = `${MAX_PORT_NUMBER}`
-
-      expect(validatePortNumber(text1)).toEqual(expectedResponse1)
-      expect(validatePortNumber(text2)).toEqual(expectedResponse2)
-      expect(validatePortNumber(text4)).toEqual(expectedResponse4)
-      expect(validatePortNumber(text5)).toEqual(expectedResponse5)
-      expect(validatePortNumber(text6)).toEqual(expectedResponse6)
-      expect(validatePortNumber(text7)).toEqual(expectedResponse7)
-      expect(validatePortNumber(text8)).toEqual(expectedResponse8)
-    })
-  })
-
   describe('validateEmail', () => {
     it('validateEmail should return "true" only for email format text', () => {
       expect(validateEmail(text1)).toBeFalsy()
@@ -281,22 +258,6 @@ describe('Validations utils', () => {
       ['31231231231', '31231231231'],
     ])('for input: %s (input), should be output: %s', (input, expected) => {
       const result = validateNumber(input)
-      expect(result).toBe(expected)
-    })
-  })
-
-  describe('validateTimeoutNumber', () => {
-    it.each([
-      ['123', '123'],
-      ['123-1', '1231'],
-      ['$', ''],
-      ['11.zx-1', '111'],
-      ['1ueooeu1', '11'],
-      ['euiejk', ''],
-      ['0', ''],
-      ['1000001', '1000000'],
-    ])('for input: %s (input), should be output: %s', (input, expected) => {
-      const result = validateTimeoutNumber(input)
       expect(result).toBe(expected)
     })
   })

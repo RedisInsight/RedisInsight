@@ -1,21 +1,14 @@
 import React, { ChangeEvent } from 'react'
 import {
-  EuiFieldNumber,
   EuiFieldText,
   EuiRadioGroup,
   EuiRadioGroupOption,
-  EuiTextArea,
   htmlIdGenerator,
 } from '@elastic/eui'
 import cx from 'classnames'
 import { FormikProps } from 'formik'
 
-import {
-  MAX_PORT_NUMBER,
-  selectOnFocus,
-  validateField,
-  validatePortNumber,
-} from 'uiSrc/utils'
+import { MAX_PORT_NUMBER, selectOnFocus, validateField } from 'uiSrc/utils'
 import { SECURITY_FIELD } from 'uiSrc/constants'
 
 import { SshPassType } from 'uiSrc/pages/home/constants'
@@ -24,7 +17,11 @@ import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
-import { PasswordInput } from 'uiSrc/components/base/inputs'
+import {
+  NumericInput,
+  PasswordInput,
+  TextArea,
+} from 'uiSrc/components/base/inputs'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from '../styles.module.scss'
 
@@ -96,25 +93,21 @@ const SSHDetails = (props: Props) => {
             </FlexItem>
 
             <FlexItem grow className={flexItemClassName}>
-              <FormField label="Port*" additionalText="Should not exceed 65535.">
-                <EuiFieldNumber
+              <FormField
+                label="Port*"
+                additionalText="Should not exceed 65535."
+              >
+                <NumericInput
+                  autoValidate
+                  min={0}
+                  max={MAX_PORT_NUMBER}
                   name="sshPort"
                   id="sshPort"
                   data-testid="sshPort"
-                  style={{ width: '100%' }}
                   placeholder="Enter SSH Port"
-                  value={formik.values.sshPort ?? ''}
-                  maxLength={6}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    formik.setFieldValue(
-                      e.target.name,
-                      validatePortNumber(e.target.value.trim()),
-                    )
-                  }}
+                  value={Number(formik.values.sshPort)}
+                  onChange={(value) => formik.setFieldValue('sshPort', value)}
                   onFocus={selectOnFocus}
-                  type="text"
-                  min={0}
-                  max={MAX_PORT_NUMBER}
                 />
               </FormField>
             </FlexItem>
@@ -193,11 +186,10 @@ const SSHDetails = (props: Props) => {
               <Row gap="m" responsive className={flexGroupClassName}>
                 <FlexItem grow className={flexItemClassName}>
                   <FormField label="Private Key*">
-                    <EuiTextArea
+                    <TextArea
                       name="sshPrivateKey"
                       id="sshPrivateKey"
                       data-testid="sshPrivateKey"
-                      fullWidth
                       maxLength={50_000}
                       placeholder="Enter SSH Private Key in PEM format"
                       value={
@@ -208,7 +200,7 @@ const SSHDetails = (props: Props) => {
                               '•',
                             ) ?? '')
                       }
-                      onChange={formik.handleChange}
+                      onChangeCapture={formik.handleChange}
                       onFocus={() => {
                         if (formik.values.sshPrivateKey === true) {
                           formik.setFieldValue('sshPrivateKey', '')

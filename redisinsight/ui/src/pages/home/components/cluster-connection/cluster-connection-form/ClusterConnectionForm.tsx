@@ -2,20 +2,9 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { isEmpty } from 'lodash'
 import { FormikErrors, useFormik } from 'formik'
-import {
-  EuiFieldNumber,
-  EuiFieldText,
-  EuiForm,
-  EuiIcon,
-  EuiToolTip,
-  keys,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiIcon, EuiToolTip, keys } from '@elastic/eui'
 
-import {
-  MAX_PORT_NUMBER,
-  validateField,
-  validatePortNumber,
-} from 'uiSrc/utils/validations'
+import { MAX_PORT_NUMBER, validateField } from 'uiSrc/utils/validations'
 import { handlePasteHostName } from 'uiSrc/utils'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { ICredentialsRedisCluster } from 'uiSrc/slices/interfaces'
@@ -29,7 +18,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
-import { PasswordInput } from 'uiSrc/components/base/inputs'
+import { NumericInput, PasswordInput } from 'uiSrc/components/base/inputs'
 
 export interface Props {
   host: string
@@ -260,23 +249,16 @@ const ClusterConnectionForm = (props: Props) => {
               label="Cluster Port*"
               additionalText="Should not exceed 65535."
             >
-              <EuiFieldNumber
+              <NumericInput
+                autoValidate
+                min={0}
+                max={MAX_PORT_NUMBER}
                 name="port"
                 id="port"
                 data-testid="port"
-                style={{ width: '100%' }}
                 placeholder="Enter Cluster Port"
-                value={formik.values.port || ''}
-                maxLength={6}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(
-                    e.target.name,
-                    validatePortNumber(e.target.value.trim()),
-                  )
-                }}
-                type="text"
-                min={0}
-                max={MAX_PORT_NUMBER}
+                value={Number(formik.values.port)}
+                onChange={(value) => formik.setFieldValue('port', value)}
               />
             </FormField>
           </FlexItem>

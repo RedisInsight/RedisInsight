@@ -1,7 +1,6 @@
-import React, { ChangeEvent, useState } from 'react'
+import React, { useState } from 'react'
 import {
   EuiForm,
-  EuiTextArea,
   keys,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -14,6 +13,7 @@ import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { TextArea } from 'uiSrc/components/base/inputs'
 import { isValidJSON } from '../../utils'
 import { JSONErrors } from '../../constants'
 
@@ -63,14 +63,12 @@ const EditEntireItemAction = (props: Props) => {
                 noValidate
               >
                 <FlexItem grow inline>
-                  <EuiTextArea
-                    isInvalid={!!error}
+                  <TextArea
+                    valid={!error}
                     className={styles.fullWidthTextArea}
                     value={value}
                     placeholder="Enter JSON value"
-                    onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-                      setValue(e.target.value)
-                    }
+                    onChange={setValue}
                     data-testid="json-value"
                   />
                 </FlexItem>

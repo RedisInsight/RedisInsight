@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react'
-import { EuiTab, EuiTabs } from '@elastic/eui'
 import { isNull } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import { EmptyMessage } from 'uiSrc/pages/database-analysis/constants'
@@ -14,12 +13,16 @@ import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
+import Tabs, { TabInfo } from 'uiSrc/components/base/layout/tabs'
+import { Text } from 'uiSrc/components/base/text'
+import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import {
   ShortDatabaseAnalysis,
   DatabaseAnalysis,
 } from 'apiSrc/modules/database-analysis/models'
+import Recommendations from '../recommendations-view'
+import AnalysisDataView from '../analysis-data-view'
 
-import { databaseAnalysisTabs } from './constants'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -41,12 +44,37 @@ const DatabaseAnalysisTabs = (props: Props) => {
 
   const dispatch = useDispatch()
 
-  const selectedTabContent = useMemo(
-    () => databaseAnalysisTabs.find((tab) => tab.id === viewTab)?.content,
-    [viewTab],
+  const tabs: TabInfo[] = useMemo(
+    () => [
+      {
+        label: <Text>Data Summary</Text>,
+        value: DatabaseAnalysisViewTab.DataSummary,
+        content: <AnalysisDataView />,
+      },
+      {
+        label: renderOnboardingTourWithChild(
+          <Text>
+            Tips{' '}
+            {data?.recommendations?.length
+              ? `(${data.recommendations.length})`
+              : ''}
+          </Text>,
+          {
+            options: { ...ONBOARDING_FEATURES.ANALYTICS_RECOMMENDATIONS },
+            anchorPosition: 'downLeft',
+          },
+          viewTab === DatabaseAnalysisViewTab.Recommendations,
+        ),
+        value: DatabaseAnalysisViewTab.Recommendations,
+        content: <Recommendations />,
+      },
+    ],
+    [viewTab, data?.recommendations],
   )
 
-  const onSelectedTabChanged = (id: DatabaseAnalysisViewTab) => {
+  const handleTabChange = (id: string) => {
+    if (viewTab === id) return
+
     if (id === DatabaseAnalysisViewTab.DataSummary) {
       sendEventTelemetry({
         event: TelemetryEvent.DATABASE_ANALYSIS_DATA_SUMMARY_CLICKED,
@@ -69,24 +97,8 @@ const DatabaseAnalysisTabs = (props: Props) => {
         },
       })
     }
-    dispatch(setDatabaseAnalysisViewTab(id))
+    dispatch(setDatabaseAnalysisViewTab(id as DatabaseAnalysisViewTab))
   }
-
-  const renderTabs = () =>
-    databaseAnalysisTabs.map(({ id, name, onboard }) =>
-      renderOnboardingTourWithChild(
-        <EuiTab
-          key={id}
-          onClick={() => onSelectedTabChanged(id)}
-          isSelected={id === viewTab}
-          data-testid={`${id}-tab`}
-        >
-          {name(data?.recommendations?.length)}
-        </EuiTab>,
-        { options: onboard, anchorPosition: 'downLeft' },
-        id === viewTab,
-      ),
-    )
 
   if (!loading && !reports?.length) {
     return (
@@ -110,10 +122,13 @@ const DatabaseAnalysisTabs = (props: Props) => {
   }
 
   return (
-    <>
-      <EuiTabs className="tabs-active-borders">{renderTabs()}</EuiTabs>
-      <div className={styles.container}>{selectedTabContent}</div>
-    </>
+    <Tabs
+      tabs={tabs}
+      value={viewTab}
+      onChange={handleTabChange}
+      className="tabs-active-borders"
+      data-testid="database-analysis-tabs"
+    />
   )
 }
 

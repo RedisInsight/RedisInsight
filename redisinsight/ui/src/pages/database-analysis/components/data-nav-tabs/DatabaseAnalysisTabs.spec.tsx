@@ -18,6 +18,7 @@ import { MOCK_RECOMMENDATIONS } from 'uiSrc/constants/mocks/mock-recommendations
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import DatabaseAnalysisTabs, { Props } from './DatabaseAnalysisTabs'
+import userEvent from '@testing-library/user-event'
 
 const mockRecommendationsSelector = jest.requireActual(
   'uiSrc/slices/recommendations/recommendations',
@@ -76,14 +77,12 @@ describe('DatabaseAnalysisTabs', () => {
     ).toBeTruthy()
   })
 
-  it('should call setDatabaseAnalysisViewTab', () => {
+  it('should call setDatabaseAnalysisViewTab', async () => {
     render(
       <DatabaseAnalysisTabs {...instance(mockedProps)} reports={mockReports} />,
     )
 
-    fireEvent.click(
-      screen.getByTestId(`${DatabaseAnalysisViewTab.Recommendations}-tab`),
-    )
+    await userEvent.click(screen.getByText('Tips'))
 
     const expectedActions = [
       setDatabaseAnalysisViewTab(DatabaseAnalysisViewTab.Recommendations),
@@ -124,9 +123,7 @@ describe('DatabaseAnalysisTabs', () => {
         />,
       )
 
-      expect(
-        screen.queryByTestId(`${DatabaseAnalysisViewTab.Recommendations}-tab`),
-      ).toHaveTextContent('Tips (3)')
+      expect(screen.getByText('Tips (3)')).toBeVisible()
     })
 
     it('should render "Tips (3)" in the tab name', () => {

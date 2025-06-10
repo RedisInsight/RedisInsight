@@ -1,5 +1,4 @@
 import React from 'react'
-import userEvent from '@testing-library/user-event'
 import { MOCK_ANALYSIS_REPORT_DATA } from 'uiSrc/mocks/data/analysis'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
 import {
@@ -10,7 +9,7 @@ import { SectionName } from 'uiSrc/pages/database-analysis'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { formatBytes, getGroupTypeDisplay } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
-import { fireEvent, render, screen, within } from 'uiSrc/utils/test-utils'
+import { fireEvent, userEvent, render, screen, within } from 'uiSrc/utils/test-utils'
 
 import AnalysisDataView from './AnalysisDataView'
 

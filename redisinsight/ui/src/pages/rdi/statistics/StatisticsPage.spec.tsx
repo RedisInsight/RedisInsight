@@ -2,7 +2,6 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 
-import userEvent from '@testing-library/user-event'
 import {
   rdiPipelineStatusSelector,
   getPipelineStatus,
@@ -19,6 +18,7 @@ import {
 } from 'uiSrc/telemetry'
 import {
   cleanup,
+  userEvent,
   fireEvent,
   mockedStore,
   render,

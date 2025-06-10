@@ -1,7 +1,12 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import userEvent from '@testing-library/user-event'
-import { fireEvent, screen, render, act } from 'uiSrc/utils/test-utils'
+import {
+  userEvent,
+  fireEvent,
+  screen,
+  render,
+  act,
+} from 'uiSrc/utils/test-utils'
 import { localStorageService } from 'uiSrc/services'
 import AutoRefresh, { Props } from './AutoRefresh'
 import { DEFAULT_REFRESH_RATE } from './utils'

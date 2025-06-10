@@ -1,7 +1,7 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import userEvent from '@testing-library/user-event'
 import {
+  userEvent,
   render,
   screen,
   mockedStore,

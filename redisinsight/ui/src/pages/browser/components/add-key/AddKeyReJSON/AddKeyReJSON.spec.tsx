@@ -1,8 +1,13 @@
 import React from 'react'
-import userEvent from '@testing-library/user-event'
 import { instance, mock } from 'ts-mockito'
 
-import { fireEvent, render, screen, waitFor } from 'uiSrc/utils/test-utils'
+import {
+  fireEvent,
+  userEvent,
+  render,
+  screen,
+  waitFor,
+} from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import AddKeyReJSON, { Props } from './AddKeyReJSON'

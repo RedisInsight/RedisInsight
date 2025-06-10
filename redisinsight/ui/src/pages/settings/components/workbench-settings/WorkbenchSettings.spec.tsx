@@ -1,8 +1,13 @@
-import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { setWorkbenchCleanUp } from 'uiSrc/slices/user/user-settings'
-import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  cleanup,
+  userEvent,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 
 import WorkbenchSettings from './WorkbenchSettings'
 

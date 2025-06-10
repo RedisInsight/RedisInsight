@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, forEach } from 'lodash'
-import { EuiSwitch, EuiTitle, EuiToolTip, EuiForm, EuiLink } from '@elastic/eui'
-import { EuiSwitchEvent } from '@elastic/eui/src/components/form/switch'
+import { EuiTitle, EuiToolTip, EuiForm, EuiLink } from '@elastic/eui'
 import cx from 'classnames'
 
 import { HorizontalRule } from 'uiSrc/components'
@@ -21,6 +20,7 @@ import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
 import { Text } from 'uiSrc/components/base/text'
 import ConsentOption from './ConsentOption'
 
+import { SwitchInput } from '../base/inputs'
 import styles from './styles.module.scss'
 
 interface Values {
@@ -79,10 +79,10 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
     return errs
   }
 
-  const selectAll = (e: EuiSwitchEvent) => {
-    setIsRecommended(e.target.checked)
+  const selectAll = (checked: boolean) => {
+    setIsRecommended(checked)
 
-    if (e.target.checked) {
+    if (checked) {
       const newBufferValues: Values = {}
       consents.forEach((consent) => {
         if (!consent.required && !consent.disabled) {
@@ -231,12 +231,9 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             <FlexItem>
               <Row gap="m">
                 <FlexItem>
-                  <EuiSwitch
-                    showLabel={false}
-                    label=""
+                  <SwitchInput
                     checked={isRecommended}
-                    onChange={selectAll}
-                    className={styles.switchOption}
+                    onCheckedChange={selectAll}
                     data-testid="switch-option-recommended"
                   />
                 </FlexItem>

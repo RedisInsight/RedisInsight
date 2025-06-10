@@ -1,13 +1,12 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
+import userEvent from '@testing-library/user-event'
 import {
   render,
   screen,
-  fireEvent,
   mockedStore,
   cleanup,
   clearStoreActions,
-  act,
 } from 'uiSrc/utils/test-utils'
 import { updateUserConfigSettings } from 'uiSrc/slices/user/user-settings'
 import ConsentsNotifications from './ConsentsNotifications'
@@ -85,11 +84,8 @@ describe('ConsentsNotifications', () => {
     it('option change should call "updateUserConfigSettingsAction"', async () => {
       render(<ConsentsNotifications />)
 
-      await act(() => {
-        screen.getAllByTestId(/switch-option/).forEach(async (el) => {
-          fireEvent.click(el)
-        })
-      })
+      const elements = screen.getAllByTestId(/switch-option/)
+      await Promise.all(elements.map((el) => userEvent.click(el)))
 
       const expectedActions = [{}].fill(updateUserConfigSettings(), 0)
       expect(

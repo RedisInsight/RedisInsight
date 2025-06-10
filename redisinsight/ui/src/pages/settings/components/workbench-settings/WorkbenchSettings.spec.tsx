@@ -1,4 +1,4 @@
-import { fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { setWorkbenchCleanUp } from 'uiSrc/slices/user/user-settings'
@@ -18,12 +18,12 @@ describe('WorkbenchSettings', () => {
     expect(render(<WorkbenchSettings />)).toBeTruthy()
   })
 
-  it('should call proper actions after click on switch wb clear mode', () => {
+  it('should call proper actions after click on switch wb clear mode', async () => {
     render(<WorkbenchSettings />)
 
     const afterRenderActions = [...store.getActions()]
 
-    fireEvent.click(screen.getByTestId('switch-workbench-cleanup'))
+    await userEvent.click(screen.getByTestId('switch-workbench-cleanup'))
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,

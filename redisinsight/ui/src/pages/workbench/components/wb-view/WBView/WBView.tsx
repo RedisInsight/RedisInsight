@@ -221,6 +221,7 @@ const WBView = (props: Props) => {
             </ResizablePanel>
 
             <ResizablePanelHandle
+              direction="horizontal"
               data-test-subj="resize-btn-scripting-area-and-results"
             />
 

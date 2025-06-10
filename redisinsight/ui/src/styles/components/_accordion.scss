@@ -44,8 +44,7 @@
   .euiFieldText,
   .euiFieldNumber,
   .euiSelect,
-  .euiSuperSelectControl,
-  .euiTextArea {
+  .euiSuperSelectControl {
     background-color: var(--euiColorLightestShade) !important;
   }
 
@@ -54,8 +53,7 @@
 
     .euiSelect,
     .euiSuperSelectControl,
-    .euiFieldText,
-    .euiTextArea {
+    .euiFieldText {
       background-color: var(--euiColorLightShade) !important;
     }
   }

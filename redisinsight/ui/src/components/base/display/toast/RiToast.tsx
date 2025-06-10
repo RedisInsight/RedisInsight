@@ -5,10 +5,10 @@ import {
   ToastContentParams,
   ToastOptions,
 } from '@redis-ui/components'
-import { EuiTextColor } from '@elastic/eui'
 import styled from 'styled-components'
 import { CommonProps, Theme } from 'uiSrc/components/base/theme/types'
 import { CancelIcon } from 'uiSrc/components/base/icons'
+import { ColorText } from 'uiSrc/components/base/text'
 
 type RiToastProps = React.ComponentProps<typeof Toast>
 export const RiToast = (props: RiToastProps) => <Toast {...props} />
@@ -34,17 +34,15 @@ export const riToast = (
   }
 
   if (typeof message === 'string') {
-    // TODO: replace with ColorText
     let color = options?.variant
     if (color === 'informative') {
       // @ts-ignore
       color = 'subdued'
     }
     toastContent.message = (
-      // @ts-ignore
-      <EuiTextColor color={color}>
+      <ColorText color={color}>
         <StyledMessage>{message}</StyledMessage>
-      </EuiTextColor>
+      </ColorText>
     )
   } else {
     toastContent.message = message

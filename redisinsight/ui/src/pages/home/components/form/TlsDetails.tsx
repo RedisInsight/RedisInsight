@@ -3,7 +3,6 @@ import {
   EuiFieldText,
   EuiSuperSelect,
   EuiSuperSelectOption,
-  EuiTextArea,
   htmlIdGenerator,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -31,6 +30,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { TextArea } from 'uiSrc/components/base/inputs'
 import styles from '../styles.module.scss'
 
 const suffix = '_tls_details'
@@ -308,13 +308,11 @@ const TlsDetails = (props: Props) => {
               <Row gap="m" responsive>
                 <FlexItem grow>
                   <FormField label="Certificate*">
-                    <EuiTextArea
+                    <TextArea
                       name="newCaCert"
                       id="newCaCert"
-                      className={styles.customScroll}
                       value={formik.values.newCaCert ?? ''}
-                      onChange={formik.handleChange}
-                      fullWidth
+                      onChangeCapture={formik.handleChange}
                       placeholder="Enter CA Certificate"
                       data-testid="new-ca-cert"
                     />
@@ -392,14 +390,12 @@ const TlsDetails = (props: Props) => {
                 <Row gap="m" responsive>
                   <FlexItem grow>
                     <FormField label="Certificate*">
-                      <EuiTextArea
+                      <TextArea
                         name="newTlsClientCert"
                         id="newTlsClientCert"
-                        className={styles.customScroll}
                         value={formik.values.newTlsClientCert}
-                        onChange={formik.handleChange}
+                        onChangeCapture={formik.handleChange}
                         draggable={false}
-                        fullWidth
                         placeholder="Enter Client Certificate"
                         data-testid="new-tls-client-cert"
                       />
@@ -410,14 +406,12 @@ const TlsDetails = (props: Props) => {
                 <Row gap="m" responsive>
                   <FlexItem grow>
                     <FormField label="Private Key*">
-                      <EuiTextArea
+                      <TextArea
                         placeholder="Enter Private Key"
                         name="newTlsClientKey"
                         id="newTlsClientKey"
-                        className={styles.customScroll}
                         value={formik.values.newTlsClientKey}
-                        onChange={formik.handleChange}
-                        fullWidth
+                        onChangeCapture={formik.handleChange}
                         data-testid="new-tls-client-cert-key"
                       />
                     </FormField>

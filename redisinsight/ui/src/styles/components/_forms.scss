@@ -41,8 +41,7 @@
 .euiFieldNumber,
 .euiSelect,
 .euiSuperSelectControl,
-.euiComboBox .euiComboBox__inputWrap,
-.euiTextArea {
+.euiComboBox .euiComboBox__inputWrap {
   background-color: var(--euiColorEmptyShade) !important;
   max-width: 100% !important;
   border: 1px solid var(--controlsBorderColor) !important;
@@ -150,7 +149,6 @@
   }
 }
 
-.euiTextArea:focus,
 .euiSuperSelectControl:focus,
 .euiFieldNumber:focus,
 .euiFieldText:focus {

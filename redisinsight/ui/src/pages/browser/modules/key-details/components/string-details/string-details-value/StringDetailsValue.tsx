@@ -1,5 +1,4 @@
 import React, {
-  ChangeEvent,
   Ref,
   useCallback,
   useEffect,
@@ -8,8 +7,7 @@ import React, {
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import cx from 'classnames'
-import { EuiProgress, EuiTextArea, EuiToolTip } from '@elastic/eui'
+import { EuiProgress, EuiToolTip } from '@elastic/eui'
 
 import {
   bufferToSerializedFormat,
@@ -60,6 +58,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { DownloadIcon } from 'uiSrc/components/base/icons'
 import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { TextArea } from 'uiSrc/components/base/inputs'
 import styles from './styles.module.scss'
 
 const MIN_ROWS = 8
@@ -293,22 +292,15 @@ const StringDetailsValue = (props: Props) => {
               )?.isValid
             }
           >
-            <EuiTextArea
-              fullWidth
+            <TextArea
               name="value"
               id="value"
               rows={rows}
-              resize="vertical"
               placeholder={config.value.placeholder}
               value={areaValue}
-              onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
-                setAreaValue(e.target.value)
-              }}
+              onChange={setAreaValue}
               disabled={loading}
-              inputRef={textAreaRef}
-              className={cx(styles.stringTextArea, {
-                [styles.areaWarning]: isDisabled,
-              })}
+              ref={textAreaRef}
               style={{
                 maxHeight: containerRef.current
                   ? containerRef.current?.clientHeight - 80

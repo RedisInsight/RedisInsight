@@ -1,4 +1,4 @@
-import { EuiSwitch, EuiTitle } from '@elastic/eui'
+import { EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
@@ -26,6 +26,7 @@ import {
   dbAnalysisReportsSelector,
   setShowNoExpiryGroup,
 } from 'uiSrc/slices/analytics/dbAnalysis'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import styles from './styles.module.scss'
@@ -113,16 +114,16 @@ const ExpirationGroupsView = (props: Props) => {
             <h4>MEMORY LIKELY TO BE FREED OVER TIME</h4>
           </EuiTitle>
           {extrapolation !== DEFAULT_EXTRAPOLATION && (
-            <EuiSwitch
-              compressed
+            <SwitchInput
               color="subdued"
               className="switch-extrapolate-results"
-              label="Extrapolate results"
+              titleOn="Extrapolate results"
+              titleOff="Extrapolate results"
               checked={isExtrapolated}
-              onChange={(e) => {
-                setIsExtrapolated(e.target.checked)
+              onCheckedChange={(checked) => {
+                setIsExtrapolated(checked)
                 onSwitchExtrapolation?.(
-                  e.target.checked,
+                  checked,
                   SectionName.MEMORY_LIKELY_TO_BE_FREED,
                 )
               }}
@@ -130,13 +131,13 @@ const ExpirationGroupsView = (props: Props) => {
             />
           )}
         </div>
-        <EuiSwitch
-          compressed
+        <SwitchInput
           color="subdued"
           className={styles.switch}
-          label={<span>Show &quot;No Expiry&quot;</span>}
+          titleOn={'Show "No Expiry"'}
+          titleOff={'Show "No Expiry"'}
           checked={showNoExpiryGroup}
-          onChange={(e) => onSwitchChange(e.target.checked)}
+          onCheckedChange={onSwitchChange}
           data-testid="show-no-expiry-switch"
         />
       </div>

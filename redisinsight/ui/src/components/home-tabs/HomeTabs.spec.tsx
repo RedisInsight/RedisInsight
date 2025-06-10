@@ -1,14 +1,8 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { cloneDeep } from 'lodash'
-import {
-  render,
-  screen,
-  fireEvent,
-  act,
-  cleanup,
-  mockedStore,
-} from 'uiSrc/utils/test-utils'
+import userEvent from '@testing-library/user-event'
+import { render, screen, cleanup, mockedStore } from 'uiSrc/utils/test-utils'
 
 import { Pages } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -73,7 +67,7 @@ describe('HomeTabs', () => {
     expect(rdiTab).toHaveAttribute('data-state', 'active')
   })
 
-  it.skip('should call proper history push', () => {
+  it('should call proper history push', async () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
     reactRouterDom.useLocation = jest
@@ -82,14 +76,12 @@ describe('HomeTabs', () => {
 
     render(<HomeTabs />)
 
-    act(() => {
-      fireEvent.click(screen.getByText('Redis Data Integration'))
-    })
+    await userEvent.click(screen.getByText('Redis Data Integration'))
 
     expect(pushMock).toHaveBeenCalledWith(Pages.rdi)
   })
 
-  it.skip('should send proper telemetry', async () => {
+  it('should send proper telemetry', async () => {
     const sendEventTelemetryMock = jest.fn()
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
@@ -100,9 +92,7 @@ describe('HomeTabs', () => {
 
     render(<HomeTabs />)
 
-    act(() => {
-      fireEvent.click(screen.getByText('Redis Data Integration'))
-    })
+    await userEvent.click(screen.getByText('Redis Data Integration'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSTANCES_TAB_CHANGED,

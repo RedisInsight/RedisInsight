@@ -42,7 +42,6 @@ export const Icon = ({
   if (!colorValue && isValidIconColor(theme, color)) {
     colorValue = theme.semantic.color.icon[color]
   }
-  console.log({ theme, colorValue })
 
   const props = {
     customColor: colorValue,

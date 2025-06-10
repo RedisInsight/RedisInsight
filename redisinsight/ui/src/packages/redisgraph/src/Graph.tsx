@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
 import * as d3 from 'd3'
 import { executeRedisCommand, formatRedisReply } from 'redisinsight-plugin-sdk'
-import { EuiToolTip, EuiSwitch } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import Graphd3, { IGraphD3 } from './graphd3'
 import { responseParser } from './parser'
 import {
@@ -21,7 +21,8 @@ import {
   NODE_COLORS_DARK,
 } from './constants'
 import { IconButton } from '../../../components/base/forms/buttons'
-import { CopyIcon, CancelSlimIcon } from '../../../components/base/icons'
+import { CancelSlimIcon } from '../../../components/base/icons'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
 
 enum EntityType {
   Node = 'Node',
@@ -411,10 +412,11 @@ export default function Graph(props: {
           delay="long"
           content="Toggle visibility of automatically fetched relationships"
         >
-          <EuiSwitch
-            label="All relationships"
+          <SwitchInput
+            titleOn="All relationships"
+            titleOff="All relationships"
             checked={showAutomaticEdges}
-            onChange={() => {
+            onCheckedChange={() => {
               container.toggleShowAutomaticEdges()
               setShowAutomaticEdges(!showAutomaticEdges)
             }}

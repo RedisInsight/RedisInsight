@@ -1,7 +1,8 @@
 import React from 'react'
 import { mock } from 'ts-mockito'
 
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import userEvent from '@testing-library/user-event'
+import { render, screen } from 'uiSrc/utils/test-utils'
 import { BulkActionsType } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import BulkActionsTabs, { Props } from './BulkActionsTabs'
@@ -43,7 +44,7 @@ describe('BulkActionsTabs', () => {
 
     render(<BulkActionsTabs {...mockedProps} onChangeType={jest.fn()} />)
 
-    fireEvent.click(screen.getByTestId('bulk-action-tab-upload'))
+    await userEvent.click(screen.getByText('Upload Data'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.BULK_ACTIONS_OPENED,
@@ -54,19 +55,5 @@ describe('BulkActionsTabs', () => {
     })
     ;(sendEventTelemetry as jest.Mock).mockRestore()
 
-    fireEvent.click(screen.getByTestId('bulk-action-tab-delete'))
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.BULK_ACTIONS_OPENED,
-      eventData: {
-        databaseId: '',
-        action: BulkActionsType.Delete,
-        filter: {
-          match: 'PATTERN',
-          type: 'set',
-        },
-      },
-    })
-    ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 })

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { EuiIcon, EuiPopover, EuiSwitch, EuiToolTip } from '@elastic/eui'
+import { EuiPopover, EuiSwitch, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { ChevronDownIcon, RefreshIcon } from 'uiSrc/components/base/icons'
 import {
@@ -13,6 +13,7 @@ import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { ColorText } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import {
   DEFAULT_REFRESH_RATE,
   DURATION_FIRST_REFRESH_TIME,
@@ -285,7 +286,7 @@ const AutoRefresh = ({
             >
               {`${refreshRate} s`}
               <div className={styles.refreshRatePencil}>
-                <EuiIcon type="pencil" />
+                <RiIcon type="EditIcon" />
               </div>
             </ColorText>
           )}

@@ -1,8 +1,7 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
-import userEvent from '@testing-library/user-event'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
-import { render, screen } from 'uiSrc/utils/test-utils'
+import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import AnalyticsTabs from './AnalyticsTabs'
 
@@ -32,7 +31,7 @@ describe('AnalyticsTabs', () => {
 
     render(<AnalyticsTabs />)
 
-    await userEvent.click(screen.getByText('Database Analysis'))
+    fireEvent.mouseDown(screen.getByText('Database Analysis'))
 
     expect(pushMock).toHaveBeenCalledTimes(1)
     expect(pushMock).toHaveBeenCalledWith(
@@ -45,7 +44,7 @@ describe('AnalyticsTabs', () => {
 
     render(<AnalyticsTabs />)
 
-    await userEvent.click(screen.getByText('Slow Log'))
+    fireEvent.mouseDown(screen.getByText('Slow Log'))
 
     expect(pushMock).toHaveBeenCalledTimes(1)
     expect(pushMock).toHaveBeenCalledWith('/instanceId/analytics/slowlog')
@@ -78,7 +77,7 @@ describe('AnalyticsTabs', () => {
 
     render(<AnalyticsTabs />)
 
-    await userEvent.click(screen.getByText('Slow Log'))
+    fireEvent.mouseDown(screen.getByText('Slow Log'))
 
     expect(pushMock).toHaveBeenCalledTimes(1)
     expect(pushMock).toHaveBeenCalledWith('/instanceId/analytics/slowlog')

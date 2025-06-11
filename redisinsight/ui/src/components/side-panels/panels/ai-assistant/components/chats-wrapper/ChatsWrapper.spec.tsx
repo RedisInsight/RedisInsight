@@ -1,12 +1,12 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
-import userEvent from '@testing-library/user-event'
 import {
   cleanup,
   mockedStore,
   render,
   screen,
   act,
+  fireEvent,
 } from 'uiSrc/utils/test-utils'
 
 import { aiChatSelector, setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
@@ -55,7 +55,7 @@ describe('ChatsWrapper', () => {
   it('should call proper dispatch after click on tab', async () => {
     render(<ChatsWrapper />)
 
-    await userEvent.click(screen.getByText('General'))
+    fireEvent.mouseDown(screen.getByText('General'))
 
     expect(store.getActions()).toEqual([setSelectedTab(AiChatType.Assistance)])
   })
@@ -63,7 +63,7 @@ describe('ChatsWrapper', () => {
   it('should call proper dispatch after click on tab', async () => {
     render(<ChatsWrapper />)
 
-    await userEvent.click(screen.getByText('My Data'))
+    fireEvent.mouseDown(screen.getByText('My Data'))
 
     expect(store.getActions()).toEqual([setSelectedTab(AiChatType.Query)])
   })
@@ -74,7 +74,7 @@ describe('ChatsWrapper', () => {
     })
     render(<ChatsWrapper />)
 
-    await userEvent.click(screen.getByText('General'))
+    fireEvent.mouseDown(screen.getByText('General'))
 
     expect(screen.getByTestId('ai-general-chat')).toBeInTheDocument()
   })
@@ -85,7 +85,7 @@ describe('ChatsWrapper', () => {
     })
     render(<ChatsWrapper />)
 
-    await userEvent.click(screen.getByText('General'))
+    fireEvent.mouseDown(screen.getByText('General'))
 
     expect(screen.getByTestId('ai-document-chat')).toBeInTheDocument()
   })

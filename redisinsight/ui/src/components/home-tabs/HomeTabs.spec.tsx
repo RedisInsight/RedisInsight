@@ -1,8 +1,7 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { cloneDeep } from 'lodash'
-import userEvent from '@testing-library/user-event'
-import { render, screen, cleanup, mockedStore } from 'uiSrc/utils/test-utils'
+import { render, screen, cleanup, mockedStore, fireEvent } from 'uiSrc/utils/test-utils'
 
 import { Pages } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -76,7 +75,7 @@ describe('HomeTabs', () => {
 
     render(<HomeTabs />)
 
-    await userEvent.click(screen.getByText('Redis Data Integration'))
+    fireEvent.mouseDown(screen.getByText('Redis Data Integration'))
 
     expect(pushMock).toHaveBeenCalledWith(Pages.rdi)
   })
@@ -92,7 +91,7 @@ describe('HomeTabs', () => {
 
     render(<HomeTabs />)
 
-    await userEvent.click(screen.getByText('Redis Data Integration'))
+    fireEvent.mouseDown(screen.getByText('Redis Data Integration'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSTANCES_TAB_CHANGED,

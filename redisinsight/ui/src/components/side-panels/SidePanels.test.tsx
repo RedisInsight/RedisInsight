@@ -1,7 +1,6 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
-import userEvent from '@testing-library/user-event'
 import {
   getRecommendations,
   recommendationsSelector,
@@ -267,7 +266,7 @@ describe('SidePanels', () => {
 
     render(<SidePanels />)
 
-    await userEvent.click(screen.getByText(/^Tutorials$/))
+    fireEvent.mouseDown(screen.getByText(/^Tutorials$/))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_PANEL_TAB_CHANGED,

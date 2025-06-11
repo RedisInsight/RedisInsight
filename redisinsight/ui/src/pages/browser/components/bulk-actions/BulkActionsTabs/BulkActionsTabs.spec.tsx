@@ -1,8 +1,7 @@
 import React from 'react'
 import { mock } from 'ts-mockito'
 
-import userEvent from '@testing-library/user-event'
-import { render, screen } from 'uiSrc/utils/test-utils'
+import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { BulkActionsType } from 'uiSrc/constants'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import BulkActionsTabs, { Props } from './BulkActionsTabs'
@@ -44,7 +43,7 @@ describe('BulkActionsTabs', () => {
 
     render(<BulkActionsTabs {...mockedProps} onChangeType={jest.fn()} />)
 
-    await userEvent.click(screen.getByText('Upload Data'))
+    fireEvent.mouseDown(screen.getByText('Upload Data'))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.BULK_ACTIONS_OPENED,

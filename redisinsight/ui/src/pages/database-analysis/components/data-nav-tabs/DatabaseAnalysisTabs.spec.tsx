@@ -1,7 +1,6 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import { instance, mock } from 'ts-mockito'
-import userEvent from '@testing-library/user-event'
 import { MOCK_ANALYSIS_REPORT_DATA } from 'uiSrc/mocks/data/analysis'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/analytics/clusterDetailsHandlers'
 import {
@@ -9,6 +8,7 @@ import {
   screen,
   mockedStore,
   cleanup,
+  fireEvent,
 } from 'uiSrc/utils/test-utils'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { setDatabaseAnalysisViewTab } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -76,12 +76,12 @@ describe('DatabaseAnalysisTabs', () => {
     ).toBeTruthy()
   })
 
-  it('should call setDatabaseAnalysisViewTab', async () => {
+  it('should call setDatabaseAnalysisViewTab', () => {
     render(
       <DatabaseAnalysisTabs {...instance(mockedProps)} reports={mockReports} />,
     )
 
-    await userEvent.click(screen.getByText('Tips'))
+    fireEvent.mouseDown(screen.getByText('Tips'))
 
     const expectedActions = [
       setDatabaseAnalysisViewTab(DatabaseAnalysisViewTab.Recommendations),
@@ -157,7 +157,7 @@ describe('DatabaseAnalysisTabs', () => {
   })
 
   describe('Telemetry', () => {
-    it.skip('should call DATABASE_ANALYSIS_DATA_SUMMARY_CLICKED telemetry event with 0 count', async () => {
+    it.skip('should call DATABASE_ANALYSIS_DATA_SUMMARY_CLICKED telemetry event with 0 count', () => {
       const sendEventTelemetryMock = jest.fn()
       ;(sendEventTelemetry as jest.Mock).mockImplementation(
         () => sendEventTelemetryMock,
@@ -174,7 +174,7 @@ describe('DatabaseAnalysisTabs', () => {
         />,
       )
 
-      await userEvent.click(screen.getByText('Data Summary'))
+      fireEvent.mouseDown(screen.getByText('Data Summary'))
 
       expect(sendEventTelemetry).toBeCalledWith({
         event: TelemetryEvent.DATABASE_ANALYSIS_DATA_SUMMARY_CLICKED,
@@ -186,7 +186,7 @@ describe('DatabaseAnalysisTabs', () => {
       ;(sendEventTelemetry as jest.Mock).mockRestore()
     })
 
-    it('should call DATABASE_ANALYSIS_RECOMMENDATIONS_CLICKED telemetry event with 0 count', async () => {
+    it('should call DATABASE_ANALYSIS_RECOMMENDATIONS_CLICKED telemetry event with 0 count', () => {
       const sendEventTelemetryMock = jest.fn()
       ;(sendEventTelemetry as jest.Mock).mockImplementation(
         () => sendEventTelemetryMock,
@@ -203,7 +203,7 @@ describe('DatabaseAnalysisTabs', () => {
         />,
       )
 
-      await userEvent.click(screen.getByText('Tips'))
+      fireEvent.mouseDown(screen.getByText('Tips'))
 
       expect(sendEventTelemetry).toBeCalledWith({
         event: TelemetryEvent.DATABASE_ANALYSIS_TIPS_CLICKED,
@@ -217,7 +217,7 @@ describe('DatabaseAnalysisTabs', () => {
       ;(sendEventTelemetry as jest.Mock).mockRestore()
     })
 
-    it('should call DATABASE_ANALYSIS_RECOMMENDATIONS_CLICKED telemetry event with 2 count', async () => {
+    it('should call DATABASE_ANALYSIS_RECOMMENDATIONS_CLICKED telemetry event with 2 count', () => {
       const sendEventTelemetryMock = jest.fn()
       ;(sendEventTelemetry as jest.Mock).mockImplementation(
         () => sendEventTelemetryMock,
@@ -234,7 +234,7 @@ describe('DatabaseAnalysisTabs', () => {
         />,
       )
 
-      await userEvent.click(screen.getByText('Tips (2)'))
+      fireEvent.mouseDown(screen.getByText('Tips (2)'))
 
       expect(sendEventTelemetry).toBeCalledWith({
         event: TelemetryEvent.DATABASE_ANALYSIS_TIPS_CLICKED,

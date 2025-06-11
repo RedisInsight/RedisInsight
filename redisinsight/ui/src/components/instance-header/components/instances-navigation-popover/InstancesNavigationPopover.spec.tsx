@@ -1,7 +1,6 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
 import { act } from 'react-dom/test-utils'
-import userEvent from '@testing-library/user-event'
 import {
   cleanup,
   fireEvent,
@@ -109,13 +108,13 @@ describe('InstancesNavigationPopover', () => {
   it('should change tabs on tabs click', async () => {
     render(<InstancesNavigationPopover name="db" />)
 
-    await userEvent.click(screen.getByTestId('nav-instance-popover-btn'))
+    fireEvent.click(screen.getByTestId('nav-instance-popover-btn'))
     expect(screen.getByText(`${InstancesTabs.Databases} (0)`)).toBeInTheDocument()
 
-    await userEvent.click(screen.getByText(`${InstancesTabs.RDI} (2)`))
+    fireEvent.mouseDown(screen.getByText(`${InstancesTabs.RDI} (2)`))
     expect(screen.getByText('Redis Data Integration page')).toBeInTheDocument()
 
-    await userEvent.click(screen.getByText(`${InstancesTabs.Databases} (0)`))
+    fireEvent.mouseDown(screen.getByText(`${InstancesTabs.Databases} (0)`))
     expect(screen.getByText('Redis Databases page')).toBeInTheDocument()
   })
 

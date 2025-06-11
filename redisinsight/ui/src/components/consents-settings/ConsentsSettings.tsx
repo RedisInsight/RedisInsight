@@ -19,9 +19,9 @@ import { InfoIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
 import { Text } from 'uiSrc/components/base/text'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
 import ConsentOption from './ConsentOption'
 
-import { SwitchInput } from '../base/inputs'
 import styles from './styles.module.scss'
 
 interface Values {

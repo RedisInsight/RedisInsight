@@ -181,8 +181,7 @@ const SummaryPerData = ({
           <SwitchInput
             color="subdued"
             className="switch-extrapolate-results"
-            titleOn="Extrapolate results"
-            titleOff="Extrapolate results"
+            title="Extrapolate results"
             checked={isExtrapolated}
             onCheckedChange={(checked) => {
               setIsExtrapolated(checked)

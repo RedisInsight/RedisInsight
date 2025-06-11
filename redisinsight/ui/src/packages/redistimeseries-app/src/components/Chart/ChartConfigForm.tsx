@@ -50,14 +50,12 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
           onClick={(v) => onChange('mode', v)}
         />
         <SwitchInput
-          titleOn="Staircase"
-          titleOff="Staircase"
+          title="Staircase"
           checked={value.staircase}
           onCheckedChange={(checked) => onChange('staircase', checked)}
         />
         <SwitchInput
-          titleOn="Fill"
-          titleOff="Fill"
+          title="Fill"
           checked={value.fill}
           onCheckedChange={(checked) => onChange('fill', checked)}
         />
@@ -96,8 +94,7 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
             <div className="right-y-axis">
               <div className="switch-wrapper">
                 <SwitchInput
-                  titleOn="Use Right Y Axis"
-                  titleOff="Use Right Y Axis"
+                  title="Use Right Y Axis"
                   checked={value.yAxis2}
                   onCheckedChange={(checked) => onChange('yAxis2', checked)}
                 />

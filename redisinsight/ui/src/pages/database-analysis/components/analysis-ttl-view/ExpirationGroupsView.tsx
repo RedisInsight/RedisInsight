@@ -117,8 +117,7 @@ const ExpirationGroupsView = (props: Props) => {
             <SwitchInput
               color="subdued"
               className="switch-extrapolate-results"
-              titleOn="Extrapolate results"
-              titleOff="Extrapolate results"
+              title="Extrapolate results"
               checked={isExtrapolated}
               onCheckedChange={(checked) => {
                 setIsExtrapolated(checked)
@@ -134,8 +133,7 @@ const ExpirationGroupsView = (props: Props) => {
         <SwitchInput
           color="subdued"
           className={styles.switch}
-          titleOn={'Show "No Expiry"'}
-          titleOff={'Show "No Expiry"'}
+          title={'Show "No Expiry"'}
           checked={showNoExpiryGroup}
           onCheckedChange={onSwitchChange}
           data-testid="show-no-expiry-switch"

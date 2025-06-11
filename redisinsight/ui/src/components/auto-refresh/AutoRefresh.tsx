@@ -266,8 +266,7 @@ const AutoRefresh = ({
         }
       >
         <SwitchInput
-          titleOn="Auto Refresh"
-          titleOff="Auto Refresh"
+          title="Auto Refresh"
           checked={enableAutoRefresh}
           onCheckedChange={onChangeEnableAutoRefresh}
           className={styles.switchOption}

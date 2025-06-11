@@ -48,8 +48,7 @@ const WorkbenchSettings = () => {
         <SwitchInput
           checked={cleanup}
           onCheckedChange={onSwitchWbCleanUp}
-          titleOn="Clear the Editor after running commands"
-          titleOff="Clear the Editor after running commands"
+          title="Clear the Editor after running commands"
           data-testid="switch-workbench-cleanup"
         />
       </FormField>

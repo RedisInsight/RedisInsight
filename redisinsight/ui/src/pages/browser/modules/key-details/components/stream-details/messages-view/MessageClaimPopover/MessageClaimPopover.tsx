@@ -212,7 +212,7 @@ const MessageClaimPopover = (props: Props) => {
       panelPaddingSize="m"
       anchorClassName="claimPendingMessage"
       panelClassName={styles.popoverWrapper}
-      closePopover={() => { }}
+      closePopover={() => {}}
       button={consumerOptions.length < 1 ? buttonTooltip : button}
     >
       <EuiForm>
@@ -333,8 +333,7 @@ const MessageClaimPopover = (props: Props) => {
         >
           <FlexItem>
             <SwitchInput
-              titleOn="Optional Parameters"
-              titleOff="Optional Parameters"
+              title="Optional Parameters"
               checked={isOptionalShow}
               onCheckedChange={setIsOptionalShow}
               data-testid="optional-parameters-switcher"

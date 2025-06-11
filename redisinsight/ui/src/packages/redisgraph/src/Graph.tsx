@@ -413,8 +413,7 @@ export default function Graph(props: {
           content="Toggle visibility of automatically fetched relationships"
         >
           <SwitchInput
-            titleOn="All relationships"
-            titleOff="All relationships"
+            title="All relationships"
             checked={showAutomaticEdges}
             onCheckedChange={() => {
               container.toggleShowAutomaticEdges()

@@ -87,8 +87,7 @@ const Monitor = (props: Props) => {
           data-testid="save-log-tooltip"
         >
           <SwitchInput
-            titleOn="Save Log"
-            titleOff="Save Log"
+            title="Save Log"
             checked={saveLogValue}
             onCheckedChange={setSaveLogValue}
             data-testid="save-log-switch"

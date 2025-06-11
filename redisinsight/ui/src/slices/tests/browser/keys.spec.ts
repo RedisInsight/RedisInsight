@@ -1409,8 +1409,8 @@ describe('keys slice', () => {
           name: stringToBuffer('rejson'),
           type: KeyTypes.ReJSON,
           ttl: -1,
-          size: 10,
-          length: JSON_LENGTH_TO_FORCE_RETRIEVE - 1,
+          size: JSON_LENGTH_TO_FORCE_RETRIEVE,
+          length: JSON_LENGTH_TO_FORCE_RETRIEVE + 100, // just to make sure this isn't used instead of size
         }
         const responsePayload = { data, status: 200 }
 
@@ -1433,8 +1433,8 @@ describe('keys slice', () => {
           name: stringToBuffer('rejson'),
           type: KeyTypes.ReJSON,
           ttl: -1,
-          size: 10,
-          length: JSON_LENGTH_TO_FORCE_RETRIEVE + 1,
+          size: JSON_LENGTH_TO_FORCE_RETRIEVE + 1,
+          length: JSON_LENGTH_TO_FORCE_RETRIEVE, // just to make sure this isn't used instead of size
         }
         const responsePayload = { data, status: 200 }
 

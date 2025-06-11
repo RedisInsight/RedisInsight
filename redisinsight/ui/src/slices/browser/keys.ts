@@ -813,7 +813,7 @@ export function fetchKeyInfo(
         dispatch<any>(fetchReJSON(key, '$', data.length, resetData))
         dispatch<any>(setEditorType(EditorType.Default))
         dispatch<any>(
-          setIsWithinThreshold(data.length <= JSON_LENGTH_TO_FORCE_RETRIEVE),
+          setIsWithinThreshold(data.size <= JSON_LENGTH_TO_FORCE_RETRIEVE),
         )
       }
       if (data.type === KeyTypes.Stream) {

@@ -2,18 +2,12 @@ import React from 'react'
 import { useTheme } from '@redis-ui/styles'
 import { MonochromeIconProps } from 'uiSrc/components/base/icons'
 
-type BaseIconProps = MonochromeIconProps & {
+type BaseIconProps = Omit<MonochromeIconProps, 'color'> & {
   icon: React.ComponentType<any>
   color?:
     | keyof ReturnType<typeof useTheme>['semantic']['color']['icon']
     | 'currentColor'
-}
-const sizesMap = {
-  XS: 8,
-  S: 12,
-  M: 16,
-  L: 20,
-  XL: 24,
+    | (string & {})
 }
 
 /**
@@ -31,27 +25,21 @@ function isValidIconColor(
 
 export const Icon = ({
   icon: IconComponent,
-  customSize,
   customColor,
-  title: titleProp,
   color = 'primary600',
-  size = 'L',
   ...rest
 }: BaseIconProps) => {
-  const sizeValue = customSize || sizesMap[size]
   const theme = useTheme()
-  let colorValue = customColor
-  if (!colorValue && isValidIconColor(theme, color)) {
-    colorValue = theme.semantic.color.icon[color]
-  } else if (color === 'currentColor') {
-    colorValue = 'currentColor'
-  }
+  const colorValue = customColor
 
-  const props = {
+  const props: IconProps = {
     customColor: colorValue,
-    width: sizeValue,
-    height: sizeValue,
     ...rest,
+  }
+  if (!colorValue && isValidIconColor(theme, color)) {
+    props.color = theme.semantic.color.icon[color]
+  } else if (color === 'currentColor' && !customColor) {
+    props.customColor = 'currentColor'
   }
 
   return <IconComponent {...props} />

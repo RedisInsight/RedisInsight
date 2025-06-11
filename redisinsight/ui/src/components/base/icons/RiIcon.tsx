@@ -2,8 +2,20 @@ import React from 'react'
 import { Icon, IconProps } from './Icon'
 import * as Icons from './index'
 
+// Create a type that excludes the IconProps type
+export type AllIconsType = Exclude<
+  keyof typeof Icons,
+  | 'IconProps'
+  | 'Icon'
+  | 'IconSizeType'
+  | 'IconColorType'
+  | 'ColorIconProps'
+  | 'MonochromeIconProps'
+  | 'IconType'
+>
+
 export type IconComponentProps = Omit<IconProps, 'icon'> & {
-  type: keyof typeof Icons
+  type: AllIconsType
 }
 
 export const RiIcon = ({ type, ...props }: IconComponentProps) => {

@@ -105,7 +105,7 @@ describe('InstancesNavigationPopover', () => {
     expect(screen.queryAllByText('RdiDB_2')).toHaveLength(0)
   })
 
-  it('should change tabs on tabs click', async () => {
+  it('should change tabs on tabs click', () => {
     render(<InstancesNavigationPopover name="db" />)
 
     fireEvent.click(screen.getByTestId('nav-instance-popover-btn'))

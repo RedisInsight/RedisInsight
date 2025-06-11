@@ -66,7 +66,7 @@ describe('HomeTabs', () => {
     expect(rdiTab).toHaveAttribute('data-state', 'active')
   })
 
-  it('should call proper history push', async () => {
+  it('should call proper history push', () => {
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
     reactRouterDom.useLocation = jest
@@ -80,7 +80,7 @@ describe('HomeTabs', () => {
     expect(pushMock).toHaveBeenCalledWith(Pages.rdi)
   })
 
-  it('should send proper telemetry', async () => {
+  it('should send proper telemetry', () => {
     const sendEventTelemetryMock = jest.fn()
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,

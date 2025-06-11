@@ -248,7 +248,7 @@ describe('SidePanels', () => {
     ;(sendEventTelemetry as jest.Mock).mockRestore()
   })
 
-  it('should call proper telemetry events on change tab', async () => {
+  it('should call proper telemetry events on change tab', () => {
     const sendEventTelemetryMock = jest.fn()
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,

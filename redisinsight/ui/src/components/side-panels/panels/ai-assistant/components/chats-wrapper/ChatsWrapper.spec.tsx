@@ -52,7 +52,7 @@ describe('ChatsWrapper', () => {
     expect(render(<ChatsWrapper />)).toBeTruthy()
   })
 
-  it('should call proper dispatch after click on tab', async () => {
+  it('should call proper dispatch after click on tab', () => {
     render(<ChatsWrapper />)
 
     fireEvent.mouseDown(screen.getByText('General'))
@@ -60,7 +60,7 @@ describe('ChatsWrapper', () => {
     expect(store.getActions()).toEqual([setSelectedTab(AiChatType.Assistance)])
   })
 
-  it('should call proper dispatch after click on tab', async () => {
+  it('should call proper dispatch after click on tab', () => {
     render(<ChatsWrapper />)
 
     fireEvent.mouseDown(screen.getByText('My Data'))
@@ -68,7 +68,7 @@ describe('ChatsWrapper', () => {
     expect(store.getActions()).toEqual([setSelectedTab(AiChatType.Query)])
   })
 
-  it('should render general chat when tab is selected', async () => {
+  it('should render general chat when tab is selected', () => {
     ;(aiChatSelector as jest.Mock).mockReturnValue({
       activeTab: AiChatType.Assistance,
     })
@@ -79,7 +79,7 @@ describe('ChatsWrapper', () => {
     expect(screen.getByTestId('ai-general-chat')).toBeInTheDocument()
   })
 
-  it('should render database chat when tab is selected', async () => {
+  it('should render database chat when tab is selected', () => {
     ;(aiChatSelector as jest.Mock).mockReturnValue({
       activeTab: AiChatType.Query,
     })

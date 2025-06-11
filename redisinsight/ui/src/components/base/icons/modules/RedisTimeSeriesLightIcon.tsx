@@ -3,5 +3,5 @@ import RedisTimeSeriesLight from 'uiSrc/assets/img/modules/RedisTimeSeriesLight.
 import { Icon, IconProps } from 'uiSrc/components/base/icons'
 
 export const RedisTimeSeriesLightIcon = (props: IconProps) => (
-  <Icon icon={RedisTimeSeriesLight} {...props} />
+  <Icon icon={RedisTimeSeriesLight} {...props} isSvg />
 )

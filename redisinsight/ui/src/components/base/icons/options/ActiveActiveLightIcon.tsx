@@ -3,5 +3,5 @@ import ActiveActiveLight from 'uiSrc/assets/img/options/Active-ActiveLight.svg?r
 import { Icon, IconProps } from 'uiSrc/components/base/icons'
 
 export const ActiveActiveLightIcon = (props: IconProps) => (
-  <Icon icon={ActiveActiveLight} {...props} />
+  <Icon icon={ActiveActiveLight} {...props} isSvg />
 )

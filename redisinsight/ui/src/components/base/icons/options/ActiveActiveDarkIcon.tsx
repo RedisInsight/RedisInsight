@@ -3,5 +3,5 @@ import ActiveActiveDark from 'uiSrc/assets/img/options/Active-ActiveDark.svg?rea
 import { Icon, IconProps } from 'uiSrc/components/base/icons'
 
 export const ActiveActiveDarkIcon = (props: IconProps) => (
-  <Icon icon={ActiveActiveDark} {...props} />
+  <Icon icon={ActiveActiveDark} {...props} isSvg />
 )

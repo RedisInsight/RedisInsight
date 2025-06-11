@@ -36,6 +36,7 @@ import {
   SettingsIcon,
 } from 'uiSrc/components/base/icons'
 import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import {
   SideBar,
   SideBarContainer,

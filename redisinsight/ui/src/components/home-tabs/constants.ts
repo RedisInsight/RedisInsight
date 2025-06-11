@@ -1,21 +1,22 @@
-import { FeatureFlags, Pages, PageValues } from 'uiSrc/constants'
+import { FeatureFlags, Pages } from 'uiSrc/constants'
+import { TabInfo } from 'uiSrc/components/base/layout/tabs'
 
-interface HomeTab {
-  id: string
-  title: string
-  path: PageValues
+type HomeTab = TabInfo & {
+  path: string
   featureFlag?: FeatureFlags
 }
 
 const tabs: HomeTab[] = [
   {
-    id: 'databases',
-    title: 'Redis Databases',
+    value: 'databases',
+    label: 'Redis Databases',
+    content: null,
     path: Pages.home,
   },
   {
-    id: 'rdi-instances',
-    title: 'Redis Data Integration',
+    value: 'rdi-instances',
+    label: 'Redis Data Integration',
+    content: null,
     path: Pages.rdi,
     featureFlag: FeatureFlags.rdi,
   },

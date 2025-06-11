@@ -5,8 +5,8 @@ import {
   mockedStore,
   render,
   screen,
-  fireEvent,
   act,
+  fireEvent,
 } from 'uiSrc/utils/test-utils'
 
 import { aiChatSelector, setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
@@ -55,7 +55,7 @@ describe('ChatsWrapper', () => {
   it('should call proper dispatch after click on tab', () => {
     render(<ChatsWrapper />)
 
-    fireEvent.click(screen.getByTestId('ai-general-chat_tab'))
+    fireEvent.mouseDown(screen.getByText('General'))
 
     expect(store.getActions()).toEqual([setSelectedTab(AiChatType.Assistance)])
   })
@@ -63,7 +63,7 @@ describe('ChatsWrapper', () => {
   it('should call proper dispatch after click on tab', () => {
     render(<ChatsWrapper />)
 
-    fireEvent.click(screen.getByTestId('ai-database-chat_tab'))
+    fireEvent.mouseDown(screen.getByText('My Data'))
 
     expect(store.getActions()).toEqual([setSelectedTab(AiChatType.Query)])
   })
@@ -74,7 +74,7 @@ describe('ChatsWrapper', () => {
     })
     render(<ChatsWrapper />)
 
-    fireEvent.click(screen.getByTestId('ai-database-chat_tab'))
+    fireEvent.mouseDown(screen.getByText('General'))
 
     expect(screen.getByTestId('ai-general-chat')).toBeInTheDocument()
   })
@@ -85,7 +85,7 @@ describe('ChatsWrapper', () => {
     })
     render(<ChatsWrapper />)
 
-    fireEvent.click(screen.getByTestId('ai-database-chat_tab'))
+    fireEvent.mouseDown(screen.getByText('General'))
 
     expect(screen.getByTestId('ai-document-chat')).toBeInTheDocument()
   })

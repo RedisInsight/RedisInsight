@@ -212,8 +212,8 @@ describe('SidePanels', () => {
 
     render(<SidePanels />)
     expect(
-      screen.getByTestId('recommendations-unread-count'),
-    ).toHaveTextContent('7')
+      screen.getByText(/^Tips \(7\)$/),
+    ).toBeVisible()
   })
 
   it('should call proper telemetry events on close panel', () => {
@@ -266,7 +266,7 @@ describe('SidePanels', () => {
 
     render(<SidePanels />)
 
-    fireEvent.click(screen.getByTestId('explore-tab'))
+    fireEvent.mouseDown(screen.getByText(/^Tutorials$/))
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.INSIGHTS_PANEL_TAB_CHANGED,

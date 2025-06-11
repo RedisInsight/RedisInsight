@@ -1,11 +1,17 @@
+import { TabInfo } from 'uiSrc/components/base/layout/tabs'
+
 export enum ManualFormTab {
   General = 'general',
   Security = 'security',
   Decompression = 'decompression',
 }
 
-export const MANUAL_FORM_TABS = [
-  { id: ManualFormTab.General, title: 'General' },
-  { id: ManualFormTab.Security, title: 'Security' },
-  { id: ManualFormTab.Decompression, title: 'Decompression & Formatters' },
+export const MANUAL_FORM_TABS: TabInfo[] = [
+  { value: ManualFormTab.General, label: 'General', content: null },
+  { value: ManualFormTab.Security, label: 'Security', content: null },
+  {
+    value: ManualFormTab.Decompression,
+    label: 'Decompression & Formatters',
+    content: null,
+  },
 ]

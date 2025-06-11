@@ -1,8 +1,6 @@
-import React, { useCallback } from 'react'
+import React, { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiTab, EuiTabs } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
-import cx from 'classnames'
 import { Header } from 'uiSrc/components/side-panels/components'
 import styles from 'uiSrc/components/side-panels/styles.module.scss'
 import { InsightsPanelTabs } from 'uiSrc/slices/interfaces/insights'
@@ -13,6 +11,7 @@ import {
   insightsPanelSelector,
 } from 'uiSrc/slices/panels/sidePanels'
 import { OnboardingTour } from 'uiSrc/components'
+import Tabs, { TabInfo } from 'uiSrc/components/base/layout/tabs'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import {
@@ -52,46 +51,35 @@ const InsightsPanel = (props: Props) => {
     })
   }
 
-  const Tabs = useCallback(
-    () => (
-      <EuiTabs className={cx('tabs-active-borders', styles.tabs)}>
-        <EuiTab
-          isSelected={tabSelected === InsightsPanelTabs.Explore}
-          onClick={() => handleChangeTab(InsightsPanelTabs.Explore)}
-          className={styles.tab}
-          data-testid="explore-tab"
-        >
+  const tabs: TabInfo[] = useMemo(
+    () => [
+      {
+        label: (
           <OnboardingTour
             options={ONBOARDING_FEATURES.EXPLORE_REDIS}
             anchorPosition={isFullScreen ? 'rightUp' : 'leftUp'}
             anchorWrapperClassName={styles.onboardingAnchorWrapper}
             fullSize
           >
-            <span className={styles.tabName}>Tutorials</span>
+            <span>Tutorials</span>
           </OnboardingTour>
-        </EuiTab>
-        <EuiTab
-          isSelected={tabSelected === InsightsPanelTabs.Recommendations}
-          onClick={() => handleChangeTab(InsightsPanelTabs.Recommendations)}
-          className={styles.tab}
-          data-testid="recommendations-tab"
-        >
-          <>
-            <span className={styles.tabName}>Tips</span>
-            {!!totalUnread && instanceId && (
-              <div
-                className={styles.tabTotalUnread}
-                data-testid="recommendations-unread-count"
-              >
-                {totalUnread}
-              </div>
-            )}
-          </>
-        </EuiTab>
-      </EuiTabs>
-    ),
+        ),
+        value: InsightsPanelTabs.Explore,
+        content: null,
+      },
+      {
+        label: <span>Tips {totalUnread ? ` (${totalUnread})` : ''}</span>,
+        value: InsightsPanelTabs.Recommendations,
+        content: null,
+      },
+    ],
     [tabSelected, totalUnread, isFullScreen],
   )
+
+  const handleTabChange = (name: string) => {
+    if (tabSelected === name) return
+    handleChangeTab(name as InsightsPanelTabs)
+  }
 
   return (
     <>
@@ -106,7 +94,13 @@ const InsightsPanel = (props: Props) => {
         </div>
       </Header>
       <div className={styles.body}>
-        <Tabs />
+        <Tabs
+          tabs={tabs}
+          value={tabSelected}
+          onChange={handleTabChange}
+          className={styles.tabs}
+          data-testid="insights-tabs"
+        />
         {tabSelected === InsightsPanelTabs.Explore && <EnablementAreaWrapper />}
         {tabSelected === InsightsPanelTabs.Recommendations && (
           <LiveTimeRecommendations />

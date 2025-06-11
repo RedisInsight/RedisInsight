@@ -64,7 +64,6 @@ export const Icon = ({
 
   const svgProps = {
     color: colorValue,
-    fill: colorValue,
     width: sizeValue,
     height: sizeValue,
     ...rest,

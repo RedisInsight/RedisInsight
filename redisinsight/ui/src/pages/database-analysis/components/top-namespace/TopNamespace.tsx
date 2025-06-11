@@ -1,4 +1,4 @@
-import { EuiLink, EuiSwitch } from '@elastic/eui'
+import { EuiLink } from '@elastic/eui'
 import { isNull } from 'lodash'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
@@ -16,6 +16,7 @@ import { changeKeyViewType } from 'uiSrc/slices/browser/keys'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { Nullable } from 'uiSrc/utils'
 import { TextBtn } from 'uiSrc/pages/database-analysis/components/base/TextBtn'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import Table from './Table'
@@ -117,18 +118,14 @@ const TopNamespace = (props: Props) => {
           by Number of Keys
         </TextBtn>
         {extrapolation !== DEFAULT_EXTRAPOLATION && (
-          <EuiSwitch
-            compressed
+          <SwitchInput
             color="subdued"
             className="switch-extrapolate-results"
-            label="Extrapolate results"
+            title="Extrapolate results"
             checked={isExtrapolated}
-            onChange={(e) => {
-              setIsExtrapolated(e.target.checked)
-              onSwitchExtrapolation?.(
-                e.target.checked,
-                SectionName.TOP_NAMESPACES,
-              )
+            onCheckedChange={(checked) => {
+              setIsExtrapolated(checked)
+              onSwitchExtrapolation?.(checked, SectionName.TOP_NAMESPACES)
             }}
             data-testid="extrapolate-results"
           />

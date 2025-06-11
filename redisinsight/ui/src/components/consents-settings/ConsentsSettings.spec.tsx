@@ -1,9 +1,9 @@
 import React from 'react'
 import { cloneDeep } from 'lodash'
 import {
+  userEvent,
   render,
   screen,
-  fireEvent,
   mockedStore,
   cleanup,
 } from 'uiSrc/utils/test-utils'
@@ -85,11 +85,10 @@ describe('ConsentsSettings', () => {
     expect(screen.getByTestId(BTN_SUBMIT)).toBeDisabled()
   })
 
-  it('should be able to submit with required options with true value', () => {
+  it('should be able to submit with required options with true value', async () => {
     render(<ConsentsSettings />)
-    screen.getAllByTestId(/switch-option/).forEach((el) => {
-      fireEvent.click(el)
-    })
+    const elements = screen.getAllByTestId(/switch-option/)
+    await Promise.all(elements.map((el) => userEvent.click(el)))
     expect(screen.getByTestId(BTN_SUBMIT)).not.toBeDisabled()
   })
 })

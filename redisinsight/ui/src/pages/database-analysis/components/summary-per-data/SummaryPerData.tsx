@@ -1,4 +1,4 @@
-import { EuiIcon, EuiSwitch } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 
@@ -21,6 +21,7 @@ import {
 } from 'uiSrc/utils'
 import { getPercentage, numberWithSpaces } from 'uiSrc/utils/numbers'
 
+import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
 import {
   DatabaseAnalysis,
@@ -178,18 +179,14 @@ const SummaryPerData = ({
           SUMMARY PER DATA TYPE
         </Title>
         {extrapolation !== DEFAULT_EXTRAPOLATION && (
-          <EuiSwitch
-            compressed
+          <SwitchInput
             color="subdued"
             className="switch-extrapolate-results"
-            label="Extrapolate results"
+            title="Extrapolate results"
             checked={isExtrapolated}
-            onChange={(e) => {
-              setIsExtrapolated(e.target.checked)
-              onSwitchExtrapolation?.(
-                e.target.checked,
-                SectionName.SUMMARY_PER_DATA,
-              )
+            onCheckedChange={(checked) => {
+              setIsExtrapolated(checked)
+              onSwitchExtrapolation?.(checked, SectionName.SUMMARY_PER_DATA)
             }}
             data-testid="extrapolate-results"
           />

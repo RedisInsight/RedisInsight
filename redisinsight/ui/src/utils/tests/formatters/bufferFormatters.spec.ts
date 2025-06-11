@@ -1,4 +1,3 @@
-import { input } from '@testing-library/user-event/dist/types/event'
 import { RedisResponseBufferType } from 'uiSrc/slices/interfaces'
 import JavaDate from 'uiSrc/utils/formatters/java-date'
 import {

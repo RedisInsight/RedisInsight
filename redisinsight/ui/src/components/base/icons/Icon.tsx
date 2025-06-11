@@ -8,6 +8,15 @@ type BaseIconProps = Omit<MonochromeIconProps, 'color'> & {
     | keyof ReturnType<typeof useTheme>['semantic']['color']['icon']
     | 'currentColor'
     | (string & {})
+  isSvg?: boolean
+}
+
+const sizesMap = {
+  XS: 8,
+  S: 12,
+  M: 16,
+  L: 20,
+  XL: 24,
 }
 
 /**
@@ -25,22 +34,32 @@ function isValidIconColor(
 
 export const Icon = ({
   icon: IconComponent,
+  isSvg = false,
+  customSize,
   customColor,
   color = 'primary600',
+  size = 'L',
   ...rest
 }: BaseIconProps) => {
+  const sizeValue = customSize || sizesMap[size]
   const theme = useTheme()
-  const colorValue = customColor
+  let colorValue = customColor
+  if (!colorValue && isValidIconColor(theme, color)) {
+    colorValue = theme.semantic.color.icon[color]
+  } else if (color === 'currentColor') {
+    colorValue = 'currentColor'
+  }
 
-  const props: IconProps = {
-    customColor: colorValue,
+  const svgProps = {
+    color: colorValue,
+    width: sizeValue,
+    height: sizeValue,
     ...rest,
   }
-  if (!colorValue && isValidIconColor(theme, color)) {
-    props.color = theme.semantic.color.icon[color]
-  } else if (color === 'currentColor' && !customColor) {
-    props.customColor = 'currentColor'
-  }
+
+  const props = isSvg
+    ? svgProps
+    : { color, customColor, size, customSize, ...rest }
 
   return <IconComponent {...props} />
 }

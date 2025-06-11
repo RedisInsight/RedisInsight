@@ -3,5 +3,5 @@ import RedisAILight from 'uiSrc/assets/img/modules/RedisAILight.svg?react'
 import { Icon, IconProps } from 'uiSrc/components/base/icons'
 
 export const RedisAILightIcon = (props: IconProps) => (
-  <Icon icon={RedisAILight} {...props} />
+  <Icon icon={RedisAILight} {...props} isSvg />
 )

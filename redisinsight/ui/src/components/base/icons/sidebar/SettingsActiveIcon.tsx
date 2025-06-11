@@ -3,5 +3,5 @@ import SettingsActiveSvg from 'uiSrc/assets/img/sidebar/settings_active.svg?reac
 import { Icon, IconProps } from 'uiSrc/components/base/icons'
 
 export const SettingsActiveIcon = (props: IconProps) => (
-  <Icon icon={SettingsActiveSvg} {...props} />
+  <Icon icon={SettingsActiveSvg} {...props} isSvg />
 )

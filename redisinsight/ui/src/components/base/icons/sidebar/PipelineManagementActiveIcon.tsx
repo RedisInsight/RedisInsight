@@ -3,5 +3,5 @@ import PipelineManagementActiveSvg from 'uiSrc/assets/img/sidebar/pipeline_activ
 import { Icon, IconProps } from 'uiSrc/components/base/icons'
 
 export const PipelineManagementActiveIcon = (props: IconProps) => (
-  <Icon icon={PipelineManagementActiveSvg} {...props} />
+  <Icon icon={PipelineManagementActiveSvg} {...props} isSvg />
 )

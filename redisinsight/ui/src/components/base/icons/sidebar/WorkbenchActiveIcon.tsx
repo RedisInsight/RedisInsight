@@ -3,5 +3,5 @@ import WorkbenchActiveSvg from 'uiSrc/assets/img/sidebar/workbench_active.svg?re
 import { Icon, IconProps } from 'uiSrc/components/base/icons'
 
 export const WorkbenchActiveIcon = (props: IconProps) => (
-  <Icon icon={WorkbenchActiveSvg} {...props} />
+  <Icon icon={WorkbenchActiveSvg} {...props} isSvg />
 )

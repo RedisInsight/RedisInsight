@@ -3,13 +3,13 @@ import { useSelector } from 'react-redux'
 import { mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
 
+import userEvent from '@testing-library/user-event'
 import {
   cleanup,
   mockedStore,
   render,
   screen,
   fireEvent,
-  act,
 } from 'uiSrc/utils/test-utils'
 import { RootState } from 'uiSrc/slices/store'
 import { BulkActionsType, KeyTypes } from 'uiSrc/constants'
@@ -128,9 +128,7 @@ describe('BulkActions', () => {
   it('should call proper event after switch tab', async () => {
     render(<BulkActions {...mockedProps} />)
 
-    act(() => {
-      fireEvent.click(screen.getByTestId('bulk-action-tab-upload'))
-    })
+    await userEvent.click(screen.getByText('Upload Data'))
 
     const expectedActions = [setBulkActionType(BulkActionsType.Upload)]
     expect(store.getActions()).toEqual(expectedActions)

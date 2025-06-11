@@ -41,6 +41,7 @@ const HomeTabs = () => {
       tabs={filteredTabs}
       value={activeTab.value}
       onChange={onSelectedTabChanged}
+      data-testid="home-tabs"
     />
   )
 }

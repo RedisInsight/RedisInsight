@@ -1,6 +1,5 @@
 import React, { ButtonHTMLAttributes, ReactElement } from 'react'
 // todo replace with redis-ui icon
-import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import {
@@ -40,12 +39,6 @@ const Item = ({
         {...iconProps}
         type={iconType}
         className={cx('euiListGroupItem__icon', iconProps?.className)}
-        style={{
-          ...iconProps?.style,
-          marginRight: 'var(--size-m)',
-          flexGrow: 0,
-          flexShrink: 0,
-        }}
       />
     )
 

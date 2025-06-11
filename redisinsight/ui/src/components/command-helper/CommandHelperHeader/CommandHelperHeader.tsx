@@ -46,7 +46,7 @@ const CommandHelperHeader = () => {
     <div className={styles.container} id="command-helper-header">
       <Row justify="between" align="center" style={{ height: '100%' }}>
         <FlexItem className={styles.title}>
-          <RiIcon type="DocumentationIcon" size="m" />
+          <RiIcon type="DocumentationIcon" size="L" />
           <OnboardingTour
             options={ONBOARDING_FEATURES.BROWSER_COMMAND_HELPER}
             anchorPosition="upLeft"

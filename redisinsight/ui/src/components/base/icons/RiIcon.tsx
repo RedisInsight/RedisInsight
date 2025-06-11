@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { SVGProps } from 'react'
 import { Icon, IconProps } from './Icon'
 import * as Icons from './index'
 
@@ -14,7 +14,8 @@ export type AllIconsType = Exclude<
   | 'IconType'
 >
 
-export type IconComponentProps = Omit<IconProps, 'icon' | 'size'> & {
+export type IconComponentProps = Omit<IconProps, 'icon' | 'size'> & 
+  Omit<SVGProps<SVGSVGElement>, 'color' | 'size'> & {
   type: AllIconsType
   size?: IconProps['size'] | 'm' | 's' | 'xs'
 }

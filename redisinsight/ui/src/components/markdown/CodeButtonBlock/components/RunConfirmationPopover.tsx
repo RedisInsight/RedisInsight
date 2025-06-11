@@ -1,4 +1,3 @@
-import { EuiTitle } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
@@ -12,6 +11,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from '../styles.module.scss'
@@ -49,9 +49,7 @@ const RunConfirmationPopover = ({ onApply }: Props) => {
 
   return (
     <>
-      <EuiTitle size="xxs">
-        <span>Run commands</span>
-      </EuiTitle>
+      <Title size="XS">Run commands</Title>
       <Spacer size="s" />
       <Text size="s">
         This tutorial will change data in your database, are you sure you want

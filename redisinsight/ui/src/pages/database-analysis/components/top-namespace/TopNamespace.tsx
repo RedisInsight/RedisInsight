@@ -1,4 +1,4 @@
-import { EuiLink, EuiTitle } from '@elastic/eui'
+import { EuiLink } from '@elastic/eui'
 import { isNull } from 'lodash'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
@@ -17,6 +17,7 @@ import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { Nullable } from 'uiSrc/utils'
 import { TextBtn } from 'uiSrc/pages/database-analysis/components/base/TextBtn'
 import { SwitchInput } from 'uiSrc/components/base/inputs'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import Table from './Table'
 import styles from './styles.module.scss'
@@ -68,15 +69,13 @@ const TopNamespace = (props: Props) => {
         data-testid="top-namespaces-empty"
       >
         <div className="section-title-wrapper">
-          <EuiTitle className="section-title">
-            <h4>TOP NAMESPACES</h4>
-          </EuiTitle>
+          <Title size="M" className="section-title">
+            TOP NAMESPACES
+          </Title>
         </div>
         <div className="section-content" data-testid="top-namespaces-message">
           <div className={styles.noNamespaceMsg}>
-            <EuiTitle size="xs">
-              <span>No namespaces to display</span>
-            </EuiTitle>
+            <Title size="XS">No namespaces to display</Title>
             <p>
               {'Configure the delimiter in '}
               <EuiLink
@@ -97,9 +96,9 @@ const TopNamespace = (props: Props) => {
   return (
     <div className={cx('section', styles.wrapper)} data-testid="top-namespaces">
       <div className="section-title-wrapper">
-        <EuiTitle className="section-title">
-          <h4>TOP NAMESPACES</h4>
-        </EuiTitle>
+        <Title size="M" className="section-title">
+          TOP NAMESPACES
+        </Title>
         <TextBtn
           $active={tableView === TableView.MEMORY}
           size="small"

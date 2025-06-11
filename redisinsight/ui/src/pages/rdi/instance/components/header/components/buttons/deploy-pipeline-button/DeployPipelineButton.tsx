@@ -1,7 +1,6 @@
 import {
   EuiIcon,
   EuiPopover,
-  EuiTitle,
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -26,6 +25,7 @@ import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { RiRocketIcon } from 'uiSrc/components/base/icons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from './styles.module.scss'
 
@@ -130,9 +130,7 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
           </PrimaryButton>
         }
       >
-        <EuiTitle size="xxs">
-          <span>Are you sure you want to deploy the pipeline?</span>
-        </EuiTitle>
+        <Title size="XS">Are you sure you want to deploy the pipeline?</Title>
         <Spacer size="s" />
         <Text size="s">
           When deployed, this local configuration will overwrite any existing

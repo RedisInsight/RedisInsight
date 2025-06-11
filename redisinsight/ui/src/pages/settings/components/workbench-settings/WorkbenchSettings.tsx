@@ -1,4 +1,4 @@
-import { EuiLink, EuiTitle } from '@elastic/eui'
+import { EuiLink } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,6 +15,7 @@ import { validateNumber } from 'uiSrc/utils'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { SwitchInput } from 'uiSrc/components/base/inputs'
+import { Title } from 'uiSrc/components/base/text/Title'
 
 const WorkbenchSettings = () => {
   const { cleanup } = useSelector(userSettingsWBSelector)
@@ -40,9 +41,7 @@ const WorkbenchSettings = () => {
 
   return (
     <>
-      <EuiTitle size="xs">
-        <h4>Editor Cleanup</h4>
-      </EuiTitle>
+      <Title size="M">Editor Cleanup</Title>
       <Spacer size="m" />
       <FormField>
         <SwitchInput

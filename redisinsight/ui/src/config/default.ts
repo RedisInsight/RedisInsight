@@ -84,6 +84,10 @@ export const defaultConfig = {
       'RI_DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL',
       1,
     ),
+    rejsonMonacoEditorMaxThreshold: intEnv(
+      'RI_REJSON_MONACO_EDITOR_MAX_THRESHOLD',
+      10_000,
+    ),
   },
   features: {
     envDependent: {

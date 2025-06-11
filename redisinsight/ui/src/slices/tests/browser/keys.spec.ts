@@ -1,6 +1,7 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { configureStore } from '@reduxjs/toolkit'
+import { getConfig } from 'uiSrc/config'
 import {
   BrowserColumns,
   KeyTypes,
@@ -32,7 +33,6 @@ import {
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import { rootReducer } from 'uiSrc/slices/store'
 import {
-  JSON_LENGTH_TO_FORCE_RETRIEVE,
   setEditorType,
   setIsWithinThreshold,
 } from 'uiSrc/slices/browser/rejson'
@@ -110,6 +110,9 @@ import reducer, {
   updateSelectedKeyRefreshTime,
   refreshKey,
 } from '../../browser/keys'
+
+const riConfig = getConfig()
+const REJSON_THRESHOLD = riConfig.browser.rejsonMonacoEditorMaxThreshold
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -1409,8 +1412,8 @@ describe('keys slice', () => {
           name: stringToBuffer('rejson'),
           type: KeyTypes.ReJSON,
           ttl: -1,
-          size: JSON_LENGTH_TO_FORCE_RETRIEVE,
-          length: JSON_LENGTH_TO_FORCE_RETRIEVE + 100, // just to make sure this isn't used instead of size
+          size: REJSON_THRESHOLD,
+          length: REJSON_THRESHOLD + 100, // just to make sure this isn't used instead of size
         }
         const responsePayload = { data, status: 200 }
 
@@ -1433,8 +1436,8 @@ describe('keys slice', () => {
           name: stringToBuffer('rejson'),
           type: KeyTypes.ReJSON,
           ttl: -1,
-          size: JSON_LENGTH_TO_FORCE_RETRIEVE + 1,
-          length: JSON_LENGTH_TO_FORCE_RETRIEVE, // just to make sure this isn't used instead of size
+          size: REJSON_THRESHOLD + 1,
+          length: REJSON_THRESHOLD, // just to make sure this isn't used instead of size
         }
         const responsePayload = { data, status: 200 }
 

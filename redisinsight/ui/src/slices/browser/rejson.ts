@@ -48,6 +48,7 @@ export const initialState: InitialStateRejson = {
     type: '',
   },
   editorType: EditorType.Default,
+  isWithinThreshold: false,
 }
 
 // A slice for recipes
@@ -114,6 +115,9 @@ const rejsonSlice = createSlice({
     setEditorType: (state, { payload }: PayloadAction<EditorType>) => {
       state.editorType = payload
     },
+    setIsWithinThreshold: (state, { payload }: PayloadAction<boolean>) => {
+      state.isWithinThreshold = payload
+    },
   },
 })
 
@@ -132,6 +136,7 @@ export const {
   removeRejsonKeySuccess,
   removeRejsonKeyFailure,
   setEditorType,
+  setIsWithinThreshold,
 } = rejsonSlice.actions
 
 // A selector

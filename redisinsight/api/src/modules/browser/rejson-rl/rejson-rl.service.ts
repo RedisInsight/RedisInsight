@@ -9,7 +9,7 @@ import * as JSONBigInt from 'json-bigint';
 import { AdditionalRedisModuleName, RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { catchAclError } from 'src/utils';
-import config from 'src/utils/config';
+import config, { Config } from 'src/utils/config';
 import { ClientMetadata } from 'src/common/models';
 import {
   CreateRejsonRlWithExpireDto,
@@ -34,6 +34,7 @@ import {
 import { RedisClient } from 'src/modules/redis/client';
 import { DatabaseService } from 'src/modules/database/database.service';
 
+const MODULES_CONFIG = config.get('modules') as Config['modules'];
 const JSONbig = JSONBigInt();
 
 @Injectable()
@@ -141,6 +142,45 @@ export class RejsonRlService {
     );
 
     return path[0] === '$' ? type[0] : type;
+  }
+
+  private async isUnsafeBigJsonLength(
+    client: RedisClient,
+    keyName: RedisString,
+    path: string,
+  ) {
+    const type = await this.getJsonDataType(client, keyName, path);
+
+    let length: number | null;
+
+    switch (type) {
+      case 'object':
+        length = await client.sendCommand(
+          [BrowserToolRejsonRlCommands.JsonObjLen, keyName, path],
+          { replyEncoding: 'utf8' },
+        ) as number;
+
+        break;
+      case 'array':
+        length = await client.sendCommand(
+          [BrowserToolRejsonRlCommands.JsonArrLen, keyName, path],
+          { replyEncoding: 'utf8' },
+        ) as number;
+
+        break;
+      default:
+        // for the rest types we can safely continue processing
+        // Even for big strings since it should be handled by "sizeThreshold" before
+        return false;
+    }
+
+    if (length === null) {
+      throw new BadRequestException(
+        `There is no such path: "${path}" in key: "${keyName}"`,
+      );
+    }
+
+    return MODULES_CONFIG.json.lengthThreshold > 0 && length > MODULES_CONFIG.json.lengthThreshold;
   }
 
   private async getDetails(
@@ -325,7 +365,12 @@ export class RejsonRlService {
 
       const jsonSize = await this.estimateSize(client, keyName, jsonPath);
 
-      if (jsonSize > config.get('modules')['json']['sizeThreshold']) {
+      if (jsonSize > MODULES_CONFIG.json.sizeThreshold) {
+        // Additional check for cardinality
+        if (await this.isUnsafeBigJsonLength(client, keyName, jsonPath)) {
+          throw new BadRequestException(ERROR_MESSAGES.UNSAFE_BIG_JSON_LENGTH);
+        }
+
         const type = await this.getJsonDataType(client, keyName, jsonPath);
         result.downloaded = false;
         result.type = type;

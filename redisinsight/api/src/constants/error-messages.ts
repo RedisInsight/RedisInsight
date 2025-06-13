@@ -159,6 +159,7 @@ export default {
     'Encountered a timeout error while attempting to retrieve data',
   RDI_VALIDATION_ERROR: 'Validation error',
   INVALID_RDI_INSTANCE_ID: 'Invalid rdi instance id.',
+  UNSAFE_BIG_JSON_LENGTH: 'This JSON is too large. Try opening it with Redis Insight Desktop.',
 
   // database settings
   DATABASE_SETTINGS_NOT_FOUND: 'Could not find settings for this database',

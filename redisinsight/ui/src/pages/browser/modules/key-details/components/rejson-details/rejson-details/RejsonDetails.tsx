@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { EuiButtonIcon } from '@elastic/eui'
 import cx from 'classnames'
 import {
@@ -9,16 +9,12 @@ import {
   setReJSONDataAction,
 } from 'uiSrc/slices/browser/rejson'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
-import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { FeatureFlags } from 'uiSrc/constants'
 
 import { getBrackets, isRealArray, isRealObject, wrapPath } from '../utils'
 import { BaseProps, ObjectTypes } from '../interfaces'
 import RejsonDynamicTypes from '../rejson-dynamic-types'
 import { AddItem } from '../components'
-import ChangeEditorTypeButton, {
-  ChangeEditorTypeButtonMode,
-} from '../../change-editor-type-button'
+import ChangeEditorTypeButton from '../../change-editor-type-button'
 
 import styles from '../styles.module.scss'
 
@@ -35,10 +31,6 @@ const RejsonDetails = (props: BaseProps) => {
   } = props
 
   const [addRootKVPair, setAddRootKVPair] = useState<boolean>(false)
-
-  const { [FeatureFlags.envDependent]: envDependentFeature } = useSelector(
-    appFeatureFlagsFeaturesSelector,
-  )
 
   const dispatch = useDispatch()
 
@@ -104,13 +96,7 @@ const RejsonDetails = (props: BaseProps) => {
                 'start',
               )}
             </span>
-            <ChangeEditorTypeButton
-              mode={
-                envDependentFeature?.flag
-                  ? ChangeEditorTypeButtonMode.editable
-                  : ChangeEditorTypeButtonMode.readOnly
-              }
-            />
+            <ChangeEditorTypeButton />
           </div>
         )}
         <RejsonDynamicTypes

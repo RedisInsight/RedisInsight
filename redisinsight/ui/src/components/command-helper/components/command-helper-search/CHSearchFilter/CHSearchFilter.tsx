@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
+import { EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import { GROUP_TYPES_DISPLAY } from 'uiSrc/constants'
@@ -9,6 +9,7 @@ import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { Text } from 'uiSrc/components/base/text'
 
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -71,8 +72,8 @@ const CHSearchFilter = ({ submitFilter, isLoading }: Props) => {
             onClick={() => !isLoading && setIsSelectOpen(!isSelectOpen)}
             role="presentation"
           >
-            <EuiIcon
-              type="controlsVertical"
+            <RiIcon
+              type="FilterIcon"
               data-testid="filter-option--group-type-default"
               className={cx(styles.controlsIcon, styles.allTypesIcon)}
             />

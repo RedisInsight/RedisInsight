@@ -1,9 +1,9 @@
 import React, { Ref, useEffect, useRef } from 'react'
 import cx from 'classnames'
-import { EuiIcon } from '@elastic/eui'
 
 import { ColorText } from 'uiSrc/components/base/text'
 import { scrollIntoView } from 'uiSrc/utils'
+import { AllIconsType, RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 type Colors =
@@ -18,7 +18,7 @@ export interface Props {
   children: React.ReactElement | string
   color?: Colors
   scrollViewOnAppear?: boolean
-  icon?: string
+  icon?: AllIconsType
   testID?: string
 }
 
@@ -45,7 +45,7 @@ const FieldMessage = ({
   return (
     <div ref={divRef} className={cx(styles.container)}>
       {icon && (
-        <EuiIcon
+        <RiIcon
           className={cx(styles.icon)}
           type={icon}
           color={color || 'danger'}

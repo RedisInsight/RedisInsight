@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import { EuiLoadingSpinner } from '@elastic/eui'
 import { isArray, isUndefined, toNumber } from 'lodash'
 
@@ -11,23 +11,8 @@ import {
 } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
-import {
-  InputDarkIcon,
-  InputLightIcon,
-  KeyDarkIcon,
-  KeyLightIcon,
-  MeasureDarkIcon,
-  MeasureLightIcon,
-  MemoryDarkIcon,
-  MemoryLightIcon,
-  OutputDarkIcon,
-  OutputLightIcon,
-  TimeDarkIcon,
-  TimeLightIcon,
-  UserDarkIcon,
-  UserLightIcon,
-} from 'uiSrc/components/database-overview/components/icons'
 
+import { AllIconsType } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -62,17 +47,20 @@ export interface IMetric {
   title: string
   tooltip?: {
     title?: string
-    icon?: Nullable<string> | FunctionComponent
+    icon?: Nullable<AllIconsType>
     content: ReactNode | string
   }
   loading?: boolean
   groupId?: string
-  icon?: Nullable<string> | FunctionComponent
+  icon?: Nullable<AllIconsType>
   className?: string
   children?: Array<IMetric>
 }
 
-function getCpuUsage(cpuUsagePercentage: number | null, theme: string) {
+function getCpuUsage(
+  cpuUsagePercentage: number | null,
+  theme: string,
+): IMetric {
   return {
     id: 'overview-cpu',
     title: 'CPU',
@@ -81,7 +69,7 @@ function getCpuUsage(cpuUsagePercentage: number | null, theme: string) {
     unavailableText: 'CPU is not available',
     tooltip: {
       title: 'CPU',
-      icon: theme === Theme.Dark ? TimeDarkIcon : TimeLightIcon,
+      icon: theme === Theme.Dark ? 'TimeDarkIcon' : 'TimeLightIcon',
       content:
         cpuUsagePercentage === null ? (
           'Calculating in progress'
@@ -96,8 +84,8 @@ function getCpuUsage(cpuUsagePercentage: number | null, theme: string) {
     icon:
       cpuUsagePercentage !== null
         ? theme === Theme.Dark
-          ? TimeDarkIcon
-          : TimeLightIcon
+          ? 'TimeDarkIcon'
+          : 'TimeLightIcon'
         : null,
     content:
       cpuUsagePercentage === null ? (
@@ -122,13 +110,13 @@ function getOpsPerSecondItem(
   // Ops per second with tooltip
   const opsPerSecItem: any = {
     id: 'overview-commands-sec',
-    icon: theme === Theme.Dark ? MeasureDarkIcon : MeasureLightIcon,
+    icon: theme === Theme.Dark ? 'MeasureDarkIcon' : 'MeasureLightIcon',
     content: opsPerSecond,
     value: opsPerSecond,
     unavailableText: 'Commands/s are not available',
     title: 'Commands/s',
     tooltip: {
-      icon: theme === Theme.Dark ? MeasureDarkIcon : MeasureLightIcon,
+      icon: theme === Theme.Dark ? 'MeasureDarkIcon' : 'MeasureLightIcon',
       content: opsPerSecond,
     },
     className: styles.opsPerSecItem,
@@ -156,7 +144,7 @@ function getOpsPerSecondItem(
     id: 'network-input',
     groupId: opsPerSecItem.id,
     title: 'Network Input',
-    icon: theme === Theme.Dark ? InputDarkIcon : InputLightIcon,
+    icon: theme === Theme.Dark ? 'InputDarkIcon' : 'InputLightIcon',
     value: networkIn,
     content: (
       <>
@@ -167,7 +155,7 @@ function getOpsPerSecondItem(
     unavailableText: 'Network Input is not available',
     tooltip: {
       title: 'Network Input',
-      icon: theme === Theme.Dark ? InputDarkIcon : InputLightIcon,
+      icon: theme === Theme.Dark ? 'InputDarkIcon' : 'InputLightIcon',
       content: (
         <>
           <b>{networkIn}</b>
@@ -181,7 +169,7 @@ function getOpsPerSecondItem(
     id: 'network-output-tip',
     groupId: opsPerSecItem.id,
     title: 'Network Output',
-    icon: theme === Theme.Dark ? OutputDarkIcon : OutputLightIcon,
+    icon: theme === Theme.Dark ? 'OutputDarkIcon' : 'OutputLightIcon',
     value: networkOut,
     content: (
       <>
@@ -192,7 +180,7 @@ function getOpsPerSecondItem(
     unavailableText: 'Network Output is not available',
     tooltip: {
       title: 'Network Output',
-      icon: theme === Theme.Dark ? OutputDarkIcon : OutputLightIcon,
+      icon: theme === Theme.Dark ? 'OutputDarkIcon' : 'OutputLightIcon',
       content: (
         <>
           <b>{networkOut}</b>
@@ -207,7 +195,7 @@ function getOpsPerSecondItem(
       {
         id: 'commands-per-sec-tip',
         title: 'Commands/s',
-        icon: theme === Theme.Dark ? MeasureDarkIcon : MeasureLightIcon,
+        icon: theme === Theme.Dark ? 'MeasureDarkIcon' : 'MeasureLightIcon',
         value: opsPerSecond,
         content: opsPerSecond,
         unavailableText: 'Commands/s are not available',
@@ -225,7 +213,7 @@ function getUsedMemoryItem(
   planMemoryLimit: number,
   usedMemoryPercent: number,
   memoryLimitMeasurementUnit = 'MB',
-) {
+): IMetric {
   const memoryUsed = formatBytes(usedMemory, 0)
   const planMemory = planMemoryLimit
     ? formatBytes(toBytes(planMemoryLimit, memoryLimitMeasurementUnit) || 0, 1)
@@ -250,7 +238,7 @@ function getUsedMemoryItem(
     title: 'Total Memory',
     tooltip: {
       title: 'Total Memory',
-      icon: theme === Theme.Dark ? MemoryDarkIcon : MemoryLightIcon,
+      icon: theme === Theme.Dark ? 'MemoryDarkIcon' : 'MemoryLightIcon',
       content: isArray(formattedUsedMemoryTooltip) ? (
         <>
           <b>{formattedUsedMemoryTooltip[0]}</b>
@@ -262,7 +250,7 @@ function getUsedMemoryItem(
         `${formattedUsedMemoryTooltip}${memoryUsedTooltip}`
       ),
     },
-    icon: theme === Theme.Dark ? MemoryDarkIcon : MemoryLightIcon,
+    icon: theme === Theme.Dark ? 'MemoryDarkIcon' : 'MemoryLightIcon',
     content: memoryContent,
   }
 }
@@ -281,9 +269,9 @@ function getTotalKeysItem(
     tooltip: {
       title: 'Total Keys',
       content: <b>{numberWithSpaces(totalKeys)}</b>,
-      icon: theme === Theme.Dark ? KeyDarkIcon : KeyLightIcon,
+      icon: theme === Theme.Dark ? 'KeyDarkIcon' : 'KeyLightIcon',
     },
-    icon: theme === Theme.Dark ? KeyDarkIcon : KeyLightIcon,
+    icon: theme === Theme.Dark ? 'KeyDarkIcon' : 'KeyLightIcon',
     content: truncateNumberToRange(totalKeys),
   }
 
@@ -329,9 +317,9 @@ const getConnectedClient = (connectedClients: number = 0) =>
     ? connectedClients
     : `~${Math.round(connectedClients)}`
 
-function getConnectedClientItem(theme: string, connectedClients = 0) {
+function getConnectedClientItem(theme: string, connectedClients = 0): IMetric {
   const connectedClientsCount = getConnectedClient(connectedClients)
-  const icon = theme === Theme.Dark ? UserDarkIcon : UserLightIcon
+  const icon = theme === Theme.Dark ? 'UserDarkIcon' : 'UserLightIcon'
   return {
     id: 'overview-connected-clients',
     value: connectedClients,

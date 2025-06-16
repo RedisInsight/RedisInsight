@@ -17,6 +17,8 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   DeleteIcon,
+  DefaultPluginDarkIcon,
+  DefaultPluginLightIcon,
 } from 'uiSrc/components/base/icons'
 import { Theme } from 'uiSrc/constants'
 import {
@@ -51,14 +53,9 @@ import {
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { FormatedDate, FullScreen } from 'uiSrc/components'
 
-import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
-import DefaultPluginIconLight from 'uiSrc/assets/img/workbench/default_view_light.svg'
-import ExecutionTimeIcon from 'uiSrc/assets/img/workbench/execution_time.svg?react'
-import GroupModeIcon from 'uiSrc/assets/img/icons/group_mode.svg?react'
-import SilentModeIcon from 'uiSrc/assets/img/icons/silent_mode.svg?react'
-
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import QueryCardTooltip from '../QueryCardTooltip'
 
 import styles from './styles.module.scss'
@@ -218,11 +215,11 @@ const QueryCardHeader = (props: Props) => {
       iconDark:
         visualization.plugin.internal && visualization.iconDark
           ? urlForAsset(visualization.plugin.baseUrl, visualization.iconDark)
-          : DefaultPluginIconDark,
+          : DefaultPluginDarkIcon,
       iconLight:
         visualization.plugin.internal && visualization.iconLight
           ? urlForAsset(visualization.plugin.baseUrl, visualization.iconLight)
-          : DefaultPluginIconLight,
+          : DefaultPluginLightIcon,
       internal: visualization.plugin.internal,
     }),
   )
@@ -271,9 +268,9 @@ const QueryCardHeader = (props: Props) => {
         <div
           className={cx(styles.dropdownOption, styles.dropdownProfileOption)}
         >
-          <EuiIcon
+          <RiIcon
             className={styles.iconDropdownOption}
-            type="visTagCloud"
+            type="VisTagCloudIcon"
             data-testid={`view-type-selected-${value}-${id}`}
           />
         </div>
@@ -378,8 +375,8 @@ const QueryCardHeader = (props: Props) => {
                   data-testid="execution-time-tooltip"
                 >
                   <>
-                    <EuiIcon
-                      type={ExecutionTimeIcon}
+                    <RiIcon
+                      type="ExecutionTimeIcon"
                       data-testid="command-execution-time-icon"
                       className={styles.iconExecutingTime}
                     />
@@ -497,7 +494,7 @@ const QueryCardHeader = (props: Props) => {
                           className={cx(styles.mode)}
                           data-testid="group-mode-tooltip"
                         >
-                          <EuiIcon type={GroupModeIcon} />
+                          <RiIcon type="GroupModeIcon" />
                         </ColorText>
                       )}
                       {isSilentMode(resultsMode) && (
@@ -505,7 +502,7 @@ const QueryCardHeader = (props: Props) => {
                           className={cx(styles.mode)}
                           data-testid="silent-mode-tooltip"
                         >
-                          <EuiIcon type={SilentModeIcon} />
+                          <RiIcon type="SilentModeIcon" />
                         </ColorText>
                       )}
                       {isRawMode(mode) && (
@@ -521,9 +518,9 @@ const QueryCardHeader = (props: Props) => {
                   position="bottom"
                   data-testid="parameters-tooltip"
                 >
-                  <EuiIcon
+                  <RiIcon
                     color="subdued"
-                    type="boxesVertical"
+                    type="MoreactionsIcon"
                     data-testid="parameters-anchor"
                   />
                 </EuiToolTip>

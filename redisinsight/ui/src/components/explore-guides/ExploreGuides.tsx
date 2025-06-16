@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiIcon, EuiTitle } from '@elastic/eui'
+import { EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { guideLinksSelector } from 'uiSrc/slices/content/guide-links'
@@ -12,6 +12,7 @@ import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { findTutorialPath } from 'uiSrc/utils'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 const ExploreGuides = () => {
@@ -60,7 +61,7 @@ const ExploreGuides = () => {
               data-testid={`guide-button-${tutorialId}`}
             >
               {icon in GUIDE_ICONS && (
-                <EuiIcon
+                <RiIcon
                   className={styles.icon}
                   type={GUIDE_ICONS[icon]}
                   data-testid={`guide-icon-${icon}`}

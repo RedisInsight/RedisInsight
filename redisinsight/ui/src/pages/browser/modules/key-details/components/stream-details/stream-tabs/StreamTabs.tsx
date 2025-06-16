@@ -1,5 +1,4 @@
-import React, { useCallback } from 'react'
-import { EuiIcon, EuiTab, EuiTabs } from '@elastic/eui'
+import React, { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -16,11 +15,8 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { SortOrder } from 'uiSrc/constants'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import Tabs, { TabInfo } from 'uiSrc/components/base/layout/tabs'
 import { ConsumerGroupDto } from 'apiSrc/modules/browser/stream/dto'
-
-import { streamViewTypeTabs } from '../constants'
-
-import styles from './styles.module.scss'
 
 const StreamTabs = () => {
   const { viewType } = useSelector(streamSelector)
@@ -56,45 +52,50 @@ const StreamTabs = () => {
     dispatch(setStreamViewType(id))
   }
 
-  const renderTabs = useCallback(() => {
-    const tabs = [...streamViewTypeTabs]
+  const tabs: TabInfo[] = useMemo(() => {
+    const baseTabs: TabInfo[] = [
+      {
+        value: StreamViewType.Data,
+        label: 'Stream Data',
+        content: null,
+      },
+      {
+        value: StreamViewType.Groups,
+        label: 'Consumer Groups',
+        content: null,
+      },
+    ]
 
     if (
       selectedGroupName &&
       (viewType === StreamViewType.Consumers ||
         viewType === StreamViewType.Messages)
     ) {
-      tabs.push({
-        id: StreamViewType.Consumers,
+      baseTabs.push({
+        value: StreamViewType.Consumers,
         label: selectedGroupName,
-        separator: <EuiIcon type="arrowRight" className={styles.separator} />,
+        content: null,
       })
     }
 
     if (selectedConsumerName && viewType === StreamViewType.Messages) {
-      tabs.push({
-        id: StreamViewType.Messages,
+      baseTabs.push({
+        value: StreamViewType.Messages,
         label: selectedConsumerName,
-        separator: <EuiIcon type="arrowRight" className={styles.separator} />,
+        content: null,
       })
     }
 
-    return tabs.map(({ id, label }) => (
-      <EuiTab
-        isSelected={viewType === id}
-        onClick={() => onSelectedTabChanged(id)}
-        key={id}
-        data-testid={`stream-tab-${id}`}
-      >
-        {label}
-      </EuiTab>
-    ))
+    return baseTabs
   }, [viewType, selectedGroupName, selectedConsumerName])
 
   return (
-    <>
-      <EuiTabs data-test-subj="stream-tabs">{renderTabs()}</EuiTabs>
-    </>
+    <Tabs
+      tabs={tabs}
+      value={viewType}
+      onChange={(id) => onSelectedTabChanged(id as StreamViewType)}
+      data-testid="stream-tabs"
+    />
   )
 }
 

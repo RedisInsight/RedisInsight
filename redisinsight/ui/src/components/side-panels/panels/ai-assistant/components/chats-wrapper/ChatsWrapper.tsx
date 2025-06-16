@@ -1,9 +1,6 @@
 import React, { useEffect } from 'react'
 
-import { EuiTab, EuiTabs } from '@elastic/eui'
-
 import { useDispatch, useSelector } from 'react-redux'
-import cx from 'classnames'
 import { filter } from 'lodash'
 import { aiChatSelector, setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
@@ -13,6 +10,7 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { Maybe } from 'uiSrc/utils'
 import { FeatureFlagComponent } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import Tabs, { TabInfo } from 'uiSrc/components/base/layout/tabs'
 import AssistanceChat from '../assistance-chat'
 import ExpertChat from '../expert-chat'
 
@@ -65,35 +63,36 @@ const ChatsWrapper = () => {
     })
   }, [databaseChatFeature, databaseChatFeature, activeTab])
 
-  const selectTab = (tab: AiChatType) => {
-    dispatch(setSelectedTab(tab))
+  const tabs: TabInfo[] = [
+    {
+      label: <span>General</span>,
+      value: AiChatType.Assistance,
+      content: null,
+    },
+    {
+      label: <span>My Data</span>,
+      value: AiChatType.Query,
+      content: null,
+    },
+  ].filter(
+    (tab) =>
+      (tab.value === AiChatType.Assistance && documentationChatFeature?.flag) ||
+      (tab.value === AiChatType.Query && databaseChatFeature?.flag),
+  )
+
+  const selectTab = (tab: string) => {
+    dispatch(setSelectedTab(tab as AiChatType))
   }
 
   return (
     <div className={styles.wrapper} data-testid="chat-wrapper">
       {chats.length > 1 && (
-        <div className={styles.tabsWrapper}>
-          <EuiTabs className={cx('tabs-active-borders', styles.tabs)}>
-            {documentationChatFeature?.flag && (
-              <EuiTab
-                isSelected={activeTab === AiChatType.Assistance}
-                onClick={() => selectTab(AiChatType.Assistance)}
-                data-testid="ai-general-chat_tab"
-              >
-                General
-              </EuiTab>
-            )}
-            {databaseChatFeature?.flag && (
-              <EuiTab
-                isSelected={activeTab === AiChatType.Query}
-                onClick={() => selectTab(AiChatType.Query)}
-                data-testid="ai-database-chat_tab"
-              >
-                My Data
-              </EuiTab>
-            )}
-          </EuiTabs>
-        </div>
+        <Tabs
+          tabs={tabs}
+          value={activeTab}
+          onChange={selectTab}
+          data-testid="ai-tabs"
+        />
       )}
       {chats.length > 0 && (
         <div className={styles.chat}>

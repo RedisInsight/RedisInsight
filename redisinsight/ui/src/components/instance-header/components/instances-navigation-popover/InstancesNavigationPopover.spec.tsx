@@ -108,21 +108,13 @@ describe('InstancesNavigationPopover', () => {
   it('should change tabs on tabs click', () => {
     render(<InstancesNavigationPopover name="db" />)
 
-    act(() => {
-      fireEvent.click(screen.getByTestId('nav-instance-popover-btn'))
-    })
+    fireEvent.click(screen.getByTestId('nav-instance-popover-btn'))
+    expect(screen.getByText(`${InstancesTabs.Databases} (0)`)).toBeInTheDocument()
 
-    expect(screen.getByTestId('instances-tabs-testId')).toBeInTheDocument()
-
-    act(() => {
-      fireEvent.click(screen.getByTestId(`${InstancesTabs.RDI}-tab-id`))
-    })
+    fireEvent.mouseDown(screen.getByText(`${InstancesTabs.RDI} (2)`))
     expect(screen.getByText('Redis Data Integration page')).toBeInTheDocument()
 
-    act(() => {
-      fireEvent.click(screen.getByTestId(`${InstancesTabs.Databases}-tab-id`))
-    })
-
+    fireEvent.mouseDown(screen.getByText(`${InstancesTabs.Databases} (0)`))
     expect(screen.getByText('Redis Databases page')).toBeInTheDocument()
   })
 

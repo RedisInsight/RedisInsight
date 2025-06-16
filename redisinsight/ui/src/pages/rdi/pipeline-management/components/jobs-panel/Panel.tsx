@@ -1,10 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
 import {
   EuiSuperSelect,
   EuiSuperSelectOption,
-  EuiTab,
-  EuiTabs,
   EuiToolTip,
   keys,
 } from '@elastic/eui'
@@ -34,6 +32,7 @@ import {
   ExtendIcon,
   ShrinkIcon,
 } from 'uiSrc/components/base/icons'
+import Tabs, { TabInfo } from 'uiSrc/components/base/layout/tabs'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -112,12 +111,6 @@ const DryRunJobPanel = (props: Props) => {
     }
   }
 
-  const handleChangeTab = (name: PipelineJobsTabs) => {
-    if (selectedTab === name) return
-
-    changeSelectedTab(name)
-  }
-
   const handleFullScreen = () => {
     setIsFullScreen((value) => !value)
   }
@@ -158,53 +151,51 @@ const DryRunJobPanel = (props: Props) => {
     results?.output?.length > 1 &&
     !!targetOptions.length
 
-  const Tabs = useCallback(
-    () => (
-      <EuiTabs className={styles.tabs}>
-        <EuiTab
-          isSelected={selectedTab === PipelineJobsTabs.Transformations}
-          onClick={() => handleChangeTab(PipelineJobsTabs.Transformations)}
-          className={styles.tab}
-          data-testid="transformations-tab"
+  const tabs: TabInfo[] = [
+    {
+      value: PipelineJobsTabs.Transformations,
+      label: (
+        <EuiToolTip
+          content={
+            <Text color="subdued" size="s">
+              Displays the results of the transformations you defined. The data
+              is presented in JSON format.
+              <br />
+              No data is written to the target database.
+            </Text>
+          }
+          data-testid="transformation-output-tooltip"
         >
-          <EuiToolTip
-            content={
-              <Text color="subdued" size="s">
-                Displays the results of the transformations you defined. The
-                data is presented in JSON format.
-                <br />
-                No data is written to the target database.
-              </Text>
-            }
-            data-testid="transformation-output-tooltip"
-          >
-            <span className={styles.tabName}>Transformation output</span>
-          </EuiToolTip>
-        </EuiTab>
-        <EuiTab
-          isSelected={selectedTab === PipelineJobsTabs.Output}
-          onClick={() => handleChangeTab(PipelineJobsTabs.Output)}
-          className={styles.tab}
-          data-testid="output-tab"
+          <Text>Transformation output</Text>
+        </EuiToolTip>
+      ),
+      content: null,
+    },
+    {
+      value: PipelineJobsTabs.Output,
+      label: (
+        <EuiToolTip
+          content={
+            <Text color="subdued" size="s">
+              Displays the list of Redis commands that will be generated based
+              on your job details.
+              <br />
+              No data is written to the target database.
+            </Text>
+          }
+          data-testid="job-output-tooltip"
         >
-          <EuiToolTip
-            content={
-              <Text color="subdued" size="s">
-                Displays the list of Redis commands that will be generated based
-                on your job details.
-                <br />
-                No data is written to the target database.
-              </Text>
-            }
-            data-testid="job-output-tooltip"
-          >
-            <span className={styles.tabName}>Job output</span>
-          </EuiToolTip>
-        </EuiTab>
-      </EuiTabs>
-    ),
-    [selectedTab, isFullScreen],
-  )
+          <Text>Job output</Text>
+        </EuiToolTip>
+      ),
+      content: null,
+    },
+  ]
+
+  const handleTabChange = (name: string) => {
+    if (selectedTab === name) return
+    changeSelectedTab(name as PipelineJobsTabs)
+  }
 
   return (
     <div
@@ -266,7 +257,7 @@ const DryRunJobPanel = (props: Props) => {
               </EuiToolTip>
             </FlexItem>
           </Row>
-          <div className={cx(styles.tabsWrapper, styles.codeLabel)}>
+          <div className={styles.codeLabel}>
             {isSelectAvailable && (
               <EuiSuperSelect
                 options={targetOptions}
@@ -276,7 +267,12 @@ const DryRunJobPanel = (props: Props) => {
                 data-testid="target-select"
               />
             )}
-            <Tabs />
+            <Tabs
+              tabs={tabs}
+              value={selectedTab}
+              onChange={handleTabChange}
+              data-testid="pipeline-jobs-tabs"
+            />
           </div>
           {selectedTab === PipelineJobsTabs.Transformations && (
             <DryRunJobTransformations />

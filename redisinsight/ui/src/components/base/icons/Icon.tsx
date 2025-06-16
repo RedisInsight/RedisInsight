@@ -1,5 +1,6 @@
 import React from 'react'
 import { useTheme } from '@redis-ui/styles'
+import cx from 'classnames'
 import { MonochromeIconProps } from 'uiSrc/components/base/icons'
 
 type BaseIconProps = Omit<MonochromeIconProps, 'color'> & {
@@ -39,6 +40,7 @@ export const Icon = ({
   customColor,
   color = 'primary600',
   size = 'L',
+  className,
   ...rest
 }: BaseIconProps) => {
   const sizeValue = customSize || sizesMap[size]
@@ -52,6 +54,7 @@ export const Icon = ({
 
   const svgProps = {
     color: colorValue,
+    fill: colorValue,
     width: sizeValue,
     height: sizeValue,
     ...rest,
@@ -61,7 +64,7 @@ export const Icon = ({
     ? svgProps
     : { color, customColor, size, customSize, ...rest }
 
-  return <IconComponent {...props} />
+  return <IconComponent {...props} className={cx(className, 'RI-Icon')} />
 }
 
 export type IconProps = Omit<BaseIconProps, 'icon'>

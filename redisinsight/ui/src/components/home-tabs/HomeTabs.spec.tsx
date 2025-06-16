@@ -111,7 +111,7 @@ describe('HomeTabs', () => {
     render(<HomeTabs />)
 
     expect(
-      screen.queryByTestId('Redis Data Integration'),
+      screen.queryByText('Redis Data Integration'),
     ).not.toBeInTheDocument()
   })
 })

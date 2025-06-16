@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiSwitch, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiToolTip } from '@elastic/eui'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
@@ -10,6 +10,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { PlayFilledIcon } from 'uiSrc/components/base/icons'
 import { ColorText } from 'uiSrc/components/base/text'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
 import MonitorLog from '../MonitorLog'
 import MonitorOutputList from '../MonitorOutputList'
 
@@ -85,11 +86,10 @@ const Monitor = (props: Props) => {
           The temporary log file will be automatically rewritten when the Profiler is reset."
           data-testid="save-log-tooltip"
         >
-          <EuiSwitch
-            compressed
-            label={<span>Save Log</span>}
+          <SwitchInput
+            title="Save Log"
             checked={saveLogValue}
-            onChange={(e) => setSaveLogValue(e.target.checked)}
+            onCheckedChange={setSaveLogValue}
             data-testid="save-log-switch"
           />
         </EuiToolTip>

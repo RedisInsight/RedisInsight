@@ -2,9 +2,9 @@ import { cloneDeep, set } from 'lodash'
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 import { instance, mock } from 'ts-mockito'
-import userEvent from '@testing-library/user-event'
 import {
   cleanup,
+  userEvent,
   fireEvent,
   initialStateDefault,
   mockedStore,

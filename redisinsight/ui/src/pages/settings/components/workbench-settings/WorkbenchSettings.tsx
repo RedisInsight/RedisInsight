@@ -1,10 +1,9 @@
-import { EuiLink, EuiSwitch } from '@elastic/eui'
+import { EuiLink } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { SettingItem } from 'uiSrc/components'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import styles from 'uiSrc/pages/settings/styles.module.scss'
 import {
   setWorkbenchCleanUp,
   updateUserConfigSettingsAction,
@@ -15,6 +14,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { validateNumber } from 'uiSrc/utils'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
 
 const WorkbenchSettings = () => {
@@ -44,11 +44,10 @@ const WorkbenchSettings = () => {
       <Title size="M">Editor Cleanup</Title>
       <Spacer size="m" />
       <FormField>
-        <EuiSwitch
-          label="Clear the Editor after running commands"
+        <SwitchInput
           checked={cleanup}
-          onChange={(e) => onSwitchWbCleanUp(e.target.checked)}
-          className={styles.switchOption}
+          onCheckedChange={onSwitchWbCleanUp}
+          title="Clear the Editor after running commands"
           data-testid="switch-workbench-cleanup"
         />
       </FormField>

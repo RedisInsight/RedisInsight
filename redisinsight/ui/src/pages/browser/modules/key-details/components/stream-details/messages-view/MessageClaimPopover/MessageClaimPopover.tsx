@@ -6,7 +6,6 @@ import {
   EuiSuperSelectOption,
   EuiPopover,
   EuiForm,
-  EuiSwitch,
   EuiToolTip,
 } from '@elastic/eui'
 import { useFormik } from 'formik'
@@ -32,7 +31,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
-import { NumericInput } from 'uiSrc/components/base/inputs'
+import { NumericInput, SwitchInput } from 'uiSrc/components/base/inputs'
 import {
   ClaimPendingEntryDto,
   ClaimPendingEntriesResponse,
@@ -213,7 +212,7 @@ const MessageClaimPopover = (props: Props) => {
       panelPaddingSize="m"
       anchorClassName="claimPendingMessage"
       panelClassName={styles.popoverWrapper}
-      closePopover={() => { }}
+      closePopover={() => {}}
       button={consumerOptions.length < 1 ? buttonTooltip : button}
     >
       <EuiForm>
@@ -333,13 +332,11 @@ const MessageClaimPopover = (props: Props) => {
           align="center"
         >
           <FlexItem>
-            <EuiSwitch
-              label="Optional Parameters"
+            <SwitchInput
+              title="Optional Parameters"
               checked={isOptionalShow}
-              onChange={(e) => setIsOptionalShow(e.target.checked)}
-              className={styles.switchOption}
+              onCheckedChange={setIsOptionalShow}
               data-testid="optional-parameters-switcher"
-              compressed
             />
           </FlexItem>
           <div>

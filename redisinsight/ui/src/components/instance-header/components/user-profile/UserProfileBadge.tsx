@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiIcon, EuiLink, EuiLoadingSpinner, EuiPopover } from '@elastic/eui'
+import { EuiLink, EuiLoadingSpinner, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import { useHistory } from 'react-router-dom'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
-import CloudIcon from 'uiSrc/assets/img/oauth/cloud.svg?react'
 
 import { buildRedisInsightUrl, getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -21,6 +20,7 @@ import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { getConfig } from 'uiSrc/config'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import styles from './styles.module.scss'
 
@@ -167,8 +167,8 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                     <span className={styles.accountName}>{name}</span> #{id}
                   </Text>
                   {id === currentAccountId && (
-                    <EuiIcon
-                      type="check"
+                    <RiIcon
+                      type="CheckThinIcon"
                       data-testid={`user-profile-selected-account-${id}`}
                     />
                   )}
@@ -202,8 +202,8 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                   data-testid="cloud-admin-console-link"
                 >
                   <Text>Back to Redis Cloud Admin console</Text>
-                  <EuiIcon
-                    type={CloudIcon}
+                  <RiIcon
+                    type="CloudIcon"
                     style={{ fill: 'none' }}
                     viewBox="-1 0 30 20"
                     strokeWidth={1.8}
@@ -224,7 +224,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
               {isImportLoading ? (
                 <EuiLoadingSpinner className={styles.loadingSpinner} size="m" />
               ) : (
-                <EuiIcon type="importAction" />
+                <RiIcon type="DownloadIcon" />
               )}
             </div>
             <EuiLink
@@ -246,8 +246,8 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                   {name}
                 </Text>
               </div>
-              <EuiIcon
-                type={CloudIcon}
+              <RiIcon
+                type="CloudIcon"
                 style={{ fill: 'none' }}
                 viewBox="-1 0 30 20"
                 strokeWidth={1.8}
@@ -260,7 +260,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
               data-testid="profile-logout"
             >
               <Text className={styles.optionTitle}>Logout</Text>
-              <EuiIcon type="exit" />
+              <RiIcon type="ExportIcon" />
             </div>
           </FeatureFlagComponent>
         </div>

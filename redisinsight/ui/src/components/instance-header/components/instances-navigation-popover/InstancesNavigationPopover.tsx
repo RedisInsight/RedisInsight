@@ -1,11 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import {
-  EuiFieldText,
-  EuiIcon,
-  EuiPopover,
-  EuiTab,
-  EuiTabs,
-} from '@elastic/eui'
+import { EuiFieldText, EuiPopover, EuiTab, EuiTabs } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
@@ -13,7 +7,6 @@ import { instancesSelector as rdiInstancesSelector } from 'uiSrc/slices/rdi/inst
 import { instancesSelector as dbInstancesSelector } from 'uiSrc/slices/instances/instances'
 import Divider from 'uiSrc/components/divider/Divider'
 import { BrowserStorageItem, DEFAULT_SORT, Pages } from 'uiSrc/constants'
-import Down from 'uiSrc/assets/img/Down.svg?react'
 import Search from 'uiSrc/assets/img/Search.svg'
 import { Instance, RdiInstance } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -21,6 +14,7 @@ import { localStorageService } from 'uiSrc/services'
 import { filterAndSort } from 'uiSrc/utils'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import InstancesList from './components/instances-list'
 import styles from './styles.module.scss'
 
@@ -114,7 +108,7 @@ const InstancesNavigationPopover = ({ name }: Props) => {
         >
           <b className={styles.breadCrumbLink}>{name}</b>
           <span>
-            <EuiIcon color="primaryText" type={Down} />
+            <RiIcon color="primary500" type="CaretDownIcon" />
           </span>
         </Text>
       }

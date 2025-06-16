@@ -6,7 +6,7 @@ import cx from 'classnames'
 import { EuiModal, EuiModalBody } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  BulkActions as BulkActionsIcon,
+  BulkActionsIcon,
   FilterTableIcon,
   QuerySearchIcon,
   IconType,

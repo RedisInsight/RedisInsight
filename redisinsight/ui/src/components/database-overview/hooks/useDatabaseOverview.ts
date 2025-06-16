@@ -99,7 +99,6 @@ export const useDatabaseOverview = () => {
       db,
     })
   }, [theme, overview, db, usedMemoryPercent])
-
   return {
     metrics,
     connectivityError,

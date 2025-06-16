@@ -3,6 +3,7 @@ export { Icon } from './Icon'
 
 export * from './common'
 export * from './guides'
+export * from './metrics'
 export * from './modules'
 export * from './options'
 export * from './sidebar'

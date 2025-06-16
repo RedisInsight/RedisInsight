@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiIcon } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import { GROUP_TYPES_DISPLAY } from 'uiSrc/constants'
@@ -9,6 +8,7 @@ import { cliSettingsSelector } from 'uiSrc/slices/cli/cli-settings'
 import { Text } from 'uiSrc/components/base/text'
 
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -80,8 +80,8 @@ const CHSearchFilter = ({ submitFilter, isLoading }: Props) => {
         allowReset
         placeholder={
           <div role="presentation">
-            <EuiIcon
-              type="controlsVertical"
+            <RiIcon
+              type="FilterIcon"
               data-testid="filter-option--group-type-default"
               className={styles.controlsIcon}
             />

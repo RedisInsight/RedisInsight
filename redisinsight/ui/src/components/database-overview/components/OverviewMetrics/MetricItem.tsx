@@ -1,8 +1,8 @@
-import cx from 'classnames'
-import { EuiFlexGroup, EuiFlexItem, EuiIcon } from '@elastic/eui'
 import React, { CSSProperties, ReactNode } from 'react'
+import cx from 'classnames'
 import styles from 'uiSrc/components/database-overview/styles.module.scss'
 import { IMetric } from 'uiSrc/components/database-overview/components/OverviewMetrics/OverviewMetrics'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiTooltip } from 'uiSrc/components'
 
 export interface OverviewItemProps {
@@ -51,7 +51,7 @@ const MetricItem = (
         >
           {icon && (
             <EuiFlexItem grow={false} className={styles.icon}>
-              <EuiIcon size="m" type={icon} className={styles.icon} />
+              <RiIcon size="m" type={icon} className={styles.icon} />
             </EuiFlexItem>
           )}
           <EuiFlexItem grow={false} className={styles.overviewItemContent}>

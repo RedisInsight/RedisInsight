@@ -1,6 +1,5 @@
 import {
   EuiFilePicker,
-  EuiIcon,
   EuiModal,
   EuiModalBody,
   EuiModalFooter,
@@ -21,6 +20,7 @@ import {
 import { Title } from 'uiSrc/components/base/text/Title'
 import { ColorText, Text } from 'uiSrc/components/base/text'
 import { Loader } from 'uiSrc/components/base/display'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props<T> {
@@ -120,11 +120,7 @@ const ImportFileModal = <T,>({
             )}
             {error && (
               <div className={styles.result} data-testid="result-failed">
-                <EuiIcon
-                  type="crossInACircleFilled"
-                  size="xxl"
-                  color="danger"
-                />
+                <RiIcon type="ToastCancelIcon" size="XL" color="danger500" />
                 <Text color="subdued" style={{ marginTop: 16 }}>
                   {errorMessage}
                 </Text>

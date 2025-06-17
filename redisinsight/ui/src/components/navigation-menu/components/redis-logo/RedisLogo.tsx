@@ -1,9 +1,9 @@
 import cx from 'classnames'
 import React from 'react'
 import { useSelector } from 'react-redux'
+
 import { BuildType } from 'uiSrc/constants/env'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
-import LogoSVG from 'uiSrc/assets/img/logo_small.svg?react'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import {
   SideBarItem,

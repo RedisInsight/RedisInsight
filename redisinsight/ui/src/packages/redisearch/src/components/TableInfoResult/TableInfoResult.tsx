@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
 import { toUpper, flatten, isArray, isEmpty, map, uniq } from 'lodash'
-import { EuiIcon } from '@elastic/eui'
 import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { ColorText, Text } from '../../../../../components/base/text'
 import { LoadingContent } from '../../../../../components/base/layout'
 import GroupBadge from '../GroupBadge'
@@ -52,9 +52,9 @@ const TableInfoResult = React.memo((props: Props) => {
         if (isBooleanColumn(title)) {
           return (
             <div className="icon" data-testid={`query-column-${title}`}>
-              <EuiIcon
-                type={initValue ? 'check' : 'cross'}
-                color={initValue ? 'primary' : 'danger'}
+              <RiIcon
+                type={initValue ? 'CheckThinIcon' : 'CancelSlimIcon'}
+                color={initValue ? 'primary500' : 'danger600'}
               />
             </div>
           )

@@ -1,9 +1,7 @@
 import React from 'react'
-import { EuiIcon } from '@elastic/eui'
-
-import CloudIcon from 'uiSrc/assets/img/oauth/cloud_color.svg?react'
 import { ColorText } from 'uiSrc/components/base/text'
 
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -28,7 +26,7 @@ const PromoLink = (props: Props) => {
       data-testid={testId}
       style={{ ...linkStyles }}
     >
-      <EuiIcon type={CloudIcon} size="m" className={styles.cloudIcon} />
+      <RiIcon type="CloudIcon" size="m" className={styles.cloudIcon} />
       <ColorText color={linkStyles?.color} className={styles.title}>
         {title}
       </ColorText>

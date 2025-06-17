@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { EuiIcon } from '@elastic/eui'
 import { remove } from 'lodash'
 
 import { FeatureFlags, DEFAULT_DELIMITER, Pages } from 'uiSrc/constants'
@@ -26,10 +25,7 @@ import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { createNewAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 import { comboBoxToArray } from 'uiSrc/utils'
 
-import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
-
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import GithubSVG from 'uiSrc/assets/img/github.svg?react'
 import {
   FeatureFlagComponent,
   LoadingContent,
@@ -38,6 +34,7 @@ import {
 import { ColorText, Text } from 'uiSrc/components/base/text'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Link } from 'uiSrc/components/base/link/Link'
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
@@ -161,9 +158,9 @@ const LiveTimeRecommendations = () => {
             </>
           }
         >
-          <EuiIcon
+          <RiIcon
             className={styles.infoIcon}
-            type="iInCircle"
+            type="InfoIcon"
             size="s"
             data-testid="recommendations-info-icon"
           />
@@ -175,10 +172,10 @@ const LiveTimeRecommendations = () => {
             style={{ marginLeft: 6 }}
             data-testid="github-repo-btn"
           >
-            <EuiIcon
+            <RiIcon
               className={styles.githubIcon}
               aria-label="redis insight github repository"
-              type={GithubSVG}
+              type="GithubIcon"
               size="s"
               data-testid="github-repo-icon"
             />
@@ -216,7 +213,11 @@ const LiveTimeRecommendations = () => {
       {instanceId && (
         <FeatureFlagComponent name={FeatureFlags.envDependent}>
           <div className={styles.footer}>
-            <EuiIcon className={styles.footerIcon} size="m" type={InfoIcon} />
+            <RiIcon
+              className={styles.footerIcon}
+              size="m"
+              type="MessageInfoIcon"
+            />
             <Text className={styles.text}>
               {'Run '}
               <PopoverRunAnalyze

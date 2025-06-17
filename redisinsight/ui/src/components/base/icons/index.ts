@@ -14,4 +14,6 @@ export {
   AzureIcon,
   Awss3Icon,
   GooglecloudIcon,
+  GoogleSigninIcon,
+  SsoIcon,
 } from '@redis-ui/icons/multicolor'

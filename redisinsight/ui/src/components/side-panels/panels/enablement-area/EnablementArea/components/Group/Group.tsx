@@ -1,6 +1,4 @@
 import React, { useState } from 'react'
-
-import { EuiIcon } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
@@ -18,6 +16,7 @@ import { RiAccordion } from 'uiSrc/components/base/display/accordion/RiAccordion
 import { Col } from 'uiSrc/components/base/layout/flex'
 import { RiTooltip, OnboardingTour } from 'uiSrc/components'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 
 import DeleteTutorialButton from '../DeleteTutorialButton'
 
@@ -103,7 +102,7 @@ const Group = (props: Props) => {
                 onClick={handleCreate}
                 data-testid="open-upload-tutorial-btn"
               >
-                <EuiIcon type="plus" />
+                <RiIcon type="PlusSlimIcon" />
               </div>
             </RiTooltip>
           </OnboardingTour>
@@ -128,8 +127,8 @@ const Group = (props: Props) => {
       label={
         <Text className="group-header" size="m">
           {isShowFolder && (
-            <EuiIcon
-              type={isGroupOpen ? 'folderOpen' : 'folderClosed'}
+            <RiIcon
+              type={isGroupOpen ? 'KnowledgeBaseIcon' : 'FolderIcon'}
               style={{ marginRight: '10px' }}
             />
           )}

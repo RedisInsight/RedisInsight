@@ -1,7 +1,6 @@
-import { EuiIcon } from '@elastic/eui'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import cx from 'classnames'
 import { findIndex, isNumber, sumBy, xor } from 'lodash'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   CellMeasurer,
   CellMeasurerCache,
@@ -20,6 +19,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { isEqualBuffers, Maybe, Nullable } from 'uiSrc/utils'
 
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RIResizeObserver } from 'uiSrc/components/base/utils'
 import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import {
@@ -472,10 +472,12 @@ const VirtualTable = (props: IProps) => {
               )}
               data-testid="header-sorting-button"
             >
-              <EuiIcon
+              <RiIcon
                 style={{ marginLeft: '4px' }}
                 type={
-                  sortedColumn?.order === SortOrder.DESC ? 'sortDown' : 'sortUp'
+                  sortedColumn?.order === SortOrder.DESC
+                    ? 'ArrowDownIcon'
+                    : 'ArrowUpIcon'
                 }
               />
             </button>

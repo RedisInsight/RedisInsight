@@ -14,7 +14,7 @@
   align-items: center;
   cursor: pointer;
 
-  :global(.euiButtonIcon), :global(.euiIcon) {
+  :global(.euiButtonIcon), :global(svg) {
     color: var(--euiTooltipTextColor) !important;
   }
 
@@ -70,7 +70,7 @@
 
 .helpMenuItemDisabled {
   cursor: auto;
-  :global(.euiIcon), div {
+  :global(svg), div {
     color: var(--buttonSecondaryDisabledTextColor) !important;
   }
 }

@@ -5,8 +5,9 @@ import { register } from '@antv/x6-react-shape'
 import Hierarchy from '@antv/hierarchy'
 import { formatRedisReply } from 'redisinsight-plugin-sdk'
 
-import { EuiIcon } from '@elastic/eui'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiTooltip } from 'uiSrc/components'
+
 import {
   EDGE_COLOR_BODY_DARK,
   EDGE_COLOR_BODY_LIGHT,
@@ -576,12 +577,12 @@ function ExplainDraw({
             {collapse ? (
               <>
                 <div>Expand</div>
-                <EuiIcon className="NodeIcon" size="m" type="arrowDown" />
+                <RiIcon className="NodeIcon" size="m" type="ArrowDownIcon" />
               </>
             ) : (
               <>
                 <div>Collapse</div>
-                <EuiIcon className="NodeIcon" size="m" type="arrowUp" />
+                <RiIcon className="NodeIcon" size="m" type="ArrowUpIcon" />
               </>
             )}
           </div>

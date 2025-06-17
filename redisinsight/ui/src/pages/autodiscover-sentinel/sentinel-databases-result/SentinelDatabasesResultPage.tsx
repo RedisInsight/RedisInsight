@@ -1,4 +1,3 @@
-import { EuiIcon } from '@elastic/eui'
 import { pick } from 'lodash'
 import { useHistory } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
@@ -26,6 +25,7 @@ import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/In
 import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon, CopyIcon } from 'uiSrc/components/base/icons'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import { Loader } from 'uiSrc/components/base/display'
 import SentinelDatabasesResult from './components'
@@ -128,7 +128,7 @@ const SentinelDatabasesResultPage = () => {
             <RiTooltip position="right" title="Error" content={message}>
               <ColorText color="danger" style={{ cursor: 'pointer' }}>
                 Error&nbsp;
-                <EuiIcon type="alert" color="danger" />
+                <RiIcon type="ToastDangerIcon" color="danger600" />
               </ColorText>
             </RiTooltip>
           )}

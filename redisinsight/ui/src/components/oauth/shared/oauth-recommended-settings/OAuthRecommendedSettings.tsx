@@ -1,9 +1,10 @@
 import React from 'react'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { FeatureFlags } from 'uiSrc/constants'
 
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -37,7 +38,7 @@ const OAuthRecommendedSettings = (props: Props) => {
           position="top"
           anchorClassName={styles.recommendedSettingsToolTip}
         >
-          <EuiIcon type="iInCircle" size="s" />
+          <RiIcon type="InfoIcon" size="s" />
         </EuiToolTip>
       </div>
     </FeatureFlagComponent>

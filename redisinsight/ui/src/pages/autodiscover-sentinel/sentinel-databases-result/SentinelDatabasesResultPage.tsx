@@ -1,7 +1,6 @@
 import {
   EuiBasicTableColumn,
   EuiLoadingSpinner,
-  EuiIcon,
   EuiToolTip,
 } from '@elastic/eui'
 import { pick } from 'lodash'
@@ -31,6 +30,7 @@ import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/In
 import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon, CopyIcon } from 'uiSrc/components/base/icons'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import SentinelDatabasesResult from './components'
 
 import styles from '../styles.module.scss'
@@ -134,7 +134,7 @@ const SentinelDatabasesResultPage = () => {
               <EuiToolTip position="right" title="Error" content={message}>
                 <ColorText color="danger" style={{ cursor: 'pointer' }}>
                   Error&nbsp;
-                  <EuiIcon type="alert" color="danger" />
+                  <RiIcon type="ToastDangerIcon" color="danger600" />
                 </ColorText>
               </EuiToolTip>
             )}

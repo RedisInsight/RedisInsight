@@ -16,6 +16,7 @@ import {
 
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import QueryCardCliDefaultResult from '../QueryCardCliDefaultResult'
 import QueryCardCliGroupResult from '../QueryCardCliGroupResult'
 import styles from './styles.module.scss'
@@ -50,7 +51,7 @@ const QueryCardCliResultWrapper = (props: Props) => {
         <div data-testid="query-cli-result" className={cx(styles.content)}>
           {isNotStored && (
             <Text className={styles.alert} data-testid="query-cli-warning">
-              <EuiIcon type="alert" className={styles.alertIcon} />
+              <RiIcon type="ToastDangerIcon" className={styles.alertIcon} />
               The result is too big to be saved. It will be deleted after the
               application is closed.
             </Text>

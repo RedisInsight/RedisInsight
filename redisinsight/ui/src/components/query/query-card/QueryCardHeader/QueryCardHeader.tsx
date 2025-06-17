@@ -17,8 +17,6 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   DeleteIcon,
-  DefaultPluginDarkIcon,
-  DefaultPluginLightIcon,
 } from 'uiSrc/components/base/icons'
 import { Theme } from 'uiSrc/constants'
 import {
@@ -215,11 +213,11 @@ const QueryCardHeader = (props: Props) => {
       iconDark:
         visualization.plugin.internal && visualization.iconDark
           ? urlForAsset(visualization.plugin.baseUrl, visualization.iconDark)
-          : DefaultPluginDarkIcon,
+          : 'DefaultPluginDarkIcon',
       iconLight:
         visualization.plugin.internal && visualization.iconLight
           ? urlForAsset(visualization.plugin.baseUrl, visualization.iconLight)
-          : DefaultPluginLightIcon,
+          : 'DefaultPluginLightIcon',
       internal: visualization.plugin.internal,
     }),
   )
@@ -237,7 +235,7 @@ const QueryCardHeader = (props: Props) => {
             position="left"
             anchorClassName={styles.tooltipIcon}
           >
-            <EuiIcon
+            <RiIcon
               className={styles.iconDropdownOption}
               type={theme === Theme.Dark ? iconDark : iconLight}
               data-testid={`view-type-selected-${value}-${id}`}
@@ -247,7 +245,7 @@ const QueryCardHeader = (props: Props) => {
       ),
       dropdownDisplay: (
         <div className={cx(styles.dropdownOption)}>
-          <EuiIcon
+          <RiIcon
             className={styles.iconDropdownOption}
             type={theme === Theme.Dark ? iconDark : iconLight}
           />

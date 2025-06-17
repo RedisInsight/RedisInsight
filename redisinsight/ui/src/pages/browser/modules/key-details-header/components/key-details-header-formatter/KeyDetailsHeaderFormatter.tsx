@@ -1,11 +1,6 @@
 import cx from 'classnames'
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  EuiIcon,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiSuperSelect, EuiSuperSelectOption, EuiToolTip } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -28,11 +23,10 @@ import {
   sendEventTelemetry,
   TelemetryEvent,
 } from 'uiSrc/telemetry'
-import FormattersLight from 'uiSrc/assets/img/icons/formatter_light.svg'
-import FormattersDark from 'uiSrc/assets/img/icons/formatter_dark.svg'
 import { stringDataSelector } from 'uiSrc/slices/browser/string'
 import { isFullStringLoaded } from 'uiSrc/utils'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { getKeyValueFormatterOptions } from './constants'
 import styles from './styles.module.scss'
 
@@ -84,8 +78,12 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
                 </ColorText>
               )}
               {width <= MIDDLE_SCREEN_RESOLUTION && (
-                <EuiIcon
-                  type={theme === Theme.Dark ? FormattersDark : FormattersLight}
+                <RiIcon
+                  color={
+                    theme === Theme.Dark ? 'informative100' : 'informative400'
+                  }
+                  size="L"
+                  type="SwitchIcon"
                   className={styles.controlsIcon}
                   data-testid={`key-value-formatter-option-selected-${value}`}
                 />

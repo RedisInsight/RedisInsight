@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiSwitch, EuiToolTip } from '@elastic/eui'
+import { EuiSwitch, EuiToolTip } from '@elastic/eui'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
-import BanIcon from 'uiSrc/assets/img/monitor/ban.svg?react'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { PlayFilledIcon } from 'uiSrc/components/base/icons'
 import { ColorText } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import MonitorLog from '../MonitorLog'
 import MonitorOutputList from '../MonitorOutputList'
 
@@ -56,11 +56,11 @@ const Monitor = (props: Props) => {
         <div className={styles.startTitle}>Start Profiler</div>
         <Row style={{ flexGrow: 0 }}>
           <FlexItem>
-            <EuiIcon
+            <RiIcon
               className={cx(styles.iconWarning, 'warning--light')}
-              type="alert"
+              type="ToastDangerIcon"
               size="m"
-              color="warning"
+              color="attention600"
               aria-label="alert icon"
               style={{ paddingTop: 2 }}
             />
@@ -102,8 +102,8 @@ const Monitor = (props: Props) => {
       <div className={cx(styles.startContent, styles.startContentError)}>
         <Row>
           <FlexItem>
-            <EuiIcon
-              type={BanIcon}
+            <RiIcon
+              type="BannedIcon"
               size="m"
               color="danger"
               aria-label="no permissions icon"

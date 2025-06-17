@@ -21,6 +21,7 @@ import {
   ActionIconButton,
   IconButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 interface MultiSearchSuggestion {
@@ -268,7 +269,7 @@ const MultiSearch = (props: Props) => {
                 }
                 data-testid="clear-history-btn"
               >
-                <EuiIcon type="eraser" style={{ marginRight: 6 }} />
+                <RiIcon type="EraserIcon" style={{ marginRight: 6 }} />
                 <span>Clear history</span>
               </div>
             </div>

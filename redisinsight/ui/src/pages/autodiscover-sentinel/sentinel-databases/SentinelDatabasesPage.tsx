@@ -1,4 +1,4 @@
-import { EuiBasicTableColumn, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiBasicTableColumn, EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { map, pick } from 'lodash'
 import { useHistory } from 'react-router-dom'
@@ -20,6 +20,7 @@ import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/In
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
 
 import SentinelDatabases from './components'
@@ -246,7 +247,7 @@ const SentinelDatabasesPage = () => {
                   position="left"
                   content="Select the Redis logical database to work with in Browser and Workbench."
                 >
-                  <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+                  <RiIcon type="InfoIcon" style={{ cursor: 'pointer' }} />
                 </EuiToolTip>
               }
             />

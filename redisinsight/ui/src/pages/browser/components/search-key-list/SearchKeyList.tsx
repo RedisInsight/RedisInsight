@@ -1,4 +1,4 @@
-import { EuiIcon, keys } from '@elastic/eui'
+import { keys } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -30,7 +30,6 @@ import {
 
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { resetBrowserTree } from 'uiSrc/slices/app/context'
-import CloudStars from 'uiSrc/assets/img/oauth/stars.svg?react'
 
 import { changeSidePanel } from 'uiSrc/slices/panels/sidePanels'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
@@ -40,6 +39,7 @@ import { SidePanels } from 'uiSrc/slices/interfaces/insights'
 import { FeatureFlags } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 const placeholders = {
@@ -192,7 +192,7 @@ const SearchKeyList = () => {
                 onClick={handleClickAskCopilot}
                 data-testid="ask-redis-copilot-btn"
               >
-                <EuiIcon className={styles.cloudIcon} type={CloudStars} />
+                <RiIcon className={styles.cloudIcon} type="StarsIcon" />
               </EmptyButton>
             </FeatureFlagComponent>
           ) : undefined

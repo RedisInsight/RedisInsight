@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { EuiIcon } from '@elastic/eui'
 import { isString, partialRight } from 'lodash'
 import { keysDataSelector } from 'uiSrc/slices/browser/keys'
 import {
@@ -25,7 +24,7 @@ import {
 } from 'uiSrc/slices/app/features'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { DatabaseAnalysisViewTab } from 'uiSrc/slices/interfaces/analytics'
-import OnboardingEmoji from 'uiSrc/assets/img/onboarding-emoji.svg'
+import OnboardingEmoji from 'uiSrc/assets/img/onboarding-emoji.svg?react'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 
@@ -678,9 +677,8 @@ const ONBOARDING_FEATURES = {
     title: (
       <>
         Great job!
-        <EuiIcon
-          style={{ marginLeft: 4, marginTop: -4 }}
-          type={OnboardingEmoji}
+        <OnboardingEmoji
+          style={{ marginLeft: 4, marginTop: -4, width: 16, height: 16 }}
         />
       </>
     ),

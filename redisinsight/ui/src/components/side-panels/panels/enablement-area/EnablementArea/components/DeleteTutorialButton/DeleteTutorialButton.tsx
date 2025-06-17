@@ -6,6 +6,7 @@ import { formatLongName } from 'uiSrc/utils'
 import { DestructiveButton } from 'uiSrc/components/base/forms/buttons'
 import { DeleteIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -37,7 +38,7 @@ const DeleteTutorialButton = (props: Props) => {
           onClick={handleClickDelete}
           data-testid={`delete-tutorial-icon-${id}`}
         >
-          <EuiIcon size="m" type="trash" />
+          <RiIcon size="m" type="DeleteIcon" />
         </div>
       }
       onClick={(e) => e.stopPropagation()}

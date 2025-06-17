@@ -11,6 +11,7 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { sendEventTelemetry } from 'uiSrc/telemetry'
 import { HELP_LINKS } from 'uiSrc/pages/home/constants'
 import { FeatureFlags } from 'uiSrc/constants'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from '../../styles.module.scss'
 
 const CreateCloud = () => {
@@ -50,9 +51,9 @@ const CreateCloud = () => {
                 target="_blank"
                 data-test-subj="create-cloud-nav-link"
               >
-                <EuiIcon
+                <RiIcon
                   className={styles.cloudIcon}
-                  type={CloudIcon}
+                  type="CloudIcon"
                   data-testid="cloud-db-icon"
                 />
               </EuiLink>

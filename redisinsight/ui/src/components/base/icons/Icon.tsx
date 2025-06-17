@@ -1,14 +1,16 @@
 import React from 'react'
 import { useTheme } from '@redis-ui/styles'
 import cx from 'classnames'
+import { IconSizeType } from '@redis-ui/icons'
 import { MonochromeIconProps } from 'uiSrc/components/base/icons'
 
-type BaseIconProps = Omit<MonochromeIconProps, 'color'> & {
+type BaseIconProps = Omit<MonochromeIconProps, 'color' | 'size'> & {
   icon: React.ComponentType<any>
   color?:
     | keyof ReturnType<typeof useTheme>['semantic']['color']['icon']
     | 'currentColor'
     | (string & {})
+  size?: IconSizeType | null
   isSvg?: boolean
 }
 
@@ -39,11 +41,16 @@ export const Icon = ({
   customSize,
   customColor,
   color = 'primary600',
-  size = 'L',
+  size,
   className,
   ...rest
 }: BaseIconProps) => {
-  const sizeValue = customSize || sizesMap[size]
+  let sizeValue: number | string | undefined = customSize
+  if (size && sizesMap[size]) {
+    sizeValue = sizesMap[size]
+  } else if (typeof size === 'undefined') {
+    sizeValue = 'L'
+  }
   const theme = useTheme()
   let colorValue = customColor
   if (!colorValue && isValidIconColor(theme, color)) {

@@ -1,8 +1,7 @@
 import React from 'react'
 
-import { EuiIcon, EuiLink, EuiTitle } from '@elastic/eui'
+import { EuiLink, EuiTitle } from '@elastic/eui'
 import { useSelector } from 'react-redux'
-import RedisDbBlueIcon from 'uiSrc/assets/img/icons/redis_db_blue.svg'
 
 import {
   CloudSsoUtmCampaign,
@@ -21,6 +20,7 @@ import { FeatureFlags } from 'uiSrc/constants'
 import { Text } from 'uiSrc/components/base/text'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 const utm = {
@@ -35,7 +35,7 @@ const FilterNotAvailable = ({ onClose }: { onClose?: () => void }) => {
   }
   return (
     <div className={styles.container}>
-      <EuiIcon type={RedisDbBlueIcon} size="original" />
+      <RiIcon type="RedisDbBlueIcon" size="original" />
       <EuiTitle
         size="m"
         className={styles.title}

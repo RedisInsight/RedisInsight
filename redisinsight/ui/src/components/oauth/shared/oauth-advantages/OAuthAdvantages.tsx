@@ -1,7 +1,8 @@
 import React from 'react'
-import { EuiIcon, EuiImage, EuiTitle } from '@elastic/eui'
+import { EuiImage, EuiTitle } from '@elastic/eui'
 import RedisLogo from 'uiSrc/assets/img/logo.svg'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { OAUTH_ADVANTAGES_ITEMS } from './constants'
 
 import styles from './styles.module.scss'
@@ -19,7 +20,7 @@ const OAuthAdvantages = () => (
           className={styles.advantage}
           key={title?.toString()}
         >
-          <EuiIcon type="check" className={styles.advantageIcon} />
+          <RiIcon type="CheckThinIcon" className={styles.advantageIcon} />
           <Text className={styles.advantageTitle} color="subdued">
             {title}
           </Text>

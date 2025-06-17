@@ -7,13 +7,14 @@ import React, {
 } from 'react'
 import cx from 'classnames'
 
-import { EuiIcon, EuiLoadingSpinner } from '@elastic/eui'
+import { EuiLoadingSpinner } from '@elastic/eui'
 import { throttle } from 'lodash'
 import {
   AiChatMessage,
   AiChatMessageType,
 } from 'uiSrc/slices/interfaces/aiAssistant'
 import { Nullable, scrollIntoView } from 'uiSrc/utils'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import LoadingMessage from '../loading-message'
@@ -129,7 +130,9 @@ const ChatHistory = (props: Props) => {
               })}
               data-testid={`ai-message-${messageType}_${id}`}
             >
-              {error && <EuiIcon type="alert" className={styles.errorIcon} />}
+              {error && (
+                <RiIcon type="ToastDangerIcon" className={styles.errorIcon} />
+              )}
               {messageType === AiChatMessageType.HumanMessage ? (
                 content
               ) : (

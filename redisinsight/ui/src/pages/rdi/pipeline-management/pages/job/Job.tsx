@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import { get, throttle } from 'lodash'
 import cx from 'classnames'
 import { monaco as monacoEditor } from 'react-monaco-editor'
@@ -35,6 +35,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
 import { Link } from 'uiSrc/components/base/link/Link'
+import { Loader } from 'uiSrc/components/base/display'
 import TemplateButton from '../../components/template-button'
 import styles from './styles.module.scss'
 
@@ -242,7 +243,7 @@ const Job = (props: Props) => {
             <Text color="subdued" style={{ marginBottom: 12 }}>
               Loading data...
             </Text>
-            <EuiLoadingSpinner color="secondary" size="l" />
+            <Loader color="secondary" size="l" />
           </div>
         ) : (
           <MonacoYaml

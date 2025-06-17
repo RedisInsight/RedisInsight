@@ -88,7 +88,7 @@ const TopKeysTable = ({
     history.push(Pages.browser(instanceId))
   }
 
-  const columnsV2: ColumnDefinition<Key>[] = [
+  const columns: ColumnDefinition<Key>[] = [
     {
       header: 'Key Type',
       id: 'type',
@@ -275,7 +275,7 @@ const TopKeysTable = ({
   return (
     <div data-testid={dataTestid}>
       <Table
-        columns={columnsV2}
+        columns={columns}
         data={data}
         defaultSorting={[
           {

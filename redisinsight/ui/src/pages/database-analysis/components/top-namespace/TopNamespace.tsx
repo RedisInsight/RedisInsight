@@ -1,6 +1,5 @@
 import { EuiLink } from '@elastic/eui'
 import { isNull } from 'lodash'
-import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
@@ -64,10 +63,7 @@ const TopNamespace = (props: Props) => {
 
   if (!data?.topMemoryNsp?.length && !data?.topKeysNsp?.length) {
     return (
-      <div
-        className={cx('section', styles.wrapper)}
-        data-testid="top-namespaces-empty"
-      >
+      <div className="section" data-testid="top-namespaces-empty">
         <div className="section-title-wrapper">
           <Title size="M" className="section-title">
             TOP NAMESPACES
@@ -94,7 +90,7 @@ const TopNamespace = (props: Props) => {
   }
 
   return (
-    <div className={cx('section', styles.wrapper)} data-testid="top-namespaces">
+    <div className="section" data-testid="top-namespaces">
       <div className="section-title-wrapper">
         <Title size="M" className="section-title">
           TOP NAMESPACES

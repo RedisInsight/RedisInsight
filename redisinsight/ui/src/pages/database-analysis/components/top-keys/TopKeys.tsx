@@ -8,12 +8,10 @@ import { Title } from 'uiSrc/components/base/text/Title'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 
 import Table from './Table'
-import styles from './styles.module.scss'
 
 export interface Props {
   data: Nullable<DatabaseAnalysis>
   loading: boolean
-  delimiter?: string
 }
 
 const MAX_TOP_KEYS = 15
@@ -30,7 +28,7 @@ const TopKeys = ({ data, loading }: Props) => {
   }
 
   return (
-    <div className={cx('section', styles.wrapper)}>
+    <div className={cx('section')}>
       <div className="section-title-wrapper">
         <Title size="M" className="section-title" data-testid="top-keys-title">
           {topKeysLength.length < MAX_TOP_KEYS &&

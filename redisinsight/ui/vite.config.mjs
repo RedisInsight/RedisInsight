@@ -46,6 +46,7 @@ export default defineConfig({
     alias: {
       lodash: 'lodash-es',
       '@elastic/eui$': '@elastic/eui/optimize/lib',
+      '@redislabsdev/redis-ui-components': '@redis-ui/components',
       '@redislabsdev/redis-ui-styles': '@redis-ui/styles',
       '@redislabsdev/redis-ui-icons': '@redis-ui/icons',
       '@redislabsdev/redis-ui-table': '@redis-ui/table',

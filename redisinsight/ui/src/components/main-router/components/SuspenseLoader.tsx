@@ -1,10 +1,10 @@
 import React from 'react'
-import { EuiLoadingSpinner } from '@elastic/eui'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './loader.module.scss'
 
 const SuspenseLoader = () => (
   <div className={styles.cover} data-testid="suspense-loader">
-    <EuiLoadingSpinner size="xl" className={styles.loader} />
+    <Loader size="xl" className={styles.loader} />
   </div>
 )
 

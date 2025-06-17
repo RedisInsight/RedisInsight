@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiIcon, EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiToolTip } from '@elastic/eui'
 import initialSyncIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/initial_sync.svg?react'
 import streamingIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/streaming.svg?react'
 import notRunningIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/not_running.svg?react'
@@ -7,6 +7,7 @@ import statusErrorIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/status_error.
 import { PipelineState } from 'uiSrc/slices/interfaces'
 import { Maybe, formatLongName } from 'uiSrc/utils'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -41,7 +42,7 @@ const CurrentPipelineStatus = ({
     <div className={styles.stateWrapper}>
       <Title size="XS">Pipeline State:</Title>
       {headerLoading ? (
-        <EuiLoadingSpinner size="m" style={{ marginLeft: '8px' }} />
+        <Loader size="m" style={{ marginLeft: '8px' }} />
       ) : (
         <EuiToolTip
           content={errorTooltipContent}

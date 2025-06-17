@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiFilePicker,
   EuiIcon,
-  EuiLoadingSpinner,
   EuiToolTip,
 } from '@elastic/eui'
 import ReactDOM from 'react-dom'
@@ -26,6 +25,7 @@ import {
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { Loader } from 'uiSrc/components/base/display'
 import ResultsLog from './components/ResultsLog'
 
 import styles from './styles.module.scss'
@@ -208,7 +208,7 @@ const ImportDatabase = (props: Props) => {
                 className={styles.loading}
                 data-testid="file-loading-indicator"
               >
-                <EuiLoadingSpinner size="xl" />
+                <Loader size="xl" />
                 <Text color="subdued" style={{ marginTop: 12 }}>
                   Uploading...
                 </Text>

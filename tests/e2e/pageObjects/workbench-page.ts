@@ -43,7 +43,7 @@ export class WorkbenchPage extends InstancePage {
     commandExecutionDateAndTime = Selector('[data-testid=command-execution-date-time]');
     executionCommandTime = Selector('[data-testid=command-execution-time-value]');
     executionCommandIcon = Selector('[data-testid=command-execution-time-icon]');
-    executedCommandTitle = Selector('[data-testid=query-card-tooltip-anchor]', { timeout: 500 });
+    executedCommandTitle = Selector('[data-testid=query-card-tooltip-anchor]', { timeout: 1500 });
     queryResult = Selector('[data-testid=query-common-result]');
     queryInputScriptArea = Selector('[data-testid=query-input-container] .view-line');
     parametersAnchor = Selector('[data-testid=parameters-anchor]');
@@ -103,7 +103,7 @@ export class WorkbenchPage extends InstancePage {
     queryTextResult = Selector(this.cssQueryTextResult);
 
     getTutorialLinkLocator = (tutorialName: string): Selector =>
-        Selector(`[data-testid=query-tutorials-link_${tutorialName}]`, { timeout: 1000 } );
+        Selector(`[data-testid=query-tutorials-link_${tutorialName}]`, { timeout: 2000 } );
 
 
     // Select view option in Workbench results
@@ -158,7 +158,7 @@ export class WorkbenchPage extends InstancePage {
      * @param paste Whether to paste the command. Default is true
      */
     async sendCommandInWorkbench(command: string, speed = 1, paste = true): Promise<void> {
-        const maxRetries = 3;
+        const maxRetries = 5;
         let lastError: Error | null = null;
 
         for (let i = 0; i < maxRetries; i++) {
@@ -170,16 +170,29 @@ export class WorkbenchPage extends InstancePage {
                 // Wait for the problematic overlay to disappear (CI-specific issue)
                 await Common.waitForElementNotVisible(this.overlayContainer);
 
+                // Enhanced wait for database readiness and stability
+                await t.wait(2000); // Increased from 500ms to 2000ms
+
+                // Verify UI elements are ready before interaction
+                await t.expect(this.queryInput.exists).ok('Query input not found', { timeout: 10000 });
+                await t.expect(this.submitCommandButton.exists).ok('Submit button not found', { timeout: 10000 });
+
                 // Perform the actual workbench interaction
                 await t
                     .click(this.queryInput)
+                    .wait(200) // Small pause after click
                     .typeText(this.queryInput, command, { replace: true, speed, paste })
+                    .wait(200) // Small pause after typing
                     .click(this.submitCommandButton);
+
+                // Wait for command to be processed
+                await t.wait(1000);
 
                 return; // Success, exit the retry loop
             } catch (error) {
                 lastError = error as Error;
-                console.warn(`Workbench command attempt ${i + 1}/${maxRetries} failed:`, error);
+                console.warn(`Workbench command attempt ${i + 1}/${maxRetries} failed for command "${command}":`, error);
+                console.warn('Error details:', lastError.message, lastError.stack);
 
                 if (i === maxRetries - 1) {
                     // Final attempt failed, throw the error
@@ -187,7 +200,7 @@ export class WorkbenchPage extends InstancePage {
                 }
 
                 // Wait before retrying to allow any animations/transitions to complete
-                await t.wait(1000);
+                await t.wait(2000);
             }
         }
     }

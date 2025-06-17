@@ -129,7 +129,7 @@ const StatisticsPage = () => {
       <div className={styles.bodyContainer}>
         {pageLoading && (
           <div className={styles.cover}>
-            <Loader size="4rem" />
+            <Loader size="xl" />
           </div>
         )}
         {!isPipelineDeployed(statusData) ? (

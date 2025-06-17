@@ -119,7 +119,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <Loader size="4rem" />
+          <Loader size="xl" />
         </div>
       )}
       <ConsentsPrivacy />
@@ -130,7 +130,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <Loader size="4rem" />
+          <Loader size="xl" />
         </div>
       )}
       <WorkbenchSettings />
@@ -141,7 +141,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <Loader size="4rem" />
+          <Loader size="xl" />
         </div>
       )}
       <CloudSettings />
@@ -152,7 +152,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <Loader size="4rem" />
+          <Loader size="xl" />
         </div>
       )}
       <CallOut className={styles.warning}>

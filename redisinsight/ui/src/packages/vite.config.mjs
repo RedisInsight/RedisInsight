@@ -39,6 +39,7 @@ export default defineConfig({
       '@elastic/eui$': '@elastic/eui/optimize/lib',
       '@redislabsdev/redis-ui-styles': '@redis-ui/styles',
       '@redislabsdev/redis-ui-icons': '@redis-ui/icons',
+      '@redislabsdev/redis-ui-table': '@redis-ui/table',
       uiSrc: fileURLToPath(new URL('../../src', import.meta.url)),
       apiSrc: fileURLToPath(new URL('../../../api/src', import.meta.url)),
     },

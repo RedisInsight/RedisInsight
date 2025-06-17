@@ -14,6 +14,7 @@ module.exports = {
     'uiSrc/(.*)': '<rootDir>/redisinsight/ui/src/$1',
     '@redislabsdev/redis-ui-styles': '@redis-ui/styles',
     '@redislabsdev/redis-ui-icons': '@redis-ui/icons',
+    '@redislabsdev/redis-ui-table': '@redis-ui/table',
     'monaco-editor': '<rootDir>/redisinsight/__mocks__/monacoMock.js',
     'monaco-yaml': '<rootDir>/redisinsight/__mocks__/monacoYamlMock.js',
     unified: '<rootDir>/redisinsight/__mocks__/unified.js',

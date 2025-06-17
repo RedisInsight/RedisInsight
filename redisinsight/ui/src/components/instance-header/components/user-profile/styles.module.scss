@@ -27,6 +27,27 @@
      border: 0 !important;
    }
 
+   .linkOption {
+    padding: 8px 12px !important;
+    width: 100%;
+    color: var(--euiTextSubduedColor) !important;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--tableLightBorderColor);
+    }
+    
+    span {
+      width: 100%;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      text-decoration: none !important;
+      cursor: pointer;
+    }
+   }
+
   .option {
     padding: 8px 12px;
 

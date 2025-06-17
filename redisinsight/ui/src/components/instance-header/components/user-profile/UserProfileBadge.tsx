@@ -21,9 +21,9 @@ import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { getConfig } from 'uiSrc/config'
 import { Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import styles from './styles.module.scss'
-import { Link } from 'uiSrc/components/base/link/Link'
 
 export interface UserProfileBadgeProps {
   'data-testid'?: string
@@ -189,7 +189,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
             otherwise={
               <>
                 <Link
-                  className={cx(styles.option, styles.clickableOption)}
+                  className={styles.linkOption}
                   href={riDesktopLink}
                   data-testid="open-ri-desktop-link"
                 >
@@ -197,7 +197,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                 </Link>
                 <Link
                   target="_blank"
-                  className={cx(styles.option, styles.clickableOption)}
+                  className={styles.linkOption}
                   href={riConfig.app.smConsoleRedirect}
                   data-testid="cloud-admin-console-link"
                 >
@@ -229,7 +229,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
             </div>
             <Link
               target="_blank"
-              className={cx(styles.option, styles.clickableOption)}
+              className={styles.linkOption}
               href={getUtmExternalLink(EXTERNAL_LINKS.cloudConsole, {
                 campaign: 'cloud_account',
               })}

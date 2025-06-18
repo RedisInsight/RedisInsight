@@ -1,5 +1,6 @@
 import {
   mockRedisClusterNodesResponse,
+  mockRedisClusterNodesResponseIPv6,
   mockRedisServerInfoResponse,
 } from 'src/__mocks__';
 import { flatMap } from 'lodash';
@@ -37,6 +38,28 @@ const mockRedisClusterNodes: IRedisClusterNode[] = [
     slot: '0-16383',
   },
 ];
+
+// IPv6 expected results
+const mockRedisClusterNodesIPv6: IRedisClusterNode[] = [
+  {
+    id: '07c37dfeb235213a872192d90877d0cd55635b91',
+    host: '2001:db8::1',
+    port: 7001,
+    replicaOf: 'e7d1eecce10fd6bb5eb35b9f99a514335d9ba9ca',
+    linkState: RedisClusterNodeLinkState.Connected,
+    slot: undefined,
+  },
+  {
+    id: 'e7d1eecce10fd6bb5eb35b9f99a514335d9ba9ca',
+    host: '2001:db8::2',
+    port: 7002,
+    replicaOf: undefined,
+    linkState: RedisClusterNodeLinkState.Connected,
+    slot: '0-16383',
+  },
+];
+
+
 
 const mockIncorrectString = '$6\r\nfoobar\r\n';
 
@@ -85,5 +108,12 @@ describe('parseNodesFromClusterInfoReply', () => {
     const result = parseNodesFromClusterInfoReply(mockIncorrectString);
 
     expect(result).toEqual([]);
+  });
+  it('should parse IPv6 addresses correctly', async () => {
+    const result = parseNodesFromClusterInfoReply(
+      mockRedisClusterNodesResponseIPv6,
+    );
+
+    expect(result).toEqual(mockRedisClusterNodesIPv6);
   });
 });

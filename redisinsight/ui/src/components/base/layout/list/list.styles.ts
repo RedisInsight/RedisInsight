@@ -12,7 +12,7 @@ import {
   useCallback,
   useEffect,
 } from 'react'
-// todo replace with redis-ui icon
+
 import { AllIconsType } from 'uiSrc/components/base/icons/RiIcon'
 import { IconProps } from 'uiSrc/components/base/icons'
 

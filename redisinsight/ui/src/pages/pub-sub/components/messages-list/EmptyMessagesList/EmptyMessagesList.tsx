@@ -1,10 +1,10 @@
 import React from 'react'
-import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { Text } from 'uiSrc/components/base/text'
 
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -28,7 +28,7 @@ const EmptyMessagesList = ({
         database
       </Text>
       <Text className={styles.alert}>
-        <EuiIcon type="alert" className={styles.alertIcon} />
+        <RiIcon type="ToastDangerIcon" className={styles.alertIcon} />
         Running in production may decrease performance and memory available
       </Text>
       {connectionType === ConnectionType.Cluster && isSpublishNotSupported && (

@@ -1,8 +1,8 @@
 import React from 'react'
-import { EuiIcon } from '@elastic/eui'
 
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { TextArea } from 'uiSrc/components/base/inputs'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
@@ -37,7 +37,7 @@ const ConnectionUrl = ({ value, onChange }: Props) => (
             </ul>
           }
         >
-          <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+          <RiIcon type="InfoIcon" style={{ cursor: 'pointer' }} />
         </RiTooltip>
       </div>
     }

@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiForm, EuiIcon } from '@elastic/eui'
+import { EuiFieldText, EuiForm } from '@elastic/eui'
 import cx from 'classnames'
 import React, {
   ChangeEvent,
@@ -15,7 +15,6 @@ import {
 } from 'uiSrc/slices/app/context'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { publishMessageAction } from 'uiSrc/slices/pubsub/pubsub'
-import UserIcon from 'uiSrc/assets/img/icons/user.svg?react'
 import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
@@ -23,6 +22,7 @@ import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
 import { CheckThinIcon } from 'uiSrc/components/base/icons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 const HIDE_BADGE_TIMER = 3000
@@ -138,7 +138,7 @@ const PublishMessage = () => {
                       >
                         {affectedClients}
                       </span>
-                      <EuiIcon type={UserIcon || 'user'} />
+                      <RiIcon type="UserIcon" />
                     </Row>
                   )}
                 </RiBadge>

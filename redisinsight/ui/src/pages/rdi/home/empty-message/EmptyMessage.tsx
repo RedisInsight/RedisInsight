@@ -1,11 +1,10 @@
-import { EuiIcon, EuiImage } from '@elastic/eui'
+import { EuiImage } from '@elastic/eui'
 import React, { useContext } from 'react'
 
 import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import EmptyListDarkIcon from 'uiSrc/assets/img/rdi/empty_list_dark.svg'
 import EmptyListLightIcon from 'uiSrc/assets/img/rdi/empty_list_light.svg'
-import NewTabIcon from 'uiSrc/assets/img/rdi/new_tab.svg'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { Theme } from 'uiSrc/constants'
 
@@ -13,6 +12,7 @@ import { Text } from 'uiSrc/components/base/text'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
@@ -58,7 +58,7 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => {
               campaign: 'rdi_list',
             })}
           >
-            RDI Quickstart <EuiIcon type={NewTabIcon} />
+            RDI Quickstart <RiIcon type="ArrowDiagonalIcon" />
           </Link>
         </FlexItem>
       </Row>

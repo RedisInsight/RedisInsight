@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiIcon } from '@elastic/eui'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import {
   EXTERNAL_LINKS,

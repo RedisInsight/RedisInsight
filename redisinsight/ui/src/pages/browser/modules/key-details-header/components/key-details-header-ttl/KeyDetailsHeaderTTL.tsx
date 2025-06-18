@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiIcon } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -14,6 +14,7 @@ import { MAX_TTL_NUMBER, validateTTLNumber } from 'uiSrc/utils'
 
 import { FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -75,7 +76,11 @@ const KeyDetailsHeaderTTL = ({ onEditTTL }: Props) => {
 
   const appendTTLEditing = () =>
     !ttlIsEditing ? (
-      <EuiIcon className={styles.iconPencil} type="pencil" color="subdued" />
+      <RiIcon
+        className={styles.iconPencil}
+        type="EditIcon"
+        color="informative400"
+      />
     ) : (
       ''
     )
@@ -102,7 +107,7 @@ const KeyDetailsHeaderTTL = ({ onEditTTL }: Props) => {
                 TTL:
               </Text>
             </FlexItem>
-            <FlexItem grow inline>
+            <FlexItem grow>
               <InlineItemEditor
                 onApply={() => applyEditTTL()}
                 onDecline={(event) => cancelEditTTl(event)}

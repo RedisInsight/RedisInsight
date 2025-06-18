@@ -6,7 +6,6 @@ import {
 } from 'uiSrc/components'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { sendEventTelemetry } from 'uiSrc/telemetry'

@@ -1,6 +1,5 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiIcon } from '@elastic/eui'
 import { isArray } from 'lodash'
 
 import { LoadingContent } from 'uiSrc/components/base/layout'
@@ -9,9 +8,9 @@ import { ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 import {
   cliParseTextResponse,
   formatToText,
-  replaceEmptyValue,
   isGroupResults,
   Maybe,
+  replaceEmptyValue,
 } from 'uiSrc/utils'
 
 import { CommandExecutionStatus } from 'uiSrc/slices/interfaces/cli'

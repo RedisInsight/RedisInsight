@@ -1,4 +1,3 @@
-import { EuiIcon } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -19,6 +18,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 
 import SlowLogConfig from '../SlowLogConfig'
 import styles from './styles.module.scss'
@@ -100,7 +100,11 @@ const Actions = (props: Props) => {
 
   const ToolTipContent = (
     <div className={styles.popoverContainer}>
-      <EuiIcon type="alert" color="danger" className={styles.warningIcon} />
+      <RiIcon
+        type="ToastDangerIcon"
+        color="attention600"
+        className={styles.warningIcon}
+      />
       <div>
         <Text size="m" component="div">
           <h4 className={styles.popoverTitle}>
@@ -214,9 +218,9 @@ const Actions = (props: Props) => {
             </span>
           }
         >
-          <EuiIcon
+          <RiIcon
             className={styles.infoIcon}
-            type="iInCircle"
+            type="InfoIcon"
             style={{ cursor: 'pointer' }}
             data-testid="slow-log-tooltip-icon"
           />

@@ -1,13 +1,8 @@
-import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import { DonutChart } from 'uiSrc/components/charts'
 import { ChartData } from 'uiSrc/components/charts/donut-chart/DonutChart'
-import {
-  KeyIconSvg,
-  MemoryIconSvg,
-} from 'uiSrc/components/database-overview/components/icons'
 import { GROUP_TYPES_COLORS, GroupTypesColors } from 'uiSrc/constants'
 import {
   DEFAULT_EXTRAPOLATION,
@@ -23,6 +18,7 @@ import { getPercentage, numberWithSpaces } from 'uiSrc/utils/numbers'
 
 import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import {
   DatabaseAnalysis,
   SimpleTypeSummary,
@@ -210,8 +206,8 @@ const SummaryPerData = ({
                 className={styles.chartTitle}
                 data-testid="donut-title-memory"
               >
-                <EuiIcon
-                  type={MemoryIconSvg}
+                <RiIcon
+                  type="MemoryIconIcon"
                   className={styles.icon}
                   size="m"
                 />
@@ -242,7 +238,7 @@ const SummaryPerData = ({
           title={
             <div className={styles.chartCenter}>
               <div className={styles.chartTitle} data-testid="donut-title-keys">
-                <EuiIcon type={KeyIconSvg} className={styles.icon} size="m" />
+                <RiIcon type="KeyIconIcon" className={styles.icon} size="m" />
                 <Title size="XS">Keys</Title>
               </div>
               <hr className={styles.titleSeparator} />

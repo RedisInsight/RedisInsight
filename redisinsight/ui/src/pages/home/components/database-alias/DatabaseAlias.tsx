@@ -1,25 +1,21 @@
 import React, { ChangeEvent, useState, useEffect, useContext } from 'react'
-import { EuiFieldText, EuiIcon } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
 import { useHistory } from 'react-router'
 
 import {
-  CopyIcon,
   ArrowLeftIcon,
+  CopyIcon,
   DoubleChevronRightIcon,
 } from 'uiSrc/components/base/icons'
 import { BuildType } from 'uiSrc/constants/env'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
-import { Nullable, getDbIndex } from 'uiSrc/utils'
+import { getDbIndex, Nullable } from 'uiSrc/utils'
 import { Pages, Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor/InlineItemEditor'
-import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
-import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
-import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
-import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
@@ -36,6 +32,7 @@ import {
 import { FlexItem, Grid, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
@@ -167,11 +164,11 @@ const DatabaseAlias = (props: Props) => {
               <FlexItem>
                 <RiTooltip
                   content={
-                    <EuiIcon
+                    <RiIcon
                       type={
                         theme === Theme.Dark
-                          ? RediStackDarkLogo
-                          : RediStackLightLogo
+                          ? 'RediStackDarkLogoIcon'
+                          : 'RediStackLightLogoIcon'
                       }
                       className={styles.tooltipLogo}
                       data-testid="tooltip-redis-stack-icon"
@@ -179,11 +176,11 @@ const DatabaseAlias = (props: Props) => {
                   }
                   position="bottom"
                 >
-                  <EuiIcon
+                  <RiIcon
                     type={
                       theme === Theme.Dark
-                        ? RediStackDarkMin
-                        : RediStackLightMin
+                        ? 'RediStackDarkMinIcon'
+                        : 'RediStackLightMinIcon'
                     }
                     className={styles.redistackIcon}
                     data-testid="redis-stack-icon"
@@ -224,7 +221,7 @@ const DatabaseAlias = (props: Props) => {
                         onChange={onChange}
                         append={
                           !isEditing ? (
-                            <EuiIcon type="pencil" color="subdued" />
+                            <RiIcon type="EditIcon" color="informative400" />
                           ) : (
                             ''
                           )
@@ -252,8 +249,8 @@ const DatabaseAlias = (props: Props) => {
                   </b>
                   <b>{getDbIndex(toNumber(database))}</b>
                   {!isCloneMode && (
-                    <EuiIcon
-                      type="pencil"
+                    <RiIcon
+                      type="EditIcon"
                       className={cx(styles.aliasEditIcon)}
                     />
                   )}

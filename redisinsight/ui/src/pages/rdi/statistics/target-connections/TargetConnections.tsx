@@ -1,4 +1,3 @@
-import { EuiIcon } from '@elastic/eui'
 import React from 'react'
 
 import {
@@ -8,6 +7,7 @@ import {
 import { formatLongName } from 'uiSrc/utils'
 import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import { RiTooltip } from 'uiSrc/components'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
 
@@ -32,9 +32,9 @@ const columns: ColumnDefinition<ConnectionData>[] = [
       },
     }) =>
       status === StatisticsConnectionStatus.connected ? (
-        <EuiIcon type="dot" color="var(--buttonSuccessColor)" />
+        <RiIcon type="ToastInfoIcon" color="success300" />
       ) : (
-        <EuiIcon type="alert" color="danger" />
+        <RiIcon type="ToastDangerIcon" color="danger600" />
       ),
   },
   {

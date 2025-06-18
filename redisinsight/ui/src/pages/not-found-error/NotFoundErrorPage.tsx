@@ -1,16 +1,15 @@
 import React, { useCallback } from 'react'
-import { EuiIcon } from '@elastic/eui'
 import { useHistory } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { FeatureFlags } from 'uiSrc/constants/featureFlags'
 import { getConfig } from 'uiSrc/config'
-import Logo from 'uiSrc/assets/img/logo.svg?react'
 import Robot from 'uiSrc/assets/img/robot.svg?react'
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 const NotFoundErrorPage = () => {
@@ -34,10 +33,10 @@ const NotFoundErrorPage = () => {
         <FlexItem grow>
           <Col align="start" gap="xl">
             <FlexItem grow>
-              <EuiIcon
+              <RiIcon
                 className={styles.logoIcon}
                 size="original"
-                type={Logo}
+                type="RedisLogoFullIcon"
               />
             </FlexItem>
             <FlexItem grow>

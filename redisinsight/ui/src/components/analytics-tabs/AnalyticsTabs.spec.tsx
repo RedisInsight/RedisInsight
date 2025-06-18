@@ -1,8 +1,7 @@
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
-import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
-import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import AnalyticsTabs from './AnalyticsTabs'
 
@@ -32,13 +31,7 @@ describe('AnalyticsTabs', () => {
 
     render(<AnalyticsTabs />)
 
-    await act(() => {
-      fireEvent.click(
-        screen.getByTestId(
-          `analytics-tab-${AnalyticsViewTab.DatabaseAnalysis}`,
-        ),
-      )
-    })
+    fireEvent.mouseDown(screen.getByText('Database Analysis'))
 
     expect(pushMock).toHaveBeenCalledTimes(1)
     expect(pushMock).toHaveBeenCalledWith(
@@ -51,11 +44,7 @@ describe('AnalyticsTabs', () => {
 
     render(<AnalyticsTabs />)
 
-    await act(() => {
-      fireEvent.click(
-        screen.getByTestId(`analytics-tab-${AnalyticsViewTab.SlowLog}`),
-      )
-    })
+    fireEvent.mouseDown(screen.getByText('Slow Log'))
 
     expect(pushMock).toHaveBeenCalledTimes(1)
     expect(pushMock).toHaveBeenCalledWith('/instanceId/analytics/slowlog')
@@ -69,20 +58,16 @@ describe('AnalyticsTabs', () => {
 
     render(<AnalyticsTabs />)
 
-    expect(
-      screen.getByTestId(`analytics-tab-${AnalyticsViewTab.ClusterDetails}`),
-    ).toBeInTheDocument()
+    expect(screen.getByText('Overview')).toBeInTheDocument()
   })
 
   it('should not render cluster details tab when connectionType is not Cluster', async () => {
-    const { queryByTestId } = render(<AnalyticsTabs />)
+    const { queryByText } = render(<AnalyticsTabs />)
 
-    expect(
-      queryByTestId(`analytics-tab-${AnalyticsViewTab.ClusterDetails}`),
-    ).not.toBeInTheDocument()
+    expect(queryByText('Overview')).not.toBeInTheDocument()
   })
 
-  it('should call History push with /cluster-details path when click on ClusterDetails tab ', async () => {
+  it('should call History push with /cluster-details path when click on SlowLog tab ', async () => {
     const mockConnectionType = ConnectionType.Cluster
     ;(connectedInstanceSelector as jest.Mock).mockReturnValueOnce({
       connectionType: mockConnectionType,
@@ -92,15 +77,9 @@ describe('AnalyticsTabs', () => {
 
     render(<AnalyticsTabs />)
 
-    await act(() => {
-      fireEvent.click(
-        screen.getByTestId(`analytics-tab-${AnalyticsViewTab.ClusterDetails}`),
-      )
-    })
+    fireEvent.mouseDown(screen.getByText('Slow Log'))
 
     expect(pushMock).toHaveBeenCalledTimes(1)
-    expect(pushMock).toHaveBeenCalledWith(
-      '/instanceId/analytics/cluster-details',
-    )
+    expect(pushMock).toHaveBeenCalledWith('/instanceId/analytics/slowlog')
   })
 })

@@ -66,13 +66,6 @@ body .euiSuperSelect__listbox {
   color: var(--htmlColor)
 }
 
-.euiTab {
-  color: var(--euiTextColor);
-  &.euiTab-isSelected {
-    color: var(--euiColorPrimary);
-  }
-}
-
 .euiFilePicker-hasFiles .euiFilePicker__promptText {
   color: var(--euiTextColor);
 }

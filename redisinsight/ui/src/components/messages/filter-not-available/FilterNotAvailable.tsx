@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { EuiLink, EuiTitle } from '@elastic/eui'
+import { EuiLink } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import {
@@ -21,6 +21,7 @@ import { Text } from 'uiSrc/components/base/text'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { Title } from 'uiSrc/components/base/text/Title'
 import styles from './styles.module.scss'
 
 const utm = {
@@ -36,13 +37,13 @@ const FilterNotAvailable = ({ onClose }: { onClose?: () => void }) => {
   return (
     <div className={styles.container}>
       <RiIcon type="RedisDbBlueIcon" size="original" />
-      <EuiTitle
-        size="m"
+      <Title
+        size="M"
         className={styles.title}
         data-testid="filter-not-available-title"
       >
-        <h4>Upgrade your Redis database to version 6 or above</h4>
-      </EuiTitle>
+        Upgrade your Redis database to version 6 or above
+      </Title>
       <Text>Filtering by data type is supported in Redis 6 and above.</Text>
       <Spacer size="m" />
       {!!freeInstances.length && (

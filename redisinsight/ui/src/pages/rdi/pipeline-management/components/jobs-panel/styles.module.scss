@@ -67,51 +67,6 @@ $animation-duration: 300ms;
   }
 }
 
-.tabs {
-  display: flex;
-
-  .tab {
-    background-color: var(--buttonGuideBgColor);
-    color: var(--euiTextSubduedColor);
-    font-size: 14px;
-    margin: 0 !important;
-    border-radius: 4px;
-    padding: 8px 16px 8px 16px !important;
-
-    &:global {
-      &.euiTab + .euiTab:after {
-        display: none !important;
-      }
-    }
-
-    &:global(.euiTab-isSelected) {
-      color: var(--externalLinkColor);
-
-      &:hover {
-        text-decoration: none;
-      }
-    }
-
-    &:global:not(.euiTab-isSelected) {
-      background-color: transparent;
-
-      &:hover {
-        .tabName {
-          text-decoration: underline;
-        }
-      }
-    }
-
-    :global {
-      .euiTab__content {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-    }
-  }
-}
-
 .actionBtn {
   &:global(.euiButton) {
     height: 20px !important;

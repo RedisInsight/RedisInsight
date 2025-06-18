@@ -1,7 +1,6 @@
 import {
   EuiFieldText,
   EuiForm,
-  EuiTitle,
   EuiToolTip,
   EuiToolTipProps,
   ToolTipPositions,
@@ -33,6 +32,7 @@ import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { PasswordInput } from 'uiSrc/components/base/inputs'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { Title } from 'uiSrc/components/base/text/Title'
 import ValidationTooltip from './components/ValidationTooltip'
 
 import styles from './styles.module.scss'
@@ -88,9 +88,9 @@ const ConnectionForm = (props: Props) => {
   useEffect(() => {
     setInitialFormValues(getInitialValues(editInstance))
     setModalHeader(
-      <EuiTitle size="s">
-        <h4>{editInstance ? 'Edit endpoint' : 'Add RDI endpoint'}</h4>
-      </EuiTitle>,
+      <Title size="M">
+        {editInstance ? 'Edit endpoint' : 'Add RDI endpoint'}
+      </Title>,
     )
   }, [editInstance])
 

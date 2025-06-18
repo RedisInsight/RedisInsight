@@ -1,7 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { EuiTitle } from '@elastic/eui'
 
 import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
 import {
@@ -28,6 +27,7 @@ import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import {
   MODULE_CAPABILITY_TEXT_NOT_AVAILABLE,
@@ -60,9 +60,9 @@ const ModuleNotLoadedMinimalized = (props: Props) => {
   return (
     <div className={styles.wrapper} data-testid="module-not-loaded-popover">
       <div>
-        <EuiTitle size="xxs" className={styles.title}>
-          <h5>{moduleText?.title}</h5>
-        </EuiTitle>
+        <Title size="S" className={styles.title}>
+          {moduleText?.title}
+        </Title>
         <Spacer size="s" />
         <FeatureFlagComponent
           name={FeatureFlags.cloudAds}

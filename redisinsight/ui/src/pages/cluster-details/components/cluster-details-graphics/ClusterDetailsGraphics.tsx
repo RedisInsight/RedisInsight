@@ -1,4 +1,3 @@
-import { EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import { sumBy } from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -7,6 +6,7 @@ import { ChartData } from 'uiSrc/components/charts/donut-chart/DonutChart'
 import { ModifiedClusterNodes } from 'uiSrc/pages/cluster-details/ClusterDetailsPage'
 import { formatBytes, Nullable } from 'uiSrc/utils'
 import { getPercentage, numberWithSpaces } from 'uiSrc/utils/numbers'
+import { Title } from 'uiSrc/components/base/text/Title'
 
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
@@ -117,9 +117,7 @@ const ClusterDetailsGraphics = ({
           <div className={styles.chartCenter}>
             <div className={styles.chartTitle} data-testid="donut-title-memory">
               <RiIcon type="MemoryIconIcon" className={styles.icon} size="m" />
-              <EuiTitle size="xs">
-                <span>Memory</span>
-              </EuiTitle>
+              <Title size="XS">Memory</Title>
             </div>
             <hr className={styles.titleSeparator} />
             <div className={styles.centerCount}>
@@ -137,9 +135,7 @@ const ClusterDetailsGraphics = ({
           <div className={styles.chartCenter}>
             <div className={styles.chartTitle} data-testid="donut-title-keys">
               <RiIcon type="KeyIconIcon" className={styles.icon} size="m" />
-              <EuiTitle size="xs">
-                <span>Keys</span>
-              </EuiTitle>
+              <Title size="XS">Keys</Title>
             </div>
             <hr className={styles.titleSeparator} />
             <div className={styles.centerCount}>

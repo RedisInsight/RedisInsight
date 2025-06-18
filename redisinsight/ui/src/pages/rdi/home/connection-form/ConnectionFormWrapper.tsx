@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { EuiTitle } from '@elastic/eui'
 import { FormDialog } from 'uiSrc/components'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Nullable } from 'uiSrc/utils'
 import { ModalHeaderProvider } from 'uiSrc/contexts/ModalTitleProvider'
 import ConnectionForm, { Props as ConnectionFormProps } from './ConnectionForm'
@@ -20,13 +20,7 @@ const ConnectionFormWrapper = (props: Props) => {
     <FormDialog
       isOpen={isOpen}
       onClose={onCancel}
-      header={
-        modalHeader ?? (
-          <EuiTitle size="s">
-            <h4>Add endpoint</h4>
-          </EuiTitle>
-        )
-      }
+      header={modalHeader ?? <Title size="M">Add endpoint</Title>}
       footer={<div id="footerDatabaseForm" />}
     >
       <div className={styles.bodyWrapper}>

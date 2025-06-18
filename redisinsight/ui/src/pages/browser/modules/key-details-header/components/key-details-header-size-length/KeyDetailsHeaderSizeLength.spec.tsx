@@ -1,8 +1,13 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import userEvent from '@testing-library/user-event'
-import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  userEvent,
+  cleanup,
+  mockedStore,
+  render,
+  screen,
+} from 'uiSrc/utils/test-utils'
 import * as keysSlice from 'uiSrc/slices/browser/keys'
 import { KeyTypes } from 'uiSrc/constants'
 import { Props, KeyDetailsHeaderSizeLength } from './KeyDetailsHeaderSizeLength'

@@ -1,6 +1,8 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import { EuiFieldText, EuiPopover, EuiTab, EuiTabs } from '@elastic/eui'
-import cx from 'classnames'
+import {
+  EuiFieldText,
+  EuiPopover,
+} from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { instancesSelector as rdiInstancesSelector } from 'uiSrc/slices/rdi/instances'
@@ -15,6 +17,7 @@ import { filterAndSort } from 'uiSrc/utils'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Text } from 'uiSrc/components/base/text'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import Tabs, { TabInfo } from 'uiSrc/components/base/layout/tabs'
 import InstancesList from './components/instances-list'
 import styles from './styles.module.scss'
 
@@ -93,6 +96,22 @@ const InstancesNavigationPopover = ({ name }: Props) => {
     )
   }
 
+  const tabs: TabInfo[] = useMemo(
+    () => [
+      {
+        label: `${InstancesTabs.Databases} (${dbInstances?.length || 0})`,
+        value: InstancesTabs.Databases,
+        content: null,
+      },
+      {
+        label: `${InstancesTabs.RDI} (${rdiInstances?.length || 0})`,
+        value: InstancesTabs.RDI,
+        content: null,
+      },
+    ],
+    [dbInstances, rdiInstances],
+  )
+
   return (
     <EuiPopover
       ownFocus
@@ -126,28 +145,14 @@ const InstancesNavigationPopover = ({ name }: Props) => {
         </div>
         <div>
           <div className={styles.tabsContainer}>
-            <EuiTabs
-              className={cx('tabs-active-borders', styles.tabs)}
+            <Tabs
+              tabs={tabs}
+              value={selectedTab}
+              // @ts-expect-error type mismatch
+              onChange={setSelectedTab}
+              className={styles.tabs}
               data-testid="instances-tabs-testId"
-            >
-              <EuiTab
-                className={styles.tab}
-                isSelected={selectedTab === InstancesTabs.Databases}
-                onClick={() => setSelectedTab(InstancesTabs.Databases)}
-                data-testid={`${InstancesTabs.Databases}-tab-id`}
-              >
-                {InstancesTabs.Databases} ({dbInstances?.length || 0})
-              </EuiTab>
-
-              <EuiTab
-                className={styles.tab}
-                isSelected={selectedTab === InstancesTabs.RDI}
-                onClick={() => setSelectedTab(InstancesTabs.RDI)}
-                data-testid={`${InstancesTabs.RDI}-tab-id`}
-              >
-                {InstancesTabs.RDI} ({rdiInstances?.length || 0})
-              </EuiTab>
-            </EuiTabs>
+            />
           </div>
           <Spacer size="m" />
           <InstancesList

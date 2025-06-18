@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { EuiPopover, EuiSwitch, EuiToolTip } from '@elastic/eui'
+import { EuiPopover, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { ChevronDownIcon, RefreshIcon } from 'uiSrc/components/base/icons'
 import {
@@ -14,6 +14,7 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { ColorText } from 'uiSrc/components/base/text'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
 import {
   DEFAULT_REFRESH_RATE,
   DURATION_FIRST_REFRESH_TIME,
@@ -265,16 +266,13 @@ const AutoRefresh = ({
           />
         }
       >
-        <div className={styles.switch}>
-          <EuiSwitch
-            compressed
-            label="Auto Refresh"
-            checked={enableAutoRefresh}
-            onChange={(e) => onChangeEnableAutoRefresh(e.target.checked)}
-            className={styles.switchOption}
-            data-testid={getDataTestid('auto-refresh-switch')}
-          />
-        </div>
+        <SwitchInput
+          title="Auto Refresh"
+          checked={enableAutoRefresh}
+          onCheckedChange={onChangeEnableAutoRefresh}
+          className={styles.switchOption}
+          data-testid={getDataTestid('auto-refresh-switch')}
+        />
         <div className={styles.inputContainer}>
           <div className={styles.inputLabel}>Refresh rate:</div>
           {!editingRate && (

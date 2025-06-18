@@ -4,7 +4,6 @@ import {
   EuiModal,
   EuiModalBody,
   EuiModalHeader,
-  EuiTitle,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -19,6 +18,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { Title } from 'uiSrc/components/base/text/Title'
 import styles from '../styles.module.scss'
 
 const ConsentsSettingsPopup = () => {
@@ -57,11 +57,9 @@ const ConsentsSettingsPopup = () => {
         <EuiModalHeader className={styles.modalHeader}>
           <Row justify="between">
             <FlexItem>
-              <EuiTitle size="s">
-                <h3 className={styles.consentsPopupTitle}>
-                  EULA and Privacy Settings
-                </h3>
-              </EuiTitle>
+              <Title size="L" className={styles.consentsPopupTitle}>
+                EULA and Privacy Settings
+              </Title>
             </FlexItem>
             <FlexItem>
               <RiIcon className={styles.redisIcon} type="RedisLogoFullIcon" />

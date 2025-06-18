@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiTitle } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { OAuthAgreement } from 'uiSrc/components/oauth/shared'
 
@@ -9,6 +8,7 @@ import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
 import { setOAuthCloudSource } from 'uiSrc/slices/oauth/cloud'
 import OAuthForm from 'uiSrc/components/oauth/shared/oauth-form'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
@@ -48,9 +48,7 @@ const WelcomeAiAssistant = () => {
                 Build faster with Redis Copilot.
               </Text>
               <Spacer size="xl" />
-              <EuiTitle size="xs">
-                <h5>Sign in to get started.</h5>
-              </EuiTitle>
+              <Title size="S">Sign in to get started.</Title>
 
               <Spacer size="l" />
               {form}

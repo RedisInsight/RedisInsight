@@ -5,7 +5,6 @@ import {
   EuiTableSelectionType,
   PropertySort,
   EuiPopover,
-  EuiTitle,
   EuiToolTip,
 } from '@elastic/eui'
 import { map, pick } from 'lodash'
@@ -25,6 +24,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Pages } from 'uiSrc/constants'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Text } from 'uiSrc/components/base/text'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
@@ -195,9 +195,9 @@ const RedisCloudDatabasesPage = ({
   return (
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
-        <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>Redis Cloud Databases</h1>
-        </EuiTitle>
+        <Title size="XXL" className={styles.title} data-testid="title">
+          Redis Cloud Databases
+        </Title>
 
         <Row align="end" gap="s">
           <FlexItem grow>

@@ -13,6 +13,7 @@ import {
 
 import { ThemeProvider } from 'styled-components'
 import { themeLight } from '@redis-ui/styles'
+import userEvent from '@testing-library/user-event'
 import { RootState, store as rootStore } from 'uiSrc/slices/store'
 import { initialState as initialStateInstances } from 'uiSrc/slices/instances/instances'
 import { initialState as initialStateTags } from 'uiSrc/slices/instances/tags'
@@ -398,6 +399,7 @@ export const mockFeatureFlags = (
 export * from '@testing-library/react'
 // override render method
 export {
+  userEvent,
   initialStateDefault,
   render,
   renderHook,

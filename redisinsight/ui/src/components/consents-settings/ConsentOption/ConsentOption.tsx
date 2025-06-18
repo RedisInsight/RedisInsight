@@ -1,10 +1,10 @@
 import React from 'react'
-import { EuiSwitch } from '@elastic/eui'
 import parse from 'html-react-parser'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Text } from 'uiSrc/components/base/text'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { IConsent } from '../ConsentsSettings'
 
 import styles from '../styles.module.scss'
@@ -42,14 +42,11 @@ const ConsentOption = (props: Props) => {
       )}
       <Row gap="m">
         <FlexItem>
-          <EuiSwitch
-            showLabel={false}
-            label=""
+          <SwitchInput
             checked={checked}
-            onChange={(e) =>
-              onChangeAgreement(e.target.checked, consent.agreementName)
+            onCheckedChange={(checked) =>
+              onChangeAgreement(checked, consent.agreementName)
             }
-            className={styles.switchOption}
             data-testid={`switch-option-${consent.agreementName}`}
             disabled={consent?.disabled}
           />

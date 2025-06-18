@@ -1,8 +1,9 @@
 import React from 'react'
-import { EuiLoadingSpinner, EuiTitle, EuiToolTip } from '@elastic/eui'
+import { EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
 import { PipelineState } from 'uiSrc/slices/interfaces'
 import { formatLongName, Maybe } from 'uiSrc/utils'
 import { AllIconsType, RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { IconProps } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
@@ -56,9 +57,7 @@ const CurrentPipelineStatus = ({
 
   return (
     <div className={styles.stateWrapper}>
-      <EuiTitle size="xxs">
-        <h6>Pipeline State: </h6>
-      </EuiTitle>
+      <Title size="XS">Pipeline State:</Title>
       {headerLoading ? (
         <EuiLoadingSpinner size="m" style={{ marginLeft: '8px' }} />
       ) : (

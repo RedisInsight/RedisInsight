@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiFilePicker,
   EuiLoadingSpinner,
-  EuiTitle,
   EuiToolTip,
 } from '@elastic/eui'
 import ReactDOM from 'react-dom'
@@ -24,6 +23,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { ColorText, Text } from 'uiSrc/components/base/text'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import ResultsLog from './components/ResultsLog'
@@ -51,12 +51,7 @@ const ImportDatabase = (props: Props) => {
   useEffect(() => {
     setDomReady(true)
 
-    setModalHeader(
-      <EuiTitle size="s">
-        <h4>Import from file</h4>
-      </EuiTitle>,
-      true,
-    )
+    setModalHeader(<Title size="M">Import from file</Title>, true)
 
     return () => {
       setModalHeader(null)

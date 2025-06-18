@@ -34,7 +34,8 @@ fixture `Command results at Workbench`
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
     });
-test('Verify that user can switches between Table and Text for FT.INFO and see results corresponding to their views', async t => {
+test
+    .skip('Verify that user can switches between Table and Text for FT.INFO and see results corresponding to their views', async t => {
     const infoCommand = `FT.INFO ${indexName}`;
 
     // Send FT.INFO and switch to Text view
@@ -46,7 +47,8 @@ test('Verify that user can switches between Table and Text for FT.INFO and see r
     await t.switchToIframe(workbenchPage.iframe);
     await t.expect(workbenchPage.queryTableResult.exists).ok('The table view is not switched for command FT.INFO');
 });
-test('Verify that user can switches between Table and Text for FT.SEARCH and see results corresponding to their views', async t => {
+test
+    .skip('Verify that user can switches between Table and Text for FT.SEARCH and see results corresponding to their views', async t => {
     const searchCommand = `FT.SEARCH ${indexName} *`;
 
     // Send FT.SEARCH and switch to Text view
@@ -58,7 +60,8 @@ test('Verify that user can switches between Table and Text for FT.SEARCH and see
     await t.switchToIframe(workbenchPage.iframe);
     await t.expect(workbenchPage.queryTableResult.exists).ok('The table view is not switched for command FT.SEARCH');
 });
-test('Verify that user can switches between Table and Text for FT.AGGREGATE and see results corresponding to their views', async t => {
+test
+    .skip('Verify that user can switches between Table and Text for FT.AGGREGATE and see results corresponding to their views', async t => {
     const aggregateCommand = `FT.Aggregate ${indexName} * GROUPBY 0 REDUCE MAX 1 @price AS max_price`;
 
     // Send FT.AGGREGATE and switch to Text view

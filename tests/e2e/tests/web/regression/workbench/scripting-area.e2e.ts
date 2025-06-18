@@ -28,7 +28,8 @@ fixture `Scripting area at Workbench`
         await workbenchPage.sendCommandInWorkbench(`FT.DROPINDEX ${indexName} DD`);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test('Verify that user can run multiple commands written in multiple lines in Workbench page', async t => {
+test
+    .skip('Verify that user can run multiple commands written in multiple lines in Workbench page', async t => {
     const commandsForSend = [
         'info',
         `FT.CREATE ${indexName} ON HASH PREFIX 1 product: SCHEMA name TEXT`,

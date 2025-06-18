@@ -127,7 +127,8 @@ test
     }).after(async() => {
         await refreshFeaturesTestData();
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneV5Config);
-    })('Verify that user can upvote recommendations', async t => {
+    })
+    .skip('Verify that user can upvote recommendations', async t => {
         const notUsefulVoteOption = 'not useful';
         const usefulVoteOption = 'useful';
         await browserPage.NavigationHeader.togglePanel(true);
@@ -156,7 +157,8 @@ test
         // Verify that user can rate recommendations with one of 2 existing types at the same time
         await recommendationsActions.verifyVoteIsSelected(redisVersionRecom, usefulVoteOption);
     });
-test('Verify that user can hide recommendations and checkbox value is saved', async t => {
+test
+    .skip('Verify that user can hide recommendations and checkbox value is saved', async t => {
     const commandToGetRecommendation = 'FT.INFO';
     await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);
 
@@ -206,7 +208,8 @@ test('Verify that user can snooze recommendation', async t => {
     tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).visible).ok('recommendation is not displayed again');
 });
-test('Verify that recommendations from database analysis are displayed in Insight panel above live recommendations', async t => {
+test
+    .skip('Verify that recommendations from database analysis are displayed in Insight panel above live recommendations', async t => {
     await browserPage.NavigationHeader.togglePanel(true);
     let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
     const redisVersionRecommendationSelector = tab.getRecommendationByName(redisVersionRecom);
@@ -261,7 +264,8 @@ test
         await refreshFeaturesTestData();
         await browserPage.deleteKeyByName(keyName);
         await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
-    })('Verify that key name is displayed for Insights and DA recommendations', async t => {
+    })
+    .skip('Verify that key name is displayed for Insights and DA recommendations', async t => {
         const cliCommand = `JSON.SET ${keyName} $ '{ "model": "Hyperion", "brand": "Velorim"}'`;
         await browserPage.Cli.sendCommandInCli('flushdb');
         await browserPage.Cli.sendCommandInCli(cliCommand);

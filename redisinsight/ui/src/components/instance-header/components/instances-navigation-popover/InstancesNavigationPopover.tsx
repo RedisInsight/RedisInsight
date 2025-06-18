@@ -1,8 +1,5 @@
-import React, { ChangeEvent, useEffect, useState } from 'react'
-import {
-  EuiFieldText,
-  EuiPopover,
-} from '@elastic/eui'
+import React, { ChangeEvent, useEffect, useMemo, useState } from 'react'
+import { EuiFieldText, EuiPopover } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { instancesSelector as rdiInstancesSelector } from 'uiSrc/slices/rdi/instances'

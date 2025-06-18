@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import {
   EuiBasicTableColumn,
-  EuiIcon,
   EuiInMemoryTable,
   EuiLink,
   EuiToolTip,
@@ -24,8 +23,6 @@ import {
 import { removeCapiKeyAction } from 'uiSrc/slices/oauth/cloud'
 import { Text } from 'uiSrc/components/base/text'
 
-import CloudStars from 'uiSrc/assets/img/oauth/stars.svg?react'
-
 import {
   EmptyButton,
   IconButton,
@@ -33,6 +30,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Title } from 'uiSrc/components/base/text/Title'
 import styles from './styles.module.scss'
 
@@ -113,10 +111,10 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
                 content="This API key is invalid. Remove it from   and Redis Cloud and create a new one instead."
                 anchorClassName={styles.invalidIconAnchor}
               >
-                <EuiIcon
+                <RiIcon
+                  type="ToastDangerIcon"
+                  color="danger600"
                   className={styles.invalidIcon}
-                  type="alert"
-                  color="danger"
                 />
               </EuiToolTip>
             )}
@@ -220,7 +218,11 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
       <>
         <div className={styles.noKeysMessage} data-testid="no-api-keys-message">
           <Title size="XS">
-            <EuiIcon className={styles.starsIcon} type={CloudStars} />
+            <RiIcon
+                className={styles.starsIcon}
+                type="StarsIcon"
+                color="attention300"
+              />
             The ultimate Redis starting point
           </Title>
           <Spacer size="s" />

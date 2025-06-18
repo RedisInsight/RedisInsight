@@ -4,7 +4,6 @@ import {
   EuiModal,
   EuiModalBody,
   EuiModalHeader,
-  EuiIcon,
 } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -16,9 +15,9 @@ import { Pages, Theme } from 'uiSrc/constants'
 import { ConsentsSettings } from 'uiSrc/components'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import Logo from 'uiSrc/assets/img/logo.svg'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Title } from 'uiSrc/components/base/text/Title'
 import styles from '../styles.module.scss'
 
@@ -63,11 +62,7 @@ const ConsentsSettingsPopup = () => {
               </Title>
             </FlexItem>
             <FlexItem>
-              <EuiIcon
-                className={styles.redisIcon}
-                size="original"
-                type={Logo}
-              />
+              <RiIcon className={styles.redisIcon} type="RedisLogoFullIcon" />
             </FlexItem>
           </Row>
         </EuiModalHeader>

@@ -1,8 +1,8 @@
 import React from 'react'
-import { EuiIcon } from '@elastic/eui'
 
 import { Text } from 'uiSrc/components/base/text'
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -34,7 +34,8 @@ const UploadFile = (props: Props) => {
         className={styles.uploadBtn}
         data-testid="upload-file-btn"
       >
-        <EuiIcon className={styles.icon} type="folderOpen" />
+        {/* todo: 'folderOpen', replace with redis-ui once available */}
+        <RiIcon className={styles.icon} type="KnowledgeBaseIcon" />
         <Text className={styles.label}>Upload</Text>
         <input
           type="file"

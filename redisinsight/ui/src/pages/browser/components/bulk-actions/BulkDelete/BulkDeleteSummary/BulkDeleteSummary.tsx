@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { isUndefined } from 'lodash'
 
@@ -13,6 +13,7 @@ import {
 import BulkActionSummary from 'uiSrc/pages/browser/components/bulk-actions/BulkActionSummary'
 import { Text } from 'uiSrc/components/base/text'
 
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 const BulkDeleteSummary = () => {
@@ -49,9 +50,9 @@ const BulkDeleteSummary = () => {
               the number of keys scanned and the scan percentage.
               The final number may be different."
             >
-              <EuiIcon
-                color="subdued"
-                type="iInCircle"
+              <RiIcon
+                color="informative400"
+                type="InfoIcon"
                 data-testid="bulk-delete-tooltip"
               />
             </EuiToolTip>

@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/no-this-in-sfc */
-import { EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiPopover, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { Ref, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -57,6 +57,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 const HIDE_REFRESH_LABEL_WIDTH = 640
@@ -407,9 +408,9 @@ const KeysHeader = (props: Props) => {
                           display="inlineBlock"
                           anchorClassName="flex-row"
                         >
-                          <EuiIcon
+                          <RiIcon
                             className={styles.infoIcon}
-                            type="iInCircle"
+                            type="InfoIcon"
                             size="m"
                             style={{ cursor: 'pointer' }}
                             data-testid="key-size-info-icon"

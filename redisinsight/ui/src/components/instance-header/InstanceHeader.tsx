@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { selectOnFocus } from 'uiSrc/utils'
@@ -39,6 +39,7 @@ import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { EditIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
 import { NumericInput } from 'uiSrc/components/base/inputs'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import InstancesNavigationPopover from './components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
@@ -93,8 +94,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
   }
 
   const goToReturnUrl = () => {
-    const fullUrl = `${returnUrlBase}${returnUrl}`
-    document.location = fullUrl
+    document.location = `${returnUrlBase}${returnUrl}`
   }
 
   const handleChangeDbIndex = () => {
@@ -280,9 +280,9 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                         />
                       }
                     >
-                      <EuiIcon
+                      <RiIcon
                         className={styles.infoIcon}
-                        type="iInCircle"
+                        type="InfoIcon"
                         size="l"
                         style={{ cursor: 'pointer' }}
                         data-testid="db-info-icon"

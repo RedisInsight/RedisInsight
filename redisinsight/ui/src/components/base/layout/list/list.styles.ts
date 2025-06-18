@@ -12,8 +12,9 @@ import {
   useCallback,
   useEffect,
 } from 'react'
-// todo replace with redis-ui icon
-import { EuiIconProps, IconType } from '@elastic/eui/src/components/icon/icon'
+
+import { AllIconsType } from 'uiSrc/components/base/icons/RiIcon'
+import { IconProps } from 'uiSrc/components/base/icons'
 
 export const ListClassNames = {
   listItem: 'RI-list-group-item',
@@ -90,7 +91,6 @@ export const StyledGroup = styled.ul<
   ${({ $flush = false }) => $flush && listStyles.flush};
 `
 
-type IconProps = Omit<EuiIconProps, 'type'>
 export const SIZES = ['xs', 's', 'm', 'l'] as const
 export type ListGroupItemSize = (typeof SIZES)[number]
 
@@ -124,14 +124,14 @@ export type ListGroupItemProps = HTMLAttributes<HTMLLIElement> & {
   isDisabled?: boolean
 
   /**
-   * Adds `EuiIcon` of `EuiIcon.type`
+   * Adds `RiIcon` of `RiIcon.type`
    */
-  iconType?: IconType
+  iconType?: AllIconsType
 
   /**
-   * Further extend the props applied to EuiIcon
+   * Further extend the props applied to RiIcon
    */
-  iconProps?: Omit<IconProps, 'type'>
+  iconProps?: IconProps
 
   /**
    * Custom node to pass as the icon. Cannot be used in conjunction

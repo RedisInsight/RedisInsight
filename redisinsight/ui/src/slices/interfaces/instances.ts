@@ -1,6 +1,7 @@
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces/app'
 import { Maybe, Nullable } from 'uiSrc/utils'
 import { OAuthSocialAction } from 'uiSrc/slices/interfaces/cloud'
+import { DatabaseListColumn } from 'uiSrc/constants'
 import { GetHashFieldsResponse } from 'apiSrc/modules/browser/hash/dto'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
 import {
@@ -199,11 +200,6 @@ export const COMMAND_MODULES = {
   [RedisDefaultModules.Bloom]: [RedisDefaultModules.Bloom],
 }
 
-const RediSearchModulesText = [...REDISEARCH_MODULES].reduce(
-  (prev, next) => ({ ...prev, [next]: 'Redis Query Engine' }),
-  {},
-)
-
 // Enums don't allow to use dynamic key
 export const DATABASE_LIST_MODULES_TEXT = Object.freeze({
   [RedisDefaultModules.AI]: 'AI',
@@ -216,7 +212,10 @@ export const DATABASE_LIST_MODULES_TEXT = Object.freeze({
   [RedisDefaultModules.TimeSeries]: 'Time Series',
   [RedisCustomModulesName.Proto]: 'redis-protobuf',
   [RedisCustomModulesName.IpTables]: 'RedisPushIpTables',
-  ...RediSearchModulesText,
+  [RedisDefaultModules.Search]: 'Redis Query Engine',
+  [RedisDefaultModules.SearchLight]: 'Redis Query Engine',
+  [RedisDefaultModules.FT]: 'Redis Query Engine',
+  [RedisDefaultModules.FTL]: 'Redis Query Engine',
 })
 
 export enum AddRedisClusterDatabaseOptions {

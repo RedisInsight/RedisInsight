@@ -1,4 +1,3 @@
-import { EuiIcon } from '@elastic/eui'
 import { format, formatDuration, intervalToDuration } from 'date-fns'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -20,6 +19,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { RefreshIcon, DownloadIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 const PADDINGS_OUTSIDE = 12
@@ -85,7 +85,11 @@ const MonitorLog = () => {
               className={styles.time}
               data-testid="profiler-running-time"
             >
-              <EuiIcon type="clock" />
+              <RiIcon
+                size="s"
+                color="informative400"
+                type="ExecutionTimeIcon"
+              />
               {format(timestamp.start, 'hh:mm:ss')}
               &nbsp;&#8211;&nbsp;
               {format(timestamp.paused, 'hh:mm:ss')}

@@ -8,7 +8,6 @@ import {
   EuiSuperSelect,
   EuiSuperSelectOption,
   EuiPopover,
-  EuiIcon,
 } from '@elastic/eui'
 
 import { Text } from 'uiSrc/components/base/text'
@@ -47,6 +46,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { DeleteIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/list/dto'
 
 import {
@@ -198,8 +198,8 @@ const RemoveListElements = (props: Props) => {
           </Text>
           {(!length || length <= +count) && (
             <div className={styles.appendInfo}>
-              <EuiIcon
-                type="alert"
+              <RiIcon
+                type="ToastDangerIcon"
                 style={{ marginRight: '1rem', marginTop: '4px' }}
               />
               <Text size="s">
@@ -230,9 +230,9 @@ const RemoveListElements = (props: Props) => {
       closePopover={() => setIsInfoPopoverOpen(false)}
       initialFocus={false}
       button={
-        <EuiIcon
+        <RiIcon
           className={styles.infoIcon}
-          type="iInCircle"
+          type="InfoIcon"
           onClick={() =>
             setIsInfoPopoverOpen((isPopoverOpen) => !isPopoverOpen)
           }

@@ -1,5 +1,4 @@
-import TextViewIconDark from 'uiSrc/assets/img/workbench/text_view_dark.svg'
-import TextViewIconLight from 'uiSrc/assets/img/workbench/text_view_light.svg'
+import { AllIconsType } from 'uiSrc/components/base/icons/RiIcon'
 
 export const WORKBENCH_HISTORY_WRAPPER_NAME = 'WORKBENCH'
 export const WORKBENCH_HISTORY_MAX_LENGTH = 30
@@ -14,8 +13,8 @@ export const DEFAULT_TEXT_VIEW_TYPE = {
   text: 'Text',
   name: 'default__Text',
   value: WBQueryType.Text,
-  iconDark: TextViewIconDark,
-  iconLight: TextViewIconLight,
+  iconDark: 'TextViewIconDarkIcon' as AllIconsType,
+  iconLight: 'TextViewIconLightIcon' as AllIconsType,
   internal: true,
 }
 

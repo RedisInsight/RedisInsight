@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiIcon, EuiLink, EuiPopover } from '@elastic/eui'
+import { EuiLink, EuiPopover } from '@elastic/eui'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { Text } from 'uiSrc/components/base/text'
 import {
@@ -7,6 +7,7 @@ import {
   UTM_CAMPAINGS,
   UTM_MEDIUMS,
 } from 'uiSrc/constants/links'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 const ClickableAppendInfo = () => {
@@ -22,9 +23,9 @@ const ClickableAppendInfo = () => {
       id="showPupSubExamples"
       ownFocus={false}
       button={
-        <EuiIcon
+        <RiIcon
           size="l"
-          type="iInCircle"
+          type="InfoIcon"
           style={{ cursor: 'pointer' }}
           onClick={onClick}
           data-testid="append-info-icon"

@@ -1,9 +1,10 @@
 import React from 'react'
 import { isNull } from 'lodash'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { Button } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -54,7 +55,7 @@ const ScanMore = ({
             position="top"
             display="inlineBlock"
           >
-            <EuiIcon type="iInCircle" />
+            <RiIcon type="InfoIcon" />
           </EuiToolTip>
         )}
         Scan more

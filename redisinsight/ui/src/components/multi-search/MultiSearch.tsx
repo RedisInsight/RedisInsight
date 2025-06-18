@@ -1,10 +1,4 @@
-import {
-  EuiFieldText,
-  EuiIcon,
-  EuiProgress,
-  EuiToolTip,
-  keys,
-} from '@elastic/eui'
+import { EuiFieldText, EuiProgress, EuiToolTip, keys } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 
@@ -21,6 +15,7 @@ import {
   ActionIconButton,
   IconButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 interface MultiSearchSuggestion {
@@ -268,7 +263,7 @@ const MultiSearch = (props: Props) => {
                 }
                 data-testid="clear-history-btn"
               >
-                <EuiIcon type="eraser" style={{ marginRight: 6 }} />
+                <RiIcon type="EraserIcon" style={{ marginRight: 6 }} />
                 <span>Clear history</span>
               </div>
             </div>

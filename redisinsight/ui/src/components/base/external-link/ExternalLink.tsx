@@ -1,6 +1,7 @@
 import React from 'react'
 import { EuiLinkProps } from '@elastic/eui/src/components/link/link'
-import { Icon, ArrowDiagonalIcon, IconProps } from 'uiSrc/components/base/icons'
+import { IconProps } from 'uiSrc/components/base/icons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Link } from 'uiSrc/components/base/link/Link'
 
 export type Props = EuiLinkProps & {
@@ -13,7 +14,7 @@ const ExternalLink = (props: Props) => {
   const { iconPosition = 'right', iconSize = 'M', children, ...rest } = props
 
   const ArrowIcon = () => (
-    <Icon icon={ArrowDiagonalIcon} size={iconSize} color="informative400" />
+    <RiIcon type="ArrowDiagonalIcon" size={iconSize} color="informative400" />
   )
 
   return (

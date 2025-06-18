@@ -2,10 +2,7 @@ import { cloneDeep } from 'lodash'
 import React from 'react'
 import reactRouterDom from 'react-router-dom'
 
-import {
-  rdiPipelineStatusSelector,
-  getPipelineStatus,
-} from 'uiSrc/slices/rdi/pipeline'
+import { getPipelineStatus } from 'uiSrc/slices/rdi/pipeline'
 import {
   getStatistics,
   rdiStatisticsSelector,
@@ -25,8 +22,59 @@ import {
 } from 'uiSrc/utils/test-utils'
 import { PageNames, Pages } from 'uiSrc/constants'
 import { setLastPageContext } from 'uiSrc/slices/app/context'
+import { RdiPipelineStatus } from 'uiSrc/slices/interfaces'
 
 import StatisticsPage from './StatisticsPage'
+
+const CONNECTIONS_DATA = {
+  connections: {
+    Connection1: {
+      status: 'good',
+      type: 'type1',
+      host: 'Redis-Cloud',
+      port: 12000,
+      database: 'admin',
+      user: 'admin',
+    },
+  },
+  dataStreams: {
+    Stream1: {
+      total: 35,
+      pending: 2,
+      inserted: 2530,
+      updated: 65165,
+      deleted: 1,
+      filtered: 0,
+      rejected: 5,
+      deduplicated: 0,
+      lastArrival: '1 Hour',
+    },
+  },
+  processingPerformance: {
+    totalBatches: 3427,
+    batchSizeAvg: '0.93',
+    readTimeAvg: '13',
+    processTimeAvg: '24',
+    ackTimeAvg: '6.2',
+    totalTimeAvg: '6.1',
+    recPerSecAvg: 110,
+  },
+  rdiPipelineStatus: {
+    rdiVersion: '2.0',
+    address: '172.17.0.2:12006',
+    runStatus: 'Started',
+    syncMode: 'Streaming',
+  },
+  clients: {
+    9875: {
+      addr: '172.16.0.2:62356',
+      name: 'redis-di-cli',
+      ageSec: 100,
+      idleSec: 2,
+      user: 'default',
+    },
+  },
+}
 
 jest.mock('uiSrc/slices/rdi/instances', () => ({
   ...jest.requireActual('uiSrc/slices/rdi/instances'),
@@ -57,55 +105,8 @@ jest.mock('uiSrc/slices/rdi/statistics', () => ({
   rdiStatisticsSelector: jest.fn().mockReturnValue({
     loading: false,
     results: {
-      data: {
-        connections: {
-          Connection1: {
-            status: 'good',
-            type: 'type1',
-            host: 'Redis-Cloud',
-            port: 12000,
-            database: 'admin',
-            user: 'admin',
-          },
-        },
-        dataStreams: {
-          Stream1: {
-            total: 35,
-            pending: 2,
-            inserted: 2530,
-            updated: 65165,
-            deleted: 1,
-            filtered: 0,
-            rejected: 5,
-            deduplicated: 0,
-            lastArrival: '1 Hour',
-          },
-        },
-        processingPerformance: {
-          totalBatches: 3427,
-          batchSizeAvg: '0.93',
-          readTimeAvg: '13',
-          processTimeAvg: '24',
-          ackTimeAvg: '6.2',
-          totalTimeAvg: '6.1',
-          recPerSecAvg: 110,
-        },
-        rdiPipelineStatus: {
-          rdiVersion: '2.0',
-          address: '172.17.0.2:12006',
-          runStatus: 'Started',
-          syncMode: 'Streaming',
-        },
-        clients: {
-          9875: {
-            addr: '172.16.0.2:62356',
-            name: 'redis-di-cli',
-            ageSec: 100,
-            idleSec: 2,
-            user: 'default',
-          },
-        },
-      },
+      status: 'success',
+      data: CONNECTIONS_DATA
     },
   }),
 }))
@@ -134,23 +135,45 @@ describe('StatisticsPage', () => {
     expect(document.title).toBe('name - Pipeline Status')
   })
 
-  it('renders null when statisticsData is not available', () => {
+  it('renders null when statisticsResults is not available', () => {
     ;(rdiStatisticsSelector as jest.Mock).mockReturnValueOnce({
-      data: null,
+      loading: false,
+      results: null,
     })
     const { container } = render(<StatisticsPage />)
     expect(container.firstChild).toBeNull()
   })
 
-  it('renders the empty state when pipeline data is empty', () => {
-    ;(rdiPipelineStatusSelector as jest.Mock).mockReturnValueOnce({
-      data: {
-        components: {},
-        pipelines: {},
+  it('renders the empty state when statistics status is not success', () => {
+    ;(rdiStatisticsSelector as jest.Mock).mockReturnValueOnce({
+      loading: false,
+      results: {
+        status: null,
+        data: CONNECTIONS_DATA
       },
     })
-    const { getByText } = render(<StatisticsPage />)
-    expect(getByText('No pipeline deployed yet')).toBeInTheDocument()
+    render(<StatisticsPage />)
+    expect(screen.getByTestId('empty-pipeline')).toBeInTheDocument()
+  })
+
+  it('renders the empty state when statistics status is success but data is missing', () => {
+    ;(rdiStatisticsSelector as jest.Mock).mockReturnValueOnce({
+      loading: false,
+      results: {
+        status: RdiPipelineStatus.Success,
+        data: null,
+      },
+    })
+    render(<StatisticsPage />)
+    expect(screen.getByTestId('empty-pipeline')).toBeInTheDocument()
+  })
+
+    it('renders statistics sections when status is success and data exists', () => {
+    render(<StatisticsPage />)
+
+    // Check that statistics sections are rendered instead of empty state
+    expect(screen.queryByTestId('empty-pipeline')).not.toBeInTheDocument()
+    expect(screen.getByTestId('processing-performance-info-refresh-btn')).toBeInTheDocument()
   })
 
   it('should call proper telemetry on page view', () => {

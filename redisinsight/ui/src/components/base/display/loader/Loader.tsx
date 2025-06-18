@@ -1,29 +1,45 @@
 import React, { ComponentProps } from 'react'
 
 import { Loader as RedisLoader } from '@redis-ui/components'
+import { useTheme } from '@redis-ui/styles'
+
+type Space = {
+  space000: string;
+  space010: string;
+  space025: string;
+  space050: string;
+  space100: string;
+  space150: string;
+  space200: string;
+  space250: string;
+  space300: string;
+  space400: string;
+  space500: string;
+  space550: string;
+  space600: string;
+  space800: string;
+}
 
 export type RedisLoaderProps = ComponentProps<typeof RedisLoader>
 
-const convertSizeToPx = (tShirtSize: string) => {
-  switch (tShirtSize) {
+const convertSizeToPx = (tShirtSize: string, space: Space) => {
+  switch (tShirtSize.toLowerCase()) {
     case 's':
-    case 'S':
-      return '8px'
+      return space.space050
     case 'm':
-    case 'M':
-      return '16px'
+      return space.space100
     case 'l':
-    case 'L':
-      return '24px'
+      return space.space250
     case 'xl':
-    case 'XL':
-      return '32px'
+      return space.space300
     default:
-      return '16px'
+      return space.space100
   }
 }
 
 export default function Loader({ size, ...rest }: RedisLoaderProps) {
-  const sizeInPx = size ? convertSizeToPx(size) : '16px'
+  const theme = useTheme()
+  const { space } = theme.core
+  const sizeInPx = size ? convertSizeToPx(size, space) : space.space100
   return <RedisLoader size={sizeInPx} {...rest} />
 }

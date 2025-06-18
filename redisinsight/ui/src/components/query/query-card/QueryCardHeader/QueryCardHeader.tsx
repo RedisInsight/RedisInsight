@@ -1,52 +1,47 @@
 import React, { useContext } from 'react'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
-import {
-  EuiIcon,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiSuperSelect, EuiSuperSelectOption, EuiToolTip } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 import { findIndex, isNumber } from 'lodash'
 import { ColorText } from 'uiSrc/components/base/text'
 
 import {
-  CopyIcon,
-  PlayIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  CopyIcon,
   DeleteIcon,
+  PlayIcon,
 } from 'uiSrc/components/base/icons'
 import { Theme } from 'uiSrc/constants'
 import {
   getCommandNameFromQuery,
   getVisualizationsByCommand,
   isGroupMode,
-  truncateText,
-  urlForAsset,
-  truncateMilliseconds,
+  isGroupResults,
   isRawMode,
   isSilentMode,
   isSilentModeWithoutError,
-  isGroupResults,
+  truncateMilliseconds,
+  truncateText,
+  urlForAsset,
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
-  getViewTypeOptions,
-  WBQueryType,
   getProfileViewTypeOptions,
-  ProfileQueryType,
+  getViewTypeOptions,
   isCommandAllowedForProfile,
+  ProfileQueryType,
+  WBQueryType,
 } from 'uiSrc/pages/workbench/constants'
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
 import {
-  RunQueryMode,
   ResultsMode,
   ResultsSummary,
+  RunQueryMode,
 } from 'uiSrc/slices/interfaces/workbench'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { FormatedDate, FullScreen } from 'uiSrc/components'

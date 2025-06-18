@@ -1,11 +1,9 @@
 import React from 'react'
-import { EuiIcon, EuiLoadingSpinner, EuiTitle, EuiToolTip } from '@elastic/eui'
-import initialSyncIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/initial_sync.svg?react'
-import streamingIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/streaming.svg?react'
-import notRunningIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/not_running.svg?react'
-import statusErrorIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/status_error.svg?react'
+import { EuiLoadingSpinner, EuiTitle, EuiToolTip } from '@elastic/eui'
 import { PipelineState } from 'uiSrc/slices/interfaces'
-import { Maybe, formatLongName } from 'uiSrc/utils'
+import { formatLongName, Maybe } from 'uiSrc/utils'
+import { AllIconsType, RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { IconProps } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -21,16 +19,36 @@ const CurrentPipelineStatus = ({
 }: Props) => {
   const getPipelineStateIconAndLabel = (
     pipelineState: Maybe<PipelineState>,
-  ) => {
+  ): {
+    label: string
+    icon: AllIconsType
+    iconColor: IconProps['color']
+  } => {
     switch (pipelineState) {
       case PipelineState.InitialSync:
-        return { icon: initialSyncIcon, label: 'Initial sync' }
+        return {
+          icon: 'IndicatorSyncingIcon',
+          iconColor: 'success300',
+          label: 'Initial sync',
+        }
       case PipelineState.CDC:
-        return { icon: streamingIcon, label: 'Streaming' }
+        return {
+          icon: 'IndicatorSyncedIcon',
+          iconColor: 'success300',
+          label: 'Streaming',
+        }
       case PipelineState.NotRunning:
-        return { icon: notRunningIcon, label: 'Not running' }
+        return {
+          icon: 'IndicatorXIcon',
+          iconColor: 'attention500',
+          label: 'Not running',
+        }
       default:
-        return { icon: statusErrorIcon, label: 'Error' }
+        return {
+          icon: 'IndicatorErrorIcon',
+          iconColor: 'danger500',
+          label: 'Error',
+        }
     }
   }
   const stateInfo = getPipelineStateIconAndLabel(pipelineState)
@@ -49,7 +67,7 @@ const CurrentPipelineStatus = ({
           anchorClassName={statusError && styles.tooltip}
         >
           <div className={styles.stateBadge} data-testid="pipeline-state-badge">
-            <EuiIcon type={stateInfo.icon} />
+            <RiIcon type={stateInfo.icon} color={stateInfo.iconColor} />
             <span>{stateInfo.label}</span>
           </div>
         </EuiToolTip>

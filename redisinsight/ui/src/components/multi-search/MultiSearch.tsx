@@ -1,10 +1,4 @@
-import {
-  EuiFieldText,
-  EuiIcon,
-  EuiProgress,
-  EuiToolTip,
-  keys,
-} from '@elastic/eui'
+import { EuiFieldText, EuiProgress, EuiToolTip, keys } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 

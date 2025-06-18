@@ -2,13 +2,7 @@ import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
-import {
-  EuiAccordion,
-  EuiIcon,
-  EuiLink,
-  EuiPanel,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiAccordion, EuiLink, EuiPanel, EuiToolTip } from '@elastic/eui'
 
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
@@ -24,10 +18,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { FeatureFlags, Theme } from 'uiSrc/constants'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
-import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
-import NoRecommendationsDark from 'uiSrc/assets/img/icons/recommendations_dark.svg'
-import NoRecommendationsLight from 'uiSrc/assets/img/icons/recommendations_light.svg'
+
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { recommendationsSelector } from 'uiSrc/slices/recommendations/recommendations'
 import { sortRecommendations } from 'uiSrc/utils/recommendation'
@@ -36,6 +27,7 @@ import { findTutorialPath } from 'uiSrc/utils'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
@@ -104,9 +96,11 @@ const Recommendations = () => {
                 display="inlineBlock"
                 anchorClassName="flex-row"
               >
-                <EuiIcon
+                <RiIcon
                   type={
-                    theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
+                    theme === Theme.Dark
+                      ? 'RediStackDarkMinIcon'
+                      : 'RediStackLightMinIcon'
                   }
                   className={styles.redisStackIcon}
                   data-testid={`${id}-redis-stack-icon`}
@@ -138,11 +132,11 @@ const Recommendations = () => {
         className={styles.container}
         data-testid="empty-recommendations-message"
       >
-        <EuiIcon
+        <RiIcon
           type={
             theme === Theme.Dark
-              ? NoRecommendationsDark
-              : NoRecommendationsLight
+              ? 'NoRecommendationsDarkIcon'
+              : 'NoRecommendationsLightIcon'
           }
           className={styles.noRecommendationsIcon}
           data-testid="no=recommendations-icon"

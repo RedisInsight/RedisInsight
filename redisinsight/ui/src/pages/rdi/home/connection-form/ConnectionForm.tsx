@@ -1,7 +1,6 @@
 import {
   EuiFieldText,
   EuiForm,
-  EuiIcon,
   EuiTitle,
   EuiToolTip,
   EuiToolTipProps,
@@ -33,6 +32,7 @@ import {
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { PasswordInput } from 'uiSrc/components/base/inputs'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import ValidationTooltip from './components/ValidationTooltip'
 
 import styles from './styles.module.scss'
@@ -73,7 +73,7 @@ const AppendInfo = ({ title, content, ...rest }: AppendInfoProps) => (
     content={content}
     {...rest}
   >
-    <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+    <RiIcon type="InfoIcon" style={{ cursor: 'pointer' }} />
   </EuiToolTip>
 )
 
@@ -177,10 +177,7 @@ const ConnectionForm = (props: Props) => {
             data-testid="connection-form"
           >
             <div className={cx('container relative')}>
-              <FormField
-                label="RDI Alias*"
-                className={styles.withoutPadding}
-              >
+              <FormField label="RDI Alias*" className={styles.withoutPadding}>
                 <Field name="name">
                   {({ field }: { field: FieldInputProps<string> }) => (
                     <EuiFieldText

@@ -1,8 +1,9 @@
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import React from 'react'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { Text } from 'uiSrc/components/base/text'
 
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface PatternsInfoProps {
@@ -32,8 +33,8 @@ const PatternsInfo = ({ channels }: PatternsInfoProps) => {
           </>
         }
       >
-        <EuiIcon
-          type="iInCircle"
+        <RiIcon
+          type="InfoIcon"
           style={{ cursor: 'pointer' }}
           data-testid="append-info-icon"
         />

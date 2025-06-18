@@ -1,9 +1,4 @@
-import {
-  EuiAccordion,
-  EuiIcon,
-  EuiLoadingSpinner,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiAccordion, EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -20,17 +15,17 @@ import {
   setChangedFile,
   setPipelineJobs,
 } from 'uiSrc/slices/rdi/pipeline'
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { isEqualPipelineFile, Nullable } from 'uiSrc/utils'
-import statusErrorIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/status_error.svg?react'
 
-import { Text, ColorText } from 'uiSrc/components/base/text'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { DeleteIcon, EditIcon, PlusIcon } from 'uiSrc/components/base/icons'
 import {
   DestructiveButton,
   IconButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -45,7 +40,7 @@ const buildValidationMessage = (text: string) => ({
   content: (
     <Row align="center" gap="s">
       <FlexItem>
-        <EuiIcon type="iInCircle" />
+        <RiIcon type="InfoIcon" />
       </FlexItem>
       <FlexItem grow>{text}</FlexItem>
     </Row>
@@ -171,8 +166,8 @@ const JobsTree = (props: IProps) => {
         {name}
 
         {!isValid && (
-          <EuiIcon
-            type={statusErrorIcon}
+          <RiIcon
+            type="IndicatorXIcon"
             className="rdi-pipeline-nav__error"
             data-testid="rdi-pipeline-nav__error"
           />
@@ -294,8 +289,8 @@ const JobsTree = (props: IProps) => {
         </div>
         <Row className={styles.fullWidth} align="center">
           <FlexItem>
-            <EuiIcon
-              type="document"
+            <RiIcon
+              type="ContractsIcon"
               className={styles.fileIcon}
               data-test-subj="jobs-folder-icon-close"
             />
@@ -311,8 +306,9 @@ const JobsTree = (props: IProps) => {
     <Row className={styles.fullWidth} align="center" justify="between">
       <Row className={styles.fullWidth} align="center">
         <FlexItem>
-          <EuiIcon
-            type={accordionState === 'open' ? 'folderOpen' : 'folderClosed'}
+          <RiIcon
+            type="FolderIcon"
+            color={accordionState === 'open' ? 'success300' : 'informative400'}
             className={styles.folderIcon}
             data-test-subj="jobs-folder-icon"
           />
@@ -382,8 +378,8 @@ const JobsTree = (props: IProps) => {
         >
           <Row className={styles.fullWidth} align="center">
             <FlexItem>
-              <EuiIcon
-                type="document"
+              <RiIcon
+                type="ContractsIcon"
                 className={styles.fileIcon}
                 data-test-subj="jobs-file-icon"
               />

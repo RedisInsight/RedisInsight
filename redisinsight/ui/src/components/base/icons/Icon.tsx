@@ -45,11 +45,14 @@ export const Icon = ({
   className,
   ...rest
 }: BaseIconProps) => {
-  let sizeValue: number | string | undefined = customSize
+  let sizeValue: number | string | undefined
   if (size && sizesMap[size]) {
     sizeValue = sizesMap[size]
   } else if (typeof size === 'undefined') {
     sizeValue = 'L'
+  }
+  if (customSize) {
+    sizeValue = customSize
   }
   const theme = useTheme()
   let colorValue = customColor

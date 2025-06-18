@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useRef } from 'react'
-import { EuiFieldText, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { validateEntryId } from 'uiSrc/utils'
 import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-key/AddKeyStream/AddKeyStream'
@@ -9,6 +9,7 @@ import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-field
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -135,7 +136,7 @@ const StreamEntryFields = (props: Props) => {
                   </>
                 }
               >
-                <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+                <RiIcon type="InfoIcon" style={{ cursor: 'pointer' }} />
               </EuiToolTip>
             }
             isInvalid={!!entryIdError}

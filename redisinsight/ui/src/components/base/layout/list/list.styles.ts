@@ -129,7 +129,7 @@ export type ListGroupItemProps = HTMLAttributes<HTMLLIElement> & {
   iconType?: AllIconsType
 
   /**
-   * Further extend the props applied to EuiIcon
+   * Further extend the props applied to RiIcon
    */
   iconProps?: IconProps
 

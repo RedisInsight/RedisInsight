@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiFilePicker, EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiFilePicker, EuiPopover, EuiToolTip } from '@elastic/eui'
 
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'

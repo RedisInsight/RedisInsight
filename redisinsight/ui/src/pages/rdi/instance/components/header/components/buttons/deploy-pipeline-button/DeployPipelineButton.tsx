@@ -1,9 +1,4 @@
-import {
-  EuiIcon,
-  EuiPopover,
-  EuiTitle,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiPopover, EuiTitle, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -27,6 +22,7 @@ import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { RiRocketIcon } from 'uiSrc/components/base/icons'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -158,8 +154,8 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
           />
 
           <EuiToolTip content="The pipeline will take a new snapshot of the data and process it, then continue tracking changes.">
-            <EuiIcon
-              type="iInCircle"
+            <RiIcon
+              type="InfoIcon"
               size="m"
               style={{ cursor: 'pointer' }}
               data-testid="reset-checkbox-info-icon"

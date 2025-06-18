@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { EuiIcon, EuiTab, EuiTabs } from '@elastic/eui'
+import { EuiTab, EuiTabs } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -16,6 +16,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { SortOrder } from 'uiSrc/constants'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { ConsumerGroupDto } from 'apiSrc/modules/browser/stream/dto'
 
 import { streamViewTypeTabs } from '../constants'
@@ -67,7 +68,9 @@ const StreamTabs = () => {
       tabs.push({
         id: StreamViewType.Consumers,
         label: selectedGroupName,
-        separator: <EuiIcon type="arrowRight" className={styles.separator} />,
+        separator: (
+          <RiIcon type="ArrowRightIcon" className={styles.separator} />
+        ),
       })
     }
 
@@ -75,7 +78,9 @@ const StreamTabs = () => {
       tabs.push({
         id: StreamViewType.Messages,
         label: selectedConsumerName,
-        separator: <EuiIcon type="arrowRight" className={styles.separator} />,
+        separator: (
+          <RiIcon type="ArrowRightIcon" className={styles.separator} />
+        ),
       })
     }
 

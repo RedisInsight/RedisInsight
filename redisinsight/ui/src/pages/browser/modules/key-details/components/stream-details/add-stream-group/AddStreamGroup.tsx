@@ -1,9 +1,4 @@
-import {
-  EuiFieldText,
-  EuiIcon,
-  EuiPanel,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFieldText, EuiPanel, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -24,6 +19,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/stream/dto'
 
 import styles from './styles.module.scss'
@@ -146,8 +142,8 @@ const AddStreamGroup = (props: Props) => {
                           title="Enter Valid ID, 0 or $"
                           content={lastDeliveredIDTooltipText}
                         >
-                          <EuiIcon
-                            type="iInCircle"
+                          <RiIcon
+                            type="InfoIcon"
                             style={{ cursor: 'pointer' }}
                             data-testid="entry-id-info-icon"
                           />

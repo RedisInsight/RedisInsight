@@ -1,11 +1,10 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiLink, EuiToolTip } from '@elastic/eui'
+import { EuiLink, EuiToolTip } from '@elastic/eui'
 
 import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
-import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { sendEventTelemetry } from 'uiSrc/telemetry'

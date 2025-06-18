@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiEmptyPrompt, EuiIcon, EuiLink } from '@elastic/eui'
+import { EuiEmptyPrompt, EuiLink } from '@elastic/eui'
 
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'

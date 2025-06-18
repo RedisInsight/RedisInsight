@@ -1,29 +1,20 @@
 import {
   EuiBasicTableColumn,
-  EuiIcon,
   EuiInMemoryTable,
   EuiToolTip,
   PropertySort,
 } from '@elastic/eui'
-import { IconType } from '@elastic/eui/src/components/icon/icon'
 import cx from 'classnames'
 import { map } from 'lodash'
 import React, { useState } from 'react'
 
 import { LoadingContent } from 'uiSrc/components/base/layout'
-import {
-  InputIconSvg,
-  KeyIconSvg,
-  MemoryIconSvg,
-  OutputIconSvg,
-  UserIconSvg,
-  MeasureIconSvg,
-} from 'uiSrc/components/database-overview/components/icons'
 import { ModifiedClusterNodes } from 'uiSrc/pages/clusterDetails/ClusterDetailsPage'
 import { formatBytes, Nullable } from 'uiSrc/utils'
 import { rgb } from 'uiSrc/utils/colors'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 
+import { AllIconsType, RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 const ClusterNodesTable = ({
@@ -46,9 +37,9 @@ const ClusterNodesTable = ({
     )
   }
 
-  const headerIconTemplate = (label: string, icon: IconType) => (
+  const headerIconTemplate = (label: string, icon: AllIconsType) => (
     <div className={cx(styles.headerCell, styles.headerCellIcon)}>
-      <EuiIcon type={icon} className={styles.headerIcon} />
+      <RiIcon type={icon} className={styles.headerIcon} />
       <span>{label}</span>
     </div>
   )
@@ -82,7 +73,7 @@ const ClusterNodesTable = ({
       ),
     },
     {
-      name: headerIconTemplate('Commands/s', MeasureIconSvg),
+      name: headerIconTemplate('Commands/s', 'MeasureIconIcon'),
       field: 'opsPerSecond',
       width: '12%',
       sortable: true,
@@ -100,7 +91,7 @@ const ClusterNodesTable = ({
       },
     },
     {
-      name: headerIconTemplate('Network Input', InputIconSvg),
+      name: headerIconTemplate('Network Input', 'InputIconIcon'),
       field: 'networkInKbps',
       width: '12%',
       sortable: true,
@@ -121,7 +112,7 @@ const ClusterNodesTable = ({
       },
     },
     {
-      name: headerIconTemplate('Network Output', OutputIconSvg),
+      name: headerIconTemplate('Network Output', 'OutputIconIcon'),
       field: 'networkOutKbps',
       width: '12%',
       sortable: true,
@@ -142,7 +133,7 @@ const ClusterNodesTable = ({
       },
     },
     {
-      name: headerIconTemplate('Total Memory', MemoryIconSvg),
+      name: headerIconTemplate('Total Memory', 'MemoryIconIcon'),
       field: 'usedMemory',
       width: '12%',
       sortable: true,
@@ -169,7 +160,7 @@ const ClusterNodesTable = ({
       },
     },
     {
-      name: headerIconTemplate('Total Keys', KeyIconSvg),
+      name: headerIconTemplate('Total Keys', 'KeyIconIcon'),
       field: 'totalKeys',
       width: '12%',
       sortable: true,
@@ -189,7 +180,7 @@ const ClusterNodesTable = ({
     {
       name: (
         <div className={cx(styles.headerCell, styles.headerCellIcon)}>
-          <EuiIcon type={UserIconSvg} className={styles.headerIcon} />
+          <RiIcon type="UserIconIcon" className={styles.headerIcon} />
           <span>Clients</span>
         </div>
       ),

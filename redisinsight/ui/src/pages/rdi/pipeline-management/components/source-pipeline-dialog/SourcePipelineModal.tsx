@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { EuiIcon, EuiModal, EuiModalBody, EuiTitle, keys } from '@elastic/eui'
+import { EuiModal, EuiModalBody, EuiTitle, keys } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   fetchRdiPipeline,
   setChangedFile,
@@ -14,10 +14,10 @@ import {
   setPipelineDialogState,
 } from 'uiSrc/slices/app/context'
 import UploadModal from 'uiSrc/pages/rdi/pipeline-management/components/upload-modal/UploadModal'
-import UploadIcon from 'uiSrc/assets/img/rdi/upload_from_server.svg?react'
 import { Text } from 'uiSrc/components/base/text'
 
 import { FileChangeType } from 'uiSrc/slices/interfaces'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export const EMPTY_PIPELINE = {
@@ -113,7 +113,7 @@ const SourcePipelineDialog = () => {
               className={styles.action}
               data-testid="server-source-pipeline-dialog"
             >
-              <EuiIcon type={UploadIcon} size="xl" className={styles.icon} />
+              <RiIcon type="UploadIcon" size="xl" className={styles.icon} />
               <Text className={styles.text}>Download from server</Text>
             </div>
             <div
@@ -124,7 +124,7 @@ const SourcePipelineDialog = () => {
               className={styles.action}
               data-testid="file-source-pipeline-dialog"
             >
-              <EuiIcon type="exportAction" size="xl" className={styles.icon} />
+              <RiIcon type="ExportIcon" size="xl" className={styles.icon} />
               <Text className={styles.text}>Upload from file</Text>
             </div>
             <div
@@ -135,7 +135,7 @@ const SourcePipelineDialog = () => {
               className={styles.action}
               data-testid="empty-source-pipeline-dialog"
             >
-              <EuiIcon type="document" size="xl" className={styles.icon} />
+              <RiIcon type="ContractsIcon" size="xl" className={styles.icon} />
               <Text className={styles.text}>Create new pipeline</Text>
             </div>
           </div>

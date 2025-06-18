@@ -1,4 +1,4 @@
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import React from 'react'
 import { useSelector } from 'react-redux'
 
@@ -14,6 +14,7 @@ import { formatBytes } from 'uiSrc/utils'
 
 import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -53,9 +54,9 @@ const KeyDetailsHeaderSizeLength = ({ width }: Props) => {
                 {isSizeTooLarge && (
                   <>
                     {' '}
-                    <EuiIcon
+                    <RiIcon
                       className={styles.infoIcon}
-                      type="iInCircle"
+                      type="InfoIcon"
                       size="m"
                       style={{ cursor: 'pointer' }}
                       data-testid="key-size-info-icon"

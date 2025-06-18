@@ -1,4 +1,4 @@
-import { EuiBasicTableColumn, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiBasicTableColumn, EuiToolTip } from '@elastic/eui'
 import React from 'react'
 
 import {
@@ -6,6 +6,7 @@ import {
   StatisticsConnectionStatus,
 } from 'uiSrc/slices/interfaces'
 import { formatLongName } from 'uiSrc/utils'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
 import Table from '../components/table'
@@ -26,9 +27,9 @@ const columns: EuiBasicTableColumn<ConnectionData>[] = [
     width: '80px',
     render: (status: string) =>
       status === StatisticsConnectionStatus.connected ? (
-        <EuiIcon type="dot" color="var(--buttonSuccessColor)" />
+        <RiIcon type="ToastInfoIcon" color="success300" />
       ) : (
-        <EuiIcon type="alert" color="danger" />
+        <RiIcon type="ToastDangerIcon" color="danger600" />
       ),
     align: 'center',
     sortable: true,

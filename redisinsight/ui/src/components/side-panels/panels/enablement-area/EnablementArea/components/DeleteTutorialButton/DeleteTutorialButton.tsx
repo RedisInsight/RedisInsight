@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiIcon, EuiPopover } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 
 import { formatLongName } from 'uiSrc/utils'
 

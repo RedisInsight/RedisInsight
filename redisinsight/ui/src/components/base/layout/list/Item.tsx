@@ -1,6 +1,6 @@
 import React, { ButtonHTMLAttributes, ReactElement } from 'react'
-// todo replace with redis-ui icon
 import cx from 'classnames'
+
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import {
   ListClassNames,

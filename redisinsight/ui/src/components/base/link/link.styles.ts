@@ -1,0 +1,78 @@
+import React from 'react'
+import styled, { css } from 'styled-components'
+import { Link } from '@redis-ui/components'
+import { useTheme } from '@redis-ui/styles'
+
+export type LinkProps = React.ComponentProps<typeof Link>
+
+// TODO [DA]: Export the color functionality and use both for Link and Text
+export type EuiColorNames =
+  | 'default'
+  | 'primary'
+  | 'text'
+  | 'subdued'
+  | 'danger'
+  | 'ghost'
+  | 'accent'
+  | 'warning'
+  | 'success'
+
+export type ColorType = LinkProps['color'] | EuiColorNames | (string & {})
+
+export type RiLinkProps = Omit<LinkProps, 'color'> & {
+  color?: ColorType
+}
+
+export interface MapProps extends RiLinkProps {
+  $color?: ColorType
+}
+
+export const useColorTextStyles = ({ $color }: MapProps = {}) => {
+  const theme = useTheme()
+  const colors = theme.semantic.color
+
+  const getColorValue = (color?: ColorType) => {
+    if (!color) {
+      return colors.text.primary400
+    }
+    switch (color) {
+      case 'default':
+      case 'primary':
+        return colors.text.primary400
+      case 'text':
+        return colors.text.neutral700
+      case 'subdued':
+        return colors.text.informative400
+      case 'danger':
+        return colors.text.danger600
+      case 'ghost':
+        return colors.text.neutral600
+      case 'accent':
+        return colors.text.notice600
+      case 'warning':
+        return colors.text.attention600
+      case 'success':
+        return colors.text.success600
+      default:
+        return color // any supported color value e.g #fff
+    }
+  }
+
+  return css`
+    color: ${getColorValue($color)};
+  `
+}
+
+export const StyledLink = styled(Link)<MapProps>`
+  ${useColorTextStyles};
+
+  text-decoration: underline !important;
+
+  &:hover {
+    text-decoration: none !important;
+  }
+
+  &:focus {
+    background-color: inherit !important;
+  }
+`

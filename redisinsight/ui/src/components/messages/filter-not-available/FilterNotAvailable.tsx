@@ -89,7 +89,6 @@ const FilterNotAvailable = ({ onClose }: { onClose?: () => void }) => {
             <Spacer size="m" />
             <Link
               className={styles.link}
-              external={false}
               target="_blank"
               color="text"
               href={getUtmExternalLink(EXTERNAL_LINKS.redisStack, utm)}

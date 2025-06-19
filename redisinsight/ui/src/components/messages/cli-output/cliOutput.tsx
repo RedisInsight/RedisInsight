@@ -153,7 +153,6 @@ export const cliTexts = {
         className="btnLikeLink"
         color="text"
         target="_blank"
-        external={false}
         data-test-subj="hello3-btn"
       >
         RESP3

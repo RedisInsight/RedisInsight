@@ -46,7 +46,6 @@ const CommandHelper = (props: Props) => {
     const docUrl = getDocUrlForCommand(commandName)
     return (
       <Link
-        color="subdued"
         href={docUrl}
         className={styles.link}
         target="_blank"

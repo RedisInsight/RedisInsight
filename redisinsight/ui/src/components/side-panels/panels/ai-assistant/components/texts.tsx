@@ -21,7 +21,6 @@ export const ASSISTANCE_CHAT_AGREEMENTS = (
       the{' '}
       <Link
         color="subdued"
-        external={false}
         target="_blank"
         href="https://redis.io/legal/redis-copilot-terms-of-use/"
       >
@@ -30,7 +29,6 @@ export const ASSISTANCE_CHAT_AGREEMENTS = (
       and{' '}
       <Link
         color="subdued"
-        external={false}
         target="_blank"
         href="https://redis.com/legal/privacy-policy/"
       >

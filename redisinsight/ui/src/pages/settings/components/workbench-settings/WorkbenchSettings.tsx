@@ -64,7 +64,6 @@ const WorkbenchSettings = () => {
           <>
             {'Sets the size of a command batch for the '}
             <Link
-              color="text"
               href="https://redis.io/docs/latest/develop/use/pipelining/"
               target="_blank"
               data-testid="pipelining-link"

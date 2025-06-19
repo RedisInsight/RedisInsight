@@ -1,11 +1,11 @@
 import React from 'react'
 
-import { EuiLink } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { findTutorialPath } from 'uiSrc/utils'
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
 import {
   sendEventTelemetry,
   TELEMETRY_EMPTY_VALUE,
@@ -45,7 +45,7 @@ const QueryTutorials = ({ tutorials, source }: Props) => {
     <div className={styles.container}>
       <Text className={styles.title}>Tutorials:</Text>
       {tutorials.map(({ id, title }) => (
-        <EuiLink
+        <Link
           role="button"
           key={id}
           className={styles.tutorialLink}
@@ -53,7 +53,7 @@ const QueryTutorials = ({ tutorials, source }: Props) => {
           data-testid={`query-tutorials-link_${id}`}
         >
           {title}
-        </EuiLink>
+        </Link>
       ))}
     </div>
   )

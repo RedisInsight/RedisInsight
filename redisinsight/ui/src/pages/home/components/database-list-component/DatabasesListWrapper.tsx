@@ -1,7 +1,6 @@
 import {
   Criteria,
   EuiIcon,
-  EuiLink,
   EuiPopover,
   EuiResizeObserver,
   EuiTableFieldDataColumnType,
@@ -88,6 +87,7 @@ import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
 import { Tag } from 'uiSrc/slices/interfaces/tag'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
+import { Link } from 'uiSrc/components/base/link/Link'
 import DbStatus from '../db-status'
 
 import { TagsCell } from '../tags-cell/TagsCell'
@@ -598,9 +598,8 @@ const DatabasesListWrapper = (props: Props) => {
               )}
               {instance.cloudDetails && (
                 <EuiToolTip content="Go to Redis Cloud">
-                  <EuiLink
+                  <Link
                     target="_blank"
-                    external={false}
                     href={EXTERNAL_LINKS.cloudConsole}
                     onClick={handleClickGoToCloud}
                     data-testid={`cloud-link-${instance.id}`}
@@ -609,7 +608,7 @@ const DatabasesListWrapper = (props: Props) => {
                       type={CloudLinkIcon}
                       className={styles.cloudIcon}
                     />
-                  </EuiLink>
+                  </Link>
                 </EuiToolTip>
               )}
               <FeatureFlagComponent name={FeatureFlags.databaseManagement}>

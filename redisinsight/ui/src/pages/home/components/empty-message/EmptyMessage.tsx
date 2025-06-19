@@ -1,4 +1,4 @@
-import { EuiImage, EuiLink } from '@elastic/eui'
+import { EuiImage } from '@elastic/eui'
 import React from 'react'
 
 import CakeIcon from 'uiSrc/assets/img/databases/cake.svg'
@@ -10,6 +10,7 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -40,11 +41,10 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => (
     </PrimaryButton>
     <OAuthSsoHandlerDialog>
       {(ssoCloudHandlerClick) => (
-        <EuiLink
+        <Link
           data-testid="empty-database-cloud-button"
           target="_blank"
           className={styles.link}
-          external={false}
           href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
             campaign: UTM_CAMPAINGS[OAuthSocialSource.EmptyDatabasesList],
             medium: 'main',
@@ -57,7 +57,7 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => (
           }}
         >
           Create a free trial Cloud database
-        </EuiLink>
+        </Link>
       )}
     </OAuthSsoHandlerDialog>
   </div>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiLink, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
@@ -7,6 +7,7 @@ import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
 import CreateRedisearchIndex from './CreateRedisearchIndex'
 
 import styles from './styles.module.scss'
@@ -49,17 +50,16 @@ const CreateRedisearchIndexWrapper = ({
           <Text size="s">
             Use CLI or Workbench to create more advanced indexes. See more
             details in the{' '}
-            <EuiLink
+            <Link
               color="text"
               href={getUtmExternalLink('https://redis.io/commands/ft.create/', {
                 campaign: 'browser_search',
               })}
               className={styles.link}
-              external={false}
               target="_blank"
             >
               documentation.
-            </EuiLink>
+            </Link>
           </Text>
         </FlexItem>
       </div>

@@ -69,19 +69,24 @@ describe('Recommendation', () => {
   })
 
   it('should render RecommendationVoting', async () => {
-    const { getByTestId } = render(
-      <Recommendation {...instanceMock} name="searchJSON" />,
-    )
+    // initial state open
+    render(<Recommendation {...instanceMock} name="searchJSON" />)
+    // accordion button
+    const button = screen.getByTestId(
+      'ri-accordion-header-searchJSON',
+    ) as HTMLButtonElement
+    expect(screen.queryByTestId('recommendation-voting')).toBeInTheDocument()
+    expect(button).toBeInTheDocument()
+    // close accordion
+    fireEvent.click(button)
+
     expect(
       screen.queryByTestId('recommendation-voting'),
     ).not.toBeInTheDocument()
-    const button = getByTestId(
-      'ri-accordion-header-searchJSON',
-    ) as HTMLButtonElement
-    expect(button).toBeInTheDocument()
-    await userEvent.click(button)
+    // open accordion
+    fireEvent.click(button)
 
-    expect(screen.getByTestId('recommendation-voting')).toBeInTheDocument()
+    expect(screen.queryByTestId('recommendation-voting')).toBeInTheDocument()
   })
 
   it('should properly push history on workbench page', async () => {
@@ -93,7 +98,7 @@ describe('Recommendation', () => {
     const { getByTestId } = render(
       <Recommendation
         {...instanceMock}
-        isRead={false}
+        isRead
         name="searchJSON"
         tutorialId="123"
         provider={PROVIDER}
@@ -117,26 +122,24 @@ describe('Recommendation', () => {
     sendEventTelemetry.mockRestore()
   })
 
-  it('should properly call openNewWindowDatabase and open a new window on workbench page to specific guide', () => {
+  it('should properly call openNewWindowDatabase and open a new window on workbench page to specific guide', async () => {
     // will be improved
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
     ;(findTutorialPath as jest.Mock).mockImplementation(() => 'path')
 
-    const { container } = render(
+    const { getByTestId } = render(
       <Recommendation
         {...instanceMock}
-        isRead={false}
+        isRead
         name="searchJSON"
         tutorialId="123"
         provider={PROVIDER}
       />,
     )
 
-    fireEvent.click(
-      container.querySelector(
-        '[data-test-subj="searchJSON-button"]',
-      ) as HTMLButtonElement,
+    await userEvent.click(
+      getByTestId('ri-accordion-header-searchJSON') as HTMLButtonElement,
     )
     fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))
 
@@ -155,26 +158,24 @@ describe('Recommendation', () => {
     pushMock.mockRestore()
   })
 
-  it('should properly push history on workbench page to specific tutorial', () => {
+  it('should properly push history on workbench page to specific tutorial', async () => {
     // will be improved
     const pushMock = jest.fn()
     reactRouterDom.useHistory = jest.fn().mockReturnValue({ push: pushMock })
     ;(findTutorialPath as jest.Mock).mockImplementation(() => 'path')
 
-    const { container } = render(
+    const { getByTestId } = render(
       <Recommendation
         {...instanceMock}
-        isRead={false}
+        isRead
         name="searchJSON"
         tutorialId="123"
         provider={PROVIDER}
       />,
     )
 
-    fireEvent.click(
-      container.querySelector(
-        '[data-test-subj="searchJSON-button"]',
-      ) as HTMLButtonElement,
+    await userEvent.click(
+      getByTestId('ri-accordion-header-searchJSON') as HTMLButtonElement,
     )
     fireEvent.click(screen.getByTestId('searchJSON-to-tutorial-btn'))
 

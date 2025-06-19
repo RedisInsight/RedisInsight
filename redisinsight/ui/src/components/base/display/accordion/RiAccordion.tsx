@@ -44,6 +44,7 @@ const RiAccordionActions = ({
 )
 
 export const RiAccordion = ({
+  id,
   content,
   label,
   onAction,
@@ -54,15 +55,31 @@ export const RiAccordion = ({
   collapsible = true,
   ...rest
 }: RiAccordionProps) => (
-  <Section.Compose {...rest} collapsible={collapsible}>
-    <Section.Header.Compose collapsedInfo={collapsedInfo}>
-      <RiAccordionLabel label={label} />
+  <Section.Compose
+    id={`ri-accordion-${id}`}
+    data-testid={`ri-accordion-${id}`}
+    {...rest}
+    collapsible={collapsible}
+  >
+    <Section.Header.Compose
+      collapsedInfo={collapsedInfo}
+      id={`ri-accordion-${id}`}
+      data-testid={`ri-accordion-header-${id}`}
+    >
+      <RiAccordionLabel
+        label={label}
+        data-testid={`ri-accordion-label-${id}`}
+      />
       <RiAccordionActions
         actions={actions}
         onAction={onAction}
         actionButtonText={actionButtonText}
+        data-testid={`ri-accordion-actions-${id}`}
       />
     </Section.Header.Compose>
-    <Section.Body content={children ?? content} />
+    <Section.Body
+      content={children ?? content}
+      data-testid={`ri-accordion-body-${id}`}
+    />
   </Section.Compose>
 )

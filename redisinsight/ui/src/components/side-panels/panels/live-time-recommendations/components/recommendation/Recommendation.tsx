@@ -56,35 +56,25 @@ export interface IProps {
   recommendationsContent: IRecommendationsStatic
 }
 
-const Recommendation = ({
+const RecommendationTitle = ({
+  redisStack,
+  title,
   id,
-  name,
-  isRead,
-  vote,
-  tutorialId,
-  hide,
-  provider,
-  params,
-  recommendationsContent,
-}: IProps) => {
-  const history = useHistory()
-  const dispatch = useDispatch()
+}: {
+  redisStack: Maybe<boolean>
+  title?: string
+  id: string
+}) => {
   const { theme } = useContext(ThemeContext)
-  const { instanceId = '' } = useParams<{ instanceId: string }>()
-
-  const {
-    redisStack,
-    title,
-    liveTitle,
-    content = [],
-  } = recommendationsContent[name] || {}
-
-  const recommendationTitle = (redisStack: Maybe<boolean>, id: string) => (
+  return (
     <Row
       align="center"
       justify="start"
       gap="m"
-      style={{ maxWidth: '60%', textAlign: 'left' }}
+      style={{
+        maxWidth: '60%',
+        textAlign: 'left',
+      }}
     >
       {redisStack && (
         <FlexItem>
@@ -112,9 +102,32 @@ const Recommendation = ({
           </EuiLink>
         </FlexItem>
       )}
-      <FlexItem className="truncateText">{liveTitle || title}</FlexItem>
+      <FlexItem className="truncateText">{title}</FlexItem>
     </Row>
   )
+}
+
+const Recommendation = ({
+  id,
+  name,
+  isRead,
+  vote,
+  tutorialId,
+  hide,
+  provider,
+  params,
+  recommendationsContent,
+}: IProps) => {
+  const history = useHistory()
+  const dispatch = useDispatch()
+  const { instanceId = '' } = useParams<{ instanceId: string }>()
+
+  const {
+    redisStack,
+    title,
+    liveTitle,
+    content = [],
+  } = recommendationsContent[name] || {}
 
   const handleRedirect = () => {
     sendEventTelemetry({
@@ -226,47 +239,45 @@ const Recommendation = ({
   )
 
   const renderButtonContent = (
-    <Row className={styles.fullWidth}>
-      <Row className={styles.fullWidth} align="end" gap="m">
-        <FlexItem>
-          <EuiToolTip
-            title="Snooze tip"
-            content="This tip will be removed from the list and displayed again when relevant."
-            position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
-          >
-            <IconButton
-              icon={SnoozeIcon}
-              className={styles.snoozeBtn}
-              onClick={handleDelete}
-              aria-label="snooze tip"
-              data-testid={`${name}-delete-btn`}
-            />
-          </EuiToolTip>
-        </FlexItem>
-        <FlexItem>
-          <EuiToolTip
-            title={`${hide ? 'Show' : 'Hide'} tip`}
-            content={`${
-              hide
-                ? 'This tip will be shown in the list.'
-                : 'This tip will be removed from the list and not displayed again.'
-            }`}
-            position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
-          >
-            <IconButton
-              icon={hide ? HideIcon : ShowIcon}
-              className={styles.hideBtn}
-              onClick={toggleHide}
-              aria-label="hide/unhide tip"
-              data-testid={`toggle-hide-${name}-btn`}
-            />
-          </EuiToolTip>
-        </FlexItem>
-      </Row>
+    <Row className={styles.fullWidth} align="end" gap="m">
+      <FlexItem>
+        <EuiToolTip
+          title="Snooze tip"
+          content="This tip will be removed from the list and displayed again when relevant."
+          position="top"
+          display="inlineBlock"
+          anchorClassName="flex-row"
+        >
+          <IconButton
+            icon={SnoozeIcon}
+            className={styles.snoozeBtn}
+            onClick={handleDelete}
+            aria-label="snooze tip"
+            data-testid={`${name}-delete-btn`}
+          />
+        </EuiToolTip>
+      </FlexItem>
+      <FlexItem>
+        <EuiToolTip
+          title={`${hide ? 'Show' : 'Hide'} tip`}
+          content={`${
+            hide
+              ? 'This tip will be shown in the list.'
+              : 'This tip will be removed from the list and not displayed again.'
+          }`}
+          position="top"
+          display="inlineBlock"
+          anchorClassName="flex-row"
+        >
+          <IconButton
+            icon={hide ? HideIcon : ShowIcon}
+            className={styles.hideBtn}
+            onClick={toggleHide}
+            aria-label="hide/unhide tip"
+            data-testid={`toggle-hide-${name}-btn`}
+          />
+        </EuiToolTip>
+      </FlexItem>
     </Row>
   )
 
@@ -283,7 +294,13 @@ const Recommendation = ({
         id={name}
         defaultOpen={!isRead}
         actions={renderButtonContent}
-        label={recommendationTitle(redisStack, name)}
+        label={
+          <RecommendationTitle
+            redisStack={redisStack}
+            title={title || liveTitle}
+            id={name}
+          />
+        }
         data-testid={`${name}-accordion`}
         aria-label={`${name}-accordion`}
       >

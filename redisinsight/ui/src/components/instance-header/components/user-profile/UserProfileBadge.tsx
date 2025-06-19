@@ -21,7 +21,7 @@ import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { getConfig } from 'uiSrc/config'
 import { Text } from 'uiSrc/components/base/text'
-import { Link } from 'uiSrc/components/base/link/Link'
+import { UserProfileLink } from 'uiSrc/components/base/link/UserProfileLink'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import styles from './styles.module.scss'
 
@@ -188,16 +188,14 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
             name={FeatureFlags.envDependent}
             otherwise={
               <>
-                <Link
-                  className={styles.linkOption}
+                <UserProfileLink
                   href={riDesktopLink}
                   data-testid="open-ri-desktop-link"
                 >
                   <Text>Open in Redis Insight Desktop version</Text>
-                </Link>
-                <Link
+                </UserProfileLink>
+                <UserProfileLink
                   target="_blank"
-                  className={styles.linkOption}
                   href={riConfig.app.smConsoleRedirect}
                   data-testid="cloud-admin-console-link"
                 >
@@ -208,7 +206,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                     viewBox="-1 0 30 20"
                     strokeWidth={1.8}
                   />
-                </Link>
+                </UserProfileLink>
               </>
             }
           >
@@ -227,9 +225,8 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                 <EuiIcon type="importAction" />
               )}
             </div>
-            <Link
+            <UserProfileLink
               target="_blank"
-              className={styles.linkOption}
               href={getUtmExternalLink(EXTERNAL_LINKS.cloudConsole, {
                 campaign: 'cloud_account',
               })}
@@ -251,7 +248,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                 viewBox="-1 0 30 20"
                 strokeWidth={1.8}
               />
-            </Link>
+            </UserProfileLink>
             <div
               role="presentation"
               className={cx(styles.option, styles.clickableOption)}

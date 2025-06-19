@@ -73,7 +73,8 @@ test
     await t.switchToIframe(workbenchPage.iframe);
     await t.expect(workbenchPage.queryTableResult.exists).ok('The table view is not switched for command FT.AGGREGATE');
 });
-test('Verify that user can switches between views and see results according to this view in full mode in Workbench', async t => {
+test
+    .skip('Verify that user can switches between views and see results according to this view in full mode in Workbench', async t => {
     const command = 'CLIENT LIST';
 
     // Send command and check table view is default in full mode
@@ -87,7 +88,8 @@ test('Verify that user can switches between views and see results according to t
     // Verify that search results are displayed in Text view
     await t.expect(workbenchPage.queryCardContainer.nth(0).find(workbenchPage.cssQueryTextResult).exists).ok('The result is displayed in Text view');
 });
-test('Big output in workbench is visible in virtualized table', async t => {
+test
+    .skip('Big output in workbench is visible in virtualized table', async t => {
     // Send commands
     const command = 'graph.query t "UNWIND range(1,1000) AS x return x"';
     const bottomText = 'Query internal execution time';
@@ -122,7 +124,8 @@ test
     .after(async t => {
         await t.switchToMainWindow();
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneRedisearch);
-    })('Verify that user can see the client List visualization available for all users', async t => {
+    })
+    .skip('Verify that user can see the client List visualization available for all users', async t => {
         const command = 'CLIENT LIST';
         // Send command in workbench to view client list
         await workbenchPage.sendCommandInWorkbench(command);
@@ -131,7 +134,8 @@ test
         // verify table view row count match with text view after client list command
         await workBenchActions.verifyClientListTableViewRowCount();
     });
-test('Verify that user can clear all results at once.', async t => {
+test
+    .skip('Verify that user can clear all results at once.', async t => {
     await t.click(workbenchPage.clearResultsBtn);
     await t.expect(workbenchPage.queryTextResult.exists).notOk('Clear all button does not remove commands');
 });

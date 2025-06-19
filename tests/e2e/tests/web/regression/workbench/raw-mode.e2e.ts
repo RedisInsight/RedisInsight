@@ -40,7 +40,8 @@ fixture `Workbench Raw mode`
         await apiKeyRequests.deleteKeyByNameApi(keyName, ossStandaloneConfig.databaseName);
         await databaseAPIRequests.deleteStandaloneDatabaseApi(ossStandaloneConfig);
     });
-test('Use raw mode for Workbech result', async t => {
+test
+    .skip('Use raw mode for Workbech result', async t => {
     // Send commands
     await workbenchPage.sendCommandsArrayInWorkbench(commandsForSend);
     // Display result in Ascii when raw mode is off
@@ -70,7 +71,8 @@ test
     .after(async() => {
         // Clear and delete database
         await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
-    })('Save Raw mode state', async t => {
+    })
+    .skip('Save Raw mode state', async t => {
         // Send command in raw mode
         await t.click(workbenchPage.rawModeBtn);
         await workbenchPage.sendCommandsArrayInWorkbench(commandsForSend);

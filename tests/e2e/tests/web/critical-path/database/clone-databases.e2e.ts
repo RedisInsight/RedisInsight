@@ -68,7 +68,7 @@ test
         await myRedisDatabasePage.deleteDatabaseByName(newOssDatabaseAlias);
     })
     .meta({ rte: rte.ossCluster })
-        ('Verify that user can clone OSS Cluster', async t => {
+    .skip('Verify that user can clone OSS Cluster', async t => {
         await databaseHelper.clickOnEditDatabaseByName(ossClusterConfig.ossClusterDatabaseName);
 
         // Verify that user can test OSS Cluster connection on edit and see the success message

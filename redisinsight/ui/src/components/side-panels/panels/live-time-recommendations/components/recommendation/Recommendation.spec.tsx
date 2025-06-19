@@ -73,7 +73,7 @@ describe('Recommendation', () => {
     )
     fireEvent.click(
       container.querySelector(
-        '[data-test-subj="searchJSON-button"]',
+        '[data-testid="searchJSON-accordion"] button',
       ) as HTMLButtonElement,
     )
     expect(screen.getByTestId('recommendation-voting')).toBeInTheDocument()

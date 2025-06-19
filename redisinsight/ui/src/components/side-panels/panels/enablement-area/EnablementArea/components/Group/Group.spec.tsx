@@ -23,7 +23,7 @@ describe('Group', () => {
         {children}
       </Group>,
     )
-    const accordionButton = queryByTestId(`accordion-button-${testId}`)
+    const accordionButton = queryByTestId(`accordion-${testId}`)
 
     expect(accordionButton).toHaveTextContent(label)
   })
@@ -39,7 +39,9 @@ describe('Group', () => {
         onToggle={callback}
       />,
     )
-    fireEvent.click(screen.getByTestId(`accordion-button-${testId}`))
+    const accordion = screen.getByTestId(`accordion-${testId}`)
+    const btn = accordion.querySelector('button')
+    fireEvent.click(btn!)
 
     expect(callback).toHaveBeenCalled()
   })

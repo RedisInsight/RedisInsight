@@ -116,14 +116,9 @@ const TableInfoResult = React.memo((props: Props) => {
   return (
     <div className="container">
       {isDataArr && (
-        <div className="content">
+        <div className="content" data-testid={`query-table-result-${query}`}>
           {Header()}
-          <Table
-            columns={columns}
-            data={items ?? []}
-            defaultSorting={[]}
-            data-testid={`query-table-result-${query}`}
-          />
+          <Table columns={columns} data={items ?? []} />
           {Footer()}
         </div>
       )}

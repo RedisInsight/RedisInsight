@@ -1,24 +1,9 @@
 import React, { ComponentProps } from 'react'
 
 import { Loader as RedisLoader } from '@redis-ui/components'
-import { useTheme } from '@redis-ui/styles'
+import { useTheme, theme } from '@redis-ui/styles'
 
-type Space = {
-  space000: string;
-  space010: string;
-  space025: string;
-  space050: string;
-  space100: string;
-  space150: string;
-  space200: string;
-  space250: string;
-  space300: string;
-  space400: string;
-  space500: string;
-  space550: string;
-  space600: string;
-  space800: string;
-}
+type Space = typeof theme.core.space
 
 export type RedisLoaderProps = ComponentProps<typeof RedisLoader>
 

@@ -79,7 +79,42 @@ const Recommendation = ({
     content = [],
   } = recommendationsContent[name] || {}
 
-  const recommendationTitle = liveTitle || title
+  const recommendationTitle = (redisStack: Maybe<boolean>, id: string) => (
+    <Row
+      align="center"
+      justify="start"
+      gap="m"
+      style={{ maxWidth: '60%', textAlign: 'left' }}
+    >
+      {redisStack && (
+        <FlexItem>
+          <EuiLink
+            external={false}
+            target="_blank"
+            href={EXTERNAL_LINKS.redisStack}
+            className={styles.redisStackLink}
+            data-testid={`${id}-redis-stack-link`}
+          >
+            <EuiToolTip
+              content="Redis Stack"
+              position="top"
+              display="inlineBlock"
+              anchorClassName="flex-row"
+            >
+              <EuiIcon
+                type={
+                  theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
+                }
+                className={styles.redisStackIcon}
+                data-testid={`${id}-redis-stack-icon`}
+              />
+            </EuiToolTip>
+          </EuiLink>
+        </FlexItem>
+      )}
+      <FlexItem className="truncateText">{liveTitle || title}</FlexItem>
+    </Row>
+  )
 
   const handleRedirect = () => {
     sendEventTelemetry({
@@ -190,35 +225,9 @@ const Recommendation = ({
     </Text>
   )
 
-  const renderButtonContent = (redisStack: Maybe<boolean>, id: string) => (
+  const renderButtonContent = (
     <Row className={styles.fullWidth}>
-      <Row className={styles.fullWidth} align="center" gap="l">
-        <FlexItem>
-          {redisStack && (
-            <EuiLink
-              external={false}
-              target="_blank"
-              href={EXTERNAL_LINKS.redisStack}
-              className={styles.redisStackLink}
-              data-testid={`${id}-redis-stack-link`}
-            >
-              <EuiToolTip
-                content="Redis Stack"
-                position="top"
-                display="inlineBlock"
-                anchorClassName="flex-row"
-              >
-                <EuiIcon
-                  type={
-                    theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
-                  }
-                  className={styles.redisStackIcon}
-                  data-testid={`${id}-redis-stack-icon`}
-                />
-              </EuiToolTip>
-            </EuiLink>
-          )}
-        </FlexItem>
+      <Row className={styles.fullWidth} align="end" gap="m">
         <FlexItem>
           <EuiToolTip
             title="Snooze tip"
@@ -266,22 +275,22 @@ const Recommendation = ({
   }
 
   return (
-    <div data-testid={`${name}-recommendation`}>
+    <div
+      data-testid={`${name}-recommendation`}
+      style={{ marginBottom: '1rem' }}
+    >
       <RiAccordion
-        collapsible
         id={name}
         defaultOpen={!isRead}
-        onAction={() => {}}
-        actionButtonText={renderButtonContent(redisStack, name)}
-        label={recommendationTitle}
+        actions={renderButtonContent}
+        label={recommendationTitle(redisStack, name)}
         data-testid={`${name}-accordion`}
         aria-label={`${name}-accordion`}
-        content={
-          <EuiPanel className={styles.accordionContent} color="subdued">
-            {recommendationContent()}
-          </EuiPanel>
-        }
-      />
+      >
+        <EuiPanel className={styles.accordionContent} color="subdued">
+          {recommendationContent()}
+        </EuiPanel>
+      </RiAccordion>
     </div>
   )
 }

@@ -164,6 +164,7 @@ const Navigation = (props: Props) => {
             id={id}
             label={label}
             actions={actions}
+            isShowFolder={level !== 0}
             isShowActions={currentSourcePath.startsWith(
               ApiEndpoints.CUSTOM_TUTORIALS_PATH,
             )}

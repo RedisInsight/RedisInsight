@@ -77,48 +77,45 @@ const Recommendations = () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => event.stopPropagation()
 
-  const renderButtonContent = (
-    redisStack: boolean,
-    badges: string[],
-    id: string,
-  ) => (
+  const renderButtonContent = (badges: string[], id: string) => (
+    <FlexItem className="recommendation-badges" data-test-subj={`${id}-button`}>
+      <RecommendationBadges badges={badges} />
+    </FlexItem>
+  )
+  const renderLabel = (redisStack: boolean, title: string, id: string) => (
     <Row
       className={cx(styles.accordionBtn, styles.accordionButton)}
       align="center"
-      justify="between"
-      data-test-subj={`${id}-button`}
+      justify="start"
+      gap="m"
+      data-test-subj={`${id}-label`}
     >
-      <Row align="center">
-        <FlexItem onClick={onRedisStackClick}>
-          {redisStack && (
-            <EuiLink
-              external={false}
-              target="_blank"
-              href={EXTERNAL_LINKS.redisStack}
-              className={styles.redisStackLink}
-              data-testid={`${id}-redis-stack-link`}
+      <FlexItem onClick={onRedisStackClick}>
+        {redisStack && (
+          <EuiLink
+            external={false}
+            target="_blank"
+            href={EXTERNAL_LINKS.redisStack}
+            data-testid={`${id}-redis-stack-link`}
+          >
+            <EuiToolTip
+              content="Redis Stack"
+              position="top"
+              display="inlineBlock"
+              anchorClassName="flex-row"
             >
-              <EuiToolTip
-                content="Redis Stack"
-                position="top"
-                display="inlineBlock"
-                anchorClassName="flex-row"
-              >
-                <EuiIcon
-                  type={
-                    theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
-                  }
-                  className={styles.redisStackIcon}
-                  data-testid={`${id}-redis-stack-icon`}
-                />
-              </EuiToolTip>
-            </EuiLink>
-          )}
-        </FlexItem>
-      </Row>
-      <FlexItem>
-        <RecommendationBadges badges={badges} />
+              <EuiIcon
+                type={
+                  theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
+                }
+                className={styles.redisStackIcon}
+                data-testid={`${id}-redis-stack-icon`}
+              />
+            </EuiToolTip>
+          </EuiLink>
+        )}
       </FlexItem>
+      <FlexItem>{title}</FlexItem>
     </Row>
   )
 
@@ -181,38 +178,32 @@ const Recommendations = () => {
                 data-testid={`${id}-recommendation`}
               >
                 <RiAccordion
-                  collapsible
                   id={name}
                   key={`${name}-accordion`}
-                  label={title}
-                  onAction={() => false}
-                  actionButtonText={renderButtonContent(redisStack, badges, id)}
+                  label={renderLabel(redisStack, title, id)}
+                  actions={renderButtonContent(badges, id)}
                   className={styles.accordion}
                   defaultOpen
                   onOpenChange={(isOpen) => handleToggle(isOpen, id)}
                   data-testid={`${id}-accordion`}
-                  content={
-                    <EuiPanel
-                      className={styles.accordionContent}
-                      color="subdued"
-                    >
-                      <RecommendationBody
-                        elements={content}
-                        params={params}
-                        telemetryName={telemetryEvent ?? name}
+                >
+                  <EuiPanel className={styles.accordionContent} color="subdued">
+                    <RecommendationBody
+                      elements={content}
+                      params={params}
+                      telemetryName={telemetryEvent ?? name}
+                    />
+                    {!!params?.keys?.length && (
+                      <RecommendationCopyComponent
+                        keyName={params.keys[0]}
+                        provider={provider}
+                        telemetryEvent={
+                          recommendationsContent[name]?.telemetryEvent ?? name
+                        }
                       />
-                      {!!params?.keys?.length && (
-                        <RecommendationCopyComponent
-                          keyName={params.keys[0]}
-                          provider={provider}
-                          telemetryEvent={
-                            recommendationsContent[name]?.telemetryEvent ?? name
-                          }
-                        />
-                      )}
-                    </EuiPanel>
-                  }
-                />
+                    )}
+                  </EuiPanel>
+                </RiAccordion>
                 <div className={styles.footer}>
                   <FeatureFlagComponent name={FeatureFlags.envDependent}>
                     <RecommendationVoting vote={vote as Vote} name={name} />

@@ -15,6 +15,7 @@ import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { OnboardingTour } from 'uiSrc/components'
 import { RiAccordion } from 'uiSrc/components/base/display/accordion/RiAccordion'
 import { Col } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
 import DeleteTutorialButton from '../DeleteTutorialButton'
 
 import './styles.scss'
@@ -32,6 +33,7 @@ export interface Props {
   onToggle?: (isOpen: boolean) => void
   isPageOpened?: boolean
   isShowActions?: boolean
+  isShowFolder?: boolean
 }
 
 const Group = (props: Props) => {
@@ -48,6 +50,7 @@ const Group = (props: Props) => {
     onCreate,
     onDelete,
     isPageOpened,
+    isShowFolder,
   } = props
   const { deleting: deletingCustomTutorials } = useSelector(
     workbenchCustomTutorialsSelector,
@@ -115,25 +118,31 @@ const Group = (props: Props) => {
 
   return (
     <RiAccordion
-      collapsible
       id={id}
       data-testid={`accordion-${id}`}
-      content={
-        <Col gap="l">
-          {isShowActions && actionsContent}
-          {children}
-        </Col>
-      }
       defaultOpen={initialIsOpen}
       open={forceState === 'open' || isGroupOpen}
-      label={label}
+      label={
+        <Text className="group-header" size="m">
+          {isShowFolder && (
+            <EuiIcon
+              type={isGroupOpen ? 'folderOpen' : 'folderClosed'}
+              style={{ marginRight: '10px' }}
+            />
+          )}
+          {label}
+        </Text>
+      }
       onOpenChange={handleOpen}
       style={{
         whiteSpace: 'nowrap',
         width: 'auto',
       }}
       className={cx({ withBorder })}
-    />
+      actions={isShowActions ? actionsContent : null}
+    >
+      <Col gap="l">{children}</Col>
+    </RiAccordion>
   )
 }
 

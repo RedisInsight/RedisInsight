@@ -2,8 +2,6 @@ import React, { Ref, useRef, useState } from 'react'
 import {
   EuiForm,
   EuiPopover,
-  EuiTextArea,
-  EuiTitle,
   EuiToolTip,
   keys,
 } from '@elastic/eui'
@@ -14,7 +12,9 @@ import { isModifiedEvent } from 'uiSrc/services'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { SendIcon } from 'uiSrc/components/base/icons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
+import { TextArea } from 'uiSrc/components/base/inputs'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -64,8 +64,8 @@ const ChatForm = (props: Props) => {
     }
   }
 
-  const handleChange = ({ target }: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setValue(target.value)
+  const handleChange = (value: string) => {
+    setValue(value)
     updateTextAreaHeight()
   }
 
@@ -103,9 +103,7 @@ const ChatForm = (props: Props) => {
               <div>
                 {validation.title && (
                   <>
-                    <EuiTitle size="xxs">
-                      <span>{validation.title}</span>
-                    </EuiTitle>
+                    <Title size="XS">{validation.title}</Title>
                     <Spacer size="s" />
                   </>
                 )}
@@ -128,10 +126,9 @@ const ChatForm = (props: Props) => {
           onSubmit={handleSubmitForm}
           onKeyDown={handleKeyDown}
         >
-          <EuiTextArea
-            inputRef={textAreaRef}
+          <TextArea
+            ref={textAreaRef}
             placeholder={placeholder || 'Ask me about Redis'}
-            className={styles.textarea}
             value={value}
             onChange={handleChange}
             disabled={!!validation}

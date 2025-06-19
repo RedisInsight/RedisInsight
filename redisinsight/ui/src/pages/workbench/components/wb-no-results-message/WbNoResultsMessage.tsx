@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiPanel, EuiTitle } from '@elastic/eui'
+import { EuiPanel } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -18,6 +18,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { LightBulbIcon } from 'uiSrc/components/base/icons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
@@ -49,16 +50,12 @@ const WbNoResultsMessage = () => {
       >
         No results to display yet
       </Text>
-      <EuiTitle>
-        <span style={{ marginTop: 12, fontSize: 28 }}>
-          This is our advanced CLI
-        </span>
-      </EuiTitle>
-      <EuiTitle>
-        <span style={{ marginTop: 6, fontSize: 20, lineHeight: 1.2 }}>
-          for Redis commands.
-        </span>
-      </EuiTitle>
+      <Title style={{ marginTop: 12, fontSize: 28 }}>
+        This is our advanced CLI
+      </Title>
+      <Title style={{ marginTop: 6, fontSize: 20, lineHeight: 1.2 }}>
+        for Redis commands.
+      </Title>
       <Spacer />
 
       <EuiPanel

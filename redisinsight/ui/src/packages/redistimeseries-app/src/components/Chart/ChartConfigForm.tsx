@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import {
   EuiFieldText,
-  EuiSwitch,
   EuiFormFieldset,
   EuiButtonGroup,
   EuiAccordion,
   EuiButtonGroupProps,
 } from '@elastic/eui'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { AxisScale, GraphMode, ChartConfigFormProps } from './interfaces'
 import {
   X_LABEL_MAX_LENGTH,
@@ -49,17 +49,15 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
           selected={value.mode}
           onClick={(v) => onChange('mode', v)}
         />
-        <EuiSwitch
-          compressed
-          label={<span className="switch-staircase-label">Staircase</span>}
+        <SwitchInput
+          title="Staircase"
           checked={value.staircase}
-          onChange={(e) => onChange('staircase', e.target.checked)}
+          onCheckedChange={(checked) => onChange('staircase', checked)}
         />
-        <EuiSwitch
-          compressed
-          label="Fill"
+        <SwitchInput
+          title="Fill"
           checked={value.fill}
-          onChange={(e) => onChange('fill', e.target.checked)}
+          onCheckedChange={(checked) => onChange('fill', checked)}
         />
         <EuiAccordion
           arrowDisplay="right"
@@ -95,11 +93,10 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
           <section>
             <div className="right-y-axis">
               <div className="switch-wrapper">
-                <EuiSwitch
-                  compressed
-                  label="Use Right Y Axis"
+                <SwitchInput
+                  title="Use Right Y Axis"
                   checked={value.yAxis2}
-                  onChange={(e) => onChange('yAxis2', e.target.checked)}
+                  onCheckedChange={(checked) => onChange('yAxis2', checked)}
                 />
               </div>
               {value.yAxis2 && (

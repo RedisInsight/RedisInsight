@@ -188,7 +188,7 @@ describe('InstanceForm', () => {
     })
     expect(handleSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
-        port: '123',
+        port: 123,
       }),
     )
   })
@@ -212,7 +212,7 @@ describe('InstanceForm', () => {
       </div>,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
 
     await act(async () => {
       fireEvent.click(screen.getByTestId('tls'))
@@ -317,7 +317,7 @@ describe('InstanceForm', () => {
     expect(handleTestConnection).toHaveBeenCalledWith(
       expect.objectContaining({
         showDb: true,
-        db: '12',
+        db: 12,
       }),
     )
     await act(async () => {
@@ -327,7 +327,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
         showDb: true,
-        db: '12',
+        db: 12,
       }),
     )
   })
@@ -351,7 +351,7 @@ describe('InstanceForm', () => {
       </div>,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     await act(async () => {
       fireEvent.click(screen.getByTestId('sni'))
     })
@@ -398,7 +398,7 @@ describe('InstanceForm', () => {
       </div>,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     await act(async () => {
       fireEvent.click(screen.getByTestId('sni'))
     })
@@ -451,7 +451,7 @@ describe('InstanceForm', () => {
       </div>,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     await act(async () => {
       fireEvent.click(screen.getByTestId('verify-tls-cert'))
     })
@@ -496,7 +496,7 @@ describe('InstanceForm', () => {
       </div>,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     await act(async () => {
       fireEvent.click(screen.getByTestId('select-ca-cert'))
     })
@@ -563,7 +563,7 @@ describe('InstanceForm', () => {
       </div>,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     expect(screen.getByTestId(QA_CA_CERT)).toBeInTheDocument()
     await act(async () => {
       fireEvent.change(screen.getByTestId(QA_CA_CERT), {
@@ -620,7 +620,7 @@ describe('InstanceForm', () => {
       </div>,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     await act(async () => {
       fireEvent.click(screen.getByTestId('tls-required-checkbox'))
     })
@@ -666,7 +666,7 @@ describe('InstanceForm', () => {
       </div>,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     expect(screen.getByTestId('select-cert')).toBeInTheDocument()
 
     await act(async () => {
@@ -747,7 +747,7 @@ describe('InstanceForm', () => {
         expect(screen.getByTestId(id)).toBeTruthy()
       })
 
-      fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+      fireEvent.mouseDown(screen.getByText('Security'))
       expect(screen.getByTestId('tls')).toBeTruthy()
     })
 
@@ -778,7 +778,7 @@ describe('InstanceForm', () => {
         expect(screen.getByTestId(id)).toBeTruthy()
       })
 
-      fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+      fireEvent.mouseDown(screen.getByText('Security'))
       expect(screen.getByTestId('tls')).toBeTruthy()
     })
 
@@ -843,7 +843,7 @@ describe('InstanceForm', () => {
       </div>,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     act(() => {
       fireEvent.click(screen.getByTestId('use-ssh'))
     })
@@ -886,7 +886,7 @@ describe('InstanceForm', () => {
       </div>,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     act(() => {
       fireEvent.click(screen.getByTestId('use-ssh'))
     })
@@ -916,7 +916,7 @@ describe('InstanceForm', () => {
       </div>,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     await act(async () => {
       fireEvent.click(screen.getByTestId('use-ssh'))
     })
@@ -954,7 +954,7 @@ describe('InstanceForm', () => {
 
     expect(screen.getByTestId(BTN_SUBMIT)).not.toBeDisabled()
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     await act(async () => {
       fireEvent.click(screen.getByTestId('use-ssh'))
     })
@@ -1004,7 +1004,7 @@ describe('InstanceForm', () => {
 
     expect(screen.getByTestId(BTN_SUBMIT)).not.toBeDisabled()
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     await act(async () => {
       fireEvent.click(screen.getByTestId('use-ssh'))
     })
@@ -1053,7 +1053,7 @@ describe('InstanceForm', () => {
       </div>,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     await act(async () => {
       fireEvent.click(screen.getByTestId('use-ssh'))
     })
@@ -1064,7 +1064,7 @@ describe('InstanceForm', () => {
       })
 
       fireEvent.change(screen.getByTestId('sshPort'), {
-        target: { value: '1771' },
+        target: { value: 1771 },
       })
 
       fireEvent.change(screen.getByTestId('sshUsername'), {
@@ -1083,7 +1083,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
         sshHost: 'localhost',
-        sshPort: '1771',
+        sshPort: 1771,
         sshUsername: 'username',
         sshPassword: '123',
       }),
@@ -1105,7 +1105,7 @@ describe('InstanceForm', () => {
       </div>,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     await act(async () => {
       fireEvent.click(screen.getByTestId('use-ssh'))
     })
@@ -1119,7 +1119,7 @@ describe('InstanceForm', () => {
       })
 
       fireEvent.change(screen.getByTestId('sshPort'), {
-        target: { value: '1771' },
+        target: { value: 1771 },
       })
 
       fireEvent.change(screen.getByTestId('sshUsername'), {
@@ -1142,7 +1142,7 @@ describe('InstanceForm', () => {
     expect(handleSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
         sshHost: 'localhost',
-        sshPort: '1771',
+        sshPort: 1771,
         sshUsername: 'username',
         sshPrivateKey: '123444',
         sshPassphrase: '123444',
@@ -1185,7 +1185,7 @@ describe('InstanceForm', () => {
     )
     expect(screen.getByTestId('password')).toHaveAttribute('type', 'password')
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     expect(screen.getByTestId('sshPassphrase')).toHaveAttribute(
       'value',
       '••••••••••••',
@@ -1195,12 +1195,12 @@ describe('InstanceForm', () => {
       'password',
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-general'))
+    fireEvent.mouseDown(screen.getByText('General'))
     fireEvent.focus(screen.getByTestId('password'))
 
     expect(screen.getByTestId('password')).toHaveAttribute('value', '')
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     fireEvent.focus(screen.getByTestId('sshPassphrase'))
     expect(screen.getByTestId('sshPassphrase')).toHaveAttribute('value', '')
   })
@@ -1219,7 +1219,7 @@ describe('InstanceForm', () => {
       />,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     expect(screen.getByTestId('sshPassword')).toHaveAttribute(
       'value',
       '••••••••••••',
@@ -1247,7 +1247,7 @@ describe('InstanceForm', () => {
       />,
     )
 
-    fireEvent.click(screen.getByTestId('manual-form-tab-security'))
+    fireEvent.mouseDown(screen.getByText('Security'))
     expect(screen.getByTestId('sshPassword')).toHaveAttribute(
       'maxLength',
       '10000',
@@ -1264,16 +1264,16 @@ describe('InstanceForm', () => {
       )
 
       expect(screen.getByTestId('timeout')).toBeInTheDocument()
-      expect(screen.getByTestId('timeout')).toHaveAttribute('maxLength', '7')
 
       fireEvent.change(screen.getByTestId('timeout'), {
         target: { value: '2000000' },
       })
+      fireEvent.focusOut(screen.getByTestId('timeout'))
 
       expect(screen.getByTestId('timeout')).toHaveAttribute('value', '1000000')
     })
 
-    it('should put only numbers', () => {
+    it('should default  to previous value when value other than just numbers is provided', () => {
       render(
         <ManualConnectionForm
           {...instance(mockedProps)}
@@ -1285,7 +1285,7 @@ describe('InstanceForm', () => {
         target: { value: '11a2EU$#@' },
       })
 
-      expect(screen.getByTestId('timeout')).toHaveAttribute('value', '112')
+      expect(screen.getByTestId('timeout')).toHaveAttribute('value', '30')
     })
   })
 

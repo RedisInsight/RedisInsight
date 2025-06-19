@@ -5,6 +5,7 @@ import svgr from 'vite-plugin-svgr';
 import { ViteEjsPlugin } from 'vite-plugin-ejs';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { resolve } from 'path';
+import { fileURLToPath } from 'url';
 
 const riPlugins = [
   { name: 'redisearch', entry: 'src/main.tsx' },
@@ -36,6 +37,10 @@ export default defineConfig({
     alias: {
       lodash: 'lodash-es',
       '@elastic/eui$': '@elastic/eui/optimize/lib',
+      '@redislabsdev/redis-ui-styles': '@redis-ui/styles',
+      '@redislabsdev/redis-ui-icons': '@redis-ui/icons',
+      uiSrc: fileURLToPath(new URL('../../src', import.meta.url)),
+      apiSrc: fileURLToPath(new URL('../../../api/src', import.meta.url)),
     },
   },
   server: {

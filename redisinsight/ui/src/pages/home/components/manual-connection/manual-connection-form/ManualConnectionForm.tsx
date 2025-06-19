@@ -1,4 +1,4 @@
-import { EuiTab, EuiTabs, EuiTitle, keys } from '@elastic/eui'
+import { keys } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, pick } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
@@ -27,6 +27,8 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { ArrowLeftIcon } from 'uiSrc/components/base/icons'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import TabsComponent from 'uiSrc/components/base/layout/tabs'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { MANUAL_FORM_TABS, ManualFormTab } from './constants'
 import CloneConnection from './components/CloneConnection'
 import FooterActions from './components/FooterActions'
@@ -165,9 +167,7 @@ const ManualConnectionForm = (props: Props) => {
             />
           </FlexItem>
           <FlexItem grow>
-            <EuiTitle size="s">
-              <h4>Clone Database</h4>
-            </EuiTitle>
+            <Title size="M">Clone Database</Title>
           </FlexItem>
         </Row>,
       )
@@ -175,20 +175,11 @@ const ManualConnectionForm = (props: Props) => {
     }
 
     if (isEditMode) {
-      setModalHeader(
-        <EuiTitle size="s">
-          <h4>Edit Database</h4>
-        </EuiTitle>,
-      )
+      setModalHeader(<Title size="M">Edit Database</Title>)
       return
     }
 
-    setModalHeader(
-      <EuiTitle size="s">
-        <h4>Connection Settings</h4>
-      </EuiTitle>,
-      true,
-    )
+    setModalHeader(<Title size="M">Connection Settings</Title>, true)
   }, [isEditMode, isCloneMode])
 
   useEffect(() => {
@@ -233,18 +224,12 @@ const ManualConnectionForm = (props: Props) => {
   }
 
   const Tabs = () => (
-    <EuiTabs className={cx('tabs-active-borders', styles.tabs)}>
-      {MANUAL_FORM_TABS.map(({ id, title }) => (
-        <EuiTab
-          key={id}
-          isSelected={activeTab === id}
-          onClick={() => handleTabClick(id)}
-          data-testid={`manual-form-tab-${id}`}
-        >
-          {title}
-        </EuiTab>
-      ))}
-    </EuiTabs>
+    <TabsComponent
+      tabs={MANUAL_FORM_TABS}
+      value={activeTab}
+      onChange={(id) => handleTabClick(id as ManualFormTab)}
+      data-testid="manual-form-tabs"
+    />
   )
 
   return (

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { EuiIcon, EuiTitle } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { useHistory } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -9,6 +9,7 @@ import Logo from 'uiSrc/assets/img/logo.svg?react'
 import Robot from 'uiSrc/assets/img/robot.svg?react'
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
@@ -40,13 +41,11 @@ const NotFoundErrorPage = () => {
               />
             </FlexItem>
             <FlexItem grow>
-              <EuiTitle>
-                <h1>
-                  Whoops!
-                  <br />
-                  This Page Is an Empty Set
-                </h1>
-              </EuiTitle>
+              <Title size="XXL">
+                Whoops!
+                <br />
+                This Page Is an Empty Set
+              </Title>
               <Text component="div">
                 <p
                   className={styles.errorSubtext}

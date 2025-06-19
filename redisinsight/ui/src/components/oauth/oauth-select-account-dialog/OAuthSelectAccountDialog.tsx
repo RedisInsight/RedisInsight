@@ -4,7 +4,6 @@ import {
   EuiModalBody,
   EuiRadioGroup,
   EuiRadioGroupOption,
-  EuiTitle,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
@@ -42,6 +41,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { ColorText, Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
@@ -186,9 +186,9 @@ const OAuthSelectAccountDialog = () => {
     >
       <EuiModalBody className={styles.modalBody}>
         <section className={styles.content}>
-          <EuiTitle size="s">
-            <h3 className={styles.title}>Connect to Redis Cloud</h3>
-          </EuiTitle>
+          <Title size="M" className={styles.title}>
+            Connect to Redis Cloud
+          </Title>
           <Text className={styles.subTitle}>
             Select an account to connect to:
           </Text>

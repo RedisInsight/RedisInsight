@@ -4,7 +4,6 @@ import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 
 import {
-  act,
   cleanup,
   fireEvent,
   mockedStore,
@@ -94,12 +93,12 @@ describe('JobsPanel', () => {
     expect(queryByTestId('transformations-output')).toBeInTheDocument()
     expect(queryByTestId('commands-output')).not.toBeInTheDocument()
 
-    fireEvent.click(screen.getByTestId('output-tab'))
+    fireEvent.mouseDown(screen.getByText('Job output'))
 
     expect(queryByTestId('transformations-output')).not.toBeInTheDocument()
     expect(queryByTestId('commands-output')).toBeInTheDocument()
 
-    fireEvent.click(screen.getByTestId('transformations-tab'))
+    fireEvent.mouseDown(screen.getByText('Transformation output'))
 
     expect(queryByTestId('transformations-output')).toBeInTheDocument()
     expect(queryByTestId('commands-output')).not.toBeInTheDocument()
@@ -123,9 +122,7 @@ describe('JobsPanel', () => {
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
 
-    await act(() => {
-      fireEvent.click(screen.getByTestId('output-tab'))
-    })
+    fireEvent.mouseDown(screen.getByText('Job output'))
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
   })
@@ -142,9 +139,7 @@ describe('JobsPanel', () => {
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
 
-    await act(() => {
-      fireEvent.click(screen.getByTestId('output-tab'))
-    })
+    fireEvent.mouseDown(screen.getByText('Job output'))
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
   })
@@ -164,9 +159,7 @@ describe('JobsPanel', () => {
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
 
-    await act(() => {
-      fireEvent.click(screen.getByTestId('output-tab'))
-    })
+    fireEvent.mouseDown(screen.getByText('Job output'))
 
     expect(queryByTestId('target-select')).toBeInTheDocument()
   })

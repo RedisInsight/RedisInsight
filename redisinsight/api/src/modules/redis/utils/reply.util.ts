@@ -115,8 +115,12 @@ export const parseNodesFromClusterInfoReply = (
         // fields = [id, endpoint, flags, master, pingSent, pongRecv, configEpoch, linkState, slot]
         const fields = line.split(' ');
         const [id, endpoint, , master, , , , linkState, slot] = fields;
-        const host = endpoint.split(':')[0];
-        const port = endpoint.split(':')[1].split('@')[0];
+
+        const hostAndPort = endpoint.split('@')[0]
+        const lastColonIndex = hostAndPort.lastIndexOf(':');
+
+        const host = hostAndPort.substring(0, lastColonIndex);
+        const port = hostAndPort.substring(lastColonIndex + 1);
         nodes.push({
           id,
           host,

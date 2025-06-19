@@ -1,9 +1,6 @@
-import React from 'react'
 import styled, { css } from 'styled-components'
-import { Link } from '@redis-ui/components'
+import { Link as RedisUiLink, LinkProps } from '@redis-ui/components'
 import { useTheme } from '@redis-ui/styles'
-
-export type LinkProps = React.ComponentProps<typeof Link>
 
 // TODO [DA]: Export the color functionality and use both for Link and Text
 export type EuiColorNames =
@@ -63,7 +60,7 @@ export const useColorTextStyles = ({ $color }: MapProps = {}) => {
   `
 }
 
-export const StyledLink = styled(Link)<MapProps>`
+export const StyledLink = styled(RedisUiLink)<MapProps>`
   ${useColorTextStyles};
 
   text-decoration: underline !important;

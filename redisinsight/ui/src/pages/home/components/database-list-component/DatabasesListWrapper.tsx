@@ -1,7 +1,6 @@
 import {
   Criteria,
   EuiIcon,
-  EuiLink,
   EuiPopover,
   EuiResizeObserver,
   EuiTableFieldDataColumnType,
@@ -88,12 +87,12 @@ import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
 import { Tag } from 'uiSrc/slices/interfaces/tag'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
+import { Link } from 'uiSrc/components/base/link/Link'
 import DbStatus from '../db-status'
 
 import { TagsCell } from '../tags-cell/TagsCell'
 import { TagsCellHeader } from '../tags-cell/TagsCellHeader'
 import styles from './styles.module.scss'
-import { Link } from 'uiSrc/components/base/link/Link'
 
 export interface Props {
   instances: Instance[]

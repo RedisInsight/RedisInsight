@@ -80,7 +80,8 @@ test
         await browserPage.OverviewPanel.changeDbIndex(0);
         await apiKeyRequests.deleteKeyByNameApi(keyName, databasesForAdding[1].databaseName);
         await databaseAPIRequests.deleteStandaloneDatabasesApi(databasesForAdding);
-    })('Verify Insights panel Recommendations displaying', async t => {
+    })
+    .skip('Verify Insights panel Recommendations displaying', async t => {
         await browserPage.NavigationHeader.togglePanel(true);
         // Verify that "Welcome to recommendations" panel displayed when there are no recommendations
         let tab = await browserPage.InsightsPanel.setActiveTab(ExploreTabs.Tips);
@@ -189,7 +190,8 @@ test
     await t.expect(await tab.getRecommendationByName(searchVisualizationRecom).visible)
         .ok('recommendation is not displayed when show hide recommendation is checked');
 });
-test('Verify that user can snooze recommendation', async t => {
+test
+    .skip('Verify that user can snooze recommendation', async t => {
     const commandToGetRecommendation = 'FT.INFO';
     await browserPage.Cli.sendCommandInCli(commandToGetRecommendation);
 

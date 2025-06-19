@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiLoadingSpinner } from '@elastic/eui'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 import { get, throttle } from 'lodash'
@@ -37,6 +36,7 @@ import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
 
 import { Link } from 'uiSrc/components/base/link/Link'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 const Config = () => {
@@ -182,7 +182,7 @@ const Config = () => {
             <Text color="subdued" style={{ marginBottom: 12 }}>
               Loading data...
             </Text>
-            <EuiLoadingSpinner color="secondary" size="l" />
+            <Loader color="secondary" size="l" />
           </div>
         ) : (
           <MonacoYaml

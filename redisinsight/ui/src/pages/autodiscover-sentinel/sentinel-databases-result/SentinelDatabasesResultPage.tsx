@@ -1,6 +1,5 @@
 import {
   EuiBasicTableColumn,
-  EuiLoadingSpinner,
   EuiIcon,
   EuiToolTip,
 } from '@elastic/eui'
@@ -31,6 +30,7 @@ import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/In
 import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon, CopyIcon } from 'uiSrc/components/base/icons'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { Loader } from 'uiSrc/components/base/display'
 import SentinelDatabasesResult from './components'
 
 import styles from '../styles.module.scss'
@@ -126,7 +126,7 @@ const SentinelDatabasesResultPage = () => {
       ) {
         return (
           <div data-testid={`status_${name}_${status}`}>
-            {loading && <EuiLoadingSpinner />}
+            {loading && <Loader />}
             {!loading && status === AddRedisDatabaseStatus.Success && (
               <Text>{message}</Text>
             )}

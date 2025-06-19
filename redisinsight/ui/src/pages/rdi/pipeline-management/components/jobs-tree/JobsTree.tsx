@@ -1,7 +1,6 @@
 import {
   EuiAccordion,
   EuiIcon,
-  EuiLoadingSpinner,
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -31,6 +30,7 @@ import {
   DestructiveButton,
   IconButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -119,10 +119,10 @@ const JobsTree = (props: IProps) => {
     const isJobExists = isNumber(idx)
     const updatedJobs = isJobExists
       ? [
-          ...jobs.slice(0, idx),
-          { ...jobs[idx], name: value },
-          ...jobs.slice(idx + 1),
-        ]
+        ...jobs.slice(0, idx),
+        { ...jobs[idx], name: value },
+        ...jobs.slice(idx + 1),
+      ]
       : [...jobs, { name: value, value: '' }]
 
     dispatch(setPipelineJobs(updatedJobs))
@@ -329,7 +329,7 @@ const JobsTree = (props: IProps) => {
             </ColorText>
           )}
           {loading && (
-            <EuiLoadingSpinner
+            <Loader
               data-testid="rdi-nav-jobs-loader"
               className={styles.loader}
             />

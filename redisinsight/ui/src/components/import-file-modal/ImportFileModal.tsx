@@ -1,7 +1,6 @@
 import {
   EuiFilePicker,
   EuiIcon,
-  EuiLoadingSpinner,
   EuiModal,
   EuiModalBody,
   EuiModalFooter,
@@ -21,6 +20,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 export interface Props<T> {
@@ -112,7 +112,7 @@ const ImportFileModal = <T,>({
                 className={styles.loading}
                 data-testid="file-loading-indicator"
               >
-                <EuiLoadingSpinner size="xl" />
+                <Loader size="xl" />
                 <Text color="subdued" style={{ marginTop: 12 }}>
                   Uploading...
                 </Text>

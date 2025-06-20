@@ -1,7 +1,7 @@
 import React from 'react'
-import { EuiInMemoryTable } from '@elastic/eui'
 
 import { render, fireEvent, screen } from 'uiSrc/utils/test-utils'
+import { Table } from 'uiSrc/components/base/layout/table'
 
 import RedisCloudDatabasesResultPage from './RedisCloudDatabasesResultPage'
 import RedisCloudDatabasesResult, {
@@ -25,13 +25,10 @@ const mockRedisCloudDatabasesResult = (
       onBack
     </button>
     <div className="itemList">
-      <EuiInMemoryTable
-        isSelectable
-        items={[]}
-        itemId="id"
-        loading={false}
+      <Table
         columns={props.columns}
-        data-testid="table"
+        data={[]}
+        defaultSorting={[{ id: 'name', desc: false }]}
       />
     </div>
   </div>

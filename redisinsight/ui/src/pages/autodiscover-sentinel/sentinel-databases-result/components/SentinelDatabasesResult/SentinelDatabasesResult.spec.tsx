@@ -1,27 +1,24 @@
-import { EuiBasicTableColumn } from '@elastic/eui'
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
 import { cleanup, render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import SentinelDatabasesResult, { Props } from './SentinelDatabasesResult'
 
 const mockedProps = mock<Props>()
 
 let mastersMock: ModifiedSentinelMaster[]
-let columnsMock: EuiBasicTableColumn<ModifiedSentinelMaster>[]
+let columnsMock: ColumnDefinition<ModifiedSentinelMaster>[]
 
 beforeEach(() => {
   cleanup()
 
   columnsMock = [
     {
-      field: 'name',
-      className: 'column_name',
-      name: 'Master group',
-      dataType: 'string',
-      sortable: true,
-      width: '170px',
-      truncateText: true,
+      header: 'Master group',
+      id: 'name',
+      accessorKey: 'name',
+      enableSorting: true,
     },
   ]
 

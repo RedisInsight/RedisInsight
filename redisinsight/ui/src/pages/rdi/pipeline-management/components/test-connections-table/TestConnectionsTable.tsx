@@ -1,8 +1,6 @@
-import { EuiBasicTableColumn, EuiInMemoryTable } from '@elastic/eui'
-import cx from 'classnames'
 import React from 'react'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 
-import { Maybe } from 'uiSrc/utils'
 import { IRdiConnectionResult } from 'uiSrc/slices/interfaces'
 
 import styles from './styles.module.scss'
@@ -14,22 +12,26 @@ export interface Props {
 const TestConnectionsTable = (props: Props) => {
   const { data } = props
 
-  const columns: EuiBasicTableColumn<IRdiConnectionResult>[] = [
+  const columns: ColumnDefinition<IRdiConnectionResult>[] = [
     {
-      name: 'Name',
-      field: 'target',
-      width: '50%',
-      truncateText: true,
-      render: (target: string) => (
-        <div data-testid={`table-target-${target}`}>{target}</div>
-      ),
+      header: 'Name',
+      id: 'target',
+      accessorKey: 'target',
+      cell: ({
+        row: {
+          original: { target },
+        },
+      }) => <div data-testid={`table-target-${target}`}>{target}</div>,
     },
     {
-      name: 'Result',
-      field: 'error',
-      width: '50%',
-      truncateText: true,
-      render: (error: Maybe<string>, { target }) => (
+      header: 'Result',
+      id: 'error',
+      accessorKey: 'error',
+      cell: ({
+        row: {
+          original: { target, error },
+        },
+      }) => (
         <div data-testid={`table-result-${target}`}>
           {error || 'Successful'}
         </div>
@@ -41,17 +43,10 @@ const TestConnectionsTable = (props: Props) => {
 
   return (
     <div className={styles.tableWrapper}>
-      <EuiInMemoryTable
-        items={data ?? []}
+      <Table
         columns={columns}
-        className={cx(
-          'inMemoryTableDefault',
-          'noBorders',
-          'stickyHeader',
-          styles.table,
-        )}
-        responsive={false}
-        itemId="index"
+        data={data ?? []}
+        defaultSorting={[]}
         data-testid="connections-log-table"
       />
     </div>

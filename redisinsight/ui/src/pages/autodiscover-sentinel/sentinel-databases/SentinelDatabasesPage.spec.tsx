@@ -1,7 +1,7 @@
 import React from 'react'
-import { EuiInMemoryTable } from '@elastic/eui'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 
+import { Table } from 'uiSrc/components/base/layout/table'
 import SentinelDatabasesPage from './SentinelDatabasesPage'
 import SentinelDatabases from './components'
 import { Props as SentinelDatabasesProps } from './components/SentinelDatabases/SentinelDatabases'
@@ -50,16 +50,7 @@ const mockSentinelDatabases = (props: SentinelDatabasesProps) => (
     >
       onSubmit
     </button>
-    <div className="itemList databaseList sentinelDatabaseList">
-      <EuiInMemoryTable
-        isSelectable
-        items={props.masters}
-        itemId="id"
-        loading={false}
-        columns={props.columns}
-        data-testid="table"
-      />
-    </div>
+    <Table columns={props.columns} data={props.masters} />
   </div>
 )
 

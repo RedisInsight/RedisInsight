@@ -1,9 +1,7 @@
-import { EuiBasicTableColumn, EuiInMemoryTable } from '@elastic/eui'
-import cx from 'classnames'
 import React from 'react'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 
 import { ErrorImportResult } from 'uiSrc/slices/interfaces'
-import { Maybe } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -29,31 +27,40 @@ const TableResult = (props: Props) => {
     </ul>
   )
 
-  const columns: EuiBasicTableColumn<any>[] = [
+  const columns: ColumnDefinition<DataImportResult>[] = [
     {
-      name: '#',
-      field: 'index',
-      width: '4%',
-      render: (index: number) => (
-        <span data-testid={`table-index-${index}`}>({index})</span>
-      ),
+      header: '#',
+      id: 'index',
+      accessorKey: 'index',
+      cell: ({
+        row: {
+          original: { index },
+        },
+      }) => <span data-testid={`table-index-${index}`}>({index})</span>,
     },
     {
-      name: 'Host:Port',
-      field: 'host',
-      width: '25%',
-      truncateText: true,
-      render: (_host, { host, port, index }) => (
+      header: 'Host:Port',
+      id: 'host',
+      accessorKey: 'host',
+      cell: ({
+        row: {
+          original: { host, port, index },
+        },
+      }) => (
         <div data-testid={`table-host-port-${index}`}>
           {host}:{port}
         </div>
       ),
     },
     {
-      name: 'Result',
-      field: 'errors',
-      width: '25%',
-      render: (errors: Maybe<ErrorImportResult[]>, { index }) => (
+      header: 'Result',
+      id: 'errors',
+      accessorKey: 'errors',
+      cell: ({
+        row: {
+          original: { errors, index },
+        },
+      }) => (
         <div data-testid={`table-result-${index}`}>
           {errors ? (
             <ErrorResult errors={errors.map((e) => e.message)} />
@@ -69,19 +76,7 @@ const TableResult = (props: Props) => {
 
   return (
     <div className={styles.tableWrapper}>
-      <EuiInMemoryTable
-        items={data ?? []}
-        columns={columns}
-        className={cx(
-          'inMemoryTableDefault',
-          'noBorders',
-          'stickyHeader',
-          styles.table,
-        )}
-        responsive={false}
-        itemId="index"
-        data-testid="result-log-table"
-      />
+      <Table columns={columns} data={data} defaultSorting={[]} />
     </div>
   )
 }

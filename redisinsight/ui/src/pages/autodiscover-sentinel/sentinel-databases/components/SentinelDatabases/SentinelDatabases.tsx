@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import cx from 'classnames'
-import {
-  EuiInMemoryTable,
-  EuiBasicTableColumn,
-  EuiTableSelectionType,
-  PropertySort,
-  EuiPopover,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiPopover, EuiToolTip } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import { sentinelSelector } from 'uiSrc/slices/instances/sentinel'
@@ -26,10 +19,11 @@ import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import styles from '../../../styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<ModifiedSentinelMaster>[]
+  columns: ColumnDefinition<ModifiedSentinelMaster>[]
   masters: ModifiedSentinelMaster[]
   onClose: () => void
   onBack: () => void
@@ -57,11 +51,6 @@ const SentinelDatabases = ({
   const [selection, setSelection] = useState<ModifiedSentinelMaster[]>([])
 
   const { loading } = useSelector(sentinelSelector)
-
-  const sort: PropertySort = {
-    field: 'name',
-    direction: 'asc',
-  }
 
   const updateSelection = (
     selected: ModifiedSentinelMaster[],
@@ -100,9 +89,15 @@ const SentinelDatabases = ({
     return selected || emptyAliases.length !== 0
   }
 
-  const selectionValue: EuiTableSelectionType<ModifiedSentinelMaster> = {
-    onSelectionChange: (selected: ModifiedSentinelMaster[]) =>
-      setSelection(selected),
+  const selectionValue = {
+    onSelectionChange: (selected: ModifiedSentinelMaster) =>
+      setSelection((previous) => {
+        const isSelected = previous.some((item) => item.id === selected.id)
+        if (isSelected) {
+          return previous.filter((item) => item.id !== selected.id)
+        }
+        return [...previous, selected]
+      }),
   }
 
   const onQueryChange = (term: string) => {
@@ -117,6 +112,8 @@ const SentinelDatabases = ({
         item.port?.toString()?.includes(value) ||
         item.numberOfSlaves?.toString().includes(value),
     )
+
+    console.log('+++onQueryChange', itemsTemp)
 
     if (!itemsTemp.length) {
       setMessage(notFoundMsg)
@@ -228,18 +225,18 @@ const SentinelDatabases = ({
         <br />
 
         <div className="itemList databaseList sentinelDatabaseList">
-          <EuiInMemoryTable
-            isSelectable
-            items={items}
-            itemId="id"
-            loading={loading}
-            message={message}
+          <Table
             columns={columns}
-            sorting={{ sort }}
-            selection={selectionValue}
-            className={cx(styles.table, !masters.length && styles.tableEmpty)}
-            data-testid="table"
+            data={items}
+            defaultSorting={[
+              {
+                id: 'name',
+                desc: false,
+              },
+            ]}
+            onRowClick={selectionValue.onSelectionChange}
           />
+          {!items.length && <Text color="subdued">{message}</Text>}
           {!masters.length && (
             <Text className={styles.notFoundMsg} color="subdued">
               {notMastersMsg}

@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { map } from 'lodash'
-import {
-  EuiInMemoryTable,
-  EuiBasicTableColumn,
-  EuiTableSelectionType,
-  PropertySort,
-  EuiPopover,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiPopover, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import {
   InstanceRedisCloud,
@@ -20,6 +13,7 @@ import { LoadingContent } from 'uiSrc/components/base/layout'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import {
@@ -35,7 +29,7 @@ import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from '../styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<RedisCloudSubscription>[]
+  columns: ColumnDefinition<RedisCloudSubscription>[]
   subscriptions: Nullable<RedisCloudSubscription[]>
   loading: boolean
   account: Nullable<RedisCloudAccount>
@@ -90,11 +84,6 @@ const RedisCloudSubscriptions = ({
 
   const countStatusFailed = items.length - countStatusActive
 
-  const sort: PropertySort = {
-    field: 'status',
-    direction: 'asc',
-  }
-
   const handleSubmit = () => {
     onSubmit(
       map(selection, ({ id, type, free }) => ({
@@ -113,11 +102,27 @@ const RedisCloudSubscriptions = ({
     setIsPopoverOpen(false)
   }
 
-  const selectionValue: EuiTableSelectionType<RedisCloudSubscription> = {
-    selectable: ({ status, numberOfDatabases }) =>
-      status === RedisCloudSubscriptionStatus.Active && numberOfDatabases !== 0,
-    onSelectionChange: (selected: RedisCloudSubscription[]) =>
-      setSelection(selected),
+  const selectionValue = {
+    onSelectionChange: (selected: RedisCloudSubscription) =>
+      setSelection((previous) => {
+        const canSelect =
+          selected.status === RedisCloudSubscriptionStatus.Active &&
+          selected.numberOfDatabases !== 0
+
+        if (!canSelect) {
+          return previous
+        }
+
+        const isSelected = previous.some(
+          (item) => item.id === selected.id && item.type === selected.type,
+        )
+        if (isSelected) {
+          return previous.filter(
+            (item) => !(item.id === selected.id && item.type === selected.type),
+          )
+        }
+        return [...previous, selected]
+      }),
   }
 
   const onQueryChange = (term: string) => {
@@ -281,15 +286,16 @@ const RedisCloudSubscriptions = ({
           <div className={styles.account}>
             <Account />
           </div>
-          <EuiInMemoryTable
-            items={items}
-            itemId="id"
-            loading={loading}
+          <Table
             columns={columns}
-            sorting={{ sort }}
-            selection={selectionValue}
-            className={cx(styles.table, { [styles.tableEmpty]: !items.length })}
-            isSelectable
+            data={items}
+            defaultSorting={[
+              {
+                id: 'name',
+                desc: false,
+              },
+            ]}
+            onRowClick={selectionValue.onSelectionChange}
           />
           {!items.length && (
             <Text className={styles.noSubscriptions}>{message}</Text>

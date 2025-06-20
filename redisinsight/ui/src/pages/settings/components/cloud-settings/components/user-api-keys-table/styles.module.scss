@@ -1,22 +1,3 @@
-.table {
-  @include eui.scrollBar;
-  max-height: 240px;
-  overflow-y: auto;
-
-  :global {
-    .euiTableCellContent {
-      padding: 10px 12px !important;
-    }
-  }
-
-  &:global {
-    &.inMemoryTableDefault.noBorders .euiTableHeaderCell {
-      background-color: var(--euiColorEmptyShade);
-      border-bottom: 1px solid var(--euiColorLightShade) !important;
-    }
-  }
-}
-
 .invalidIconAnchor {
   flex-shrink: 0;
 }

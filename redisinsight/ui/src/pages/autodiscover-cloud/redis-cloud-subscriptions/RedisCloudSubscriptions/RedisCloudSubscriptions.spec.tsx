@@ -3,6 +3,7 @@ import { instance, mock } from 'ts-mockito'
 import {
   RedisCloudSubscription,
   RedisCloudSubscriptionStatus,
+  RedisCloudSubscriptionType,
 } from 'uiSrc/slices/interfaces'
 import { render } from 'uiSrc/utils/test-utils'
 import RedisCloudSubscriptions, { Props } from './RedisCloudSubscriptions'
@@ -13,13 +14,10 @@ describe('RedisCloudSubscriptions', () => {
   it('should render', () => {
     const columnsMock = [
       {
-        field: 'subscriptionId',
-        className: 'column_subscriptionId',
-        name: 'Subscription ID',
-        dataType: 'string',
-        sortable: true,
-        width: '170px',
-        truncateText: true,
+        id: 'subscriptionId',
+        accessorKey: 'subscriptionId',
+        header: 'Subscription ID',
+        enableSorting: true,
       },
     ]
 
@@ -31,6 +29,8 @@ describe('RedisCloudSubscriptions', () => {
         provider: 'provider',
         region: 'region',
         status: RedisCloudSubscriptionStatus.Active,
+        type: RedisCloudSubscriptionType.Fixed,
+        free: false,
       },
     ]
     expect(

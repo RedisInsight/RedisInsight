@@ -2,14 +2,9 @@ import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
-import {
-  EuiAccordion,
-  EuiIcon,
-  EuiLink,
-  EuiPanel,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon, EuiLink, EuiPanel, EuiToolTip } from '@elastic/eui'
 
+import cx from 'classnames'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
   FeatureFlagComponent,
@@ -36,6 +31,7 @@ import { findTutorialPath } from 'uiSrc/utils'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiAccordion } from 'uiSrc/components/base/display/accordion/RiAccordion'
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
@@ -81,45 +77,45 @@ const Recommendations = () => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => event.stopPropagation()
 
-  const renderButtonContent = (
-    redisStack: boolean,
-    title: string,
-    badges: string[],
-    id: string,
-  ) => (
-    <Row className={styles.accordionButton} align="center" justify="between">
-      <Row align="center">
-        <FlexItem onClick={onRedisStackClick}>
-          {redisStack && (
-            <EuiLink
-              external={false}
-              target="_blank"
-              href={EXTERNAL_LINKS.redisStack}
-              className={styles.redisStackLink}
-              data-testid={`${id}-redis-stack-link`}
+  const renderButtonContent = (badges: string[], id: string) => (
+    <FlexItem className="recommendation-badges" data-test-subj={`${id}-button`}>
+      <RecommendationBadges badges={badges} />
+    </FlexItem>
+  )
+  const renderLabel = (redisStack: boolean, title: string, id: string) => (
+    <Row
+      className={cx(styles.accordionBtn, styles.accordionButton)}
+      align="center"
+      justify="start"
+      gap="m"
+      data-test-subj={`${id}-label`}
+    >
+      <FlexItem onClick={onRedisStackClick}>
+        {redisStack && (
+          <EuiLink
+            external={false}
+            target="_blank"
+            href={EXTERNAL_LINKS.redisStack}
+            data-testid={`${id}-redis-stack-link`}
+          >
+            <EuiToolTip
+              content="Redis Stack"
+              position="top"
+              display="inlineBlock"
+              anchorClassName="flex-row"
             >
-              <EuiToolTip
-                content="Redis Stack"
-                position="top"
-                display="inlineBlock"
-                anchorClassName="flex-row"
-              >
-                <EuiIcon
-                  type={
-                    theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
-                  }
-                  className={styles.redisStackIcon}
-                  data-testid={`${id}-redis-stack-icon`}
-                />
-              </EuiToolTip>
-            </EuiLink>
-          )}
-        </FlexItem>
-        <FlexItem>{title}</FlexItem>
-      </Row>
-      <FlexItem>
-        <RecommendationBadges badges={badges} />
+              <EuiIcon
+                type={
+                  theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
+                }
+                className={styles.redisStackIcon}
+                data-testid={`${id}-redis-stack-icon`}
+              />
+            </EuiToolTip>
+          </EuiLink>
+        )}
       </FlexItem>
+      <FlexItem>{title}</FlexItem>
     </Row>
   )
 
@@ -181,21 +177,14 @@ const Recommendations = () => {
                 className={styles.recommendation}
                 data-testid={`${id}-recommendation`}
               >
-                <EuiAccordion
+                <RiAccordion
                   id={name}
                   key={`${name}-accordion`}
-                  arrowDisplay="right"
-                  buttonContent={renderButtonContent(
-                    redisStack,
-                    title,
-                    badges,
-                    id,
-                  )}
-                  buttonClassName={styles.accordionBtn}
-                  buttonProps={{ 'data-test-subj': `${id}-button` }}
+                  label={renderLabel(redisStack, title, id)}
+                  actions={renderButtonContent(badges, id)}
                   className={styles.accordion}
-                  initialIsOpen
-                  onToggle={(isOpen) => handleToggle(isOpen, id)}
+                  defaultOpen
+                  onOpenChange={(isOpen) => handleToggle(isOpen, id)}
                   data-testid={`${id}-accordion`}
                 >
                   <EuiPanel className={styles.accordionContent} color="subdued">
@@ -214,7 +203,7 @@ const Recommendations = () => {
                       />
                     )}
                   </EuiPanel>
-                </EuiAccordion>
+                </RiAccordion>
                 <div className={styles.footer}>
                   <FeatureFlagComponent name={FeatureFlags.envDependent}>
                     <RecommendationVoting vote={vote as Vote} name={name} />

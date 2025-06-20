@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { useTheme } from '@redis-ui/styles'
 import { CommonProps } from 'uiSrc/components/base/theme/types'
 
-export const gapSizes = ['none', 'xs', 's', 'm', 'l', 'xl'] as const
+export const gapSizes = ['none', 'xs', 's', 'm', 'l', 'xl', 'xxl'] as const
 export type GapSizeType = (typeof gapSizes)[number]
 export const columnCount = [1, 2, 3, 4] as const
 export type ColumnCountType = (typeof columnCount)[number]
@@ -103,9 +103,12 @@ const flexGroupStyles = {
       gap: ${({ theme }: { theme: ThemeType }) => theme.core.space.space100};
     `,
     l: css`
-      gap: ${({ theme }: { theme: ThemeType }) => theme.core.space.space250};
+      gap: ${({ theme }: { theme: ThemeType }) => theme.core.space.space150};
     `,
     xl: css`
+      gap: ${({ theme }: { theme: ThemeType }) => theme.core.space.space250};
+    `,
+    xxl: css`
       gap: ${({ theme }: { theme: ThemeType }) => theme.core.space.space300};
     `,
   },

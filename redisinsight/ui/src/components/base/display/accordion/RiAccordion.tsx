@@ -1,4 +1,4 @@
-import React, { ReactNode, isValidElement, ComponentProps } from 'react'
+import React, { ComponentProps, isValidElement, ReactNode } from 'react'
 import { Section, SectionProps } from '@redis-ui/components'
 
 export type RiAccordionProps = Omit<ComponentProps<typeof Section>, 'label'> & {
@@ -11,14 +11,8 @@ export type RiAccordionProps = Omit<ComponentProps<typeof Section>, 'label'> & {
   children?: SectionProps['content']
   onAction?: SectionProps['onAction']
 }
-type RiAccordionLabelProps = { label: ReactNode }
 
-type RiAccordionActionsProps = Pick<
-  RiAccordionProps,
-  'actionButtonText' | 'actions' | 'onAction'
->
-
-const RiAccordionLabel = ({ label }: RiAccordionLabelProps) => {
+const RiAccordionLabel = ({ label }: Pick<RiAccordionProps, 'label'>) => {
   if (typeof label === 'string') {
     return <Section.Header.Label label={label} />
   }
@@ -28,6 +22,12 @@ const RiAccordionLabel = ({ label }: RiAccordionLabelProps) => {
   // Ensure we always return a valid JSX element by wrapping non-JSX values
   return isValidElement(label) ? label : <>{label}</>
 }
+
+type RiAccordionActionsProps = Pick<
+  RiAccordionProps,
+  'actionButtonText' | 'actions' | 'onAction'
+>
+
 const RiAccordionActions = ({
   actionButtonText,
   actions,

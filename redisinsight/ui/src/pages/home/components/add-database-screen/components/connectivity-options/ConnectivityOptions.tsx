@@ -69,6 +69,7 @@ const ConnectivityOptions = (props: Props) => {
                     }}
                     data-testid="create-free-db-btn"
                   >
+                    {/* TODO: fix this once Link is merged */}
                     <RiBadge className={styles.freeBadge} label="Free" />
                     <Col align="center">
                       <RocketIcon

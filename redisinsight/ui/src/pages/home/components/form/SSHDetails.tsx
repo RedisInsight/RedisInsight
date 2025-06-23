@@ -1,11 +1,5 @@
 import React, { ChangeEvent } from 'react'
-import {
-  EuiFieldText,
-  EuiRadioGroup,
-  EuiRadioGroupOption,
-  htmlIdGenerator,
-} from '@elastic/eui'
-import cx from 'classnames'
+import { EuiFieldText, htmlIdGenerator } from '@elastic/eui'
 import { FormikProps } from 'formik'
 
 import { MAX_PORT_NUMBER, selectOnFocus, validateField } from 'uiSrc/utils'
@@ -14,8 +8,7 @@ import { SECURITY_FIELD } from 'uiSrc/constants'
 import { SshPassType } from 'uiSrc/pages/home/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 
-import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import {
   NumericInput,
@@ -23,7 +16,7 @@ import {
   TextArea,
 } from 'uiSrc/components/base/inputs'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
-import styles from '../styles.module.scss'
+import { RiRadioGroup } from 'uiSrc/components/base/forms/radio-group/RadioGroup'
 
 export interface Props {
   flexGroupClassName?: string
@@ -31,16 +24,18 @@ export interface Props {
   formik: FormikProps<DbConnectionInfo>
 }
 
-const sshPassTypeOptions: EuiRadioGroupOption[] = [
+const sshPassTypeOptions = [
   {
     id: SshPassType.Password,
+    value: SshPassType.Password,
     label: 'Password',
-    'data-test-subj': 'radio-btn-password',
+    // 'data-test-subj': 'radio-btn-password',
   },
   {
     id: SshPassType.PrivateKey,
+    value: SshPassType.PrivateKey,
     label: 'Private Key',
-    'data-test-subj': 'radio-btn-privateKey',
+    // 'data-test-subj': 'radio-btn-privateKey',
   },
 ]
 
@@ -48,13 +43,9 @@ const SSHDetails = (props: Props) => {
   const { flexGroupClassName = '', flexItemClassName = '', formik } = props
 
   return (
-    <>
+    <Col gap="m">
       <Row
-        gap="m"
-        className={cx(flexGroupClassName, {
-          [styles.tlsContainer]: !flexGroupClassName,
-          [styles.tlsSniOpened]: !!formik.values.ssh,
-        })}
+        className={flexGroupClassName}
         align={!flexGroupClassName ? 'end' : undefined}
       >
         <FlexItem style={{ width: '230px' }} className={flexItemClassName}>
@@ -70,9 +61,9 @@ const SSHDetails = (props: Props) => {
       </Row>
 
       {formik.values.ssh && (
-        <>
+        <Col gap="l">
           <Row gap="m" responsive className={flexGroupClassName}>
-            <FlexItem grow className={cx(flexItemClassName)}>
+            <FlexItem grow className={flexItemClassName}>
               <FormField label="Host*">
                 <EuiFieldText
                   name="sshHost"
@@ -91,7 +82,6 @@ const SSHDetails = (props: Props) => {
                 />
               </FormField>
             </FlexItem>
-
             <FlexItem grow className={flexItemClassName}>
               <FormField
                 label="Port*"
@@ -112,9 +102,8 @@ const SSHDetails = (props: Props) => {
               </FormField>
             </FlexItem>
           </Row>
-
-          <Row gap="m" responsive className={flexGroupClassName}>
-            <FlexItem grow className={cx(flexItemClassName)}>
+          <Row responsive className={flexGroupClassName}>
+            <FlexItem grow className={flexItemClassName}>
               <FormField label="Username*">
                 <EuiFieldText
                   name="sshUsername"
@@ -134,19 +123,13 @@ const SSHDetails = (props: Props) => {
               </FormField>
             </FlexItem>
           </Row>
-
-          <Spacer />
-          <Row gap="m" responsive className={flexGroupClassName}>
-            <FlexItem
-              grow
-              className={cx(flexItemClassName, styles.sshPassTypeWrapper)}
-            >
-              <EuiRadioGroup
+          <Row responsive className={flexGroupClassName}>
+            <FlexItem grow className={flexItemClassName}>
+              <RiRadioGroup
                 id="sshPassType"
-                name="sshPassType"
-                options={sshPassTypeOptions}
-                idSelected={formik.values.sshPassType}
-                className={styles.sshPassType}
+                items={sshPassTypeOptions}
+                layout="horizontal"
+                value={formik.values.sshPassType}
                 onChange={(id) => formik.setFieldValue('sshPassType', id)}
                 data-testid="ssh-pass-type"
               />
@@ -154,7 +137,7 @@ const SSHDetails = (props: Props) => {
           </Row>
 
           {formik.values.sshPassType === SshPassType.Password && (
-            <Row gap="m" responsive className={flexGroupClassName}>
+            <Row responsive className={flexGroupClassName}>
               <FlexItem grow className={flexItemClassName}>
                 <FormField label="Password">
                   <PasswordInput
@@ -182,8 +165,8 @@ const SSHDetails = (props: Props) => {
           )}
 
           {formik.values.sshPassType === SshPassType.PrivateKey && (
-            <>
-              <Row gap="m" responsive className={flexGroupClassName}>
+            <Col gap="m">
+              <Row responsive className={flexGroupClassName}>
                 <FlexItem grow className={flexItemClassName}>
                   <FormField label="Private Key*">
                     <TextArea
@@ -210,7 +193,7 @@ const SSHDetails = (props: Props) => {
                   </FormField>
                 </FlexItem>
               </Row>
-              <Row gap="m" responsive className={flexGroupClassName}>
+              <Row responsive className={flexGroupClassName}>
                 <FlexItem grow className={flexItemClassName}>
                   <FormField label="Passphrase">
                     <PasswordInput
@@ -235,11 +218,11 @@ const SSHDetails = (props: Props) => {
                   </FormField>
                 </FlexItem>
               </Row>
-            </>
+            </Col>
           )}
-        </>
+        </Col>
       )}
-    </>
+    </Col>
   )
 }
 

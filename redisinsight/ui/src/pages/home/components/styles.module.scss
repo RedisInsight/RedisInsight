@@ -153,20 +153,6 @@
   flex-basis: 100% !important;
 }
 
-.sshPassTypeWrapper {
-  .sshPassType {
-    display: flex;
-    align-items: center;
-
-    :global {
-      .euiRadioGroup__item {
-        margin-right: 12px;
-        margin-top: 0;
-      }
-    }
-  }
-}
-
 .selectedOptionWithLongTextSupport {
   overflow: hidden;
   text-overflow: ellipsis;

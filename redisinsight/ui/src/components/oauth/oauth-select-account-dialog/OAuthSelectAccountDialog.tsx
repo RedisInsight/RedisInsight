@@ -1,10 +1,5 @@
 import React, { useCallback } from 'react'
-import {
-  EuiModal,
-  EuiModalBody,
-  EuiRadioGroup,
-  EuiRadioGroupOption,
-} from '@elastic/eui'
+import { EuiModal, EuiModalBody } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
 import { useHistory } from 'react-router-dom'
@@ -43,6 +38,8 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { RiRadioGroup } from 'uiSrc/components/base/forms/radio-group/RadioGroup'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 interface FormValues {
@@ -168,12 +165,14 @@ const OAuthSelectAccountDialog = () => {
     formik.setFieldValue('accountId', value)
   }
 
-  const radios: EuiRadioGroupOption[] = accounts.map(({ id, name = '' }) => ({
+  const radios = accounts.map(({ id, name = '' }) => ({
     id: `${id}`,
     label: (
-      <ColorText className={styles.label}>
+      <ColorText color="subdued">
         {name}
-        <span>{id}</span>
+        <ColorText color="accent" style={{ paddingLeft: 6 }}>
+          {id}
+        </ColorText>
       </ColorText>
     ),
   }))
@@ -192,13 +191,18 @@ const OAuthSelectAccountDialog = () => {
           <Text className={styles.subTitle}>
             Select an account to connect to:
           </Text>
-          <EuiRadioGroup
-            options={radios}
-            className={styles.radios}
-            idSelected={formik.values.accountId ?? ''}
+          <Spacer size="xl" />
+          <RiRadioGroup.Compose
+            value={formik.values.accountId ?? ''}
             onChange={(id) => handleChangeAccountIdFormat(id)}
-            name="radio accounts group"
-          />
+          >
+            {radios.map(({ id, label }) => (
+              <RiRadioGroup.Item.Compose value={id} key={id}>
+                <RiRadioGroup.Item.Indicator />
+                <RiRadioGroup.Item.Label>{label}</RiRadioGroup.Item.Label>
+              </RiRadioGroup.Item.Compose>
+            ))}
+          </RiRadioGroup.Compose>
         </section>
         <div className={styles.footer}>
           <SecondaryButton

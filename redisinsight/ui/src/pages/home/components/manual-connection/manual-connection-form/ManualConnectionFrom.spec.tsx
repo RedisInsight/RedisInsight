@@ -13,7 +13,7 @@ import ManualConnectionForm, { Props } from './ManualConnectionForm'
 const BTN_SUBMIT = 'btn-submit'
 const NEW_CA_CERT = 'new-ca-cert'
 const QA_CA_CERT = 'qa-ca-cert'
-const RADIO_BTN_PRIVATE_KEY = '[data-test-subj="radio-btn-privateKey"] label'
+const RADIO_BTN_PRIVATE_KEY = '[for="privateKey"]'
 const BTN_TEST_CONNECTION = 'btn-test-connection'
 
 const mockedProps = mock<Props>()

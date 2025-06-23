@@ -1,14 +1,7 @@
 import React, { ChangeEvent, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
-import {
-  EuiFieldText,
-  EuiForm,
-  EuiRadioGroup,
-  EuiRadioGroupOption,
-  EuiSuperSelect,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiSuperSelect, EuiToolTip } from '@elastic/eui'
 import { checkDateTimeFormat, formatTimestamp } from 'uiSrc/utils'
 import {
   DATETIME_FORMATTER_DEFAULT,
@@ -24,7 +17,8 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon, CheckBoldIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
-import styles from './styles.module.scss'
+import { RiRadioGroup } from 'uiSrc/components/base/forms/radio-group/RadioGroup'
+import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 
 interface InitialValuesType {
   format: string
@@ -167,18 +161,18 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
     formik.handleSubmit()
   }
 
-  const dateTimeFormatOptions: EuiRadioGroupOption[] = [
+  const dateTimeFormatOptions = [
     {
       id: DatetimeRadioOption.Common,
       label: (
-        <div className={styles.radioLabelWrapper}>
-          <div className={styles.radioLabelTextContainer}>
-            <Text color="subdued" className={styles.radioLabelText}>
+        <Row align="center" justify="start" style={{ height: 40 }} gap="m">
+          <FlexItem style={{ minWidth: 150 }}>
+            <Text color="subdued" size="s">
               Pre-selected formats
             </Text>
-          </div>
+          </FlexItem>
           <EuiSuperSelect
-            className={styles.datetimeInput}
+            style={{ width: 240 }}
             options={dateTimeOptions.map((option) => ({
               ...option,
               'data-test-subj': `date-option-${option.value}`,
@@ -191,28 +185,30 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
             data-test-subj="select-datetime"
             data-testid="select-datetime-testid"
           />
-        </div>
+        </Row>
       ),
     },
     {
       id: DatetimeRadioOption.Custom,
       label: (
-        <div className={styles.radioLabelWrapper}>
-          <div className={styles.radioLabelTextContainer}>
-            <Text color="subdued" className={styles.radioLabelText}>
+        <Row style={{ height: 40 }} align="center" justify="start" gap="m">
+          <FlexItem style={{ minWidth: 150 }}>
+            <Text color="subdued" size="s">
               Custom
             </Text>
-          </div>
+          </FlexItem>
           {formik.values.selectedRadioOption === DatetimeRadioOption.Custom && (
             <>
-              <EuiFieldText
-                className={styles.datetimeInput}
-                id="customFormat"
-                name="customFormat"
-                value={formik.values.customFormat}
-                onChange={(e) => onCustomFormatChange(e)}
-                data-testid="custom-datetime-input"
-              />
+              <div>
+                <EuiFieldText
+                  style={{ width: 240 }}
+                  id="customFormat"
+                  name="customFormat"
+                  value={formik.values.customFormat}
+                  onChange={(e) => onCustomFormatChange(e)}
+                  data-testid="custom-datetime-input"
+                />
+              </div>
               <EuiToolTip
                 position="top"
                 anchorClassName="euiToolTip__btn-disabled"
@@ -223,7 +219,6 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
                 <PrimaryButton
                   aria-label="Save"
                   loading={formik.isSubmitting}
-                  className={styles.customBtn}
                   onClick={onCustomFormatSubmit}
                   data-testid="datetime-custom-btn"
                   icon={getBtnIconType()}
@@ -234,7 +229,7 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
               </EuiToolTip>
             </>
           )}
-        </div>
+        </Row>
       ),
     },
   ]
@@ -245,13 +240,17 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
       onSubmit={formik.handleSubmit}
       data-testid="format-timestamp-form"
     >
-      <EuiRadioGroup
-        options={dateTimeFormatOptions}
-        className={styles.radios}
-        name="radioDateTime"
-        idSelected={formik.values.selectedRadioOption}
+      <RiRadioGroup.Compose
+        value={formik.values.selectedRadioOption}
         onChange={(id) => onRadioOptionChange(id)}
-      />
+      >
+        {dateTimeFormatOptions.map(({ id, label }) => (
+          <RiRadioGroup.Item.Compose value={id} key={id}>
+            <RiRadioGroup.Item.Indicator />
+            <RiRadioGroup.Item.Label>{label}</RiRadioGroup.Item.Label>
+          </RiRadioGroup.Item.Compose>
+        ))}
+      </RiRadioGroup.Compose>
     </EuiForm>
   )
 }

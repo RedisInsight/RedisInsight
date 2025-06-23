@@ -13,11 +13,11 @@ export type RiAccordionProps = Omit<ComponentProps<typeof Section>, 'label'> & {
 }
 
 const RiAccordionLabel = ({ label }: Pick<RiAccordionProps, 'label'>) => {
-  if (typeof label === 'string') {
-    return <Section.Header.Label label={label} />
-  }
   if (!label) {
     return null
+  }
+  if (typeof label === 'string') {
+    return <Section.Header.Label label={label} />
   }
   // Ensure we always return a valid JSX element by wrapping non-JSX values
   return isValidElement(label) ? label : <>{label}</>

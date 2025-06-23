@@ -13,11 +13,10 @@ export type RiAccordionProps = Omit<ComponentProps<typeof Section>, 'label'> & {
 }
 type RiAccordionLabelProps = { label: ReactNode }
 
-type RiAccordionActionsProps = {
-  actionButtonText: SectionProps['actionButtonText']
-  actions?: ReactNode
-  onAction?: SectionProps['onAction']
-}
+type RiAccordionActionsProps = Pick<
+  RiAccordionProps,
+  'actionButtonText' | 'actions' | 'onAction'
+>
 
 const RiAccordionLabel = ({ label }: RiAccordionLabelProps) => {
   if (typeof label === 'string') {

@@ -161,8 +161,6 @@ const Navigation = (props: Props) => {
       case EnablementAreaComponent.Group:
         return (
           <Group
-            buttonClassName={level === 0 ? styles.baseGroup : ''}
-            triggerStyle={paddingsStyle}
             id={id}
             label={label}
             actions={actions}
@@ -242,6 +240,8 @@ const Navigation = (props: Props) => {
 
   return (
     <ListGroup
+      style={{ padding: 5 }}
+      gap="m"
       maxWidth="false"
       data-testid="enablementArea-treeView"
       flush

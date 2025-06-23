@@ -5,6 +5,7 @@ import { FeatureFlagComponent } from 'uiSrc/components'
 import { ColorText } from 'uiSrc/components/base/text'
 import { FeatureFlags } from 'uiSrc/constants/featureFlags'
 import { Link } from 'uiSrc/components/base/link/Link'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 
 export const InitOutputText = (
   host: string = '',
@@ -105,14 +106,14 @@ export const cliTexts = {
   USE_PROFILER_TOOL: (onClick: () => void) => (
     <ColorText color="danger" key={Date.now()}>
       {'Use '}
-      <Link
+      <EmptyButton
         onClick={onClick}
         className="btnLikeLink"
         color="text"
         data-testid="monitor-btn"
       >
         Profiler
-      </Link>
+      </EmptyButton>
       {' tool to see all the requests processed by the server.'}
     </ColorText>
   ),

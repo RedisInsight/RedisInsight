@@ -42,9 +42,20 @@
     flex-direction: column;
     margin: 80px auto 100px;
 
-    :global(.euiTitle) {
-      font-size: 18px;
-      margin-bottom: 10px;
+    .noNamespaceParagraph {
+      margin-top: 10px;
+
+      .displayInlineBlock {
+        display: inline;
+      }
+
+      .treeViewBtn {
+        text-decoration: underline;
+
+        &:hover, &:focus {
+          text-decoration: none;
+        }
+      }
     }
   }
 }

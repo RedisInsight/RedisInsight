@@ -8,8 +8,8 @@ import React, {
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { debounce, get, set } from 'lodash'
 import { TreeWalker, TreeWalkerValue, FixedSizeTree as Tree } from 'react-vtree'
-import { EuiIcon, EuiImage, EuiLoadingSpinner, EuiProgress } from '@elastic/eui'
-import { useDispatch, useSelector } from 'react-redux'
+import { EuiIcon, EuiImage, EuiProgress } from '@elastic/eui'
+import { useDispatch } from 'react-redux'
 
 import { bufferToString, Maybe, Nullable } from 'uiSrc/utils'
 import { useDisposableWebworker } from 'uiSrc/services'
@@ -26,7 +26,7 @@ import KeyLightSVG from 'uiSrc/assets/img/sidebar/browser.svg'
 import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { fetchKeysMetadataTree } from 'uiSrc/slices/browser/keys'
-import { appContextDbConfig } from 'uiSrc/slices/app/context'
+import { Loader } from 'uiSrc/components/base/display'
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
 
 import { Node } from './components/Node'
@@ -74,7 +74,7 @@ const VirtualTree = (props: Props) => {
     onStatusOpen,
     onStatusSelected,
     setConstructingTree,
-    webworkerFn = () => {},
+    webworkerFn = () => { },
     onDeleteClicked,
     onDeleteLeaf,
   } = props
@@ -311,7 +311,7 @@ const VirtualTree = (props: Props) => {
               data-testid="virtual-tree-spinner"
             >
               <div className={styles.loadingBody}>
-                <EuiLoadingSpinner
+                <Loader
                   size="xl"
                   className={styles.loadingSpinner}
                 />

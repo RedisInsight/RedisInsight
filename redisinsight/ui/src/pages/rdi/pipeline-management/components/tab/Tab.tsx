@@ -1,9 +1,10 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiLoadingSpinner } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 
 import statusErrorIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/status_error.svg?react'
 import { Text } from 'uiSrc/components/base/text'
+import { Loader } from 'uiSrc/components/base/display'
 
 import styles from './styles.module.scss'
 
@@ -54,7 +55,7 @@ const Tab = (props: IProps) => {
           )}
 
           {isLoading && (
-            <EuiLoadingSpinner
+            <Loader
               data-testid="rdi-nav-config-loader"
               className={styles.loader}
             />

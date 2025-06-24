@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
 import { last } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiIcon, EuiLink, EuiPageSideBar, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiPageSideBar, EuiToolTip } from '@elastic/eui'
 import HighlightedFeature, {
   Props as HighlightedFeatureProps,
 } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
@@ -48,6 +48,7 @@ import {
 } from 'uiSrc/components/base/icons'
 import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
 import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
+import { Link } from 'uiSrc/components/base/link/Link'
 import CreateCloud from './components/create-cloud'
 import HelpMenu from './components/help-menu/HelpMenu'
 import NotificationMenu from './components/notifications-center'
@@ -394,8 +395,7 @@ const NavigationMenu = () => {
           />
           <EuiToolTip content="Star us on GitHub" position="right">
             <span className={cx(styles.iconNavItem, styles.githubLink)}>
-              <EuiLink
-                external={false}
+              <Link
                 href={EXTERNAL_LINKS.githubRepo}
                 target="_blank"
                 data-test-subj="github-repo-btn"
@@ -406,7 +406,7 @@ const NavigationMenu = () => {
                   type={GithubIcon}
                   data-testid="github-repo-icon"
                 />
-              </EuiLink>
+              </Link>
             </span>
           </EuiToolTip>
         </FeatureFlagComponent>

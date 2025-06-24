@@ -1,11 +1,11 @@
 import React, { ReactElement } from 'react'
-import { EuiLink } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { CommandGroup } from 'uiSrc/constants'
 import { goBackFromCommand } from 'uiSrc/slices/cli/cli-settings'
 import { getDocUrlForCommand } from 'uiSrc/utils'
 import { ColorText, Text } from 'uiSrc/components/base/text'
 
+import { Link } from 'uiSrc/components/base/link/Link'
 import CHCommandInfo from '../components/command-helper-info'
 import CHSearchWrapper from '../components/command-helper-search'
 import CHSearchOutput from '../components/command-helper-search-output'
@@ -45,16 +45,14 @@ const CommandHelper = (props: Props) => {
   const readMore = (commandName = '') => {
     const docUrl = getDocUrlForCommand(commandName)
     return (
-      <EuiLink
-        color="subdued"
+      <Link
         href={docUrl}
         className={styles.link}
-        external={false}
         target="_blank"
         data-testid="read-more"
       >
         Read more
-      </EuiLink>
+      </Link>
     )
   }
 

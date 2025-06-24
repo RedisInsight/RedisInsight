@@ -8,7 +8,8 @@ import {
   MonacoEditor as Editor,
   useMonacoValidation,
 } from 'uiSrc/components/monaco-editor'
-import { setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
+import { setEditorType, setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
+import { EditorType } from 'uiSrc/slices/interfaces'
 import { BaseProps } from '../interfaces'
 import { useChangeEditorType } from '../../change-editor-type-button'
 
@@ -42,6 +43,7 @@ const MonacoEditor = (props: BaseProps) => {
 
   const submitUpdate = () => {
     dispatch(setReJSONDataAction(selectedKey, ROOT_PATH, value, false, length))
+    dispatch(setEditorType(EditorType.Default))
   }
 
   return (

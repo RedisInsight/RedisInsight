@@ -2,6 +2,7 @@ import { EuiLink } from '@elastic/eui'
 import React from 'react'
 
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Link } from 'uiSrc/components/base/link/Link'
 import { Text } from 'uiSrc/components/base/text'
 
 export const ASSISTANCE_CHAT_AGREEMENTS = (
@@ -18,23 +19,21 @@ export const ASSISTANCE_CHAT_AGREEMENTS = (
     <Text size="xs">
       By accessing and/or using Redis Copilot, you acknowledge that you agree to
       the{' '}
-      <EuiLink
+      <Link
         color="subdued"
-        external={false}
         target="_blank"
         href="https://redis.io/legal/redis-copilot-terms-of-use/"
       >
         REDIS COPILOT TERMS
-      </EuiLink>{' '}
+      </Link>{' '}
       and{' '}
-      <EuiLink
+      <Link
         color="subdued"
-        external={false}
         target="_blank"
         href="https://redis.com/legal/privacy-policy/"
       >
         Privacy Policy
-      </EuiLink>
+      </Link>
       .
     </Text>
   </>
@@ -56,23 +55,21 @@ export const EXPERT_CHAT_AGREEMENTS = (
     <Text size="xs">
       By accepting these terms, you consent to the processing of any information
       included in your database, and you agree to the{' '}
-      <EuiLink
+      <Link
         color="subdued"
-        external={false}
         target="_blank"
         href="https://redis.io/legal/redis-copilot-terms-of-use/"
       >
         REDIS COPILOT TERMS
-      </EuiLink>{' '}
+      </Link>{' '}
       and{' '}
-      <EuiLink
+      <Link
         color="subdued"
-        external={false}
         target="_blank"
         href="https://redis.com/legal/privacy-policy/"
       >
         Privacy Policy
-      </EuiLink>
+      </Link>
       .
     </Text>
   </>

@@ -14,9 +14,7 @@
 }
 
 .title {
-  &:global(.euiLink) {
-    color: var(--euiTextSubduedColorHover) !important;
-  }
+  color: var(--euiTextSubduedColorHover) !important;
 }
 
 .summary, .summary div {

@@ -1,4 +1,3 @@
-import { EuiLink } from '@elastic/eui'
 import { isNull } from 'lodash'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
@@ -18,6 +17,7 @@ import { Nullable } from 'uiSrc/utils'
 import { TextBtn } from 'uiSrc/pages/database-analysis/components/base/TextBtn'
 import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import Table from './Table'
 import styles from './styles.module.scss'
@@ -50,7 +50,7 @@ const TopNamespace = (props: Props) => {
     return null
   }
 
-  const handleTreeViewClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleTreeViewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
 
     dispatch(resetBrowserTree())
@@ -75,21 +75,21 @@ const TopNamespace = (props: Props) => {
         </div>
         <div className="section-content" data-testid="top-namespaces-message">
           <div className={styles.noNamespaceMsg}>
-            <Title size="XS">No namespaces to display</Title>
-            <p>
+            <Title size="L">No namespaces to display</Title>
+            <p className={styles.noNamespaceParagraph}>
               {'Configure the delimiter in '}
-              <EuiLink
-                color="text"
-                onClick={handleTreeViewClick}
+              <EmptyButton
                 data-testid="tree-view-page-link"
+                className={styles.treeViewBtn}
+                onClick={handleTreeViewClick}
               >
                 Tree View
-              </EuiLink>
+              </EmptyButton>
               {' to customize the namespaces displayed.'}
             </p>
           </div>
         </div>
-      </div>
+      </div >
     )
   }
 

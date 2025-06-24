@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiIcon, EuiLink, EuiLoadingSpinner, EuiPopover } from '@elastic/eui'
+import { EuiIcon, EuiLoadingSpinner, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import { useHistory } from 'react-router-dom'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
@@ -21,6 +21,7 @@ import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { getConfig } from 'uiSrc/config'
 import { Text } from 'uiSrc/components/base/text'
+import { UserProfileLink } from 'uiSrc/components/base/link/UserProfileLink'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import styles from './styles.module.scss'
 
@@ -187,17 +188,14 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
             name={FeatureFlags.envDependent}
             otherwise={
               <>
-                <EuiLink
-                  className={cx(styles.option, styles.clickableOption)}
+                <UserProfileLink
                   href={riDesktopLink}
                   data-testid="open-ri-desktop-link"
                 >
                   <Text>Open in Redis Insight Desktop version</Text>
-                </EuiLink>
-                <EuiLink
-                  external={false}
+                </UserProfileLink>
+                <UserProfileLink
                   target="_blank"
-                  className={cx(styles.option, styles.clickableOption)}
                   href={riConfig.app.smConsoleRedirect}
                   data-testid="cloud-admin-console-link"
                 >
@@ -208,7 +206,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                     viewBox="-1 0 30 20"
                     strokeWidth={1.8}
                   />
-                </EuiLink>
+                </UserProfileLink>
               </>
             }
           >
@@ -227,10 +225,8 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                 <EuiIcon type="importAction" />
               )}
             </div>
-            <EuiLink
-              external={false}
+            <UserProfileLink
               target="_blank"
-              className={cx(styles.option, styles.clickableOption)}
               href={getUtmExternalLink(EXTERNAL_LINKS.cloudConsole, {
                 campaign: 'cloud_account',
               })}
@@ -252,7 +248,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                 viewBox="-1 0 30 20"
                 strokeWidth={1.8}
               />
-            </EuiLink>
+            </UserProfileLink>
             <div
               role="presentation"
               className={cx(styles.option, styles.clickableOption)}

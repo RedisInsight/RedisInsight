@@ -1,6 +1,5 @@
 import {
   EuiIcon,
-  EuiLink,
   EuiPopover,
   EuiToolTip,
 } from '@elastic/eui'
@@ -32,6 +31,7 @@ import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { SupportIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
 import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
+import { Link } from 'uiSrc/components/base/link/Link'
 import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
 
@@ -125,8 +125,7 @@ const HelpMenu = () => {
         >
           <FeatureFlagComponent name={FeatureFlags.envDependent}>
             <FlexItem grow={2} className={styles.helpMenuItem}>
-              <EuiLink
-                external={false}
+              <Link
                 className={styles.helpMenuItemLink}
                 href={EXTERNAL_LINKS.githubIssues}
                 target="_blank"
@@ -141,7 +140,7 @@ const HelpMenu = () => {
                 >
                   Provide <br /> Feedback
                 </Text>
-              </EuiLink>
+              </Link>
             </FlexItem>
           </FeatureFlagComponent>
           <FlexItem className={styles.helpMenuItemRow} grow={4}>
@@ -166,8 +165,7 @@ const HelpMenu = () => {
               >
                 <EuiIcon type="package" size="l" />
               </div>
-              <EuiLink
-                external={false}
+              <Link
                 onClick={onClickReleaseNotes}
                 className={styles.helpMenuTextLink}
                 href={EXTERNAL_LINKS.releaseNotes}
@@ -177,7 +175,7 @@ const HelpMenu = () => {
                 <Text size="xs" className={styles.helpMenuTextLink}>
                   Release Notes
                 </Text>
-              </EuiLink>
+              </Link>
             </div>
             <FeatureFlagComponent name={FeatureFlags.envDependent}>
               <div className={styles.helpMenuItemLink}>

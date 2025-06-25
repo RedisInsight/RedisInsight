@@ -1,10 +1,5 @@
 import React, { ChangeEvent, useState } from 'react'
-import {
-  EuiFieldText,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  htmlIdGenerator,
-} from '@elastic/eui'
+import { EuiFieldText, htmlIdGenerator } from '@elastic/eui'
 import cx from 'classnames'
 import { FormikProps } from 'formik'
 
@@ -31,6 +26,11 @@ import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { TextArea } from 'uiSrc/components/base/inputs'
+import {
+  RiSelect,
+  SelectValueRender,
+  SelectOption,
+} from 'uiSrc/components/base/forms/select/RiSelect'
 import styles from '../styles.module.scss'
 
 const suffix = '_tls_details'
@@ -40,7 +40,12 @@ export interface Props {
   caCertificates?: { id: string; name: string }[]
   certificates?: { id: number; name: string }[]
 }
-
+const valueRender: SelectValueRender = ({ option, isOptionValue }) => {
+  if (isOptionValue) {
+    return (option.dropdownDisplay ?? option.inputDisplay) as JSX.Element
+  }
+  return option.inputDisplay as JSX.Element
+}
 const TlsDetails = (props: Props) => {
   const dispatch = useDispatch()
   const { formik, caCertificates, certificates } = props
@@ -85,14 +90,16 @@ const TlsDetails = (props: Props) => {
     setActiveCertId(`${id}${suffix}`)
   }
 
-  const optionsCertsCA: EuiSuperSelectOption<string>[] = [
+  const optionsCertsCA: SelectOption[] = [
     {
       value: NO_CA_CERT,
-      inputDisplay: 'No CA Certificate',
+      inputDisplay: <span>No CA Certificate</span>,
+      dropdownDisplay: null,
     },
     {
       value: ADD_NEW_CA_CERT,
-      inputDisplay: 'Add new CA certificate',
+      inputDisplay: <span>Add new CA certificate</span>,
+      dropdownDisplay: null,
     },
   ]
 
@@ -130,10 +137,11 @@ const TlsDetails = (props: Props) => {
     })
   })
 
-  const optionsCertsClient: EuiSuperSelectOption<string>[] = [
+  const optionsCertsClient: SelectOption[] = [
     {
       value: 'ADD_NEW',
-      inputDisplay: 'Add new certificate',
+      inputDisplay: <span>Add new certificate</span>,
+      dropdownDisplay: null,
     },
   ]
 
@@ -255,19 +263,18 @@ const TlsDetails = (props: Props) => {
         <div className="boxSection">
           <Spacer />
           <Row gap="m" responsive>
-            <FlexItem grow>
+            <FlexItem>
               <FormField
                 label={`CA Certificate${
                   formik.values.verifyServerTlsCert ? '*' : ''
                 }`}
               >
-                <EuiSuperSelect
+                <RiSelect
                   name="selectedCaCertName"
                   placeholder="Select CA certificate"
-                  valueOfSelected={
-                    formik.values.selectedCaCertName ?? NO_CA_CERT
-                  }
+                  value={formik.values.selectedCaCertName ?? NO_CA_CERT}
                   options={optionsCertsCA}
+                  valueRender={valueRender}
                   onChange={(value) => {
                     formik.setFieldValue(
                       'selectedCaCertName',
@@ -346,10 +353,11 @@ const TlsDetails = (props: Props) => {
           <Row gap="m" responsive>
             <FlexItem grow>
               <FormField label="Client Certificate*">
-                <EuiSuperSelect
+                <RiSelect
                   placeholder="Select certificate"
-                  valueOfSelected={formik.values.selectedTlsClientCertId}
+                  value={formik.values.selectedTlsClientCertId}
                   options={optionsCertsClient}
+                  valueRender={valueRender}
                   onChange={(value) => {
                     formik.setFieldValue('selectedTlsClientCertId', value)
                   }}

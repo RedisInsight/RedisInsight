@@ -127,9 +127,10 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
   }
 
   return (
-    <Container>
+    <Container className={width >= MIDDLE_SCREEN_RESOLUTION ? 'fullWidth' : ''}>
       <div className="selectWrapper">
         <KeyDetailsSelect
+          $fullWidth={width >= MIDDLE_SCREEN_RESOLUTION}
           disabled={!isStringFormattingEnabled}
           defaultOpen={isSelectOpen}
           options={options}

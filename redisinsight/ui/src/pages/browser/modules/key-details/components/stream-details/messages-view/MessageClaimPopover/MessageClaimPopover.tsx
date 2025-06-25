@@ -1,13 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import {
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiPopover,
-  EuiForm,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiPopover, EuiForm, EuiToolTip } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { orderBy, filter } from 'lodash'
 
@@ -32,6 +26,7 @@ import {
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { NumericInput, SwitchInput } from 'uiSrc/components/base/inputs'
+import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import {
   ClaimPendingEntryDto,
   ClaimPendingEntriesResponse,
@@ -62,9 +57,9 @@ const getConsumersOptions = (consumers: ConsumerDto[]) =>
     ),
   }))
 
-const timeOptions: EuiSuperSelectOption<ClaimTimeOptions>[] = [
-  { value: ClaimTimeOptions.RELATIVE, inputDisplay: 'Relative Time' },
-  { value: ClaimTimeOptions.ABSOLUTE, inputDisplay: 'Timestamp' },
+const timeOptions = [
+  { value: ClaimTimeOptions.RELATIVE, label: 'Relative Time' },
+  { value: ClaimTimeOptions.ABSOLUTE, label: 'Timestamp' },
 ]
 
 export interface Props {
@@ -95,9 +90,7 @@ const MessageClaimPopover = (props: Props) => {
   ) ?? { name: '' }
 
   const [isOptionalShow, setIsOptionalShow] = useState<boolean>(false)
-  const [consumerOptions, setConsumerOptions] = useState<
-    EuiSuperSelectOption<string>[]
-  >([])
+  const [consumerOptions, setConsumerOptions] = useState<any[]>([])
   const [initialValues, setInitialValues] = useState({
     consumerName: '',
     minIdleTime: '0',
@@ -216,14 +209,13 @@ const MessageClaimPopover = (props: Props) => {
       button={consumerOptions.length < 1 ? buttonTooltip : button}
     >
       <EuiForm>
-        <Row responsive>
-          <FlexItem grow>
+        <Row responsive gap="m">
+          <FlexItem>
             <FormField label="Consumer">
-              <EuiSuperSelect
-                fullWidth
-                itemClassName={styles.consumerOption}
-                valueOfSelected={formik.values.consumerName}
+              <RiSelect
+                value={formik.values.consumerName}
                 options={consumerOptions}
+                valueRender={({ option }) => option.inputDisplay as JSX.Element}
                 className={styles.consumerField}
                 name="consumerName"
                 onChange={(value) =>
@@ -257,7 +249,12 @@ const MessageClaimPopover = (props: Props) => {
         {isOptionalShow && (
           <>
             <Spacer size="m" />
-            <Row className={styles.container} align="center">
+            <Row
+              className={styles.container}
+              align="center"
+              justify="between"
+              gap="m"
+            >
               <FlexItem grow className={styles.idle}>
                 <FormField label="Idle Time">
                   <div className={styles.timeWrapper}>
@@ -278,11 +275,10 @@ const MessageClaimPopover = (props: Props) => {
                   </div>
                 </FormField>
               </FlexItem>
-              <FlexItem grow className={styles.timeSelect}>
-                <FormField className={styles.hiddenLabel} label="time">
-                  <EuiSuperSelect
-                    itemClassName={styles.timeOption}
-                    valueOfSelected={formik.values.timeOption}
+              <FlexItem className={styles.timeSelect}>
+                <FormField label="Time">
+                  <RiSelect
+                    value={formik.values.timeOption}
                     options={timeOptions}
                     className={styles.timeOptionField}
                     name="consumerName"
@@ -291,7 +287,7 @@ const MessageClaimPopover = (props: Props) => {
                   />
                 </FormField>
               </FlexItem>
-              <FlexItem grow>
+              <FlexItem>
                 <FormField label="Retry Count">
                   <NumericInput
                     autoValidate
@@ -309,7 +305,7 @@ const MessageClaimPopover = (props: Props) => {
                 </FormField>
               </FlexItem>
               <FlexItem grow={2}>
-                <FormField className={styles.hiddenLabel} label="force">
+                <FormField className={styles.hiddenLabel} label="Force">
                   <Checkbox
                     id="force_claim"
                     name="force"

@@ -1,14 +1,19 @@
 import { EuiIcon } from '@elastic/eui'
 
 import styled from 'styled-components'
+import { ComponentProps } from 'react'
 import { ColorText } from 'uiSrc/components/base/text'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 
-const KeyDetailsSelect = styled(RiSelect)`
+type KeyDetailsSelectProps = ComponentProps<typeof RiSelect> & {
+  $fullWidth?: boolean
+}
+
+const KeyDetailsSelect = styled(RiSelect)<KeyDetailsSelectProps>`
   border: none !important;
   background-color: inherit !important;
   color: var(--iconsDefaultColor) !important;
-  max-width: 56px;
+  max-width: ${({ $fullWidth }) => ($fullWidth ? '100%' : '92px')};
   padding-right: 18px;
   padding-left: 0;
   height: 28px;
@@ -48,7 +53,10 @@ const ControlsIcon = styled(EuiIcon)`
   }
 `
 
-const Container = styled.div`
+const Container = styled.div<{
+  className?: string
+  children: React.ReactNode
+}>`
   margin-right: 12px;
   height: 30px;
   border-radius: 4px;
@@ -60,6 +68,7 @@ const Container = styled.div`
     transform: translateY(-1px);
     background-color: var(--tableRowSelectedColor);
   }
+
   &:active {
     transform: translateY(1px);
   }

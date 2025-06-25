@@ -209,7 +209,7 @@ export class SettingsService {
         return `${isEncryptionAvailable}`;
       }
     } catch (e) {
-      this.logger.error(`Unable to proceed agreements checker ${checker}`);
+      this.logger.error(`Unable to proceed agreements checker ${checker}`, e);
     }
 
     return defaultOption;

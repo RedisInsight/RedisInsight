@@ -2,7 +2,6 @@ import { get } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiLoadingSpinner } from '@elastic/eui'
 
 import { Text } from 'uiSrc/components/base/text'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
@@ -24,6 +23,7 @@ import { formatLongName, Nullable, setTitle } from 'uiSrc/utils'
 import { setLastPageContext } from 'uiSrc/slices/app/context'
 import { PageNames } from 'uiSrc/constants'
 import { IPipelineStatus, PipelineStatus } from 'uiSrc/slices/interfaces'
+import { Loader } from 'uiSrc/components/base/display'
 import Clients from './clients'
 import DataStreams from './data-streams'
 import Empty from './empty'
@@ -129,7 +129,7 @@ const StatisticsPage = () => {
       <div className={styles.bodyContainer}>
         {pageLoading && (
           <div className={styles.cover}>
-            <EuiLoadingSpinner size="xl" />
+            <Loader size="xl" />
           </div>
         )}
         {!isPipelineDeployed(statusData) ? (

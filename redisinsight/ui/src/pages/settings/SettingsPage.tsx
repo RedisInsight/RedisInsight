@@ -1,10 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import cx from 'classnames'
-import {
-  EuiCollapsibleNavGroup,
-  EuiForm,
-  EuiLoadingSpinner,
-} from '@elastic/eui'
+import { EuiCollapsibleNavGroup, EuiForm } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setTitle } from 'uiSrc/utils'
@@ -40,6 +36,7 @@ import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
+import { Loader } from 'uiSrc/components/base/display'
 import {
   defaultValueRender,
   RiSelect,
@@ -123,7 +120,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <EuiLoadingSpinner size="xl" />
+          <Loader size="xl" />
         </div>
       )}
       <ConsentsPrivacy />
@@ -134,7 +131,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <EuiLoadingSpinner size="xl" />
+          <Loader size="xl" />
         </div>
       )}
       <WorkbenchSettings />
@@ -145,7 +142,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <EuiLoadingSpinner size="xl" />
+          <Loader size="xl" />
         </div>
       )}
       <CloudSettings />
@@ -156,7 +153,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <EuiLoadingSpinner size="xl" />
+          <Loader size="xl" />
         </div>
       )}
       <CallOut className={styles.warning}>

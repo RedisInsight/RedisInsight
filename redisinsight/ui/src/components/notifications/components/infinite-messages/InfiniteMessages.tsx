@@ -1,7 +1,6 @@
 import React from 'react'
 import {
   EuiIcon,
-  EuiLoadingSpinner,
 } from '@elastic/eui'
 import { find } from 'lodash'
 import cx from 'classnames'
@@ -29,6 +28,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Link } from 'uiSrc/components/base/link/Link'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 export enum InfiniteMessagesIds {
@@ -54,7 +54,7 @@ export const INFINITE_MESSAGES = {
       <div role="presentation" data-testid="authenticating-notification">
         <Row justify="end">
           <FlexItem>
-            <EuiLoadingSpinner
+            <Loader
               className={cx('infiniteMessage__icon', styles.loading)}
             />
           </FlexItem>
@@ -74,7 +74,7 @@ export const INFINITE_MESSAGES = {
       <div role="presentation" data-testid="pending-create-db-notification">
         <Row justify="end">
           <FlexItem grow={false}>
-            <EuiLoadingSpinner
+            <Loader
               className={cx('infiniteMessage__icon', styles.loading)}
             />
           </FlexItem>
@@ -340,7 +340,7 @@ export const INFINITE_MESSAGES = {
       <div role="presentation" data-testid="pending-create-db-notification">
         <Row justify="end">
           <FlexItem>
-            <EuiLoadingSpinner
+            <Loader
               className={cx('infiniteMessage__icon', styles.loading)}
             />
           </FlexItem>

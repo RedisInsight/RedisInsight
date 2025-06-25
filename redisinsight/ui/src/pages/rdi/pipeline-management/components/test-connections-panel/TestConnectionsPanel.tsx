@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiLoadingSpinner } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import TestConnectionsLog from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-log'
@@ -9,6 +8,7 @@ import { Text } from 'uiSrc/components/base/text'
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 interface TestConnectionPanelWrapperProps {
@@ -51,7 +51,7 @@ const TestConnectionsPanel = (props: Props) => {
             <Text className={styles.loaderText}>Loading results...</Text>
           </FlexItem>
           <FlexItem>
-            <EuiLoadingSpinner
+            <Loader
               data-testid="test-connections-loader"
               className={styles.loaderIcon}
               color="secondary"

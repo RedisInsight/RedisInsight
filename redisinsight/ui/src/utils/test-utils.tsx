@@ -257,6 +257,18 @@ const waitForEuiPopoverVisible = async (timeout = 500) => {
   )
 }
 
+export const waitForRedisUiSelectVisible = async (timeout = 500) => {
+  await waitFor(
+    () => {
+      const element = document.querySelector(
+        '[data-radix-popper-content-wrapper]',
+      )
+      expect(element).toBeInTheDocument()
+    },
+    { timeout }, // Account for long delay on popover
+  )
+}
+
 export const waitForStack = async (timeout = 0) => {
   await waitFor(() => {}, { timeout })
 }

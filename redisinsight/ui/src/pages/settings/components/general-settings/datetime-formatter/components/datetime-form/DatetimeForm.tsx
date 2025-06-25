@@ -5,18 +5,17 @@ import { EuiFieldText, EuiForm, EuiToolTip } from '@elastic/eui'
 import { checkDateTimeFormat, formatTimestamp } from 'uiSrc/utils'
 import {
   DATETIME_FORMATTER_DEFAULT,
+  dateTimeOptions,
   DatetimeRadioOption,
   TimezoneOption,
-  dateTimeOptions,
 } from 'uiSrc/constants'
 import {
   updateUserConfigSettingsAction,
   userSettingsConfigSelector,
 } from 'uiSrc/slices/user/user-settings'
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
-import { InfoIcon, CheckBoldIcon } from 'uiSrc/components/base/icons'
-import { Text } from 'uiSrc/components/base/text'
+import { CheckBoldIcon, InfoIcon } from 'uiSrc/components/base/icons'
 import { RiRadioGroup } from 'uiSrc/components/base/forms/radio-group/RadioGroup'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import {
@@ -167,14 +166,30 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
 
   const dateTimeFormatOptions = [
     {
-      id: DatetimeRadioOption.Common,
-      label: (
-        <Row align="center" justify="start" style={{ height: 40 }} gap="m">
-          <FlexItem style={{ minWidth: 150 }}>
-            <Text color="subdued" size="s">
-              Pre-selected formats
-            </Text>
-          </FlexItem>
+      value: DatetimeRadioOption.Common,
+      label: 'Pre-selected formats',
+    },
+    {
+      value: DatetimeRadioOption.Custom,
+      label: 'Custom',
+    },
+  ]
+
+  return (
+    <EuiForm
+      component="form"
+      onSubmit={formik.handleSubmit}
+      data-testid="format-timestamp-form"
+    >
+      <RiRadioGroup
+        items={dateTimeFormatOptions}
+        id="datetime-format"
+        data-testid="format-timestamp-form-radio-group"
+        value={formik.values.selectedRadioOption}
+        onChange={(id) => onRadioOptionChange(id)}
+      />
+      <Row gap="m" style={{ height: 50 }}>
+        {formik.values.selectedRadioOption === DatetimeRadioOption.Common && (
           <RiSelect
             style={{ width: 240 }}
             options={dateTimeOptions.map((option) => ({
@@ -190,72 +205,40 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
             data-test-subj="select-datetime"
             data-testid="select-datetime-testid"
           />
-        </Row>
-      ),
-    },
-    {
-      id: DatetimeRadioOption.Custom,
-      label: (
-        <Row style={{ height: 40 }} align="center" justify="start" gap="m">
-          <FlexItem style={{ minWidth: 150 }}>
-            <Text color="subdued" size="s">
-              Custom
-            </Text>
-          </FlexItem>
-          {formik.values.selectedRadioOption === DatetimeRadioOption.Custom && (
-            <>
-              <div>
-                <EuiFieldText
-                  style={{ width: 240 }}
-                  id="customFormat"
-                  name="customFormat"
-                  value={formik.values.customFormat}
-                  onChange={(e) => onCustomFormatChange(e)}
-                  data-testid="custom-datetime-input"
-                />
-              </div>
-              <EuiToolTip
-                position="top"
-                anchorClassName="euiToolTip__btn-disabled"
-                content={
-                  showError ? error || 'This format is not supported' : null
-                }
+        )}
+        {formik.values.selectedRadioOption === DatetimeRadioOption.Custom && (
+          <>
+            <FlexItem grow={false}>
+              <EuiFieldText
+                style={{ width: 240 }}
+                id="customFormat"
+                name="customFormat"
+                value={formik.values.customFormat}
+                onChange={(e) => onCustomFormatChange(e)}
+                data-testid="custom-datetime-input"
+              />
+            </FlexItem>
+            <EuiToolTip
+              position="top"
+              anchorClassName="euiToolTip__btn-disabled"
+              content={
+                showError ? error || 'This format is not supported' : null
+              }
+            >
+              <PrimaryButton
+                aria-label="Save"
+                loading={formik.isSubmitting}
+                onClick={onCustomFormatSubmit}
+                data-testid="datetime-custom-btn"
+                icon={getBtnIconType()}
+                disabled={showError}
               >
-                <PrimaryButton
-                  aria-label="Save"
-                  loading={formik.isSubmitting}
-                  onClick={onCustomFormatSubmit}
-                  data-testid="datetime-custom-btn"
-                  icon={getBtnIconType()}
-                  disabled={showError}
-                >
-                  Save
-                </PrimaryButton>
-              </EuiToolTip>
-            </>
-          )}
-        </Row>
-      ),
-    },
-  ]
-
-  return (
-    <EuiForm
-      component="form"
-      onSubmit={formik.handleSubmit}
-      data-testid="format-timestamp-form"
-    >
-      <RiRadioGroup.Compose
-        value={formik.values.selectedRadioOption}
-        onChange={(id) => onRadioOptionChange(id)}
-      >
-        {dateTimeFormatOptions.map(({ id, label }) => (
-          <RiRadioGroup.Item.Compose value={id} key={id}>
-            <RiRadioGroup.Item.Indicator />
-            <RiRadioGroup.Item.Label>{label}</RiRadioGroup.Item.Label>
-          </RiRadioGroup.Item.Compose>
-        ))}
-      </RiRadioGroup.Compose>
+                Save
+              </PrimaryButton>
+            </EuiToolTip>
+          </>
+        )}
+      </Row>
     </EuiForm>
   )
 }

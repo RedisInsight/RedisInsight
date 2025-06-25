@@ -38,7 +38,12 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { ColorText, Text } from 'uiSrc/components/base/text'
-import { RiRadioGroup } from 'uiSrc/components/base/forms/radio-group/RadioGroup'
+import {
+  RiRadioGroupItemIndicator,
+  RiRadioGroupItemLabel,
+  RiRadioGroupItemRoot,
+  RiRadioGroupRoot,
+} from 'uiSrc/components/base/forms/radio-group/RadioGroup'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
@@ -192,17 +197,17 @@ const OAuthSelectAccountDialog = () => {
             Select an account to connect to:
           </Text>
           <Spacer size="xl" />
-          <RiRadioGroup.Compose
+          <RiRadioGroupRoot
             value={formik.values.accountId ?? ''}
             onChange={(id) => handleChangeAccountIdFormat(id)}
           >
             {radios.map(({ id, label }) => (
-              <RiRadioGroup.Item.Compose value={id} key={id}>
-                <RiRadioGroup.Item.Indicator />
-                <RiRadioGroup.Item.Label>{label}</RiRadioGroup.Item.Label>
-              </RiRadioGroup.Item.Compose>
+              <RiRadioGroupItemRoot value={id} key={id}>
+                <RiRadioGroupItemIndicator />
+                <RiRadioGroupItemLabel>{label}</RiRadioGroupItemLabel>
+              </RiRadioGroupItemRoot>
             ))}
-          </RiRadioGroup.Compose>
+          </RiRadioGroupRoot>
         </section>
         <div className={styles.footer}>
           <SecondaryButton

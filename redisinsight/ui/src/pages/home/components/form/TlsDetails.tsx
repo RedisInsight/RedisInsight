@@ -29,7 +29,7 @@ import { TextArea } from 'uiSrc/components/base/inputs'
 import {
   RiSelect,
   SelectValueRender,
-  SelectOption,
+  RiSelectOption,
 } from 'uiSrc/components/base/forms/select/RiSelect'
 import styles from '../styles.module.scss'
 
@@ -90,7 +90,7 @@ const TlsDetails = (props: Props) => {
     setActiveCertId(`${id}${suffix}`)
   }
 
-  const optionsCertsCA: SelectOption[] = [
+  const optionsCertsCA: RiSelectOption[] = [
     {
       value: NO_CA_CERT,
       inputDisplay: <span>No CA Certificate</span>,
@@ -137,7 +137,7 @@ const TlsDetails = (props: Props) => {
     })
   })
 
-  const optionsCertsClient: SelectOption[] = [
+  const optionsCertsClient: RiSelectOption[] = [
     {
       value: 'ADD_NEW',
       inputDisplay: <span>Add new certificate</span>,

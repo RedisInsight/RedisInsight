@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
-import { EuiFieldText, EuiForm, EuiSuperSelect, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiToolTip } from '@elastic/eui'
 import { checkDateTimeFormat, formatTimestamp } from 'uiSrc/utils'
 import {
   DATETIME_FORMATTER_DEFAULT,
@@ -19,6 +19,10 @@ import { InfoIcon, CheckBoldIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
 import { RiRadioGroup } from 'uiSrc/components/base/forms/radio-group/RadioGroup'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  defaultValueRender,
+  RiSelect,
+} from 'uiSrc/components/base/forms/select/RiSelect'
 
 interface InitialValuesType {
   format: string
@@ -171,13 +175,14 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
               Pre-selected formats
             </Text>
           </FlexItem>
-          <EuiSuperSelect
+          <RiSelect
             style={{ width: 240 }}
             options={dateTimeOptions.map((option) => ({
               ...option,
               'data-test-subj': `date-option-${option.value}`,
             }))}
-            valueOfSelected={formik.values.commonFormat}
+            valueRender={defaultValueRender}
+            value={formik.values.commonFormat}
             onChange={(option) => onCommonFormatChange(option)}
             disabled={
               formik.values.selectedRadioOption !== DatetimeRadioOption.Common

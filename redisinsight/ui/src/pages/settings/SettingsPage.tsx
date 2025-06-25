@@ -4,7 +4,6 @@ import {
   EuiCollapsibleNavGroup,
   EuiForm,
   EuiLoadingSpinner,
-  EuiSuperSelect,
 } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -42,6 +41,10 @@ import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import {
+  defaultValueRender,
+  RiSelect,
+} from 'uiSrc/components/base/forms/select/RiSelect'
+import {
   AdvancedSettings,
   CloudSettings,
   WorkbenchSettings,
@@ -59,10 +62,10 @@ const SettingsPage = () => {
 
   const options = THEMES
   const themeContext = useContext(ThemeContext)
-  let { theme, changeTheme, usingSystemTheme } = themeContext
-
+  const { theme, changeTheme, usingSystemTheme } = themeContext
+  let currentTheme = theme
   if (usingSystemTheme) {
-    theme = Theme.System
+    currentTheme = Theme.System
   }
 
   useEffect(() => {
@@ -81,7 +84,7 @@ const SettingsPage = () => {
   setTitle('Settings')
 
   const onChange = (value: string) => {
-    const previousValue = theme
+    const previousValue = currentTheme
     changeTheme(value)
     sendEventTelemetry({
       event: TelemetryEvent.SETTINGS_COLOR_THEME_CHANGED,
@@ -98,11 +101,12 @@ const SettingsPage = () => {
         <Title size="XS">Color Theme</Title>
         <Spacer size="m" />
         <FormField label="Specifies the color theme to be used in Redis Insight:">
-          <EuiSuperSelect
+          <RiSelect
             options={options}
-            valueOfSelected={theme}
+            valueRender={defaultValueRender}
+            value={currentTheme}
             onChange={onChange}
-            style={{ marginTop: '12px' }}
+            style={{ marginTop: '12px', maxWidth: 240 }}
             data-test-subj="select-theme"
           />
         </FormField>

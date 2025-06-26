@@ -70,6 +70,7 @@ const AddKey = (props: Props) => {
           color={color}
           style={{ lineHeight: 'inherit' }}
           data-test-subj={value}
+          data-testid={value}
         >
           {text}
         </HealthText>

@@ -9,6 +9,7 @@ import {
   mockStore,
   render,
   screen,
+  userEvent,
 } from 'uiSrc/utils/test-utils'
 import { loadKeys, setFilter } from 'uiSrc/slices/browser/keys'
 import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instances'
@@ -60,11 +61,11 @@ describe('FilterKeyType', () => {
     expect(queryByTestId(unsupportedAnchorId)).not.toBeInTheDocument()
   })
 
-  it('"setFilter" and "loadKeys" should be called after select "Hash" type', () => {
-    const { queryByText } = render(<FilterKeyType />)
+  it('"setFilter" and "loadKeys" should be called after select "Hash" type', async () => {
+    const { findByText } = render(<FilterKeyType />)
 
-    fireEvent.click(screen.getByTestId(filterSelectId))
-    fireEvent.click(queryByText('Hash') || document)
+    await userEvent.click(screen.getByTestId(filterSelectId))
+    await userEvent.click(await findByText('Hash'))
 
     const expectedActions = [setFilter(KeyTypes.Hash), loadKeys()]
     expect(clearStoreActions(store.getActions())).toEqual(
@@ -123,7 +124,7 @@ describe('FilterKeyType', () => {
     expect(graphElement).not.toBeInTheDocument()
   })
 
-  it('should not filter out items if required feature flags are set to true', () => {
+  it('should not filter out items if required feature flags are set to true', async () => {
     const { queryByText } = render(
       <FilterKeyType
         modules={[
@@ -136,7 +137,7 @@ describe('FilterKeyType', () => {
       />,
     )
 
-    fireEvent.click(screen.getByTestId(filterSelectId))
+    await userEvent.click(screen.getByTestId(filterSelectId))
 
     const graphElement = queryByText('Graph')
     expect(graphElement).toBeInTheDocument()

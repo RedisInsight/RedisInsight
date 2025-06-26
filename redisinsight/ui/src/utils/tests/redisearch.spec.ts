@@ -11,6 +11,7 @@ const nameAndVersionToModule = ([name, semanticVersion, version]: any[]) => ({
 const ALL_OPTIONS = FIELD_TYPE_OPTIONS.map(({ value, text }) => ({
   value,
   inputDisplay: text,
+  label: text,
 }))
 
 const getFieldTypeOptionsTests: any[] = [

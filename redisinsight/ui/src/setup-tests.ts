@@ -25,3 +25,6 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   unobserve: jest.fn(),
   disconnect: jest.fn(),
 }))
+
+// we need this since jsdom doesn't support PointerEvent
+window.HTMLElement.prototype.hasPointerCapture = jest.fn()

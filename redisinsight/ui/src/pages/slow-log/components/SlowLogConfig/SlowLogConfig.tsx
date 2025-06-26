@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiForm, EuiSuperSelect } from '@elastic/eui'
+import { EuiFieldText, EuiForm } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import React, { ChangeEvent, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -29,8 +29,12 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
-import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import {
+  defaultValueRender,
+  RiSelect,
+} from 'uiSrc/components/base/forms/select/RiSelect'
 import { convertNumberByUnits } from '../../utils'
 import styles from './styles.module.scss'
 
@@ -163,7 +167,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
   }
 
   return (
-    <div
+    <Col
       className={cx(styles.container, {
         [styles.containerCluster]: connectionType === ConnectionType.Cluster,
       })}
@@ -172,14 +176,33 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
       {connectionType !== ConnectionType.Cluster && (
         <>
           <EuiForm component="form">
-            <FormField className={styles.formRow}>
-              <>
+            <FormField
+              layout="horizontal"
+              className={styles.formRow}
+              label={
                 <div className={styles.rowLabel}>slowlog-log-slower-than</div>
-                <div className={styles.rowFields}>
+              }
+              additionalText={
+                <div className={styles.helpText}>
+                  <div data-testid="unit-converter">{unitConverter()}</div>
+                  <div>
+                    Execution time to exceed in order to log the command.
+                    <br />
+                    -1 disables Slow Log. 0 logs each command.
+                  </div>
+                </div>
+              }
+            >
+              <Row
+                grow={false}
+                align="center"
+                justify="start"
+                className={styles.rowFields}
+              >
+                <div className={styles.input}>
                   <EuiFieldText
                     name="slowerThan"
                     id="slowerThan"
-                    className={styles.input}
                     value={slowerThan}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                       setSlowerThan(
@@ -190,27 +213,31 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
                     autoComplete="off"
                     data-testid="slower-than-input"
                   />
-                  <EuiSuperSelect
-                    options={options}
-                    valueOfSelected={durationUnit}
-                    onChange={onChangeUnit}
-                    popoverClassName={styles.selectWrapper}
-                    data-test-subj="select-default-unit"
-                  />
-                  <div className={styles.helpText}>
-                    <div data-testid="unit-converter">{unitConverter()}</div>
-                    <div>
-                      Execution time to exceed in order to log the command.
-                      <br />
-                      -1 disables Slow Log. 0 logs each command.
-                    </div>
-                  </div>
                 </div>
-              </>
+                <RiSelect
+                  style={{ maxWidth: 100 }}
+                  options={options}
+                  value={durationUnit}
+                  valueRender={defaultValueRender}
+                  onChange={onChangeUnit}
+                  data-test-subj="select-default-unit"
+                />
+              </Row>
             </FormField>
-            <FormField className={styles.formRow}>
+            <FormField
+              className={styles.formRow}
+              layout="horizontal"
+              label={<div className={styles.rowLabel}>slowlog-max-len</div>}
+              additionalText={
+                <div className={styles.helpText}>
+                  The length of the Slow Log. When a new command is logged the
+                  oldest
+                  <br />
+                  one is removed from the queue of logged commands.
+                </div>
+              }
+            >
               <>
-                <div className={styles.rowLabel}>slowlog-max-len</div>
                 <div className={styles.rowFields}>
                   <EuiFieldText
                     name="maxLen"
@@ -224,12 +251,6 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
                     autoComplete="off"
                     data-testid="max-len-input"
                   />
-                  <div className={styles.helpText}>
-                    The length of the Slow Log. When a new command is logged the
-                    oldest
-                    <br />
-                    one is removed from the queue of logged commands.
-                  </div>
                 </div>
               </>
             </FormField>
@@ -265,7 +286,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
           </Row>
         </>
       )}
-    </div>
+    </Col>
   )
 }
 

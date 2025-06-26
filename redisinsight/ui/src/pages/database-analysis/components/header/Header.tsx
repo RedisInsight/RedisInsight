@@ -1,14 +1,10 @@
 import React from 'react'
 import cx from 'classnames'
-import {
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiToolTip,
-  EuiIcon,
-} from '@elastic/eui'
+import { EuiToolTip, EuiIcon } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
+import styled from 'styled-components'
 import { CaretRightIcon } from 'uiSrc/components/base/icons'
 import { createNewAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
@@ -29,11 +25,15 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { HideFor } from 'uiSrc/components/base/utils/ShowHide'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analysis-progress'
 
 import styles from './styles.module.scss'
 
+const HeaderSelect = styled(RiSelect)`
+  border: 0 none;
+`
 export interface Props {
   items: ShortDatabaseAnalysis[]
   selectedValue: Nullable<string>
@@ -58,17 +58,19 @@ const Header = (props: Props) => {
   const { treeViewDelimiter = [DEFAULT_DELIMITER] } =
     useSelector(appContextDbConfig)
 
-  const analysisOptions: EuiSuperSelectOption<any>[] = items.map((item) => {
+  const analysisOptions = items.map((item) => {
     const { createdAt, id, db } = item
     return {
-      value: id,
+      value: id || '',
+      label: createdAt?.toString() || '',
       inputDisplay: (
         <>
-          <span>{`${getDbIndex(db)} `}</span>
+          <span
+            data-test-subj={`items-report-${id}`}
+          >{`${getDbIndex(db)} `}</span>
           <FormatedDate date={createdAt || ''} />
         </>
       ),
-      'data-test-subj': `items-report-${id}`,
     }
   })
 
@@ -102,12 +104,12 @@ const Header = (props: Props) => {
                 </FlexItem>
               </HideFor>
               <FlexItem grow>
-                <EuiSuperSelect
+                <HeaderSelect
                   options={analysisOptions}
-                  style={{ border: 'none !important' }}
-                  className={styles.changeReport}
-                  popoverClassName={styles.changeReport}
-                  valueOfSelected={selectedValue ?? ''}
+                  valueRender={({ option }) =>
+                    option.inputDisplay as JSX.Element
+                  }
+                  value={selectedValue ?? ''}
                   onChange={(value: string) => onChangeSelectedAnalysis(value)}
                   data-testid="select-report"
                 />

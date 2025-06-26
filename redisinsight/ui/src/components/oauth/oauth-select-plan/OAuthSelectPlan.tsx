@@ -1,11 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import {
-  EuiIcon,
-  EuiModal,
-  EuiModalBody,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-} from '@elastic/eui'
+import { EuiIcon, EuiModal, EuiModalBody } from '@elastic/eui'
 import { toNumber, filter, get, find, first } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -31,6 +25,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
 import { OAuthProvider, OAuthProviders } from './constants'
 import styles from './styles.module.scss'
@@ -123,7 +118,12 @@ const OAuthSelectPlan = () => {
       find(rsRegions, { provider })?.regions || []
 
     return (
-      <Text color="subdued" size="s" data-testid={`option-${region}`}>
+      <Text
+        color="subdued"
+        size="s"
+        data-testid={`option-${region}`}
+        data-test-subj={`oauth-region-${region}`}
+      >
         {`${countryName} (${cityName})`}
         <ColorText className={styles.regionName}>{region}</ColorText>
         {rsProviderRegions?.includes(region) && (
@@ -138,9 +138,10 @@ const OAuthSelectPlan = () => {
     )
   }
 
-  const regionOptions: EuiSuperSelectOption<string>[] = plans.map((item) => {
+  const regionOptions = plans.map((item) => {
     const { id, region = '' } = item
     return {
+      label: `${id}`,
       value: `${id}`,
       inputDisplay: getOptionDisplay(item),
       dropdownDisplay: getOptionDisplay(item),
@@ -206,16 +207,19 @@ const OAuthSelectPlan = () => {
           </section>
           <section className={styles.region}>
             <Text className={styles.regionLabel}>Region</Text>
-            <EuiSuperSelect
-              fullWidth
-              itemClassName={styles.regionSelectItem}
-              className={styles.regionSelect}
+            <RiSelect
+              loading={loading}
               disabled={loading || !regionOptions.length}
-              isLoading={loading}
               options={regionOptions}
-              valueOfSelected={planIdSelected}
-              onChange={onChangeRegion}
+              value={planIdSelected}
               data-testid="select-oauth-region"
+              onChange={onChangeRegion}
+              valueRender={({ option, isOptionValue }) => {
+                if (isOptionValue) {
+                  return option.inputDisplay
+                }
+                return option.dropdownDisplay
+              }}
             />
             {!regionOptions.length && (
               <Text

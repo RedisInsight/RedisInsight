@@ -1,6 +1,12 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { act, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  userEvent,
+} from 'uiSrc/utils/test-utils'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
 import { BuildType } from 'uiSrc/constants/env'
 import { appRedirectionSelector } from 'uiSrc/slices/app/url-handling'
@@ -13,7 +19,7 @@ import ManualConnectionForm, { Props } from './ManualConnectionForm'
 const BTN_SUBMIT = 'btn-submit'
 const NEW_CA_CERT = 'new-ca-cert'
 const QA_CA_CERT = 'qa-ca-cert'
-const RADIO_BTN_PRIVATE_KEY = '[data-test-subj="radio-btn-privateKey"] label'
+const RADIO_BTN_PRIVATE_KEY = '[for="privateKey"]'
 const BTN_TEST_CONNECTION = 'btn-test-connection'
 
 const mockedProps = mock<Props>()
@@ -480,7 +486,7 @@ describe('InstanceForm', () => {
   it('should select value from "CA Certificate"', async () => {
     const handleSubmit = jest.fn()
     const handleTestConnection = jest.fn()
-    const { queryByText } = render(
+    const { findByText } = render(
       <div id="footerDatabaseForm">
         <ManualConnectionForm
           {...instance(mockedProps)}
@@ -497,13 +503,10 @@ describe('InstanceForm', () => {
     )
 
     fireEvent.mouseDown(screen.getByText('Security'))
-    await act(async () => {
-      fireEvent.click(screen.getByTestId('select-ca-cert'))
-    })
-    await act(async () => {
-      fireEvent.click(queryByText('Add new CA certificate') || document)
-    })
-
+    await userEvent.click(screen.getByTestId('select-ca-cert'))
+    await userEvent.click(
+      (await findByText('Add new CA certificate')) || document,
+    )
     expect(screen.getByTestId(NEW_CA_CERT)).toBeInTheDocument()
     await act(async () => {
       fireEvent.change(screen.getByTestId(NEW_CA_CERT), {

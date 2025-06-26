@@ -10,6 +10,7 @@ import {
   mockedStore,
   render,
   screen,
+  userEvent,
 } from 'uiSrc/utils/test-utils'
 import {
   loadList,
@@ -135,7 +136,7 @@ describe('RediSearchIndexesList', () => {
       clearStoreActions(expectedActions),
     )
 
-    expect(localStorageService.set).toBeCalledWith(
+    expect(localStorageService.set).toHaveBeenCalledWith(
       BrowserStorageItem.browserSearchMode,
       SearchMode.Pattern,
     )
@@ -159,19 +160,19 @@ describe('RediSearchIndexesList', () => {
     )
   })
 
-  it('"onCreateIndex" should be called after click Create Index', () => {
+  it('"onCreateIndex" should be called after click Create Index', async () => {
     const onCreateIndexMock = jest.fn()
-    const { queryByText } = render(
+    const { findByText } = render(
       <RediSearchIndexesList
         {...instance(mockedProps)}
         onCreateIndex={onCreateIndexMock}
       />,
     )
 
-    fireEvent.click(screen.getByTestId('select-search-mode'))
-    fireEvent.click(queryByText('Create Index') || document)
+    await userEvent.click(screen.getByTestId('select-search-mode'))
+    await userEvent.click((await findByText('Create Index')) || document)
 
-    expect(onCreateIndexMock).toBeCalled()
+    expect(onCreateIndexMock).toHaveBeenCalled()
   })
 
   it('"setSelectedIndex" and "loadKeys" should be called after select Index', async () => {
@@ -195,8 +196,8 @@ describe('RediSearchIndexesList', () => {
       modules: [{ name: RedisDefaultModules.Search }],
     }))
 
-    fireEvent.click(screen.getByTestId('select-search-mode'))
-    fireEvent.click(queryByText(bufferToString(index)) || document)
+    await userEvent.click(screen.getByTestId('select-search-mode'))
+    await userEvent.click(queryByText(bufferToString(index)) || document)
 
     const expectedActions = [setSelectedIndex(index), loadList()]
 
@@ -204,7 +205,7 @@ describe('RediSearchIndexesList', () => {
       clearStoreActions(expectedActions),
     )
 
-    expect(fetchKeysMock).toBeCalled()
+    expect(fetchKeysMock).toHaveBeenCalled()
   })
 
   it('should load indexes after click on refresh', () => {

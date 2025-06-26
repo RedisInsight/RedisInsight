@@ -1,13 +1,13 @@
 import React from 'react'
 import { mock } from 'ts-mockito'
 import {
-  fireEvent,
   render,
   screen,
-  waitForEuiPopoverVisible,
+  userEvent,
+  waitForRedisUiSelectVisible,
 } from 'uiSrc/utils/test-utils'
 
-import { Props, KeyDetailsHeaderFormatter } from './KeyDetailsHeaderFormatter'
+import { KeyDetailsHeaderFormatter, Props } from './KeyDetailsHeaderFormatter'
 
 const mockedProps = {
   ...mock<Props>(),
@@ -35,12 +35,11 @@ describe('KeyValueFormatter', () => {
     ]
     render(<KeyDetailsHeaderFormatter {...mockedProps} />)
 
-    fireEvent.click(screen.getByTestId('select-format-key-value'))
+    await userEvent.click(screen.getByTestId('select-format-key-value'))
 
-    await waitForEuiPopoverVisible()
-
-    expect(
-      document.querySelector('.euiSuperSelect__listbox'),
-    ).toHaveTextContent(strictOrder.join(''))
+    await waitForRedisUiSelectVisible()
+    strictOrder.forEach((option) => {
+      expect(screen.getByText(option)).toBeInTheDocument()
+    })
   })
 })

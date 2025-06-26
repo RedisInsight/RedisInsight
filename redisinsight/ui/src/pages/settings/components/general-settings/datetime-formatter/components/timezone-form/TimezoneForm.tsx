@@ -1,14 +1,17 @@
 import React, { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
-import { EuiForm, EuiSuperSelect } from '@elastic/eui'
+import { EuiForm } from '@elastic/eui'
 import { TimezoneOption, timezoneOptions } from 'uiSrc/constants'
 import {
   updateUserConfigSettingsAction,
   userSettingsConfigSelector,
 } from 'uiSrc/slices/user/user-settings'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import styles from './styles.module.scss'
+import {
+  defaultValueRender,
+  RiSelect,
+} from 'uiSrc/components/base/forms/select/RiSelect'
 
 interface InitialValuesType {
   timezone: TimezoneOption
@@ -64,13 +67,14 @@ const TimezoneForm = () => {
       data-testid="format-timezone-form"
     >
       <div>
-        <EuiSuperSelect
-          className={styles.datetimeInput}
+        <RiSelect
+          style={{ width: 240 }}
           options={timezoneOptions.map((option) => ({
             ...option,
             'data-test-subj': `zone-option-${option.value}`,
           }))}
-          valueOfSelected={formik.values.timezone}
+          value={formik.values.timezone}
+          valueRender={defaultValueRender}
           onChange={(option) => onTimezoneChange(option)}
           data-test-subj="select-timezone"
         />

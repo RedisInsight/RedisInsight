@@ -2,10 +2,10 @@ import React from 'react'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { fetchDBAnalysisReportsHistory } from 'uiSrc/slices/analytics/dbAnalysis'
 import {
-  waitForEuiPopoverVisible,
   render,
-  fireEvent,
   screen,
+  waitForRedisUiSelectVisible,
+  userEvent,
 } from 'uiSrc/utils/test-utils'
 
 import DatabaseAnalysisPage from './DatabaseAnalysisPage'
@@ -53,15 +53,15 @@ describe('DatabaseAnalysisPage', () => {
 
     render(<DatabaseAnalysisPage />)
 
-    fireEvent.click(screen.getByTestId('select-report'))
+    await userEvent.click(screen.getByTestId('select-report'))
 
-    await waitForEuiPopoverVisible()
+    await waitForRedisUiSelectVisible()
 
-    fireEvent.click(
+    await userEvent.click(
       document.querySelector('[data-test-subj="items-report-123"]') as Element,
     )
 
-    expect(sendEventTelemetry).toBeCalledWith({
+    expect(sendEventTelemetry).toHaveBeenCalledWith({
       event: TelemetryEvent.DATABASE_ANALYSIS_HISTORY_VIEWED,
       eventData: {
         databaseId: 'instanceId',

@@ -298,7 +298,7 @@
     "url-parse": "^1.5.10",
     "uuid": "^8.3.2"
   },
-  "devEngines": {
+  "engines": {
     "node": ">=16.x",
     "npm": ">=6.x",
     "yarn": ">=1.21.3"

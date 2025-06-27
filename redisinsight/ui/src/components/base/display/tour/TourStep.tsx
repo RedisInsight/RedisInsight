@@ -71,7 +71,8 @@ export const TourStep = ({
   ...rest
 }: TourStepProps) => {
   const [isVisible, setIsVisible] = useState(open)
-  const titleId = useGenerateId()
+  const id = useGenerateId()
+  const titleId = `${id}-title`
 
   useEffect(() => {
     setIsVisible(open)
@@ -83,7 +84,9 @@ export const TourStep = ({
   const place = popoverPlacementMap[placement]
   const popoverContent = (
     <Popover.Card.Compose style={{ minWidth, maxWidth }}>
-      <Popover.Card.Header.Compose>{title}</Popover.Card.Header.Compose>
+      <Popover.Card.Header.Compose id={titleId}>
+        {title}
+      </Popover.Card.Header.Compose>
       <Popover.Card.Body.Compose>{content}</Popover.Card.Body.Compose>
     </Popover.Card.Compose>
   )
@@ -96,6 +99,7 @@ export const TourStep = ({
       sideOffset={offset}
       alignOffset={-10}
       content={popoverContent}
+      id={id}
       aria-labelledby={titleId}
       {...rest}
       withButton

@@ -83,11 +83,7 @@ export const TourStep = ({
   const place = popoverPlacementMap[placement]
   const popoverContent = (
     <Popover.Card.Compose style={{ minWidth, maxWidth }}>
-      <Popover.Card.Header.Compose>
-        {/* <Popover.Card.Header.Title id={titleId}> */}
-        {title}
-        {/* </Popover.Card.Header.Title> */}
-      </Popover.Card.Header.Compose>
+      <Popover.Card.Header.Compose>{title}</Popover.Card.Header.Compose>
       <Popover.Card.Body.Compose>{content}</Popover.Card.Body.Compose>
     </Popover.Card.Compose>
   )

@@ -11,14 +11,9 @@ export type TourStepProps = {
    */
   open?: boolean
   /**
-   * Function to call for 'Skip tour' and 'End tour' actions
-   */
-  onClose?: () => void
-  /**
-   * The title text that appears atop each step in the tour. The subtitle gets wrapped in the appropriate heading level.
+   * The title text that appears atop each step in the tour.
    */
   title?: ReactNode
-  // placement?: 'top' | 'bottom' | 'left' | 'right'
   placement?:
     | 'upCenter'
     | 'upLeft'

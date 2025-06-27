@@ -80,7 +80,7 @@ const OnboardingTour = (props: Props) => {
   }
 
   const Header = (
-    <Col className={styles.header} align="baseline">
+    <Col className={styles.header}>
       {!isLastStep ? (
         <EmptyButton
           onClick={handleSkip}
@@ -150,7 +150,6 @@ const OnboardingTour = (props: Props) => {
         open={isOpen}
         minWidth={300}
         maxWidth={360}
-        onClose={() => setIsOpen(false)}
         title={Header}
         placement={anchorPosition}
         className={cx(styles.popoverPanel, panelClassName, {

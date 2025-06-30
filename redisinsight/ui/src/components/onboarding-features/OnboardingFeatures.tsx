@@ -697,7 +697,7 @@ const ONBOARDING_FEATURES = {
 
       useEffect(() => {
         const closeLastStep = async () => {
-          await dispatch(
+          dispatch(
             incrementOnboardStepAction(OnboardingSteps.Finish, 0, async () => {
               await sendEventTelemetry({
                 event: TelemetryEvent.ONBOARDING_TOUR_FINISHED,

@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react'
-
-import { EuiTourStep } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import cx from 'classnames'
 
@@ -16,7 +14,10 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
-import { Text } from 'uiSrc/components/base/text'
+import { ColorText } from 'uiSrc/components/base/text'
+import { TourStep } from 'uiSrc/components/base/display/tour/TourStep'
+import { Col, Row } from 'uiSrc/components/base/layout/flex'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Props as OnboardingWrapperProps } from './OnboardingTourWrapper'
 
 import styles from './styles.module.scss'
@@ -79,7 +80,7 @@ const OnboardingTour = (props: Props) => {
   }
 
   const Header = (
-    <div className={styles.header}>
+    <Col className={styles.header}>
       {!isLastStep ? (
         <EmptyButton
           onClick={handleSkip}
@@ -99,24 +100,22 @@ const OnboardingTour = (props: Props) => {
           data-testid="close-tour-btn"
         />
       )}
-      <div className={styles.title} data-testid="step-title">
+      <Title size="XS" data-testid="step-title">
         {title}
-      </div>
-    </div>
+      </Title>
+    </Col>
   )
 
   const StepContent = (
-    <>
-      <div className={styles.content}>
-        <Text>
-          <div data-testid="step-content">{content}</div>
-        </Text>
+    <Col>
+      <div className={styles.content} data-testid="step-content">
+        {content}
       </div>
-      <div className={styles.footer}>
-        <Text color="subdued" className={styles.stepCount}>
+      <Row className={styles.footer} align="center" justify="between">
+        <ColorText color="subdued" className={styles.stepCount}>
           {currentStep} of {totalSteps}
-        </Text>
-        <div className={styles.backNext}>
+        </ColorText>
+        <Row grow={false} gap="m">
           {currentStep > 1 && (
             <SecondaryButton
               onClick={handleClickBack}
@@ -130,13 +129,12 @@ const OnboardingTour = (props: Props) => {
             onClick={handleClickNext}
             size="s"
             data-testid="next-btn"
-            style={{ marginLeft: 8 }}
           >
             {!isLastStep ? 'Next' : 'Take me back'}
           </PrimaryButton>
-        </div>
-      </div>
-    </>
+        </Row>
+      </Row>
+    </Col>
   )
 
   return (
@@ -147,28 +145,21 @@ const OnboardingTour = (props: Props) => {
       })}
       role="presentation"
     >
-      <EuiTourStep
+      <TourStep
         content={StepContent}
-        decoration="none"
-        isStepOpen={isOpen}
+        open={isOpen}
         minWidth={300}
-        onFinish={() => setIsOpen(false)}
-        step={step}
-        stepsTotal={totalSteps}
-        title=""
-        subtitle={Header}
-        anchorPosition={anchorPosition}
-        className={styles.popover}
-        anchorClassName={styles.popoverAnchor}
-        panelClassName={cx(styles.popoverPanel, panelClassName, {
+        maxWidth={360}
+        title={Header}
+        placement={anchorPosition}
+        className={cx(styles.popoverPanel, panelClassName, {
           [styles.lastStep]: isLastStep,
         })}
-        zIndex={9999}
         offset={5}
         data-testid="onboarding-tour"
       >
         {children}
-      </EuiTourStep>
+      </TourStep>
     </div>
   )
 }

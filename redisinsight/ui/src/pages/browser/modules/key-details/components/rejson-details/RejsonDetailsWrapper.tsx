@@ -144,6 +144,7 @@ const RejsonDetailsWrapper = (props: Props) => {
             )}
 
             <span>test</span>
+            <span>test 2</span>
 
             {shouldShowDefaultEditor && (
               <RejsonDetails

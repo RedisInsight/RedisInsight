@@ -86,8 +86,9 @@ export const convertMultilineReplyToObject = (
  * Parse and return all endpoints from the nodes list returned by "cluster info" command
  * @Input
  * ```
- * 08418e3514990489e48fa05d642efc33e205f5 172.31.100.211:6379@16379 myself,master - 0 1698694904000 1 connected 0-5460\n
- * d2dee846c715a917ec9a4963e8885b06130f9f 172.31.100.212:6379@16379 master - 0 1698694905285 2 connected 5461-10922\n
+ * 08418e3514990489e48fa05d642efc33e205f5 172.31.100.211:6379@16379 myself,master - 0 1698694904000 1 connected 0-5460
+ * d2dee846c715a917ec9a4963e8885b06130f9f 172.31.100.212:6379@16379 master - 0 1698694905285 2 connected 5461-10922
+ * 3e92457ab813ad7a62dacf768ec7309210feaf [2001:db8::1]:7001@17001 master - 0 1698694906000 3 connected 10923-16383
  * ```
  * @Output
  * ```
@@ -99,6 +100,10 @@ export const convertMultilineReplyToObject = (
  *   {
  *     host: "172.31.100.212",
  *     port: 6379
+ *   },
+ *   {
+ *     host: "2001:db8::1",
+ *     port: 7001
  *   }
  * ]
  * ```
@@ -115,8 +120,12 @@ export const parseNodesFromClusterInfoReply = (
         // fields = [id, endpoint, flags, master, pingSent, pongRecv, configEpoch, linkState, slot]
         const fields = line.split(' ');
         const [id, endpoint, , master, , , , linkState, slot] = fields;
-        const host = endpoint.split(':')[0];
-        const port = endpoint.split(':')[1].split('@')[0];
+
+        const hostAndPort = endpoint.split('@')[0]
+        const lastColonIndex = hostAndPort.lastIndexOf(':');
+
+        const host = hostAndPort.substring(0, lastColonIndex);
+        const port = hostAndPort.substring(lastColonIndex + 1);
         nodes.push({
           id,
           host,

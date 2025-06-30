@@ -132,7 +132,7 @@ const AddStreamEntries = (props: Props) => {
 
   return (
     <>
-      <div className={styles.content}>
+      <div className={styles.content} data-test-subj="add-stream-field-panel">
         <StreamEntryFields
           entryIdError={entryIdError}
           entryID={entryID}

@@ -89,7 +89,7 @@ const AddStreamGroup = (props: Props) => {
 
   return (
     <>
-      <div className={styles.content}>
+      <div className={styles.content} data-test-subj="add-stream-groups-field-panel">
         <FlexItem
           className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace')}
           grow

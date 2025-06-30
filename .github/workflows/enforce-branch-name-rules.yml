@@ -14,9 +14,14 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const labels = context.payload.pull_request.labels.map(l => l.name);
-            console.log("Labels on PR:", labels);
-            if (labels.includes("run-tests")) {
+            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+            });
+            const labelNames = labels.map(l => l.name);
+            console.log("Labels on PR:", labelNames);
+            if (labelNames.includes("run-tests")) {
               console.log("Override label found; skipping branch name check.");
               return "skip";
             }

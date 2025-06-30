@@ -1,10 +1,10 @@
 import React from 'react'
-import { ModifiedClusterNodes } from 'uiSrc/pages/clusterDetails/ClusterDetailsPage'
 import { getLetterByIndex } from 'uiSrc/utils'
 import { rgb } from 'uiSrc/utils/colors'
 import { render, screen } from 'uiSrc/utils/test-utils'
 
 import ClusterNodesTable from './ClusterNodesTable'
+import { ModifiedClusterNodes } from '../../ClusterDetailsPage'
 
 const mockNodes = [
   {

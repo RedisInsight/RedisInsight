@@ -1,9 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import {
-  EuiInMemoryTable,
-  EuiBasicTableColumn,
-  PropertySort,
-} from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
 
@@ -25,10 +20,11 @@ import { SearchInput } from 'uiSrc/components/base/inputs'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import styles from './styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<InstanceRedisCluster>[]
+  columns: ColumnDefinition<InstanceRedisCluster>[]
   onView: (sendEvent?: boolean) => void
   onBack: (sendEvent?: boolean) => void
 }
@@ -40,16 +36,11 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
   const [items, setItems] = useState<InstanceRedisCluster[]>([])
   const [message, setMessage] = useState(loadingMsg)
 
-  const { loading, dataAdded: instances } = useSelector(clusterSelector)
+  const { dataAdded: instances } = useSelector(clusterSelector)
 
   setTitle('Redis Enterprise Databases Added')
 
   useEffect(() => setItems(instances), [instances])
-
-  const sort: PropertySort = {
-    field: 'name',
-    direction: 'asc',
-  }
 
   const countSuccessAdded = instances.filter(
     ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Success,
@@ -119,15 +110,19 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
         </Row>
         <br />
         <div className="itemList databaseList clusterDatabaseListResult">
-          <EuiInMemoryTable
-            items={items}
-            itemId="uid"
-            loading={loading}
-            message={message}
+          <Table
             columns={columns}
-            sorting={{ sort }}
-            className={styles.table}
+            data={items}
+            defaultSorting={[
+              {
+                id: 'name',
+                desc: false,
+              },
+            ]}
           />
+          {!items.length && (
+            <Text className={styles.noDatabases}>{message}</Text>
+          )}
         </div>
       </div>
       <FlexItem className={cx(styles.footer, 'footerAddDatabase')}>

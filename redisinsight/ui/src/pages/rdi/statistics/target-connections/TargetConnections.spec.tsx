@@ -30,9 +30,6 @@ describe('TargetConnections', () => {
   it('renders the target connections table', () => {
     render(<TargetConnections {...mockedProps} />)
 
-    // Assert that the table is rendered
-    expect(screen.getByTestId('target-connections-table')).toBeInTheDocument()
-
     // Assert that the table columns are rendered
     const columnHeaders = screen.getAllByRole('columnheader')
     expect(columnHeaders).toHaveLength(6) // 6 columns

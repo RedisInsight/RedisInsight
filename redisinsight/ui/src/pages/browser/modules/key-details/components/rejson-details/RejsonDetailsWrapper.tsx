@@ -143,6 +143,8 @@ const RejsonDetailsWrapper = (props: Props) => {
               />
             )}
 
+            <span>test</span>
+
             {shouldShowDefaultEditor && (
               <RejsonDetails
                 selectedKey={selectedKey || stringToBuffer('')}

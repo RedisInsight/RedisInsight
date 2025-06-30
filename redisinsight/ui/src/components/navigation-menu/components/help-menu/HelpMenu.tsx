@@ -19,15 +19,14 @@ import GithubHelpCenterSVG from 'uiSrc/assets/img/github.svg?react'
 import BulbSVG from 'uiSrc/assets/img/bulb.svg?react'
 
 import { FeatureFlags } from 'uiSrc/constants'
-import { FeatureFlagComponent, RiTooltip } from 'uiSrc/components'
+import { FeatureFlagComponent } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Title } from 'uiSrc/components/base/text/Title'
-import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { SupportIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
-import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
 import { Link } from 'uiSrc/components/base/link/Link'
+import { SideBarItem } from 'uiSrc/components/base/layout/sidebar'
 import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
 
@@ -69,20 +68,20 @@ const HelpMenu = () => {
     })
   }
 
-  const HelpMenuButton = () => (
-    <NavigationItemWrapper
+  const HelpMenuButton = (
+    <SideBarItem
       className={cx(navStyles.navigationButton, {
         [navStyles.navigationButtonNotified]: isReleaseNotesViewed === false,
       })}
+      onClick={() => setIsHelpMenuActive((value) => !value)}
+      tooltipProps={{ text: 'Help' }}
     >
-      <IconButton
-        size="L"
+      <SideBarItem.Icon
         icon={SupportIcon}
         aria-label="Help Menu"
-        onClick={() => setIsHelpMenuActive((value) => !value)}
         data-testid="help-menu-button"
       />
-    </NavigationItemWrapper>
+    </SideBarItem>
   )
 
   return (
@@ -92,17 +91,7 @@ const HelpMenu = () => {
       anchorClassName={styles.unsupportedInfo}
       panelClassName={cx('popoverLikeTooltip', styles.popoverWrapper)}
       closePopover={() => setIsHelpMenuActive(false)}
-      button={
-        <>
-          {!isHelpMenuActive && (
-            <RiTooltip content="Help" position="right" key="help-menu">
-              {HelpMenuButton()}
-            </RiTooltip>
-          )}
-
-          {isHelpMenuActive && HelpMenuButton()}
-        </>
-      }
+      button={HelpMenuButton}
     >
       <div className={styles.popover} data-testid="help-center">
         <Title size="XS" className={styles.helpMenuTitle}>

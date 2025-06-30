@@ -4,7 +4,6 @@ import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
 import { last } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiIcon, EuiPageSideBar } from '@elastic/eui'
 import HighlightedFeature, {
   Props as HighlightedFeatureProps,
 } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
@@ -20,15 +19,14 @@ import {
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { connectedInstanceSelector as connectedRdiInstanceSelector } from 'uiSrc/slices/rdi/instances'
 
-import Divider from 'uiSrc/components/divider/Divider'
 import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
-import { FeatureFlagComponent, RiTooltip } from 'uiSrc/components'
+import { FeatureFlagComponent } from 'uiSrc/components'
 
 import { appContextSelector } from 'uiSrc/slices/app/context'
 import { AppWorkspace } from 'uiSrc/slices/interfaces'
-import { IconButton, IconType } from 'uiSrc/components/base/forms/buttons'
+import { IconType } from 'uiSrc/components/base/forms/buttons'
 import {
   BrowserActiveIcon,
   BrowserIcon,
@@ -46,9 +44,14 @@ import {
   WorkbenchIcon,
   GithubIcon,
 } from 'uiSrc/components/base/icons'
-import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
 import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
-import { Link } from 'uiSrc/components/base/link/Link'
+import {
+  SideBar,
+  SideBarContainer,
+  SideBarDivider,
+  SideBarFooter,
+  SideBarItem,
+} from 'uiSrc/components/base/layout/sidebar'
 import CreateCloud from './components/create-cloud'
 import HelpMenu from './components/help-menu/HelpMenu'
 import NotificationMenu from './components/notifications-center'
@@ -265,30 +268,28 @@ const NavigationMenu = () => {
             tooltipPosition="right"
             transformOnHover
           >
-            <RiTooltip content={nav.tooltipText} position="right">
-              <div className={styles.navigationButtonWrapper}>
-                <NavigationItemWrapper
-                  active={nav.isActivePage}
-                  className={nav.getClassName()}
-                >
-                  <IconButton
-                    onClick={nav.onClick}
-                    size="M"
-                    icon={nav.getIconType()}
-                    aria-label={nav.ariaLabel}
-                    data-testid={nav.dataTestId}
-                  />
-                </NavigationItemWrapper>
-                {nav.isBeta && (
-                  <RiBadge className={styles.betaLabel} label="BETA" />
-                )}
-              </div>
-            </RiTooltip>
-          </HighlightedFeature>,
+            <div className={styles.navigationButtonWrapper}>
+              <SideBarItem
+                isActive={nav.isActivePage}
+                // className={nav.getClassName()}
+                onClick={nav.onClick}
+                tooltipProps={{ text: nav.tooltipText, placement: 'right' }}
+              >
+                <SideBarItem.Icon
+                  icon={nav.getIconType()}
+                  aria-label={nav.ariaLabel}
+                  data-testid={nav.dataTestId}
+                />
+              </SideBarItem>
+              {nav.isBeta && (
+                <RiBadge className={styles.betaLabel} label="BETA" />
+              )}
+            </div>
+          </HighlightedFeature >,
           { options: nav.onboard },
           nav.isActivePage,
         )}
-      </React.Fragment>
+      </React.Fragment >
     )
 
     return nav.featureFlag ? (
@@ -314,21 +315,18 @@ const NavigationMenu = () => {
         })}
         transformOnHover
       >
-        <RiTooltip content={nav.tooltipText} position="right">
-          <NavigationItemWrapper
-            active={nav.isActivePage}
-            className={nav.getClassName()}
-          >
-            <IconButton
-              onClick={nav.onClick}
-              size="M"
-              icon={nav.getIconType()}
-              aria-label={nav.ariaLabel}
-              data-testid={nav.dataTestId}
-            />
-          </NavigationItemWrapper>
-        </RiTooltip>
-      </HighlightedFeature>
+        <SideBarItem
+          isActive={nav.isActivePage}
+          tooltipProps={{ text: nav.tooltipText, placement: 'right' }}
+          onClick={nav.onClick}
+        >
+          <SideBarItem.Icon
+            icon={nav.getIconType()}
+            aria-label={nav.ariaLabel}
+            data-testid={nav.dataTestId}
+          />
+        </SideBarItem>
+      </HighlightedFeature >
     )
 
     return nav.featureFlag ? (
@@ -345,11 +343,12 @@ const NavigationMenu = () => {
   }
 
   return (
-    <EuiPageSideBar
+    <SideBar
+      isExpanded={false}
       aria-label="Main navigation"
       className={cx(styles.navigation, 'eui-yScroll')}
     >
-      <div className={styles.container}>
+      <SideBarContainer className={styles.container}>
         <RedisLogo isRdiWorkspace={isRdiWorkspace} />
         {connectedInstanceId &&
           !isRdiWorkspace &&
@@ -357,8 +356,8 @@ const NavigationMenu = () => {
         {connectedRdiInstanceId &&
           isRdiWorkspace &&
           privateRdiRoutes.map(renderNavItem)}
-      </div>
-      <div className={styles.bottomContainer}>
+      </SideBarContainer>
+      <SideBarFooter>
         <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
           <CreateCloud />
           <NotificationMenu />
@@ -367,51 +366,25 @@ const NavigationMenu = () => {
           <HelpMenu />
         </FeatureFlagComponent>
         {publicRoutes.map(renderPublicNavItem)}
-        <FeatureFlagComponent
-          name={FeatureFlags.envDependent}
-          otherwise={
-            <Divider
-              color="transparent"
-              className="eui-hideFor--xs eui-hideFor--s"
-              variant="middle"
-              data-testid="github-repo-divider-otherwise"
-            />
-          }
-          enabledByDefault
-        >
-          <Divider
-            data-testid="github-repo-divider-default"
-            colorVariable="separatorNavigationColor"
-            className="eui-hideFor--xs eui-hideFor--s"
-            variant="middle"
-          />
-        </FeatureFlagComponent>
+
+        <SideBarDivider />
+
         <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
-          <Divider
-            colorVariable="separatorNavigationColor"
-            className="eui-showFor--xs--flex eui-showFor--s--flex"
-            variant="middle"
-            orientation="vertical"
-          />
-          <RiTooltip content="Star us on GitHub" position="right">
-            <span className={cx(styles.iconNavItem, styles.githubLink)}>
-              <Link
-                href={EXTERNAL_LINKS.githubRepo}
-                target="_blank"
-                data-test-subj="github-repo-btn"
-              >
-                <EuiIcon
-                  className={styles.githubIcon}
-                  aria-label="redis insight github repository"
-                  type={GithubIcon}
-                  data-testid="github-repo-icon"
-                />
-              </Link>
-            </span>
-          </RiTooltip>
-        </FeatureFlagComponent>
-      </div>
-    </EuiPageSideBar>
+          <SideBarItem
+            className={cx(styles.iconNavItem, styles.githubLink)}
+            tooltipProps={{ text: 'Star us on GitHub', placement: 'right' }}
+            onClick={() => window.open(EXTERNAL_LINKS.githubRepo, '_blank', 'noopener,noreferrer')}
+            data-test-subj="github-repo-btn"
+          >
+            <SideBarItem.Icon
+              icon={GithubIcon}
+              aria-label="github-repo-icon"
+              data-testid="github-repo-icon"
+            />
+          </SideBarItem>
+        </FeatureFlagComponent >
+      </SideBarFooter >
+    </SideBar >
   )
 }
 

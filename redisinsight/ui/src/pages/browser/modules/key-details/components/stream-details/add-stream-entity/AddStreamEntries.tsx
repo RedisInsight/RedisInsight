@@ -1,5 +1,3 @@
-import { EuiPanel } from '@elastic/eui'
-import cx from 'classnames'
 import { toNumber } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -134,18 +132,7 @@ const AddStreamEntries = (props: Props) => {
 
   return (
     <>
-      <EuiPanel
-        color="transparent"
-        hasShadow={false}
-        borderRadius="none"
-        data-test-subj="add-stream-field-panel"
-        className={cx(
-          styles.content,
-          'eui-yScroll',
-          'flexItemNoFullWidth',
-          'inlineFieldsNoSpace',
-        )}
-      >
+      <div className={styles.content}>
         <StreamEntryFields
           entryIdError={entryIdError}
           entryID={entryID}
@@ -153,14 +140,9 @@ const AddStreamEntries = (props: Props) => {
           fields={fields}
           setFields={setFields}
         />
-      </EuiPanel>
-      <EuiPanel
-        style={{ border: 'none' }}
-        color="transparent"
-        hasShadow={false}
-        className="flexItemNoFullWidth"
-      >
-        <Row justify="end" gap="m">
+      </div>
+      <>
+        <Row justify="end" gap="m" style={{ padding: 18 }}>
           <FlexItem>
             <div>
               <SecondaryButton
@@ -185,7 +167,7 @@ const AddStreamEntries = (props: Props) => {
             </div>
           </FlexItem>
         </Row>
-      </EuiPanel>
+      </>
     </>
   )
 }

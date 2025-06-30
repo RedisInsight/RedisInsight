@@ -1,7 +1,6 @@
 import {
   EuiFieldText,
   EuiFormFieldset,
-  EuiPanel,
   EuiPopover,
   EuiSuperSelect,
   EuiSuperSelectOption,
@@ -328,14 +327,8 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
           </div>
         </div>
       </div>
-      <EuiPanel
-        style={{ border: 'none' }}
-        color="transparent"
-        hasShadow={false}
-        borderRadius="none"
-        className={styles.footer}
-      >
-        <Row justify="end" gap="m">
+      <>
+        <Row justify="end" gap="m" style={{ padding: 18 }}>
           <FlexItem>
             <SecondaryButton
               color="secondary"
@@ -358,7 +351,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
             </PrimaryButton>
           </FlexItem>
         </Row>
-      </EuiPanel>
+      </>
     </>
   )
 }

@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiPanel } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -20,6 +19,8 @@ import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { LightBulbIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
+import { Card } from 'uiSrc/components/base/layout'
+
 import styles from './styles.module.scss'
 
 const WbNoResultsMessage = () => {
@@ -58,13 +59,9 @@ const WbNoResultsMessage = () => {
       </Title>
       <Spacer />
 
-      <EuiPanel
-        className={styles.noResultsPanel}
-        hasShadow={false}
-        grow={false}
-      >
+      <Card className={styles.noResultsPanel}>
         <ArrowToGuidesIcon className={styles.arrowToGuides} />
-        <Row gap="m" responsive>
+        <Row gap="m" responsive style={{ padding: 18 }}>
           <FlexItem>
             <img
               className={styles.noResultsIcon}
@@ -98,7 +95,7 @@ const WbNoResultsMessage = () => {
             </Text>
           </FlexItem>
         </Row>
-      </EuiPanel>
+      </Card>
     </div>
   )
 }

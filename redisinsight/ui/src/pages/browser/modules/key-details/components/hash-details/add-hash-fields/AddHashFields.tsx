@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import cx from 'classnames'
-import { EuiFieldText, EuiPanel } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import {
   keysSelector,
@@ -166,18 +165,7 @@ const AddHashFields = (props: Props) => {
 
   return (
     <>
-      <EuiPanel
-        color="transparent"
-        hasShadow={false}
-        borderRadius="none"
-        data-test-subj="add-hash-field-panel"
-        className={cx(
-          styles.container,
-          'eui-yScroll',
-          'flexItemNoFullWidth',
-          'inlineFieldsNoSpace',
-        )}
-      >
+      <div className={styles.container}>
         <AddMultipleFields
           items={fields}
           isClearDisabled={isClearDisabled}
@@ -246,13 +234,8 @@ const AddHashFields = (props: Props) => {
             </Row>
           )}
         </AddMultipleFields>
-      </EuiPanel>
-      <EuiPanel
-        style={{ border: 'none' }}
-        color="transparent"
-        hasShadow={false}
-        className="flexItemNoFullWidth"
-      >
+      </div>
+      <>
         <Row justify="end" gap="m">
           <FlexItem>
             <div>
@@ -277,7 +260,7 @@ const AddHashFields = (props: Props) => {
             </div>
           </FlexItem>
         </Row>
-      </EuiPanel>
+      </>
     </>
   )
 }

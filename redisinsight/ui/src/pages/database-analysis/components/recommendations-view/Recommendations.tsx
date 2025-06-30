@@ -37,6 +37,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
+import { Link } from 'uiSrc/components/base/link/Link'
 
 const Recommendations = () => {
   const { data, loading } = useSelector(dbAnalysisSelector)
@@ -91,8 +92,7 @@ const Recommendations = () => {
       <Row align="center">
         <FlexItem onClick={onRedisStackClick}>
           {redisStack && (
-            <EuiLink
-              external={false}
+            <Link
               target="_blank"
               href={EXTERNAL_LINKS.redisStack}
               className={styles.redisStackLink}
@@ -112,7 +112,7 @@ const Recommendations = () => {
                   data-testid={`${id}-redis-stack-icon`}
                 />
               </EuiToolTip>
-            </EuiLink>
+            </Link>
           )}
         </FlexItem>
         <FlexItem>{title}</FlexItem>

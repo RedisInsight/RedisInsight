@@ -1,8 +1,4 @@
-import {
-  EuiLoadingSpinner,
-  EuiIcon,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon, EuiToolTip } from '@elastic/eui'
 import { pick } from 'lodash'
 import { useHistory } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
@@ -31,6 +27,7 @@ import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon, CopyIcon } from 'uiSrc/components/base/icons'
 import { ColorText, Text } from 'uiSrc/components/base/text'
 import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
+import { Loader } from 'uiSrc/components/base/display'
 import SentinelDatabasesResult from './components'
 
 import styles from '../styles.module.scss'
@@ -123,7 +120,7 @@ const SentinelDatabasesResultPage = () => {
         },
       }) => (
         <div data-testid={`status_${name}_${status}`}>
-          {loading && <EuiLoadingSpinner />}
+          {loading && <Loader />}
           {!loading && status === AddRedisDatabaseStatus.Success && (
             <Text>{message}</Text>
           )}
@@ -143,9 +140,11 @@ const SentinelDatabasesResultPage = () => {
       id: 'name',
       accessorKey: 'name',
       enableSorting: true,
-      cell: ({ row: { original: { name } } }) => (
-        <span data-testid={`primary-group_${name}`}>{name}</span>
-      ),
+      cell: ({
+        row: {
+          original: { name },
+        },
+      }) => <span data-testid={`primary-group_${name}`}>{name}</span>,
     },
     {
       header: 'Database Alias*',

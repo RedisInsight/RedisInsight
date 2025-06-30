@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import { EuiToolTip, EuiIcon, EuiLink } from '@elastic/eui'
+import { EuiToolTip, EuiIcon } from '@elastic/eui'
 import { format } from 'date-fns'
 import { useDispatch } from 'react-redux'
 import { isNull } from 'lodash'
@@ -27,6 +27,7 @@ import { CopyIcon } from 'uiSrc/components/base/icons'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
+import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -177,15 +178,14 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
             text={
               <>
                 {'To delete this API key from Redis Cloud, '}
-                <EuiLink
+                <Link
                   target="_blank"
                   color="text"
-                  external={false}
                   tabIndex={-1}
                   href="https://redis.io/redis-enterprise-cloud/overview/?utm_source=redisinsight&utm_medium=settings&utm_campaign=clear_keys"
                 >
                   sign in to Redis Cloud
-                </EuiLink>
+                </Link>
                 {' and delete it manually.'}
               </>
             }

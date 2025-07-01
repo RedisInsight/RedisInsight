@@ -1,23 +1,22 @@
-import cx from 'classnames'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
 import {
   notificationCenterSelector,
   setIsCenterOpen,
 } from 'uiSrc/slices/app/notifications'
-
 import { NotificationsIcon } from 'uiSrc/components/base/icons'
-import { SideBarItem } from 'uiSrc/components/base/layout/sidebar'
+import {
+  SideBarItem,
+  SideBarItemIcon,
+} from 'uiSrc/components/base/layout/sidebar'
 import NotificationCenter from './NotificationCenter'
 import PopoverNotification from './PopoverNotification'
 
-import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
 
 const NavButton = () => {
-  const { isCenterOpen, totalUnread } = useSelector(
-    notificationCenterSelector,
-  )
+  const { isCenterOpen, totalUnread } = useSelector(notificationCenterSelector)
 
   const dispatch = useDispatch()
 
@@ -27,13 +26,11 @@ const NavButton = () => {
 
   const Btn = (
     <SideBarItem
-      className={cx(navStyles.navigationButton, styles.notificationIcon, {
-        // [styles.active]: isCenterOpen,
-      })}
       tooltipProps={{ text: 'Notification Center', placement: 'right' }}
       onMouseDownCapture={onClickIcon}
+      isActive={isCenterOpen}
     >
-      <SideBarItem.Icon
+      <SideBarItemIcon
         icon={NotificationsIcon}
         aria-label="Notification Menu"
         data-testid="notification-menu-button"
@@ -42,7 +39,7 @@ const NavButton = () => {
   )
 
   return (
-    <div className={styles.navBtnWrapper}>
+    <>
       {Btn}
       {totalUnread > 0 && !isCenterOpen && (
         <div
@@ -52,7 +49,7 @@ const NavButton = () => {
           {totalUnread > 9 ? '9+' : totalUnread}
         </div>
       )}
-    </div>
+    </>
   )
 }
 

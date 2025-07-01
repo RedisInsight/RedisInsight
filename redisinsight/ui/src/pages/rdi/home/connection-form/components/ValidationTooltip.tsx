@@ -13,7 +13,7 @@ export interface Props {
 
 const ValidationTooltip = ({ isValid, errors, children }: Props) => {
   const tooltipContent = (
-    <ul>
+    <ul data-testid="validation-errors-list">
       {Object.values(errors).map((value) => (
         <li key={value}>{value}</li>
       ))}

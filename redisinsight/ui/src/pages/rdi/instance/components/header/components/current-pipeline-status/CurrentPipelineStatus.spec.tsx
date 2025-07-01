@@ -29,8 +29,8 @@ describe('CurrentPipelineStatus', () => {
     )
     expect(screen.getByText('Error')).toBeInTheDocument()
 
-    fireEvent.mouseOver(screen.getByTestId('pipeline-state-badge'))
-    await waitFor(() => screen.getByText(errorMessage))
-    expect(screen.getByText(errorMessage)).toBeInTheDocument()
+    fireEvent.focus(screen.getByTestId('pipeline-state-badge'))
+    await waitFor(() => screen.getAllByText(errorMessage)[0])
+    expect(screen.getAllByText(errorMessage)[0]).toBeInTheDocument()
   })
 })

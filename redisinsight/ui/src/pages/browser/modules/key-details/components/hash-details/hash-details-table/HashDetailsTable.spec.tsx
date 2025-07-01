@@ -18,7 +18,7 @@ import {
   mockedStore,
   render,
   screen,
-  waitForEuiToolTipVisible,
+  waitForRiTooltipVisible,
 } from 'uiSrc/utils/test-utils'
 import {
   GZIP_COMPRESSED_VALUE_1,
@@ -216,10 +216,10 @@ describe('HashDetailsTable', () => {
       expect(editBtn).toBeDisabled()
 
       act(() => {
-        fireEvent.mouseOver(editBtn)
+        fireEvent.focus(editBtn)
       })
 
-      await waitForEuiToolTipVisible()
+      await waitForRiTooltipVisible()
       expect(screen.getByTestId('hash_edit-tooltip-1')).toHaveTextContent(
         TEXT_DISABLED_FORMATTER_EDITING,
       )
@@ -288,9 +288,9 @@ describe('HashDetailsTable', () => {
       fireEvent.click(editBtn)
 
       await act(async () => {
-        fireEvent.mouseOver(editBtn)
+        fireEvent.focus(editBtn)
       })
-      await waitForEuiToolTipVisible()
+      await waitForRiTooltipVisible()
 
       expect(editBtn).toBeDisabled()
       expect(screen.getByTestId('hash_edit-tooltip-1')).toHaveTextContent(
@@ -330,9 +330,9 @@ describe('HashDetailsTable', () => {
 
       // button with disabled removing
       await act(async () => {
-        fireEvent.mouseOver(removeHashButtons[1])
+        fireEvent.focus(removeHashButtons[1])
       })
-      await waitForEuiToolTipVisible()
+      await waitForRiTooltipVisible()
       expect(
         screen.getByTestId(
           `remove-hash-button-${MOCK_TRUNCATED_STRING_VALUE}-tooltip`,
@@ -355,9 +355,9 @@ describe('HashDetailsTable', () => {
       expect(editButton).toBeDisabled()
 
       await act(async () => {
-        fireEvent.mouseOver(editButton)
+        fireEvent.focus(editButton)
       })
-      await waitForEuiToolTipVisible()
+      await waitForRiTooltipVisible()
 
       expect(
         screen.getByTestId('hash_edit-tooltip-regular-field'),
@@ -389,9 +389,9 @@ describe('HashDetailsTable', () => {
       expect(editButton).toBeDisabled()
 
       await act(async () => {
-        fireEvent.mouseOver(editButton)
+        fireEvent.focus(editButton)
       })
-      await waitForEuiToolTipVisible()
+      await waitForRiTooltipVisible()
 
       expect(
         screen.getByTestId(`hash_edit-tooltip-${MOCK_TRUNCATED_STRING_VALUE}`),
@@ -423,9 +423,9 @@ describe('HashDetailsTable', () => {
       expect(editTtlButton).toBeDisabled()
 
       await act(async () => {
-        fireEvent.mouseOver(editTtlButton)
+        fireEvent.focus(editTtlButton)
       })
-      await waitForEuiToolTipVisible()
+      await waitForRiTooltipVisible()
 
       expect(
         screen.getByTestId(

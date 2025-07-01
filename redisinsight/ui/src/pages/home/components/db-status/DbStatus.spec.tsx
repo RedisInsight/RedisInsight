@@ -5,7 +5,7 @@ import {
   fireEvent,
   render,
   screen,
-  waitForEuiToolTipVisible,
+  waitForRiTooltipVisible,
 } from 'uiSrc/utils/test-utils'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -101,12 +101,12 @@ describe('DbStatus', () => {
     )
 
     await act(async () => {
-      fireEvent.mouseOver(
+      fireEvent.focus(
         screen.getByTestId(`database-status-${WarningTypes.TryDatabase}-1`),
       )
     })
 
-    await waitForEuiToolTipVisible(1_000)
+    await waitForRiTooltipVisible(1_000)
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_NOT_USED_DB_NOTIFICATION_VIEWED,

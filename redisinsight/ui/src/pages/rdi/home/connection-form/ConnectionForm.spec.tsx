@@ -113,7 +113,7 @@ describe('ConnectionForm', () => {
       </>,
     )
 
-    fireEvent.mouseOver(screen.getByTestId('connection-form-add-button'))
+    fireEvent.focus(screen.getByTestId('connection-form-add-button'))
 
     const tooltip = await screen.findByTestId(
       'connection-form-validation-tooltip',
@@ -130,7 +130,7 @@ describe('ConnectionForm', () => {
       </>,
     )
 
-    fireEvent.mouseOver(screen.getByTestId('connection-form-test-button'))
+    fireEvent.focus(screen.getByTestId('connection-form-test-button'))
 
     const tooltip = await screen.findByTestId(
       'connection-form-validation-tooltip',

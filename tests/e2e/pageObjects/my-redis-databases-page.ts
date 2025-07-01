@@ -66,7 +66,7 @@ export class MyRedisDatabasePage extends BaseOverviewPage {
     searchInput = Selector('[data-testid=search-database-list]');
     importDatabaseInput = Selector('[data-testid=import-file-modal-filepicker]');
     //TEXT ELEMENTS
-    moduleTooltip = Selector('.euiToolTipPopover');
+    moduleTooltip = Selector('[data-radix-popper-content-wrapper]');
     moduleQuantifier = Selector('[data-testid=_module]');
     dbNameList = Selector('[data-testid^=instance-name]', { timeout: 3000 });
     tableRowContent = Selector('[data-test-subj=database-alias-column]');

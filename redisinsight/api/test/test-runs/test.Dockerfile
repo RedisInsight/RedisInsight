@@ -5,9 +5,9 @@ RUN dbus-uuidgen > /var/lib/dbus/machine-id
 
 WORKDIR /usr/src/app
 
-COPY package.json yarn.lock ./
+COPY package.json package-lock.json ./
 COPY stubs ./stubs
-RUN yarn install
+RUN npm ci
 COPY . .
 
 COPY ./test/test-runs/test-docker-entry.sh ./test/test-runs/wait-for-it.sh ./
@@ -18,4 +18,4 @@ ARG GNOME_KEYRING_PASS="somepass"
 ENV GNOME_KEYRING_PASS=${GNOME_KEYRING_PASS}
 
 ENTRYPOINT ["./test-docker-entry.sh"]
-CMD ["yarn", "test:api:ci:cov"]
+CMD ["npm", "run", "test:api:ci:cov"]

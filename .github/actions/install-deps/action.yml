@@ -27,4 +27,5 @@ runs:
         # export npm_config_keytar_binary_host_mirror=${{ inputs.keytar-host-mirror }}
         # export npm_config_node_sqlite3_binary_host_mirror=${{ inputs.sqlite3-host-mirror }}
 
-        npm ci
+        # TODO: Fix peer dependencies issues
+        npm ci --legacy-peer-deps

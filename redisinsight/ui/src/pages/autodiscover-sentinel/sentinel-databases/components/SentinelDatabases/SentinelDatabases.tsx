@@ -178,7 +178,7 @@ const SentinelDatabases = ({
         title={title}
         content={
           isSubmitDisabled() ? (
-            <span className="euiToolTip__content">{content}</span>
+            <span>{content}</span>
           ) : null
         }
       >

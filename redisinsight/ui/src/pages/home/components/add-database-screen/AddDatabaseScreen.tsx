@@ -125,7 +125,7 @@ const AddDatabaseScreen = (props: Props) => {
               position="top"
               content={
                 isInvalid ? (
-                  <span className="euiToolTip__content">
+                  <span>
                     {ConnectionUrlError}
                   </span>
                 ) : null
@@ -160,7 +160,7 @@ const AddDatabaseScreen = (props: Props) => {
                   position="top"
                   content={
                     isInvalid ? (
-                      <span className="euiToolTip__content">
+                      <span>
                         {ConnectionUrlError}
                       </span>
                     ) : null

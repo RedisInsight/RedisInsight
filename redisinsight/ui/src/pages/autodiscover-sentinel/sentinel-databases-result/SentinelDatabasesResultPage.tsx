@@ -329,7 +329,7 @@ const SentinelDatabasesResultPage = () => {
               title={isDisabled ? validationErrors.REQUIRED_TITLE(1) : null}
               content={
                 isDisabled ? (
-                  <span className="euiToolTip__content">Database Alias</span>
+                  <span>Database Alias</span>
                 ) : null
               }
             >

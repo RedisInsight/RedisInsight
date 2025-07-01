@@ -3,7 +3,7 @@ import React from 'react'
 import { TooltipProvider, Tooltip, TooltipProps } from '@redis-ui/components'
 import { HoverContent } from './HoverContent'
 
-interface RiTooltipProps extends TooltipProps {
+export interface RiTooltipProps extends TooltipProps {
   title?: React.ReactNode
   position?: TooltipProps['placement']
   delay?: TooltipProps['openDelayDuration']

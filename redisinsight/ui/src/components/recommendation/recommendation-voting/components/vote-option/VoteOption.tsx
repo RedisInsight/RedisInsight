@@ -99,7 +99,7 @@ const VoteOption = (props: Props) => {
       isOpen={popover === voteOption}
       closePopover={() => setPopover('')}
       anchorClassName={styles.popoverAnchor}
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+      panelClassName={cx('popoverLikeTooltip', styles.popover)}
       button={
         <RiTooltip
           content={getTooltipContent(voteOption)}

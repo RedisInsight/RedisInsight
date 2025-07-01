@@ -130,7 +130,7 @@ const CloudConnectionForm = (props: Props) => {
       }
       content={
         submitIsDisabled ? (
-          <span className="euiToolTip__content">
+          <span>
             {Object.values(errors).map((err) => [err, <br key={err} />])}
           </span>
         ) : null

@@ -172,7 +172,7 @@ const RedisCloudDatabasesPage = ({
       }
       content={
         isDisabled ? (
-          <span className="euiToolTip__content">
+          <span>
             {validationErrors.NO_DBS_SELECTED}
           </span>
         ) : null

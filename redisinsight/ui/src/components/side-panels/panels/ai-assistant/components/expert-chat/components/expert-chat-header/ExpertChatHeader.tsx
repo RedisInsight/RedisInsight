@@ -84,11 +84,7 @@ const ExpertChatHeader = (props: Props) => {
             ownFocus
             initialFocus={false}
             className={styles.popoverAnchor}
-            panelClassName={cx(
-              'euiToolTip',
-              'popoverLikeTooltip',
-              styles.popover,
-            )}
+            panelClassName={cx('popoverLikeTooltip', styles.popover)}
             anchorClassName={styles.popoverAnchor}
             anchorPosition="downLeft"
             isOpen={isTutorialsPopoverOpen}

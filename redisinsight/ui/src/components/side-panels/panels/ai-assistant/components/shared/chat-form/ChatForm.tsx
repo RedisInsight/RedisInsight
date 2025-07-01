@@ -135,11 +135,7 @@ const ChatForm = (props: Props) => {
             isOpen={isAgreementsPopoverOpen}
             anchorPosition="downRight"
             closePopover={() => setIsAgreementsPopoverOpen(false)}
-            panelClassName={cx(
-              'euiToolTip',
-              'popoverLikeTooltip',
-              styles.popover,
-            )}
+            panelClassName={cx('popoverLikeTooltip', styles.popover)}
             anchorClassName={styles.popoverAnchor}
             button={
               <PrimaryButton

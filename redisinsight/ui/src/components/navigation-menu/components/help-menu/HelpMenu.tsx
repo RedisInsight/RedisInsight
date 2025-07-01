@@ -90,11 +90,7 @@ const HelpMenu = () => {
       anchorPosition="rightUp"
       isOpen={isHelpMenuActive}
       anchorClassName={styles.unsupportedInfo}
-      panelClassName={cx(
-        'euiToolTip',
-        'popoverLikeTooltip',
-        styles.popoverWrapper,
-      )}
+      panelClassName={cx('popoverLikeTooltip', styles.popoverWrapper)}
       closePopover={() => setIsHelpMenuActive(false)}
       button={
         <>

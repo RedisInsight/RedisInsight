@@ -114,7 +114,7 @@ const RedisUploadButton = ({ label, path }: Props) => {
         anchorPosition="downLeft"
         isOpen={isPopoverOpen}
         closePopover={() => setIsPopoverOpen(false)}
-        panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+        panelClassName={cx('popoverLikeTooltip', styles.popover)}
         anchorClassName={styles.popoverAnchor}
         panelPaddingSize="none"
         button={

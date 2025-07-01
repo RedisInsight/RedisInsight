@@ -335,7 +335,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             position="top"
             content={
               submitIsDisabled() ? (
-                <span className="euiToolTip__content">
+                <span>
                   {Object.values(errors).map((err) => [
                     spec?.agreements[err as string]?.requiredText,
                     <br key={err} />,

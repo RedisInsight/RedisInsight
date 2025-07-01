@@ -169,11 +169,7 @@ const InternalPage = (props: Props) => {
         <div style={{ padding: 0 }}>
           <EuiPopover
             initialFocus={false}
-            panelClassName={cx(
-              'euiToolTip',
-              'popoverLikeTooltip',
-              styles.popover,
-            )}
+            panelClassName={cx('popoverLikeTooltip', styles.popover)}
             anchorClassName={styles.popoverAnchor}
             anchorPosition="leftCenter"
             isOpen={showCapabilityPopover}

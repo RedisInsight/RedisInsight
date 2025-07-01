@@ -1,10 +1,4 @@
-import {
-  EuiFieldText,
-  EuiForm,
-  EuiIcon,
-  EuiToolTipProps,
-  ToolTipPositions,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiIcon, ToolTipPositions } from '@elastic/eui'
 import {
   Field,
   FieldInputProps,
@@ -20,7 +14,7 @@ import { isNull } from 'lodash'
 
 import ReactDOM from 'react-dom'
 import { SECURITY_FIELD } from 'uiSrc/constants'
-import { RiTooltip } from 'uiSrc/components'
+import { RiTooltip, RiTooltipProps } from 'uiSrc/components'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import { getFormUpdates, Nullable } from 'uiSrc/utils'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
@@ -38,7 +32,7 @@ import ValidationTooltip from './components/ValidationTooltip'
 import styles from './styles.module.scss'
 
 export interface AppendInfoProps
-  extends Omit<EuiToolTipProps, 'children' | 'delay' | 'position'> {
+  extends Omit<RiTooltipProps, 'children' | 'delay' | 'position'> {
   position?: ToolTipPositions
 }
 

@@ -68,7 +68,7 @@ const UploadTutorialForm = (props: Props) => {
       errorsArr.splice(maxErrorsCount, errorsArr.length, ['...'])
     }
     return isSubmitDisabled ? (
-      <span className="euiToolTip__content">{errorsArr}</span>
+      <span>{errorsArr}</span>
     ) : null
   }
 

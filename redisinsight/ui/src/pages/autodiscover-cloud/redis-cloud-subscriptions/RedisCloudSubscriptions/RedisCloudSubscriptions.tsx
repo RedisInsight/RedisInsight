@@ -183,7 +183,7 @@ const RedisCloudSubscriptions = ({
       }
       content={
         isDisabled ? (
-          <span className="euiToolTip__content">
+          <span>
             {validationErrors.NO_SUBSCRIPTIONS_CLOUD}
           </span>
         ) : null

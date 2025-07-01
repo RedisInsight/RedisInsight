@@ -28,7 +28,7 @@ const ConfirmOverwrite = ({
     anchorPosition="downRight"
     isOpen={isOpen}
     closePopover={onCancel}
-    panelClassName={cx('euiToolTip', 'popoverLikeTooltip')}
+    panelClassName={cx('popoverLikeTooltip')}
     button={children}
   >
     <Text size="m" style={{ fontWeight: 'bold' }}>

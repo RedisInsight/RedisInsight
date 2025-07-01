@@ -1,5 +1,4 @@
 export { GithubIcon } from './GithubIcon'
-export { SettingsIcon as RISettingsIcon } from './SettingsIcon'
 export { SettingsActiveIcon } from './SettingsActiveIcon'
 export { BrowserIcon } from './BrowserIcon'
 export { BrowserActiveIcon } from './BrowserActiveIcon'

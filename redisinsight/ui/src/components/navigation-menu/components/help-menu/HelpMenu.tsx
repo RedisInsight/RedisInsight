@@ -27,7 +27,10 @@ import { Title } from 'uiSrc/components/base/text/Title'
 import { SupportIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
 import { Link } from 'uiSrc/components/base/link/Link'
-import { SideBarItem } from 'uiSrc/components/base/layout/sidebar'
+import {
+  SideBarItem,
+  SideBarItemIcon,
+} from 'uiSrc/components/base/layout/sidebar'
 import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
 
@@ -71,13 +74,14 @@ const HelpMenu = () => {
 
   const HelpMenuButton = (
     <SideBarItem
-      className={cx(navStyles.navigationButton, {
-        [navStyles.navigationButtonNotified]: isReleaseNotesViewed === false,
+      className={cx({
+        [navStyles.navigationButtonNotified]: true,
       })}
       onClick={() => setIsHelpMenuActive((value) => !value)}
-      tooltipProps={{ text: 'Help' }}
+      tooltipProps={{ text: 'Help', placement: 'right' }}
+      isActive={isHelpMenuActive}
     >
-      <SideBarItem.Icon
+      <SideBarItemIcon
         icon={SupportIcon}
         aria-label="Help Menu"
         data-testid="help-menu-button"

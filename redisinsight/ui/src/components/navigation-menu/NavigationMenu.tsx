@@ -1,7 +1,6 @@
 /* eslint-disable react/no-this-in-sfc */
 import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import cx from 'classnames'
 import { last } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import HighlightedFeature, {
@@ -12,7 +11,6 @@ import { ANALYTICS_ROUTES } from 'uiSrc/components/main-router/constants/sub-rou
 import { FeatureFlags, PageNames, Pages } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import {
-  appFeatureFlagsFeaturesSelector,
   appFeaturePagesHighlightingSelector,
   removeFeatureFromHighlighting,
 } from 'uiSrc/slices/app/features'
@@ -36,13 +34,12 @@ import {
   PipelineStatisticsIcon,
   PubSubActiveIcon,
   PubSubIcon,
-  SettingsActiveIcon,
-  RISettingsIcon,
   SlowLogActiveIcon,
   SlowLogIcon,
   WorkbenchActiveIcon,
   WorkbenchIcon,
   GithubIcon,
+  SettingsIcon,
 } from 'uiSrc/components/base/icons'
 import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
 import {
@@ -51,6 +48,7 @@ import {
   SideBarDivider,
   SideBarFooter,
   SideBarItem,
+  SideBarItemIcon,
 } from 'uiSrc/components/base/layout/sidebar'
 import CreateCloud from './components/create-cloud'
 import HelpMenu from './components/help-menu/HelpMenu'
@@ -70,7 +68,6 @@ interface INavigations {
   dataTestId: string
   connectedInstanceId?: string
   onClick: () => void
-  getClassName: () => string
   getIconType: () => IconType
   onboard?: any
   featureFlag?: FeatureFlags
@@ -91,9 +88,6 @@ const NavigationMenu = () => {
     connectedRdiInstanceSelector,
   )
   const highlightedPages = useSelector(appFeaturePagesHighlightingSelector)
-  const { [FeatureFlags.envDependent]: envDependentFeature } = useSelector(
-    appFeatureFlagsFeaturesSelector,
-  )
 
   const isRdiWorkspace = workspace === AppWorkspace.RDI
 
@@ -127,11 +121,6 @@ const NavigationMenu = () => {
     return {}
   }
 
-  const navigationButtonStyle = {
-    [styles.navigationButton]: true,
-    [styles.navigationButtonAlt]: !envDependentFeature?.flag,
-  }
-
   const privateRoutes: INavigations[] = [
     {
       tooltipText: 'Browser',
@@ -141,11 +130,8 @@ const NavigationMenu = () => {
       onClick: () => handleGoPage(Pages.browser(connectedInstanceId)),
       dataTestId: 'browser-page-btn',
       connectedInstanceId,
-      getClassName() {
-        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
-      },
       getIconType() {
-        return this.isActivePage ? BrowserIcon : BrowserActiveIcon
+        return this.isActivePage ? BrowserActiveIcon : BrowserIcon
       },
       onboard: ONBOARDING_FEATURES.BROWSER_PAGE,
     },
@@ -157,11 +143,8 @@ const NavigationMenu = () => {
       dataTestId: 'workbench-page-btn',
       connectedInstanceId,
       isActivePage: activePage === `/${PageNames.workbench}`,
-      getClassName() {
-        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
-      },
       getIconType() {
-        return this.isActivePage ? WorkbenchIcon : WorkbenchActiveIcon
+        return this.isActivePage ? WorkbenchActiveIcon : WorkbenchIcon
       },
       onboard: ONBOARDING_FEATURES.WORKBENCH_PAGE,
     },
@@ -173,11 +156,8 @@ const NavigationMenu = () => {
       dataTestId: 'analytics-page-btn',
       connectedInstanceId,
       isActivePage: isAnalyticsPath(activePage),
-      getClassName() {
-        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
-      },
       getIconType() {
-        return this.isActivePage ? SlowLogActiveIcon : SlowLogIcon
+        return this.isActivePage ? SlowLogIcon : SlowLogActiveIcon
       },
       featureFlag: FeatureFlags.envDependent,
     },
@@ -189,11 +169,8 @@ const NavigationMenu = () => {
       dataTestId: 'pub-sub-page-btn',
       connectedInstanceId,
       isActivePage: activePage === pubSubPath,
-      getClassName() {
-        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
-      },
       getIconType() {
-        return this.isActivePage ? PubSubActiveIcon : PubSubIcon
+        return this.isActivePage ? PubSubIcon : PubSubActiveIcon
       },
       onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE,
       featureFlag: FeatureFlags.envDependent,
@@ -208,13 +185,10 @@ const NavigationMenu = () => {
       onClick: () => handleGoPage(Pages.rdiStatistics(connectedRdiInstanceId)),
       dataTestId: 'pipeline-status-page-btn',
       isActivePage: activePage === `/${PageNames.rdiStatistics}`,
-      getClassName() {
-        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
-      },
       getIconType() {
         return this.isActivePage
-          ? PipelineStatisticsActiveIcon
-          : PipelineStatisticsIcon
+          ? PipelineStatisticsIcon
+          : PipelineStatisticsActiveIcon
       },
     },
     {
@@ -225,9 +199,6 @@ const NavigationMenu = () => {
         handleGoPage(Pages.rdiPipelineManagement(connectedRdiInstanceId)),
       dataTestId: 'pipeline-management-page-btn',
       isActivePage: isPipelineManagementPath(),
-      getClassName() {
-        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
-      },
       getIconType() {
         return this.isActivePage
           ? PipelineManagementActiveIcon
@@ -244,12 +215,7 @@ const NavigationMenu = () => {
       onClick: () => handleGoPage(Pages.settings),
       dataTestId: 'settings-page-btn',
       isActivePage: activePage === Pages.settings,
-      getClassName() {
-        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
-      },
-      getIconType() {
-        return this.isActivePage ? SettingsActiveIcon : RISettingsIcon
-      },
+      getIconType: () => SettingsIcon,
       featureFlag: FeatureFlags.envDependent,
     },
   ]
@@ -262,20 +228,17 @@ const NavigationMenu = () => {
             {...getAdditionPropsForHighlighting(nav.pageName)}
             key={nav.tooltipText}
             isHighlight={!!highlightedPages[nav.pageName]?.length}
-            dotClassName={cx(styles.highlightDot, {
-              [styles.activePage]: nav.isActivePage,
-            })}
+            dotClassName={styles.highlightDot}
             tooltipPosition="right"
             transformOnHover
           >
             <div className={styles.navigationButtonWrapper}>
               <SideBarItem
                 isActive={nav.isActivePage}
-                // className={nav.getClassName()}
                 onClick={nav.onClick}
                 tooltipProps={{ text: nav.tooltipText, placement: 'right' }}
               >
-                <SideBarItem.Icon
+                <SideBarItemIcon
                   icon={nav.getIconType()}
                   aria-label={nav.ariaLabel}
                   data-testid={nav.dataTestId}
@@ -310,17 +273,16 @@ const NavigationMenu = () => {
       <HighlightedFeature
         key={nav.tooltipText}
         isHighlight={!!highlightedPages[nav.pageName]?.length}
-        dotClassName={cx(styles.highlightDot, {
-          [styles.activePage]: nav.isActivePage,
-        })}
+        dotClassName={styles.highlightDot}
         transformOnHover
       >
         <SideBarItem
-          isActive={nav.isActivePage}
           tooltipProps={{ text: nav.tooltipText, placement: 'right' }}
           onClick={nav.onClick}
+          isActive={nav.isActivePage}
+          className={styles.sideBarItem}
         >
-          <SideBarItem.Icon
+          <SideBarItemIcon
             icon={nav.getIconType()}
             aria-label={nav.ariaLabel}
             data-testid={nav.dataTestId}
@@ -346,9 +308,10 @@ const NavigationMenu = () => {
     <SideBar
       isExpanded={false}
       aria-label="Main navigation"
-      className={cx(styles.navigation, 'eui-yScroll')}
+      data-testid="main-navigation-sidebar"
+      className={styles.mainNavbar}
     >
-      <SideBarContainer className={styles.container}>
+      <SideBarContainer>
         <RedisLogo isRdiWorkspace={isRdiWorkspace} />
         {connectedInstanceId &&
           !isRdiWorkspace &&
@@ -357,7 +320,7 @@ const NavigationMenu = () => {
           isRdiWorkspace &&
           privateRdiRoutes.map(renderNavItem)}
       </SideBarContainer>
-      <SideBarFooter>
+      <SideBarFooter className={styles.footer}>
         <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
           <CreateCloud />
           <NotificationMenu />
@@ -365,26 +328,27 @@ const NavigationMenu = () => {
         <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
           <HelpMenu />
         </FeatureFlagComponent>
+
         {publicRoutes.map(renderPublicNavItem)}
 
-        <SideBarDivider />
-
         <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
-          <SideBarItem
-            className={cx(styles.iconNavItem, styles.githubLink)}
-            tooltipProps={{ text: 'Star us on GitHub', placement: 'right' }}
-            onClick={() => window.open(EXTERNAL_LINKS.githubRepo, '_blank', 'noopener,noreferrer')}
-            data-test-subj="github-repo-btn"
-          >
-            <SideBarItem.Icon
-              icon={GithubIcon}
-              aria-label="github-repo-icon"
-              data-testid="github-repo-icon"
-            />
-          </SideBarItem>
-        </FeatureFlagComponent >
-      </SideBarFooter >
-    </SideBar >
+          <SideBarDivider />
+          <SideBarFooter.Link href={EXTERNAL_LINKS.githubRepo} target="_blank">
+            <SideBarItem
+              className={styles.githubNavItem}
+              tooltipProps={{ text: 'Star us on GitHub', placement: 'right' }}
+              data-test-subj="github-repo-btn"
+            >
+              <SideBarItemIcon
+                icon={GithubIcon}
+                aria-label="github-repo-icon"
+                data-testid="github-repo-icon"
+              />
+            </SideBarItem>
+          </SideBarFooter.Link>
+        </FeatureFlagComponent>
+      </SideBarFooter>
+    </SideBar>
   )
 }
 

@@ -131,7 +131,7 @@ export class RdiService {
     } catch (error) {
       this.logger.error(
         `Failed to delete instance(s): ${ids}`,
-        error.message,
+        error,
         sessionMetadata,
       );
       this.analytics.sendRdiInstanceDeleted(
@@ -153,6 +153,7 @@ export class RdiService {
     } catch (error) {
       this.logger.error(
         `Failed to connect to rdi instance ${rdiClientMetadata.id}`,
+        error,
         rdiClientMetadata,
       );
       throw wrapRdiPipelineError(error);

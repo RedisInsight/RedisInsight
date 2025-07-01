@@ -23,7 +23,7 @@ jobs:
         run: |
           FILENAME=ui.prod.deps.audit.json
 
-          yarn audit --groups dependencies --json > $FILENAME || true &&
+          npm audit --omit=dev --json > $FILENAME || true &&
           FILENAME=$FILENAME DEPS="UI prod" node .github/deps-audit-report.js &&
           curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
@@ -31,7 +31,7 @@ jobs:
         run: |
           FILENAME=ui.dev.deps.audit.json
 
-          yarn audit --groups devDependencies --json > $FILENAME || true &&
+          npm audit --only=dev --json > $FILENAME || true &&
           FILENAME=$FILENAME DEPS="UI dev" node .github/deps-audit-report.js &&
           curl -H "Content-type: application/json" --data @slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
@@ -40,17 +40,17 @@ jobs:
           FILENAME=ui.lint.audit.json
           WORKDIR="."
 
-          yarn lint:ui -f json -o $FILENAME || true &&
+          npm run lint:ui -f json -o $FILENAME || true &&
           FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="UI" node .github/lint-report.js &&
           curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
-          yarn lint -f json -o $FILENAME || true &&
+          npm run lint -f json -o $FILENAME || true &&
           FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="REST" node .github/lint-report.js &&
           curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
       - name: Unit tests UI
         timeout-minutes: 30
-        run: yarn test:cov --ci --silent
+        run: npm run test:cov -- --ci --silent
 
       - name: Upload Test Report
         uses: actions/upload-artifact@v4

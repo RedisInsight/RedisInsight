@@ -6,11 +6,7 @@ import React, {
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiFieldText,
-  EuiForm,
-  EuiPanel,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addSetKey } from 'uiSrc/slices/browser/keys'
 
@@ -167,14 +163,8 @@ const AddKeySet = (props: Props) => {
         Submit
       </PrimaryButton>
       <AddKeyFooter>
-        <EuiPanel
-          color="transparent"
-          className="flexItemNoFullWidth"
-          hasShadow={false}
-          borderRadius="none"
-          style={{ border: 'none' }}
-        >
-          <Row justify="end">
+        <>
+          <Row justify="end" style={{ padding: 18 }}>
             <FlexItem>
               <SecondaryButton
                 onClick={() => onCancel(true)}
@@ -195,7 +185,7 @@ const AddKeySet = (props: Props) => {
               </PrimaryButton>
             </FlexItem>
           </Row>
-        </EuiPanel>
+        </>
       </AddKeyFooter>
     </EuiForm>
   )

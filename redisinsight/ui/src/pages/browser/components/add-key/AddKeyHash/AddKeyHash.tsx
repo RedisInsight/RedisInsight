@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiFieldText, EuiForm, EuiPanel } from '@elastic/eui'
+import { EuiFieldText, EuiForm } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import {
   isVersionHigherOrEquals,
@@ -237,14 +237,8 @@ const AddKeyHash = (props: Props) => {
         Submit
       </PrimaryButton>
       <AddKeyFooter>
-        <EuiPanel
-          color="transparent"
-          className="flexItemNoFullWidth"
-          hasShadow={false}
-          borderRadius="none"
-          style={{ border: 'none' }}
-        >
-          <Row justify="end">
+        <>
+          <Row justify="end" style={{ padding: 18 }}>
             <FlexItem>
               <SecondaryButton
                 onClick={() => onCancel(true)}
@@ -265,7 +259,7 @@ const AddKeyHash = (props: Props) => {
               </PrimaryButton>
             </FlexItem>
           </Row>
-        </EuiPanel>
+        </>
       </AddKeyFooter>
     </EuiForm>
   )

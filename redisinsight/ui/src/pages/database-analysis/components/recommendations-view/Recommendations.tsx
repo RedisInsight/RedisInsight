@@ -2,13 +2,7 @@ import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
-import {
-  EuiAccordion,
-  EuiIcon,
-  EuiLink,
-  EuiPanel,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiAccordion, EuiIcon, EuiToolTip } from '@elastic/eui'
 
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
@@ -36,8 +30,10 @@ import { findTutorialPath } from 'uiSrc/utils'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
-import styles from './styles.module.scss'
 import { Link } from 'uiSrc/components/base/link/Link'
+import { Card } from 'uiSrc/components/base/layout'
+
+import styles from './styles.module.scss'
 
 const Recommendations = () => {
   const { data, loading } = useSelector(dbAnalysisSelector)
@@ -198,7 +194,7 @@ const Recommendations = () => {
                   onToggle={(isOpen) => handleToggle(isOpen, id)}
                   data-testid={`${id}-accordion`}
                 >
-                  <EuiPanel className={styles.accordionContent} color="subdued">
+                  <Card className={styles.accordionContent}>
                     <RecommendationBody
                       elements={content}
                       params={params}
@@ -213,7 +209,7 @@ const Recommendations = () => {
                         }
                       />
                     )}
-                  </EuiPanel>
+                  </Card>
                 </EuiAccordion>
                 <div className={styles.footer}>
                   <FeatureFlagComponent name={FeatureFlags.envDependent}>

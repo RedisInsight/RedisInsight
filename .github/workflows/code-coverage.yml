@@ -100,6 +100,7 @@ jobs:
         id: findPr
 
       - name: Post or Update Coverage Summary Comment
+        if: ${{ steps.findPr.outputs.number != '' }}
         uses: actions/github-script@v7
         with:
           script: |

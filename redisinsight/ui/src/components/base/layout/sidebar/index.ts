@@ -1,4 +1,5 @@
 import { SideBar } from '@redis-ui/components'
+import { SideBarItemIcon } from './SideBarItemIcon'
 
 const SideBarHeader = SideBar.Header
 // eslint-disable-next-line prefer-destructuring
@@ -14,6 +15,7 @@ export {
   SideBarLogo,
   SideBarContainer,
   SideBarItem,
+  SideBarItemIcon,
   SideBarDivider,
   SideBarFooter,
 }

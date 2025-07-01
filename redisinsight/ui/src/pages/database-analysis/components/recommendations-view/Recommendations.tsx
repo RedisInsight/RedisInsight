@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
-import { EuiAccordion, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiAccordion, EuiIcon } from '@elastic/eui'
 
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
@@ -12,6 +12,7 @@ import {
   RecommendationBody,
   RecommendationCopyComponent,
   RecommendationVoting,
+  RiTooltip,
 } from 'uiSrc/components'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -94,12 +95,7 @@ const Recommendations = () => {
               className={styles.redisStackLink}
               data-testid={`${id}-redis-stack-link`}
             >
-              <EuiToolTip
-                content="Redis Stack"
-                position="top"
-                display="inlineBlock"
-                anchorClassName="flex-row"
-              >
+              <RiTooltip content="Redis Stack" position="top">
                 <EuiIcon
                   type={
                     theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
@@ -107,7 +103,7 @@ const Recommendations = () => {
                   className={styles.redisStackIcon}
                   data-testid={`${id}-redis-stack-icon`}
                 />
-              </EuiToolTip>
+              </RiTooltip>
             </Link>
           )}
         </FlexItem>

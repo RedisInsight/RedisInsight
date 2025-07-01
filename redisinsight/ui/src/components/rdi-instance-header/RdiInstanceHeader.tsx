@@ -1,10 +1,13 @@
 import React from 'react'
-import { EuiToolTip } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
-import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
+import {
+  FeatureFlagComponent,
+  OAuthUserProfile,
+  RiTooltip,
+} from 'uiSrc/components'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
@@ -39,7 +42,7 @@ const RdiInstanceHeader = () => {
           data-testid="breadcrumbs-container"
         >
           <div>
-            <EuiToolTip position="bottom" content="My RDI instances">
+            <RiTooltip position="bottom" content="My RDI instances">
               <Text
                 className={styles.breadCrumbLink}
                 aria-label="My RDI instances"
@@ -49,7 +52,7 @@ const RdiInstanceHeader = () => {
               >
                 RDI instances
               </Text>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
           <div style={{ flex: 1, overflow: 'hidden' }}>
             <div style={{ maxWidth: '100%' }}>

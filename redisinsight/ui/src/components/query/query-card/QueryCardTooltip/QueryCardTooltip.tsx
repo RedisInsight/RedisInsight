@@ -1,9 +1,9 @@
 import React from 'react'
-import { EuiToolTip } from '@elastic/eui'
 import { take } from 'lodash'
 import cx from 'classnames'
 
 import { Nullable, getDbIndex, isGroupResults, truncateText } from 'uiSrc/utils'
+import { RiTooltip } from 'uiSrc/components'
 import { EMPTY_COMMAND } from 'uiSrc/constants'
 import { ResultsMode } from 'uiSrc/slices/interfaces'
 import styles from './styles.module.scss'
@@ -70,16 +70,18 @@ const QueryCardTooltip = (props: Props) => {
   })
 
   return (
-    <EuiToolTip
+    <RiTooltip
       className={styles.tooltip}
-      anchorClassName={styles.tooltipAnchor}
       content={<>{contentItems}</>}
       position="bottom"
     >
-      <span data-testid="query-card-tooltip-anchor">
+      <span
+        data-testid="query-card-tooltip-anchor"
+        className={styles.tooltipAnchor}
+      >
         {`${!isGroupResults(resultsMode) ? getDbIndex(db) : ''} ${command}`.trim()}
       </span>
-    </EuiToolTip>
+    </RiTooltip>
   )
 }
 

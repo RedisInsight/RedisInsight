@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { EuiFieldText, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 
+import { RiTooltip } from 'uiSrc/components'
 import { TagSuggestions } from './TagSuggestions'
 
 type TagInputFieldProps = {
@@ -27,7 +28,7 @@ export const TagInputField = ({
 
   return (
     <div>
-      <EuiToolTip content={errorMessage} position="top">
+      <RiTooltip content={errorMessage} position="top">
         <div>
           <EuiFieldText
             value={value}
@@ -55,7 +56,7 @@ export const TagInputField = ({
             />
           )}
         </div>
-      </EuiToolTip>
+      </RiTooltip>
       {rightContent}
     </div>
   )

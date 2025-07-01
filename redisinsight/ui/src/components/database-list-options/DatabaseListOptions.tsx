@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { isString } from 'lodash'
-import { EuiToolTip, IconType } from '@elastic/eui'
+import { IconType } from '@elastic/eui'
+import { RiTooltip } from 'uiSrc/components'
 
 import {
   AddRedisClusterDatabaseOptions,
@@ -88,14 +89,13 @@ const DatabaseListOptions = ({ options }: Props) => {
   }: ITooltipProps) => (
     <>
       {contentProp ? (
-        <EuiToolTip
+        <RiTooltip
           content={
             isString(value)
               ? `Persistence: ${PersistencePolicy[value]}`
               : contentProp
           }
           position="top"
-          anchorClassName={styles.tooltip}
         >
           {icon ? (
             <IconButton
@@ -114,7 +114,7 @@ const DatabaseListOptions = ({ options }: Props) => {
               {contentProp.match(/\b(\w)/g)?.join('')}
             </div>
           )}
-        </EuiToolTip>
+        </RiTooltip>
       ) : null}
     </>
   )

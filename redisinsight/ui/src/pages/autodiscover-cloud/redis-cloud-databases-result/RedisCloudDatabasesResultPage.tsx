@@ -1,4 +1,4 @@
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -21,7 +21,11 @@ import {
   replaceSpaces,
   setTitle,
 } from 'uiSrc/utils'
-import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
+import {
+  DatabaseListModules,
+  DatabaseListOptions,
+  RiTooltip,
+} from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
@@ -74,14 +78,14 @@ const RedisCloudDatabasesResultPage = () => {
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
           <div role="presentation" data-testid={`db_name_${name}`}>
-            <EuiToolTip
+            <RiTooltip
               position="bottom"
               title="Database"
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
               <Text>{cellContent}</Text>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
@@ -105,14 +109,14 @@ const RedisCloudDatabasesResultPage = () => {
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
           <div role="presentation">
-            <EuiToolTip
+            <RiTooltip
               position="bottom"
               title="Subscription"
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
               <Text>{cellContent}</Text>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
@@ -148,18 +152,14 @@ const RedisCloudDatabasesResultPage = () => {
         return (
           <div className="public_endpoint">
             <Text className="copyPublicEndpointText">{text}</Text>
-            <EuiToolTip
-              position="right"
-              content="Copy"
-              anchorClassName="copyPublicEndpointTooltip"
-            >
+            <RiTooltip position="right" content="Copy">
               <IconButton
                 icon={CopyIcon}
                 aria-label="Copy public endpoint"
                 className="copyPublicEndpointBtn"
                 onClick={() => handleCopy(text)}
               />
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
@@ -205,7 +205,7 @@ const RedisCloudDatabasesResultPage = () => {
             {statusAdded === AddRedisDatabaseStatus.Success ? (
               <Text>{messageAdded}</Text>
             ) : (
-              <EuiToolTip position="left" title="Error" content={messageAdded}>
+              <RiTooltip position="left" title="Error" content={messageAdded}>
                 <Row align="center" gap="s">
                   <FlexItem>
                     <EuiIcon type="alert" color="danger" />
@@ -220,7 +220,7 @@ const RedisCloudDatabasesResultPage = () => {
                     </ColorText>
                   </FlexItem>
                 </Row>
-              </EuiToolTip>
+              </RiTooltip>
             )}
           </>
         )

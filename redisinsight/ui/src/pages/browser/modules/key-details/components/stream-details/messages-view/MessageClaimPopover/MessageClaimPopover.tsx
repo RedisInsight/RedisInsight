@@ -6,7 +6,6 @@ import {
   EuiSuperSelectOption,
   EuiPopover,
   EuiForm,
-  EuiToolTip,
 } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { orderBy, filter } from 'lodash'
@@ -32,6 +31,7 @@ import {
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { NumericInput, SwitchInput } from 'uiSrc/components/base/inputs'
+import { RiTooltip } from 'uiSrc/components'
 import {
   ClaimPendingEntryDto,
   ClaimPendingEntriesResponse,
@@ -190,15 +190,13 @@ const MessageClaimPopover = (props: Props) => {
   )
 
   const buttonTooltip = (
-    <EuiToolTip
+    <RiTooltip
       content="There is no consumer to claim the message."
       position="top"
-      display="inlineBlock"
-      anchorClassName="flex-row"
       data-testid="claim-pending-message-tooltip"
     >
       {button}
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   return (

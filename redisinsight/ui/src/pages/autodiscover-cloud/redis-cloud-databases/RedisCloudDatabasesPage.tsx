@@ -1,4 +1,3 @@
-import { EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -23,7 +22,11 @@ import {
   OAuthSocialAction,
   RedisCloudSubscriptionTypeText,
 } from 'uiSrc/slices/interfaces'
-import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
+import {
+  DatabaseListModules,
+  DatabaseListOptions,
+  RiTooltip,
+} from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
@@ -133,14 +136,14 @@ const RedisCloudDatabasesPage = () => {
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
           <div role="presentation" data-testid={`db_name_${name}`}>
-            <EuiToolTip
+            <RiTooltip
               position="bottom"
               title="Database"
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
               <Text>{cellContent}</Text>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
@@ -171,14 +174,14 @@ const RedisCloudDatabasesPage = () => {
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
           <div role="presentation">
-            <EuiToolTip
+            <RiTooltip
               position="bottom"
               title="Subscription"
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
               <Text>{cellContent}</Text>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
@@ -214,18 +217,14 @@ const RedisCloudDatabasesPage = () => {
         return (
           <div className="public_endpoint">
             <Text className="copyPublicEndpointText">{text}</Text>
-            <EuiToolTip
-              position="right"
-              content="Copy"
-              anchorClassName="copyPublicEndpointTooltip"
-            >
+            <RiTooltip position="right" content="Copy">
               <IconButton
                 icon={CopyIcon}
                 aria-label="Copy public endpoint"
                 className="copyPublicEndpointBtn"
                 onClick={() => handleCopy(text)}
               />
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },

@@ -1,4 +1,4 @@
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { map, pick } from 'lodash'
 import { useHistory } from 'react-router-dom'
@@ -15,7 +15,7 @@ import {
   updateMastersSentinel,
 } from 'uiSrc/slices/instances/sentinel'
 import { LoadedSentinel, ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
-import { InputFieldSentinel } from 'uiSrc/components'
+import { InputFieldSentinel, RiTooltip } from 'uiSrc/components'
 import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/InputFieldSentinel'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
@@ -157,11 +157,7 @@ const SentinelDatabasesPage = () => {
         return (
           <div className="host_port">
             <Text className="copyHostPortText">{text}</Text>
-            <EuiToolTip
-              position="right"
-              content="Copy"
-              anchorClassName="copyPublicEndpointTooltip"
-            >
+            <RiTooltip position="right" content="Copy">
               <IconButton
                 icon={CopyIcon}
                 aria-label="Copy public endpoint"
@@ -169,7 +165,7 @@ const SentinelDatabasesPage = () => {
                 onClick={() => handleCopy(text)}
                 tabIndex={-1}
               />
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
@@ -246,13 +242,12 @@ const SentinelDatabasesPage = () => {
               inputType={SentinelInputFieldType.Number}
               onChangedInput={handleChangedInput}
               append={
-                <EuiToolTip
-                  anchorClassName="inputAppendIcon"
+                <RiTooltip
                   position="left"
                   content="Select the Redis logical database to work with in Browser and Workbench."
                 >
                   <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
-                </EuiToolTip>
+                </RiTooltip>
               }
             />
           </div>

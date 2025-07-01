@@ -1,8 +1,9 @@
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Pages } from 'uiSrc/constants'
+import { RiTooltip } from 'uiSrc/components'
 import { BuildType } from 'uiSrc/constants/env'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
@@ -28,7 +29,7 @@ export const RedisLogo = ({ isRdiWorkspace }: Props) => {
   }
 
   return (
-    <EuiToolTip
+    <RiTooltip
       content={
         server?.buildType === BuildType.RedisStack
           ? 'Edit database'
@@ -48,6 +49,6 @@ export const RedisLogo = ({ isRdiWorkspace }: Props) => {
           <EuiIcon aria-label="Redis Insight Homepage" type={LogoSVG} />
         </Link>
       </span>
-    </EuiToolTip>
+    </RiTooltip>
   )
 }

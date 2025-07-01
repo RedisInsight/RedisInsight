@@ -1,9 +1,4 @@
-import {
-  EuiForm,
-  EuiSuperSelect,
-  EuiToolTip,
-  EuiSuperSelectOption,
-} from '@elastic/eui'
+import { EuiForm, EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -24,6 +19,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 import { NO_TEMPLATE_VALUE, NO_OPTIONS, INGEST_OPTION } from './constants'
 
 import styles from './styles.module.scss'
@@ -207,12 +203,10 @@ const TemplateForm = (props: Props) => {
         >
           Cancel
         </SecondaryButton>
-        <EuiToolTip
+        <RiTooltip
           content={getTooltipContent(value, isNoTemplateOptions)}
           position="bottom"
-          display="inlineBlock"
           className={styles.btn}
-          anchorClassName="flex-row"
         >
           <PrimaryButton
             disabled={isNoTemplateOptions || !!value}
@@ -223,7 +217,7 @@ const TemplateForm = (props: Props) => {
           >
             Apply
           </PrimaryButton>
-        </EuiToolTip>
+        </RiTooltip>
       </div>
     </div>
   )

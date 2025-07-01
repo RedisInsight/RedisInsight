@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
 import { last } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiIcon, EuiPageSideBar, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiPageSideBar } from '@elastic/eui'
 import HighlightedFeature, {
   Props as HighlightedFeatureProps,
 } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
@@ -24,7 +24,7 @@ import Divider from 'uiSrc/components/divider/Divider'
 import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
-import { FeatureFlagComponent } from 'uiSrc/components'
+import { FeatureFlagComponent, RiTooltip } from 'uiSrc/components'
 
 import { appContextSelector } from 'uiSrc/slices/app/context'
 import { AppWorkspace } from 'uiSrc/slices/interfaces'
@@ -265,7 +265,7 @@ const NavigationMenu = () => {
             tooltipPosition="right"
             transformOnHover
           >
-            <EuiToolTip content={nav.tooltipText} position="right">
+            <RiTooltip content={nav.tooltipText} position="right">
               <div className={styles.navigationButtonWrapper}>
                 <NavigationItemWrapper
                   active={nav.isActivePage}
@@ -283,7 +283,7 @@ const NavigationMenu = () => {
                   <RiBadge className={styles.betaLabel} label="BETA" />
                 )}
               </div>
-            </EuiToolTip>
+            </RiTooltip>
           </HighlightedFeature>,
           { options: nav.onboard },
           nav.isActivePage,
@@ -314,7 +314,7 @@ const NavigationMenu = () => {
         })}
         transformOnHover
       >
-        <EuiToolTip content={nav.tooltipText} position="right">
+        <RiTooltip content={nav.tooltipText} position="right">
           <NavigationItemWrapper
             active={nav.isActivePage}
             className={nav.getClassName()}
@@ -327,7 +327,7 @@ const NavigationMenu = () => {
               data-testid={nav.dataTestId}
             />
           </NavigationItemWrapper>
-        </EuiToolTip>
+        </RiTooltip>
       </HighlightedFeature>
     )
 
@@ -393,7 +393,7 @@ const NavigationMenu = () => {
             variant="middle"
             orientation="vertical"
           />
-          <EuiToolTip content="Star us on GitHub" position="right">
+          <RiTooltip content="Star us on GitHub" position="right">
             <span className={cx(styles.iconNavItem, styles.githubLink)}>
               <Link
                 href={EXTERNAL_LINKS.githubRepo}
@@ -408,7 +408,7 @@ const NavigationMenu = () => {
                 />
               </Link>
             </span>
-          </EuiToolTip>
+          </RiTooltip>
         </FeatureFlagComponent>
       </div>
     </EuiPageSideBar>

@@ -1,4 +1,3 @@
-import { EuiToolTip } from '@elastic/eui'
 import React, { ReactElement } from 'react'
 import { isUndefined } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,6 +8,7 @@ import {
   AutoRefresh,
   FullScreen,
   LoadingContent,
+  RiTooltip,
 } from 'uiSrc/components'
 import { HIDE_LAST_REFRESH } from 'uiSrc/constants'
 import {
@@ -154,7 +154,7 @@ const KeyDetailsHeader = ({
                 )}
                 <FlexItem>
                   {(!arePanelsCollapsed || isFullScreen) && (
-                    <EuiToolTip content="Close" position="left">
+                    <RiTooltip content="Close" position="left">
                       <IconButton
                         icon={CancelSlimIcon}
                         aria-label="Close key"
@@ -162,7 +162,7 @@ const KeyDetailsHeader = ({
                         onClick={() => onCloseKey()}
                         data-testid="close-key-btn"
                       />
-                    </EuiToolTip>
+                    </RiTooltip>
                   )}
                 </FlexItem>
               </Row>

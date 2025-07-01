@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import cx from 'classnames'
-import { EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import { sentinelSelector } from 'uiSrc/slices/instances/sentinel'
@@ -18,6 +18,7 @@ import { InfoIcon } from 'uiSrc/components/base/icons'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import styles from '../../../styles.module.scss'
@@ -172,9 +173,8 @@ const SentinelDatabases = ({
     }
 
     return (
-      <EuiToolTip
+      <RiTooltip
         position="top"
-        anchorClassName="euiToolTip__btn-disabled"
         title={title}
         content={
           isSubmitDisabled() ? (
@@ -192,7 +192,7 @@ const SentinelDatabases = ({
         >
           Add Primary Group
         </PrimaryButton>
-      </EuiToolTip>
+      </RiTooltip>
     )
   }
 

@@ -1,9 +1,8 @@
 import React from 'react'
-import { EuiToolTip } from '@elastic/eui'
 
 import { IDataStreams } from 'uiSrc/slices/interfaces'
 import { formatLongName } from 'uiSrc/utils'
-import { FormatedDate } from 'uiSrc/components'
+import { FormatedDate, RiTooltip } from 'uiSrc/components'
 import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
@@ -36,9 +35,9 @@ const columns: ColumnDefinition<DataStreamsData>[] = [
     accessorKey: 'name',
     enableSorting: true,
     cell: ({ getValue }) => (
-      <EuiToolTip content={getValue<string>()}>
+      <RiTooltip content={getValue<string>()}>
         <span>{formatLongName(getValue<string>(), 30, 0, '...')}</span>
-      </EuiToolTip>
+      </RiTooltip>
     ),
   },
   {

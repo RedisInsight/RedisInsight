@@ -1,11 +1,10 @@
-import { EuiToolTip } from '@elastic/eui'
 import { isNil } from 'lodash'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 
 import { ColorText } from 'uiSrc/components/base/text'
-import { GroupBadge } from 'uiSrc/components'
+import { GroupBadge, RiTooltip } from 'uiSrc/components'
 import { Pages } from 'uiSrc/constants'
 import {
   SCAN_COUNT_DEFAULT,
@@ -115,7 +114,7 @@ const TopKeysTable = ({
         const cellContent = (name as string).substring(0, 200)
         return (
           <div data-testid="top-keys-table-name">
-            <EuiToolTip
+            <RiTooltip
               title="Key Name"
               position="bottom"
               content={tooltipContent}
@@ -126,7 +125,7 @@ const TopKeysTable = ({
               >
                 {cellContent}
               </TableTextBtn>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
@@ -162,9 +161,8 @@ const TopKeysTable = ({
 
         return (
           <span data-testid={`ttl-${name}`}>
-            <EuiToolTip
+            <RiTooltip
               title="Time to Live"
-              anchorClassName="truncateText"
               position="bottom"
               content={
                 <>
@@ -177,7 +175,7 @@ const TopKeysTable = ({
               <ColorText color="subdued">
                 {truncateNumberToFirstUnit(value)}
               </ColorText>
-            </EuiToolTip>
+            </RiTooltip>
           </span>
         )
       },
@@ -206,7 +204,7 @@ const TopKeysTable = ({
         const [number, size] = formatBytes(value, 3, true)
         const isHighlight = isBigKey(type, HighlightType.Memory, value)
         return (
-          <EuiToolTip
+          <RiTooltip
             content={
               <>
                 {isHighlight ? (
@@ -226,7 +224,7 @@ const TopKeysTable = ({
             >
               {number} {size}
             </ColorText>
-          </EuiToolTip>
+          </RiTooltip>
         )
       },
     },
@@ -254,7 +252,7 @@ const TopKeysTable = ({
 
         const isHighlight = isBigKey(type, HighlightType.Length, value)
         return (
-          <EuiToolTip
+          <RiTooltip
             content={
               isHighlight ? 'Consider splitting it into multiple keys' : ''
             }
@@ -266,7 +264,7 @@ const TopKeysTable = ({
             >
               {numberWithSpaces(value)}
             </ColorText>
-          </EuiToolTip>
+          </RiTooltip>
         )
       },
     },

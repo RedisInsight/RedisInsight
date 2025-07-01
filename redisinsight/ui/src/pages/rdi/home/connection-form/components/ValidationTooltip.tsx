@@ -1,8 +1,8 @@
-import { EuiToolTip } from '@elastic/eui'
 import { FormikErrors } from 'formik'
 import React from 'react'
 
 import validationErrors from 'uiSrc/constants/validationErrors'
+import { RiTooltip } from 'uiSrc/components'
 import { ConnectionFormValues } from '../ConnectionForm'
 
 export interface Props {
@@ -21,10 +21,9 @@ const ValidationTooltip = ({ isValid, errors, children }: Props) => {
   )
 
   return (
-    <EuiToolTip
+    <RiTooltip
       data-testid="connection-form-validation-tooltip"
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       title={
         !isValid
           ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
@@ -33,7 +32,7 @@ const ValidationTooltip = ({ isValid, errors, children }: Props) => {
       content={!isValid ? tooltipContent : null}
     >
       {children}
-    </EuiToolTip>
+    </RiTooltip>
   )
 }
 

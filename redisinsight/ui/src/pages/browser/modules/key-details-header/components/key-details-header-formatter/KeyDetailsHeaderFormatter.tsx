@@ -1,11 +1,6 @@
 import cx from 'classnames'
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  EuiIcon,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon, EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -33,6 +28,7 @@ import FormattersDark from 'uiSrc/assets/img/icons/formatter_dark.svg'
 import { stringDataSelector } from 'uiSrc/slices/browser/string'
 import { isFullStringLoaded } from 'uiSrc/utils'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 import { getKeyValueFormatterOptions } from './constants'
 import styles from './styles.module.scss'
 
@@ -67,15 +63,13 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
       getKeyValueFormatterOptions(keyType).map(({ value, text }) => ({
         value,
         inputDisplay: (
-          <EuiToolTip
+          <RiTooltip
             content={
               !isStringFormattingEnabled
                 ? TEXT_DISABLED_STRING_FORMATTING
                 : typeSelected
             }
             position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
           >
             <>
               {width > MIDDLE_SCREEN_RESOLUTION && (
@@ -91,7 +85,7 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
                 />
               )}
             </>
-          </EuiToolTip>
+          </RiTooltip>
         ),
         dropdownDisplay: (
           <Text size="s" className={styles.dropdownDisplay}>

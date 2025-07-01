@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiToolTip } from '@elastic/eui'
 import { get, throttle } from 'lodash'
 import cx from 'classnames'
 import { monaco as monacoEditor } from 'react-monaco-editor'
@@ -26,7 +25,7 @@ import {
   yamlToJson,
 } from 'uiSrc/utils'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
-import { KeyboardShortcut } from 'uiSrc/components'
+import { KeyboardShortcut, RiTooltip } from 'uiSrc/components'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import {
@@ -182,7 +181,7 @@ const Job = (props: Props) => {
         <div className="rdi__content-header">
           <Text className={cx('rdi__title', 'line-clamp-2')}>{name}</Text>
           <div className={styles.actionContainer}>
-            <EuiToolTip
+            <RiTooltip
               position="top"
               className={styles.tooltip}
               content={
@@ -206,7 +205,7 @@ const Job = (props: Props) => {
               >
                 SQL and JMESPath Editor
               </SecondaryButton>
-            </EuiToolTip>
+            </RiTooltip>
             <TemplateButton
               value={value}
               setFieldValue={(template) => {

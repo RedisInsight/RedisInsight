@@ -1,11 +1,10 @@
 import React, { ChangeEvent, Ref, useEffect, useRef, useState } from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
-
+import { RiTooltip } from 'uiSrc/components'
 import { Text } from 'uiSrc/components/base/text'
 import { EditIcon } from 'uiSrc/components/base/icons'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
@@ -102,9 +101,8 @@ const EditableTextArea = (props: Props) => {
           {children}
         </Text>
         {isHovering && (
-          <EuiToolTip
+          <RiTooltip
             content={editToolTipContent}
-            anchorClassName={styles.editBtnAnchor}
             data-testid={`${testIdPrefix}_edit-tooltip-${field}`}
           >
             <IconButton
@@ -119,7 +117,7 @@ const EditableTextArea = (props: Props) => {
               }}
               data-testid={`${testIdPrefix}_edit-btn-${field}`}
             />
-          </EuiToolTip>
+          </RiTooltip>
         )}
       </div>
     )

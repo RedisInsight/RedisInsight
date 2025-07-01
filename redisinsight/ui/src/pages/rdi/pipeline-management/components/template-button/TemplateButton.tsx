@@ -1,6 +1,5 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiToolTip } from '@elastic/eui'
 
 import { useParams } from 'react-router-dom'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -8,6 +7,7 @@ import {
   fetchJobTemplate,
   rdiPipelineStrategiesSelector,
 } from 'uiSrc/slices/rdi/pipeline'
+import { RiTooltip } from 'uiSrc/components'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import { getTooltipContent } from '../template-form/TemplateForm'
@@ -46,11 +46,9 @@ const TemplateButton = ({ setFieldValue, value }: TemplateButtonProps) => {
   }
 
   return (
-    <EuiToolTip
+    <RiTooltip
       content={getTooltipContent(value, !templateOption)}
       position="bottom"
-      display="inlineBlock"
-      anchorClassName="flex-row"
     >
       <SecondaryButton
         inverted
@@ -64,7 +62,7 @@ const TemplateButton = ({ setFieldValue, value }: TemplateButtonProps) => {
       >
         Insert template
       </SecondaryButton>
-    </EuiToolTip>
+    </RiTooltip>
   )
 }
 

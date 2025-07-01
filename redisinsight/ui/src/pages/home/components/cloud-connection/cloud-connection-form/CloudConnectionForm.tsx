@@ -2,18 +2,12 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty } from 'lodash'
-import {
-  EuiFieldText,
-  EuiForm,
-  EuiRadioGroup,
-  EuiToolTip,
-  keys,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiRadioGroup, keys } from '@elastic/eui'
 
 import { useSelector } from 'react-redux'
 import { validateField } from 'uiSrc/utils/validations'
 import validationErrors from 'uiSrc/constants/validationErrors'
-import { FeatureFlagComponent } from 'uiSrc/components'
+import { FeatureFlagComponent, RiTooltip } from 'uiSrc/components'
 import { FeatureFlags } from 'uiSrc/constants'
 import { CloudConnectionOptions } from 'uiSrc/pages/home/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -127,9 +121,8 @@ const CloudConnectionForm = (props: Props) => {
   )
 
   const SubmitButton = ({ onClick, submitIsDisabled }: ISubmitButton) => (
-    <EuiToolTip
+    <RiTooltip
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       title={
         submitIsDisabled
           ? validationErrors.REQUIRED_TITLE(Object.values(errors).length)
@@ -154,7 +147,7 @@ const CloudConnectionForm = (props: Props) => {
       >
         Submit
       </PrimaryButton>
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   const Footer = () => {

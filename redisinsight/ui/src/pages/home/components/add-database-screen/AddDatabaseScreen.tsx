@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiForm, EuiToolTip } from '@elastic/eui'
+import { EuiForm } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
@@ -22,6 +22,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
+import { RiTooltip } from 'uiSrc/components'
 import ConnectivityOptions from './components/connectivity-options'
 import ConnectionUrl from './components/connection-url'
 import { Values } from './constants'
@@ -120,9 +121,8 @@ const AddDatabaseScreen = (props: Props) => {
 
         <Row responsive justify="between" style={{ padding: 4 }}>
           <FlexItem>
-            <EuiToolTip
+            <RiTooltip
               position="top"
-              anchorClassName="euiToolTip__btn-disabled"
               content={
                 isInvalid ? (
                   <span className="euiToolTip__content">
@@ -142,7 +142,7 @@ const AddDatabaseScreen = (props: Props) => {
               >
                 Test Connection
               </EmptyButton>
-            </EuiToolTip>
+            </RiTooltip>
           </FlexItem>
           <FlexItem>
             <Row responsive gap="l">
@@ -156,9 +156,8 @@ const AddDatabaseScreen = (props: Props) => {
                 </SecondaryButton>
               </FlexItem>
               <FlexItem>
-                <EuiToolTip
+                <RiTooltip
                   position="top"
-                  anchorClassName="euiToolTip__btn-disabled"
                   content={
                     isInvalid ? (
                       <span className="euiToolTip__content">
@@ -176,7 +175,7 @@ const AddDatabaseScreen = (props: Props) => {
                   >
                     Add Database
                   </PrimaryButton>
-                </EuiToolTip>
+                </RiTooltip>
               </FlexItem>
             </Row>
           </FlexItem>

@@ -7,7 +7,6 @@ import {
   EuiRadioGroup,
   EuiRadioGroupOption,
   EuiSuperSelect,
-  EuiToolTip,
 } from '@elastic/eui'
 import { checkDateTimeFormat, formatTimestamp } from 'uiSrc/utils'
 import {
@@ -24,6 +23,7 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon, CheckBoldIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 interface InitialValuesType {
@@ -213,9 +213,8 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
                 onChange={(e) => onCustomFormatChange(e)}
                 data-testid="custom-datetime-input"
               />
-              <EuiToolTip
+              <RiTooltip
                 position="top"
-                anchorClassName="euiToolTip__btn-disabled"
                 content={
                   showError ? error || 'This format is not supported' : null
                 }
@@ -231,7 +230,7 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
                 >
                   Save
                 </PrimaryButton>
-              </EuiToolTip>
+              </RiTooltip>
             </>
           )}
         </div>

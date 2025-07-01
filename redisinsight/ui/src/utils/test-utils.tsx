@@ -228,7 +228,7 @@ const clearStoreActions = (actions: any[]) => {
 }
 
 /**
- * Ensure the EuiToolTip being tested is open and visible before continuing
+ * Ensure the RiTooltip being tested is open and visible before continuing
  */
 const waitForEuiToolTipVisible = async (timeout = 500) => {
   await waitFor(

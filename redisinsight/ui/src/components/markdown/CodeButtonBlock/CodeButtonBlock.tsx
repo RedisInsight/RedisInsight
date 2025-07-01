@@ -1,4 +1,4 @@
-import { EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { monaco } from 'react-monaco-editor'
@@ -16,7 +16,7 @@ import {
   MonacoLanguage,
 } from 'uiSrc/constants'
 
-import { CodeBlock } from 'uiSrc/components'
+import { CodeBlock, RiTooltip } from 'uiSrc/components'
 import { getDBConfigStorageField } from 'uiSrc/services'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import {
@@ -198,8 +198,7 @@ const CodeButtonBlock = (props: Props) => {
                 scrollLock: true,
               }}
               button={
-                <EuiToolTip
-                  anchorClassName={styles.popoverAnchor}
+                <RiTooltip
                   content={
                     isPopoverOpen
                       ? undefined
@@ -220,7 +219,7 @@ const CodeButtonBlock = (props: Props) => {
                   >
                     Run
                   </EmptyButton>
-                </EuiToolTip>
+                </RiTooltip>
               }
             >
               {getPopoverMessage()}

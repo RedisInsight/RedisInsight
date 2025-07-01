@@ -1,4 +1,3 @@
-import { EuiToolTip } from '@elastic/eui'
 import { fireEvent } from '@testing-library/react'
 import React from 'react'
 import {
@@ -7,6 +6,7 @@ import {
   screen,
   waitForEuiToolTipVisible,
 } from 'uiSrc/utils/test-utils'
+import { RiTooltip } from 'uiSrc/components'
 
 import HighlightedFeature from './HighlightedFeature'
 
@@ -145,9 +145,9 @@ describe('HighlightedFeature', () => {
         isHighlight
         hideFirstChild
       >
-        <EuiToolTip title="PrevTooltipTitle" data-testid="no-render-tooltip">
+        <RiTooltip title="PrevTooltipTitle" data-testid="no-render-tooltip">
           <Content />
-        </EuiToolTip>
+        </RiTooltip>
       </HighlightedFeature>,
     )
 

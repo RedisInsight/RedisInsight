@@ -1,5 +1,6 @@
 import React from 'react'
-import { EuiToolTip, EuiIcon } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
+import { RiTooltip } from 'uiSrc/components'
 import { EntityInfo, EntityType } from './parser'
 
 interface INodeProps {
@@ -12,9 +13,9 @@ interface INodeProps {
 function Snippet({ content }: { content: string }) {
   return (
     <div className="FooterCommon Footer">
-      <EuiToolTip delay="long" content={content}>
+      <RiTooltip delay={500} content={content}>
         <span>{content}</span>
-      </EuiToolTip>
+      </RiTooltip>
     </div>
   )
 }
@@ -30,9 +31,9 @@ export function ExplainNode(props: INodeProps) {
       <div className="Main">
         <div className="Info">
           <div className="InfoData">
-            <EuiToolTip delay="long" content={infoData}>
+            <RiTooltip delay={500} content={infoData}>
               <span>{infoData}</span>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
           {subType &&
             [
@@ -99,9 +100,9 @@ export function ProfileNode(props: INodeProps) {
     <div className="ProfileContainer" id={`node-${id}`}>
       <div className="Main">
         <div className="InfoData">
-          <EuiToolTip delay="long" content={infoData}>
+          <RiTooltip delay={500} content={infoData}>
             <span>{infoData}</span>
-          </EuiToolTip>
+          </RiTooltip>
         </div>
         <div className="Type">
           {[
@@ -116,15 +117,15 @@ export function ProfileNode(props: INodeProps) {
       </div>
       {snippet && <Snippet content={snippet} />}
       <div className="MetaData">
-        <EuiToolTip content={<NodeToolTipContent content="Execution Time" />}>
+        <RiTooltip content={<NodeToolTipContent content="Execution Time" />}>
           <div className="Time">
             <div className="IconContainer">
               <EuiIcon className="NodeIcon" size="m" type="clock" />
             </div>
             <div>{time} ms</div>
           </div>
-        </EuiToolTip>
-        <EuiToolTip
+        </RiTooltip>
+        <RiTooltip
           content={
             <NodeToolTipContent
               {...{
@@ -146,7 +147,7 @@ export function ProfileNode(props: INodeProps) {
               <EuiIcon className="NodeIcon" size="m" type="reportingApp" />
             </div>
           </div>
-        </EuiToolTip>
+        </RiTooltip>
       </div>
     </div>
   )

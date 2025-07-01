@@ -1,4 +1,4 @@
-import { EuiIcon, EuiToolTip, PropertySort } from '@elastic/eui'
+import { EuiIcon, PropertySort } from '@elastic/eui'
 import { IconType } from '@elastic/eui/src/components/icon/icon'
 import cx from 'classnames'
 import { map } from 'lodash'
@@ -17,6 +17,7 @@ import {
 import { formatBytes, Nullable } from 'uiSrc/utils'
 import { rgb } from 'uiSrc/utils/colors'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import { RiTooltip } from 'uiSrc/components'
 
 import { ModifiedClusterNodes } from '../../ClusterDetailsPage'
 import styles from './styles.module.scss'
@@ -158,7 +159,7 @@ const ClusterNodesTable = ({
         const [number, size] = formatBytes(value, 3, true)
         const isMax = isMaxValue('usedMemory', value)
         return (
-          <EuiToolTip
+          <RiTooltip
             content={`${numberWithSpaces(value)} B`}
             data-testid="usedMemory-tooltip"
           >
@@ -171,7 +172,7 @@ const ClusterNodesTable = ({
               </span>
               <span className={styles.valueUnit}>{size}</span>
             </>
-          </EuiToolTip>
+          </RiTooltip>
         )
       },
     },

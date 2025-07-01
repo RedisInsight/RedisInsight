@@ -6,6 +6,7 @@ import { HoverContent } from './HoverContent'
 interface RiTooltipProps extends TooltipProps {
   title?: React.ReactNode
   position?: TooltipProps['placement']
+  delay?: TooltipProps['openDelayDuration']
 }
 
 export const RiTooltip = ({
@@ -13,6 +14,7 @@ export const RiTooltip = ({
   title,
   content,
   position,
+  delay,
   ...props
 }: RiTooltipProps) => (
   <TooltipProvider>
@@ -20,6 +22,7 @@ export const RiTooltip = ({
       {...props}
       content={<HoverContent title={title} content={content} />}
       placement={position}
+      openDelayDuration={delay}
     >
       <span>{children}</span>
     </Tooltip>

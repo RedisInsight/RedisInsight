@@ -1,14 +1,9 @@
 import React, { ChangeEvent, Ref, useEffect, useRef, useState } from 'react'
 import { capitalize } from 'lodash'
 import cx from 'classnames'
-import {
-  EuiFieldText,
-  EuiForm,
-  EuiToolTip,
-  EuiPopover,
-  keys,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiPopover, keys } from '@elastic/eui'
 
+import { RiTooltip } from 'uiSrc/components'
 import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
@@ -169,10 +164,8 @@ const InlineItemEditor = (props: Props) => {
     !!(isLoading || isError || isDisabled || (disableEmpty && !value.length))
 
   const ApplyBtn = (
-    <EuiToolTip
-      anchorClassName={styles.tooltip}
+    <RiTooltip
       position="bottom"
-      display="inlineBlock"
       title={
         (isDisabled && disabledTooltipText?.title) ||
         (getError && getError?.(value)?.title)
@@ -193,7 +186,7 @@ const InlineItemEditor = (props: Props) => {
         onClick={handleApplyClick}
         data-testid="apply-btn"
       />
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   return (

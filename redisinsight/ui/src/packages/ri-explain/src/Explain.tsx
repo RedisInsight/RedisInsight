@@ -5,7 +5,8 @@ import { register } from '@antv/x6-react-shape'
 import Hierarchy from '@antv/hierarchy'
 import { formatRedisReply } from 'redisinsight-plugin-sdk'
 
-import { EuiToolTip, EuiIcon } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
+import { RiTooltip } from 'uiSrc/components'
 import {
   EDGE_COLOR_BODY_DARK,
   EDGE_COLOR_BODY_LIGHT,
@@ -536,14 +537,14 @@ function ExplainDraw({
                 icon: 'bullseye',
               },
             ].map((item) => (
-              <EuiToolTip position="left" content={item.name}>
+              <RiTooltip position="left" content={item.name}>
                 <IconButton
                   color="text"
                   onClick={item.onClick}
                   icon={item.icon}
                   aria-label={item.name}
                 />
-              </EuiToolTip>
+              </RiTooltip>
             ))}
           </div>
         )}

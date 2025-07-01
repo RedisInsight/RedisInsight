@@ -1,11 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
-import {
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiToolTip,
-  EuiIcon,
-} from '@elastic/eui'
+import { EuiSuperSelect, EuiSuperSelectOption, EuiIcon } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -23,7 +18,7 @@ import {
   ANALYZE_CLUSTER_TOOLTIP_MESSAGE,
   ANALYZE_TOOLTIP_MESSAGE,
 } from 'uiSrc/constants/recommendations'
-import { FormatedDate } from 'uiSrc/components'
+import { FormatedDate, RiTooltip } from 'uiSrc/components'
 import { DEFAULT_DELIMITER } from 'uiSrc/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { HideFor } from 'uiSrc/components/base/utils/ShowHide'
@@ -164,9 +159,8 @@ const Header = (props: Props) => {
               </PrimaryButton>
             </FlexItem>
             <FlexItem style={{ paddingLeft: 6 }}>
-              <EuiToolTip
+              <RiTooltip
                 position="bottom"
-                anchorClassName={styles.tooltipAnchor}
                 className={styles.tooltip}
                 title="Database Analysis"
                 data-testid="db-new-reports-tooltip"
@@ -182,7 +176,7 @@ const Header = (props: Props) => {
                   size="l"
                   data-testid="db-new-reports-icon"
                 />
-              </EuiToolTip>
+              </RiTooltip>
             </FlexItem>
           </Row>
         </FlexItem>

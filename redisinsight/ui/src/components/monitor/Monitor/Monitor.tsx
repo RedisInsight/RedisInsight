@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import BanIcon from 'uiSrc/assets/img/monitor/ban.svg?react'
 
+import { RiTooltip } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { PlayFilledIcon } from 'uiSrc/components/base/icons'
@@ -45,7 +46,7 @@ const Monitor = (props: Props) => {
   const MonitorNotStarted = () => (
     <div className={styles.startContainer} data-testid="monitor-not-started">
       <div className={styles.startContent}>
-        <EuiToolTip content="Start" display="inlineBlock">
+        <RiTooltip content="Start">
           <IconButton
             icon={PlayFilledIcon}
             className={styles.startTitleIcon}
@@ -53,7 +54,7 @@ const Monitor = (props: Props) => {
             aria-label="start monitor"
             data-testid="start-monitor"
           />
-        </EuiToolTip>
+        </RiTooltip>
         <div className={styles.startTitle}>Start Profiler</div>
         <Row style={{ flexGrow: 0 }}>
           <FlexItem>
@@ -80,7 +81,7 @@ const Monitor = (props: Props) => {
         </Row>
       </div>
       <div className={styles.saveLogContainer} data-testid="save-log-container">
-        <EuiToolTip
+        <RiTooltip
           title="Allows you to download the generated log file after pausing the Profiler"
           content="Profiler log is saved to a file on your local machine with no size limitation.
           The temporary log file will be automatically rewritten when the Profiler is reset."
@@ -92,7 +93,7 @@ const Monitor = (props: Props) => {
             onCheckedChange={setSaveLogValue}
             data-testid="save-log-switch"
           />
-        </EuiToolTip>
+        </RiTooltip>
       </div>
     </div>
   )

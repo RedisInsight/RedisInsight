@@ -1,8 +1,4 @@
-import {
-  EuiFieldText,
-  EuiIcon,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFieldText, EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -23,6 +19,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { RiTooltip } from 'uiSrc/components'
 import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/stream/dto'
 
 import styles from './styles.module.scss'
@@ -89,7 +86,10 @@ const AddStreamGroup = (props: Props) => {
 
   return (
     <>
-      <div className={styles.content} data-test-subj="add-stream-groups-field-panel">
+      <div
+        className={styles.content}
+        data-test-subj="add-stream-groups-field-panel"
+      >
         <FlexItem
           className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace')}
           grow
@@ -127,8 +127,7 @@ const AddStreamGroup = (props: Props) => {
                       onBlur={() => setIsIdFocused(false)}
                       onFocus={() => setIsIdFocused(true)}
                       append={
-                        <EuiToolTip
-                          anchorClassName="inputAppendIcon"
+                        <RiTooltip
                           className={styles.entryIdTooltip}
                           position="left"
                           title="Enter Valid ID, 0 or $"
@@ -139,7 +138,7 @@ const AddStreamGroup = (props: Props) => {
                             style={{ cursor: 'pointer' }}
                             data-testid="entry-id-info-icon"
                           />
-                        </EuiToolTip>
+                        </RiTooltip>
                       }
                       autoComplete="off"
                       data-testid="id-field"

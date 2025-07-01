@@ -1,4 +1,4 @@
-import { EuiSuperSelect, EuiSuperSelectOption, EuiToolTip } from '@elastic/eui'
+import { EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { isString } from 'lodash'
@@ -36,6 +36,7 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
 import { RefreshIcon } from 'uiSrc/components/base/icons'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export const CREATE = 'create'
@@ -185,7 +186,7 @@ const RediSearchIndexesList = (props: Props) => {
           )}
         </div>
         <div className={styles.refresh}>
-          <EuiToolTip content="Refresh Indexes">
+          <RiTooltip content="Refresh Indexes">
             <IconButton
               size="S"
               icon={RefreshIcon}
@@ -195,7 +196,7 @@ const RediSearchIndexesList = (props: Props) => {
               aria-label="refresh indexes list"
               data-testid="refresh-indexes-btn"
             />
-          </EuiToolTip>
+          </RiTooltip>
         </div>
       </div>
     </OutsideClickDetector>

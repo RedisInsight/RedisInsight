@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiToolTip } from '@elastic/eui'
 import { useHistory, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -11,7 +10,7 @@ import {
   Nullable,
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
-import { GroupBadge } from 'uiSrc/components'
+import { GroupBadge, RiTooltip } from 'uiSrc/components'
 import { Pages } from 'uiSrc/constants'
 import {
   changeSearchMode,
@@ -104,7 +103,7 @@ const NameSpacesTable = ({
             data-testid={`expanded-${item.nsp}-${index}`}
           >
             <div className="truncateText">
-              <EuiToolTip
+              <RiTooltip
                 title="Key Pattern"
                 position="bottom"
                 content={`${item.nsp}:*`}
@@ -115,7 +114,7 @@ const NameSpacesTable = ({
                 >
                   {`${item.nsp}${delimiter}*`}
                 </TableTextBtn>
-              </EuiToolTip>
+              </RiTooltip>
             </div>
             <div>
               <GroupBadge type={type.type} />
@@ -157,7 +156,7 @@ const NameSpacesTable = ({
         const tooltipContent = formatLongName(textWithDelimiter)
         return (
           <div className="truncateText">
-            <EuiToolTip
+            <RiTooltip
               title="Key Pattern"
               position="bottom"
               content={tooltipContent}
@@ -167,7 +166,7 @@ const NameSpacesTable = ({
               >
                 {cellContent}
               </TableTextBtn>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
@@ -212,7 +211,7 @@ const NameSpacesTable = ({
         )
 
         return (
-          <EuiToolTip
+          <RiTooltip
             content={`${formatValueBytes} B`}
             data-testid="usedMemory-tooltip"
           >
@@ -222,7 +221,7 @@ const NameSpacesTable = ({
             >
               {formatValue} {size}
             </ColorText>
-          </EuiToolTip>
+          </RiTooltip>
         )
       },
     },

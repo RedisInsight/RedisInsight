@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { remove } from 'lodash'
 
 import { FeatureFlags, DEFAULT_DELIMITER, Pages } from 'uiSrc/constants'
@@ -30,7 +30,11 @@ import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import GithubSVG from 'uiSrc/assets/img/github.svg?react'
-import { FeatureFlagComponent, LoadingContent } from 'uiSrc/components'
+import {
+  FeatureFlagComponent,
+  LoadingContent,
+  RiTooltip,
+} from 'uiSrc/components'
 import { ColorText, Text } from 'uiSrc/components/base/text'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 
@@ -138,9 +142,8 @@ const LiveTimeRecommendations = () => {
     <div className={styles.actions}>
       <div>
         <ColorText className={styles.boldText}>Our Tips</ColorText>
-        <EuiToolTip
+        <RiTooltip
           position="bottom"
-          anchorClassName={styles.tooltipAnchor}
           className={styles.tooltip}
           content={
             <>
@@ -163,7 +166,7 @@ const LiveTimeRecommendations = () => {
             size="s"
             data-testid="recommendations-info-icon"
           />
-        </EuiToolTip>
+        </RiTooltip>
         <FeatureFlagComponent name={FeatureFlags.envDependent}>
           <Link
             href={EXTERNAL_LINKS.githubRepo}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 
 import { useDispatch } from 'react-redux'
@@ -10,6 +10,7 @@ import {
   TELEMETRY_EMPTY_VALUE,
   TelemetryEvent,
 } from 'uiSrc/telemetry'
+import { RiTooltip } from 'uiSrc/components'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import {
   changeSelectedTab,
@@ -62,26 +63,21 @@ const ExpertChatHeader = (props: Props) => {
   return (
     <div className={styles.header}>
       {connectedInstanceName ? (
-        <EuiToolTip
-          content={connectedInstanceName}
-          anchorClassName={styles.dbName}
-        >
+        <RiTooltip content={connectedInstanceName}>
           <Text size="xs" className="truncateText">
             {connectedInstanceName}
           </Text>
-        </EuiToolTip>
+        </RiTooltip>
       ) : (
         <span />
       )}
       <div className={styles.headerActions}>
-        <EuiToolTip
+        <RiTooltip
           content={
             isTutorialsPopoverOpen
               ? undefined
               : 'Open relevant tutorials to learn more'
           }
-          anchorClassName={styles.headerBtnAnchor}
-          display="block"
           position="bottom"
         >
           <EuiPopover
@@ -124,7 +120,7 @@ const ExpertChatHeader = (props: Props) => {
               </PrimaryButton>
             </>
           </EuiPopover>
-        </EuiToolTip>
+        </RiTooltip>
         <RestartChat
           button={
             <EmptyButton

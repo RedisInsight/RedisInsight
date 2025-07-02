@@ -26,17 +26,11 @@ import { appContextSelector } from 'uiSrc/slices/app/context'
 import { AppWorkspace } from 'uiSrc/slices/interfaces'
 import { IconType } from 'uiSrc/components/base/forms/buttons'
 import {
-  BrowserActiveIcon,
   BrowserIcon,
-  PipelineManagementActiveIcon,
   PipelineManagementIcon,
-  PipelineStatisticsActiveIcon,
   PipelineStatisticsIcon,
-  PubSubActiveIcon,
   PubSubIcon,
-  SlowLogActiveIcon,
   SlowLogIcon,
-  WorkbenchActiveIcon,
   WorkbenchIcon,
   GithubIcon,
   SettingsIcon,
@@ -130,9 +124,7 @@ const NavigationMenu = () => {
       onClick: () => handleGoPage(Pages.browser(connectedInstanceId)),
       dataTestId: 'browser-page-btn',
       connectedInstanceId,
-      getIconType() {
-        return this.isActivePage ? BrowserActiveIcon : BrowserIcon
-      },
+      getIconType: () => BrowserIcon,
       onboard: ONBOARDING_FEATURES.BROWSER_PAGE,
     },
     {
@@ -143,9 +135,7 @@ const NavigationMenu = () => {
       dataTestId: 'workbench-page-btn',
       connectedInstanceId,
       isActivePage: activePage === `/${PageNames.workbench}`,
-      getIconType() {
-        return this.isActivePage ? WorkbenchActiveIcon : WorkbenchIcon
-      },
+      getIconType: () => WorkbenchIcon,
       onboard: ONBOARDING_FEATURES.WORKBENCH_PAGE,
     },
     {
@@ -156,9 +146,7 @@ const NavigationMenu = () => {
       dataTestId: 'analytics-page-btn',
       connectedInstanceId,
       isActivePage: isAnalyticsPath(activePage),
-      getIconType() {
-        return this.isActivePage ? SlowLogIcon : SlowLogActiveIcon
-      },
+      getIconType: () => SlowLogIcon,
       featureFlag: FeatureFlags.envDependent,
     },
     {
@@ -169,9 +157,7 @@ const NavigationMenu = () => {
       dataTestId: 'pub-sub-page-btn',
       connectedInstanceId,
       isActivePage: activePage === pubSubPath,
-      getIconType() {
-        return this.isActivePage ? PubSubIcon : PubSubActiveIcon
-      },
+      getIconType: () => PubSubIcon,
       onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE,
       featureFlag: FeatureFlags.envDependent,
     },
@@ -185,11 +171,7 @@ const NavigationMenu = () => {
       onClick: () => handleGoPage(Pages.rdiStatistics(connectedRdiInstanceId)),
       dataTestId: 'pipeline-status-page-btn',
       isActivePage: activePage === `/${PageNames.rdiStatistics}`,
-      getIconType() {
-        return this.isActivePage
-          ? PipelineStatisticsIcon
-          : PipelineStatisticsActiveIcon
-      },
+      getIconType: () => PipelineStatisticsIcon,
     },
     {
       tooltipText: 'Pipeline Management',
@@ -199,11 +181,7 @@ const NavigationMenu = () => {
         handleGoPage(Pages.rdiPipelineManagement(connectedRdiInstanceId)),
       dataTestId: 'pipeline-management-page-btn',
       isActivePage: isPipelineManagementPath(),
-      getIconType() {
-        return this.isActivePage
-          ? PipelineManagementActiveIcon
-          : PipelineManagementIcon
-      },
+      getIconType: () => PipelineManagementIcon,
     },
   ]
 

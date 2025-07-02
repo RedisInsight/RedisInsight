@@ -22,8 +22,8 @@ import {
   SortOrder,
   Theme,
 } from 'uiSrc/constants'
-import KeyLightSVG from 'uiSrc/assets/img/sidebar/browser.svg'
-import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
+import KeyLightSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
+import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser.svg'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { fetchKeysMetadataTree } from 'uiSrc/slices/browser/keys'
 import { Loader, ProgressBarLoader } from 'uiSrc/components/base/display'

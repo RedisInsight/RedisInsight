@@ -1,5 +1,5 @@
-import { EuiSuperSelectOption } from '@elastic/eui'
 import { getConfig } from 'uiSrc/config'
+import { RiSelectOption } from 'uiSrc/components/base/forms/select/RiSelect'
 
 const riConfig = getConfig()
 
@@ -11,7 +11,7 @@ export enum Theme {
 
 export const DEFAULT_THEME = riConfig.app.defaultTheme
 
-export const THEMES: EuiSuperSelectOption<string>[] = [
+export const THEMES: RiSelectOption[] = [
   {
     inputDisplay: 'Match System',
     value: Theme.System,

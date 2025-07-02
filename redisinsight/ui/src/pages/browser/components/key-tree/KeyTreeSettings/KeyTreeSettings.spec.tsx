@@ -16,6 +16,8 @@ import {
   screen,
   act,
   waitForEuiPopoverVisible,
+  waitForRedisUiSelectVisible,
+  userEvent,
 } from 'uiSrc/utils/test-utils'
 
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
@@ -109,15 +111,11 @@ describe('KeyTreeDelimiter', () => {
     )
     expect(containerLabels.querySelector('[title=":"]')).not.toBeInTheDocument()
 
-    await act(async () => {
-      fireEvent.click(screen.getByTestId(SORTING_SELECT))
-    })
+    await userEvent.click(screen.getByTestId(SORTING_SELECT))
 
-    await waitForEuiPopoverVisible()
+    await waitForRedisUiSelectVisible()
 
-    await act(async () => {
-      fireEvent.click(screen.getByTestId(SORTING_DESC_ITEM))
-    })
+    await userEvent.click(screen.getByTestId(SORTING_DESC_ITEM))
     ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     await act(async () => {

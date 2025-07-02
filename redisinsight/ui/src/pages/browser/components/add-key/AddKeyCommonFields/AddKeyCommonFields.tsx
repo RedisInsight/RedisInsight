@@ -1,10 +1,11 @@
 import React, { ChangeEvent } from 'react'
 import { toNumber } from 'lodash'
-import { EuiFieldText, EuiFormFieldset, EuiSuperSelect } from '@elastic/eui'
+import { EuiFieldText, EuiFormFieldset } from '@elastic/eui'
 import { MAX_TTL_NUMBER, Maybe, validateTTLNumberForAddKey } from 'uiSrc/utils'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import { AddCommonFieldsFormConfig as config } from '../constants/fields-config'
 
 import styles from './styles.module.scss'
@@ -51,13 +52,14 @@ const AddKeyCommonFields = (props: Props) => {
             legend={{ children: 'Select key type', display: 'hidden' }}
           >
             <FormField label="Key Type*">
-              <EuiSuperSelect
-                itemClassName="withColorDefinition"
-                fullWidth
-                disabled={loading}
+              <RiSelect
                 options={options}
-                valueOfSelected={typeSelected}
+                valueRender={({ option }): JSX.Element =>
+                  (option.inputDisplay ?? option.value) as JSX.Element
+                }
+                value={typeSelected}
                 onChange={(value: string) => onChangeType(value)}
+                disabled={loading}
                 data-testid="select-key-type"
               />
             </FormField>

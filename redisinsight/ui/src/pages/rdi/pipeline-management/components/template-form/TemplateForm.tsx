@@ -1,9 +1,4 @@
-import {
-  EuiForm,
-  EuiSuperSelect,
-  EuiToolTip,
-  EuiSuperSelectOption,
-} from '@elastic/eui'
+import { EuiForm, EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -24,6 +19,11 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { Text } from 'uiSrc/components/base/text'
+import {
+  RiSelectOption,
+  RiSelect,
+  defaultValueRender,
+} from 'uiSrc/components/base/forms/select/RiSelect'
 import { NO_TEMPLATE_VALUE, NO_OPTIONS, INGEST_OPTION } from './constants'
 
 import styles from './styles.module.scss'
@@ -64,10 +64,10 @@ const TemplateForm = (props: Props) => {
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
 
   const [pipelineTypeOptions, setPipelineTypeOptions] = useState<
-    EuiSuperSelectOption<string>[]
+    RiSelectOption[]
   >([])
   const [dbTypeOptions, setDbTypeOptions] =
-    useState<EuiSuperSelectOption<string>[]>(NO_OPTIONS)
+    useState<RiSelectOption[]>(NO_OPTIONS)
   const [selectedDbType, setSelectedDbType] = useState<string>('')
   const [selectedPipelineType, setSelectedPipelineType] = useState<string>('')
 
@@ -173,11 +173,11 @@ const TemplateForm = (props: Props) => {
           <FormField className={styles.formRow}>
             <>
               <div className={styles.rowLabel}>Pipeline type</div>
-              <EuiSuperSelect
+              <RiSelect
                 options={pipelineTypeOptions}
-                valueOfSelected={selectedPipelineType}
+                valueRender={defaultValueRender}
+                value={selectedPipelineType}
                 onChange={(value) => setSelectedPipelineType(value)}
-                popoverClassName={styles.selectWrapper}
                 data-testid="pipeline-type-select"
               />
             </>
@@ -187,11 +187,11 @@ const TemplateForm = (props: Props) => {
           <FormField className={styles.formRow}>
             <>
               <div className={styles.rowLabel}>Database type</div>
-              <EuiSuperSelect
+              <RiSelect
                 options={dbTypeOptions}
-                valueOfSelected={selectedDbType}
+                valueRender={defaultValueRender}
+                value={selectedDbType}
                 onChange={(value) => setSelectedDbType(value)}
-                popoverClassName={styles.selectWrapper}
                 data-testid="db-type-select"
               />
             </>

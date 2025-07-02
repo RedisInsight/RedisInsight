@@ -2,8 +2,6 @@ import {
   EuiFieldText,
   EuiFormFieldset,
   EuiPopover,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
 } from '@elastic/eui'
 import { EuiComboBoxOptionOption } from '@elastic/eui/src/components/combo_box/types'
 import cx from 'classnames'
@@ -33,6 +31,7 @@ import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { HealthText, Text } from 'uiSrc/components/base/text'
 import { Link } from 'uiSrc/components/base/link/Link'
+import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
@@ -60,10 +59,7 @@ const keyTypeOptions = KEY_TYPE_OPTIONS.map((item) => {
   }
 })
 
-const initialFieldValue = (
-  fieldTypeOptions: EuiSuperSelectOption<string>[],
-  id = 0,
-) => ({
+const initialFieldValue = (fieldTypeOptions: any[], id = 0) => ({
   id,
   identifier: '',
   fieldType: fieldTypeOptions[0]?.value || '',
@@ -79,7 +75,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
   const [prefixes, setPrefixes] = useState<EuiComboBoxOptionOption[]>([])
   const [indexName, setIndexName] = useState<string>('')
   const [fieldTypeOptions, setFieldTypeOptions] =
-    useState<EuiSuperSelectOption<string>[]>(getFieldTypeOptions)
+    useState<ReturnType<typeof getFieldTypeOptions>>(getFieldTypeOptions)
   const [fields, setFields] = useState<any[]>([
     initialFieldValue(fieldTypeOptions),
   ])
@@ -237,11 +233,12 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                   legend={{ children: 'Select key type', display: 'hidden' }}
                 >
                   <FormField label="Key Type*">
-                    <EuiSuperSelect
-                      itemClassName="withColorDefinition"
-                      fullWidth
+                    <RiSelect
                       options={keyTypeOptions}
-                      valueOfSelected={keyTypeSelected}
+                      valueRender={({ option }) =>
+                        option.inputDisplay || option.value
+                      }
+                      value={keyTypeSelected}
                       onChange={(value: RedisearchIndexKeyType) =>
                         setKeyTypeSelected(value)
                       }
@@ -310,10 +307,9 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                   </FlexItem>
                   <FlexItem grow>
                     <FormField>
-                      <EuiSuperSelect
-                        itemClassName="withColorDefinition"
+                      <RiSelect
                         options={fieldTypeOptions}
-                        valueOfSelected={item.fieldType}
+                        value={item.fieldType}
                         onChange={(value: string) =>
                           handleFieldChange('fieldType', item.id, value)
                         }

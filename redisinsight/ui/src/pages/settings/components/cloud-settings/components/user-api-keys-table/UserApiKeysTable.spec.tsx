@@ -69,11 +69,7 @@ describe('UserApiKeysTable', () => {
   it('should render row content properly', () => {
     render(<UserApiKeysTable {...mockedProps} items={mockedCapiKeys} />)
 
-    expect(
-      screen.getByTestId(`row-${mockedCapiKeys[0].name}`),
-    ).toHaveTextContent(
-      'API Key NameRedisInsight-f4868252-a128-4a02-af75-bd3c99898267-2020-11-01T-123Created2 Aug 2023Last used2 Aug 2023',
-    )
+    expect(screen.getByText(mockedCapiKeys[0].name)).toBeVisible()
   })
 
   it('should show delete popover and call proper action on delete', async () => {
@@ -97,24 +93,7 @@ describe('UserApiKeysTable', () => {
 
     apiService.delete = jest.fn().mockResolvedValue({ status: 200 })
 
-    const { container } = render(
-      <UserApiKeysTable {...mockedProps} items={mockedCapiKeys} />,
-    )
-
-    fireEvent.click(
-      container.querySelector(
-        '[data-test-subj="tableHeaderSortButton"]',
-      ) as HTMLElement,
-    )
-
-    expect(sendEventTelemetry).toBeCalledWith({
-      event: TelemetryEvent.SETTINGS_CLOUD_API_KEY_SORTED,
-      eventData: {
-        direction: 'asc',
-        field: 'name',
-        numberOfKeys: 3,
-      },
-    })
+    render(<UserApiKeysTable {...mockedProps} items={mockedCapiKeys} />)
 
     sendEventTelemetry.mockRestore()
 

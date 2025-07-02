@@ -1,10 +1,9 @@
 import React from 'react'
-import { EuiPanel } from '@elastic/eui'
 import SuspenseLoader from 'uiSrc/components/main-router/components/SuspenseLoader'
 
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
-import styles from './styles.module.scss'
+import { Card } from 'uiSrc/components/base/layout'
 
 export type ConnectivityErrorProps = {
   onRetry?: () => void
@@ -17,8 +16,8 @@ const ConnectivityError = ({
   error,
   onRetry,
 }: ConnectivityErrorProps) => (
-  <Col className={styles.connectivityError}>
-    <EuiPanel>
+  <Col>
+    <Card>
       <Col style={{ minHeight: '100vh' }} centered>
         {isLoading && <SuspenseLoader />}
         <Col centered gap="xl">
@@ -30,7 +29,7 @@ const ConnectivityError = ({
           )}
         </Col>
       </Col>
-    </EuiPanel>
+    </Card>
   </Col>
 )
 

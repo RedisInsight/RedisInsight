@@ -1,9 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import {
-  EuiInMemoryTable,
-  EuiBasicTableColumn,
-  PropertySort,
-} from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 
@@ -20,11 +15,12 @@ import {
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import styles from './styles.module.scss'
 
 export interface Props {
   countSuccessAdded: number
-  columns: EuiBasicTableColumn<ModifiedSentinelMaster>[]
+  columns: ColumnDefinition<ModifiedSentinelMaster>[]
   masters: ModifiedSentinelMaster[]
   onBack: () => void
   onViewDatabases: () => void
@@ -46,11 +42,6 @@ const SentinelDatabasesResult = ({
   const { loading } = useSelector(sentinelSelector)
 
   const countFailAdded = masters?.length - countSuccessAdded
-
-  const sort: PropertySort = {
-    field: 'message',
-    direction: 'asc',
-  }
 
   useEffect(() => {
     if (masters.length) {
@@ -126,15 +117,20 @@ const SentinelDatabasesResult = ({
         </FlexItem>
         <br />
         <div className="itemList databaseList sentinelDatabaseListResult">
-          <EuiInMemoryTable
-            items={items}
-            itemId="id"
-            loading={loading}
-            message={message}
-            columns={columns}
-            sorting={{ sort }}
-            className={styles.table}
-          />
+          {!items.length || loading ? (
+            <Text>{message}</Text>
+          ) : (
+            <Table
+              columns={columns}
+              data={items}
+              defaultSorting={[
+                {
+                  id: 'message',
+                  desc: false,
+                },
+              ]}
+            />
+          )}
         </div>
       </div>
       <FlexItem padding={4}>

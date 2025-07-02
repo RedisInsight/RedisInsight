@@ -2,7 +2,9 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { toNumber } from 'lodash'
-import { EuiFieldText, EuiIcon, EuiPanel, EuiPopover } from '@elastic/eui'
+import { EuiFieldText, EuiIcon, EuiPopover } from '@elastic/eui'
+
+
 
 import { Text } from 'uiSrc/components/base/text'
 import { KeyTypes } from 'uiSrc/constants'
@@ -243,17 +245,7 @@ const RemoveListElements = (props: Props) => {
 
   return (
     <>
-      <EuiPanel
-        color="transparent"
-        hasShadow={false}
-        borderRadius="none"
-        className={cx(
-          styles.content,
-          'eui-yScroll',
-          'flexItemNoFullWidth',
-          'inlineFieldsNoSpace',
-        )}
-      >
+      <div className={styles.content}>
         <FlexItem grow>
           <Row align="center">
             <FlexItem style={{ minWidth: '220px' }}>
@@ -293,14 +285,9 @@ const RemoveListElements = (props: Props) => {
             </FlexItem>
           </Row>
         </FlexItem>
-      </EuiPanel>
-      <EuiPanel
-        style={{ border: 'none' }}
-        color="transparent"
-        hasShadow={false}
-        className="flexItemNoFullWidth"
-      >
-        <Row justify="end" gap="xl">
+      </div>
+      <>
+        <Row justify="end" gap="xl" style={{ padding: 18 }}>
           <FlexItem>
             <div>
               <SecondaryButton
@@ -315,7 +302,7 @@ const RemoveListElements = (props: Props) => {
             <div>{RemoveButton()}</div>
           </FlexItem>
         </Row>
-      </EuiPanel>
+      </>
     </>
   )
 }

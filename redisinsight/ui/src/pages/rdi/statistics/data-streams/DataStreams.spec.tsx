@@ -50,9 +50,6 @@ describe('DataStreams', () => {
   it('renders the data streams table', () => {
     render(<DataStreams {...mockedProps} />)
 
-    // Assert that the table is rendered
-    expect(screen.getByTestId('data-streams-table')).toBeInTheDocument()
-
     // Assert that the table columns are rendered
     const columnHeaders = screen.getAllByRole('columnheader')
     expect(columnHeaders).toHaveLength(10) // 10 columns

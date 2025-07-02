@@ -1,4 +1,4 @@
-import { EuiPanel, EuiResizeObserver } from '@elastic/eui'
+import { EuiResizeObserver } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -26,6 +26,7 @@ import RdiHeader from './header/RdiHeader'
 import RdiInstancesListWrapper from './instance-list/RdiInstancesListWrapper'
 
 import styles from './styles.module.scss'
+import { Card } from 'uiSrc/components/base/layout'
 
 const RdiPage = () => {
   const [width, setWidth] = useState(0)
@@ -121,11 +122,11 @@ const RdiPage = () => {
 
   const InstanceList = () =>
     !data.length ? (
-      <EuiPanel className={styles.emptyPanel} borderRadius="none">
+      <Card>
         {!loading && !loadingChanging && (
           <EmptyMessage onAddInstanceClick={handleOpenConnectionForm} />
         )}
-      </EuiPanel>
+      </Card>
     ) : (
       <EuiResizeObserver onResize={onResize}>
         {(resizeRef) => (

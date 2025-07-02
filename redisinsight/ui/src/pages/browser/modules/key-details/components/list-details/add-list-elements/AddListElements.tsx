@@ -1,7 +1,8 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
 import cx from 'classnames'
-import { EuiFieldText, EuiPanel } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 
 import {
   selectedKeyDataSelector,
@@ -124,18 +125,7 @@ const AddListElements = (props: Props) => {
 
   return (
     <>
-      <EuiPanel
-        color="transparent"
-        hasShadow={false}
-        borderRadius="none"
-        data-test-subj="add-list-field-panel"
-        className={cx(
-          styles.container,
-          'eui-yScroll',
-          'flexItemNoFullWidth',
-          'inlineFieldsNoSpace',
-        )}
-      >
+      <div className={styles.container}>
         <RiSelect
           value={destination}
           options={optionsDestinations}
@@ -162,14 +152,9 @@ const AddListElements = (props: Props) => {
             />
           )}
         </AddMultipleFields>
-      </EuiPanel>
-      <EuiPanel
-        style={{ border: 'none' }}
-        color="transparent"
-        hasShadow={false}
-        className="flexItemNoFullWidth"
-      >
-        <Row justify="end" gap="m">
+      </div>
+      <>
+        <Row justify="end" gap="m" style={{ padding: 18 }}>
           <FlexItem>
             <div>
               <SecondaryButton
@@ -191,7 +176,7 @@ const AddListElements = (props: Props) => {
             </div>
           </FlexItem>
         </Row>
-      </EuiPanel>
+      </>
     </>
   )
 }

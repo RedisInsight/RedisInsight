@@ -1,12 +1,7 @@
 import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import {
-  EuiPanel,
-  EuiAccordion,
-  EuiToolTip,
-  EuiIcon,
-} from '@elastic/eui'
+import { EuiAccordion, EuiToolTip, EuiIcon } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 import cx from 'classnames'
 
@@ -42,6 +37,7 @@ import {
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Card } from 'uiSrc/components/base/layout'
 import {
   IconButton,
   SecondaryButton,
@@ -251,10 +247,11 @@ const Recommendation = ({
         <FlexItem>
           <EuiToolTip
             title={`${hide ? 'Show' : 'Hide'} tip`}
-            content={`${hide
-              ? 'This tip will be shown in the list.'
-              : 'This tip will be removed from the list and not displayed again.'
-              }`}
+            content={`${
+              hide
+                ? 'This tip will be shown in the list.'
+                : 'This tip will be removed from the list and not displayed again.'
+            }`}
             position="top"
             display="inlineBlock"
             anchorClassName="flex-row"
@@ -296,9 +293,9 @@ const Recommendation = ({
         data-testid={`${name}-accordion`}
         aria-label={`${name}-accordion`}
       >
-        <EuiPanel className={styles.accordionContent} color="subdued">
+        <Card className={styles.accordionContent} color="subdued">
           {recommendationContent()}
-        </EuiPanel>
+        </Card>
       </EuiAccordion>
     </div>
   )

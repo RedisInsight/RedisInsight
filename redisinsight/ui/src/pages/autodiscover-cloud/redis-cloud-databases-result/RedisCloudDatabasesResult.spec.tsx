@@ -9,13 +9,10 @@ describe('RedisCloudDatabasesResult', () => {
   it('should render', () => {
     const columnsMock = [
       {
-        field: 'subscriptionId',
-        className: 'column_subscriptionId',
-        name: 'Subscription ID',
-        dataType: 'string',
-        sortable: true,
-        width: '170px',
-        truncateText: true,
+        id: 'subscriptionId',
+        accessorKey: 'subscriptionId',
+        header: 'Subscription ID',
+        enableSorting: true,
       },
     ]
     expect(

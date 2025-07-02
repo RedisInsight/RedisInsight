@@ -1,7 +1,6 @@
 import {
   EuiFieldText,
   EuiIcon,
-  EuiPanel,
   EuiToolTip,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -90,18 +89,7 @@ const AddStreamGroup = (props: Props) => {
 
   return (
     <>
-      <EuiPanel
-        color="transparent"
-        hasShadow={false}
-        borderRadius="none"
-        data-test-subj="add-stream-groups-field-panel"
-        className={cx(
-          styles.content,
-          'eui-yScroll',
-          'flexItemNoFullWidth',
-          'inlineFieldsNoSpace',
-        )}
-      >
+      <div className={styles.content} data-test-subj="add-stream-groups-field-panel">
         <FlexItem
           className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace')}
           grow
@@ -172,14 +160,9 @@ const AddStreamGroup = (props: Props) => {
             </FlexItem>
           </Row>
         </FlexItem>
-      </EuiPanel>
-      <EuiPanel
-        style={{ border: 'none' }}
-        color="transparent"
-        hasShadow={false}
-        className="flexItemNoFullWidth"
-      >
-        <Row justify="end" gap="l">
+      </div>
+      <>
+        <Row justify="end" gap="l" style={{ padding: 18 }}>
           <FlexItem>
             <div>
               <SecondaryButton
@@ -202,7 +185,7 @@ const AddStreamGroup = (props: Props) => {
             </div>
           </FlexItem>
         </Row>
-      </EuiPanel>
+      </>
     </>
   )
 }

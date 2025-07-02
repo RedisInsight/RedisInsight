@@ -64,7 +64,7 @@ const CliHeader = () => {
   return (
     <div className={styles.container} id="cli-header">
       <Row justify="between" align="center" style={{ height: '100%' }}>
-        <FlexItem className={styles.title}>
+        <FlexItem className={styles.title} direction="row">
           <EuiIcon type="console" size="m" />
           <OnboardingTour
             options={ONBOARDING_FEATURES.BROWSER_CLI}

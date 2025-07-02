@@ -62,7 +62,7 @@ interface INavigations {
   dataTestId: string
   connectedInstanceId?: string
   onClick: () => void
-  getIconType: () => IconType
+  iconType: IconType
   onboard?: any
   featureFlag?: FeatureFlags
 }
@@ -124,7 +124,7 @@ const NavigationMenu = () => {
       onClick: () => handleGoPage(Pages.browser(connectedInstanceId)),
       dataTestId: 'browser-page-btn',
       connectedInstanceId,
-      getIconType: () => BrowserIcon,
+      iconType: BrowserIcon,
       onboard: ONBOARDING_FEATURES.BROWSER_PAGE,
     },
     {
@@ -135,7 +135,7 @@ const NavigationMenu = () => {
       dataTestId: 'workbench-page-btn',
       connectedInstanceId,
       isActivePage: activePage === `/${PageNames.workbench}`,
-      getIconType: () => WorkbenchIcon,
+      iconType: WorkbenchIcon,
       onboard: ONBOARDING_FEATURES.WORKBENCH_PAGE,
     },
     {
@@ -146,7 +146,7 @@ const NavigationMenu = () => {
       dataTestId: 'analytics-page-btn',
       connectedInstanceId,
       isActivePage: isAnalyticsPath(activePage),
-      getIconType: () => SlowLogIcon,
+      iconType: SlowLogIcon,
       featureFlag: FeatureFlags.envDependent,
     },
     {
@@ -157,7 +157,7 @@ const NavigationMenu = () => {
       dataTestId: 'pub-sub-page-btn',
       connectedInstanceId,
       isActivePage: activePage === pubSubPath,
-      getIconType: () => PubSubIcon,
+      iconType: PubSubIcon,
       onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE,
       featureFlag: FeatureFlags.envDependent,
     },
@@ -171,7 +171,7 @@ const NavigationMenu = () => {
       onClick: () => handleGoPage(Pages.rdiStatistics(connectedRdiInstanceId)),
       dataTestId: 'pipeline-status-page-btn',
       isActivePage: activePage === `/${PageNames.rdiStatistics}`,
-      getIconType: () => PipelineStatisticsIcon,
+      iconType: PipelineStatisticsIcon,
     },
     {
       tooltipText: 'Pipeline Management',
@@ -181,7 +181,7 @@ const NavigationMenu = () => {
         handleGoPage(Pages.rdiPipelineManagement(connectedRdiInstanceId)),
       dataTestId: 'pipeline-management-page-btn',
       isActivePage: isPipelineManagementPath(),
-      getIconType: () => PipelineManagementIcon,
+      iconType: PipelineManagementIcon,
     },
   ]
 
@@ -193,7 +193,7 @@ const NavigationMenu = () => {
       onClick: () => handleGoPage(Pages.settings),
       dataTestId: 'settings-page-btn',
       isActivePage: activePage === Pages.settings,
-      getIconType: () => SettingsIcon,
+      iconType: SettingsIcon,
       featureFlag: FeatureFlags.envDependent,
     },
   ]
@@ -217,7 +217,7 @@ const NavigationMenu = () => {
                 tooltipProps={{ text: nav.tooltipText, placement: 'right' }}
               >
                 <SideBarItemIcon
-                  icon={nav.getIconType()}
+                  icon={nav.iconType}
                   aria-label={nav.ariaLabel}
                   data-testid={nav.dataTestId}
                 />
@@ -261,7 +261,7 @@ const NavigationMenu = () => {
           className={styles.sideBarItem}
         >
           <SideBarItemIcon
-            icon={nav.getIconType()}
+            icon={nav.iconType}
             aria-label={nav.ariaLabel}
             data-testid={nav.dataTestId}
           />

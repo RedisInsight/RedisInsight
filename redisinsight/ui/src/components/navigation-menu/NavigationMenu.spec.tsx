@@ -178,11 +178,9 @@ describe('NavigationMenu', () => {
           buildType: BuildType.DockerOnPremise,
         },
       }))
-      const { container } = render(<NavigationMenu />)
+      render(<NavigationMenu />)
 
-      const githubBtn = container.querySelector(
-        '[data-test-subj="github-repo-btn"]',
-      )
+      const githubBtn = screen.getByTestId("github-repo-btn")
       expect(githubBtn).toBeTruthy()
       expect(githubBtn?.getAttribute('href')).toEqual(EXTERNAL_LINKS.githubRepo)
     })
@@ -219,9 +217,6 @@ describe('NavigationMenu', () => {
         screen.queryByTestId('github-repo-divider-default'),
       ).toBeInTheDocument()
       expect(screen.queryByTestId('github-repo-icon')).toBeInTheDocument()
-      expect(
-        screen.queryByTestId('github-repo-divider-otherwise'),
-      ).not.toBeInTheDocument()
     })
 
     it('should hide feature dependent items when feature flag is off', async () => {
@@ -240,9 +235,6 @@ describe('NavigationMenu', () => {
         screen.queryByTestId('github-repo-divider-default'),
       ).not.toBeInTheDocument()
       expect(screen.queryByTestId('notification-menu')).not.toBeInTheDocument()
-      expect(
-        screen.queryByTestId('github-repo-divider-otherwise'),
-      ).toBeInTheDocument()
     })
   })
 })

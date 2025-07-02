@@ -332,12 +332,15 @@ const NavigationMenu = () => {
         {publicRoutes.map(renderPublicNavItem)}
 
         <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
-          <SideBarDivider />
-          <SideBarFooter.Link href={EXTERNAL_LINKS.githubRepo} target="_blank">
+          <SideBarDivider data-testid="github-repo-divider-default" />
+          <SideBarFooter.Link
+            data-testid="github-repo-btn"
+            href={EXTERNAL_LINKS.githubRepo}
+            target="_blank"
+          >
             <SideBarItem
               className={styles.githubNavItem}
               tooltipProps={{ text: 'Star us on GitHub', placement: 'right' }}
-              data-test-subj="github-repo-btn"
             >
               <SideBarItemIcon
                 icon={GithubIcon}

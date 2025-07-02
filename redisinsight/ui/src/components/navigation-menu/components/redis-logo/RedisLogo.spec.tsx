@@ -8,6 +8,7 @@ import {
   screen,
 } from 'uiSrc/utils/test-utils'
 import { FeatureFlags } from 'uiSrc/constants'
+import { SideBar } from 'uiSrc/components/base/layout/sidebar'
 import { RedisLogo } from './RedisLogo'
 
 beforeEach(() => {
@@ -22,7 +23,7 @@ describe('RedisLogo', () => {
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
       { flag: true },
     )
-    render(<RedisLogo isRdiWorkspace={false} />, {
+    render(<SideBar isExpanded={false}><RedisLogo isRdiWorkspace={false} /></SideBar>, {
       store: mockStore(initialStoreState),
     })
 
@@ -35,7 +36,7 @@ describe('RedisLogo', () => {
       `app.features.featureFlags.features.${FeatureFlags.envDependent}`,
       { flag: false },
     )
-    render(<RedisLogo isRdiWorkspace={false} />, {
+    render(<SideBar isExpanded={false}><RedisLogo isRdiWorkspace={false} /></SideBar>, {
       store: mockStore(initialStoreState),
     })
 

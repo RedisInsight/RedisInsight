@@ -37,6 +37,7 @@ const CreateCloud = () => {
               campaign: 'navigation_menu',
             })}
             style={{ marginInline: 'auto', backgroundColor: 'transparent' }}
+            data-testid="create-cloud-db-link"
           >
             <SideBarItem
               tooltipProps={{
@@ -50,8 +51,8 @@ const CreateCloud = () => {
                   action: OAuthSocialAction.Create,
                 })
               }}
-              data-test-subj="create-cloud-nav-link"
               style={{ marginInline: 'auto' }}
+              data-testid="create-cloud-sidebar-item"
             >
               <SideBarItemIcon
                 width="20px"

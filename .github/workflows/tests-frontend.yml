@@ -40,11 +40,11 @@ jobs:
           FILENAME=ui.lint.audit.json
           WORKDIR="."
 
-          npm run lint:ui -f json -o $FILENAME || true &&
+          npm run lint:ui -- -f json -o $FILENAME || true &&
           FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="UI" node .github/lint-report.js &&
           curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
-          npm run lint -f json -o $FILENAME || true &&
+          npm run lint -- -f json -o $FILENAME || true &&
           FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="REST" node .github/lint-report.js &&
           curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 

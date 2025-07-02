@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React from 'react'
 
 import cx from 'classnames'
 import { ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
@@ -38,8 +38,6 @@ const QueryActions = (props: Props) => {
     onChangeGroupMode,
     onSubmit,
   } = props
-  const runTooltipRef = useRef<RiTooltip>(null)
-
   const KeyBoardTooltipContent = KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
     <>
       <Text className={styles.tooltipText} size="s">
@@ -109,7 +107,6 @@ const QueryActions = (props: Props) => {
         className={styles.divider}
       />
       <RiTooltip
-        // ref={runTooltipRef} TODO: RI-7074: forward ref
         position="left"
         content={
           isLoading
@@ -121,7 +118,6 @@ const QueryActions = (props: Props) => {
         <EmptyButton
           onClick={() => {
             onSubmit()
-            setTimeout(() => runTooltipRef?.current?.hideToolTip?.(), 0)
           }}
           loading={isLoading}
           disabled={isLoading}

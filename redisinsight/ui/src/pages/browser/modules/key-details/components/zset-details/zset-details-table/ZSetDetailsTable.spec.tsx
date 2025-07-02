@@ -173,13 +173,12 @@ describe('ZSetDetailsTable', () => {
       ;(zsetDataSelector as jest.Mock).mockImplementation(zsetDataSelectorMock)
     })
 
-    // TODO: RI-7074 check this scenario
-    it.skip('should not be able to edit when member name is truncated', async () => {
+    it('should not be able to edit when member name is truncated', async () => {
       render(<ZSetDetailsTable {...instance(mockedProps)} />)
       const score = screen.getByTestId(/zset_content-value-/)
 
       await act(async () => {
-        fireEvent.focus(score)
+        fireEvent.mouseOver(score)
       })
 
       const scoreEditButton = screen.getByTestId(/zset_edit-btn-/)

@@ -108,10 +108,17 @@ export const connectivityErrorsInterceptor = (error: AxiosError) => {
     message?: string
     code?: string
     error?: string
+    errorCode?: number
   }
 
   if (isConnectivityError(response?.status, responseData)) {
-    store?.dispatch<any>(setConnectivityError(ApiErrors.ConnectionLost))
+    let message
+
+    if (responseData?.errorCode === 10908) {
+      message = responseData?.message
+    }
+
+    store?.dispatch<any>(setConnectivityError(message || ApiErrors.ConnectionLost))
   }
 
   return Promise.reject(error)

@@ -72,7 +72,7 @@ const CHSearchFilter = ({ submitFilter, isLoading }: Props) => {
   }
 
   return (
-    <div className={cx(styles.container)}>
+    <div className={styles.container}>
       <RiSelect
         loading={isLoading}
         disabled={isLoading}

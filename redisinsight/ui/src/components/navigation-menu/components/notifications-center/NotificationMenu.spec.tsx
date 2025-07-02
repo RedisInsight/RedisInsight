@@ -6,6 +6,7 @@ import {
   setIsCenterOpen,
 } from 'uiSrc/slices/app/notifications'
 import { cleanup, mockedStore, render, screen } from 'uiSrc/utils/test-utils'
+import { SideBar } from 'uiSrc/components/base/layout/sidebar'
 import NotificationMenu from './NotificationMenu'
 
 jest.mock('uiSrc/slices/app/notifications', () => ({
@@ -24,13 +25,15 @@ beforeEach(() => {
   store.clearActions()
 })
 
+const sideBarWithNotificationMenu = <SideBar isExpanded={false}><NotificationMenu /></SideBar>
+
 describe('NotificationMenu', () => {
   it('should render', () => {
-    expect(render(<NotificationMenu />)).toBeTruthy()
+    expect(render(sideBarWithNotificationMenu)).toBeTruthy()
   })
 
   it('should open notification center onClick icon', async () => {
-    render(<NotificationMenu />)
+    render(sideBarWithNotificationMenu)
 
     fireEvent.mouseDown(screen.getByTestId('notification-menu-button'))
 
@@ -39,7 +42,7 @@ describe('NotificationMenu', () => {
   })
 
   it('should show badge with count of unread messages', async () => {
-    render(<NotificationMenu />)
+    render(sideBarWithNotificationMenu)
 
     expect(screen.getByTestId('total-unread-badge')).toBeInTheDocument()
     expect(screen.getByTestId('total-unread-badge')).toHaveTextContent('1')
@@ -51,7 +54,7 @@ describe('NotificationMenu', () => {
       totalUnread: 13,
       isCenterOpen: false,
     })
-    render(<NotificationMenu />)
+    render(sideBarWithNotificationMenu)
 
     expect(screen.getByTestId('total-unread-badge')).toHaveTextContent('9+')
   })

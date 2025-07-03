@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
-import { EuiFieldText, EuiForm, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiForm } from '@elastic/eui'
 import { checkDateTimeFormat, formatTimestamp } from 'uiSrc/utils'
 import {
   DATETIME_FORMATTER_DEFAULT,
@@ -18,6 +18,7 @@ import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon, CheckBoldIcon } from 'uiSrc/components/base/icons'
 import { RiRadioGroup } from 'uiSrc/components/base/forms/radio-group/RadioGroup'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { RiTooltip } from 'uiSrc/components'
 import {
   defaultValueRender,
   RiSelect,
@@ -218,9 +219,8 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
                 data-testid="custom-datetime-input"
               />
             </FlexItem>
-            <EuiToolTip
+            <RiTooltip
               position="top"
-              anchorClassName="euiToolTip__btn-disabled"
               content={
                 showError ? error || 'This format is not supported' : null
               }
@@ -235,7 +235,7 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
               >
                 Save
               </PrimaryButton>
-            </EuiToolTip>
+            </RiTooltip>
           </>
         )}
       </Row>

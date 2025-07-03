@@ -48,7 +48,8 @@
     "cpu-features": "file:./stubs/cpu-features",
     "cross-spawn": "^7.0.5",
     "redis-parser": "3.0.0",
-    "file-stream-rotator": "^1.0.0"
+    "file-stream-rotator": "^1.0.0",
+    "glob": "^10.3.10"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.20",

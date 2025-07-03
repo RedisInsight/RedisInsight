@@ -166,16 +166,17 @@ $marginIcon: 12px;
 }
 
 .dropdownOption {
-  display: flex;
+  display: flex !important;
   align-items: center;
   position: relative;
   padding: 0 0 3px 8px;
 
   span {
-    margin-left: 10px;
+    font-size: 14px;
+    margin-left: 5px;
     line-height: 20px;
     overflow: hidden;
-    max-width: 100px;
+    max-width: 200px;
   }
 }
 

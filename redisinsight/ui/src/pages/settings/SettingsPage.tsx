@@ -1,11 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import cx from 'classnames'
-import {
-  EuiCollapsibleNavGroup,
-  EuiForm,
-  EuiLoadingSpinner,
-  EuiSuperSelect,
-} from '@elastic/eui'
+import { EuiCollapsibleNavGroup, EuiForm } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setTitle } from 'uiSrc/utils'
@@ -41,6 +36,11 @@ import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
+import { Loader } from 'uiSrc/components/base/display'
+import {
+  defaultValueRender,
+  RiSelect,
+} from 'uiSrc/components/base/forms/select/RiSelect'
 import {
   AdvancedSettings,
   CloudSettings,
@@ -59,10 +59,10 @@ const SettingsPage = () => {
 
   const options = THEMES
   const themeContext = useContext(ThemeContext)
-  let { theme, changeTheme, usingSystemTheme } = themeContext
-
+  const { theme, changeTheme, usingSystemTheme } = themeContext
+  let currentTheme = theme
   if (usingSystemTheme) {
-    theme = Theme.System
+    currentTheme = Theme.System
   }
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const SettingsPage = () => {
   setTitle('Settings')
 
   const onChange = (value: string) => {
-    const previousValue = theme
+    const previousValue = currentTheme
     changeTheme(value)
     sendEventTelemetry({
       event: TelemetryEvent.SETTINGS_COLOR_THEME_CHANGED,
@@ -98,11 +98,12 @@ const SettingsPage = () => {
         <Title size="XS">Color Theme</Title>
         <Spacer size="m" />
         <FormField label="Specifies the color theme to be used in Redis Insight:">
-          <EuiSuperSelect
+          <RiSelect
             options={options}
-            valueOfSelected={theme}
+            valueRender={defaultValueRender}
+            value={currentTheme}
             onChange={onChange}
-            style={{ marginTop: '12px' }}
+            style={{ marginTop: '12px', maxWidth: 240 }}
             data-test-subj="select-theme"
           />
         </FormField>
@@ -119,7 +120,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <EuiLoadingSpinner size="xl" />
+          <Loader size="xl" />
         </div>
       )}
       <ConsentsPrivacy />
@@ -130,7 +131,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <EuiLoadingSpinner size="xl" />
+          <Loader size="xl" />
         </div>
       )}
       <WorkbenchSettings />
@@ -141,7 +142,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <EuiLoadingSpinner size="xl" />
+          <Loader size="xl" />
         </div>
       )}
       <CloudSettings />
@@ -152,7 +153,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <EuiLoadingSpinner size="xl" />
+          <Loader size="xl" />
         </div>
       )}
       <CallOut className={styles.warning}>

@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import {
-  EuiInMemoryTable,
-  EuiBasicTableColumn,
-  PropertySort,
-} from '@elastic/eui'
-import {
   InstanceRedisCloud,
   AddRedisDatabaseStatus,
 } from 'uiSrc/slices/interfaces'
@@ -22,10 +17,11 @@ import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import styles from './styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<InstanceRedisCloud>[]
+  columns: ColumnDefinition<InstanceRedisCloud>[]
   onView: () => void
   onBack: () => void
 }
@@ -37,14 +33,9 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
   const [items, setItems] = useState<InstanceRedisCloud[]>([])
   const [message, setMessage] = useState(loadingMsg)
 
-  const { loading, dataAdded: instances } = useSelector(cloudSelector)
+  const { dataAdded: instances } = useSelector(cloudSelector)
 
   useEffect(() => setItems(instances), [instances])
-
-  const sort: PropertySort = {
-    field: 'name',
-    direction: 'asc',
-  }
 
   const countSuccessAdded = instances.filter(
     ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Success,
@@ -112,15 +103,17 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
         </Flex>
         <br />
         <div className="itemList databaseList cloudDatabaseListResult">
-          <EuiInMemoryTable
-            items={items}
-            itemId="uid"
-            loading={loading}
-            message={message}
+          <Table
             columns={columns}
-            className={styles.table}
-            sorting={{ sort }}
+            data={items}
+            defaultSorting={[
+              {
+                id: 'name',
+                desc: false,
+              },
+            ]}
           />
+          {!items.length && <Text>{message}</Text>}
         </div>
       </div>
       <FlexItem padding={4}>

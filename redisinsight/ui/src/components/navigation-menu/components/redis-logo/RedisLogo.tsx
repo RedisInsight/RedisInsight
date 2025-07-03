@@ -1,4 +1,4 @@
-import { EuiLink, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React from 'react'
 import { useSelector } from 'react-redux'
@@ -8,6 +8,7 @@ import { getRouterLinkProps } from 'uiSrc/services'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { Link } from 'uiSrc/components/base/link/Link'
 import styles from '../../styles.module.scss'
 
 type Props = {
@@ -38,7 +39,7 @@ export const RedisLogo = ({ isRdiWorkspace }: Props) => {
       position="right"
     >
       <span className={cx(styles.iconNavItem, styles.homeIcon)}>
-        <EuiLink
+        <Link
           {...getRouterLinkProps(isRdiWorkspace ? Pages.rdi : Pages.home)}
           className={styles.logo}
           data-test-subj="home-page-btn"
@@ -49,7 +50,7 @@ export const RedisLogo = ({ isRdiWorkspace }: Props) => {
             type="RedisLogo"
             size="XL"
           />
-        </EuiLink>
+        </Link>
       </span>
     </EuiToolTip>
   )

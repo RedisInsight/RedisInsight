@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { EuiLink } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import {
@@ -22,6 +21,7 @@ import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
 const utm = {
@@ -86,16 +86,15 @@ const FilterNotAvailable = ({ onClose }: { onClose?: () => void }) => {
               )}
             </OAuthSsoHandlerDialog>
             <Spacer size="m" />
-            <EuiLink
+            <Link
               className={styles.link}
-              external={false}
               target="_blank"
               color="text"
               href={getUtmExternalLink(EXTERNAL_LINKS.redisStack, utm)}
               data-testid="learn-more-link"
             >
               Learn More
-            </EuiLink>
+            </Link>
           </div>
         </FeatureFlagComponent>
       )}

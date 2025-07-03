@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiLink, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiPopover, EuiToolTip } from '@elastic/eui'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { putRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -18,6 +18,7 @@ import { Text } from 'uiSrc/components/base/text'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { Link } from 'uiSrc/components/base/link/Link'
 import { getVotedText, iconType, voteTooltip } from './utils'
 import styles from './styles.module.scss'
 
@@ -153,8 +154,7 @@ const VoteOption = (props: Props) => {
               className={styles.feedbackBtn}
               size="s"
             >
-              <EuiLink
-                external={false}
+              <Link
                 className={styles.link}
                 href={EXTERNAL_LINKS.recommendationFeedback}
                 target="_blank"
@@ -168,7 +168,7 @@ const VoteOption = (props: Props) => {
                   data-testid="github-repo-icon"
                 />
                 To Github
-              </EuiLink>
+              </Link>
             </PrimaryButton>
           </FlexItem>
         </Col>

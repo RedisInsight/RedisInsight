@@ -25,7 +25,7 @@ interface Props {
 }
 
 const Status = ({ data }: Props) => (
-  <Panel paddingSize="l">
+  <Panel>
     <Row gap="m" responsive>
       <StatusItem label="Address" value={data.address} />
       <VerticalDivider />

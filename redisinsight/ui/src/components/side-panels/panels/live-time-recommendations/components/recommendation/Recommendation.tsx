@@ -1,7 +1,10 @@
 import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { EuiLink, EuiPanel, EuiAccordion, EuiToolTip } from '@elastic/eui'
+import {
+  EuiAccordion,
+  EuiToolTip,
+} from '@elastic/eui'
 import { isUndefined } from 'lodash'
 import cx from 'classnames'
 
@@ -35,12 +38,14 @@ import {
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Card } from 'uiSrc/components/base/layout'
 import {
   IconButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -198,8 +203,7 @@ const Recommendation = ({
       <Row className={styles.fullWidth} align="center">
         <FlexItem>
           {redisStack && (
-            <EuiLink
-              external={false}
+            <Link
               target="_blank"
               href={EXTERNAL_LINKS.redisStack}
               className={styles.redisStackLink}
@@ -221,7 +225,7 @@ const Recommendation = ({
                   data-testid={`${id}-redis-stack-icon`}
                 />
               </EuiToolTip>
-            </EuiLink>
+            </Link>
           )}
         </FlexItem>
         <FlexItem grow className="truncateText">
@@ -293,9 +297,9 @@ const Recommendation = ({
         data-testid={`${name}-accordion`}
         aria-label={`${name}-accordion`}
       >
-        <EuiPanel className={styles.accordionContent} color="subdued">
+        <Card className={styles.accordionContent} color="subdued">
           {recommendationContent()}
-        </EuiPanel>
+        </Card>
       </EuiAccordion>
     </div>
   )

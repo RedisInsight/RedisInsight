@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import {
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiToolTip,
-  keys,
-} from '@elastic/eui'
+import { EuiToolTip, keys } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { isArray, upperFirst } from 'lodash'
@@ -33,6 +28,11 @@ import {
   ShrinkIcon,
 } from 'uiSrc/components/base/icons'
 import Tabs, { TabInfo } from 'uiSrc/components/base/layout/tabs'
+import {
+  RiSelect,
+  RiSelectOption,
+  defaultValueRender,
+} from 'uiSrc/components/base/forms/select/RiSelect'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -62,9 +62,7 @@ const DryRunJobPanel = (props: Props) => {
   )
   const [input, setInput] = useState<string>('')
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
-  const [targetOptions, setTargetOptions] = useState<
-    EuiSuperSelectOption<string>[]
-  >([])
+  const [targetOptions, setTargetOptions] = useState<RiSelectOption[]>([])
   const [selectedTarget, setSelectedTarget] = useState<string>()
 
   const dispatch = useDispatch()
@@ -259,11 +257,11 @@ const DryRunJobPanel = (props: Props) => {
           </Row>
           <div className={styles.codeLabel}>
             {isSelectAvailable && (
-              <EuiSuperSelect
+              <RiSelect
                 options={targetOptions}
-                valueOfSelected={selectedTarget}
+                valueRender={defaultValueRender}
+                value={selectedTarget}
                 onChange={(value) => setSelectedTarget(value)}
-                popoverClassName={styles.selectWrapper}
                 data-testid="target-select"
               />
             )}

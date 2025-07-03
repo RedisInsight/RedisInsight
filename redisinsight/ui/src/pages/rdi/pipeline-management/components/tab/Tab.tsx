@@ -1,8 +1,8 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiLoadingSpinner } from '@elastic/eui'
-import { Text } from 'uiSrc/components/base/text'
 
+import { Text } from 'uiSrc/components/base/text'
+import { Loader } from 'uiSrc/components/base/display'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
@@ -53,7 +53,7 @@ const Tab = (props: IProps) => {
           )}
 
           {isLoading && (
-            <EuiLoadingSpinner
+            <Loader
               data-testid="rdi-nav-config-loader"
               className={styles.loader}
             />

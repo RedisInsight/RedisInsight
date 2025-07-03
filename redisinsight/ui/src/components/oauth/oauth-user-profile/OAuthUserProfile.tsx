@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiLoadingSpinner } from '@elastic/eui'
 import cx from 'classnames'
 import OAuthSignInButton from 'uiSrc/components/oauth/oauth-sign-in-button'
 import {
@@ -14,6 +13,7 @@ import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { PackageType } from 'uiSrc/constants/env'
 import UserProfileBadge from 'uiSrc/components/instance-header/components/user-profile/UserProfileBadge'
+import { Loader } from 'uiSrc/components/base/display'
 
 import styles from './styles.module.scss'
 
@@ -41,7 +41,7 @@ const OAuthUserProfile = (props: Props) => {
     if (initialLoading) {
       return (
         <div className={styles.loadingContainer}>
-          <EuiLoadingSpinner
+          <Loader
             className={cx('infiniteMessage__icon', styles.loading)}
             size="l"
             data-testid="oath-user-profile-spinner"

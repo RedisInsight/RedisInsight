@@ -93,7 +93,7 @@ describe('DatetimeForm', () => {
     await act(() => fireEvent.click(screen.getByText('Custom')))
     await act(() => fireEvent.click(screen.getByText('Pre-selected formats')))
 
-    expect(sendEventTelemetry).toBeCalledWith({
+    expect(sendEventTelemetry).toHaveBeenCalledWith({
       event: TelemetryEvent.SETTINGS_DATE_TIME_FORMAT_CHANGED,
       eventData: {
         currentFormat: dateTimeOptions[0].value,

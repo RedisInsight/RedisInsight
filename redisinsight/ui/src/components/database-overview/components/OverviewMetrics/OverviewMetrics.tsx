@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react'
-import { EuiLoadingSpinner } from '@elastic/eui'
 import { isArray, isUndefined, toNumber } from 'lodash'
 
 import {
@@ -11,6 +10,7 @@ import {
 } from 'uiSrc/utils'
 import { Theme } from 'uiSrc/constants'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import { Loader } from 'uiSrc/components/base/display'
 
 import { AllIconsType } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
@@ -91,7 +91,7 @@ function getCpuUsage(
       cpuUsagePercentage === null ? (
         <>
           <div className={styles.calculationWrapper}>
-            <EuiLoadingSpinner className={styles.spinner} size="m" />
+            <Loader className={styles.spinner} size="m" />
             <span className={styles.calculation}>Calculating...</span>
           </div>
         </>

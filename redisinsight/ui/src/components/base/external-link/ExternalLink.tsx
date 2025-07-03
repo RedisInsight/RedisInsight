@@ -1,8 +1,9 @@
 import React from 'react'
-import { EuiLink } from '@elastic/eui'
 import { EuiLinkProps } from '@elastic/eui/src/components/link/link'
+
 import { IconProps } from 'uiSrc/components/base/icons'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { Link } from 'uiSrc/components/base/link/Link'
 
 export type Props = EuiLinkProps & {
   href: string
@@ -18,11 +19,11 @@ const ExternalLink = (props: Props) => {
   )
 
   return (
-    <EuiLink {...rest} external={false} target="_blank">
+    <Link {...rest} target="_blank">
       {iconPosition === 'left' && <ArrowIcon />}
       {children}
       {iconPosition === 'right' && <ArrowIcon />}
-    </EuiLink>
+    </Link>
   )
 }
 

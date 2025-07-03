@@ -1,6 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 
-import { EuiForm, EuiLoadingSpinner, EuiPopover } from '@elastic/eui'
+import { EuiForm, EuiPopover } from '@elastic/eui'
 
 import cx from 'classnames'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
@@ -11,6 +11,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { EditIcon } from 'uiSrc/components/base/icons'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -110,7 +111,7 @@ const EditablePopover = (props: Props) => {
       icon={btnIconType || EditIcon}
       aria-label="Edit field"
       color="primary"
-      onClick={isDisabledEditButton ? () => {} : handleButtonClick}
+      onClick={isDisabledEditButton ? () => { } : handleButtonClick}
       className={editBtnClassName}
       data-testid={`${prefix}_edit-btn-${field}`}
     />
@@ -135,7 +136,7 @@ const EditablePopover = (props: Props) => {
         >
           {content}
           {isDelayed && (
-            <EuiLoadingSpinner
+            <Loader
               className={cx(editBtnClassName, styles.spinner)}
               size="m"
             />

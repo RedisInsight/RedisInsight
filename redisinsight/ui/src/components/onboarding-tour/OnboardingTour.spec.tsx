@@ -106,7 +106,7 @@ describe('OnboardingTour', () => {
 
     fireEvent.click(screen.getByTestId('back-btn'))
     expect(store.getActions()).toEqual([setOnboardPrevStep()])
-    expect(onBack).toBeCalled()
+    expect(onBack).toHaveBeenCalled()
   })
 
   it('should call proper actions on next button', () => {
@@ -131,7 +131,7 @@ describe('OnboardingTour', () => {
 
     fireEvent.click(screen.getByTestId('next-btn'))
     expect(store.getActions()).toEqual([setOnboardNextStep()])
-    expect(onNext).toBeCalled()
+    expect(onNext).toHaveBeenCalled()
   })
 
   it('should call proper actions on skip button', () => {
@@ -156,7 +156,7 @@ describe('OnboardingTour', () => {
 
     fireEvent.click(screen.getByTestId('skip-tour-btn'))
     expect(store.getActions()).toEqual([skipOnboarding()])
-    expect(onSkip).toBeCalled()
+    expect(onSkip).toHaveBeenCalled()
   })
 
   it('should not show onboarding if step !== currentStep', () => {

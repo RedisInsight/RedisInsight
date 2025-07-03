@@ -10,9 +10,9 @@ describe('TableResult', () => {
   })
 
   it('should not render table for empty data', () => {
-    render(<TableResult data={[]} />)
+    const { container } = render(<TableResult data={[]} />)
 
-    expect(screen.queryByTestId('result-log-table')).not.toBeInTheDocument()
+    expect(container.childNodes.length).toBe(0)
   })
 
   it('should render table data with success messages', () => {

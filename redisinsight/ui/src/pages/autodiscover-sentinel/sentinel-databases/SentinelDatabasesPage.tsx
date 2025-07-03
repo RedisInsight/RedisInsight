@@ -1,4 +1,4 @@
-import { EuiBasicTableColumn, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { map, pick } from 'lodash'
 import { useHistory } from 'react-router-dom'
@@ -21,6 +21,7 @@ import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
 
 import SentinelDatabases from './components'
@@ -106,25 +107,28 @@ const SentinelDatabasesPage = () => {
     )
   }
 
-  const columns: EuiBasicTableColumn<ModifiedSentinelMaster>[] = [
+  const columns: ColumnDefinition<ModifiedSentinelMaster>[] = [
     {
-      field: 'name',
-      className: 'column_masterName',
-      name: 'Primary Group',
-      truncateText: true,
-      sortable: true,
-      width: '211px',
-      render: (name: string) => (
-        <span data-testid={`primary-group_${name}`}>{name}</span>
-      ),
+      header: 'Primary Group',
+      id: 'name',
+      accessorKey: 'name',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { name },
+        },
+      }) => <span data-testid={`primary-group_${name}`}>{name}</span>,
     },
     {
-      field: 'alias',
-      className: 'column_db_alias',
-      name: 'Database Alias*',
-      width: '285px',
-      sortable: true,
-      render: function InstanceAliasCell(_alias: string, { id, alias, name }) {
+      header: 'Database Alias*',
+      id: 'alias',
+      accessorKey: 'alias',
+      enableSorting: true,
+      cell: function InstanceAliasCell({
+        row: {
+          original: { id, alias, name },
+        },
+      }) {
         return (
           <div role="presentation">
             <InputFieldSentinel
@@ -141,17 +145,15 @@ const SentinelDatabasesPage = () => {
       },
     },
     {
-      field: 'host',
-      className: 'column_address',
-      name: 'Address',
-      width: '210px',
-      dataType: 'auto',
-      truncateText: true,
-      sortable: ({ host, port }) => `${host}:${port}`,
-      render: function Address(
-        _host: string,
-        { host, port }: ModifiedSentinelMaster,
-      ) {
+      header: 'Address',
+      id: 'host',
+      accessorKey: 'host',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { host, port },
+        },
+      }) => {
         const text = `${host}:${port}`
         return (
           <div className="host_port">
@@ -174,22 +176,20 @@ const SentinelDatabasesPage = () => {
       },
     },
     {
-      field: 'numberOfSlaves',
-      className: 'column_numberOfSlaves',
-      name: '# of replicas',
-      dataType: 'number',
-      align: 'center',
-      sortable: true,
-      width: '130px',
-      truncateText: true,
-      hideForMobile: true,
+      header: '# of replicas',
+      id: 'numberOfSlaves',
+      accessorKey: 'numberOfSlaves',
+      enableSorting: true,
     },
     {
-      field: 'username',
-      className: 'column_username',
-      name: 'Username',
-      width: '285px',
-      render: function UsernameCell(_username: string, { username, id }) {
+      header: 'Username',
+      id: 'username',
+      accessorKey: 'username',
+      cell: function UsernameCell({
+        row: {
+          original: { username, id },
+        },
+      }) {
         return (
           <div role="presentation">
             <InputFieldSentinel
@@ -205,11 +205,14 @@ const SentinelDatabasesPage = () => {
       },
     },
     {
-      field: 'password',
-      className: 'column_password',
-      name: 'Password',
-      width: '285px',
-      render: function PasswordCell(_password: string, { password, id }) {
+      header: 'Password',
+      id: 'password',
+      accessorKey: 'password',
+      cell: function PasswordCell({
+        row: {
+          original: { password, id },
+        },
+      }) {
         return (
           <div role="presentation">
             <InputFieldSentinel
@@ -225,12 +228,14 @@ const SentinelDatabasesPage = () => {
       },
     },
     {
-      field: 'db',
-      className: 'column_db',
-      width: '200px',
-      dataType: 'auto',
-      name: 'Database Index',
-      render: function IndexCell(_index: string, { db = 0, id }) {
+      header: 'Database Index',
+      id: 'db',
+      accessorKey: 'db',
+      cell: function IndexCell({
+        row: {
+          original: { db = 0, id },
+        },
+      }) {
         return (
           <div role="presentation">
             <InputFieldSentinel

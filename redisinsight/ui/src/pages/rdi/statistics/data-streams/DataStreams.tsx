@@ -1,12 +1,12 @@
-import { EuiTableFieldDataColumnType, EuiToolTip } from '@elastic/eui'
 import React from 'react'
+import { EuiToolTip } from '@elastic/eui'
 
 import { IDataStreams } from 'uiSrc/slices/interfaces'
 import { formatLongName } from 'uiSrc/utils'
 import { FormatedDate } from 'uiSrc/components'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
-import Table from '../components/table'
 
 type DataStreamsData = {
   name: string
@@ -29,6 +29,75 @@ interface Props {
   onChangeAutoRefresh: (enableAutoRefresh: boolean, refreshRate: string) => void
 }
 
+const columns: ColumnDefinition<DataStreamsData>[] = [
+  {
+    header: 'Stream name',
+    id: 'name',
+    accessorKey: 'name',
+    enableSorting: true,
+    cell: ({ getValue }) => (
+      <EuiToolTip content={getValue<string>()}>
+        <span>{formatLongName(getValue<string>(), 30, 0, '...')}</span>
+      </EuiToolTip>
+    ),
+  },
+  {
+    header: 'Total',
+    id: 'total',
+    accessorKey: 'total',
+    enableSorting: true,
+  },
+  {
+    header: 'Pending',
+    id: 'pending',
+    accessorKey: 'pending',
+    enableSorting: true,
+  },
+  {
+    header: 'Inserted',
+    id: 'inserted',
+    accessorKey: 'inserted',
+    enableSorting: true,
+  },
+  {
+    header: 'Updated',
+    id: 'updated',
+    accessorKey: 'updated',
+    enableSorting: true,
+  },
+  {
+    header: 'Deleted',
+    id: 'deleted',
+    accessorKey: 'deleted',
+    enableSorting: true,
+  },
+  {
+    header: 'Filtered',
+    id: 'filtered',
+    accessorKey: 'filtered',
+    enableSorting: true,
+  },
+  {
+    header: 'Rejected',
+    id: 'rejected',
+    accessorKey: 'rejected',
+    enableSorting: true,
+  },
+  {
+    header: 'Deduplicated',
+    id: 'deduplicated',
+    accessorKey: 'deduplicated',
+    enableSorting: true,
+  },
+  {
+    header: 'Last arrival',
+    id: 'lastArrival',
+    accessorKey: 'lastArrival',
+    enableSorting: true,
+    cell: ({ getValue }) => <FormatedDate date={getValue<string>()} />,
+  },
+]
+
 const DataStreams = ({
   data,
   loading,
@@ -36,85 +105,28 @@ const DataStreams = ({
   onRefreshClicked,
   onChangeAutoRefresh,
 }: Props) => {
-  const dataStreams = Object.keys(data?.streams || {}).map((key) => {
-    const dataStream = data.streams[key]
-    return {
-      name: key,
-      ...dataStream,
-    }
-  })
+  const dataStreams: DataStreamsData[] = Object.keys(data?.streams || {}).map(
+    (key) => {
+      const dataStream = data.streams[key]
+      return {
+        name: key,
+        ...dataStream,
+      }
+    },
+  )
 
-  const totals = data?.totals
-
-  const columns: EuiTableFieldDataColumnType<DataStreamsData>[] = [
-    {
-      name: 'Stream name',
-      field: 'name',
-      sortable: true,
-      render: (name: string) => (
-        <EuiToolTip content={name}>
-          <span>{formatLongName(name, 30, 0, '...')}</span>
-        </EuiToolTip>
-      ),
-      width: '20%',
-      footer: 'Total',
-    },
-    {
-      name: 'Total',
-      field: 'total',
-      sortable: true,
-      footer: () => totals?.total || '0',
-    },
-    {
-      name: 'Pending',
-      field: 'pending',
-      sortable: true,
-      footer: () => totals?.pending || '0',
-    },
-    {
-      name: 'Inserted',
-      field: 'inserted',
-      sortable: true,
-      footer: () => totals?.inserted || '0',
-    },
-    {
-      name: 'Updated',
-      field: 'updated',
-      sortable: true,
-      footer: () => totals?.updated || '0',
-    },
-    {
-      name: 'Deleted',
-      field: 'deleted',
-      sortable: true,
-      footer: () => totals?.deleted || '0',
-    },
-    {
-      name: 'Filtered',
-      field: 'filtered',
-      sortable: true,
-      footer: () => totals?.filtered || '0',
-    },
-    {
-      name: 'Rejected',
-      field: 'rejected',
-      sortable: true,
-      footer: () => totals?.rejected || '0',
-    },
-    {
-      name: 'Deduplicated',
-      field: 'deduplicated',
-      sortable: true,
-      footer: () => totals?.deduplicated || '0',
-    },
-    {
-      name: 'Last arrival',
-      field: 'lastArrival',
-      render: (dateStr) => <FormatedDate date={dateStr} />,
-      sortable: true,
-      footer: '',
-    },
-  ]
+  const totalsRow: DataStreamsData = {
+    name: 'Total',
+    total: data?.totals?.total || 0,
+    pending: data?.totals?.pending || 0,
+    inserted: data?.totals?.inserted || 0,
+    updated: data?.totals?.updated || 0,
+    deleted: data?.totals?.deleted || 0,
+    filtered: data?.totals?.filtered || 0,
+    rejected: data?.totals?.rejected || 0,
+    deduplicated: data?.totals?.deduplicated || 0,
+    lastArrival: '',
+  }
 
   return (
     <Panel>
@@ -127,11 +139,10 @@ const DataStreams = ({
         onRefreshClicked={onRefreshClicked}
         onChangeAutoRefresh={onChangeAutoRefresh}
       >
-        <Table<DataStreamsData>
-          id="data-streams"
+        <Table
           columns={columns}
-          items={dataStreams}
-          initialSortField="name"
+          data={[...dataStreams, totalsRow]}
+          defaultSorting={[{ id: 'name', desc: false }]}
         />
       </Accordion>
     </Panel>

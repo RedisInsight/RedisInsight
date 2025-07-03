@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
-import { EuiFieldText, EuiForm, EuiPanel } from '@elastic/eui'
+import { EuiFieldText, EuiForm } from '@elastic/eui'
 import { Maybe, stringToBuffer, validateScoreNumber } from 'uiSrc/utils'
 import { isNaNConvertedString } from 'uiSrc/utils/numbers'
 import { addKeyStateSelector, addZsetKey } from 'uiSrc/slices/browser/keys'
@@ -238,14 +238,8 @@ const AddKeyZset = (props: Props) => {
         Submit
       </PrimaryButton>
       <AddKeyFooter>
-        <EuiPanel
-          className="flexItemNoFullWidth"
-          color="transparent"
-          hasShadow={false}
-          borderRadius="none"
-          style={{ border: 'none' }}
-        >
-          <Row justify="end">
+        <>
+          <Row justify="end" style={{ padding: 18 }}>
             <FlexItem>
               <div>
                 <SecondaryButton
@@ -270,7 +264,7 @@ const AddKeyZset = (props: Props) => {
               </div>
             </FlexItem>
           </Row>
-        </EuiPanel>
+        </>
       </AddKeyFooter>
     </EuiForm>
   )

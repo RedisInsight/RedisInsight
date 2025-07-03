@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { EuiLink, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import { remove } from 'lodash'
 
 import { FeatureFlags, DEFAULT_DELIMITER, Pages } from 'uiSrc/constants'
@@ -32,6 +32,7 @@ import { ColorText, Text } from 'uiSrc/components/base/text'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { Link } from 'uiSrc/components/base/link/Link'
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import PopoverRunAnalyze from './components/popover-run-analyze'
@@ -162,8 +163,7 @@ const LiveTimeRecommendations = () => {
           />
         </EuiToolTip>
         <FeatureFlagComponent name={FeatureFlags.envDependent}>
-          <EuiLink
-            external={false}
+          <Link
             href={EXTERNAL_LINKS.githubRepo}
             target="_blank"
             style={{ marginLeft: 6 }}
@@ -176,7 +176,7 @@ const LiveTimeRecommendations = () => {
               size="s"
               data-testid="github-repo-icon"
             />
-          </EuiLink>
+          </Link>
         </FeatureFlagComponent>
       </div>
 
@@ -227,13 +227,13 @@ const LiveTimeRecommendations = () => {
                     : ANALYZE_TOOLTIP_MESSAGE
                 }
               >
-                <EuiLink
+                <Link
                   className={styles.link}
                   onClick={() => setIsShowApproveRun(true)}
                   data-testid="footer-db-analysis-link"
                 >
                   Database Analysis
-                </EuiLink>
+                </Link>
               </PopoverRunAnalyze>
               {' to get more tips'}
             </Text>

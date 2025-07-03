@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiPopover, EuiSuperSelect } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import { isEqual } from 'lodash'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -31,6 +31,7 @@ import {
   AutoTagOption,
 } from 'uiSrc/components/base/forms/combo-box/AutoTag'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -39,7 +40,10 @@ export interface Props {
 const sortOptions = [SortOrder.ASC, SortOrder.DESC].map((value) => ({
   value,
   inputDisplay: (
-    <span data-testid={`tree-view-sorting-item-${value}`}>
+    <span
+      data-testid={`tree-view-sorting-item-${value}`}
+      className={styles.selectItem}
+    >
       Key name {value}
     </span>
   ),
@@ -165,11 +169,11 @@ const KeyTreeSettings = ({ loading }: Props) => {
               <RiIcon type="DescendingIcon" className={styles.sortIcon} />
               Sort by
             </div>
-            <EuiSuperSelect
+            <RiSelect
               options={sortOptions}
-              valueOfSelected={sorting}
+              valueRender={({ option }) => option.inputDisplay ?? option.value}
+              value={sorting}
               className={styles.select}
-              itemClassName={styles.selectItem}
               onChange={(value: SortOrder) => onChangeSort(value)}
               data-testid="tree-view-sorting-select"
             />

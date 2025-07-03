@@ -7,6 +7,7 @@ import {
   fireEvent,
   cleanup,
   mockedStore,
+  userEvent,
 } from 'uiSrc/utils/test-utils'
 
 import CreateRedisearchIndexWrapper from './CreateRedisearchIndexWrapper'
@@ -93,8 +94,8 @@ describe('CreateRedisearchIndexWrapper', () => {
     expect(store.getActions()).toEqual(expectedActions)
   })
 
-  it('should properly change all fields', () => {
-    const { queryByText, container } = render(
+  it('should properly change all fields', async () => {
+    const { container, findByText } = render(
       <CreateRedisearchIndexWrapper onClosePanel={onClose} />,
     )
     const comboboxInput = container.querySelector(
@@ -112,15 +113,15 @@ describe('CreateRedisearchIndexWrapper', () => {
 
     fireEvent.keyDown(comboboxInput, { key: 'Enter', code: 13, charCode: 13 })
 
-    fireEvent.click(screen.getByTestId('key-type'))
-    fireEvent.click(queryByText('JSON') || document)
+    await userEvent.click(screen.getByTestId('key-type'))
+    await userEvent.click(await findByText('JSON'))
 
     fireEvent.change(screen.getByTestId('identifier-0'), {
       target: { value: 'identifier' },
     })
 
-    fireEvent.click(screen.getByTestId('field-type-0'))
-    fireEvent.click(queryByText('GEO') || document)
+    await userEvent.click(screen.getByTestId('field-type-0'))
+    await userEvent.click(await findByText('GEO'))
 
     expect(screen.getByTestId('index-name')).toHaveValue('index')
     expect(screen.getByTestId('key-type')).toHaveTextContent('JSON')

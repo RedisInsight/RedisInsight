@@ -1,4 +1,4 @@
-import { EuiBasicTableColumn, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -27,6 +27,7 @@ import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { ColorText, Text } from 'uiSrc/components/base/text'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import RedisClusterDatabases from './RedisClusterDatabases'
 import RedisClusterDatabasesResult from './RedisClusterDatabasesResult'
 
@@ -69,16 +70,17 @@ const RedisClusterDatabasesPage = () => {
     navigator.clipboard.writeText(text)
   }
 
-  const columns: EuiBasicTableColumn<InstanceRedisCluster>[] = [
+  const columns: ColumnDefinition<InstanceRedisCluster>[] = [
     {
-      field: 'name',
-      className: 'column_name',
-      name: 'Database',
-      dataType: 'auto',
-      truncateText: true,
-      sortable: true,
-      width: '420px',
-      render: function InstanceCell(name: string = '') {
+      header: 'Database',
+      id: 'name',
+      accessorKey: 'name',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { name },
+        },
+      }) => {
         const cellContent = name
           .substring(0, 200)
           .replace(/\s\s/g, '\u00a0\u00a0')
@@ -97,27 +99,21 @@ const RedisClusterDatabasesPage = () => {
       },
     },
     {
-      field: 'status',
-      className: 'column_status',
-      name: 'Status',
-      dataType: 'string',
-      sortable: true,
-      width: '185px',
-      truncateText: true,
-      hideForMobile: true,
+      header: 'Status',
+      id: 'status',
+      accessorKey: 'status',
+      enableSorting: true,
     },
     {
-      field: 'dnsName',
-      className: 'column_dnsName',
-      name: 'Endpoint',
-      width: '410px',
-      dataType: 'auto',
-      truncateText: true,
-      sortable: true,
-      render: function DnsName(
-        dnsName: string,
-        { port }: InstanceRedisCluster,
-      ) {
+      header: 'Endpoint',
+      id: 'dnsName',
+      accessorKey: 'dnsName',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { dnsName, port },
+        },
+      }) => {
         const text = `${dnsName}:${port}`
         return (
           !!dnsName && (
@@ -141,17 +137,11 @@ const RedisClusterDatabasesPage = () => {
       },
     },
     {
-      field: 'modules',
-      className: 'column_modules',
-      name: 'Capabilities',
-      dataType: 'auto',
-      align: 'left',
-      width: '190px',
-      sortable: true,
-      render: function Modules(
-        _modules: any[],
-        instance: InstanceRedisCluster,
-      ) {
+      header: 'Capabilities',
+      id: 'modules',
+      accessorKey: 'modules',
+      enableSorting: true,
+      cell: function Modules({ row: { original: instance } }) {
         return (
           <DatabaseListModules
             modules={instance?.modules?.map((name) => ({ name }))}
@@ -160,14 +150,11 @@ const RedisClusterDatabasesPage = () => {
       },
     },
     {
-      field: 'options',
-      className: 'column_options',
-      name: 'Options',
-      dataType: 'auto',
-      align: 'left',
-      width: '220px',
-      sortable: true,
-      render: function Opitions(_opts: any[], instance: InstanceRedisCluster) {
+      header: 'Options',
+      id: 'options',
+      accessorKey: 'options',
+      enableSorting: true,
+      cell: ({ row: { original: instance } }) => {
         const options = parseInstanceOptionsCluster(
           instance?.uid,
           instances || [],
@@ -177,18 +164,16 @@ const RedisClusterDatabasesPage = () => {
     },
   ]
 
-  const messageColumn: EuiBasicTableColumn<InstanceRedisCluster> = {
-    field: 'messageAdded',
-    className: 'column_message',
-    name: 'Result',
-    dataType: 'string',
-    align: 'left',
-    width: '110px',
-    sortable: true,
-    render: function Message(
-      messageAdded: string,
-      { statusAdded }: InstanceRedisCluster,
-    ) {
+  const messageColumn: ColumnDefinition<InstanceRedisCluster> = {
+    header: 'Result',
+    id: 'messageAdded',
+    accessorKey: 'messageAdded',
+    enableSorting: true,
+    cell: function Message({
+      row: {
+        original: { statusAdded, messageAdded },
+      },
+    }) {
       return (
         <>
           {statusAdded === AddRedisDatabaseStatus.Success ? (
@@ -216,7 +201,7 @@ const RedisClusterDatabasesPage = () => {
     },
   }
 
-  const columnsResult: EuiBasicTableColumn<InstanceRedisCluster>[] = [
+  const columnsResult: ColumnDefinition<InstanceRedisCluster>[] = [
     ...columns,
   ]
   columnsResult.push(messageColumn)

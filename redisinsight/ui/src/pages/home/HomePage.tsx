@@ -1,4 +1,3 @@
-import { EuiPanel } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -57,6 +56,7 @@ import { CREATE_CLOUD_DB_ID } from 'uiSrc/pages/home/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 
 import { Page, PageBody } from 'uiSrc/components/base/layout/page'
+import { Card } from 'uiSrc/components/base/layout'
 import DatabasesList from './components/database-list-component'
 import DatabaseListHeader from './components/database-list-header'
 import EmptyMessage from './components/empty-message/EmptyMessage'
@@ -280,9 +280,9 @@ const HomePage = () => {
             )}
             <div key="homePage" className="homePage">
               {!isInstanceExists && !loading && !loadingChanging ? (
-                <EuiPanel className={styles.emptyPanel} borderRadius="none">
+                <Card>
                   <EmptyMessage onAddInstanceClick={handleAddInstance} />
-                </EuiPanel>
+                </Card>
               ) : (
                 <DatabasesList
                   loading={loading}

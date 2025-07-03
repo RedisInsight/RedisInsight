@@ -1,4 +1,4 @@
-import { EuiBasicTableColumn, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -21,7 +21,6 @@ import {
   InstanceRedisCloud,
   LoadedCloud,
   OAuthSocialAction,
-  RedisCloudSubscriptionType,
   RedisCloudSubscriptionTypeText,
 } from 'uiSrc/slices/interfaces'
 import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
@@ -31,6 +30,7 @@ import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
+import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import RedisCloudDatabases from './RedisCloudDatabases'
 
 import styles from './styles.module.scss'
@@ -119,16 +119,17 @@ const RedisCloudDatabasesPage = () => {
     navigator.clipboard.writeText(text)
   }
 
-  const columns: EuiBasicTableColumn<InstanceRedisCloud>[] = [
+  const columns: ColumnDefinition<InstanceRedisCloud>[] = [
     {
-      field: 'name',
-      className: 'column_name',
-      name: 'Database',
-      dataType: 'auto',
-      truncateText: true,
-      sortable: true,
-      width: '195px',
-      render: function InstanceCell(name: string = '') {
+      header: 'Database',
+      id: 'name',
+      accessorKey: 'name',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { name },
+        },
+      }) => {
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
           <div role="presentation" data-testid={`db_name_${name}`}>
@@ -145,26 +146,28 @@ const RedisCloudDatabasesPage = () => {
       },
     },
     {
-      field: 'subscriptionId',
-      className: 'column_subscriptionId',
-      name: 'Subscription ID',
-      dataType: 'string',
-      sortable: true,
-      width: '170px',
-      truncateText: true,
-      render: (subscriptionId: string) => (
+      header: 'Subscription ID',
+      id: 'subscriptionId',
+      accessorKey: 'subscriptionId',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { subscriptionId },
+        },
+      }) => (
         <span data-testid={`sub_id_${subscriptionId}`}>{subscriptionId}</span>
       ),
     },
     {
-      field: 'subscriptionName',
-      className: 'column_subscriptionName',
-      name: 'Subscription',
-      dataType: 'string',
-      sortable: true,
-      width: '300px',
-      truncateText: true,
-      render: function SubscriptionCell(name: string = '') {
+      header: 'Subscription',
+      id: 'subscriptionName',
+      accessorKey: 'subscriptionName',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { subscriptionName: name },
+        },
+      }) => {
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
           <div role="presentation">
@@ -181,35 +184,32 @@ const RedisCloudDatabasesPage = () => {
       },
     },
     {
-      field: 'subscriptionType',
-      className: 'column_subscriptionType',
-      name: 'Type',
-      width: '95px',
-      dataType: 'string',
-      sortable: true,
-      truncateText: true,
-      render: (type: RedisCloudSubscriptionType) =>
-        RedisCloudSubscriptionTypeText[type] ?? '-',
+      header: 'Type',
+      id: 'subscriptionType',
+      accessorKey: 'subscriptionType',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { subscriptionType },
+        },
+      }) => RedisCloudSubscriptionTypeText[subscriptionType!] ?? '-',
     },
     {
-      field: 'status',
-      className: 'column_status',
-      name: 'Status',
-      dataType: 'string',
-      sortable: true,
-      width: '110px',
-      truncateText: true,
-      hideForMobile: true,
+      header: 'Status',
+      id: 'status',
+      accessorKey: 'status',
+      enableSorting: true,
     },
     {
-      field: 'publicEndpoint',
-      className: 'column_publicEndpoint',
-      name: 'Endpoint',
-      width: '310px',
-      dataType: 'auto',
-      truncateText: true,
-      sortable: true,
-      render: function PublicEndpoint(publicEndpoint: string) {
+      header: 'Endpoint',
+      id: 'publicEndpoint',
+      accessorKey: 'publicEndpoint',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { publicEndpoint },
+        },
+      }) => {
         const text = publicEndpoint
         return (
           <div className="public_endpoint">
@@ -231,14 +231,11 @@ const RedisCloudDatabasesPage = () => {
       },
     },
     {
-      field: 'modules',
-      className: 'column_modules',
-      name: 'Capabilities',
-      dataType: 'auto',
-      align: 'left',
-      width: '200px',
-      sortable: true,
-      render: function Modules(_, instance: InstanceRedisCloud) {
+      header: 'Capabilities',
+      id: 'modules',
+      accessorKey: 'modules',
+      enableSorting: true,
+      cell: function Modules({ row: { original: instance } }) {
         return (
           <DatabaseListModules
             modules={instance.modules.map((name) => ({ name }))}
@@ -247,14 +244,11 @@ const RedisCloudDatabasesPage = () => {
       },
     },
     {
-      field: 'options',
-      className: 'column_options',
-      name: 'Options',
-      dataType: 'auto',
-      align: 'left',
-      width: '180px',
-      sortable: true,
-      render: function Opitions(_, instance: InstanceRedisCloud) {
+      header: 'Options',
+      id: 'options',
+      accessorKey: 'options',
+      enableSorting: true,
+      cell: ({ row: { original: instance } }) => {
         const options = parseInstanceOptionsCloud(
           instance.databaseId,
           instances || [],

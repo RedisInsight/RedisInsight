@@ -1,7 +1,7 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiForm, EuiPanel } from '@elastic/eui'
+import { EuiForm } from '@elastic/eui'
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addReJSONKey } from 'uiSrc/slices/browser/keys'
@@ -104,14 +104,8 @@ const AddKeyReJSON = (props: Props) => {
         Submit
       </PrimaryButton>
       <AddKeyFooter>
-        <EuiPanel
-          color="transparent"
-          className="flexItemNoFullWidth"
-          hasShadow={false}
-          borderRadius="none"
-          style={{ border: 'none' }}
-        >
-          <Row justify="end">
+        <>
+          <Row justify="end" style={{ padding: 18 }}>
             <FlexItem>
               <div>
                 <SecondaryButton
@@ -136,7 +130,7 @@ const AddKeyReJSON = (props: Props) => {
               </div>
             </FlexItem>
           </Row>
-        </EuiPanel>
+        </>
       </AddKeyFooter>
     </EuiForm>
   )

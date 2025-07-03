@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiLink, EuiLoadingSpinner } from '@elastic/eui'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 import { get, throttle } from 'lodash'
@@ -36,6 +35,8 @@ import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
 
+import { Link } from 'uiSrc/components/base/link/Link'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 const Config = () => {
@@ -159,8 +160,7 @@ const Config = () => {
         </div>
         <Text className="rdi__text" color="subdued">
           {'Provide '}
-          <EuiLink
-            external={false}
+          <Link
             data-testid="rdi-pipeline-config-link"
             target="_blank"
             href={getUtmExternalLink(EXTERNAL_LINKS.rdiPipeline, {
@@ -169,7 +169,7 @@ const Config = () => {
             })}
           >
             connection details
-          </EuiLink>
+          </Link>
           {
             ' for source and target databases and other collector configurations, such as tables and columns to track.'
           }
@@ -182,7 +182,7 @@ const Config = () => {
             <Text color="subdued" style={{ marginBottom: 12 }}>
               Loading data...
             </Text>
-            <EuiLoadingSpinner color="secondary" size="l" />
+            <Loader color="secondary" size="l" />
           </div>
         ) : (
           <MonacoYaml

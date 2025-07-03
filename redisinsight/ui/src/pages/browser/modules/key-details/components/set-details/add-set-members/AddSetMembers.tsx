@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import cx from 'classnames'
-import { EuiFieldText, EuiPanel } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { ColorText } from 'uiSrc/components/base/text'
 
 import {
@@ -136,13 +135,7 @@ const AddSetMembers = (props: Props) => {
 
   return (
     <>
-      <EuiPanel
-        color="transparent"
-        hasShadow={false}
-        borderRadius="none"
-        data-test-subj="add-set-field-panel"
-        className={cx(styles.container, 'eui-yScroll', 'flexItemNoFullWidth')}
-      >
+      <div className={styles.container}>
         <AddMultipleFields
           items={members}
           isClearDisabled={isClearDisabled}
@@ -173,14 +166,9 @@ const AddSetMembers = (props: Props) => {
             </Row>
           )}
         </AddMultipleFields>
-      </EuiPanel>
-      <EuiPanel
-        style={{ border: 'none' }}
-        color="transparent"
-        hasShadow={false}
-        className="flexItemNoFullWidth"
-      >
-        <Row justify="end" gap="xl">
+      </div>
+      <>
+        <Row justify="end" gap="xl" style={{ padding: 18 }}>
           <FlexItem>
             <SecondaryButton
               onClick={() => closePanel(true)}
@@ -200,7 +188,7 @@ const AddSetMembers = (props: Props) => {
             </PrimaryButton>
           </FlexItem>
         </Row>
-      </EuiPanel>
+      </>
     </>
   )
 }

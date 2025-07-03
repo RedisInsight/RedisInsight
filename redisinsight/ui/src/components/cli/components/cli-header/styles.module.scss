@@ -33,8 +33,6 @@
 }
 
 .title {
-  display: flex;
-  flex-direction: row !important;
   align-items: center;
   :global {
     .euiIcon {

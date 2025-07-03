@@ -1,7 +1,7 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { EuiForm, EuiPanel } from '@elastic/eui'
+import { EuiForm } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 
 import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/browser/keys'
@@ -70,13 +70,8 @@ const AddKeyString = (props: Props) => {
         Submit
       </PrimaryButton>
       <AddKeyFooter>
-        <EuiPanel
-          style={{ border: 'none' }}
-          color="transparent"
-          hasShadow={false}
-          borderRadius="none"
-        >
-          <Row justify="end" gap="m">
+        <>
+          <Row justify="end" gap="m" style={{ padding: 18 }}>
             <FlexItem>
               <div>
                 <SecondaryButton
@@ -101,7 +96,7 @@ const AddKeyString = (props: Props) => {
               </div>
             </FlexItem>
           </Row>
-        </EuiPanel>
+        </>
       </AddKeyFooter>
     </EuiForm>
   )

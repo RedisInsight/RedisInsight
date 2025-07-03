@@ -1,8 +1,7 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
-import cx from 'classnames'
-import { EuiFieldText, EuiPanel } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 
 import { stringToBuffer, validateScoreNumber } from 'uiSrc/utils'
 import { isNaNConvertedString } from 'uiSrc/utils/numbers'
@@ -177,18 +176,7 @@ const AddZsetMembers = (props: Props) => {
 
   return (
     <>
-      <EuiPanel
-        color="transparent"
-        hasShadow={false}
-        borderRadius="none"
-        data-test-subj="add-zset-field-panel"
-        className={cx(
-          styles.container,
-          'eui-yScroll',
-          'flexItemNoFullWidth',
-          'inlineFieldsNoSpace',
-        )}
-      >
+      <div className={styles.container}>
         <AddMultipleFields
           items={members}
           isClearDisabled={isClearDisabled}
@@ -239,14 +227,9 @@ const AddZsetMembers = (props: Props) => {
             </Row>
           )}
         </AddMultipleFields>
-      </EuiPanel>
-      <EuiPanel
-        style={{ border: 'none' }}
-        color="transparent"
-        hasShadow={false}
-        className="flexItemNoFullWidth"
-      >
-        <Row justify="end" gap="l">
+      </div>
+      <>
+        <Row justify="end" gap="l" style={{ padding: 18 }}>
           <FlexItem>
             <div>
               <SecondaryButton
@@ -270,7 +253,7 @@ const AddZsetMembers = (props: Props) => {
             </div>
           </FlexItem>
         </Row>
-      </EuiPanel>
+      </>
     </>
   )
 }

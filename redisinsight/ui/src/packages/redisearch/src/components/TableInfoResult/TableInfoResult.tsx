@@ -1,8 +1,7 @@
 /* eslint-disable react/prop-types */
-import React, { ReactElement, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
 import { toUpper, flatten, isArray, isEmpty, map, uniq } from 'lodash'
-import { EuiBasicTableColumn, EuiInMemoryTable } from '@elastic/eui'
 
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { ColorText, Text } from '../../../../../components/base/text'
@@ -15,7 +14,6 @@ export interface Props {
   result: any
 }
 
-const loadingMessage = 'loading...'
 const noResultsMessage = 'No results found.'
 const noOptionsMessage = 'No options found'
 
@@ -23,7 +21,6 @@ const TableInfoResult = React.memo((props: Props) => {
   const { result: resultProp, query } = props
 
   const [result, setResult] = useState(resultProp)
-
   const [items, setItems] = useState([])
 
   useEffect(() => {
@@ -43,18 +40,17 @@ const TableInfoResult = React.memo((props: Props) => {
   const uniqColumns =
     uniq(flatten(map(items, (item) => Object.keys(item)))) ?? []
 
-  const columns: EuiBasicTableColumn<any>[] = uniqColumns.map(
+  const columns: ColumnDefinition<any>[] = uniqColumns.map(
     (title: string = ' ') => ({
-      field: title,
-      name: toUpper(title),
-      truncateText: true,
-      align: isBooleanColumn(title) ? 'center' : 'left',
-      'data-testid': `query-column-${title}`,
-      // sortable: (value) => (value[title] ? value[title].toLowerCase() : Infinity),
-      render: function Cell(initValue?: string): ReactElement | null {
+      header: toUpper(title),
+      id: title,
+      accessorKey: title,
+      enableSorting: false,
+      cell: ({ row: { original } }) => {
+        const initValue = original[title]
         if (isBooleanColumn(title)) {
           return (
-            <div className="icon">
+            <div className="icon" data-testid={`query-column-${title}`}>
               <RiIcon
                 type={initValue ? 'CheckThinIcon' : 'CancelSlimIcon'}
                 color={initValue ? 'primary500' : 'danger600'}
@@ -62,7 +58,6 @@ const TableInfoResult = React.memo((props: Props) => {
             </div>
           )
         }
-
         return <Text>{initValue}</Text>
       },
     }),
@@ -120,19 +115,9 @@ const TableInfoResult = React.memo((props: Props) => {
   return (
     <div className="container">
       {isDataArr && (
-        <div className="content">
+        <div className="content" data-testid={`query-table-result-${query}`}>
           {Header()}
-          <EuiInMemoryTable
-            items={items ?? []}
-            loading={!result}
-            message={loadingMessage}
-            columns={columns}
-            className={cx('inMemoryTableDefault', 'tableInfo', {
-              tableWithPagination: result?.length > 10,
-            })}
-            responsive={false}
-            data-testid={`query-table-result-${query}`}
-          />
+          <Table columns={columns} data={items ?? []} />
           {Footer()}
         </div>
       )}

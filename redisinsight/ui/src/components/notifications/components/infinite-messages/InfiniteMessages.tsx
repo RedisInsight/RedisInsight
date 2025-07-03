@@ -1,8 +1,4 @@
 import React from 'react'
-import {
-  EuiLink,
-  EuiLoadingSpinner,
-} from '@elastic/eui'
 import { find } from 'lodash'
 import cx from 'classnames'
 import { CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
@@ -28,6 +24,8 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 export enum InfiniteMessagesIds {
@@ -53,7 +51,7 @@ export const INFINITE_MESSAGES = {
       <div role="presentation" data-testid="authenticating-notification">
         <Row justify="end">
           <FlexItem>
-            <EuiLoadingSpinner
+            <Loader
               className={cx('infiniteMessage__icon', styles.loading)}
             />
           </FlexItem>
@@ -73,7 +71,7 @@ export const INFINITE_MESSAGES = {
       <div role="presentation" data-testid="pending-create-db-notification">
         <Row justify="end">
           <FlexItem grow={false}>
-            <EuiLoadingSpinner
+            <Loader
               className={cx('infiniteMessage__icon', styles.loading)}
             />
           </FlexItem>
@@ -263,15 +261,14 @@ export const INFINITE_MESSAGES = {
           setting restricting database connection management.
           <Spacer size="m" />
           Log in to{' '}
-          <EuiLink
+          <Link
             target="_blank"
             color="text"
-            external={false}
             tabIndex={-1}
             href="https://cloud.redis.io/#/databases?utm_source=redisinsight&utm_medium=main&utm_campaign=disabled_db_management"
           >
             Redis Cloud
-          </EuiLink>{' '}
+          </Link>{' '}
           to check your database.
         </Text>
         <Spacer size="m" />
@@ -340,7 +337,7 @@ export const INFINITE_MESSAGES = {
       <div role="presentation" data-testid="pending-create-db-notification">
         <Row justify="end">
           <FlexItem>
-            <EuiLoadingSpinner
+            <Loader
               className={cx('infiniteMessage__icon', styles.loading)}
             />
           </FlexItem>
@@ -423,7 +420,7 @@ export const INFINITE_MESSAGES = {
               <FlexItem>
                 <PrimaryButton
                   size="s"
-                  onClick={() => {}}
+                  onClick={() => { }}
                   data-testid="notification-connect-db"
                 >
                   Statistics

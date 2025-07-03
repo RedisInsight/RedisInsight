@@ -1,12 +1,6 @@
-import {
-  EuiBasicTableColumn,
-  EuiInMemoryTable,
-  EuiToolTip,
-  PropertySort,
-} from '@elastic/eui'
-import cx from 'classnames'
+import { EuiToolTip } from '@elastic/eui'
 import { isNil } from 'lodash'
-import React, { useState } from 'react'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 
@@ -45,9 +39,8 @@ import {
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { TableTextBtn } from 'uiSrc/pages/database-analysis/components/base/TableTextBtn'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import { Key } from 'apiSrc/modules/database-analysis/models/key'
-
-import styles from './styles.module.scss'
 
 export interface Props {
   data: Key[]
@@ -56,13 +49,12 @@ export interface Props {
   dataTestid?: string
 }
 
-const Table = (props: Props) => {
-  const { data, defaultSortField, delimiter = ':', dataTestid = '' } = props
-  const [sort, setSort] = useState<PropertySort>({
-    field: defaultSortField,
-    direction: 'desc',
-  })
-
+const TopKeysTable = ({
+  data = [],
+  defaultSortField,
+  delimiter = ':',
+  dataTestid = '',
+}: Props) => {
   const history = useHistory()
   const dispatch = useDispatch()
 
@@ -96,49 +88,41 @@ const Table = (props: Props) => {
     history.push(Pages.browser(instanceId))
   }
 
-  const setDataTestId = ({ name }: { name: string }) => ({
-    'data-testid': `row-${name}`,
-  })
-
-  const columns: EuiBasicTableColumn<Key>[] = [
+  const columns: ColumnDefinition<Key>[] = [
     {
-      name: 'Key Type',
-      field: 'type',
-      width: '10%',
-      align: 'left',
-      sortable: true,
-      render: (type: string) => (
-        <div className={styles.badgesContainer}>
-          <GroupBadge key={type} type={type} className={styles.badge} />
-        </div>
-      ),
+      header: 'Key Type',
+      id: 'type',
+      accessorKey: 'type',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { type },
+        },
+      }) => <GroupBadge key={type} type={type} />,
     },
     {
-      name: 'Key Name',
-      field: 'name',
-      dataType: 'string',
-      align: 'left',
-      width: 'auto',
-      height: '42px',
-      sortable: true,
-      truncateText: true,
-      render: (name: string) => {
-        const tooltipContent = formatLongName(name)
+      header: 'Key Name',
+      id: 'name',
+      accessorKey: 'name',
+      enableSorting: true,
+      minSize: 200,
+      cell: ({
+        row: {
+          original: { name },
+        },
+      }) => {
+        const tooltipContent = formatLongName(name as string)
         const cellContent = (name as string).substring(0, 200)
         return (
-          <div
-            data-testid="top-keys-table-name"
-            className={cx(styles.delimiter, 'truncateText')}
-          >
+          <div data-testid="top-keys-table-name">
             <EuiToolTip
               title="Key Name"
-              anchorClassName={styles.tooltip}
               position="bottom"
               content={tooltipContent}
             >
               <TableTextBtn
                 style={{ height: 'auto' }}
-                onClick={() => handleRedirect(name)}
+                onClick={() => handleRedirect(name as string)}
               >
                 {cellContent}
               </TableTextBtn>
@@ -148,12 +132,15 @@ const Table = (props: Props) => {
       },
     },
     {
-      name: 'TTL',
-      field: 'ttl',
-      width: '14%',
-      sortable: true,
-      align: 'left',
-      render: (value: number, { name }) => {
+      header: 'TTL',
+      id: 'ttl',
+      accessorKey: 'ttl',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { name, ttl: value },
+        },
+      }) => {
         if (isNil(value)) {
           return (
             <ColorText
@@ -174,10 +161,9 @@ const Table = (props: Props) => {
         }
 
         return (
-          <span className={styles.count} data-testid={`ttl-${name}`}>
+          <span data-testid={`ttl-${name}`}>
             <EuiToolTip
               title="Time to Live"
-              className={styles.tooltip}
               anchorClassName="truncateText"
               position="bottom"
               content={
@@ -188,19 +174,24 @@ const Table = (props: Props) => {
                 </>
               }
             >
-              <>{truncateNumberToFirstUnit(value)}</>
+              <ColorText color="subdued">
+                {truncateNumberToFirstUnit(value)}
+              </ColorText>
             </EuiToolTip>
           </span>
         )
       },
     },
     {
-      name: 'Key Size',
-      field: 'memory',
-      width: '9%',
-      sortable: true,
-      align: 'right',
-      render: (value: number, { type }) => {
+      header: 'Key Size',
+      id: 'memory',
+      accessorKey: 'memory',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { type, memory: value },
+        },
+      }) => {
         if (isNil(value)) {
           return (
             <ColorText
@@ -227,29 +218,28 @@ const Table = (props: Props) => {
                 {numberWithSpaces(value)} B
               </>
             }
-            anchorClassName={cx({ [styles.highlight]: isHighlight })}
             data-testid="usedMemory-tooltip"
           >
-            <>
-              <span
-                className={styles.count}
-                data-testid={`nsp-usedMemory-value=${value}${isHighlight ? '-highlighted' : ''}`}
-              >
-                {number}
-              </span>
-              <span className={styles.valueUnit}>{size}</span>
-            </>
+            <ColorText
+              color="subdued"
+              data-testid={`nsp-usedMemory-value=${value}${isHighlight ? '-highlighted' : ''}`}
+            >
+              {number} {size}
+            </ColorText>
           </EuiToolTip>
         )
       },
     },
     {
-      name: 'Length',
-      field: 'length',
-      width: '15%',
-      sortable: ({ length }) => length ?? -1,
-      align: 'right',
-      render: (value: number, { name, type }) => {
+      header: 'Length',
+      id: 'length',
+      accessorKey: 'length',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { name, type, length: value },
+        },
+      }) => {
         if (isNil(value)) {
           return (
             <ColorText
@@ -268,15 +258,14 @@ const Table = (props: Props) => {
             content={
               isHighlight ? 'Consider splitting it into multiple keys' : ''
             }
-            anchorClassName={cx({ [styles.highlight]: isHighlight })}
             data-testid="usedMemory-tooltip"
           >
-            <span
-              className={styles.count}
+            <ColorText
+              color="subdued"
               data-testid={`length-value-${name}${isHighlight ? '-highlighted' : ''}`}
             >
               {numberWithSpaces(value)}
-            </span>
+            </ColorText>
           </EuiToolTip>
         )
       },
@@ -284,27 +273,19 @@ const Table = (props: Props) => {
   ]
 
   return (
-    <div className={styles.wrapper} data-testid={dataTestid}>
-      <div className={styles.tableWrapper}>
-        <EuiInMemoryTable
-          items={data ?? []}
-          columns={columns}
-          className={cx(
-            'inMemoryTableDefault',
-            'noHeaderBorders',
-            'stickyHeader',
-            styles.table,
-          )}
-          responsive={false}
-          itemId="name"
-          rowProps={setDataTestId}
-          sorting={{ sort }}
-          onTableChange={({ sort }: any) => setSort(sort)}
-          data-testid="nsp-table"
-        />
-      </div>
+    <div data-testid={dataTestid}>
+      <Table
+        columns={columns}
+        data={data}
+        defaultSorting={[
+          {
+            id: defaultSortField,
+            desc: true,
+          },
+        ]}
+      />
     </div>
   )
 }
 
-export default Table
+export default TopKeysTable

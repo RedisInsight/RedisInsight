@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiLink, EuiPopover } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { Text } from 'uiSrc/components/base/text'
 import {
@@ -7,6 +7,7 @@ import {
   UTM_CAMPAINGS,
   UTM_MEDIUMS,
 } from 'uiSrc/constants/links'
+import { Link } from 'uiSrc/components/base/link/Link'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
@@ -43,8 +44,7 @@ const ClickableAppendInfo = () => {
         separated by spaces.
         <br />
         Supported glob-style patterns are described&nbsp;
-        <EuiLink
-          external={false}
+        <Link
           target="_blank"
           href={getUtmExternalLink(EXTERNAL_LINKS.pubSub, {
             medium: UTM_MEDIUMS.Main,
@@ -52,7 +52,7 @@ const ClickableAppendInfo = () => {
           })}
         >
           here.
-        </EuiLink>
+        </Link>
       </Text>
     </EuiPopover>
   )

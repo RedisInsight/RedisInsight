@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
-import { EuiAccordion, EuiLink, EuiPanel, EuiToolTip } from '@elastic/eui'
+import { EuiAccordion, EuiToolTip } from '@elastic/eui'
 
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
@@ -28,6 +28,9 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { Card } from 'uiSrc/components/base/layout'
+
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
@@ -83,8 +86,7 @@ const Recommendations = () => {
       <Row align="center">
         <FlexItem onClick={onRedisStackClick}>
           {redisStack && (
-            <EuiLink
-              external={false}
+            <Link
               target="_blank"
               href={EXTERNAL_LINKS.redisStack}
               className={styles.redisStackLink}
@@ -106,7 +108,7 @@ const Recommendations = () => {
                   data-testid={`${id}-redis-stack-icon`}
                 />
               </EuiToolTip>
-            </EuiLink>
+            </Link>
           )}
         </FlexItem>
         <FlexItem>{title}</FlexItem>
@@ -192,7 +194,7 @@ const Recommendations = () => {
                   onToggle={(isOpen) => handleToggle(isOpen, id)}
                   data-testid={`${id}-accordion`}
                 >
-                  <EuiPanel className={styles.accordionContent} color="subdued">
+                  <Card className={styles.accordionContent}>
                     <RecommendationBody
                       elements={content}
                       params={params}
@@ -207,7 +209,7 @@ const Recommendations = () => {
                         }
                       />
                     )}
-                  </EuiPanel>
+                  </Card>
                 </EuiAccordion>
                 <div className={styles.footer}>
                   <FeatureFlagComponent name={FeatureFlags.envDependent}>

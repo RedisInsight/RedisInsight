@@ -1,4 +1,4 @@
-import { EuiImage, EuiLink } from '@elastic/eui'
+import { EuiImage } from '@elastic/eui'
 import React, { useContext } from 'react'
 
 import { EXTERNAL_LINKS, UTM_MEDIUMS } from 'uiSrc/constants/links'
@@ -13,6 +13,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
 const subTitleText =
@@ -49,17 +50,16 @@ const EmptyMessage = ({ onAddInstanceClick }: Props) => {
         </FlexItem>
         or
         <FlexItem grow>
-          <EuiLink
+          <Link
             data-testid="empty-rdi-quickstart-button"
             target="_blank"
-            external={false}
             href={getUtmExternalLink(EXTERNAL_LINKS.rdiQuickStart, {
               medium: UTM_MEDIUMS.Rdi,
               campaign: 'rdi_list',
             })}
           >
             RDI Quickstart <RiIcon type="ArrowDiagonalIcon" />
-          </EuiLink>
+          </Link>
         </FlexItem>
       </Row>
     </div>

@@ -489,6 +489,9 @@
     border: none;
     vertical-align: baseline;
   }
+  td {
+    vertical-align: middle;
+  }
   code,
   pre,
   kbd,

@@ -165,10 +165,10 @@ describe('NavigationMenu', () => {
     it('should render cloud link', () => {
       const { container } = render(<NavigationMenu />)
 
-      const createCloudLink = container.querySelector(
-        '[data-test-subj="create-cloud-nav-link"]',
+      const createCloudItem = container.querySelector(
+        '[data-testid="create-cloud-sidebar-item"]',
       )
-      expect(createCloudLink).toBeTruthy()
+      expect(createCloudItem).toBeTruthy()
     })
 
     it('should render github btn with proper link', () => {

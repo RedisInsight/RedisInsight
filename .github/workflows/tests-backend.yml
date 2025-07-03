@@ -46,7 +46,7 @@ jobs:
           FILENAME=api.lint.audit.json
           WORKDIR="./redisinsight/api"
 
-          npm run lint:api -- -f json -o $FILENAME || true &&
+          npm run lint --prefix redisinsight/api -- --ext .ts . -f json -o $FILENAME || true &&
           FILENAME=$FILENAME WORKDIR=$WORKDIR TARGET="API" node .github/lint-report.js &&
           curl -H "Content-type: application/json" --data @$WORKDIR/slack.$FILENAME -H "Authorization: Bearer $SLACK_AUDIT_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 

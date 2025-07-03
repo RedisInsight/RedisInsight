@@ -1,5 +1,6 @@
 import React from 'react'
-import { EuiToolTip, EuiIcon } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { EntityInfo, EntityType } from './parser'
 
 interface INodeProps {
@@ -119,7 +120,7 @@ export function ProfileNode(props: INodeProps) {
         <EuiToolTip content={<NodeToolTipContent content="Execution Time" />}>
           <div className="Time">
             <div className="IconContainer">
-              <EuiIcon className="NodeIcon" size="m" type="clock" />
+              <RiIcon className="NodeIcon" size="m" type="ExecutionTimeIcon" />
             </div>
             <div>{time} ms</div>
           </div>
@@ -143,7 +144,7 @@ export function ProfileNode(props: INodeProps) {
                   : recordsProduced}
             </div>
             <div className="IconContainer">
-              <EuiIcon className="NodeIcon" size="m" type="reportingApp" />
+              <RiIcon className="NodeIcon" size="m" type="ContractsIcon" />
             </div>
           </div>
         </EuiToolTip>

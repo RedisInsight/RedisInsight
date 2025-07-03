@@ -1,8 +1,6 @@
 import React from 'react'
 
-import { EuiIcon } from '@elastic/eui'
 import { useSelector } from 'react-redux'
-import RedisDbBlueIcon from 'uiSrc/assets/img/icons/redis_db_blue.svg'
 
 import {
   CloudSsoUtmCampaign,
@@ -21,6 +19,7 @@ import { FeatureFlags } from 'uiSrc/constants'
 import { Text } from 'uiSrc/components/base/text'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
@@ -37,7 +36,7 @@ const FilterNotAvailable = ({ onClose }: { onClose?: () => void }) => {
   }
   return (
     <div className={styles.container}>
-      <EuiIcon type={RedisDbBlueIcon} size="original" />
+      <RiIcon type="RedisDbBlueIcon" size="original" />
       <Title
         size="M"
         className={styles.title}

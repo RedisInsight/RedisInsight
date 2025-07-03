@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   EuiFilePicker,
-  EuiIcon,
   EuiToolTip,
 } from '@elastic/eui'
 import ReactDOM from 'react-dom'
@@ -25,6 +24,7 @@ import {
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Loader } from 'uiSrc/components/base/display'
 import ResultsLog from './components/ResultsLog'
 
@@ -216,11 +216,7 @@ const ImportDatabase = (props: Props) => {
             )}
             {error && (
               <div className={styles.result} data-testid="result-failed">
-                <EuiIcon
-                  type="crossInACircleFilled"
-                  size="xxl"
-                  color="danger"
-                />
+                <RiIcon type="ToastCancelIcon" color="danger600" size="xxl" />
                 <Text color="subdued" style={{ marginTop: 16 }}>
                   Failed to add database connections
                 </Text>

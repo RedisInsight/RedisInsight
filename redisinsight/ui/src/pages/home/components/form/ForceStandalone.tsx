@@ -1,15 +1,12 @@
 import React, { ChangeEvent } from 'react'
-import {
-  EuiIcon,
-  EuiToolTip,
-  htmlIdGenerator,
-} from '@elastic/eui'
+import { EuiToolTip, htmlIdGenerator } from '@elastic/eui'
 import { FormikProps } from 'formik'
 
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 
 export interface Props {
   formik: FormikProps<DbConnectionInfo>
@@ -28,8 +25,8 @@ const ForceStandaloneLabel = () => (
         </p>
       }
     >
-      <EuiIcon
-        type="iInCircle"
+      <RiIcon
+        type="InfoIcon"
         style={{
           cursor: 'pointer',
           marginLeft: '5px',

@@ -2383,7 +2383,7 @@
     "@react-hook/latest" "^1.0.2"
     "@react-hook/passive-layout-effect" "^1.2.0"
 
-"@redis-ui/components@^38.0.0", "@redis-ui/components@^38.1.3":
+"@redis-ui/components@^38.0.0", "@redis-ui/components@^38.1.4":
   version "38.1.4"
   resolved "https://registry.yarnpkg.com/@redis-ui/components/-/components-38.1.4.tgz#02e620f937629162539b2fb36f8b1505442fad24"
   integrity sha512-13SDg3R4hQ1tGyOz8glk3NEuduTsnQpm5sjBf6AtsDHGmugFtQSn3JHvcOgVM+i4Ax6m42SvB6q/4nJD1Yygvg==
@@ -2414,10 +2414,10 @@
   resolved "https://registry.yarnpkg.com/@redis-ui/icons/-/icons-4.16.1.tgz#87fc6ab073a203de6b313a4868c0a84f076c8580"
   integrity sha512-ZRQWzambHq9A/5zWx4HXEBNU8uCFwf6Ap0NKZryoMq5iGfygBF8k8A89RmwUXuSlJ99NRxW+RvmbcMd+Tyosmg==
 
-"@redis-ui/styles@^11.0.2":
-  version "11.0.2"
-  resolved "https://registry.yarnpkg.com/@redis-ui/styles/-/styles-11.0.2.tgz#9c9bf40cbcf256a056c1664a613725d310b051f2"
-  integrity sha512-Lx2+WQ1obHq64W9tJV1zG+fRJIP9DoLbhc3JsAApyw/Xd4+e19Kqrvm7kysMMUCqKyYHu8eyx1WfmlS0nprX2A==
+"@redis-ui/styles@^11.4.0":
+  version "11.4.0"
+  resolved "https://registry.yarnpkg.com/@redis-ui/styles/-/styles-11.4.0.tgz#188712020d985d6c94cacabcf47e341335e46270"
+  integrity sha512-t+3sgLblPxas+qGx0gGzQFm6kQoA8Pxg7y355OeT+fMJ03WMZmeAj+hcfR3zAgVUTfyU9QgOCJKo5/QKfIxNgQ==
   dependencies:
     color-alpha "^2.0.0"
 

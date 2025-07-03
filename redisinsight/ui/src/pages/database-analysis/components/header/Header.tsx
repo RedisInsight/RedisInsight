@@ -1,6 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiToolTip, EuiIcon } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -25,6 +25,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { HideFor } from 'uiSrc/components/base/utils/ShowHide'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analysis-progress'
@@ -178,9 +179,9 @@ const Header = (props: Props) => {
                     : ANALYZE_TOOLTIP_MESSAGE
                 }
               >
-                <EuiIcon
+                <RiIcon
                   className={styles.infoIcon}
-                  type="iInCircle"
+                  type="InfoIcon"
                   size="l"
                   data-testid="db-new-reports-icon"
                 />

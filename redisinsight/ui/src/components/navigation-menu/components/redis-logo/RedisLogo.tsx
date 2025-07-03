@@ -1,4 +1,4 @@
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React from 'react'
 import { useSelector } from 'react-redux'
@@ -6,8 +6,8 @@ import { Pages } from 'uiSrc/constants'
 import { BuildType } from 'uiSrc/constants/env'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
-import LogoSVG from 'uiSrc/assets/img/logo_small.svg?react'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Link } from 'uiSrc/components/base/link/Link'
 import styles from '../../styles.module.scss'
 
@@ -22,7 +22,7 @@ export const RedisLogo = ({ isRdiWorkspace }: Props) => {
   if (!envDependent?.flag) {
     return (
       <span className={cx(styles.iconNavItem, styles.homeIcon)}>
-        <EuiIcon aria-label="Redis Insight Homepage" type={LogoSVG} />
+        <RiIcon aria-label="Redis Insight Homepage" type="RedisLogo" />
       </span>
     )
   }
@@ -45,7 +45,11 @@ export const RedisLogo = ({ isRdiWorkspace }: Props) => {
           data-test-subj="home-page-btn"
           data-testid="redis-logo-link"
         >
-          <EuiIcon aria-label="Redis Insight Homepage" type={LogoSVG} />
+          <RiIcon
+            aria-label="Redis Insight Homepage"
+            type="RedisLogo"
+            size="XL"
+          />
         </Link>
       </span>
     </EuiToolTip>

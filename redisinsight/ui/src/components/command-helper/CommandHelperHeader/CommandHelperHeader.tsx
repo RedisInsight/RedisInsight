@@ -2,7 +2,6 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
-import { EuiIcon } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   resetCliHelperSettings,
@@ -15,6 +14,7 @@ import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Text } from 'uiSrc/components/base/text'
 import { WindowControlGroup } from 'uiSrc/components/base/shared/WindowControlGroup'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 const CommandHelperHeader = () => {
@@ -46,7 +46,7 @@ const CommandHelperHeader = () => {
     <div className={styles.container} id="command-helper-header">
       <Row justify="between" align="center" style={{ height: '100%' }}>
         <FlexItem className={styles.title}>
-          <EuiIcon type="documents" size="m" />
+          <RiIcon type="DocumentationIcon" size="L" />
           <OnboardingTour
             options={ONBOARDING_FEATURES.BROWSER_COMMAND_HELPER}
             anchorPosition="upLeft"

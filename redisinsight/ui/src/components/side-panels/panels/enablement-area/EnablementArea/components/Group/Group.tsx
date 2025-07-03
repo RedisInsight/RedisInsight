@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiAccordion, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiAccordion, EuiToolTip } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
@@ -14,6 +14,7 @@ import { EAItemActions } from 'uiSrc/constants'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { OnboardingTour } from 'uiSrc/components'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import DeleteTutorialButton from '../DeleteTutorialButton'
 
 import './styles.scss'
@@ -104,7 +105,7 @@ const Group = (props: Props) => {
                 onClick={handleCreate}
                 data-testid="open-upload-tutorial-btn"
               >
-                <EuiIcon type="plus" />
+                <RiIcon type="PlusSlimIcon" />
               </div>
             </EuiToolTip>
           </OnboardingTour>
@@ -124,7 +125,7 @@ const Group = (props: Props) => {
     <div className="group-header-wrapper">
       <Text className="group-header" size="m">
         {isShowFolder && (
-          <EuiIcon type={isGroupOpen ? 'folderOpen' : 'folderClosed'} />
+          <RiIcon type={isGroupOpen ? 'KnowledgeBaseIcon' : 'FolderIcon'} />
         )}
         {label}
       </Text>

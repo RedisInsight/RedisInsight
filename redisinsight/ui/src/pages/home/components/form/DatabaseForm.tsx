@@ -2,7 +2,7 @@ import React, { ChangeEvent } from 'react'
 import { useSelector } from 'react-redux'
 import { FormikProps } from 'formik'
 
-import { EuiFieldText, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiToolTip } from '@elastic/eui'
 import { BuildType } from 'uiSrc/constants/env'
 import { SECURITY_FIELD } from 'uiSrc/constants'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
@@ -17,6 +17,7 @@ import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { NumericInput, PasswordInput } from 'uiSrc/components/base/inputs'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 
 interface IShowFields {
   alias: boolean
@@ -76,7 +77,7 @@ const DatabaseForm = (props: Props) => {
         </ul>
       }
     >
-      <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+      <RiIcon type="InfoIcon" style={{ cursor: 'pointer' }} />
     </EuiToolTip>
   )
 

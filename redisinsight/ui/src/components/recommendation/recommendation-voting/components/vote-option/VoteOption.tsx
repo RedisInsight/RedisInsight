@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiPopover, EuiToolTip } from '@elastic/eui'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { putRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -12,15 +12,14 @@ import {
 } from 'uiSrc/slices/recommendations/recommendations'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { Nullable } from 'uiSrc/utils'
-import PetardIcon from 'uiSrc/assets/img/icons/petard.svg?react'
-import GithubSVG from 'uiSrc/assets/img/icons/github-white.svg?react'
 
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Text } from 'uiSrc/components/base/text'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Link } from 'uiSrc/components/base/link/Link'
-import { getVotedText, voteTooltip, iconType } from './utils'
+import { getVotedText, iconType, voteTooltip } from './utils'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -124,7 +123,7 @@ const VoteOption = (props: Props) => {
           <FlexItem>
             <Row>
               <FlexItem>
-                <EuiIcon type={PetardIcon} className={styles.petardIcon} />
+                <RiIcon type="PetardIcon" className={styles.petardIcon} />
               </FlexItem>
               <FlexItem grow>
                 <div>
@@ -161,10 +160,11 @@ const VoteOption = (props: Props) => {
                 target="_blank"
                 data-test-subj="github-repo-link"
               >
-                <EuiIcon
+                <RiIcon
                   className={styles.githubIcon}
                   aria-label="redis insight github issues"
-                  type={GithubSVG}
+                  type="GithubIcon"
+                  color="informative100"
                   data-testid="github-repo-icon"
                 />
                 To Github

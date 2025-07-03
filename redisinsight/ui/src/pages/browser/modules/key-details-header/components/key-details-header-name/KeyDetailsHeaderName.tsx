@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { isNull } from 'lodash'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
@@ -31,6 +31,7 @@ import { FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -141,7 +142,7 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
   }
 
   const appendKeyEditing = () =>
-    !keyIsEditing ? <EuiIcon type="pencil" color="subdued" /> : ''
+    !keyIsEditing ? <RiIcon type="EditIcon" color="informative400" /> : ''
 
   return (
     <FlexItem

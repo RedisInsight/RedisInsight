@@ -1,13 +1,11 @@
-import {
-  EuiFieldText,
-  EuiIcon,
-} from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { omit } from 'lodash'
 import React, { useState } from 'react'
 import cx from 'classnames'
 import { useDebouncedEffect } from 'uiSrc/services'
 import { NumericInput, PasswordInput } from 'uiSrc/components/base/inputs'
 
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export enum SentinelInputFieldType {
@@ -83,9 +81,9 @@ const InputFieldSentinel = (props: Props) => {
         />
       )}
       {isInvalid && (
-        <EuiIcon
-          color="danger"
-          type="alert"
+        <RiIcon
+          color="danger500"
+          type="ToastDangerIcon"
           className={cx(styles.inputInvalidIcon)}
         />
       )}

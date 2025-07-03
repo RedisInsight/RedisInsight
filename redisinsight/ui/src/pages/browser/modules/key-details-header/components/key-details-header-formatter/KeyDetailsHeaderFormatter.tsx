@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { EuiToolTip } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -7,9 +7,7 @@ import {
   KeyValueFormat,
   MIDDLE_SCREEN_RESOLUTION,
   TEXT_DISABLED_STRING_FORMATTING,
-  Theme,
 } from 'uiSrc/constants'
-import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
   keysSelector,
   selectedKeyDataSelector,
@@ -21,8 +19,6 @@ import {
   sendEventTelemetry,
   TelemetryEvent,
 } from 'uiSrc/telemetry'
-import FormattersLight from 'uiSrc/assets/img/icons/formatter_light.svg'
-import FormattersDark from 'uiSrc/assets/img/icons/formatter_dark.svg'
 import { stringDataSelector } from 'uiSrc/slices/browser/string'
 import { isFullStringLoaded } from 'uiSrc/utils'
 import { Text } from 'uiSrc/components/base/text'
@@ -41,7 +37,6 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
   const { width } = props
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const { theme } = useContext(ThemeContext)
   const { viewType } = useSelector(keysSelector)
   const { viewFormat } = useSelector(selectedKeySelector)
   const { type: keyType, length } = useSelector(selectedKeyDataSelector) ?? {}
@@ -80,7 +75,7 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
                 <OptionText color="subdued">{text}</OptionText>
               ) : (
                 <ControlsIcon
-                  type={theme === Theme.Dark ? FormattersDark : FormattersLight}
+                  type="SwitchIcon"
                   data-testid={`key-value-formatter-option-selected-${value}`}
                 />
               )}

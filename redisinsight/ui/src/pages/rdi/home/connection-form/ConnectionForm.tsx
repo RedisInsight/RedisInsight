@@ -1,7 +1,6 @@
 import {
   EuiFieldText,
   EuiForm,
-  EuiIcon,
   EuiToolTip,
   EuiToolTipProps,
   ToolTipPositions,
@@ -32,6 +31,7 @@ import {
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { PasswordInput } from 'uiSrc/components/base/inputs'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Title } from 'uiSrc/components/base/text/Title'
 import ValidationTooltip from './components/ValidationTooltip'
 
@@ -73,7 +73,7 @@ const AppendInfo = ({ title, content, ...rest }: AppendInfoProps) => (
     content={content}
     {...rest}
   >
-    <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+    <RiIcon type="InfoIcon" style={{ cursor: 'pointer' }} />
   </EuiToolTip>
 )
 

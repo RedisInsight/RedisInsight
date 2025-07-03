@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
 import {
-  streamSelector,
-  setStreamViewType,
   fetchConsumerGroups,
-  selectedGroupSelector,
-  selectedConsumerSelector,
   fetchStreamEntries,
+  selectedConsumerSelector,
+  selectedGroupSelector,
+  setStreamViewType,
+  streamSelector,
 } from 'uiSrc/slices/browser/stream'
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'

@@ -1,10 +1,9 @@
-import { EuiFieldText,  EuiIcon, EuiPopover } from '@elastic/eui'
 import React, { memo } from 'react'
-
-import FilterSvg from 'uiSrc/assets/img/icons/filter.svg'
+import { EuiFieldText, EuiPopover } from '@elastic/eui'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { useFilterTags } from './useFilterTags'
 import styles from './styles.module.scss'
 
@@ -30,9 +29,9 @@ export const TagsCellHeader = memo(() => {
       Tags{' '}
       <EuiPopover
         button={
-          <EuiIcon
+          <RiIcon
             role="button"
-            type={FilterSvg}
+            type="FilterIcon"
             size="m"
             className={styles.filterByTagIcon}
             onClick={(e) => {

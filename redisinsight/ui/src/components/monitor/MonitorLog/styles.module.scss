@@ -17,7 +17,7 @@
   .time {
     display: flex;
     align-items: center;
-    :global(.euiIcon) {
+    :global(svg) {
       margin-right: 6px;
     }
   }

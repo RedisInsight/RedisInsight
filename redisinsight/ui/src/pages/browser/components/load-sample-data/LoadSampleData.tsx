@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiIcon, EuiPopover } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -15,6 +15,7 @@ import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { PlayFilledIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -68,7 +69,7 @@ const LoadSampleData = (props: Props) => {
     >
       <Row gap="m" responsive={false}>
         <FlexItem>
-          <EuiIcon type="alert" className={styles.popoverIcon} />
+          <RiIcon type="ToastDangerIcon" className={styles.popoverIcon} />
         </FlexItem>
         <FlexItem>
           <Text>Execute commands in bulk</Text>

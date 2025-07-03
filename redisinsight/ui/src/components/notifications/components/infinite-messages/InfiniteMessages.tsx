@@ -1,12 +1,8 @@
 import React from 'react'
-import {
-  EuiIcon,
-} from '@elastic/eui'
 import { find } from 'lodash'
 import cx from 'classnames'
 import { CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import ExternalLink from 'uiSrc/components/base/external-link'
-import ChampagneIcon from 'uiSrc/assets/img/icons/champagne.svg'
 import Divider from 'uiSrc/components/divider/Divider'
 import { OAuthProviders } from 'uiSrc/components/oauth/oauth-select-plan/constants'
 
@@ -26,6 +22,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Link } from 'uiSrc/components/base/link/Link'
 import { Loader } from 'uiSrc/components/base/display'
@@ -133,7 +130,7 @@ export const INFINITE_MESSAGES = {
         >
           <Row justify="end">
             <FlexItem className="infiniteMessage__icon">
-              <EuiIcon type={ChampagneIcon} size="original" />
+              <RiIcon type="ChampagneIcon" size="original" />
             </FlexItem>
             <FlexItem grow>
               <Title className="infiniteMessage__title">Congratulations!</Title>
@@ -164,7 +161,7 @@ export const INFINITE_MESSAGES = {
                       className={styles.vendorLabel}
                       data-testid="notification-details-vendor"
                     >
-                      {!!vendor?.icon && <EuiIcon type={vendor?.icon} />}
+                      {!!vendor?.icon && <RiIcon type={vendor?.icon} />}
                       <Text size="xs">{vendor?.label}</Text>
                     </FlexItem>
                   </Row>
@@ -408,7 +405,7 @@ export const INFINITE_MESSAGES = {
       >
         <Row justify="end">
           <FlexItem className="infiniteMessage__icon">
-            <EuiIcon type={ChampagneIcon} size="original" />
+            <RiIcon type="ChampagneIcon" size="original" />
           </FlexItem>
           <FlexItem grow>
             <Title className="infiniteMessage__title">Congratulations!</Title>

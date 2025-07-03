@@ -1,4 +1,4 @@
-import { EuiIcon, EuiProgress, EuiResizeObserver } from '@elastic/eui'
+import { EuiProgress, EuiResizeObserver } from '@elastic/eui'
 import cx from 'classnames'
 import { findIndex, isNumber, sumBy, xor } from 'lodash'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -19,6 +19,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
 import { isEqualBuffers, Maybe, Nullable } from 'uiSrc/utils'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import {
   ColumnWidthSizes,
   IColumnSearchState,
@@ -469,10 +470,12 @@ const VirtualTable = (props: IProps) => {
               )}
               data-testid="header-sorting-button"
             >
-              <EuiIcon
+              <RiIcon
                 style={{ marginLeft: '4px' }}
                 type={
-                  sortedColumn?.order === SortOrder.DESC ? 'sortDown' : 'sortUp'
+                  sortedColumn?.order === SortOrder.DESC
+                    ? 'ArrowDownIcon'
+                    : 'ArrowUpIcon'
                 }
               />
             </button>

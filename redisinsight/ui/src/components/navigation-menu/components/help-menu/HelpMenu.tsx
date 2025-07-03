@@ -1,5 +1,4 @@
 import {
-  EuiIcon,
   EuiPopover,
   EuiToolTip,
 } from '@elastic/eui'
@@ -19,9 +18,6 @@ import { setOnboarding } from 'uiSrc/slices/app/features'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
-import GithubHelpCenterSVG from 'uiSrc/assets/img/github.svg?react'
-import BulbSVG from 'uiSrc/assets/img/bulb.svg?react'
-
 import { FeatureFlags } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
@@ -31,6 +27,7 @@ import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { SupportIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
 import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Link } from 'uiSrc/components/base/link/Link'
 import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
@@ -131,7 +128,7 @@ const HelpMenu = () => {
                 target="_blank"
                 data-testid="submit-bug-btn"
               >
-                <EuiIcon type={GithubHelpCenterSVG} size="xxl" />
+                <RiIcon type="GithubHelpCenterIcon" size="xxl" />
                 <Spacer size="m" />
                 <Text
                   size="xs"
@@ -145,7 +142,7 @@ const HelpMenu = () => {
           </FeatureFlagComponent>
           <FlexItem className={styles.helpMenuItemRow} grow={4}>
             <div className={styles.helpMenuItemLink}>
-              <EuiIcon type="keyboardShortcut" size="l" />
+              <RiIcon type="KeyboardShortcutsIcon" size="l" />
               <Text
                 size="xs"
                 className={styles.helpMenuTextLink}
@@ -163,7 +160,7 @@ const HelpMenu = () => {
                 })}
                 style={{ display: 'flex' }}
               >
-                <EuiIcon type="package" size="l" />
+                <RiIcon type="DocumentationIcon" size="l" />
               </div>
               <Link
                 onClick={onClickReleaseNotes}
@@ -179,7 +176,7 @@ const HelpMenu = () => {
             </div>
             <FeatureFlagComponent name={FeatureFlags.envDependent}>
               <div className={styles.helpMenuItemLink}>
-                <EuiIcon type={BulbSVG} size="l" />
+                <RiIcon type="LightBulbIcon" size="l" />
                 <Text
                   size="xs"
                   className={styles.helpMenuTextLink}

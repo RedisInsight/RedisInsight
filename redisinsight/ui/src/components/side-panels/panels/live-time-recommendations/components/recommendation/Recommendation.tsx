@@ -1,7 +1,10 @@
 import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { EuiAccordion, EuiToolTip, EuiIcon } from '@elastic/eui'
+import {
+  EuiAccordion,
+  EuiToolTip,
+} from '@elastic/eui'
 import { isUndefined } from 'lodash'
 import cx from 'classnames'
 
@@ -26,8 +29,6 @@ import {
   IRecommendationParams,
 } from 'uiSrc/slices/interfaces/recommendations'
 
-import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
-import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import {
   SnoozeIcon,
   StarsIcon,
@@ -43,6 +44,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
@@ -213,9 +215,11 @@ const Recommendation = ({
                 display="inlineBlock"
                 anchorClassName="flex-row"
               >
-                <EuiIcon
+                <RiIcon
                   type={
-                    theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
+                    theme === Theme.Dark
+                      ? 'RediStackDarkMinIcon'
+                      : 'RediStackLightMinIcon'
                   }
                   className={styles.redisStackIcon}
                   data-testid={`${id}-redis-stack-icon`}

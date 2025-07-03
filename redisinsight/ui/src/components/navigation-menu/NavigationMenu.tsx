@@ -4,7 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
 import { last } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiIcon, EuiPageSideBar, EuiToolTip } from '@elastic/eui'
+import { EuiPageSideBar, EuiToolTip } from '@elastic/eui'
 import HighlightedFeature, {
   Props as HighlightedFeatureProps,
 } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
@@ -44,10 +44,10 @@ import {
   SlowLogIcon,
   WorkbenchActiveIcon,
   WorkbenchIcon,
-  GithubIcon,
 } from 'uiSrc/components/base/icons'
 import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
 import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Link } from 'uiSrc/components/base/link/Link'
 import CreateCloud from './components/create-cloud'
 import HelpMenu from './components/help-menu/HelpMenu'
@@ -400,10 +400,10 @@ const NavigationMenu = () => {
                 target="_blank"
                 data-test-subj="github-repo-btn"
               >
-                <EuiIcon
+                <RiIcon
                   className={styles.githubIcon}
                   aria-label="redis insight github repository"
-                  type={GithubIcon}
+                  type="GithubIcon"
                   data-testid="github-repo-icon"
                 />
               </Link>

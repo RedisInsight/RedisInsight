@@ -1,7 +1,8 @@
 import React, { useContext } from 'react'
+import styled from 'styled-components'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
-import { EuiIcon, EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 import { findIndex, isNumber } from 'lodash'
 import { ColorText } from 'uiSrc/components/base/text'
@@ -54,6 +55,7 @@ import SilentModeIcon from 'uiSrc/assets/img/icons/silent_mode.svg?react'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import QueryCardTooltip from '../QueryCardTooltip'
 
 import styles from './styles.module.scss'
@@ -98,6 +100,23 @@ const getTruncatedExecutionTimeString = (value: number): string => {
 
   return truncateMilliseconds(parseFloat((value / 1000).toFixed(3)))
 }
+
+const ProfileSelect = styled(RiSelect)`
+  border: none !important;
+  background-color: inherit !important;
+  color: var(--iconsDefaultColor) !important;
+  width: 46px;
+  padding: inherit !important;
+
+  & ~ div {
+    right: 0;
+
+    svg {
+      width: 10px !important;
+      height: 10px !important;
+    }
+  }
+`
 
 const QueryCardHeader = (props: Props) => {
   const {
@@ -224,10 +243,12 @@ const QueryCardHeader = (props: Props) => {
 
   const options: any[] = getViewTypeOptions()
   options.push(...pluginsOptions)
-  const modifiedOptions: EuiSuperSelectOption<any>[] = options.map((item) => {
+  const modifiedOptions = options.map((item) => {
     const { value, id, text, iconDark, iconLight } = item
     return {
       value: id ?? value,
+      label: id ?? value,
+      disabled: false,
       inputDisplay: (
         <div className={styles.changeViewWrapper}>
           <RiTooltip content={truncateText(text, 500)} position="left">
@@ -252,14 +273,14 @@ const QueryCardHeader = (props: Props) => {
     }
   })
 
-  const profileOptions: EuiSuperSelectOption<any>[] = (
-    getProfileViewTypeOptions() as any[]
-  ).map((item) => {
+  const profileOptions = (getProfileViewTypeOptions() as any[]).map((item) => {
     const { value, id, text } = item
     return {
       value: id ?? value,
+      label: id ?? value,
       inputDisplay: (
         <div
+          data-test-subj={`profile-type-option-${value}-${id}`}
           className={cx(styles.dropdownOption, styles.dropdownProfileOption)}
         >
           <EuiIcon
@@ -271,6 +292,7 @@ const QueryCardHeader = (props: Props) => {
       ),
       dropdownDisplay: (
         <div
+          data-test-subj={`profile-type-option-${value}-${id}`}
           className={cx(styles.dropdownOption, styles.dropdownProfileOption)}
         >
           <span>{truncateText(text, 20)}</span>
@@ -291,6 +313,9 @@ const QueryCardHeader = (props: Props) => {
       value: '',
       disabled: true,
       inputDisplay: <span className={styles.separator} />,
+      label: '',
+      dropdownDisplay: <span />,
+      'data-test-subj': '',
     })
   }
 
@@ -338,7 +363,7 @@ const QueryCardHeader = (props: Props) => {
           </div>
         </FlexItem>
         <FlexItem className={styles.controls}>
-          <Row align="center" gap="m">
+          <Row align="center" justify="end" gap="l">
             <FlexItem
               className={styles.time}
               data-testid="command-execution-date-time"
@@ -393,21 +418,19 @@ const QueryCardHeader = (props: Props) => {
               {isOpen && canCommandProfile && !summaryText && (
                 <div className={styles.dropdownWrapper}>
                   <div className={styles.dropdown}>
-                    <EuiSuperSelect
-                      options={profileOptions}
-                      itemClassName={cx(
-                        styles.changeViewItem,
-                        styles.dropdownProfileItem,
-                      )}
-                      className={cx(
-                        styles.changeView,
-                        styles.dropdownProfileIcon,
-                      )}
-                      valueOfSelected={ProfileQueryType.Profile}
-                      onChange={(value: ProfileQueryType) =>
-                        onQueryProfile(value)
+                    <ProfileSelect
+                      placeholder={profileOptions[0].inputDisplay}
+                      onChange={(value: ProfileQueryType | string) =>
+                        onQueryProfile(value as ProfileQueryType)
                       }
+                      options={profileOptions}
                       data-testid="run-profile-type"
+                      valueRender={({ option, isOptionValue }) => {
+                        if (isOptionValue) {
+                          return option.dropdownDisplay as JSX.Element
+                        }
+                        return option.inputDisplay as JSX.Element
+                      }}
                     />
                   </div>
                 </div>
@@ -420,11 +443,15 @@ const QueryCardHeader = (props: Props) => {
               {isOpen && options.length > 1 && !summaryText && (
                 <div className={styles.dropdownWrapper}>
                   <div className={styles.dropdown}>
-                    <EuiSuperSelect
+                    <ProfileSelect
                       options={modifiedOptions}
-                      itemClassName={cx(styles.changeViewItem)}
-                      className={cx(styles.changeView)}
-                      valueOfSelected={selectedValue}
+                      valueRender={({ option, isOptionValue }) => {
+                        if (isOptionValue) {
+                          return option.dropdownDisplay as JSX.Element
+                        }
+                        return option.inputDisplay as JSX.Element
+                      }}
+                      value={selectedValue}
                       onChange={(value: string) => onChangeView(value)}
                       data-testid="select-view-type"
                     />

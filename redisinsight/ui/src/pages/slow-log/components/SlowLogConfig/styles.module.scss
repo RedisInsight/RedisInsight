@@ -32,17 +32,12 @@
 }
 
 .rowFields {
-  display: inline-block;
   width: 400px;
 }
 
 .rowLabel {
-  display: inline-block;
-  width: 156px;
-  padding-right: 12px;
-  vertical-align: top;
+  min-width: 156px;
   font-size: 13px;
-  padding-top: 14px;
 }
 
 .helpText {

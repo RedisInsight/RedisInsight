@@ -2,12 +2,11 @@ import React from 'react'
 import { cloneDeep } from 'lodash'
 
 import {
-  act,
   cleanup,
-  fireEvent,
   mockedStore,
   render,
   screen,
+  userEvent,
 } from 'uiSrc/utils/test-utils'
 import { ADD_KEY_TYPE_OPTIONS } from 'uiSrc/pages/browser/components/add-key/constants/key-type-options'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -71,7 +70,7 @@ describe('AddKey', () => {
     )
 
     expect(
-      screen.getByDisplayValue(ADD_KEY_TYPE_OPTIONS[0].value),
+      screen.getByTestId(ADD_KEY_TYPE_OPTIONS[0].value),
     ).toBeInTheDocument()
   })
 
@@ -83,10 +82,8 @@ describe('AddKey', () => {
       />,
     )
 
-    fireEvent.click(screen.getByTestId('select-key-type'))
-    await act(() => {
-      fireEvent.click(screen.queryByText('JSON') || document)
-    })
+    await userEvent.click(screen.getByTestId('select-key-type'))
+    await userEvent.click((await screen.findByText('JSON')) || document)
 
     expect(screen.getByTestId('json-not-loaded-text')).toBeInTheDocument()
   })
@@ -111,10 +108,10 @@ describe('AddKey', () => {
     )
     const afterRenderActions = [...store.getActions()]
 
-    fireEvent.click(screen.getByTestId('select-key-type'))
-    fireEvent.click(screen.queryByText('JSON') || document)
+    await userEvent.click(screen.getByTestId('select-key-type'))
+    await userEvent.click((await screen.findByText('JSON')) || document)
 
-    fireEvent.click(screen.getByTestId('guide-free-database-link'))
+    await userEvent.click(screen.getByTestId('guide-free-database-link'))
 
     const expectedActions = [
       setSSOFlow(OAuthSocialAction.Create),
@@ -141,11 +138,8 @@ describe('AddKey', () => {
       />,
     )
 
-    fireEvent.click(screen.getByTestId('select-key-type'))
-    await act(() => {
-      fireEvent.click(screen.queryByText('JSON') || document)
-    })
-
+    await userEvent.click(screen.getByTestId('select-key-type'))
+    await userEvent.click((await screen.findByText('JSON')) || document)
     expect(screen.queryByTestId('json-not-loaded-text')).not.toBeInTheDocument()
   })
 })

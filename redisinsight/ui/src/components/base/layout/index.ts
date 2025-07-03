@@ -1,5 +1,6 @@
 import HorizontalRule from './horizontal-rule/HorizontalRule'
 import LoadingContent from './loading-content/LoadingContent'
+import ProgressBarLoader from './progress-bar/ProgressBarLoader'
 import ResizableContainer from './resize/container/ResizableContainer'
 import ResizablePanel from './resize/panel/ResizablePanel'
 import ResizablePanelHandle from './resize/handle/ResizablePanelHandle'
@@ -8,6 +9,7 @@ export * from './card'
 export {
   HorizontalRule,
   LoadingContent,
+  ProgressBarLoader,
   ResizablePanel,
   ResizableContainer,
   ResizablePanelHandle,

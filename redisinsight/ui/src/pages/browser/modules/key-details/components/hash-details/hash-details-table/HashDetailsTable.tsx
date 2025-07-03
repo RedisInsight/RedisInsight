@@ -1,4 +1,3 @@
-import { EuiProgress } from '@elastic/eui'
 import cx from 'classnames'
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -83,6 +82,7 @@ import {
   FormattedValue,
 } from 'uiSrc/pages/browser/modules/key-details/shared'
 import { RiTooltip } from 'uiSrc/components'
+import { ProgressBarLoader } from 'uiSrc/components/base/layout'
 import {
   AddFieldsToHashDto,
   GetHashFieldsResponse,
@@ -610,12 +610,7 @@ const HashDetailsTable = (props: Props) => {
         )}
       >
         {loading && (
-          <EuiProgress
-            color="primary"
-            size="xs"
-            position="absolute"
-            data-testid="progress-key-hash"
-          />
+          <ProgressBarLoader color="primary" data-testid="progress-key-hash" />
         )}
         <VirtualTable
           hideProgress

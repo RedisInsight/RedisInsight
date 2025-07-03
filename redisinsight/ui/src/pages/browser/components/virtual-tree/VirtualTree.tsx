@@ -8,7 +8,7 @@ import React, {
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { debounce, get, set } from 'lodash'
 import { TreeWalker, TreeWalkerValue, FixedSizeTree as Tree } from 'react-vtree'
-import { EuiIcon, EuiImage, EuiProgress } from '@elastic/eui'
+import { EuiIcon, EuiImage } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 
 import { bufferToString, Maybe, Nullable } from 'uiSrc/utils'
@@ -27,6 +27,7 @@ import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { fetchKeysMetadataTree } from 'uiSrc/slices/browser/keys'
 import { Loader } from 'uiSrc/components/base/display'
+import { ProgressBarLoader } from 'uiSrc/components/base/layout'
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
 
 import { Node } from './components/Node'
@@ -283,13 +284,10 @@ const VirtualTree = (props: Props) => {
           {nodes.current.length > 0 && (
             <>
               {loading && (
-                <EuiProgress
+                <ProgressBarLoader
                   color="primary"
-                  size="xs"
-                  position="absolute"
-                  className={styles.progress}
-                  style={{ width }}
                   data-testid="progress-key-tree"
+                  style={{ width }}
                 />
               )}
               <Tree

@@ -1,4 +1,3 @@
-import { EuiProgress } from '@elastic/eui'
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -73,6 +72,7 @@ import {
   FormattedValue,
 } from 'uiSrc/pages/browser/modules/key-details/shared'
 import { Text } from 'uiSrc/components/base/text'
+import { ProgressBarLoader } from 'uiSrc/components/base/layout'
 import {
   SetListElementDto,
   SetListElementResponse,
@@ -385,12 +385,7 @@ const ListDetailsTable = () => {
       )}
     >
       {loading && (
-        <EuiProgress
-          color="primary"
-          size="xs"
-          position="absolute"
-          data-testid="progress-key-list"
-        />
+        <ProgressBarLoader color="primary" data-testid="progress-key-list" />
       )}
       <VirtualTable
         autoHeight

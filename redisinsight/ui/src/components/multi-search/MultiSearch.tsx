@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiIcon, EuiProgress, keys } from '@elastic/eui'
+import { EuiFieldText, EuiIcon, keys } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 
@@ -15,6 +15,7 @@ import {
   ActionIconButton,
   IconButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { ProgressBarLoader } from 'uiSrc/components/base/layout'
 import styles from './styles.module.scss'
 
 interface MultiSearchSuggestion {
@@ -204,11 +205,9 @@ const MultiSearch = (props: Props) => {
               data-testid="suggestions"
             >
               {suggestions?.loading && (
-                <EuiProgress
-                  color="primary"
-                  size="xs"
-                  position="absolute"
+                <ProgressBarLoader
                   data-testid="progress-suggestions"
+                  color="primary"
                 />
               )}
               <ul role="listbox">

@@ -2,7 +2,6 @@ import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toNumber, isNumber } from 'lodash'
 import cx from 'classnames'
-import { EuiProgress } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
 import {
   appContextBrowserKeyDetails,
@@ -73,6 +72,7 @@ import {
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { Text } from 'uiSrc/components/base/text'
 import { RiTooltip } from 'uiSrc/components'
+import { ProgressBarLoader } from 'uiSrc/components/base/layout'
 import {
   AddMembersToZSetDto,
   SearchZSetMembersResponse,
@@ -496,10 +496,8 @@ const ZSetDetailsTable = (props: Props) => {
         )}
       >
         {loading && (
-          <EuiProgress
+          <ProgressBarLoader
             color="primary"
-            size="xs"
-            position="absolute"
             data-testid="progress-key-zset"
           />
         )}

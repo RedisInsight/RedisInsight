@@ -47,11 +47,11 @@ describe('CreateCloud', () => {
 
   it('should call proper actions on click cloud button', () => {
     const { container } = render(sideBarWithCreateCloud)
-    const createCloudLink = container.querySelector(
+    const createCloudItem = container.querySelector(
       '[data-testid="create-cloud-sidebar-item"]',
     )
 
-    fireEvent.click(createCloudLink as Element)
+    fireEvent.click(createCloudItem as Element)
 
     expect(store.getActions()).toEqual([
       setSSOFlow(OAuthSocialAction.Create),
@@ -73,11 +73,11 @@ describe('CreateCloud', () => {
       },
     })
     const { container } = render(sideBarWithCreateCloud)
-    const createCloudLink = container.querySelector(
+    const createCloudItem = container.querySelector(
       '[data-testid="create-cloud-sidebar-item"]',
     )
 
-    fireEvent.click(createCloudLink as Element)
+    fireEvent.click(createCloudItem as Element)
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: HELP_LINKS.cloud.event,
@@ -90,9 +90,9 @@ describe('CreateCloud', () => {
   it('should not render if cloud ads feature flag is disabled', () => {
     mockFeatureFlags(false)
     const { container } = render(sideBarWithCreateCloud)
-    const createCloudLink = container.querySelector(
+    const createCloudItem = container.querySelector(
       '[data-testid="create-cloud-db-link"]',
     )
-    expect(createCloudLink).not.toBeInTheDocument()
+    expect(createCloudItem).not.toBeInTheDocument()
   })
 })

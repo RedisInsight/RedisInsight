@@ -41,7 +41,7 @@ export const RiIcon = ({ type, size, ...props }: IconComponentProps) => {
     return (
       <img
         {...(props as ImgHTMLAttributes<HTMLImageElement>)}
-        alt={props.title ? props.title : ''}
+        alt={props.title ?? ''}
         src={type}
         className={cx(type, props.className)}
         style={props.style}

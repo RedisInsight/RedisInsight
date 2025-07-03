@@ -14,6 +14,11 @@ enum IoredisNodeRole {
   ALL = 'all',
 }
 
+type NatMapValue = {
+  host: string;
+  port: number;
+};
+
 export class ClusterIoredisClient extends IoredisClient {
   protected readonly client: Cluster;
 
@@ -28,10 +33,11 @@ export class ClusterIoredisClient extends IoredisClient {
         let natAddress = {};
 
         if (this.client.options.natMap) {
-          const natAddressString = findKey(this.client.options.natMap, {
-            host: node.options.host,
-            port: node.options.port,
-          });
+          const natAddressString = findKey(
+            this.client.options.natMap,
+            (val: NatMapValue) =>
+              val.host === node.options.host && val.port === node.options.port,
+          );
 
           if (natAddressString) {
             const [, natHost, natPort] = natAddressString.match(/(.+):(\d+)$/);

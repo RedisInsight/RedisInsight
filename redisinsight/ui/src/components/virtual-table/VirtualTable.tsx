@@ -1,4 +1,4 @@
-import { EuiIcon, EuiProgress, EuiResizeObserver } from '@elastic/eui'
+import { EuiIcon, EuiResizeObserver } from '@elastic/eui'
 import cx from 'classnames'
 import { findIndex, isNumber, sumBy, xor } from 'lodash'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -19,6 +19,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
 import { isEqualBuffers, Maybe, Nullable } from 'uiSrc/utils'
 import { Text } from 'uiSrc/components/base/text'
+import { ProgressBarLoader } from 'uiSrc/components/base/layout'
 import {
   ColumnWidthSizes,
   IColumnSearchState,
@@ -596,10 +597,8 @@ const VirtualTable = (props: IProps) => {
           data-testid="virtual-table-container"
         >
           {loading && !hideProgress && (
-            <EuiProgress
+            <ProgressBarLoader
               color="primary"
-              size="xs"
-              position="absolute"
               className={styles.progress}
               data-testid="progress-key-list"
             />

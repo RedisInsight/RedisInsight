@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiProgress } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
 
 import { Text } from 'uiSrc/components/base/text'
@@ -50,6 +49,7 @@ import {
 } from 'uiSrc/components/virtual-table/interfaces'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import { FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
+import { ProgressBarLoader } from 'uiSrc/components/base/layout'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
 import styles from './styles.module.scss'
 
@@ -325,10 +325,8 @@ const SetDetailsTable = (props: Props) => {
       )}
     >
       {loading && (
-        <EuiProgress
+        <ProgressBarLoader
           color="primary"
-          size="xs"
-          position="absolute"
           data-testid="progress-key-set"
         />
       )}

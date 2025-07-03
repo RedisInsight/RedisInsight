@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 import { Link as RedisUiLink, LinkProps } from '@redis-ui/components'
-import { useTheme } from '@redis-ui/styles'
+import { useTheme, theme } from '@redis-ui/styles'
 
 // TODO [DA]: Export the color functionality and use both for Link and Text
 export type EuiColorNames =
@@ -25,38 +25,34 @@ export interface MapProps extends RiLinkProps {
   $color?: ColorType
 }
 
+type ThemeColors = typeof theme.semantic.color
+
+export const getLinkColor = (color: ColorType, themeColors: ThemeColors) => {
+  if (!color) {
+    return themeColors.text.primary500
+  }
+
+  const linkColorsMap: Map<ColorType, string> = new Map([
+    ['inherit', 'inherit'],
+    ['default', themeColors.text.primary500],
+    ['primary', themeColors.text.primary500],
+    ['text', themeColors.text.neutral700],
+    ['subdued', themeColors.text.informative400],
+    ['danger', themeColors.text.danger600],
+    ['ghost', themeColors.text.neutral600],
+    ['accent', themeColors.text.notice600],
+    ['warning', themeColors.text.attention600],
+    ['success', themeColors.text.success600],
+  ])
+
+  return linkColorsMap.get(color) ?? color
+}
+
 export const useColorTextStyles = ({ $color }: MapProps = {}) => {
   const theme = useTheme()
   const colors = theme.semantic.color
 
-  const getColorValue = (color?: ColorType) => {
-    if (!color) {
-      return colors.text.primary500
-    }
-    switch (color) {
-      case 'inherit':
-        return 'inherit'
-      case 'default':
-      case 'primary':
-        return colors.text.primary500
-      case 'text':
-        return colors.text.neutral700
-      case 'subdued':
-        return colors.text.informative400
-      case 'danger':
-        return colors.text.danger600
-      case 'ghost':
-        return colors.text.neutral600
-      case 'accent':
-        return colors.text.notice600
-      case 'warning':
-        return colors.text.attention600
-      case 'success':
-        return colors.text.success600
-      default:
-        return color // any supported color value e.g #fff
-    }
-  }
+  const getColorValue = (color?: ColorType) => getLinkColor(color, colors)
 
   return css`
     color: ${getColorValue($color)};

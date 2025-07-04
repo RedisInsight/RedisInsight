@@ -1,15 +1,6 @@
 import { theme } from '@redis-ui/styles'
+import { ReactNode } from 'react'
 import styled, { css, keyframes } from 'styled-components'
-
-export const LoaderContainer = styled.div<
-  React.HtmlHTMLAttributes<HTMLDivElement>
->`
-  position: relative;
-  height: 3px;
-  background-color: #e6e6e6;
-  overflow: hidden;
-  border-radius: 2px;
-`
 
 const backgroundStyles = {
   loaderBar: {
@@ -17,12 +8,6 @@ const backgroundStyles = {
       background-color: ${theme.semantic.color.background.primary500};
     `,
   },
-}
-
-type LoaderBarColor = keyof typeof backgroundStyles.loaderBar
-
-export type LoaderBarProps = React.HTMLAttributes<HTMLDivElement> & {
-  color: LoaderBarColor
 }
 
 const loading = keyframes`
@@ -34,6 +19,26 @@ const loading = keyframes`
   }
 `
 
+interface LoaderContainerProps {
+  children?: ReactNode
+  style?: React.CSSProperties
+  className?: string
+}
+
+export const LoaderContainer = styled.div<LoaderContainerProps>`
+  position: relative;
+  height: 3px;
+  background-color: #e6e6e6;
+  overflow: hidden;
+  border-radius: 2px;
+`
+
+type LoaderBarColor = keyof typeof backgroundStyles.loaderBar
+
+interface LoaderBarProps {
+  color: LoaderBarColor
+}
+
 export const LoaderBar = styled.div<LoaderBarProps>`
   position: absolute;
   height: 100%;
@@ -43,3 +48,5 @@ export const LoaderBar = styled.div<LoaderBarProps>`
   ${({ color = 'primary' }) => backgroundStyles.loaderBar[color]};
   animation: ${loading} 1s ease-in-out infinite;
 `
+
+export type ProgressBarLoaderProps = LoaderContainerProps & LoaderBarProps

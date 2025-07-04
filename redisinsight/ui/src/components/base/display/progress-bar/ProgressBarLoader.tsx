@@ -9,8 +9,9 @@ const ProgressBarLoader = ({
   className,
   style,
   color,
+  ...rest
 }: ProgressBarLoaderProps) => (
-  <LoaderContainer className={className} style={style}>
+  <LoaderContainer className={className} style={style} {...rest}>
     <LoaderBar color={color} />
   </LoaderContainer>
 )

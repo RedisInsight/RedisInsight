@@ -1,4 +1,4 @@
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -20,7 +20,11 @@ import {
   AddRedisDatabaseStatus,
   InstanceRedisCluster,
 } from 'uiSrc/slices/interfaces'
-import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
+import {
+  DatabaseListModules,
+  DatabaseListOptions,
+  RiTooltip,
+} from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
@@ -85,14 +89,14 @@ const RedisClusterDatabasesPage = () => {
           .replace(/\s\s/g, '\u00a0\u00a0')
         return (
           <div role="presentation" data-testid={`db_name_${name}`}>
-            <EuiToolTip
+            <RiTooltip
               position="bottom"
               title="Database"
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
               <Text>{cellContent}</Text>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
@@ -118,18 +122,14 @@ const RedisClusterDatabasesPage = () => {
           !!dnsName && (
             <div className="host_port">
               <Text className="copyHostPortText">{text}</Text>
-              <EuiToolTip
-                position="right"
-                content="Copy"
-                anchorClassName="copyHostPortTooltip"
-              >
+              <RiTooltip position="right" content="Copy">
                 <IconButton
                   icon={CopyIcon}
                   aria-label="Copy host:port"
                   className="copyHostPortBtn"
                   onClick={() => handleCopy(text)}
                 />
-              </EuiToolTip>
+              </RiTooltip>
             </div>
           )
         )
@@ -178,7 +178,7 @@ const RedisClusterDatabasesPage = () => {
           {statusAdded === AddRedisDatabaseStatus.Success ? (
             <Text>{messageAdded}</Text>
           ) : (
-            <EuiToolTip position="left" title="Error" content={messageAdded}>
+            <RiTooltip position="left" title="Error" content={messageAdded}>
               <Row align="center" gap="s">
                 <FlexItem>
                   <EuiIcon type="alert" color="danger" />
@@ -193,16 +193,14 @@ const RedisClusterDatabasesPage = () => {
                   </ColorText>
                 </FlexItem>
               </Row>
-            </EuiToolTip>
+            </RiTooltip>
           )}
         </>
       )
     },
   }
 
-  const columnsResult: ColumnDefinition<InstanceRedisCluster>[] = [
-    ...columns,
-  ]
+  const columnsResult: ColumnDefinition<InstanceRedisCluster>[] = [...columns]
   columnsResult.push(messageColumn)
 
   if (instancesAdded.length) {

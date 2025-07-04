@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react'
-import { EuiToolTip, EuiIcon } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { format } from 'date-fns'
 import { useDispatch } from 'react-redux'
 import { isNull } from 'lodash'
@@ -7,7 +7,7 @@ import { isNull } from 'lodash'
 import { formatLongName, Nullable } from 'uiSrc/utils'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { OAuthSsoHandlerDialog, RiTooltip } from 'uiSrc/components'
 import {
   CloudCapiKey,
   OAuthSocialAction,
@@ -88,20 +88,17 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
         return (
           <div className={styles.nameField}>
             {!valid && (
-              <EuiToolTip
-                content="This API key is invalid. Remove it from Redis Cloud and create a new one instead."
-                anchorClassName={styles.invalidIconAnchor}
-              >
+              <RiTooltip content="This API key is invalid. Remove it from Redis Cloud and create a new one instead.">
                 <EuiIcon
                   className={styles.invalidIcon}
                   type="alert"
                   color="danger"
                 />
-              </EuiToolTip>
+              </RiTooltip>
             )}
-            <EuiToolTip title="API Key Name" content={tooltipContent}>
+            <RiTooltip title="API Key Name" content={tooltipContent}>
               <>{name}</>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
@@ -116,11 +113,9 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
           original: { createdAt },
         },
       }) => (
-        <EuiToolTip
-          content={format(new Date(createdAt), 'HH:mm:ss d LLL yyyy')}
-        >
+        <RiTooltip content={format(new Date(createdAt), 'HH:mm:ss d LLL yyyy')}>
           <>{format(new Date(createdAt), 'd MMM yyyy')}</>
-        </EuiToolTip>
+        </RiTooltip>
       ),
     },
     {
@@ -135,11 +130,11 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
       }) => (
         <>
           {lastUsed ? (
-            <EuiToolTip
+            <RiTooltip
               content={format(new Date(lastUsed), 'HH:mm:ss d LLL yyyy')}
             >
               <>{format(new Date(lastUsed), 'd MMM yyyy')}</>
-            </EuiToolTip>
+            </RiTooltip>
           ) : (
             'Never'
           )}
@@ -156,10 +151,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
         },
       }) => (
         <div>
-          <EuiToolTip
-            content="Copy API Key Name"
-            anchorClassName={styles.copyBtnAnchor}
-          >
+          <RiTooltip content="Copy API Key Name">
             <IconButton
               icon={CopyIcon}
               aria-label="Copy API key"
@@ -167,7 +159,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
               style={{ marginRight: 4 }}
               data-testid={`copy-api-key-${name}`}
             />
-          </EuiToolTip>
+          </RiTooltip>
           <PopoverDelete
             header={
               <>

@@ -128,7 +128,7 @@ describe('OAuthForm', () => {
     expect(screen.getByTestId('btn-submit')).toBeDisabled()
 
     await act(async () => {
-      fireEvent.mouseOver(screen.getByTestId('btn-submit'))
+      fireEvent.focus(screen.getByTestId('btn-submit'))
     })
 
     await waitFor(() => screen.getByTestId('btn-submit-tooltip'))

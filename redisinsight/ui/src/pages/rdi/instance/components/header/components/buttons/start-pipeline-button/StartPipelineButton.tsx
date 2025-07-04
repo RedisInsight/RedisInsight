@@ -1,20 +1,16 @@
 import React from 'react'
-import { EuiToolTip } from '@elastic/eui'
 
 import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import { PlayFilledIcon } from 'uiSrc/components/base/icons'
+import { RiTooltip } from 'uiSrc/components'
 import { PipelineButtonProps } from '../reset-pipeline-button/ResetPipelineButton'
-import styles from '../styles.module.scss'
 
 const StartPipelineButton = ({
   onClick,
   disabled,
   loading,
 }: PipelineButtonProps) => (
-  <EuiToolTip
-    content="Start the pipeline to resume processing new data arrivals."
-    anchorClassName={disabled ? styles.disabled : styles.tooltip}
-  >
+  <RiTooltip content="Start the pipeline to resume processing new data arrivals.">
     <SecondaryButton
       aria-label="Start running pipeline"
       size="s"
@@ -26,7 +22,7 @@ const StartPipelineButton = ({
     >
       Start Pipeline
     </SecondaryButton>
-  </EuiToolTip>
+  </RiTooltip>
 )
 
 export default StartPipelineButton

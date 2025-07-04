@@ -172,7 +172,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
       anchorPosition="upCenter"
       isOpen={isInfoPopoverOpen}
       anchorClassName={styles.unsupportedInfo}
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip')}
+      panelClassName={cx('popoverLikeTooltip')}
       closePopover={() => setIsInfoPopoverOpen(false)}
       initialFocus={false}
       button={

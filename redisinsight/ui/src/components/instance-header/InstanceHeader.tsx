@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import cx from 'classnames'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { selectOnFocus } from 'uiSrc/utils'
@@ -22,7 +22,11 @@ import {
   setBrowserSelectedKey,
 } from 'uiSrc/slices/app/context'
 
-import { DatabaseOverview, FeatureFlagComponent } from 'uiSrc/components'
+import {
+  DatabaseOverview,
+  FeatureFlagComponent,
+  RiTooltip,
+} from 'uiSrc/components'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
 import ShortInstanceInfo from 'uiSrc/components/instance-header/components/ShortInstanceInfo'
@@ -141,7 +145,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
           >
             <div>
               <FeatureFlagComponent name={FeatureFlags.envDependent}>
-                <EuiToolTip
+                <RiTooltip
                   position="bottom"
                   content={
                     server?.buildType === BuildType.RedisStack
@@ -162,7 +166,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                   >
                     Databases
                   </Text>
-                </EuiToolTip>
+                </RiTooltip>
               </FeatureFlagComponent>
             </div>
             <div style={{ flex: 1, overflow: 'hidden' }}>
@@ -181,7 +185,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                           style={{ padding: '4px 24px 4px 0' }}
                           data-testid="return-to-sm-item"
                         >
-                          <EuiToolTip
+                          <RiTooltip
                             position="bottom"
                             content={returnUrlTooltip || returnUrlLabel}
                           >
@@ -193,7 +197,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                             >
                               &#60; {returnUrlLabel}
                             </Text>
-                          </EuiToolTip>
+                          </RiTooltip>
                         </FlexItem>
                       }
                     />
@@ -260,9 +264,8 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                     </FlexItem>
                   )}
                   <FlexItem style={{ paddingLeft: 6 }}>
-                    <EuiToolTip
+                    <RiTooltip
                       position="right"
-                      anchorClassName={styles.tooltipAnchor}
                       className={styles.tooltip}
                       content={
                         <ShortInstanceInfo
@@ -287,7 +290,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                         style={{ cursor: 'pointer' }}
                         data-testid="db-info-icon"
                       />
-                    </EuiToolTip>
+                    </RiTooltip>
                   </FlexItem>
                 </Row>
               </div>

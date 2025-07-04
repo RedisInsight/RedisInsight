@@ -1,4 +1,4 @@
-import { EuiForm, EuiToolTip, keys } from '@elastic/eui'
+import { EuiForm, keys } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, pick } from 'lodash'
 import React, { useRef, useState } from 'react'
@@ -19,6 +19,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { RiTooltip } from 'uiSrc/components'
 
 export interface Props {
   loading: boolean
@@ -80,9 +81,8 @@ const SentinelConnectionForm = (props: Props) => {
   }
 
   const SubmitButton = ({ onClick, submitIsDisabled }: ISubmitButton) => (
-    <EuiToolTip
+    <RiTooltip
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       title={
         submitIsDisabled
           ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
@@ -102,7 +102,7 @@ const SentinelConnectionForm = (props: Props) => {
       >
         Discover Database
       </PrimaryButton>
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   const Footer = () => {

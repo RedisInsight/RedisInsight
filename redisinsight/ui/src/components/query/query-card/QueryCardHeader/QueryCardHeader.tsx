@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import styled from 'styled-components'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 import { findIndex, isNumber } from 'lodash'
 import { ColorText } from 'uiSrc/components/base/text'
@@ -45,7 +45,7 @@ import {
   ResultsSummary,
 } from 'uiSrc/slices/interfaces/workbench'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
-import { FormatedDate, FullScreen } from 'uiSrc/components'
+import { FormatedDate, FullScreen, RiTooltip } from 'uiSrc/components'
 
 import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
 import DefaultPluginIconLight from 'uiSrc/assets/img/workbench/default_view_light.svg'
@@ -251,17 +251,13 @@ const QueryCardHeader = (props: Props) => {
       disabled: false,
       inputDisplay: (
         <div className={styles.changeViewWrapper}>
-          <EuiToolTip
-            content={truncateText(text, 500)}
-            position="left"
-            anchorClassName={styles.tooltipIcon}
-          >
+          <RiTooltip content={truncateText(text, 500)} position="left">
             <EuiIcon
               className={styles.iconDropdownOption}
               type={theme === Theme.Dark ? iconDark : iconLight}
               data-testid={`view-type-selected-${value}-${id}`}
             />
-          </EuiToolTip>
+          </RiTooltip>
         </div>
       ),
       dropdownDisplay: (
@@ -390,11 +386,10 @@ const QueryCardHeader = (props: Props) => {
               data-testid="command-execution-time"
             >
               {isNumber(executionTime) && (
-                <EuiToolTip
+                <RiTooltip
                   title="Processing Time"
                   content={getExecutionTimeString(executionTime)}
                   position="left"
-                  anchorClassName={cx(styles.tooltipIcon, styles.alignCenter)}
                   data-testid="execution-time-tooltip"
                 >
                   <>
@@ -413,7 +408,7 @@ const QueryCardHeader = (props: Props) => {
                       {getTruncatedExecutionTimeString(executionTime)}
                     </ColorText>
                   </>
-                </EuiToolTip>
+                </RiTooltip>
               )}
             </FlexItem>
             <FlexItem
@@ -486,7 +481,7 @@ const QueryCardHeader = (props: Props) => {
             </FlexItem>
             {!isFullScreen && (
               <FlexItem className={cx(styles.buttonIcon, styles.playIcon)}>
-                <EuiToolTip content="Run again" position="left">
+                <RiTooltip content="Run again" position="left">
                   <IconButton
                     disabled={emptyCommand}
                     icon={PlayIcon}
@@ -494,7 +489,7 @@ const QueryCardHeader = (props: Props) => {
                     data-testid="re-run-command"
                     onClick={handleQueryReRun}
                   />
-                </EuiToolTip>
+                </RiTooltip>
               </FlexItem>
             )}
             {!isFullScreen && (
@@ -509,9 +504,8 @@ const QueryCardHeader = (props: Props) => {
             )}
             <FlexItem className={styles.buttonIcon}>
               {(isRawMode(mode) || isGroupResults(resultsMode)) && (
-                <EuiToolTip
+                <RiTooltip
                   className={styles.tooltip}
-                  anchorClassName={styles.tooltipAnchor}
                   content={
                     <>
                       {isGroupMode(resultsMode) && (
@@ -548,7 +542,7 @@ const QueryCardHeader = (props: Props) => {
                     type="boxesVertical"
                     data-testid="parameters-anchor"
                   />
-                </EuiToolTip>
+                </RiTooltip>
               )}
             </FlexItem>
           </Row>

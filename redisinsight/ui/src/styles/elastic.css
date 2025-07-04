@@ -2881,7 +2881,6 @@
     min-width: 30%;
     max-width: calc(100% - 32px);
   }
-  .euiCard--hasBetaBadge .euiCard__betaBadgeWrapper .euiToolTipAnchor,
   .euiCard--hasBetaBadge .euiCard__betaBadgeWrapper .euiCard__betaBadge {
     width: 100%;
   }
@@ -9121,13 +9120,6 @@
   .euiFormControlLayout--group .euiButtonIcon:focus-visible {
     outline: 2px solid rgba(0, 107, 180, 0.3);
     outline-offset: -2px;
-  }
-  .euiFormControlLayout--group .euiToolTipAnchor > .euiIcon {
-    height: 100%;
-    background-color: #e9edf3;
-    padding: 0 8px;
-    width: 32px;
-    border-radius: 0;
   }
   .euiFormControlLayout--group > .euiFormControlLayout__prepend,
   .euiFormControlLayout--group > .euiFormControlLayout__append {
@@ -17024,109 +17016,6 @@
   .euiToken--gray.euiToken--dark {
     background-color: #69707d;
     color: #fff;
-  }
-  .euiToolTip {
-    box-shadow:
-      0 12px 24px 0 rgba(0, 0, 0, 0.1),
-      0 6px 12px 0 rgba(0, 0, 0, 0.1),
-      0 4px 4px 0 rgba(0, 0, 0, 0.1),
-      0 2px 2px 0 rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    background-color: #404040;
-    color: #fff;
-    z-index: 9000;
-    max-width: 256px;
-    overflow-wrap: break-word;
-    font-size: 14px;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    padding: 12px;
-    animation: euiToolTipTop 350ms ease-out 0s forwards;
-    position: absolute;
-    opacity: 0;
-  }
-  .euiToolTip .euiToolTip__arrow {
-    content: '';
-    position: absolute;
-    transform-origin: center;
-    border-radius: 2px;
-    background-color: #404040;
-    width: 12px;
-    height: 12px;
-    transform: translateY(-7px) rotateZ(45deg);
-  }
-  .euiToolTip.euiToolTip--right {
-    animation-name: euiToolTipRight;
-  }
-  .euiToolTip.euiToolTip--right .euiToolTip__arrow {
-    transform: translateX(-5px) rotateZ(45deg);
-  }
-  .euiToolTip.euiToolTip--bottom {
-    animation-name: euiToolTipBottom;
-  }
-  .euiToolTip.euiToolTip--bottom .euiToolTip__arrow {
-    transform: translateY(-5px) rotateZ(45deg);
-  }
-  .euiToolTip.euiToolTip--left {
-    animation-name: euiToolTipLeft;
-  }
-  .euiToolTip.euiToolTip--left .euiToolTip__arrow {
-    transform: translateX(-7px) rotateZ(45deg);
-  }
-  .euiToolTip .euiToolTip__title {
-    font-weight: 700;
-    border-bottom: solid 1px #595959;
-    padding-bottom: 4px;
-    margin-bottom: 4px;
-  }
-  .euiToolTipAnchor {
-    display: inline-block;
-  }
-  .euiToolTipAnchor *[disabled] {
-    pointer-events: none;
-  }
-  .euiToolTipAnchor.euiToolTipAnchor--displayBlock {
-    display: block;
-  }
-  @keyframes euiToolTipTop {
-    0% {
-      opacity: 0;
-      transform: translateY(-16px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  @keyframes euiToolTipBottom {
-    0% {
-      opacity: 0;
-      transform: translateY(16px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  @keyframes euiToolTipLeft {
-    0% {
-      opacity: 0;
-      transform: translateX(-16px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  @keyframes euiToolTipRight {
-    0% {
-      opacity: 0;
-      transform: translateX(16px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
   }
   .euiTour--minWidth-default {
     min-width: 240px;

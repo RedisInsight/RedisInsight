@@ -1,14 +1,8 @@
-import {
-  EuiFieldText,
-  EuiIcon,
-  EuiProgress,
-  EuiToolTip,
-  keys,
-} from '@elastic/eui'
+import { EuiFieldText, EuiIcon, EuiProgress, keys } from '@elastic/eui'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 
-import { GroupBadge } from 'uiSrc/components'
+import { GroupBadge, RiTooltip } from 'uiSrc/components'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { Nullable } from 'uiSrc/utils'
 
@@ -274,7 +268,7 @@ const MultiSearch = (props: Props) => {
             </div>
           )}
           {(value || !!options.length) && (
-            <EuiToolTip content="Reset Filters" position="bottom">
+            <RiTooltip content="Reset Filters" position="bottom">
               <ActionIconButton
                 icon={CancelSlimIcon}
                 size="XS"
@@ -284,10 +278,10 @@ const MultiSearch = (props: Props) => {
                 data-testid="reset-filter-btn"
                 variant="secondary"
               />
-            </EuiToolTip>
+            </RiTooltip>
           )}
           {!!suggestionOptions?.length && (
-            <EuiToolTip
+            <RiTooltip
               content={suggestions?.buttonTooltipTitle}
               position="bottom"
             >
@@ -302,18 +296,16 @@ const MultiSearch = (props: Props) => {
                 className={styles.historyIcon}
                 data-testid="show-suggestions-btn"
               />
-            </EuiToolTip>
+            </RiTooltip>
           )}
           {appendRight}
           {disableSubmit && (
-            <EuiToolTip
+            <RiTooltip
               position="top"
-              display="inlineBlock"
-              anchorClassName={styles.anchorSubmitBtn}
               content="Please choose index in order to preform the search"
             >
               {SubmitBtn()}
-            </EuiToolTip>
+            </RiTooltip>
           )}
           {!disableSubmit && SubmitBtn()}
         </div>

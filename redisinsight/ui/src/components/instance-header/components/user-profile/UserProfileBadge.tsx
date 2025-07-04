@@ -116,7 +116,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
         anchorPosition="upRight"
         isOpen={isProfileOpen}
         closePopover={() => setIsProfileOpen(false)}
-        panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+        panelClassName={cx('popoverLikeTooltip', styles.popover)}
         button={
           <div
             role="presentation"

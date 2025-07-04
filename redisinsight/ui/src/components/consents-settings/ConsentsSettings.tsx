@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, forEach } from 'lodash'
-import { EuiToolTip, EuiForm } from '@elastic/eui'
+import { EuiForm } from '@elastic/eui'
 import cx from 'classnames'
 
-import { HorizontalRule } from 'uiSrc/components'
+import { HorizontalRule, RiTooltip } from 'uiSrc/components'
 import { compareConsents } from 'uiSrc/utils'
 import {
   updateUserConfigSettingsAction,
@@ -331,12 +331,11 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
           ))}
         </FlexItem>
         <FlexItem>
-          <EuiToolTip
+          <RiTooltip
             position="top"
-            anchorClassName="euiToolTip__btn-disabled"
             content={
               submitIsDisabled() ? (
-                <span className="euiToolTip__content">
+                <span>
                   {Object.values(errors).map((err) => [
                     spec?.agreements[err as string]?.requiredText,
                     <br key={err} />,
@@ -355,7 +354,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             >
               Submit
             </PrimaryButton>
-          </EuiToolTip>
+          </RiTooltip>
         </FlexItem>
       </Row>
     </EuiForm>

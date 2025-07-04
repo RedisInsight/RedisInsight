@@ -1,9 +1,9 @@
 import { isString } from 'lodash'
-import { EuiToolTip } from '@elastic/eui'
 import { ToolTipPositions } from '@elastic/eui/src/components/tool_tip/tool_tip'
 import cx from 'classnames'
 import React from 'react'
 import { FeaturesHighlightingType } from 'uiSrc/constants/featuresHighlighting'
+import { RiTooltip } from 'uiSrc/components'
 
 import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
 import styles from './styles.module.scss'
@@ -63,7 +63,7 @@ const HighlightedFeature = (props: Props) => {
   )
 
   const TooltipHighlighting = () => (
-    <EuiToolTip
+    <RiTooltip
       title={title}
       content={content}
       position={tooltipPosition}
@@ -72,11 +72,11 @@ const HighlightedFeature = (props: Props) => {
       <div data-testid="tooltip-highlighting-inner">
         <DotHighlighting />
       </div>
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   const TooltipBadgeHighlighting = () => (
-    <EuiToolTip
+    <RiTooltip
       title={title}
       content={content}
       position={tooltipPosition}
@@ -88,7 +88,7 @@ const HighlightedFeature = (props: Props) => {
       >
         <BadgeHighlighting />
       </div>
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   if (type === 'dialog') {

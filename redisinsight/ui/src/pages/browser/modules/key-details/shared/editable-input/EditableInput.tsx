@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 
+import { RiTooltip } from 'uiSrc/components'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 
@@ -59,9 +59,8 @@ const EditableInput = (props: Props) => {
           <div style={{ display: 'flex' }}>{children}</div>
         </Text>
         {isHovering && (
-          <EuiToolTip
+          <RiTooltip
             content={editToolTipContent}
-            anchorClassName={styles.editBtnAnchor}
             data-testid={`${testIdPrefix}_edit-tooltip-${field}`}
           >
             <IconButton
@@ -76,7 +75,7 @@ const EditableInput = (props: Props) => {
               }}
               data-testid={`${testIdPrefix}_edit-btn-${field}`}
             />
-          </EuiToolTip>
+          </RiTooltip>
         )}
       </div>
     )

@@ -1,8 +1,4 @@
-import {
-  EuiIcon,
-  EuiPopover,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -27,6 +23,7 @@ import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { RiRocketIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -109,7 +106,7 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
         ownFocus
         initialFocus={false}
         className={styles.popoverAnchor}
-        panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+        panelClassName={cx('popoverLikeTooltip', styles.popover)}
         anchorClassName={styles.popoverAnchor}
         anchorPosition="upLeft"
         isOpen={isPopoverOpen}
@@ -155,14 +152,14 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
             data-testid="reset-pipeline-checkbox"
           />
 
-          <EuiToolTip content="The pipeline will take a new snapshot of the data and process it, then continue tracking changes.">
+          <RiTooltip content="The pipeline will take a new snapshot of the data and process it, then continue tracking changes.">
             <EuiIcon
               type="iInCircle"
               size="m"
               style={{ cursor: 'pointer' }}
               data-testid="reset-checkbox-info-icon"
             />
-          </EuiToolTip>
+          </RiTooltip>
         </div>
         <Row gap="m" responsive justify="end">
           <FlexItem>

@@ -5,10 +5,9 @@ import {
   VariableSizeList as List,
 } from 'react-window'
 import { useParams } from 'react-router-dom'
-import { EuiToolTip } from '@elastic/eui'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { FormatedDate } from 'uiSrc/components'
+import { FormatedDate, RiTooltip } from 'uiSrc/components'
 import { ChevronDownIcon } from 'uiSrc/components/base/icons'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { IMessage } from 'apiSrc/modules/pub-sub/interfaces/message.interface'
@@ -140,9 +139,9 @@ const MessagesList = (props: Props) => {
           <FormatedDate date={time} />
         </div>
         <div className={styles.channel}>
-          <EuiToolTip content={channel} position="bottom" display="inlineBlock">
+          <RiTooltip content={channel} position="bottom">
             <div className={styles.channelAnchor}>{channel}</div>
-          </EuiToolTip>
+          </RiTooltip>
         </div>
         <div className={styles.message} ref={rowRef}>
           <span>{message}</span>

@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react'
 import parse from 'html-react-parser'
 import cx from 'classnames'
 import { flatten, isArray, isEmpty, map, uniq } from 'lodash'
-import { EuiToolTip } from '@elastic/eui'
 import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 
 import { ColorText } from '../../../../../components/base/text/ColorText'
 import { IconButton } from '../../../../../components/base/forms/buttons'
 import { CopyIcon } from '../../../../../components/base/icons'
+import { RiTooltip } from '../../../../../components'
 import { CommandArgument, Command } from '../../constants'
 import { formatLongName, replaceSpaces } from '../../utils'
 
@@ -75,11 +75,10 @@ const TableResult = React.memo((props: Props) => {
               className={cx('tooltipContainer')}
               data-testid={`query-column-${title}`}
             >
-              <EuiToolTip
+              <RiTooltip
                 position="bottom"
                 title={title}
                 className="text-multiline-ellipsis"
-                anchorClassName={cx('tooltip')}
                 content={formatLongName(value.toString())}
               >
                 <div className="copy-btn-wrapper">
@@ -95,7 +94,7 @@ const TableResult = React.memo((props: Props) => {
                     }
                   />
                 </div>
-              </EuiToolTip>
+              </RiTooltip>
             </div>
           )
         },

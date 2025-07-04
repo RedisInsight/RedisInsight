@@ -7,7 +7,7 @@ import React, {
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiProgress, EuiToolTip } from '@elastic/eui'
+import { EuiProgress } from '@elastic/eui'
 
 import {
   bufferToSerializedFormat,
@@ -59,6 +59,7 @@ import { DownloadIcon } from 'uiSrc/components/base/icons'
 import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
 import { TextArea } from 'uiSrc/components/base/inputs'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 const MIN_ROWS = 8
@@ -244,15 +245,14 @@ const StringDetailsValue = (props: Props) => {
     )
 
     return (
-      <EuiToolTip
+      <RiTooltip
         title={!isValid ? noEditableText : undefined}
-        anchorClassName={styles.tooltipAnchor}
         className={styles.tooltip}
         position="left"
         data-testid="string-value-tooltip"
       >
         {textEl}
-      </EuiToolTip>
+      </RiTooltip>
     )
   }
 

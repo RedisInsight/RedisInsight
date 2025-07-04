@@ -228,21 +228,25 @@ const clearStoreActions = (actions: any[]) => {
 }
 
 /**
- * Ensure the EuiToolTip being tested is open and visible before continuing
+ * Ensure the RiTooltip being tested is open and visible before continuing
  */
-const waitForEuiToolTipVisible = async (timeout = 500) => {
+const waitForRiTooltipVisible = async (timeout = 500) => {
   await waitFor(
     () => {
-      const tooltip = document.querySelector('.euiToolTipPopover')
+      const tooltip = document.querySelector(
+        '[data-radix-popper-content-wrapper]',
+      )
       expect(tooltip).toBeInTheDocument()
     },
     { timeout }, // Account for long delay on tooltips
   )
 }
 
-const waitForEuiToolTipHidden = async () => {
+const waitForRiTooltipHidden = async () => {
   await waitFor(() => {
-    const tooltip = document.querySelector('.euiToolTipPopover')
+    const tooltip = document.querySelector(
+      '[data-radix-popper-content-wrapper]',
+    )
     expect(tooltip).toBeNull()
   })
 }
@@ -417,7 +421,7 @@ export {
   renderHook,
   renderWithRouter,
   clearStoreActions,
-  waitForEuiToolTipVisible,
-  waitForEuiToolTipHidden,
+  waitForRiTooltipVisible,
+  waitForRiTooltipHidden,
   waitForEuiPopoverVisible,
 }

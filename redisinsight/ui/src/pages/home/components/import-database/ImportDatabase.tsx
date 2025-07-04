@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiFilePicker,
-  EuiIcon,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFilePicker, EuiIcon } from '@elastic/eui'
 import ReactDOM from 'react-dom'
 import {
   fetchInstancesAction,
@@ -14,7 +10,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { UploadWarning } from 'uiSrc/components'
+import { RiTooltip, UploadWarning } from 'uiSrc/components'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
@@ -145,9 +141,8 @@ const ImportDatabase = (props: Props) => {
         >
           Cancel
         </SecondaryButton>
-        <EuiToolTip
+        <RiTooltip
           position="top"
-          anchorClassName="euiToolTip__btn-disabled"
           content={isSubmitDisabled ? 'Upload a file' : undefined}
         >
           <PrimaryButton
@@ -161,7 +156,7 @@ const ImportDatabase = (props: Props) => {
           >
             Submit
           </PrimaryButton>
-        </EuiToolTip>
+        </RiTooltip>
       </div>,
       footerEl,
     )

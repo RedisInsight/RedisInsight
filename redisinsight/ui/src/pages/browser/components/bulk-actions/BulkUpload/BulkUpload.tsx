@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiFilePicker, EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiFilePicker, EuiIcon, EuiPopover } from '@elastic/eui'
 
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
@@ -20,7 +20,7 @@ import BulkActionSummary from 'uiSrc/pages/browser/components/bulk-actions/BulkA
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { isProcessedBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
-import { UploadWarning } from 'uiSrc/components'
+import { RiTooltip, UploadWarning } from 'uiSrc/components'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
   PrimaryButton,
@@ -106,7 +106,7 @@ const BulkUpload = (props: Props) => {
         <div className={styles.content}>
           <Text color="subdued">
             Upload the text file with the list of Redis commands
-            <EuiToolTip
+            <RiTooltip
               content={
                 <>
                   <Text size="xs">SET Key0 Value0</Text>
@@ -121,7 +121,7 @@ const BulkUpload = (props: Props) => {
                 type="iInCircle"
                 style={{ marginLeft: 4, marginBottom: 2 }}
               />
-            </EuiToolTip>
+            </RiTooltip>
           </Text>
           <Spacer size="l" />
           <EuiFilePicker

@@ -1,6 +1,5 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiToolTip } from '@elastic/eui'
 
 import { DeleteIcon, PlusIcon } from 'uiSrc/components/base/icons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
@@ -9,6 +8,7 @@ import {
   ActionIconButton,
   IconButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props<T> {
@@ -31,7 +31,7 @@ const AddMultipleFields = <T,>(props: Props<T>) => {
       <Row align="center" gap="s">
         <FlexItem grow>{child}</FlexItem>
         <FlexItem>
-          <EuiToolTip content="Remove" position="left">
+          <RiTooltip content="Remove" position="left">
             <IconButton
               icon={DeleteIcon}
               disabled={isClearDisabled(item, index)}
@@ -39,7 +39,7 @@ const AddMultipleFields = <T,>(props: Props<T>) => {
               onClick={() => onClickRemove(item, index)}
               data-testid="remove-item"
             />
-          </EuiToolTip>
+          </RiTooltip>
         </FlexItem>
       </Row>
     </FlexItem>
@@ -53,7 +53,7 @@ const AddMultipleFields = <T,>(props: Props<T>) => {
       <Spacer size="s" />
       <Row align="center" justify="end">
         <FlexItem>
-          <EuiToolTip content="Add" position="left">
+          <RiTooltip content="Add" position="left">
             <ActionIconButton
               variant="secondary"
               icon={PlusIcon}
@@ -61,7 +61,7 @@ const AddMultipleFields = <T,>(props: Props<T>) => {
               onClick={onClickAdd}
               data-testid="add-item"
             />
-          </EuiToolTip>
+          </RiTooltip>
         </FlexItem>
       </Row>
     </>

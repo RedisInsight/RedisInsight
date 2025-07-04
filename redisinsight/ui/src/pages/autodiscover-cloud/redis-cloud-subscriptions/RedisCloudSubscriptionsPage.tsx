@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { isNumber } from 'lodash'
-import { EuiToolTip } from '@elastic/eui'
 
 import { Pages } from 'uiSrc/constants'
 import {
@@ -14,6 +13,7 @@ import {
   RedisCloudSubscriptionStatusText,
   RedisCloudSubscriptionTypeText,
 } from 'uiSrc/slices/interfaces'
+import { RiTooltip } from 'uiSrc/components'
 import {
   cloudSelector,
   fetchInstancesRedisCloud,
@@ -137,7 +137,7 @@ const RedisCloudSubscriptionsPage = () => {
       }) {
         return status !== RedisCloudSubscriptionStatus.Active ||
           numberOfDatabases === 0 ? (
-          <EuiToolTip
+          <RiTooltip
             title={
               <p>
                 This subscription is not available for one of the following
@@ -152,7 +152,7 @@ const RedisCloudSubscriptionsPage = () => {
               icon={ToastDangerIcon}
               aria-label="subscription alert"
             />
-          </EuiToolTip>
+          </RiTooltip>
         ) : null
       },
     },
@@ -180,14 +180,14 @@ const RedisCloudSubscriptionsPage = () => {
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
           <div role="presentation">
-            <EuiToolTip
+            <RiTooltip
               position="bottom"
               title="Subscription"
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
               <Text>{cellContent}</Text>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },

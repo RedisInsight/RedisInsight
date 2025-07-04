@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { map } from 'lodash'
-import { EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import {
   InstanceRedisCloud,
@@ -26,6 +26,7 @@ import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { RiTooltip } from 'uiSrc/components'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -175,15 +176,14 @@ const RedisCloudSubscriptions = ({
   )
 
   const SubmitButton = ({ isDisabled }: { isDisabled: boolean }) => (
-    <EuiToolTip
+    <RiTooltip
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       title={
         isDisabled ? validationErrors.SELECT_AT_LEAST_ONE('subscription') : null
       }
       content={
         isDisabled ? (
-          <span className="euiToolTip__content">
+          <span>
             {validationErrors.NO_SUBSCRIPTIONS_CLOUD}
           </span>
         ) : null
@@ -199,7 +199,7 @@ const RedisCloudSubscriptions = ({
       >
         Show databases
       </PrimaryButton>
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   const SummaryText = () => (

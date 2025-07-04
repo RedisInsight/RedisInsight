@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import { map, pick } from 'lodash'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -16,6 +16,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { RiTooltip } from 'uiSrc/components'
 import { Pages } from 'uiSrc/constants'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { SearchInput } from 'uiSrc/components/base/inputs'
@@ -164,15 +165,14 @@ const RedisCloudDatabasesPage = ({
   )
 
   const SubmitButton = ({ isDisabled }: { isDisabled: boolean }) => (
-    <EuiToolTip
+    <RiTooltip
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       title={
         isDisabled ? validationErrors.SELECT_AT_LEAST_ONE('database') : null
       }
       content={
         isDisabled ? (
-          <span className="euiToolTip__content">
+          <span>
             {validationErrors.NO_DBS_SELECTED}
           </span>
         ) : null
@@ -188,7 +188,7 @@ const RedisCloudDatabasesPage = ({
       >
         Add selected Databases
       </PrimaryButton>
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   return (

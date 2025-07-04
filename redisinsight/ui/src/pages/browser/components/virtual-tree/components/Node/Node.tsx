@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { NodePublicState } from 'react-vtree/dist/es/Tree'
 import cx from 'classnames'
-import { EuiIcon, EuiToolTip, keys as ElasticKeys } from '@elastic/eui'
+import { EuiIcon, keys as ElasticKeys } from '@elastic/eui'
 
 import { useSelector } from 'react-redux'
 import { Maybe } from 'uiSrc/utils'
@@ -12,6 +12,7 @@ import KeyRowName from 'uiSrc/pages/browser/components/key-row-name'
 import KeyRowType from 'uiSrc/pages/browser/components/key-row-type'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { appContextDbConfig } from 'uiSrc/slices/app/context'
+import { RiTooltip } from 'uiSrc/components'
 import { DeleteKeyPopover } from '../../../delete-key-popover/DeleteKeyPopover'
 import { TreeData } from '../../interfaces'
 import styles from './styles.module.scss'
@@ -110,12 +111,8 @@ const Node = ({
   }
 
   const Folder = () => (
-    <EuiToolTip
-      content={tooltipContent}
-      position="bottom"
-      anchorClassName={styles.anchorTooltipNode}
-    >
-      <>
+    <RiTooltip content={tooltipContent} position="bottom">
+      <span className={styles.anchorTooltipNode}>
         <div className={styles.nodeName}>
           <EuiIcon
             type={isOpen ? 'arrowDown' : 'arrowRight'}
@@ -144,8 +141,8 @@ const Node = ({
             {keyCount ?? ''}
           </div>
         </div>
-      </>
-    </EuiToolTip>
+      </span>
+    </RiTooltip>
   )
 
   const Leaf = () => (

@@ -8,7 +8,7 @@ import {
   fireEvent,
   act,
   screen,
-  waitForEuiToolTipVisible,
+  waitForRiTooltipVisible,
 } from 'uiSrc/utils/test-utils'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { INSTANCE_ID_MOCK } from 'uiSrc/mocks/handlers/instances/instancesHandlers'
@@ -65,9 +65,9 @@ describe('QueryCardHeader', () => {
     )
 
     await act(async () => {
-      fireEvent.mouseOver(screen.getByTestId('command-execution-time-icon'))
+      fireEvent.focus(screen.getByTestId('command-execution-time-icon'))
     })
-    await waitForEuiToolTipVisible()
+    await waitForRiTooltipVisible()
 
     expect(screen.getByTestId('execution-time-tooltip')).toHaveTextContent(
       '12 345 678.91 msec',

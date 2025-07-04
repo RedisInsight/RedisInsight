@@ -1,8 +1,9 @@
 import cx from 'classnames'
-import { EuiFlexGroup, EuiFlexItem, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiFlexGroup, EuiFlexItem, EuiIcon } from '@elastic/eui'
 import React, { CSSProperties, ReactNode } from 'react'
 import styles from 'uiSrc/components/database-overview/styles.module.scss'
 import { IMetric } from 'uiSrc/components/database-overview/components/OverviewMetrics/OverviewMetrics'
+import { RiTooltip } from 'uiSrc/components'
 
 export interface OverviewItemProps {
   children: ReactNode
@@ -37,7 +38,7 @@ const MetricItem = (
   const { className = '', content, icon, id, tooltipContent, style } = props
   return (
     <OverviewItem id={id} className={className} style={style}>
-      <EuiToolTip
+      <RiTooltip
         position="bottom"
         className={styles.tooltip}
         content={tooltipContent}
@@ -57,7 +58,7 @@ const MetricItem = (
             {content}
           </EuiFlexItem>
         </EuiFlexGroup>
-      </EuiToolTip>
+      </RiTooltip>
     </OverviewItem>
   )
 }

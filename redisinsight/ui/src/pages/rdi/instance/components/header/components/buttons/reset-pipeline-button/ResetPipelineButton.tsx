@@ -1,10 +1,9 @@
 import React from 'react'
-import { EuiToolTip } from '@elastic/eui'
 
 import { RiResetIcon } from 'uiSrc/components/base/icons'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
-import styles from '../styles.module.scss'
+import { RiTooltip } from 'uiSrc/components'
 
 export interface PipelineButtonProps {
   onClick: () => void
@@ -17,7 +16,7 @@ const ResetPipelineButton = ({
   disabled,
   loading,
 }: PipelineButtonProps) => (
-  <EuiToolTip
+  <RiTooltip
     content={
       !(disabled || loading) ? (
         <>
@@ -33,7 +32,6 @@ const ResetPipelineButton = ({
         </>
       ) : null
     }
-    anchorClassName={disabled || loading ? styles.disabled : styles.tooltip}
   >
     <SecondaryButton
       aria-label="Reset pipeline button"
@@ -46,7 +44,7 @@ const ResetPipelineButton = ({
     >
       Reset Pipeline
     </SecondaryButton>
-  </EuiToolTip>
+  </RiTooltip>
 )
 
 export default ResetPipelineButton

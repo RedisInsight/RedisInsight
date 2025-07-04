@@ -220,7 +220,7 @@ const RemoveListElements = (props: Props) => {
 
   const InfoBoxPopover = () => (
     <EuiPopover
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip')}
+      panelClassName={cx('popoverLikeTooltip')}
       anchorPosition="leftCenter"
       isOpen={isInfoPopoverOpen}
       closePopover={() => setIsInfoPopoverOpen(false)}

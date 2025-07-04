@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiToolTip, keys } from '@elastic/eui'
+import { keys } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { isArray, upperFirst } from 'lodash'
@@ -28,6 +28,7 @@ import {
   ShrinkIcon,
 } from 'uiSrc/components/base/icons'
 import Tabs, { TabInfo } from 'uiSrc/components/base/layout/tabs'
+import { RiTooltip } from 'uiSrc/components'
 import {
   RiSelect,
   RiSelectOption,
@@ -153,7 +154,7 @@ const DryRunJobPanel = (props: Props) => {
     {
       value: PipelineJobsTabs.Transformations,
       label: (
-        <EuiToolTip
+        <RiTooltip
           content={
             <Text color="subdued" size="s">
               Displays the results of the transformations you defined. The data
@@ -165,14 +166,14 @@ const DryRunJobPanel = (props: Props) => {
           data-testid="transformation-output-tooltip"
         >
           <Text>Transformation output</Text>
-        </EuiToolTip>
+        </RiTooltip>
       ),
       content: null,
     },
     {
       value: PipelineJobsTabs.Output,
       label: (
-        <EuiToolTip
+        <RiTooltip
           content={
             <Text color="subdued" size="s">
               Displays the list of Redis commands that will be generated based
@@ -184,7 +185,7 @@ const DryRunJobPanel = (props: Props) => {
           data-testid="job-output-tooltip"
         >
           <Text>Job output</Text>
-        </EuiToolTip>
+        </RiTooltip>
       ),
       content: null,
     },
@@ -236,7 +237,7 @@ const DryRunJobPanel = (props: Props) => {
           />
           <Row responsive justify="end">
             <FlexItem>
-              <EuiToolTip
+              <RiTooltip
                 content={isFormValid ? null : 'Input should have JSON format'}
                 position="top"
               >
@@ -252,7 +253,7 @@ const DryRunJobPanel = (props: Props) => {
                 >
                   Dry run
                 </EmptyButton>
-              </EuiToolTip>
+              </RiTooltip>
             </FlexItem>
           </Row>
           <div className={styles.codeLabel}>

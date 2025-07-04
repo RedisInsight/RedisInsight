@@ -1,9 +1,9 @@
-import { EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 
 import cx from 'classnames'
+import { RiTooltip } from 'uiSrc/components'
 import { ColorText } from 'uiSrc/components/base/text'
 import { PageNames, Pages } from 'uiSrc/constants'
 import JobsTree from 'uiSrc/pages/rdi/pipeline-management/components/jobs-tree'
@@ -74,17 +74,17 @@ const Navigation = () => {
         >
           <div className={styles.dotWrapper}>
             {!!changes.config && (
-              <EuiToolTip
+              <RiTooltip
                 content="This file contains undeployed changes."
                 position="top"
-                display="inlineBlock"
-                anchorClassName={styles.dotWrapper}
               >
-                <span
-                  className={styles.dot}
-                  data-testid="updated-file-config-highlight"
-                />
-              </EuiToolTip>
+                <span className={styles.dotWrapper}>
+                  <span
+                    className={styles.dot}
+                    data-testid="updated-file-config-highlight"
+                  />
+                </span>
+              </RiTooltip>
             )}
           </div>
         </Tab>

@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { EuiFieldText, EuiFilePicker, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiFilePicker } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { FormikErrors } from 'formik/dist/types'
 import { isEmpty } from 'lodash'
 
 import { Nullable } from 'uiSrc/utils'
 import validationErrors from 'uiSrc/constants/validationErrors'
+import { RiTooltip } from 'uiSrc/components'
 
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
@@ -67,7 +68,7 @@ const UploadTutorialForm = (props: Props) => {
       errorsArr.splice(maxErrorsCount, errorsArr.length, ['...'])
     }
     return isSubmitDisabled ? (
-      <span className="euiToolTip__content">{errorsArr}</span>
+      <span>{errorsArr}</span>
     ) : null
   }
 
@@ -112,9 +113,8 @@ const UploadTutorialForm = (props: Props) => {
               >
                 Cancel
               </SecondaryButton>
-              <EuiToolTip
+              <RiTooltip
                 position="top"
-                anchorClassName="euiToolTip__btn-disabled"
                 title={
                   isSubmitDisabled
                     ? validationErrors.REQUIRED_TITLE(
@@ -134,7 +134,7 @@ const UploadTutorialForm = (props: Props) => {
                 >
                   Submit
                 </PrimaryButton>
-              </EuiToolTip>
+              </RiTooltip>
             </div>
           </div>
         </div>

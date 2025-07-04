@@ -18,16 +18,16 @@ describe('StartPipelineButton', () => {
   it('should show reset info text when hovered', async () => {
     render(<StartPipelineButton {...mockedProps} />)
 
-    fireEvent.mouseOver(screen.getByTestId('start-pipeline-btn'))
+    fireEvent.focus(screen.getByTestId('start-pipeline-btn'))
     await waitFor(() =>
-      screen.getByText(
+      screen.getAllByText(
         /Start the pipeline to resume processing new data arrivals/,
       ),
     )
     expect(
-      screen.getByText(
+      screen.getAllByText(
         /Start the pipeline to resume processing new data arrivals/,
-      ),
+      )[0],
     ).toBeInTheDocument()
   })
 

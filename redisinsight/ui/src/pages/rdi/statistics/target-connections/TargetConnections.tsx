@@ -1,4 +1,4 @@
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import React from 'react'
 
 import {
@@ -7,6 +7,7 @@ import {
 } from 'uiSrc/slices/interfaces'
 import { formatLongName } from 'uiSrc/utils'
 import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
+import { RiTooltip } from 'uiSrc/components'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
 
@@ -58,9 +59,9 @@ const columns: ColumnDefinition<ConnectionData>[] = [
         original: { hostPort },
       },
     }) => (
-      <EuiToolTip content={hostPort}>
+      <RiTooltip content={hostPort}>
         <span>{formatLongName(hostPort, 80, 0, '...')}</span>
-      </EuiToolTip>
+      </RiTooltip>
     ),
   },
   {

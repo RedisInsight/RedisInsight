@@ -1,4 +1,4 @@
-import { EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { DurationUnits } from 'uiSrc/constants'
 import { slowLogSelector } from 'uiSrc/slices/analytics/slowlog'
-import { AutoRefresh } from 'uiSrc/components'
+import { AutoRefresh, RiTooltip } from 'uiSrc/components'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
@@ -177,18 +177,14 @@ const Actions = (props: Props) => {
             closePopover={closePopoverClear}
             panelPaddingSize="m"
             button={
-              <EuiToolTip
-                position="left"
-                anchorClassName={styles.icon}
-                content="Clear Slow Log"
-              >
+              <RiTooltip position="left" content="Clear Slow Log">
                 <IconButton
                   icon={EraserIcon}
                   aria-label="Clear Slow Log"
                   onClick={() => showClearPopover()}
                   data-testid="clear-btn"
                 />
-              </EuiToolTip>
+              </RiTooltip>
             }
           >
             {ToolTipContent}
@@ -196,10 +192,9 @@ const Actions = (props: Props) => {
         </FlexItem>
       )}
       <FlexItem grow>
-        <EuiToolTip
+        <RiTooltip
           title="Slow Log"
           position="bottom"
-          anchorClassName={styles.icon}
           content={
             <span data-testid="slowlog-tooltip-text">
               Slow Log is a list of slow operations for your Redis instance.
@@ -219,7 +214,7 @@ const Actions = (props: Props) => {
             style={{ cursor: 'pointer' }}
             data-testid="slow-log-tooltip-icon"
           />
-        </EuiToolTip>
+        </RiTooltip>
       </FlexItem>
     </Row>
   )

@@ -1,6 +1,6 @@
 import React from 'react'
-import { EuiToolTip } from '@elastic/eui'
 
+import { RiTooltip } from 'uiSrc/components'
 import { ColorText, Text } from 'uiSrc/components/base/text'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
@@ -23,18 +23,14 @@ const SentinelHostPort = (props: Props) => {
       Sentinel Host & Port:
       <div className={styles.hostPort}>
         <ColorText>{`${host}:${port}`}</ColorText>
-        <EuiToolTip
-          position="right"
-          content="Copy"
-          anchorClassName="copyHostPortTooltip"
-        >
+        <RiTooltip position="right" content="Copy">
           <IconButton
             icon={CopyIcon}
             aria-label="Copy host:port"
             className={styles.copyHostPortBtn}
             onClick={() => handleCopy(`${host}:${port}`)}
           />
-        </EuiToolTip>
+        </RiTooltip>
       </div>
     </Text>
   )

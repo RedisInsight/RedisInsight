@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { isUndefined } from 'lodash'
 
@@ -12,6 +12,7 @@ import {
 } from 'uiSrc/slices/browser/bulkActions'
 import BulkActionSummary from 'uiSrc/pages/browser/components/bulk-actions/BulkActionSummary'
 import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 
 import styles from './styles.module.scss'
 
@@ -42,9 +43,8 @@ const BulkDeleteSummary = () => {
         <>
           <Text className={styles.title}>
             <span>{title}</span>
-            <EuiToolTip
+            <RiTooltip
               position="right"
-              anchorClassName={styles.tooltipAnchor}
               content="Expected amount is estimated based on
               the number of keys scanned and the scan percentage.
               The final number may be different."
@@ -54,7 +54,7 @@ const BulkDeleteSummary = () => {
                 type="iInCircle"
                 data-testid="bulk-delete-tooltip"
               />
-            </EuiToolTip>
+            </RiTooltip>
           </Text>
           <Text
             color="subdued"

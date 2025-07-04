@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { EuiAccordion, EuiToolTip, EuiIcon } from '@elastic/eui'
+import { EuiAccordion, EuiIcon } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 import cx from 'classnames'
 
@@ -12,6 +12,7 @@ import {
   RecommendationCopyComponent,
   RecommendationBody,
   FeatureFlagComponent,
+  RiTooltip,
 } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -207,12 +208,7 @@ const Recommendation = ({
               className={styles.redisStackLink}
               data-testid={`${id}-redis-stack-link`}
             >
-              <EuiToolTip
-                content="Redis Stack"
-                position="top"
-                display="inlineBlock"
-                anchorClassName="flex-row"
-              >
+              <RiTooltip content="Redis Stack" position="top">
                 <EuiIcon
                   type={
                     theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
@@ -220,7 +216,7 @@ const Recommendation = ({
                   className={styles.redisStackIcon}
                   data-testid={`${id}-redis-stack-icon`}
                 />
-              </EuiToolTip>
+              </RiTooltip>
             </Link>
           )}
         </FlexItem>
@@ -228,12 +224,10 @@ const Recommendation = ({
           {title}
         </FlexItem>
         <FlexItem>
-          <EuiToolTip
+          <RiTooltip
             title="Snooze tip"
             content="This tip will be removed from the list and displayed again when relevant."
             position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
           >
             <IconButton
               icon={SnoozeIcon}
@@ -242,10 +236,10 @@ const Recommendation = ({
               aria-label="snooze tip"
               data-testid={`${name}-delete-btn`}
             />
-          </EuiToolTip>
+          </RiTooltip>
         </FlexItem>
         <FlexItem>
-          <EuiToolTip
+          <RiTooltip
             title={`${hide ? 'Show' : 'Hide'} tip`}
             content={`${
               hide
@@ -253,8 +247,6 @@ const Recommendation = ({
                 : 'This tip will be removed from the list and not displayed again.'
             }`}
             position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
           >
             <IconButton
               icon={hide ? HideIcon : ShowIcon}
@@ -263,7 +255,7 @@ const Recommendation = ({
               aria-label="hide/unhide tip"
               data-testid={`toggle-hide-${name}-btn`}
             />
-          </EuiToolTip>
+          </RiTooltip>
         </FlexItem>
       </Row>
     </Row>

@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { EuiToolTip } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import {
@@ -25,6 +24,7 @@ import FormattersLight from 'uiSrc/assets/img/icons/formatter_light.svg'
 import FormattersDark from 'uiSrc/assets/img/icons/formatter_dark.svg'
 import { stringDataSelector } from 'uiSrc/slices/browser/string'
 import { isFullStringLoaded } from 'uiSrc/utils'
+import { RiTooltip } from 'uiSrc/components'
 import { Text } from 'uiSrc/components/base/text'
 import {
   Container,
@@ -64,7 +64,7 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
         value,
         label: value,
         inputDisplay: (
-          <EuiToolTip
+          <RiTooltip
             data-test-subj={`format-option-${value}`}
             content={
               !isStringFormattingEnabled
@@ -72,8 +72,6 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
                 : typeSelected
             }
             position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
           >
             <>
               {width >= MIDDLE_SCREEN_RESOLUTION ? (
@@ -85,7 +83,7 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
                 />
               )}
             </>
-          </EuiToolTip>
+          </RiTooltip>
         ),
         dropdownDisplay: (
           <Text

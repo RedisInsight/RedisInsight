@@ -2,7 +2,7 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { isEmpty } from 'lodash'
 import { FormikErrors, useFormik } from 'formik'
-import { EuiFieldText, EuiForm, EuiIcon, EuiToolTip, keys } from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiIcon, keys } from '@elastic/eui'
 
 import { MAX_PORT_NUMBER, validateField } from 'uiSrc/utils/validations'
 import { handlePasteHostName } from 'uiSrc/utils'
@@ -19,6 +19,7 @@ import {
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { NumericInput, PasswordInput } from 'uiSrc/components/base/inputs'
+import { RiTooltip } from 'uiSrc/components'
 
 export interface Props {
   host: string
@@ -119,7 +120,7 @@ const ClusterConnectionForm = (props: Props) => {
   }
 
   const AppendHostName = () => (
-    <EuiToolTip
+    <RiTooltip
       title={
         <div>
           <p>
@@ -131,7 +132,6 @@ const ClusterConnectionForm = (props: Props) => {
         </div>
       }
       className="homePage_tooltip"
-      anchorClassName="inputAppendIcon"
       position="right"
       content={
         <ul className="homePage_toolTipUl">
@@ -151,7 +151,7 @@ const ClusterConnectionForm = (props: Props) => {
       }
     >
       <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   const CancelButton = ({ onClick }: { onClick: () => void }) => (
@@ -166,9 +166,8 @@ const ClusterConnectionForm = (props: Props) => {
   )
 
   const SubmitButton = ({ onClick, submitIsDisabled }: ISubmitButton) => (
-    <EuiToolTip
+    <RiTooltip
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       title={
         submitIsDisabled
           ? validationErrors.REQUIRED_TITLE(Object.values(errors).length)
@@ -176,7 +175,7 @@ const ClusterConnectionForm = (props: Props) => {
       }
       content={
         submitIsDisabled ? (
-          <span className="euiToolTip__content">
+          <span>
             {Object.values(errors).map((err) => [err, <br key={err} />])}
           </span>
         ) : null
@@ -193,7 +192,7 @@ const ClusterConnectionForm = (props: Props) => {
       >
         Submit
       </PrimaryButton>
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   const Footer = () => {

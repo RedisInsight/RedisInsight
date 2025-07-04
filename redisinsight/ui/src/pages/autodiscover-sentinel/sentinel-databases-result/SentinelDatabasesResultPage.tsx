@@ -1,4 +1,4 @@
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { pick } from 'lodash'
 import { useHistory } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
@@ -19,7 +19,7 @@ import {
 import { removeEmpty, setTitle } from 'uiSrc/utils'
 import { ApiStatusCode, Pages } from 'uiSrc/constants'
 import { ApiEncryptionErrors } from 'uiSrc/constants/apiErrors'
-import { InputFieldSentinel } from 'uiSrc/components'
+import { InputFieldSentinel, RiTooltip } from 'uiSrc/components'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/InputFieldSentinel'
 
@@ -125,12 +125,12 @@ const SentinelDatabasesResultPage = () => {
             <Text>{message}</Text>
           )}
           {!loading && status !== AddRedisDatabaseStatus.Success && (
-            <EuiToolTip position="right" title="Error" content={message}>
+            <RiTooltip position="right" title="Error" content={message}>
               <ColorText color="danger" style={{ cursor: 'pointer' }}>
                 Error&nbsp;
                 <EuiIcon type="alert" color="danger" />
               </ColorText>
-            </EuiToolTip>
+            </RiTooltip>
           )}
         </div>
       ),
@@ -190,11 +190,7 @@ const SentinelDatabasesResultPage = () => {
         return (
           <div className="host_port">
             <Text className="copyHostPortText">{text}</Text>
-            <EuiToolTip
-              position="right"
-              content="Copy"
-              anchorClassName="copyPublicEndpointTooltip"
-            >
+            <RiTooltip position="right" content="Copy">
               <IconButton
                 icon={CopyIcon}
                 aria-label="Copy public endpoint"
@@ -202,7 +198,7 @@ const SentinelDatabasesResultPage = () => {
                 onClick={() => handleCopy(text)}
                 tabIndex={-1}
               />
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
@@ -328,13 +324,12 @@ const SentinelDatabasesResultPage = () => {
         }
         return (
           <div role="presentation">
-            <EuiToolTip
+            <RiTooltip
               position="top"
-              anchorClassName="euiToolTip__btn-disabled"
               title={isDisabled ? validationErrors.REQUIRED_TITLE(1) : null}
               content={
                 isDisabled ? (
-                  <span className="euiToolTip__content">Database Alias</span>
+                  <span>Database Alias</span>
                 ) : null
               }
             >
@@ -347,7 +342,7 @@ const SentinelDatabasesResultPage = () => {
               >
                 Add Primary Group
               </PrimaryButton>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },

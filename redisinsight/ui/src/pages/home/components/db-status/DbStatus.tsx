@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import { differenceInDays } from 'date-fns'
 
@@ -15,6 +15,7 @@ import {
   TELEMETRY_EMPTY_VALUE,
   TelemetryEvent,
 } from 'uiSrc/telemetry'
+import { RiTooltip } from 'uiSrc/components'
 import {
   CHECK_CLOUD_DATABASE,
   WARNING_WITH_CAPABILITY,
@@ -65,7 +66,7 @@ const DbStatus = (props: Props) => {
   }
 
   const renderWarningTooltip = (content: React.ReactNode, type?: string) => (
-    <EuiToolTip
+    <RiTooltip
       content={
         <WarningTooltipContent
           id={id}
@@ -77,15 +78,14 @@ const DbStatus = (props: Props) => {
       }
       position="right"
       className={styles.tooltip}
-      anchorClassName={cx(styles.statusAnchor, styles.warning)}
     >
       <div
-        className={cx(styles.status, styles.warning)}
+        className={cx(styles.statusAnchor, styles.status, styles.warning)}
         data-testid={`database-status-${type}-${id}`}
       >
         !
       </div>
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   if (isFree && daysDiff >= LAST_CONNECTION_L) {
@@ -103,16 +103,12 @@ const DbStatus = (props: Props) => {
 
   if (isNew) {
     return (
-      <EuiToolTip
-        content="New"
-        position="top"
-        anchorClassName={cx(styles.statusAnchor)}
-      >
+      <RiTooltip content="New" position="top">
         <div
-          className={cx(styles.status, styles.new)}
+          className={cx(styles.statusAnchor, styles.status, styles.new)}
           data-testid={`database-status-new-${id}`}
         />
-      </EuiToolTip>
+      </RiTooltip>
     )
   }
 

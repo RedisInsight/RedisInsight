@@ -1,8 +1,4 @@
-import {
-  EuiIcon,
-  EuiPopover,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -23,7 +19,7 @@ import GithubHelpCenterSVG from 'uiSrc/assets/img/github.svg?react'
 import BulbSVG from 'uiSrc/assets/img/bulb.svg?react'
 
 import { FeatureFlags } from 'uiSrc/constants'
-import { FeatureFlagComponent } from 'uiSrc/components'
+import { FeatureFlagComponent, RiTooltip } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Title } from 'uiSrc/components/base/text/Title'
@@ -94,18 +90,14 @@ const HelpMenu = () => {
       anchorPosition="rightUp"
       isOpen={isHelpMenuActive}
       anchorClassName={styles.unsupportedInfo}
-      panelClassName={cx(
-        'euiToolTip',
-        'popoverLikeTooltip',
-        styles.popoverWrapper,
-      )}
+      panelClassName={cx('popoverLikeTooltip', styles.popoverWrapper)}
       closePopover={() => setIsHelpMenuActive(false)}
       button={
         <>
           {!isHelpMenuActive && (
-            <EuiToolTip content="Help" position="right" key="help-menu">
+            <RiTooltip content="Help" position="right" key="help-menu">
               {HelpMenuButton()}
-            </EuiToolTip>
+            </RiTooltip>
           )}
 
           {isHelpMenuActive && HelpMenuButton()}

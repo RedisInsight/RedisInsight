@@ -34,7 +34,7 @@ const RestartChat = (props: Props) => {
       ownFocus
       initialFocus={false}
       className={styles.popoverAnchor}
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+      panelClassName={cx('popoverLikeTooltip', styles.popover)}
       anchorClassName={cx(styles.popoverAnchor, anchorClassName)}
       anchorPosition="downLeft"
       isOpen={isPopoverOpen}

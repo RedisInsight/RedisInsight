@@ -51,7 +51,7 @@ const LoadSampleData = (props: Props) => {
       anchorPosition="upCenter"
       isOpen={isConfirmationOpen}
       closePopover={() => setIsConfirmationOpen(false)}
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+      panelClassName={cx('popoverLikeTooltip', styles.popover)}
       panelPaddingSize="none"
       anchorClassName={cx(styles.buttonWrapper, anchorClassName)}
       button={

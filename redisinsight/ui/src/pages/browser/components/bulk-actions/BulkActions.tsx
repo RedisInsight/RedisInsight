@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiToolTip } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import {
@@ -17,7 +16,7 @@ import {
   TelemetryEvent,
 } from 'uiSrc/telemetry'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
-import { FullScreen } from 'uiSrc/components'
+import { FullScreen, RiTooltip } from 'uiSrc/components'
 
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
@@ -116,19 +115,15 @@ const BulkActions = (props: Props) => {
             />
           )}
           {(!arePanelsCollapsed || isFullScreen) && (
-            <EuiToolTip
-              content="Close"
-              position="left"
-              anchorClassName={styles.anchorTooltip}
-            >
+            <RiTooltip content="Close" position="left">
               <IconButton
                 icon={CancelSlimIcon}
                 aria-label="Close panel"
-                className={styles.closeBtn}
+                className={cx(styles.closeBtn, styles.anchorTooltip)}
                 data-testid="bulk-close-panel"
                 onClick={closePanel}
               />
-            </EuiToolTip>
+            </RiTooltip>
           )}
         </FlexItem>
         <div className="eui-yScroll">

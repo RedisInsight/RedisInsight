@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { putRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -20,6 +20,7 @@ import { Text } from 'uiSrc/components/base/text'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Link } from 'uiSrc/components/base/link/Link'
+import { RiTooltip } from 'uiSrc/components'
 import { getVotedText, voteTooltip, iconType } from './utils'
 import styles from './styles.module.scss'
 
@@ -98,9 +99,9 @@ const VoteOption = (props: Props) => {
       isOpen={popover === voteOption}
       closePopover={() => setPopover('')}
       anchorClassName={styles.popoverAnchor}
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+      panelClassName={cx('popoverLikeTooltip', styles.popover)}
       button={
-        <EuiToolTip
+        <RiTooltip
           content={getTooltipContent(voteOption)}
           position="bottom"
           data-testid={`${voteOption}-vote-tooltip`}
@@ -113,7 +114,7 @@ const VoteOption = (props: Props) => {
             data-testid={`${voteOption}-vote-btn`}
             onClick={() => handleClick(name)}
           />
-        </EuiToolTip>
+        </RiTooltip>
       }
     >
       <div

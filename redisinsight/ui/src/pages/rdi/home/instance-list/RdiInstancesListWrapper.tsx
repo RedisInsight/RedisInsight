@@ -1,7 +1,6 @@
 import {
   Criteria,
   EuiTableFieldDataColumnType,
-  EuiToolTip,
   PropertySort,
 } from '@elastic/eui'
 import React, { useEffect, useRef, useState } from 'react'
@@ -26,6 +25,7 @@ import { setAppContextConnectedRdiInstanceId } from 'uiSrc/slices/app/context'
 import { Text } from 'uiSrc/components/base/text'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon, EditIcon } from 'uiSrc/components/base/icons'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -178,11 +178,7 @@ const RdiInstancesListWrapper = ({
       render: (name: string, { id }) => (
         <div className="url" data-testid="url">
           <Text className="copyUrlText">{name}</Text>
-          <EuiToolTip
-            position="right"
-            content="Copy"
-            anchorClassName="copyUrlTooltip"
-          >
+          <RiTooltip position="right" content="Copy">
             <IconButton
               size="L"
               icon={CopyIcon}
@@ -190,7 +186,7 @@ const RdiInstancesListWrapper = ({
               className="copyUrlBtn"
               onClick={() => handleCopy(name, id)}
             />
-          </EuiToolTip>
+          </RiTooltip>
         </div>
       ),
     },

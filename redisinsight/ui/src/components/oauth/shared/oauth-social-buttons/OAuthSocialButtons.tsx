@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
 import { oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
@@ -12,6 +12,7 @@ import SsoIcon from 'uiSrc/assets/img/oauth/sso.svg?react'
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -56,10 +57,9 @@ const OAuthSocialButtons = (props: Props) => {
       data-testid="oauth-container-social-buttons"
     >
       {socialLinks.map(({ strategy, text, icon, label, className = '' }) => (
-        <EuiToolTip
+        <RiTooltip
           key={label}
           position="top"
-          anchorClassName={!agreement ? 'euiToolTip__btn-disabled' : ''}
           content={agreement ? null : 'Acknowledge the agreement'}
           data-testid={`${label}-tooltip`}
         >
@@ -79,7 +79,7 @@ const OAuthSocialButtons = (props: Props) => {
               <Text className={styles.label}>{text}</Text>
             </FlexItem>
           </EmptyButton>
-        </EuiToolTip>
+        </RiTooltip>
       ))}
     </div>
   )

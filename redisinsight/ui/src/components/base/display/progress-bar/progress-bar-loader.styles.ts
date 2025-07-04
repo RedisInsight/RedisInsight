@@ -1,13 +1,56 @@
-import { theme } from '@redis-ui/styles'
+import { theme, useTheme } from '@redis-ui/styles'
 import { ReactNode } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 
-const backgroundStyles = {
-  loaderBar: {
-    primary: css`
-      background-color: ${theme.semantic.color.background.primary500};
-    `,
-  },
+export type EuiColorNames =
+  | 'inherit'
+  | 'default'
+  | 'primary'
+  | 'danger'
+  | 'warning'
+  | 'success'
+
+interface LoaderBarProps {
+  color?: string
+}
+
+export type ColorType = LoaderBarProps['color'] | EuiColorNames | (string & {})
+type ThemeColors = typeof theme.semantic.color
+
+export const getBarBackgroundColor = (
+  color: ColorType,
+  themeColors: ThemeColors,
+) => {
+  if (!color) {
+    return themeColors.background.primary300
+  }
+
+  const barBackgroundColors: Map<ColorType, string> = new Map([
+    ['inherit', 'inherit'],
+    ['default', themeColors.background.primary300],
+    ['primary', themeColors.background.primary300],
+    ['danger', themeColors.background.danger600],
+    ['warning', themeColors.background.attention600],
+    ['success', themeColors.background.success600],
+  ])
+
+  return barBackgroundColors.get(color) ?? color
+}
+
+export interface MapProps extends LoaderBarProps {
+  $color?: ColorType
+}
+
+export const useColorBackgroundStyles = ({ $color }: MapProps = {}) => {
+  const theme = useTheme()
+  const colors = theme.semantic.color
+
+  const getColorValue = (color?: ColorType) =>
+    getBarBackgroundColor(color, colors)
+
+  return css`
+    background-color: ${getColorValue($color)};
+  `
 }
 
 const loading = keyframes`
@@ -33,19 +76,14 @@ export const LoaderContainer = styled.div<LoaderContainerProps>`
   border-radius: 2px;
 `
 
-type LoaderBarColor = keyof typeof backgroundStyles.loaderBar
+export const LoaderBar = styled.div<MapProps>`
+  ${useColorBackgroundStyles}
 
-interface LoaderBarProps {
-  color: LoaderBarColor
-}
-
-export const LoaderBar = styled.div<LoaderBarProps>`
   position: absolute;
   height: 100%;
   width: 100%;
   border-radius: 2px;
 
-  ${({ color = 'primary' }) => backgroundStyles.loaderBar[color]};
   animation: ${loading} 1s ease-in-out infinite;
 `
 

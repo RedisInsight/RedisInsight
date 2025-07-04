@@ -10,7 +10,7 @@ import { Maybe, Nullable } from 'uiSrc/utils'
 import { SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { Text } from 'uiSrc/components/base/text'
-import { ProgressBarLoader } from 'uiSrc/components/base/layout'
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import { IProps } from './interfaces'
 import { getColumnWidth, useInnerElementType } from './utils'
 

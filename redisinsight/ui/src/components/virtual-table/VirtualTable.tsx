@@ -21,7 +21,7 @@ import { isEqualBuffers, Maybe, Nullable } from 'uiSrc/utils'
 
 import { Text } from 'uiSrc/components/base/text'
 import { RIResizeObserver } from 'uiSrc/components/base/utils'
-import { ProgressBarLoader } from 'uiSrc/components/base/layout'
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import {
   ColumnWidthSizes,
   IColumnSearchState,

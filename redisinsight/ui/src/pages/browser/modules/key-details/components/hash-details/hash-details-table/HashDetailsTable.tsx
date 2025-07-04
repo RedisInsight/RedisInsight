@@ -82,7 +82,7 @@ import {
   FormattedValue,
 } from 'uiSrc/pages/browser/modules/key-details/shared'
 import { RiTooltip } from 'uiSrc/components'
-import { ProgressBarLoader } from 'uiSrc/components/base/layout'
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import {
   AddFieldsToHashDto,
   GetHashFieldsResponse,

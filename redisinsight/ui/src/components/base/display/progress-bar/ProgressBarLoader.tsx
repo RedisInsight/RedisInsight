@@ -12,7 +12,7 @@ const ProgressBarLoader = ({
   ...rest
 }: ProgressBarLoaderProps) => (
   <LoaderContainer className={className} style={style} {...rest}>
-    <LoaderBar color={color} />
+    <LoaderBar $color={color} />
   </LoaderContainer>
 )
 

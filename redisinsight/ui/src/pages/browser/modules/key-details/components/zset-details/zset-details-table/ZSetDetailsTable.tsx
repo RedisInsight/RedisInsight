@@ -72,7 +72,7 @@ import {
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { Text } from 'uiSrc/components/base/text'
 import { RiTooltip } from 'uiSrc/components'
-import { ProgressBarLoader } from 'uiSrc/components/base/layout'
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import {
   AddMembersToZSetDto,
   SearchZSetMembersResponse,

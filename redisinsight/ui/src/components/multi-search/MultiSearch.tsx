@@ -15,7 +15,7 @@ import {
   ActionIconButton,
   IconButton,
 } from 'uiSrc/components/base/forms/buttons'
-import { ProgressBarLoader } from 'uiSrc/components/base/layout'
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 interface MultiSearchSuggestion {

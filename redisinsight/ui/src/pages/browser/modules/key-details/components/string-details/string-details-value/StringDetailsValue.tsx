@@ -59,7 +59,7 @@ import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
 import { TextArea } from 'uiSrc/components/base/inputs'
 import { RiTooltip } from 'uiSrc/components'
-import { ProgressBarLoader } from 'uiSrc/components/base/layout'
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 const MIN_ROWS = 8

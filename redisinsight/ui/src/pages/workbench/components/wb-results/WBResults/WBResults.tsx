@@ -11,7 +11,7 @@ import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { DeleteIcon } from 'uiSrc/components/base/icons'
-import { ProgressBarLoader } from 'uiSrc/components/base/layout'
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import WbNoResultsMessage from '../../wb-no-results-message'
 
 import styles from './styles.module.scss'

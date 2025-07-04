@@ -49,7 +49,7 @@ import {
 } from 'uiSrc/components/virtual-table/interfaces'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import { FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
-import { ProgressBarLoader } from 'uiSrc/components/base/layout'
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
 import styles from './styles.module.scss'
 

@@ -25,7 +25,7 @@ import {
 import { stringToBuffer } from 'uiSrc/utils'
 import { IJSONData } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
 
-import { ProgressBarLoader } from 'uiSrc/components/base/layout'
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import RejsonDetails from './rejson-details'
 import MonacoEditor from './monaco-editor'
 import { parseJsonData } from './utils'

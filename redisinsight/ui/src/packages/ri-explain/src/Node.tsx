@@ -1,6 +1,7 @@
 import React from 'react'
 import { EuiIcon } from '@elastic/eui'
 import { RiTooltip } from 'uiSrc/components'
+import { TOOLTIP_DELAY_LONG } from 'uiSrc/constants'
 import { EntityInfo, EntityType } from './parser'
 
 interface INodeProps {
@@ -13,7 +14,7 @@ interface INodeProps {
 function Snippet({ content }: { content: string }) {
   return (
     <div className="FooterCommon Footer">
-      <RiTooltip delay={500} content={content}>
+      <RiTooltip delay={TOOLTIP_DELAY_LONG} content={content}>
         <span>{content}</span>
       </RiTooltip>
     </div>
@@ -31,7 +32,7 @@ export function ExplainNode(props: INodeProps) {
       <div className="Main">
         <div className="Info">
           <div className="InfoData">
-            <RiTooltip delay={500} content={infoData}>
+            <RiTooltip delay={TOOLTIP_DELAY_LONG} content={infoData}>
               <span>{infoData}</span>
             </RiTooltip>
           </div>
@@ -100,7 +101,7 @@ export function ProfileNode(props: INodeProps) {
     <div className="ProfileContainer" id={`node-${id}`}>
       <div className="Main">
         <div className="InfoData">
-          <RiTooltip delay={500} content={infoData}>
+          <RiTooltip delay={TOOLTIP_DELAY_LONG} content={infoData}>
             <span>{infoData}</span>
           </RiTooltip>
         </div>

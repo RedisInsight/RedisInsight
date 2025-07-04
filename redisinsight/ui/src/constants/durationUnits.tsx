@@ -22,4 +22,6 @@ export const DEFAULT_SLOWLOG_MAX_LEN = 128
 export const DEFAULT_SLOWLOG_SLOWER_THAN = 10
 export const DEFAULT_SLOWLOG_DURATION_UNIT = DurationUnits.milliSeconds
 
+export const TOOLTIP_DELAY_LONG = 500 // ms
+
 export default DURATION_UNITS

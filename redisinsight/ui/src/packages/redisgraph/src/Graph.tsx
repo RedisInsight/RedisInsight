@@ -23,6 +23,7 @@ import { IconButton } from '../../../components/base/forms/buttons'
 import { CancelSlimIcon } from '../../../components/base/icons'
 import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { RiTooltip } from 'uiSrc/components'
+import { TOOLTIP_DELAY_LONG } from 'uiSrc/constants'
 
 enum EntityType {
   Node = 'Node',
@@ -409,7 +410,7 @@ export default function Graph(props: {
       <div className="automatic-edges-switch">
         <RiTooltip
           position="bottom"
-          delay={500}
+          delay={TOOLTIP_DELAY_LONG}
           content="Toggle visibility of automatically fetched relationships"
         >
           <SwitchInput

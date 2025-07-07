@@ -68,7 +68,7 @@ const MonacoEditor = (props: BaseProps) => {
           size="s"
           data-testid="json-data-cancel-btn"
         >
-          Cancel
+          Close
         </EuiButton>
 
         <EuiButton

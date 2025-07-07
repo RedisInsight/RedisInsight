@@ -6,7 +6,7 @@ import {
   isConnectivityError,
   requestInterceptor,
 } from 'uiSrc/services/apiService'
-import { ApiEndpoints } from 'uiSrc/constants'
+import { ApiEndpoints, CustomErrorCodes } from 'uiSrc/constants'
 import { cleanup, mockedStore } from 'uiSrc/utils/test-utils'
 import { logoutUser } from 'uiSrc/slices/oauth/cloud'
 import { store } from 'uiSrc/slices/store'
@@ -104,7 +104,7 @@ describe('connectivityErrorsInterceptor', () => {
         data: {
           message: 'custom message',
           error: 'RedisConnectionFailedException',
-          errorCode: 10_908,
+          errorCode: CustomErrorCodes.RedisConnectionDefaultUserDisabled,
         },
       },
     }
@@ -127,7 +127,7 @@ describe('connectivityErrorsInterceptor', () => {
         status: 424,
         data: {
           error: 'RedisConnectionFailedException',
-          errorCode: 10_908,
+          errorCode: CustomErrorCodes.RedisConnectionDefaultUserDisabled,
         },
       },
     }

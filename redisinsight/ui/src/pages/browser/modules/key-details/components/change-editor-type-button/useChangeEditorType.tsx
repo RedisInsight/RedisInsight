@@ -16,9 +16,7 @@ export const useChangeEditorType = () => {
   const { [FeatureFlags.envDependent]: envDependentFeature } = useSelector(
     appFeatureFlagsFeaturesSelector,
   )
-  const {
-    name: selectedKey,
-  } = useSelector(selectedKeyDataSelector) || {}
+  const selectedKey = useSelector(selectedKeyDataSelector)?.name
 
   const isTextEditorDisabled = !isWithinThreshold && !envDependentFeature?.flag
 

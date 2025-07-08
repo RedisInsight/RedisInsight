@@ -1,4 +1,3 @@
-import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { monaco } from 'react-monaco-editor'
@@ -16,7 +15,7 @@ import {
   MonacoLanguage,
 } from 'uiSrc/constants'
 
-import { CodeBlock, RiTooltip } from 'uiSrc/components'
+import { CodeBlock, RiPopover, RiTooltip } from 'uiSrc/components'
 import { getDBConfigStorageField } from 'uiSrc/services'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import {
@@ -180,19 +179,14 @@ const CodeButtonBlock = (props: Props) => {
             Copy
           </EmptyButton>
           {!isRunButtonHidden && (
-            <EuiPopover
+            <RiPopover
               ownFocus
-              initialFocus={false}
-              className={styles.popoverAnchor}
               panelClassName={cx('popoverLikeTooltip', styles.popover)}
               anchorClassName={styles.popoverAnchor}
               anchorPosition="upLeft"
               isOpen={isPopoverOpen}
               panelPaddingSize="m"
               closePopover={handleClosePopover}
-              focusTrapProps={{
-                scrollLock: true,
-              }}
               button={
                 <RiTooltip
                   content={
@@ -219,7 +213,7 @@ const CodeButtonBlock = (props: Props) => {
               }
             >
               {getPopoverMessage()}
-            </EuiPopover>
+            </RiPopover>
           )}
         </FlexItem>
       </Row>

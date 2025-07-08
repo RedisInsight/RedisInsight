@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { EuiIcon, EuiPopover } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import { ChevronDownIcon, RefreshIcon } from 'uiSrc/components/base/icons'
 import {
@@ -14,7 +14,7 @@ import { BrowserStorageItem } from 'uiSrc/constants'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { ColorText } from 'uiSrc/components/base/text'
 import { SwitchInput } from 'uiSrc/components/base/inputs'
-import { RiTooltip } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components'
 import {
   DEFAULT_REFRESH_RATE,
   DURATION_FIRST_REFRESH_TIME,
@@ -245,7 +245,7 @@ const AutoRefresh = ({
         />
       </RiTooltip>
 
-      <EuiPopover
+      <RiPopover
         ownFocus={false}
         anchorPosition="downRight"
         isOpen={isPopoverOpen}
@@ -309,7 +309,7 @@ const AutoRefresh = ({
             </>
           )}
         </div>
-      </EuiPopover>
+      </RiPopover>
     </div>
   )
 }

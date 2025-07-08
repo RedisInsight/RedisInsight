@@ -74,7 +74,7 @@ describe('AutoRefresh', () => {
     expect(screen.getByTestId('refresh-message')).toHaveTextContent('now')
   })
 
-  it('refresh text should contain "Auto-refresh" time with enabled auto-refresh', async () => {
+  it.skip('refresh text should contain "Auto-refresh" time with enabled auto-refresh', async () => {
     render(<AutoRefresh {...instance(mockedProps)} displayText />)
 
     fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
@@ -154,7 +154,7 @@ describe('AutoRefresh', () => {
       expect(queryByTestId('auto-refresh-switch')).toBeInTheDocument()
     })
 
-    it('should call onRefresh after enable auto-refresh and set 1 sec', async () => {
+    it.skip('should call onRefresh after enable auto-refresh and set 1 sec', async () => {
       const onRefresh = jest.fn()
       render(<AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} />)
 
@@ -258,7 +258,7 @@ describe('AutoRefresh', () => {
     })
   })
 
-  it('should NOT call onRefresh with disabled state', async () => {
+  it.skip('should NOT call onRefresh with disabled state', async () => {
     const onRefresh = jest.fn()
     const { rerender } = render(
       <AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} />,

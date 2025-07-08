@@ -3,7 +3,7 @@ import {
   fireEvent,
   render,
   screen,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
 } from 'uiSrc/utils/test-utils'
 
 import RestartChat from './RestartChat'
@@ -23,7 +23,7 @@ describe('RestartChat', () => {
 
     fireEvent.click(screen.getByTestId('anchor-btn'))
 
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     fireEvent.click(screen.getByTestId('ai-chat-restart-confirm'))
 

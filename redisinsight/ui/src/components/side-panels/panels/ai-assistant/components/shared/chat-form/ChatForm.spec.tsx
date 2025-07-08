@@ -4,7 +4,7 @@ import {
   fireEvent,
   render,
   screen,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
 } from 'uiSrc/utils/test-utils'
 
 import ChatForm from './ChatForm'
@@ -66,7 +66,7 @@ describe('ChatForm', () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId('ai-submit-message-btn'))
     })
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     expect(onSubmit).not.toBeCalled()
 

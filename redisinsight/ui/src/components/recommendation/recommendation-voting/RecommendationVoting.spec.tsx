@@ -10,7 +10,7 @@ import {
   fireEvent,
   render,
   screen,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
   waitForRiTooltipVisible,
 } from 'uiSrc/utils/test-utils'
 
@@ -55,7 +55,7 @@ describe('RecommendationVoting', () => {
     ).not.toBeInTheDocument()
 
     fireEvent.click(screen.getByTestId('not useful-vote-btn'))
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     expect(
       document.querySelector('[data-test-subj="github-repo-link"]'),

@@ -7,7 +7,7 @@ import {
   mockedStore,
   render,
   screen,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
 } from 'uiSrc/utils/test-utils'
 
 import {
@@ -51,7 +51,7 @@ describe('CloudSettings', () => {
     render(<CloudSettings />)
 
     fireEvent.click(screen.getByTestId('delete-key-btn'))
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     fireEvent.click(screen.getByTestId('delete-key-confirm-btn'))
 
@@ -94,7 +94,7 @@ describe('CloudSettings', () => {
     render(<CloudSettings />)
 
     fireEvent.click(screen.getByTestId('delete-key-btn'))
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.SETTINGS_CLOUD_API_KEYS_REMOVE_CLICKED,

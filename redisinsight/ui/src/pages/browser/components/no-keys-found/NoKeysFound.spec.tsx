@@ -7,7 +7,7 @@ import {
   fireEvent,
   mockedStore,
   cleanup,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
   waitForStack,
 } from 'uiSrc/utils/test-utils'
 
@@ -77,7 +77,7 @@ describe('NoKeysFound', () => {
     render(<NoKeysFound {...mockedProps} onAddKeyPanel={jest.fn()} />)
 
     fireEvent.click(screen.getByTestId('load-sample-data-btn'))
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     fireEvent.click(screen.getByTestId('load-sample-data-btn-confirm'))
 

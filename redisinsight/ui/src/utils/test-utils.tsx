@@ -251,10 +251,10 @@ const waitForRiTooltipHidden = async () => {
   })
 }
 
-const waitForEuiPopoverVisible = async (timeout = 500) => {
+const waitForRiPopoverVisible = async (timeout = 500) => {
   await waitFor(
     () => {
-      const tooltip = document.querySelector('.euiPopover__panel-isOpen')
+      const tooltip = document.querySelector('div[data-radix-popper-content-wrapper]')
       expect(tooltip).toBeInTheDocument()
     },
     { timeout }, // Account for long delay on popover
@@ -423,5 +423,5 @@ export {
   clearStoreActions,
   waitForRiTooltipVisible,
   waitForRiTooltipHidden,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
 }

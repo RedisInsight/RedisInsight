@@ -3,6 +3,8 @@ import {
   calculateRedisHitRatio,
   catchAclError,
   convertIntToSemanticVersion,
+  getRangeForNumber,
+  TOTAL_KEYS_BREAKPOINTS,
 } from 'src/utils';
 import { AdditionalRedisModule } from 'src/modules/database/models/additional.redis.module';
 import { REDIS_MODULES_COMMANDS, SUPPORTED_REDIS_MODULES } from 'src/constants';
@@ -162,11 +164,12 @@ export class DatabaseInfoProvider {
       const statsInfo = info['stats'];
       const replicationInfo = info['replication'];
       const databases = await this.getDatabasesCount(client, keyspaceInfo);
+      const totalKeys = this.getRedisNodeTotalKeysCount(keyspaceInfo);
       return {
         version: serverInfo?.redis_version,
         databases,
-        role: get(replicationInfo, 'role') || undefined,
-        totalKeys: this.getRedisNodeTotalKeysCount(keyspaceInfo),
+        role: get(replicationInfo, 'role'),
+        totalKeys,
         usedMemory: parseInt(get(memoryInfo, 'used_memory'), 10) || undefined,
         connectedClients:
           parseInt(get(clientsInfo, 'connected_clients'), 10) || undefined,
@@ -177,6 +180,23 @@ export class DatabaseInfoProvider {
           parseInt(get(memoryInfo, 'number_of_cached_scripts'), 10) ||
           undefined,
         server: serverInfo,
+        stats: {
+          instantaneous_ops_per_sec: get(
+            statsInfo,
+            'instantaneous_ops_per_sec',
+          ),
+          instantaneous_input_kbps: get(statsInfo, 'instantaneous_input_kbps'),
+          instantaneous_output_kbps: get(
+            statsInfo,
+            'instantaneous_output_kbps',
+          ),
+          uptime_in_days: get(serverInfo, 'uptime_in_days', undefined),
+          maxmemory_policy: get(memoryInfo, 'maxmemory_policy', undefined),
+          numberOfKeysRange: getRangeForNumber(
+            totalKeys,
+            TOTAL_KEYS_BREAKPOINTS,
+          ),
+        },
       };
     } catch (error) {
       throw catchAclError(error);

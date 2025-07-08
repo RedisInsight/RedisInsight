@@ -91,4 +91,17 @@ describe('TagSuggestions', () => {
 
     expect(tagElements.length).toBe(7)
   })
+
+  it('should display correct number of value suggestions when duplicated tag keys are present', () => {
+    mockSelector.mockReturnValue({
+      data: presetTagSuggestions,
+    })
+
+    renderComponent({
+      targetKey: 'environment',
+    })
+    const tagElements = screen.getAllByRole('option')
+
+    expect(tagElements.length).toBe(3)
+  })
 })

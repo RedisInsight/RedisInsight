@@ -27,7 +27,15 @@ import {
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { mockAddFieldsDto } from 'src/modules/browser/__mocks__';
 import { DatabaseService } from 'src/modules/database/database.service';
+import config, { Config } from 'src/utils/config';
 import { RejsonRlService } from './rejson-rl.service';
+
+const mockModulesConfig = config.get('modules') as Config['modules'];
+
+jest.mock(
+  'src/utils/config',
+  jest.fn(() => jest.requireActual('src/utils/config') as object),
+);
 
 const testKey = Buffer.from('somejson');
 const testSerializedObject = JSON.stringify({ some: 'object' });
@@ -40,6 +48,8 @@ describe('JsonService', () => {
   let databaseService: MockType<DatabaseService>;
 
   beforeEach(async () => {
+    mockModulesConfig.json.lengthThreshold = -1;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RejsonRlService,
@@ -593,6 +603,27 @@ describe('JsonService', () => {
           ],
         });
       });
+      it('should throw an error when array length exceeds threshold', async () => {
+        mockModulesConfig.json.lengthThreshold = 5_000;
+
+        when(client.sendCommand)
+          .calledWith(
+            [BrowserToolRejsonRlCommands.JsonType, testKey, testPath],
+            { replyEncoding: 'utf8' },
+          )
+          .mockReturnValue(['array']);
+        when(client.sendCommand)
+          .calledWith(
+            [BrowserToolRejsonRlCommands.JsonArrLen, testKey, testPath],
+            { replyEncoding: 'utf8' },
+          )
+          .mockReturnValue([5001]);
+
+        await expect(service.getJson(mockBrowserClientMetadata, {
+          keyName: testKey,
+          path: testPath,
+        })).rejects.toThrow(new BadRequestException(ERROR_MESSAGES.UNSAFE_BIG_JSON_LENGTH));
+      });
       it('should return array with scalar values in a custom path', async () => {
         const path = '$["customPath"]';
         const testData = [12, 'str'];
@@ -773,6 +804,27 @@ describe('JsonService', () => {
             },
           ],
         });
+      });
+      it('should throw an error when number of object entries exceeds threshold', async () => {
+        mockModulesConfig.json.lengthThreshold = 5_000;
+
+        when(client.sendCommand)
+          .calledWith(
+            [BrowserToolRejsonRlCommands.JsonType, testKey, testPath],
+            { replyEncoding: 'utf8' },
+          )
+          .mockReturnValue(['object']);
+        when(client.sendCommand)
+          .calledWith(
+            [BrowserToolRejsonRlCommands.JsonObjLen, testKey, testPath],
+            { replyEncoding: 'utf8' },
+          )
+          .mockReturnValue([10_000]);
+
+        await expect(service.getJson(mockBrowserClientMetadata, {
+          keyName: testKey,
+          path: testPath,
+        })).rejects.toThrow(new BadRequestException(ERROR_MESSAGES.UNSAFE_BIG_JSON_LENGTH));
       });
       it('should return object with scalar values as strings in a custom path', async () => {
         const path = '$["customPath"]';

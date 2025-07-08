@@ -20,8 +20,10 @@ export const mockKeyEncryptResult = {
 
 export const mockEncryptionService = jest.fn(() => ({
   getAvailableEncryptionStrategies: jest.fn(),
+  isEncryptionAvailable: jest.fn().mockResolvedValue(true),
   encrypt: jest.fn(),
   decrypt: jest.fn(),
+  getEncryptionStrategy: jest.fn(),
 }));
 
 export const mockEncryptionStrategyInstance = jest.fn(() => ({

@@ -1354,7 +1354,7 @@ describe('POST /databases/import', () => {
           },
         });
 
-        await validatePartialImportedDatabase(name, 'STANDALONE', 'STANDALONE');
+        await validatePartialImportedDatabase(name, 'STANDALONE', 'STANDALONE', 424);
       });
       it('Import standalone with CA + CLIENT tls partial with no cert name (format 0)', async () => {
         await validateApiCall({
@@ -1406,7 +1406,7 @@ describe('POST /databases/import', () => {
           },
         });
 
-        await validatePartialImportedDatabase(name, 'STANDALONE', 'STANDALONE');
+        await validatePartialImportedDatabase(name, 'STANDALONE', 'STANDALONE', 424);
       });
       it('Import standalone with CA + CLIENT tls (format 1)', async () => {
         await validateApiCall({
@@ -1481,7 +1481,7 @@ describe('POST /databases/import', () => {
           },
         });
 
-        await validatePartialImportedDatabase(name, 'STANDALONE', 'STANDALONE');
+        await validatePartialImportedDatabase(name, 'STANDALONE', 'STANDALONE', 424);
       });
       it('Import standalone with CA + CLIENT tls (format 2)', async () => {
         await validateApiCall({

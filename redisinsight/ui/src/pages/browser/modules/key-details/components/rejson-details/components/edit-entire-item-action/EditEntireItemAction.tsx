@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import {
   EuiForm,
   keys,
 } from '@elastic/eui'
+
 import cx from 'classnames'
+import jsonValidator from 'json-dup-key-validator'
 
 import { CancelSlimIcon, CheckThinIcon } from 'uiSrc/components/base/icons'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
@@ -18,6 +20,7 @@ import { isValidJSON } from '../../utils'
 import { JSONErrors } from '../../constants'
 
 import styles from '../../styles.module.scss'
+import ConfirmOverwrite from '../add-item/ConfirmOverwrite'
 
 export interface Props {
   initialValue: string
@@ -29,6 +32,8 @@ const EditEntireItemAction = (props: Props) => {
   const { initialValue, onCancel, onSubmit } = props
   const [value, setValue] = useState<string>(initialValue)
   const [error, setError] = useState<Nullable<string>>(null)
+  const [isConfirmationVisible, setIsConfirmationVisible] =
+    useState<boolean>(false)
 
   const handleOnEsc = (e: KeyboardEvent) => {
     if (e.code?.toLowerCase() === keys.ESCAPE) {
@@ -45,6 +50,17 @@ const EditEntireItemAction = (props: Props) => {
       return
     }
 
+    const validationError = jsonValidator.validate(value, false)
+
+    if (validationError) {
+      setIsConfirmationVisible(true)
+      return
+    }
+
+    onSubmit(value)
+  }
+
+  const confirmApply = () => {
     onSubmit(value)
   }
 
@@ -72,6 +88,11 @@ const EditEntireItemAction = (props: Props) => {
                     data-testid="json-value"
                   />
                 </FlexItem>
+                <ConfirmOverwrite
+                  isOpen={isConfirmationVisible}
+                  onCancel={() => setIsConfirmationVisible(false)}
+                  onConfirm={confirmApply}
+                >
                 <div className={cx(styles.controls, styles.controlsBottom)}>
                   <IconButton
                     icon={CancelSlimIcon}
@@ -89,6 +110,7 @@ const EditEntireItemAction = (props: Props) => {
                     data-testid="apply-edit-btn"
                   />
                 </div>
+                </ConfirmOverwrite>
               </EuiForm>
               {error && (
                 <div

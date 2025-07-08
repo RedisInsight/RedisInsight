@@ -1,4 +1,4 @@
-import { EuiIcon, EuiProgress, EuiResizeObserver } from '@elastic/eui'
+import { EuiIcon, EuiProgress } from '@elastic/eui'
 import cx from 'classnames'
 import { findIndex, isNumber, sumBy, xor } from 'lodash'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -18,7 +18,10 @@ import { SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
 import { isEqualBuffers, Maybe, Nullable } from 'uiSrc/utils'
+
 import { Text } from 'uiSrc/components/base/text'
+import { RIResizeObserver } from 'uiSrc/components/base/utils'
+
 import {
   ColumnWidthSizes,
   IColumnSearchState,
@@ -581,7 +584,7 @@ const VirtualTable = (props: IProps) => {
   }
 
   return (
-    <EuiResizeObserver onResize={onResize}>
+    <RIResizeObserver onResize={onResize}>
       {(resizeRef) => (
         <div
           ref={resizeRef}
@@ -701,7 +704,7 @@ const VirtualTable = (props: IProps) => {
           )}
         </div>
       )}
-    </EuiResizeObserver>
+    </RIResizeObserver>
   )
 }
 

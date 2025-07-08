@@ -30,6 +30,7 @@ import {
   GetAppSettingsResponse,
   UpdateSettingsDto,
 } from './dto/settings.dto';
+import { EncryptionService } from '../encryption/encryption.service';
 
 const SERVER_CONFIG = config.get('server') as Config['server'];
 
@@ -45,6 +46,8 @@ export class SettingsService {
     private readonly analytics: SettingsAnalytics,
     private readonly keytarEncryptionStrategy: KeytarEncryptionStrategy,
     private readonly keyEncryptionStrategy: KeyEncryptionStrategy,
+    @Inject(forwardRef(() => EncryptionService))
+    private readonly encryptionService: EncryptionService,
     private eventEmitter: EventEmitter2,
   ) {}
 
@@ -56,16 +59,34 @@ export class SettingsService {
   ): Promise<GetAppSettingsResponse> {
     this.logger.debug('Getting application settings.', sessionMetadata);
     try {
-      const agreements =
-        await this.agreementRepository.getOrCreate(sessionMetadata);
       const settings =
         await this.settingsRepository.getOrCreate(sessionMetadata);
+
+      let defaultOptions: object;
+      if (SERVER_CONFIG.acceptTermsAndConditions) {
+        const isEncryptionAvailable = await this.encryptionService.isEncryptionAvailable();
+
+        defaultOptions = {
+          data: {
+            analytics: false,
+            encryption: isEncryptionAvailable,
+            eula: true,
+            notifications: false,
+          },
+          version: (await this.getAgreementsSpec()).version,
+        };
+      }
+
+      const agreements = await this.agreementRepository.getOrCreate(sessionMetadata, defaultOptions);
+
       this.logger.debug(
         'Succeed to get application settings.',
         sessionMetadata,
       );
+
       return classToClass(GetAppSettingsResponse, {
         ...settings?.data,
+        acceptTermsAndConditionsOverwritten: SERVER_CONFIG.acceptTermsAndConditions,
         agreements: agreements?.version
           ? {
               ...agreements?.data,
@@ -188,7 +209,7 @@ export class SettingsService {
         return `${isEncryptionAvailable}`;
       }
     } catch (e) {
-      this.logger.error(`Unable to proceed agreements checker ${checker}`);
+      this.logger.error(`Unable to proceed agreements checker ${checker}`, e);
     }
 
     return defaultOption;

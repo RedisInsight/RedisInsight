@@ -14,27 +14,27 @@ interface LoaderBarProps {
   color?: string
 }
 
-export type ColorType = LoaderBarProps['color'] | EuiColorNames | (string & {})
+export type ColorType = EuiColorNames | (string & {})
 type ThemeColors = typeof theme.semantic.color
 
 export const getBarBackgroundColor = (
-  color: ColorType,
   themeColors: ThemeColors,
+  color?: ColorType,
 ) => {
   if (!color) {
     return themeColors.background.primary300
   }
 
-  const barBackgroundColors: Map<ColorType, string> = new Map([
-    ['inherit', 'inherit'],
-    ['default', themeColors.background.primary300],
-    ['primary', themeColors.background.primary300],
-    ['danger', themeColors.background.danger600],
-    ['warning', themeColors.background.attention600],
-    ['success', themeColors.background.success600],
-  ])
+  const barBackgroundColors: Record<ColorType, string> = {
+    inherit: 'inherit',
+    default: themeColors.background.primary300,
+    primary: themeColors.background.primary300,
+    danger: themeColors.background.danger600,
+    warning: themeColors.background.attention600,
+    success: themeColors.background.success600,
+  }
 
-  return barBackgroundColors.get(color) ?? color
+  return barBackgroundColors[color] ?? color
 }
 
 export interface MapProps extends LoaderBarProps {
@@ -46,7 +46,7 @@ export const useColorBackgroundStyles = ({ $color }: MapProps = {}) => {
   const colors = theme.semantic.color
 
   const getColorValue = (color?: ColorType) =>
-    getBarBackgroundColor(color, colors)
+    getBarBackgroundColor(colors, color)
 
   return css`
     background-color: ${getColorValue($color)};
@@ -71,7 +71,6 @@ interface LoaderContainerProps {
 export const LoaderContainer = styled.div<LoaderContainerProps>`
   position: relative;
   height: 3px;
-  background-color: #e6e6e6;
   overflow: hidden;
   border-radius: 2px;
 `

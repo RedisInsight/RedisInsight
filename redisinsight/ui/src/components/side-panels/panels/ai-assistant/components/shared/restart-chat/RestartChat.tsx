@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { EuiPopover } from '@elastic/eui'
 
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
+import { RiPopover } from 'uiSrc/components/base'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -30,17 +30,14 @@ const RestartChat = (props: Props) => {
   const extendedButton = React.cloneElement(button, { onClick: onClickAnchor })
 
   return (
-    <EuiPopover
+    <RiPopover
       ownFocus
-      initialFocus={false}
-      className={styles.popoverAnchor}
       panelClassName={cx('popoverLikeTooltip', styles.popover)}
       anchorClassName={cx(styles.popoverAnchor, anchorClassName)}
       anchorPosition="downLeft"
       isOpen={isPopoverOpen}
       panelPaddingSize="m"
       closePopover={() => setIsPopoverOpen(false)}
-      focusTrapProps={{ scrollLock: true }}
       button={extendedButton}
     >
       <>
@@ -60,7 +57,7 @@ const RestartChat = (props: Props) => {
           Restart
         </PrimaryButton>
       </>
-    </EuiPopover>
+    </RiPopover>
   )
 }
 

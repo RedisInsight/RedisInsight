@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiIcon, EuiPopover } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { putRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -20,7 +20,7 @@ import { Text } from 'uiSrc/components/base/text'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Link } from 'uiSrc/components/base/link/Link'
-import { RiTooltip } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { getVotedText, voteTooltip, iconType } from './utils'
 import styles from './styles.module.scss'
 
@@ -93,8 +93,7 @@ const VoteOption = (props: Props) => {
       : 'Enable Analytics on the Settings page to vote for a tip'
 
   return (
-    <EuiPopover
-      initialFocus={false}
+    <RiPopover
       anchorPosition="rightCenter"
       isOpen={popover === voteOption}
       closePopover={() => setPopover('')}
@@ -174,7 +173,7 @@ const VoteOption = (props: Props) => {
           </FlexItem>
         </Col>
       </div>
-    </EuiPopover>
+    </RiPopover>
   )
 }
 

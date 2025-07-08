@@ -15,7 +15,8 @@ import {
   MonacoLanguage,
 } from 'uiSrc/constants'
 
-import { CodeBlock, RiPopover, RiTooltip } from 'uiSrc/components'
+import { CodeBlock } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { getDBConfigStorageField } from 'uiSrc/services'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import {

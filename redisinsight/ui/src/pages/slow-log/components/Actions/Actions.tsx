@@ -1,4 +1,4 @@
-import { EuiIcon, EuiPopover } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -6,7 +6,8 @@ import { useParams } from 'react-router-dom'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { DurationUnits } from 'uiSrc/constants'
 import { slowLogSelector } from 'uiSrc/slices/analytics/slowlog'
-import { AutoRefresh, RiTooltip } from 'uiSrc/components'
+import { AutoRefresh } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
@@ -143,7 +144,7 @@ const Actions = (props: Props) => {
         />
       </FlexItem>
       <FlexItem grow>
-        <EuiPopover
+        <RiPopover
           ownFocus
           anchorPosition="downRight"
           isOpen={isPopoverConfigOpen}
@@ -166,11 +167,11 @@ const Actions = (props: Props) => {
             closePopover={closePopoverConfig}
             onRefresh={onRefresh}
           />
-        </EuiPopover>
+        </RiPopover>
       </FlexItem>
       {!isEmptySlowLog && (
         <FlexItem grow>
-          <EuiPopover
+          <RiPopover
             anchorPosition="leftCenter"
             ownFocus
             isOpen={isPopoverClearOpen}
@@ -188,7 +189,7 @@ const Actions = (props: Props) => {
             }
           >
             {ToolTipContent}
-          </EuiPopover>
+          </RiPopover>
         </FlexItem>
       )}
       <FlexItem grow>

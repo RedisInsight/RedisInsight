@@ -2,7 +2,7 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { toNumber } from 'lodash'
-import { EuiFieldText, EuiIcon, EuiPopover } from '@elastic/eui'
+import { EuiFieldText, EuiIcon } from '@elastic/eui'
 
 
 
@@ -43,6 +43,7 @@ import {
 import { DeleteIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
+import { RiPopover } from 'uiSrc/components/base'
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/list/dto'
 
 import {
@@ -167,7 +168,7 @@ const RemoveListElements = (props: Props) => {
   }
 
   const RemoveButton = () => (
-    <EuiPopover
+    <RiPopover
       anchorPosition="upCenter"
       isOpen={isPopoverOpen}
       closePopover={closePopover}
@@ -215,16 +216,15 @@ const RemoveListElements = (props: Props) => {
           Remove
         </DestructiveButton>
       </div>
-    </EuiPopover>
+    </RiPopover>
   )
 
   const InfoBoxPopover = () => (
-    <EuiPopover
+    <RiPopover
       panelClassName={cx('popoverLikeTooltip')}
       anchorPosition="leftCenter"
       isOpen={isInfoPopoverOpen}
       closePopover={() => setIsInfoPopoverOpen(false)}
-      initialFocus={false}
       button={
         <EuiIcon
           className={styles.infoIcon}
@@ -240,7 +240,7 @@ const RemoveListElements = (props: Props) => {
       <div className={styles.popover}>
         {HelpTexts.REMOVING_MULTIPLE_ELEMENTS_NOT_SUPPORT}
       </div>
-    </EuiPopover>
+    </RiPopover>
   )
 
   return (

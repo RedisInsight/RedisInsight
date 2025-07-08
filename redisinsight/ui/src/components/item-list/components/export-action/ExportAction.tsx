@@ -10,7 +10,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Text } from 'uiSrc/components/base/text'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
-import { RiPopover } from 'uiSrc/components'
+import { RiPopover } from 'uiSrc/components/base'
 import styles from '../styles.module.scss'
 
 export interface Props<T> {

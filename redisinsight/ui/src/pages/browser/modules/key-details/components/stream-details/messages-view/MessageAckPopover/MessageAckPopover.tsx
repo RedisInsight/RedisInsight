@@ -1,11 +1,11 @@
 import React from 'react'
-import { EuiPopover } from '@elastic/eui'
 
 import { Text } from 'uiSrc/components/base/text'
 import {
   DestructiveButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { RiPopover } from 'uiSrc/components/base'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -25,7 +25,7 @@ const AckPopover = (props: Props) => {
     acknowledge = () => {},
   } = props
   return (
-    <EuiPopover
+    <RiPopover
       key={id}
       anchorPosition="leftCenter"
       ownFocus
@@ -62,7 +62,7 @@ const AckPopover = (props: Props) => {
           </DestructiveButton>
         </div>
       </div>
-    </EuiPopover>
+    </RiPopover>
   )
 }
 

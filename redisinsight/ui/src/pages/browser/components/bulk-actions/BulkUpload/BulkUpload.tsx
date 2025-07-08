@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiFilePicker, EuiIcon, EuiPopover } from '@elastic/eui'
+import { EuiFilePicker, EuiIcon } from '@elastic/eui'
 
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
@@ -20,7 +20,8 @@ import BulkActionSummary from 'uiSrc/pages/browser/components/bulk-actions/BulkA
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { isProcessedBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
-import { RiTooltip, UploadWarning } from 'uiSrc/components'
+import { UploadWarning } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
   PrimaryButton,
@@ -177,7 +178,7 @@ const BulkUpload = (props: Props) => {
           {isProcessedBulkAction(status) ? 'Close' : 'Cancel'}
         </SecondaryButton>
         {!isCompleted ? (
-          <EuiPopover
+          <RiPopover
             id="bulk-upload-warning-popover"
             anchorPosition="upCenter"
             isOpen={isPopoverOpen}
@@ -217,7 +218,7 @@ const BulkUpload = (props: Props) => {
                 Upload
               </PrimaryButton>
             </Text>
-          </EuiPopover>
+          </RiPopover>
         ) : (
           <PrimaryButton
             icon={RefreshIcon}

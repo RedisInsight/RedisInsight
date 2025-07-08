@@ -1,6 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 
-import { EuiForm, EuiPopover } from '@elastic/eui'
+import { EuiForm } from '@elastic/eui'
 
 import cx from 'classnames'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
@@ -12,6 +12,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { EditIcon } from 'uiSrc/components/base/icons'
 import { Loader } from 'uiSrc/components/base/display'
+import { RiPopover } from 'uiSrc/components/base'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -118,7 +119,7 @@ const EditablePopover = (props: Props) => {
   )
 
   return (
-    <EuiPopover
+    <RiPopover
       ownFocus
       anchorPosition="downLeft"
       isOpen={isPopoverOpen}
@@ -173,7 +174,7 @@ const EditablePopover = (props: Props) => {
           </FlexItem>
         </Row>
       </EuiForm>
-    </EuiPopover>
+    </RiPopover>
   )
 }
 

@@ -1,12 +1,12 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiPopover } from '@elastic/eui'
 
 import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiPopover } from 'uiSrc/components/base'
 import styles from '../../styles.module.scss'
 
 interface ConfirmOverwriteProps {
@@ -22,9 +22,8 @@ const ConfirmOverwrite = ({
   onConfirm,
   children,
 }: ConfirmOverwriteProps) => (
-  <EuiPopover
+  <RiPopover
     ownFocus
-    initialFocus={false}
     anchorPosition="downRight"
     isOpen={isOpen}
     closePopover={onCancel}
@@ -58,7 +57,7 @@ const ConfirmOverwrite = ({
         Overwrite
       </PrimaryButton>
     </div>
-  </EuiPopover>
+  </RiPopover>
 )
 
 export default ConfirmOverwrite

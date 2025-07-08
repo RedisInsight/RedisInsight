@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiIcon, EuiPopover } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 
 import { formatLongName } from 'uiSrc/utils'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
@@ -7,6 +7,7 @@ import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Text } from 'uiSrc/components/base/text'
+import { RiPopover } from 'uiSrc/components/base'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -52,15 +53,13 @@ const ConfirmationPopover = (props: Props) => {
 
   return (
     <OutsideClickDetector onOutsideClick={handleClosePopover}>
-      <EuiPopover
+      <RiPopover
         id="confirmation-popover"
-        initialFocus={false}
         ownFocus
         anchorPosition="downCenter"
         isOpen={isPopoverOpen}
         closePopover={handleClosePopover}
         panelPaddingSize="m"
-        display="inlineBlock"
         panelClassName={styles.panelPopover}
         button={popoverButton}
       >
@@ -79,7 +78,7 @@ const ConfirmationPopover = (props: Props) => {
           <FlexItem>{!!appendAction && appendAction}</FlexItem>
           <FlexItem>{confirmBtn}</FlexItem>
         </Row>
-      </EuiPopover>
+      </RiPopover>
     </OutsideClickDetector>
   )
 }

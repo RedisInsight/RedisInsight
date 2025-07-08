@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/no-this-in-sfc */
-import { EuiIcon, EuiPopover } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import React, { Ref, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -46,7 +46,8 @@ import {
 
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
-import { AutoRefresh, OnboardingTour, RiTooltip } from 'uiSrc/components'
+import { AutoRefresh, OnboardingTour } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { BrowserColumns, KeyValueFormat } from 'uiSrc/constants'
 
@@ -361,7 +362,7 @@ const KeysHeader = (props: Props) => {
                   testid="keys"
                 />
                 <div className={styles.columnsButtonPopup}>
-                  <EuiPopover
+                  <RiPopover
                     ownFocus={false}
                     anchorPosition="downLeft"
                     isOpen={columnsConfigShown}
@@ -425,7 +426,7 @@ const KeysHeader = (props: Props) => {
                       }
                       data-testid="show-ttl"
                     />
-                  </EuiPopover>
+                  </RiPopover>
                 </div>
                 {ViewSwitch()}
               </div>

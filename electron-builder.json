@@ -123,7 +123,8 @@
     }
   },
   "deb": {
-    "afterInstall": "scripts/deb-after-install.sh"
+    "afterInstall": "scripts/deb-after-install.sh",
+    "beforeRemove": "scripts/deb-before-remove.sh"
   },
   "snap": {
     "plugs": ["default", "password-manager-service"],

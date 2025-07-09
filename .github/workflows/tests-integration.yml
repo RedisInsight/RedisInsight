@@ -239,17 +239,17 @@ jobs:
           ITEST_NAME=${{ matrix.rte }} node ./.github/itest-results.js
           curl -H "Content-type: application/json" --data @itests.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
-      # - name: Generate test results
-      #   uses: dorny/test-reporter@v1
-      #   id: test-reporter
-      #   if: always()
-      #   with:
-      #     name: 'Test results: IT (${{ matrix.rte }}) tests'
-      #     path: itest/results/*.result.json
-      #     reporter: mocha-json
-      #     list-tests: 'failed'
-      #     list-suites: 'failed'
-      #     fail-on-error: 'false'
+      - name: Generate test results
+        uses: dorny/test-reporter@v1
+        id: test-reporter
+        if: always()
+        with:
+          name: 'Test results: IT (${{ matrix.rte }}) tests'
+          path: itest/results/*.result.json
+          reporter: mocha-json
+          list-tests: 'failed'
+          list-suites: 'failed'
+          fail-on-error: 'false'
 
       - name: Add link to report in the workflow summary
         if: always()

@@ -164,18 +164,20 @@ jobs:
       - name: Debug NYC coverage generation
         if: always()
         run: |
-          echo "=== Debugging NYC merge process ==="
+          echo "=== Checking coverage generation results ==="
           echo "Working directory: $(pwd)"
           echo ""
-          echo "=== Try manual NYC merge on HOST ==="
+          echo "=== Coverage files status ==="
           cd ./redisinsight/api/test/test-runs
           if [ -d "coverage/.nyc_output" ] && [ "$(find coverage/.nyc_output -name "*.json" | wc -l)" -gt 0 ]; then
             echo "✅ .nyc_output directory found with $(find coverage/.nyc_output -name "*.json" | wc -l) files"
-            echo "Attempting manual NYC merge..."
-            echo "Command: cd ../.. && nyc merge ./test/test-runs/coverage/.nyc_output ./test/test-runs/coverage/test-run-coverage.json"
-            cd ../.. && nyc merge ./test/test-runs/coverage/.nyc_output ./test/test-runs/coverage/test-run-coverage.json || echo "NYC merge failed with exit code $?"
-            echo "Checking result:"
-            ls -la ./test/test-runs/coverage/test-run-coverage.json 2>/dev/null || echo "File not created"
+            echo "✅ NYC raw coverage data generated successfully"
+            if [ -f "coverage/test-run-coverage.json" ]; then
+              echo "✅ test-run-coverage.json file exists!"
+              ls -lh coverage/test-run-coverage.json
+            else
+              echo "❌ test-run-coverage.json file missing - NYC merge failed in Docker container"
+            fi
           else
             echo "❌ No coverage data files found in coverage/.nyc_output"
           fi

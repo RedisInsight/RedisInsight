@@ -128,68 +128,6 @@ jobs:
           ./redisinsight/api/test/test-runs/start-test-run.sh -r ${{ matrix.rte }} -t ${{ inputs.build }}
           mkdir -p itest/coverages && mkdir -p itest/results
 
-      - name: Verify coverage files generation
-        if: always()
-        run: |
-          echo "🎉 SUCCESS! Coverage files are being generated correctly!"
-          echo ""
-          echo "=== Final coverage directory contents ==="
-          ls -la ./redisinsight/api/test/test-runs/coverage/ || echo "Coverage directory does not exist!"
-          echo ""
-          echo "=== Nyc coverage directory contents ==="
-          ls -la ./redisinsight/api/test/test-runs/coverage/.nyc_output || echo "Nyc directory does not exist!"
-          echo ""
-          echo "=== File verification ==="
-          if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-result.json" ]; then
-            echo "✅ Test results file exists! File size:"
-            ls -lh ./redisinsight/api/test/test-runs/coverage/test-run-result.json
-          else
-            echo "❌ Test results file missing!"
-          fi
-
-          if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-coverage.json" ]; then
-            echo "✅ Coverage file exists! File size:"
-            ls -lh ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json
-          else
-            echo "❌ Coverage file missing!"
-          fi
-
-          if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-result.xml" ]; then
-            echo "✅ JUnit XML file exists! File size:"
-            ls -lh ./redisinsight/api/test/test-runs/coverage/test-run-result.xml
-          else
-            echo "❌ JUnit XML file missing!"
-          fi
-
-      - name: Debug NYC coverage generation
-        if: always()
-        run: |
-          echo "=== Checking coverage generation results ==="
-          echo "Working directory: $(pwd)"
-          echo ""
-          echo "=== Docker container debug log ==="
-          cd ./redisinsight/api/test/test-runs
-          if [ -f "coverage/debug.log" ]; then
-            echo "📋 Debug log from Docker container:"
-            cat coverage/debug.log
-          else
-            echo "❌ No debug log found from Docker container"
-          fi
-          echo ""
-          echo "=== Coverage files status ==="
-          if [ -d "coverage/.nyc_output" ] && [ "$(find coverage/.nyc_output -name "*.json" | wc -l)" -gt 0 ]; then
-            echo "✅ .nyc_output directory found with $(find coverage/.nyc_output -name "*.json" | wc -l) files"
-            echo "✅ NYC raw coverage data generated successfully"
-            if [ -f "coverage/test-run-coverage.json" ]; then
-              echo "✅ test-run-coverage.json file exists!"
-              ls -lh coverage/test-run-coverage.json
-            else
-              echo "❌ test-run-coverage.json file missing - NYC merge failed in Docker container"
-            fi
-          else
-            echo "❌ No coverage data files found in coverage/.nyc_output"
-          fi
-
       - name: Copy test results to artifacts
         run: |
           echo "=== COPYING TEST RESULTS ==="
@@ -239,17 +177,17 @@ jobs:
           ITEST_NAME=${{ matrix.rte }} node ./.github/itest-results.js
           curl -H "Content-type: application/json" --data @itests.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
-      # - name: Generate test results
-      #   uses: dorny/test-reporter@v1
-      #   id: test-reporter
-      #   if: always()
-      #   with:
-      #     name: 'Test results: IT (${{ matrix.rte }}) tests'
-      #     path: itest/results/*.result.json
-      #     reporter: mocha-json
-      #     list-tests: 'failed'
-      #     list-suites: 'failed'
-      #     fail-on-error: 'false'
+      - name: Generate test results
+        uses: dorny/test-reporter@v1
+        id: test-reporter
+        if: always()
+        with:
+          name: 'Test results: IT (${{ matrix.rte }}) tests'
+          path: itest/results/*.result.json
+          reporter: mocha-json
+          list-tests: 'failed'
+          list-suites: 'failed'
+          fail-on-error: 'false'
 
       - name: Add link to report in the workflow summary
         if: always()

@@ -167,8 +167,16 @@ jobs:
           echo "=== Checking coverage generation results ==="
           echo "Working directory: $(pwd)"
           echo ""
-          echo "=== Coverage files status ==="
+          echo "=== Docker container debug log ==="
           cd ./redisinsight/api/test/test-runs
+          if [ -f "coverage/debug.log" ]; then
+            echo "📋 Debug log from Docker container:"
+            cat coverage/debug.log
+          else
+            echo "❌ No debug log found from Docker container"
+          fi
+          echo ""
+          echo "=== Coverage files status ==="
           if [ -d "coverage/.nyc_output" ] && [ "$(find coverage/.nyc_output -name "*.json" | wc -l)" -gt 0 ]; then
             echo "✅ .nyc_output directory found with $(find coverage/.nyc_output -name "*.json" | wc -l) files"
             echo "✅ NYC raw coverage data generated successfully"

@@ -34,8 +34,8 @@ export const CreateIndexStepWrapper = () => {
 
   return (
     <Tabs
-      defaultValue={activeTab}
       tabs={VECTOR_INDEX_TABS}
+      value={activeTab}
       onChange={handleTabChange}
       variant="sub"
     />

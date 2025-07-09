@@ -57,5 +57,5 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: ${COV_FOLDER}
+      device: ../../${COV_FOLDER}
       o: bind

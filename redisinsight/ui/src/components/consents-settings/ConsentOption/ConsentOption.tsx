@@ -15,7 +15,6 @@ interface Props {
   checked: boolean
   isSettingsPage?: boolean
   withoutSpacer?: boolean
-  linkToPrivacyPolicy?: boolean
 }
 
 const ConsentOption = (props: Props) => {
@@ -25,7 +24,6 @@ const ConsentOption = (props: Props) => {
     checked,
     isSettingsPage = false,
     withoutSpacer = false,
-    linkToPrivacyPolicy = false,
   } = props
 
   return (
@@ -38,7 +36,7 @@ const ConsentOption = (props: Props) => {
             color="subdued"
             style={{ marginTop: '12px' }}
           >
-            <ItemDescription description={consent.description} withLink={linkToPrivacyPolicy} />
+            <ItemDescription description={consent.description} withLink={consent.linkToPrivacyPolicy} />
           </EuiText>
           <Spacer size="m" />
         </>
@@ -66,7 +64,7 @@ const ConsentOption = (props: Props) => {
               color="subdued"
               style={{ marginTop: '12px' }}
             >
-              <ItemDescription description={consent.description} withLink={linkToPrivacyPolicy} />
+              <ItemDescription description={consent.description} withLink={consent.linkToPrivacyPolicy} />
             </EuiText>
           )}
         </FlexItem>

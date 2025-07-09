@@ -1,14 +1,10 @@
-import { get } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { EuiLoadingSpinner, EuiText } from '@elastic/eui'
 
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
-import {
-  getPipelineStatusAction,
-  rdiPipelineStatusSelector,
-} from 'uiSrc/slices/rdi/pipeline'
+import { getPipelineStatusAction } from 'uiSrc/slices/rdi/pipeline'
 import {
   fetchRdiStatistics,
   rdiStatisticsSelector,
@@ -22,7 +18,7 @@ import {
 import { formatLongName, Nullable, setTitle } from 'uiSrc/utils'
 import { setLastPageContext } from 'uiSrc/slices/app/context'
 import { PageNames } from 'uiSrc/constants'
-import { IPipelineStatus, PipelineStatus } from 'uiSrc/slices/interfaces'
+import { IRdiStatistics, RdiPipelineStatus } from 'uiSrc/slices/interfaces'
 import Clients from './clients'
 import DataStreams from './data-streams'
 import Empty from './empty'
@@ -32,8 +28,8 @@ import TargetConnections from './target-connections'
 
 import styles from './styles.module.scss'
 
-const isPipelineDeployed = (data: Nullable<IPipelineStatus>) =>
-  get(data, ['pipelines', 'default', 'status']) === PipelineStatus.Ready
+const shouldShowStatistics = (data: Nullable<IRdiStatistics>) =>
+  data?.status === RdiPipelineStatus.Success && !!data?.data
 
 const StatisticsPage = () => {
   const [pageLoading, setPageLoading] = useState(true)
@@ -46,7 +42,6 @@ const StatisticsPage = () => {
   const { name: connectedRdiInstanceName } = useSelector(
     connectedInstanceSelector,
   )
-  const { data: statusData } = useSelector(rdiPipelineStatusSelector)
   const rdiInstanceName = formatLongName(connectedRdiInstanceName, 33, 0, '...')
   setTitle(`${rdiInstanceName} - Pipeline Status`)
 
@@ -131,7 +126,7 @@ const StatisticsPage = () => {
             <EuiLoadingSpinner size="xl" />
           </div>
         )}
-        {!isPipelineDeployed(statusData) ? (
+        {!shouldShowStatistics(statisticsResults) ? (
           // TODO add loader
           <Empty rdiInstanceId={rdiInstanceId} />
         ) : (

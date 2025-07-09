@@ -38,6 +38,7 @@ export interface IConsent {
   required: boolean
   editable: boolean
   disabled: boolean
+  linkToPrivacyPolicy: boolean
   category?: string
   since: string
   title: string
@@ -222,17 +223,6 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         <Spacer size="m" />
         {consents.length > 1 && (
           <>
-            <EuiCallOut>
-              <EuiText
-                size="s"
-                className={styles.smallText}
-                data-testid="plugin-section"
-              >
-                To avoid automatic execution of malicious code, when adding new
-                Workbench plugins, use files from trusted authors only.
-              </EuiText>
-            </EuiCallOut>
-            <Spacer />
             <FlexItem>
               <Row gap="m">
                 <FlexItem>
@@ -287,7 +277,6 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             checked={formik.values[consent.agreementName] ?? false}
             onChangeAgreement={onChangeAgreement}
             key={consent.agreementName}
-            linkToPrivacyPolicy
           />
         ))}
         {!!notificationConsents.length && (

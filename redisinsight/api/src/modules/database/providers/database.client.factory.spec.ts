@@ -1,4 +1,3 @@
-import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockCommonClientMetadata,
@@ -6,17 +5,16 @@ import {
   mockDatabaseAnalytics,
   mockDatabaseRepository,
   mockDatabaseService,
-  mockRedisNoAuthError,
   MockType,
   mockRedisClientFactory,
   mockStandaloneRedisClient,
   mockSessionMetadata,
   MockRedisClient,
+  mockEventEmitter,
 } from 'src/__mocks__';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
@@ -31,6 +29,12 @@ import {
 } from 'src/__mocks__/redis-client';
 import { RedisClient } from 'src/modules/redis/client';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
+import {
+  RedisConnectionTimeoutException,
+} from 'src/modules/redis/exceptions/connection';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { DatabaseConnectionEvent } from 'src/modules/database/constants/events';
+import { InternalServerErrorException } from '@nestjs/common';
 
 describe('DatabaseClientFactory', () => {
   let service: DatabaseClientFactory;
@@ -39,6 +43,7 @@ describe('DatabaseClientFactory', () => {
   let redisClientStorage: RedisClientStorage;
   let redisClientFactory: LocalRedisClientFactory;
   let analytics: MockType<DatabaseAnalytics>;
+  let eventEmitter: MockType<EventEmitter2>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -71,6 +76,10 @@ describe('DatabaseClientFactory', () => {
           provide: NodeRedisConnectionStrategy,
           useFactory: mockNodeRedisConnectionStrategy,
         },
+        {
+          provide: EventEmitter2,
+          useValue: mockEventEmitter,
+        },
       ],
     }).compile();
 
@@ -80,6 +89,7 @@ describe('DatabaseClientFactory', () => {
     redisClientStorage = await module.get(RedisClientStorage);
     redisClientFactory = await module.get(RedisClientFactory);
     analytics = await module.get(DatabaseAnalytics);
+    eventEmitter = await module.get(EventEmitter2);
   });
 
   describe('getOrCreateClient', () => {
@@ -246,18 +256,39 @@ describe('DatabaseClientFactory', () => {
         },
       );
     });
-    it('should throw Unauthorized error in case of NOAUTH', async () => {
+    it('should throw original error and emit connection failed event for RedisConnection* errors', async () => {
       jest
         .spyOn(redisClientFactory, 'createClient')
-        .mockRejectedValue(mockRedisNoAuthError);
+        .mockRejectedValue(new RedisConnectionTimeoutException());
       await expect(
         service.createClient(mockCommonClientMetadata),
-      ).rejects.toThrow(UnauthorizedException);
+      ).rejects.toThrow(RedisConnectionTimeoutException);
       expect(analytics.sendConnectionFailedEvent).toHaveBeenCalledWith(
         mockSessionMetadata,
         mockDatabase,
-        new UnauthorizedException(ERROR_MESSAGES.AUTHENTICATION_FAILED()),
+        new RedisConnectionTimeoutException(),
       );
+
+      expect(eventEmitter.emit).toHaveBeenCalledWith(
+        DatabaseConnectionEvent.DatabaseConnectionFailed,
+        mockCommonClientMetadata,
+      );
+    });
+
+    it('should throw original error and not emit connection failed when not RedisConnection* errors', async () => {
+      jest
+        .spyOn(redisClientFactory, 'createClient')
+        .mockRejectedValue(new InternalServerErrorException());
+      await expect(
+        service.createClient(mockCommonClientMetadata),
+      ).rejects.toThrow(InternalServerErrorException);
+      expect(analytics.sendConnectionFailedEvent).toHaveBeenCalledWith(
+        mockSessionMetadata,
+        mockDatabase,
+        new InternalServerErrorException(),
+      );
+
+      expect(eventEmitter.emit).not.toHaveBeenCalled();
     });
   });
 });

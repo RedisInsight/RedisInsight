@@ -64,7 +64,7 @@ export class SettingsService {
 
       let defaultOptions: object;
       if (SERVER_CONFIG.acceptTermsAndConditions) {
-        const isEncryptionAvailable = await this.encryptionService.isEncryptionAvailable();          
+        const isEncryptionAvailable = await this.encryptionService.isEncryptionAvailable();
 
         defaultOptions = {
           data: {
@@ -83,7 +83,6 @@ export class SettingsService {
         'Succeed to get application settings.',
         sessionMetadata,
       );
-
 
       return classToClass(GetAppSettingsResponse, {
         ...settings?.data,
@@ -210,7 +209,7 @@ export class SettingsService {
         return `${isEncryptionAvailable}`;
       }
     } catch (e) {
-      this.logger.error(`Unable to proceed agreements checker ${checker}`);
+      this.logger.error(`Unable to proceed agreements checker ${checker}`, e);
     }
 
     return defaultOption;

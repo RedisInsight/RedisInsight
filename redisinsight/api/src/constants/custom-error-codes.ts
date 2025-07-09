@@ -1,6 +1,17 @@
 export enum CustomErrorCodes {
-  // General [10000, 10999]
+  // General [10000, 10899]
   WindowUnauthorized = 10_001,
+
+  // Redis Connection [10900, 10999]
+  RedisConnectionFailed = 10_900,
+  RedisConnectionTimeout = 10_901,
+  RedisConnectionUnauthorized = 10_902,
+  RedisConnectionClusterNodesUnavailable = 10_903,
+  RedisConnectionUnavailable = 10_904,
+  RedisConnectionAuthUnsupported = 10_905,
+  RedisConnectionSentinelMasterRequired = 10_906,
+  RedisConnectionIncorrectCertificate = 10_907,
+  RedisConnectionDefaultUserDisabled = 10_908,
 
   // Cloud API [11001, 11099]
   CloudApiInternalServerError = 11_000,

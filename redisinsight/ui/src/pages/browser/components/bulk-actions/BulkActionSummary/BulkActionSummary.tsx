@@ -1,11 +1,11 @@
-import { EuiText } from '@elastic/eui'
 import React from 'react'
+import { EuiText } from '@elastic/eui'
+import styled from 'styled-components'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { millisecondsFormat } from 'uiSrc/utils'
 import { BulkActionsType } from 'uiSrc/constants'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import styles from './styles.module.scss'
 
 export interface Props {
   type?: BulkActionsType
@@ -15,6 +15,16 @@ export interface Props {
   duration?: number
   'data-testid': string
 }
+
+const SummaryContainer = styled(Row)`
+  padding-top: 18px;
+`
+const SummaryValue = styled(EuiText)`
+  font-size: 18px !important;
+  line-height: 24px;
+  font-weight: 500 !important;
+`
+
 const BulkActionSummary = ({
   type = BulkActionsType.Delete,
   processed = 0,
@@ -23,40 +33,26 @@ const BulkActionSummary = ({
   duration = 0,
   'data-testid': testId,
 }: Props) => (
-  <Row align="start" className={styles.summary} data-testid={testId}>
+  <SummaryContainer data-testid={testId} gap="xl">
     <FlexItem>
-      <EuiText className={styles.summaryValue}>
-        {numberWithSpaces(processed)}
-      </EuiText>
-      <EuiText color="subdued" className={styles.summaryLabel}>
+      <SummaryValue>{numberWithSpaces(processed)}</SummaryValue>
+      <EuiText color="subdued">
         {type === BulkActionsType.Delete ? 'Keys' : 'Commands'} Processed
       </EuiText>
     </FlexItem>
     <FlexItem>
-      <EuiText className={styles.summaryValue}>
-        {numberWithSpaces(succeed)}
-      </EuiText>
-      <EuiText color="subdued" className={styles.summaryLabel}>
-        Success
-      </EuiText>
+      <SummaryValue>{numberWithSpaces(succeed)}</SummaryValue>
+      <EuiText color="subdued">Success</EuiText>
     </FlexItem>
     <FlexItem>
-      <EuiText className={styles.summaryValue}>
-        {numberWithSpaces(failed)}
-      </EuiText>
-      <EuiText color="subdued" className={styles.summaryLabel}>
-        Errors
-      </EuiText>
+      <SummaryValue>{numberWithSpaces(failed)}</SummaryValue>
+      <EuiText color="subdued">Errors</EuiText>
     </FlexItem>
     <FlexItem>
-      <EuiText className={styles.summaryValue}>
-        {millisecondsFormat(duration, 'H:mm:ss.SSS')}
-      </EuiText>
-      <EuiText color="subdued" className={styles.summaryLabel}>
-        Time Taken
-      </EuiText>
+      <SummaryValue>{millisecondsFormat(duration, 'H:mm:ss.SSS')}</SummaryValue>
+      <EuiText color="subdued">Time Taken</EuiText>
     </FlexItem>
-  </Row>
+  </SummaryContainer>
 )
 
 export default BulkActionSummary

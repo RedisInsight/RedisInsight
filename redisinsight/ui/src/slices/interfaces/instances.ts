@@ -497,6 +497,7 @@ export interface InitialStateRejson {
   error: Nullable<string>
   data: GetRejsonRlResponse
   editorType: EditorType
+  isWithinThreshold: boolean
 }
 
 export interface ICredentialsRedisCluster {

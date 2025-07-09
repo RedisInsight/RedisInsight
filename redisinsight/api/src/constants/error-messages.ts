@@ -44,7 +44,7 @@ export default {
     `Could not connect to ${url}, please check the CA or Client certificate.`,
   INCORRECT_CREDENTIALS: (url) =>
     `Could not connect to ${url}, please check the Username or Password.`,
-
+  DATABASE_DEFAULT_USER_DISABLED: 'Database does not have default user enabled.',
   DATABASE_MANAGEMENT_IS_DISABLED:
     'Database connection management is disabled.',
   CA_CERT_EXIST: 'This ca certificate name is already in use.',
@@ -112,8 +112,9 @@ export default {
   UNDEFINED_WINDOW_ID: 'Undefined window id.',
   LIBRARY_NOT_EXIST: 'This library does not exist.',
 
-  CLOUD_CAPI_KEY_UNAUTHORIZED: 'Unable to authorize such CAPI key',
+  REDIS_CONNECTION_FAILED: 'Unable to connect to the Redis database',
 
+  CLOUD_CAPI_KEY_UNAUTHORIZED: 'Unable to authorize such CAPI key',
   CLOUD_OAUTH_CANCELED: 'Authorization request was canceled.',
   CLOUD_OAUTH_MISCONFIGURATION: 'Authorization server misconfiguration.',
   CLOUD_OAUTH_GITHUB_EMAIL_PERMISSION:
@@ -158,6 +159,7 @@ export default {
     'Encountered a timeout error while attempting to retrieve data',
   RDI_VALIDATION_ERROR: 'Validation error',
   INVALID_RDI_INSTANCE_ID: 'Invalid rdi instance id.',
+  UNSAFE_BIG_JSON_LENGTH: 'This JSON is too large. Try opening it with Redis Insight Desktop.',
 
   // database settings
   DATABASE_SETTINGS_NOT_FOUND: 'Could not find settings for this database',

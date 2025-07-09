@@ -186,6 +186,7 @@ export default {
   modules: {
     json: {
       sizeThreshold: parseInt(process.env.RI_JSON_SIZE_THRESHOLD, 10) || 1024,
+      lengthThreshold: parseInt(process.env.RI_JSON_LENGTH_THRESHOLD, 10) || -1,
     },
   },
   redis_cli: {

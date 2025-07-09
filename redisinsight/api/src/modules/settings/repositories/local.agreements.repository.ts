@@ -17,10 +17,10 @@ export class LocalAgreementsRepository extends AgreementsRepository {
 
   async getOrCreate(
     sessionMetadata: SessionMetadata,
-    defaultOptions: DefaultAgreementsOptions = {}
+    defaultOptions: DefaultAgreementsOptions = {},
   ): Promise<Agreements> {
     let entity = await this.repository.findOneBy({});
-    if (!entity) {
+    if (!entity?.data) {
       try {
         entity = await this.repository.save(
           classToClass(AgreementsEntity, plainToInstance(Agreements, {

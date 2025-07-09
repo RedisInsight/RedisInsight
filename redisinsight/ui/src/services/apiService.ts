@@ -5,7 +5,7 @@ import axios, {
 } from 'axios'
 import { isNumber } from 'lodash'
 import { sessionStorageService } from 'uiSrc/services'
-import { BrowserStorageItem } from 'uiSrc/constants'
+import { BrowserStorageItem, CustomErrorCodes } from 'uiSrc/constants'
 import { CLOUD_AUTH_API_ENDPOINTS, CustomHeaders } from 'uiSrc/constants/api'
 import { store } from 'uiSrc/slices/store'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
@@ -84,20 +84,41 @@ export const hostedAuthInterceptor = (error: AxiosError) => {
   return Promise.reject(error)
 }
 
+export const isConnectivityError = (
+  status?: number,
+  data?: { code?: string; error?: string }
+): boolean  => {
+  if (!status || !data) {
+    return false
+  }
+
+  switch (status) {
+    case 424:
+      return !!data.error?.startsWith?.('RedisConnection')
+    case 503:
+      return data.code === 'serviceUnavailable' || data.error === 'Service Unavailable'
+    default:
+      return false
+  }
+}
+
 export const connectivityErrorsInterceptor = (error: AxiosError) => {
   const { response } = error
   const responseData = response?.data as {
     message?: string
     code?: string
     error?: string
+    errorCode?: number
   }
 
-  if (
-    response?.status === 503 &&
-    (responseData.code === 'serviceUnavailable' ||
-      responseData.error === 'Service Unavailable')
-  ) {
-    store?.dispatch<any>(setConnectivityError(ApiErrors.ConnectionLost))
+  if (isConnectivityError(response?.status, responseData)) {
+    let message
+
+    if (responseData?.errorCode === CustomErrorCodes.RedisConnectionDefaultUserDisabled) {
+      message = responseData?.message
+    }
+
+    store?.dispatch<any>(setConnectivityError(message || ApiErrors.ConnectionLost))
   }
 
   return Promise.reject(error)

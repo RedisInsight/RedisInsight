@@ -17,8 +17,8 @@ const Empty = ({ rdiInstanceId }: Props) => {
   const history = useHistory()
 
   return (
-    <Panel data-testid="empty-pipeline">
-      <div className={styles.emptyPipelineContainer}>
+    <Panel>
+      <div className={styles.emptyPipelineContainer} data-testid="empty-pipeline">
         <EuiImage src={EmptyPipelineIcon} alt="empty" size="s" />
         <Spacer size="xl" />
         <EuiText>No pipeline deployed yet</EuiText>

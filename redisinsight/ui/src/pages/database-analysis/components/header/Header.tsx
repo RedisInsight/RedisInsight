@@ -161,7 +161,7 @@ const Header = (props: Props) => {
                 onClick={handleClick}
                 size="s"
               >
-                New Report
+                Analyze
               </EuiButton>
             </FlexItem>
             <FlexItem style={{ paddingLeft: 6 }}>

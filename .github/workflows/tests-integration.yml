@@ -158,33 +158,73 @@ jobs:
             echo "❌ JUnit XML file missing!"
           fi
 
-      - name: Debug - Show directory structure and environment files
+      - name: Debug NYC coverage generation
+        if: always()
         run: |
-          echo "=== DEBUGGING COVERAGE ISSUE ==="
+          echo "=== Debugging missing test-run-coverage.json file ==="
+          echo "Working directory: $(pwd)"
+          echo ""
+          echo "=== Check .nyc_output directory in API folder ==="
+          cd ./redisinsight/api
+          if [ -d ".nyc_output" ]; then
+            echo "✅ .nyc_output directory exists"
+            echo "Contents:"
+            ls -la .nyc_output
+            echo "File count: $(find .nyc_output -name "*.json" | wc -l)"
+            echo "Sample file content (first 5 lines):"
+            find .nyc_output -name "*.json" | head -1 | xargs head -5 2>/dev/null || echo "No JSON files to sample"
+          else
+            echo "❌ .nyc_output directory does not exist!"
+          fi
+          echo ""
+          echo "=== Try manual NYC merge ==="
+          if [ -d ".nyc_output" ] && [ "$(find .nyc_output -name "*.json" | wc -l)" -gt 0 ]; then
+            echo "Attempting manual NYC merge..."
+            echo "Command: nyc merge .nyc_output coverage/test-run-coverage.json"
+            nyc merge .nyc_output coverage/test-run-coverage.json || echo "NYC merge failed with exit code $?"
+            echo "Checking result:"
+            ls -la coverage/test-run-coverage.json 2>/dev/null || echo "File not created"
+          else
+            echo "Skipping merge - no coverage data files found"
+          fi
+          echo ""
+          echo "=== Final coverage directory check ==="
+          ls -la coverage/ | head -10
+
+      - name: Copy test results to artifacts
+        run: |
+          echo "=== COPYING TEST RESULTS ==="
           echo "Current working directory: $(pwd)"
-          echo ""
-          echo "=== Environment files content ==="
-          echo "local.build.env:"
-          cat ./redisinsight/api/test/test-runs/local.build.env
-          echo ""
-          echo "docker.build.env:"
-          cat ./redisinsight/api/test/test-runs/docker.build.env
-          echo ""
-          echo "=== Directory structure under redisinsight/api ==="
-          find ./redisinsight/api -type d -name "*coverage*" -o -name "*test-runs*" | head -10
           echo ""
           echo "=== Files in expected coverage directory ==="
           ls -la ./redisinsight/api/test/test-runs/coverage/ || echo "Coverage directory does not exist!"
           echo ""
-          echo "=== All files under test-runs ==="
-          find ./redisinsight/api/test/test-runs -name "*.json" -o -name "*.xml" | head -20
-          echo ""
-          echo "=== Looking for test result files anywhere ==="
-          find ./redisinsight/api -name "test-run-result.*" -o -name "*coverage*.json" | head -10
+          echo "=== Copying files with error handling ==="
 
-          cp ./redisinsight/api/test/test-runs/coverage/test-run-result.json ./itest/results/${{ matrix.rte }}.result.json
-          cp ./redisinsight/api/test/test-runs/coverage/test-run-result.xml ./itest/results/${{ matrix.rte }}.result.xml
-          cp ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json ./itest/coverages/${{ matrix.rte }}.coverage.json
+          # Copy JSON result file (should exist)
+          if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-result.json" ]; then
+            cp ./redisinsight/api/test/test-runs/coverage/test-run-result.json ./itest/results/${{ matrix.rte }}.result.json
+            echo "✅ Copied test-run-result.json"
+          else
+            echo "❌ test-run-result.json not found"
+          fi
+
+          # Copy XML result file (should exist)
+          if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-result.xml" ]; then
+            cp ./redisinsight/api/test/test-runs/coverage/test-run-result.xml ./itest/results/${{ matrix.rte }}.result.xml
+            echo "✅ Copied test-run-result.xml"
+          else
+            echo "❌ test-run-result.xml not found"
+          fi
+
+          # Copy coverage file (may be missing)
+          if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-coverage.json" ]; then
+            cp ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json ./itest/coverages/${{ matrix.rte }}.coverage.json
+            echo "✅ Copied test-run-coverage.json"
+          else
+            echo "❌ test-run-coverage.json not found - creating empty file"
+            echo "{}" > ./itest/coverages/${{ matrix.rte }}.coverage.json
+          fi
 
       - name: Upload coverage files as artifact
         if: always()

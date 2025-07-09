@@ -11,4 +11,7 @@ eval "$(echo "$GNOME_KEYRING_PASS" | gnome-keyring-daemon --unlock)"
 sleep 1
 eval "$(echo "$GNOME_KEYRING_PASS" | gnome-keyring-daemon --start)"
 
+# Create coverage directory before running tests
+mkdir -p test/test-runs/coverage
+
 exec "$@"

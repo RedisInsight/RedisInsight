@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiIcon } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -34,7 +34,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import EditablePopover from 'uiSrc/pages/browser/modules/key-details/shared/editable-popover'
 
-import { FormatedDate } from 'uiSrc/components'
+import { FormatedDate, RiTooltip } from 'uiSrc/components'
 import { Text } from 'uiSrc/components/base/text'
 import {
   ConsumerDto,
@@ -225,14 +225,13 @@ const GroupsViewWrapper = (props: Props) => {
               className="truncateText"
               data-testid={`stream-group-name-${viewName}`}
             >
-              <EuiToolTip
+              <RiTooltip
                 className={styles.tooltipName}
-                anchorClassName="truncateText"
                 position="bottom"
                 content={tooltipContent}
               >
                 <>{cellContent}</>
-              </EuiToolTip>
+              </RiTooltip>
             </div>
           </Text>
         )
@@ -283,15 +282,14 @@ const GroupsViewWrapper = (props: Props) => {
               data-testid={`group-pending-${viewName}`}
             >
               {!!pending && (
-                <EuiToolTip
+                <RiTooltip
                   title={`${pending} Pending Messages`}
                   className={styles.tooltip}
-                  anchorClassName="truncateText"
                   position="bottom"
                   content={tooltipContent}
                 >
                   <>{pending}</>
-                </EuiToolTip>
+                </RiTooltip>
               )}
               {!pending && pending}
             </div>
@@ -374,14 +372,13 @@ const GroupsViewWrapper = (props: Props) => {
                 onBlur={() => setIsIdFocused(false)}
                 onFocus={() => setIsIdFocused(true)}
                 append={
-                  <EuiToolTip
-                    anchorClassName="inputAppendIcon"
+                  <RiTooltip
                     position="left"
                     title="Enter Valid ID, 0 or $"
                     content={lastDeliveredIDTooltipText}
                   >
                     <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
-                  </EuiToolTip>
+                  </RiTooltip>
                 }
                 style={{ width: 240 }}
                 autoComplete="off"

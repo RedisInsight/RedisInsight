@@ -1,9 +1,8 @@
 import React from 'react'
-import { EuiToolTip } from '@elastic/eui'
 
+import { RiTooltip } from 'uiSrc/components'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { MinusInCircleIcon } from 'uiSrc/components/base/icons'
-import styles from '../styles.module.scss'
 
 export interface Props {
   title: string
@@ -11,18 +10,14 @@ export interface Props {
 }
 
 const RemoveItemsAction = ({ title, openRemoveItemPanel }: Props) => (
-  <EuiToolTip
-    content={title}
-    position="left"
-    anchorClassName={styles.actionBtn}
-  >
+  <RiTooltip content={title} position="left">
     <IconButton
       icon={MinusInCircleIcon}
       aria-label={title}
       onClick={openRemoveItemPanel}
       data-testid="remove-key-value-items-btn"
     />
-  </EuiToolTip>
+  </RiTooltip>
 )
 
 export { RemoveItemsAction }

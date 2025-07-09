@@ -131,6 +131,7 @@ describe('SettingsAnalytics', () => {
 
   describe('sendSettingsUpdatedEvent', () => {
     const defaultSettings: GetAppSettingsResponse = {
+      acceptTermsAndConditionsOverwritten: false,
       agreements: null,
       scanThreshold: 10000,
       batchSize: 5,

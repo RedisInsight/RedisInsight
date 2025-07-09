@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiLink, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
@@ -7,6 +6,8 @@ import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { RiTooltip } from 'uiSrc/components'
 import CreateRedisearchIndex from './CreateRedisearchIndex'
 
 import styles from './styles.module.scss'
@@ -30,11 +31,7 @@ const CreateRedisearchIndexWrapper = ({
             New Index
           </Title>
           {!arePanelsCollapsed && (
-            <EuiToolTip
-              content="Close"
-              position="left"
-              anchorClassName={styles.closeBtnTooltip}
-            >
+            <RiTooltip content="Close" position="left">
               <IconButton
                 icon={CancelSlimIcon}
                 aria-label="Close panel"
@@ -42,24 +39,23 @@ const CreateRedisearchIndexWrapper = ({
                 data-testid="create-index-close-panel"
                 onClick={onClosePanel}
               />
-            </EuiToolTip>
+            </RiTooltip>
           )}
         </FlexItem>
         <FlexItem grow className={styles.header}>
           <Text size="s">
             Use CLI or Workbench to create more advanced indexes. See more
             details in the{' '}
-            <EuiLink
+            <Link
               color="text"
               href={getUtmExternalLink('https://redis.io/commands/ft.create/', {
                 campaign: 'browser_search',
               })}
               className={styles.link}
-              external={false}
               target="_blank"
             >
               documentation.
-            </EuiLink>
+            </Link>
           </Text>
         </FlexItem>
       </div>

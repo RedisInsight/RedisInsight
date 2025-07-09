@@ -51,7 +51,7 @@ const LoadSampleData = (props: Props) => {
       anchorPosition="upCenter"
       isOpen={isConfirmationOpen}
       closePopover={() => setIsConfirmationOpen(false)}
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+      panelClassName={cx('popoverLikeTooltip', styles.popover)}
       panelPaddingSize="none"
       anchorClassName={cx(styles.buttonWrapper, anchorClassName)}
       button={
@@ -66,7 +66,7 @@ const LoadSampleData = (props: Props) => {
         </PrimaryButton>
       }
     >
-      <Row gap="m" responsive={false}>
+      <Row gap="m" responsive={false} style={{ padding: 8 }}>
         <FlexItem>
           <EuiIcon type="alert" className={styles.popoverIcon} />
         </FlexItem>

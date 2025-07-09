@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {
-  EuiInMemoryTable,
-  EuiBasicTableColumn,
-  EuiTableSelectionType,
-  PropertySort,
-  EuiPopover,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import { map, pick } from 'lodash'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -23,15 +16,17 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { RiTooltip } from 'uiSrc/components'
 import { Pages } from 'uiSrc/constants'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Text } from 'uiSrc/components/base/text'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import styles from '../styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<InstanceRedisCloud>[]
+  columns: ColumnDefinition<InstanceRedisCloud>[]
   onClose: () => void
   onBack: () => void
   onSubmit: (
@@ -85,11 +80,6 @@ const RedisCloudDatabasesPage = ({
     }
   }, [instances])
 
-  const sort: PropertySort = {
-    field: 'name',
-    direction: 'asc',
-  }
-
   const handleSubmit = () => {
     onSubmit(
       map(selection, (i) =>
@@ -106,9 +96,19 @@ const RedisCloudDatabasesPage = ({
     setIsPopoverOpen(false)
   }
 
-  const selectionValue: EuiTableSelectionType<InstanceRedisCloud> = {
-    onSelectionChange: (selected: InstanceRedisCloud[]) =>
-      setSelection(selected),
+  const selectionValue = {
+    onSelectionChange: (selected: InstanceRedisCloud) =>
+      setSelection((previous) => {
+        const isSelected = previous.some(
+          (item) => item.databaseId === selected.databaseId,
+        )
+        if (isSelected) {
+          return previous.filter(
+            (item) => item.databaseId !== selected.databaseId,
+          )
+        }
+        return [...previous, selected]
+      }),
   }
 
   const onQueryChange = (term: string) => {
@@ -165,15 +165,14 @@ const RedisCloudDatabasesPage = ({
   )
 
   const SubmitButton = ({ isDisabled }: { isDisabled: boolean }) => (
-    <EuiToolTip
+    <RiTooltip
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       title={
         isDisabled ? validationErrors.SELECT_AT_LEAST_ONE('database') : null
       }
       content={
         isDisabled ? (
-          <span className="euiToolTip__content">
+          <span>
             {validationErrors.NO_DBS_SELECTED}
           </span>
         ) : null
@@ -189,7 +188,7 @@ const RedisCloudDatabasesPage = ({
       >
         Add selected Databases
       </PrimaryButton>
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   return (
@@ -222,17 +221,18 @@ const RedisCloudDatabasesPage = ({
         <br />
 
         <div className="itemList databaseList cloudDatabaseList">
-          <EuiInMemoryTable
-            items={items}
-            itemId="databaseId"
-            loading={loading}
-            message={message}
+          <Table
             columns={columns}
-            sorting={{ sort }}
-            selection={selectionValue}
-            className={styles.table}
-            isSelectable
+            data={items}
+            defaultSorting={[
+              {
+                id: 'name',
+                desc: false,
+              },
+            ]}
+            onRowClick={selectionValue.onSelectionChange}
           />
+          {!items.length && <Text>{message}</Text>}
         </div>
       </div>
       <FlexItem padding={4}>

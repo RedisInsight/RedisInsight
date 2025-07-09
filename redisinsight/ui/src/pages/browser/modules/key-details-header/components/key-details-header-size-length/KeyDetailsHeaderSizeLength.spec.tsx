@@ -62,10 +62,10 @@ describe('KeyDetailsHeaderSizeLength', () => {
     const infoIcon = screen.getByTestId('key-size-info-icon')
     userEvent.hover(infoIcon)
 
-    const tooltipText = await screen.findByText(
+    const tooltipText = await screen.findAllByText(
       'The key size is too large to run the MEMORY USAGE command, as it may lead to performance issues.',
     )
-    expect(tooltipText).toBeInTheDocument()
+    expect(tooltipText[0]).toBeInTheDocument()
   })
 
   it('should render "Top-level values" label when type is json', () => {

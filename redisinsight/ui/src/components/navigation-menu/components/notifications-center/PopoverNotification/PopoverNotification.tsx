@@ -95,7 +95,6 @@ const PopoverNotification = () => {
           closePopover={() => {}}
           anchorClassName={styles.popoverAnchor}
           panelClassName={cx(
-            'euiToolTip',
             'popoverLikeTooltip',
             styles.popoverNotificationTooltip,
           )}

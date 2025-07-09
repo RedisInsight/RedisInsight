@@ -1,8 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import cx from 'classnames'
 import { useParams } from 'react-router-dom'
-import { EuiToolTip, EuiIcon } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 
 import {
   monitorSelector,
@@ -12,7 +11,7 @@ import {
   toggleMonitor,
 } from 'uiSrc/slices/cli/monitor'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { OnboardingTour } from 'uiSrc/components'
+import { OnboardingTour, RiTooltip } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
@@ -93,7 +92,7 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
         </FlexItem>
         {isStarted && (
           <FlexItem direction="row" className={styles.actions}>
-            <EuiToolTip
+            <RiTooltip
               content={
                 isErrorShown || isResumeLocked
                   ? ''
@@ -101,7 +100,6 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
                     ? 'Pause'
                     : 'Resume'
               }
-              anchorClassName="inline-flex"
             >
               <IconButton
                 icon={
@@ -116,14 +114,11 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
                 data-testid="toggle-run-monitor"
                 disabled={disabledPause}
               />
-            </EuiToolTip>
-            <EuiToolTip
+            </RiTooltip>
+            <RiTooltip
               content={
                 !isStarted || !items.length ? '' : 'Clear Profiler Window'
               }
-              anchorClassName={cx('inline-flex', {
-                transparent: !isStarted || !items.length,
-              })}
             >
               <IconButton
                 icon={DeleteIcon}
@@ -131,7 +126,7 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
                 aria-label="clear profiler"
                 data-testid="clear-monitor"
               />
-            </EuiToolTip>
+            </RiTooltip>
           </FlexItem>
         )}
         <FlexItem grow />

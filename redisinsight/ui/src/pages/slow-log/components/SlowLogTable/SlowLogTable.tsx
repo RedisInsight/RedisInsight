@@ -1,4 +1,3 @@
-import { EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
@@ -15,7 +14,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { Text } from 'uiSrc/components/base/text'
 
-import { FormatedDate } from 'uiSrc/components'
+import { FormatedDate, RiTooltip } from 'uiSrc/components'
 import styles from '../styles.module.scss'
 
 export const DATE_FORMAT = 'HH:mm:ss d LLL yyyy'
@@ -82,15 +81,13 @@ const SlowLogTable = (props: Props) => {
       id: 'args',
       label: 'Command',
       render: (command) => (
-        <EuiToolTip
-          position="bottom"
-          content={command}
-          anchorClassName={styles.commandTooltip}
-        >
-          <span className={styles.commandText} data-testid="command-value">
-            {command}
+        <RiTooltip position="bottom" content={command}>
+          <span className={styles.commandTooltip}>
+            <span className={styles.commandText} data-testid="command-value">
+              {command}
+            </span>
           </span>
-        </EuiToolTip>
+        </RiTooltip>
       ),
     },
   ]

@@ -1,4 +1,4 @@
-import { EuiIcon, EuiLink, EuiPopover } from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
@@ -30,6 +30,7 @@ import {
 import { PlayFilledIcon, ContractsIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
+import { Link } from 'uiSrc/components/base/link/Link'
 
 export interface Props {
   label: string
@@ -113,7 +114,7 @@ const RedisUploadButton = ({ label, path }: Props) => {
         anchorPosition="downLeft"
         isOpen={isPopoverOpen}
         closePopover={() => setIsPopoverOpen(false)}
-        panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+        panelClassName={cx('popoverLikeTooltip', styles.popover)}
         anchorClassName={styles.popoverAnchor}
         panelPaddingSize="none"
         button={
@@ -149,13 +150,13 @@ const RedisUploadButton = ({ label, path }: Props) => {
             </div>
             <Spacer size="m" />
             <div className={styles.popoverActions}>
-              <EuiLink
+              <Link
                 onClick={handleDownload}
                 className={styles.link}
                 data-testid="download-redis-upload-file"
               >
                 Download file
-              </EuiLink>
+              </Link>
               <PrimaryButton
                 size="s"
                 icon={PlayFilledIcon}

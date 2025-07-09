@@ -12,7 +12,7 @@ import {
   mockedStore,
   render,
   screen,
-  waitForEuiToolTipVisible,
+  waitForRiTooltipVisible,
 } from 'uiSrc/utils/test-utils'
 import WorkbenchPage from './WorkbenchPage'
 
@@ -287,9 +287,9 @@ describe('Raw mode', () => {
     render(<WorkbenchPage />)
 
     await act(async () => {
-      fireEvent.mouseOver(screen.getByTestId('btn-change-mode'))
+      fireEvent.focus(screen.getByTestId('btn-change-mode'))
     })
-    await waitForEuiToolTipVisible()
+    await waitForRiTooltipVisible()
 
     expect(screen.queryByTestId('change-mode-tooltip')).toBeInTheDocument()
   })
@@ -298,9 +298,9 @@ describe('Raw mode', () => {
     render(<WorkbenchPage />)
 
     await act(() => {
-      fireEvent.mouseOver(screen.getByTestId('parameters-anchor'))
+      fireEvent.focus(screen.getByTestId('parameters-anchor'))
     })
-    await waitForEuiToolTipVisible()
+    await waitForRiTooltipVisible()
 
     expect(screen.getByTestId('parameters-tooltip')).toBeInTheDocument()
   })

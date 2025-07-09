@@ -72,7 +72,7 @@ describe('KeyDetailsHeader', () => {
   it('should be able to copy key', () => {
     render(<KeyDetailsHeader {...mockedProps} />)
 
-    fireEvent.mouseOver(screen.getByTestId(KEY_BTN_TEST_ID))
+    fireEvent.focus(screen.getByTestId(KEY_BTN_TEST_ID))
 
     fireEvent.mouseEnter(screen.getByTestId(KEY_BTN_TEST_ID))
 

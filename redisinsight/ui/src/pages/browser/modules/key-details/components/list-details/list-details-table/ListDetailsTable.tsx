@@ -1,4 +1,4 @@
-import { EuiProgress, EuiToolTip } from '@elastic/eui'
+import { EuiProgress } from '@elastic/eui'
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -8,6 +8,7 @@ import {
   appContextBrowserKeyDetails,
   updateKeyDetailsSizes,
 } from 'uiSrc/slices/app/context'
+import { RiTooltip } from 'uiSrc/components'
 
 import {
   listSelector,
@@ -268,15 +269,14 @@ const ListDetailsTable = () => {
               className="truncateText"
               data-testid={`list-index-value-${index}`}
             >
-              <EuiToolTip
+              <RiTooltip
                 title="Index"
                 className={styles.tooltip}
-                anchorClassName="truncateText"
                 position="bottom"
                 content={tooltipContent}
               >
                 <>{cellContent}</>
-              </EuiToolTip>
+              </RiTooltip>
             </div>
           </Text>
         )

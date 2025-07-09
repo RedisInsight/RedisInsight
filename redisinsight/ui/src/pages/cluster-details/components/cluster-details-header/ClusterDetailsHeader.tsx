@@ -1,4 +1,3 @@
-import { EuiToolTip } from '@elastic/eui'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -19,6 +18,7 @@ import {
 import AnalyticsTabs from 'uiSrc/components/analytics-tabs'
 import { clusterDetailsSelector } from 'uiSrc/slices/analytics/clusterDetails'
 import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 
 import styles from './styles.module.scss'
 
@@ -54,7 +54,7 @@ const ClusterDetailsHeader = () => {
         (username || DEFAULT_USERNAME)?.length < MAX_NAME_LENGTH ? (
           username || DEFAULT_USERNAME
         ) : (
-          <EuiToolTip
+          <RiTooltip
             className={styles.tooltip}
             position="bottom"
             content={<>{formatLongName(username || DEFAULT_USERNAME)}</>}
@@ -62,16 +62,15 @@ const ClusterDetailsHeader = () => {
             <div data-testid="cluster-details-username">
               {formatLongName(username || DEFAULT_USERNAME, MAX_NAME_LENGTH, 5)}
             </div>
-          </EuiToolTip>
+          </RiTooltip>
         ),
     },
     {
       label: 'Uptime',
       border: 'left',
       value: (
-        <EuiToolTip
+        <RiTooltip
           className={styles.tooltip}
-          anchorClassName="truncateText"
           position="top"
           content={
             <>
@@ -84,7 +83,7 @@ const ClusterDetailsHeader = () => {
           <div data-testid="cluster-details-uptime">
             {truncateNumberToFirstUnit(data?.uptimeSec || 0)}
           </div>
-        </EuiToolTip>
+        </RiTooltip>
       ),
     },
   ]

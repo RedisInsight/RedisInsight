@@ -39,11 +39,7 @@ const RdiConfigFileActionMenu = () => {
       button={button}
       isOpen={isPopoverOpen}
       closePopover={closePopover}
-      panelClassName={cx(
-        'euiToolTip',
-        'popoverLikeTooltip',
-        styles.popoverWrapper,
-      )}
+      panelClassName={cx('popoverLikeTooltip', styles.popoverWrapper)}
       panelPaddingSize="none"
       anchorPosition="upRight"
     >

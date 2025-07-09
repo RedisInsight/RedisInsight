@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiToolTip } from '@elastic/eui'
 
 import {
   setStreamViewType,
@@ -27,6 +26,7 @@ import { formatLongName, isTruncatedString } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 import { ConsumerDto } from 'apiSrc/modules/browser/stream/dto'
 import ConsumersView from './ConsumersView'
 
@@ -133,14 +133,13 @@ const ConsumersViewWrapper = (props: Props) => {
               className="truncateText"
               data-testid={`stream-consumer-${viewName}`}
             >
-              <EuiToolTip
+              <RiTooltip
                 className={styles.tooltipName}
-                anchorClassName="truncateText"
                 position="bottom"
                 content={tooltipContent}
               >
                 <>{cellContent}</>
-              </EuiToolTip>
+              </RiTooltip>
             </div>
           </Text>
         )

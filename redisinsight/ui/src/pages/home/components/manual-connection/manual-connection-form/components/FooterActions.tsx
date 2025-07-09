@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiToolTip } from '@elastic/eui'
 import { FormikErrors } from 'formik'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { getSubmitButtonContent } from 'uiSrc/pages/home/utils'
@@ -12,6 +11,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
+import { RiTooltip } from 'uiSrc/components'
 
 export interface Props {
   submitIsDisable: () => boolean
@@ -39,9 +39,8 @@ const FooterActions = (props: Props) => {
     onClick,
     submitIsDisabled,
   }: ISubmitButton) => (
-    <EuiToolTip
+    <RiTooltip
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       title={
         submitIsDisabled
           ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
@@ -60,15 +59,14 @@ const FooterActions = (props: Props) => {
       >
         {text}
       </PrimaryButton>
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   return (
     <Row justify="between" align="center">
       <FlexItem className="btn-back">
-        <EuiToolTip
+        <RiTooltip
           position="top"
-          anchorClassName="euiToolTip__btn-disabled"
           title={
             submitIsDisable()
               ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
@@ -87,7 +85,7 @@ const FooterActions = (props: Props) => {
           >
             Test Connection
           </EmptyButton>
-        </EuiToolTip>
+        </RiTooltip>
       </FlexItem>
 
       <FlexItem>

@@ -1,4 +1,4 @@
-import { EuiBasicTableColumn, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -20,12 +20,17 @@ import {
   AddRedisDatabaseStatus,
   InstanceRedisCluster,
 } from 'uiSrc/slices/interfaces'
-import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
+import {
+  DatabaseListModules,
+  DatabaseListOptions,
+  RiTooltip,
+} from 'uiSrc/components'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import RedisClusterDatabases from './RedisClusterDatabases'
 import RedisClusterDatabasesResult from './RedisClusterDatabasesResult'
 
@@ -68,89 +73,74 @@ const RedisClusterDatabasesPage = () => {
     navigator.clipboard.writeText(text)
   }
 
-  const columns: EuiBasicTableColumn<InstanceRedisCluster>[] = [
+  const columns: ColumnDefinition<InstanceRedisCluster>[] = [
     {
-      field: 'name',
-      className: 'column_name',
-      name: 'Database',
-      dataType: 'auto',
-      truncateText: true,
-      sortable: true,
-      width: '420px',
-      render: function InstanceCell(name: string = '') {
+      header: 'Database',
+      id: 'name',
+      accessorKey: 'name',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { name },
+        },
+      }) => {
         const cellContent = name
           .substring(0, 200)
           .replace(/\s\s/g, '\u00a0\u00a0')
         return (
           <div role="presentation" data-testid={`db_name_${name}`}>
-            <EuiToolTip
+            <RiTooltip
               position="bottom"
               title="Database"
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
               <Text>{cellContent}</Text>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
     },
     {
-      field: 'status',
-      className: 'column_status',
-      name: 'Status',
-      dataType: 'string',
-      sortable: true,
-      width: '185px',
-      truncateText: true,
-      hideForMobile: true,
+      header: 'Status',
+      id: 'status',
+      accessorKey: 'status',
+      enableSorting: true,
     },
     {
-      field: 'dnsName',
-      className: 'column_dnsName',
-      name: 'Endpoint',
-      width: '410px',
-      dataType: 'auto',
-      truncateText: true,
-      sortable: true,
-      render: function DnsName(
-        dnsName: string,
-        { port }: InstanceRedisCluster,
-      ) {
+      header: 'Endpoint',
+      id: 'dnsName',
+      accessorKey: 'dnsName',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { dnsName, port },
+        },
+      }) => {
         const text = `${dnsName}:${port}`
         return (
           !!dnsName && (
             <div className="host_port">
               <Text className="copyHostPortText">{text}</Text>
-              <EuiToolTip
-                position="right"
-                content="Copy"
-                anchorClassName="copyHostPortTooltip"
-              >
+              <RiTooltip position="right" content="Copy">
                 <IconButton
                   icon={CopyIcon}
                   aria-label="Copy host:port"
                   className="copyHostPortBtn"
                   onClick={() => handleCopy(text)}
                 />
-              </EuiToolTip>
+              </RiTooltip>
             </div>
           )
         )
       },
     },
     {
-      field: 'modules',
-      className: 'column_modules',
-      name: 'Capabilities',
-      dataType: 'auto',
-      align: 'left',
-      width: '190px',
-      sortable: true,
-      render: function Modules(
-        _modules: any[],
-        instance: InstanceRedisCluster,
-      ) {
+      header: 'Capabilities',
+      id: 'modules',
+      accessorKey: 'modules',
+      enableSorting: true,
+      cell: function Modules({ row: { original: instance } }) {
         return (
           <DatabaseListModules
             modules={instance?.modules?.map((name) => ({ name }))}
@@ -159,14 +149,11 @@ const RedisClusterDatabasesPage = () => {
       },
     },
     {
-      field: 'options',
-      className: 'column_options',
-      name: 'Options',
-      dataType: 'auto',
-      align: 'left',
-      width: '220px',
-      sortable: true,
-      render: function Opitions(_opts: any[], instance: InstanceRedisCluster) {
+      header: 'Options',
+      id: 'options',
+      accessorKey: 'options',
+      enableSorting: true,
+      cell: ({ row: { original: instance } }) => {
         const options = parseInstanceOptionsCluster(
           instance?.uid,
           instances || [],
@@ -176,24 +163,22 @@ const RedisClusterDatabasesPage = () => {
     },
   ]
 
-  const messageColumn: EuiBasicTableColumn<InstanceRedisCluster> = {
-    field: 'messageAdded',
-    className: 'column_message',
-    name: 'Result',
-    dataType: 'string',
-    align: 'left',
-    width: '110px',
-    sortable: true,
-    render: function Message(
-      messageAdded: string,
-      { statusAdded }: InstanceRedisCluster,
-    ) {
+  const messageColumn: ColumnDefinition<InstanceRedisCluster> = {
+    header: 'Result',
+    id: 'messageAdded',
+    accessorKey: 'messageAdded',
+    enableSorting: true,
+    cell: function Message({
+      row: {
+        original: { statusAdded, messageAdded },
+      },
+    }) {
       return (
         <>
           {statusAdded === AddRedisDatabaseStatus.Success ? (
             <Text>{messageAdded}</Text>
           ) : (
-            <EuiToolTip position="left" title="Error" content={messageAdded}>
+            <RiTooltip position="left" title="Error" content={messageAdded}>
               <Row align="center" gap="s">
                 <FlexItem>
                   <EuiIcon type="alert" color="danger" />
@@ -208,16 +193,14 @@ const RedisClusterDatabasesPage = () => {
                   </ColorText>
                 </FlexItem>
               </Row>
-            </EuiToolTip>
+            </RiTooltip>
           )}
         </>
       )
     },
   }
 
-  const columnsResult: EuiBasicTableColumn<InstanceRedisCluster>[] = [
-    ...columns,
-  ]
+  const columnsResult: ColumnDefinition<InstanceRedisCluster>[] = [...columns]
   columnsResult.push(messageColumn)
 
   if (instancesAdded.length) {

@@ -1,6 +1,6 @@
 import React from 'react'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
-import { FeatureFlagComponent } from 'uiSrc/components'
+import { EuiIcon } from '@elastic/eui'
+import { FeatureFlagComponent, RiTooltip } from 'uiSrc/components'
 import { FeatureFlags } from 'uiSrc/constants'
 
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
@@ -25,7 +25,7 @@ const OAuthRecommendedSettings = (props: Props) => {
           onChange={(e) => onChange(e.target.checked)}
           data-testid="oauth-recommended-settings-checkbox"
         />
-        <EuiToolTip
+        <RiTooltip
           content={
             <>
               The database will be automatically created using a pre-selected
@@ -35,10 +35,9 @@ const OAuthRecommendedSettings = (props: Props) => {
             </>
           }
           position="top"
-          anchorClassName={styles.recommendedSettingsToolTip}
         >
           <EuiIcon type="iInCircle" size="s" />
-        </EuiToolTip>
+        </RiTooltip>
       </div>
     </FeatureFlagComponent>
   )

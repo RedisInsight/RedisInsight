@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiIcon, EuiLink, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { putRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -19,6 +19,8 @@ import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Text } from 'uiSrc/components/base/text'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { RiTooltip } from 'uiSrc/components'
 import { getVotedText, voteTooltip, iconType } from './utils'
 import styles from './styles.module.scss'
 
@@ -97,9 +99,9 @@ const VoteOption = (props: Props) => {
       isOpen={popover === voteOption}
       closePopover={() => setPopover('')}
       anchorClassName={styles.popoverAnchor}
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+      panelClassName={cx('popoverLikeTooltip', styles.popover)}
       button={
-        <EuiToolTip
+        <RiTooltip
           content={getTooltipContent(voteOption)}
           position="bottom"
           data-testid={`${voteOption}-vote-tooltip`}
@@ -112,7 +114,7 @@ const VoteOption = (props: Props) => {
             data-testid={`${voteOption}-vote-btn`}
             onClick={() => handleClick(name)}
           />
-        </EuiToolTip>
+        </RiTooltip>
       }
     >
       <div
@@ -154,8 +156,7 @@ const VoteOption = (props: Props) => {
               className={styles.feedbackBtn}
               size="s"
             >
-              <EuiLink
-                external={false}
+              <Link
                 className={styles.link}
                 href={EXTERNAL_LINKS.recommendationFeedback}
                 target="_blank"
@@ -168,7 +169,7 @@ const VoteOption = (props: Props) => {
                   data-testid="github-repo-icon"
                 />
                 To Github
-              </EuiLink>
+              </Link>
             </PrimaryButton>
           </FlexItem>
         </Col>

@@ -1,11 +1,8 @@
 import {
   Criteria,
   EuiIcon,
-  EuiLink,
   EuiPopover,
-  EuiResizeObserver,
   EuiTableFieldDataColumnType,
-  EuiToolTip,
   PropertySort,
 } from '@elastic/eui'
 import cx from 'classnames'
@@ -67,6 +64,7 @@ import {
   OAuthSocialSource,
 } from 'uiSrc/slices/interfaces'
 import {
+  getRedisInfoSummary,
   getRedisModulesSummary,
   sendEventTelemetry,
   TelemetryEvent,
@@ -86,12 +84,16 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
 
 import { Tag } from 'uiSrc/slices/interfaces/tag'
-import { FeatureFlagComponent } from 'uiSrc/components'
-import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
-import DbStatus from '../db-status'
 
+import { FeatureFlagComponent, RiTooltip } from 'uiSrc/components'
+import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { RIResizeObserver } from 'uiSrc/components/base/utils'
+
+import DbStatus from '../db-status'
 import { TagsCell } from '../tags-cell/TagsCell'
 import { TagsCellHeader } from '../tags-cell/TagsCellHeader'
+
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -187,12 +189,13 @@ const DatabasesListWrapper = (props: Props) => {
 
     history.push(Pages.browser(id))
   }
-  const handleCheckConnectToInstance = (
+  const handleCheckConnectToInstance = async (
     event: React.MouseEvent | React.KeyboardEvent,
     { id, provider, modules }: Instance,
   ) => {
     event.preventDefault()
     const modulesSummary = getRedisModulesSummary(modules)
+    const infoData = await getRedisInfoSummary(id)
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
@@ -200,6 +203,7 @@ const DatabasesListWrapper = (props: Props) => {
         provider,
         source: 'db_list',
         ...modulesSummary,
+        ...infoData,
       },
     })
     dispatch(
@@ -403,7 +407,7 @@ const DatabasesListWrapper = (props: Props) => {
                 createdAt={createdAt}
                 isFree={cloudDetails?.free}
               />
-              <EuiToolTip
+              <RiTooltip
                 position="bottom"
                 title="Database Alias"
                 className={styles.tooltipColumnName}
@@ -428,7 +432,7 @@ const DatabasesListWrapper = (props: Props) => {
                   </ColorText>
                   <ColorText>{` ${getDbIndex(db)}`}</ColorText>
                 </Text>
-              </EuiToolTip>
+              </RiTooltip>
             </div>
           )
         },
@@ -452,18 +456,14 @@ const DatabasesListWrapper = (props: Props) => {
           return (
             <div className="host_port" data-testid="host-port">
               <Text className="copyHostPortText">{text}</Text>
-              <EuiToolTip
-                position="right"
-                content="Copy"
-                anchorClassName="copyHostPortTooltip"
-              >
+              <RiTooltip position="right" content="Copy">
                 <IconButton
                   icon={CopyIcon}
                   aria-label="Copy host:port"
                   className="copyHostPortBtn"
                   onClick={() => handleCopy(text, id)}
                 />
-              </EuiToolTip>
+              </RiTooltip>
             </div>
           )
         },
@@ -586,7 +586,7 @@ const DatabasesListWrapper = (props: Props) => {
           return (
             <>
               {databaseManagementFeature?.flag && (
-                <EuiToolTip content="Manage Tags">
+                <RiTooltip content="Manage Tags">
                   <IconButton
                     icon={TagIcon}
                     className={styles.tagsButton}
@@ -594,13 +594,12 @@ const DatabasesListWrapper = (props: Props) => {
                     data-testid={`manage-instance-tags-${instance.id}`}
                     onClick={() => handleManageInstanceTags(instance)}
                   />
-                </EuiToolTip>
+                </RiTooltip>
               )}
               {instance.cloudDetails && (
-                <EuiToolTip content="Go to Redis Cloud">
-                  <EuiLink
+                <RiTooltip content="Go to Redis Cloud">
+                  <Link
                     target="_blank"
-                    external={false}
                     href={EXTERNAL_LINKS.cloudConsole}
                     onClick={handleClickGoToCloud}
                     data-testid={`cloud-link-${instance.id}`}
@@ -609,8 +608,8 @@ const DatabasesListWrapper = (props: Props) => {
                       type={CloudLinkIcon}
                       className={styles.cloudIcon}
                     />
-                  </EuiLink>
-                </EuiToolTip>
+                  </Link>
+                </RiTooltip>
               )}
               <FeatureFlagComponent name={FeatureFlags.databaseManagement}>
                 <EuiPopover
@@ -683,7 +682,7 @@ const DatabasesListWrapper = (props: Props) => {
   )
 
   return (
-    <EuiResizeObserver onResize={onResize}>
+    <RIResizeObserver onResize={onResize}>
       {(resizeRef) => (
         <div className={styles.container} ref={resizeRef}>
           <ItemList<Instance>
@@ -704,7 +703,7 @@ const DatabasesListWrapper = (props: Props) => {
           />
         </div>
       )}
-    </EuiResizeObserver>
+    </RIResizeObserver>
   )
 }
 

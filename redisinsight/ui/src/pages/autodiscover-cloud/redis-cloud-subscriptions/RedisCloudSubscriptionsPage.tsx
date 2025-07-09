@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { isNumber } from 'lodash'
-import { EuiBasicTableColumn, EuiToolTip } from '@elastic/eui'
 
 import { Pages } from 'uiSrc/constants'
 import {
@@ -12,9 +11,9 @@ import {
   RedisCloudSubscription,
   RedisCloudSubscriptionStatus,
   RedisCloudSubscriptionStatusText,
-  RedisCloudSubscriptionType,
   RedisCloudSubscriptionTypeText,
 } from 'uiSrc/slices/interfaces'
+import { RiTooltip } from 'uiSrc/components'
 import {
   cloudSelector,
   fetchInstancesRedisCloud,
@@ -28,6 +27,7 @@ import { oauthCloudUserSelector } from 'uiSrc/slices/oauth/cloud'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { ToastDangerIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
+import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import RedisCloudSubscriptions from './RedisCloudSubscriptions/RedisCloudSubscriptions'
 
 import styles from './styles.module.scss'
@@ -125,18 +125,19 @@ const RedisCloudSubscriptionsPage = () => {
     </ul>
   )
 
-  const columns: EuiBasicTableColumn<RedisCloudSubscription>[] = [
+  const columns: ColumnDefinition<RedisCloudSubscription>[] = [
     {
-      field: 'alert',
-      className: 'column_status_alert',
-      name: '',
-      width: '20px',
-      align: 'center',
-      dataType: 'auto',
-      render: function AlertIcon(_, { status, numberOfDatabases }) {
+      id: 'alert',
+      accessorKey: 'alert',
+      header: '',
+      cell: function AlertIcon({
+        row: {
+          original: { status, numberOfDatabases },
+        },
+      }) {
         return status !== RedisCloudSubscriptionStatus.Active ||
           numberOfDatabases === 0 ? (
-          <EuiToolTip
+          <RiTooltip
             title={
               <p>
                 This subscription is not available for one of the following
@@ -151,91 +152,100 @@ const RedisCloudSubscriptionsPage = () => {
               icon={ToastDangerIcon}
               aria-label="subscription alert"
             />
-          </EuiToolTip>
+          </RiTooltip>
         ) : null
       },
     },
     {
-      field: 'id',
-      className: 'column_id',
-      name: 'Id',
-      dataType: 'string',
-      sortable: true,
-      width: '90px',
-      truncateText: true,
-      render: (id: string) => <span data-testid={`id_${id}`}>{id}</span>,
+      id: 'id',
+      accessorKey: 'id',
+      header: 'Id',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { id },
+        },
+      }) => <span data-testid={`id_${id}`}>{id}</span>,
     },
     {
-      field: 'name',
-      className: 'column_name',
-      name: 'Subscription',
-      dataType: 'auto',
-      truncateText: true,
-      sortable: true,
-      width: '385px',
-      render: function InstanceCell(name = '') {
+      id: 'name',
+      accessorKey: 'name',
+      header: 'Subscription',
+      enableSorting: true,
+      cell: function InstanceCell({
+        row: {
+          original: { name },
+        },
+      }) {
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
           <div role="presentation">
-            <EuiToolTip
+            <RiTooltip
               position="bottom"
               title="Subscription"
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
               <Text>{cellContent}</Text>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
     },
     {
-      field: 'type',
-      className: 'column_type',
-      name: 'Type',
-      width: '120px',
-      dataType: 'string',
-      sortable: true,
-      render: (type: RedisCloudSubscriptionType) =>
-        RedisCloudSubscriptionTypeText[type] ?? '-',
+      id: 'type',
+      accessorKey: 'type',
+      header: 'Type',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { type },
+        },
+      }) => RedisCloudSubscriptionTypeText[type] ?? '-',
     },
     {
-      field: 'provider',
-      className: 'column_provider',
-      name: 'Cloud provider',
-      width: '155px',
-      dataType: 'string',
-      sortable: true,
-      render: (provider: string) => provider ?? '-',
+      id: 'provider',
+      accessorKey: 'provider',
+      header: 'Cloud provider',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { provider },
+        },
+      }) => provider ?? '-',
     },
     {
-      field: 'region',
-      className: 'column_region',
-      name: 'Region',
-      width: '115px',
-      dataType: 'string',
-      sortable: true,
-      render: (region: string) => region ?? '-',
+      id: 'region',
+      accessorKey: 'region',
+      header: 'Region',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { region },
+        },
+      }) => region ?? '-',
     },
     {
-      field: 'numberOfDatabases',
-      className: 'column_num_of_dbs',
-      name: '# databases',
-      width: '120px',
-      dataType: 'string',
-      sortable: true,
-      render: (numberOfDatabases: number) =>
-        isNumber(numberOfDatabases) ? numberOfDatabases : '-',
+      id: 'numberOfDatabases',
+      accessorKey: 'numberOfDatabases',
+      header: '# databases',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { numberOfDatabases },
+        },
+      }) => (isNumber(numberOfDatabases) ? numberOfDatabases : '-'),
     },
     {
-      field: 'status',
-      className: 'column_id',
-      name: 'Status',
-      dataType: 'string',
-      width: '135px',
-      sortable: true,
-      render: (status: RedisCloudSubscriptionStatus) =>
-        RedisCloudSubscriptionStatusText[status] ?? '-',
+      id: 'status',
+      accessorKey: 'status',
+      header: 'Status',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { status },
+        },
+      }) => RedisCloudSubscriptionStatusText[status] ?? '-',
     },
   ]
 

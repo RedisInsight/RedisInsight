@@ -1,7 +1,5 @@
 import React from 'react'
-import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiBasicTableColumn, EuiInMemoryTable } from '@elastic/eui'
 import { appInfoSelector, setShortcutsFlyoutState } from 'uiSrc/slices/app/info'
 import { KeyboardShortcut } from 'uiSrc/components'
 import { BuildType } from 'uiSrc/constants/env'
@@ -12,44 +10,42 @@ import {
   DrawerBody,
 } from 'uiSrc/components/base/layout/drawer'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 
 import { SHORTCUTS, ShortcutGroup, separator } from './schema'
-
-import styles from './styles.module.scss'
 
 const ShortcutsFlyout = () => {
   const { isShortcutsFlyoutOpen, server } = useSelector(appInfoSelector)
 
   const dispatch = useDispatch()
 
-  const tableColumns: EuiBasicTableColumn<any>[] = [
+  const tableColumns: ColumnDefinition<any>[] = [
     {
-      name: '',
-      field: 'description',
-      width: '60%',
+      header: 'Description',
+      id: 'description',
+      accessorKey: 'description',
+      enableSorting: false,
     },
     {
-      name: '',
-      field: 'keys',
-      width: '40%',
-      render: (items: string[]) => (
-        <KeyboardShortcut items={items} separator={separator} transparent />
-      ),
+      header: 'Shortcut',
+      id: 'keys',
+      accessorKey: 'keys',
+      enableSorting: false,
+      cell: ({
+        row: {
+          original: { keys },
+        },
+      }) => <KeyboardShortcut items={keys} separator={separator} transparent />,
     },
   ]
 
   const ShortcutsTable = ({ name, items }: ShortcutGroup) => (
-    <div key={name}>
+    <div key={name} data-testid={`shortcuts-table-${name}`}>
       <Title size="XS" data-test-subj={`shortcuts-section-${name}`}>
         {name}
       </Title>
       <Spacer size="m" />
-      <EuiInMemoryTable
-        className={cx('inMemoryTableDefault', styles.table)}
-        columns={tableColumns}
-        items={items}
-        responsive={false}
-      />
+      <Table columns={tableColumns} data={items} defaultSorting={[]} />
       <Spacer size="xl" />
     </div>
   )

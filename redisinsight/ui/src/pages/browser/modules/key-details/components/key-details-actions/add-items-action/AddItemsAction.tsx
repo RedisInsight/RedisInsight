@@ -1,7 +1,7 @@
 import React from 'react'
-import { EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { MIDDLE_SCREEN_RESOLUTION } from 'uiSrc/constants'
+import { RiTooltip } from 'uiSrc/components'
 
 import { PlusInCircleIcon } from 'uiSrc/components/base/icons'
 import {
@@ -17,14 +17,15 @@ export interface Props {
 }
 
 const AddItemsAction = ({ width, title, openAddItemPanel }: Props) => (
-  <EuiToolTip
+  <RiTooltip
     content={width > MIDDLE_SCREEN_RESOLUTION ? '' : title}
     position="left"
-    anchorClassName={cx(styles.actionBtn, {
-      [styles.withText]: width > MIDDLE_SCREEN_RESOLUTION,
-    })}
   >
-    <>
+    <span
+      className={cx(styles.actionBtn, {
+        [styles.withText]: width > MIDDLE_SCREEN_RESOLUTION,
+      })}
+    >
       {width > MIDDLE_SCREEN_RESOLUTION ? (
         <SecondaryButton
           size="small"
@@ -43,8 +44,8 @@ const AddItemsAction = ({ width, title, openAddItemPanel }: Props) => (
           data-testid="add-key-value-items-btn"
         />
       )}
-    </>
-  </EuiToolTip>
+    </span>
+  </RiTooltip>
 )
 
 export { AddItemsAction }

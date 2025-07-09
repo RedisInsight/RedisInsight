@@ -2,9 +2,9 @@ import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
-import { EuiIcon, EuiLink, EuiPanel, EuiToolTip } from '@elastic/eui'
-
+import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
+
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
   FeatureFlagComponent,
@@ -13,6 +13,7 @@ import {
   RecommendationBody,
   RecommendationCopyComponent,
   RecommendationVoting,
+  RiTooltip,
 } from 'uiSrc/components'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -31,7 +32,11 @@ import { findTutorialPath } from 'uiSrc/utils'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+
 import { RiAccordion } from 'uiSrc/components/base/display/accordion/RiAccordion'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { Card } from 'uiSrc/components/base/layout'
+
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
@@ -92,28 +97,23 @@ const Recommendations = () => {
     >
       <FlexItem onClick={onRedisStackClick}>
         {redisStack && (
-          <EuiLink
-            external={false}
-            target="_blank"
-            href={EXTERNAL_LINKS.redisStack}
-            data-testid={`${id}-redis-stack-link`}
-          >
-            <EuiToolTip
-              content="Redis Stack"
-              position="top"
-              display="inlineBlock"
-              anchorClassName="flex-row"
+            <Link
+              target="_blank"
+              href={EXTERNAL_LINKS.redisStack}
+              className={styles.redisStackLink}
+              data-testid={`${id}-redis-stack-link`}
             >
-              <EuiIcon
-                type={
-                  theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
-                }
-                className={styles.redisStackIcon}
-                data-testid={`${id}-redis-stack-icon`}
-              />
-            </EuiToolTip>
-          </EuiLink>
-        )}
+              <RiTooltip content="Redis Stack" position="top">
+                <EuiIcon
+                  type={
+                    theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
+                  }
+                  className={styles.redisStackIcon}
+                  data-testid={`${id}-redis-stack-icon`}
+                />
+              </RiTooltip>
+            </Link>
+          )}
       </FlexItem>
       <FlexItem>{title}</FlexItem>
     </Row>
@@ -187,7 +187,7 @@ const Recommendations = () => {
                   onOpenChange={(isOpen) => handleToggle(isOpen, id)}
                   data-testid={`${id}-accordion`}
                 >
-                  <EuiPanel className={styles.accordionContent} color="subdued">
+                  <Card className={styles.accordionContent}>
                     <RecommendationBody
                       elements={content}
                       params={params}
@@ -202,7 +202,7 @@ const Recommendations = () => {
                         }
                       />
                     )}
-                  </EuiPanel>
+                  </Card>
                 </RiAccordion>
                 <div className={styles.footer}>
                   <FeatureFlagComponent name={FeatureFlags.envDependent}>

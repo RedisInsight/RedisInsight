@@ -298,7 +298,7 @@ describe('KeyList', () => {
   it('should call proper action after click on delete', async () => {
     const { container } = render(<KeyList {...propsMock} />)
 
-    fireEvent.mouseOver(
+    fireEvent.focus(
       container.querySelectorAll(
         '.ReactVirtualized__Table__row[role="row"]',
       )[0],

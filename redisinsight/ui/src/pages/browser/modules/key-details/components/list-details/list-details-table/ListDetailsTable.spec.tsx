@@ -16,7 +16,7 @@ import {
   mockedStore,
   render,
   screen,
-  waitForEuiToolTipVisible,
+  waitForRiTooltipVisible,
 } from 'uiSrc/utils/test-utils'
 import {
   GZIP_COMPRESSED_VALUE_1,
@@ -172,9 +172,9 @@ describe('ListDetailsTable', () => {
       fireEvent.click(editBtn)
 
       await act(async () => {
-        fireEvent.mouseOver(editBtn)
+        fireEvent.focus(editBtn)
       })
-      await waitForEuiToolTipVisible()
+      await waitForRiTooltipVisible()
 
       expect(editBtn).toBeDisabled()
       expect(screen.getByTestId('list_edit-tooltip-0')).toHaveTextContent(
@@ -206,9 +206,9 @@ describe('ListDetailsTable', () => {
       const editBtn = screen.getByTestId('list_edit-btn-0')
 
       await act(async () => {
-        fireEvent.mouseOver(editBtn)
+        fireEvent.focus(editBtn)
       })
-      await waitForEuiToolTipVisible()
+      await waitForRiTooltipVisible()
 
       expect(editBtn).toBeDisabled()
       expect(screen.getByTestId('list_edit-tooltip-0')).toHaveTextContent(

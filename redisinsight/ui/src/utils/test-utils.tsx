@@ -228,21 +228,25 @@ const clearStoreActions = (actions: any[]) => {
 }
 
 /**
- * Ensure the EuiToolTip being tested is open and visible before continuing
+ * Ensure the RiTooltip being tested is open and visible before continuing
  */
-const waitForEuiToolTipVisible = async (timeout = 500) => {
+const waitForRiTooltipVisible = async (timeout = 500) => {
   await waitFor(
     () => {
-      const tooltip = document.querySelector('.euiToolTipPopover')
+      const tooltip = document.querySelector(
+        '[data-radix-popper-content-wrapper]',
+      )
       expect(tooltip).toBeInTheDocument()
     },
     { timeout }, // Account for long delay on tooltips
   )
 }
 
-const waitForEuiToolTipHidden = async () => {
+const waitForRiTooltipHidden = async () => {
   await waitFor(() => {
-    const tooltip = document.querySelector('.euiToolTipPopover')
+    const tooltip = document.querySelector(
+      '[data-radix-popper-content-wrapper]',
+    )
     expect(tooltip).toBeNull()
   })
 }
@@ -252,6 +256,18 @@ const waitForEuiPopoverVisible = async (timeout = 500) => {
     () => {
       const tooltip = document.querySelector('.euiPopover__panel-isOpen')
       expect(tooltip).toBeInTheDocument()
+    },
+    { timeout }, // Account for long delay on popover
+  )
+}
+
+export const waitForRedisUiSelectVisible = async (timeout = 500) => {
+  await waitFor(
+    () => {
+      const element = document.querySelector(
+        '[data-radix-popper-content-wrapper]',
+      )
+      expect(element).toBeInTheDocument()
     },
     { timeout }, // Account for long delay on popover
   )
@@ -405,7 +421,7 @@ export {
   renderHook,
   renderWithRouter,
   clearStoreActions,
-  waitForEuiToolTipVisible,
-  waitForEuiToolTipHidden,
+  waitForRiTooltipVisible,
+  waitForRiTooltipHidden,
   waitForEuiPopoverVisible,
 }

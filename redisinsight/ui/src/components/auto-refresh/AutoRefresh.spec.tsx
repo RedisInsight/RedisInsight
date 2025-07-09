@@ -316,15 +316,15 @@ describe('AutoRefresh', () => {
     render(
       <AutoRefresh
         {...instance(mockedProps)}
-        disabled={true}
+        disabled
         disabledRefreshButtonMessage={tooltipText}
       />,
     )
 
-    fireEvent.mouseOver(screen.getByTestId('refresh-btn'))
+    fireEvent.focus(screen.getByTestId('refresh-btn'))
     await screen.findByTestId('refresh-tooltip')
     expect(screen.getByTestId('refresh-tooltip')).toHaveTextContent(
-      new RegExp(`^${tooltipText}$`),
+      new RegExp(`^${tooltipText}`),
     )
   })
 })

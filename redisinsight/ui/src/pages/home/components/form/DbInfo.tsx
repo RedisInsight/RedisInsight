@@ -1,11 +1,11 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { capitalize } from 'lodash'
 import cx from 'classnames'
 
 import { ColorText, Text } from 'uiSrc/components/base/text'
-import { DatabaseListModules } from 'uiSrc/components'
+import { DatabaseListModules, RiTooltip } from 'uiSrc/components'
 import { BuildType } from 'uiSrc/constants/env'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { ConnectionType } from 'uiSrc/slices/interfaces'
@@ -45,10 +45,9 @@ const DbInfo = (props: Props) => {
   const { server } = useSelector(appInfoSelector)
 
   const AppendEndpoints = () => (
-    <EuiToolTip
+    <RiTooltip
       title="Host:port"
       position="left"
-      anchorClassName={styles.anchorEndpoints}
       content={
         <ul className={styles.endpointsList}>
           {nodes?.map(({ host: eHost, port: ePort }) => (
@@ -67,7 +66,7 @@ const DbInfo = (props: Props) => {
         title=""
         style={{ cursor: 'pointer' }}
       />
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   return (

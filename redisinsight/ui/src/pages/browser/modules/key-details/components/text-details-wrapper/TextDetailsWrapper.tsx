@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react'
 
-import { EuiToolTip } from '@elastic/eui'
-
+import { RiTooltip } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
@@ -21,11 +20,7 @@ const TextDetailsWrapper = ({
 
   return (
     <div className={styles.container} data-testid={getDataTestid('details')}>
-      <EuiToolTip
-        content="Close"
-        position="left"
-        anchorClassName={styles.closeRightPanel}
-      >
+      <RiTooltip content="Close" position="left">
         <IconButton
           icon={CancelSlimIcon}
           aria-label="Close key"
@@ -33,7 +28,7 @@ const TextDetailsWrapper = ({
           onClick={() => onClose()}
           data-testid={getDataTestid('close-key-btn')}
         />
-      </EuiToolTip>
+      </RiTooltip>
       <Row centered>
         <FlexItem className={styles.textWrapper}>
           <div>{children}</div>

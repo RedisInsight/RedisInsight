@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import cx from 'classnames'
-import { EuiToolTip } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
@@ -26,6 +25,7 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { LightBulbIcon } from 'uiSrc/components/base/icons'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -80,7 +80,7 @@ const InsightsTrigger = (props: Props) => {
 
   return (
     <div className={cx(styles.container, { [styles.isOpen]: isInsightsOpen })}>
-      <EuiToolTip
+      <RiTooltip
         title={isHighlighted && instanceId ? undefined : 'Insights'}
         content={
           isHighlighted && instanceId
@@ -100,7 +100,7 @@ const InsightsTrigger = (props: Props) => {
             <span className={styles.highlighting} />
           )}
         </IconButton>
-      </EuiToolTip>
+      </RiTooltip>
     </div>
   )
 }

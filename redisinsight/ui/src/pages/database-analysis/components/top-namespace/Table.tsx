@@ -1,14 +1,6 @@
-import { forIn } from 'lodash'
-import React, { useEffect, useState } from 'react'
-import {
-  EuiBasicTableColumn,
-  EuiInMemoryTable,
-  EuiToolTip,
-  PropertySort,
-} from '@elastic/eui'
+import React from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import cx from 'classnames'
 
 import {
   extrapolate,
@@ -18,7 +10,7 @@ import {
   Nullable,
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
-import { GroupBadge } from 'uiSrc/components'
+import { GroupBadge, RiTooltip } from 'uiSrc/components'
 import { Pages } from 'uiSrc/constants'
 import {
   changeSearchMode,
@@ -39,10 +31,9 @@ import {
   setBrowserTreeDelimiter,
 } from 'uiSrc/slices/app/context'
 import { TableTextBtn } from 'uiSrc/pages/database-analysis/components/base/TableTextBtn'
-import { IconButton } from 'uiSrc/components/base/forms/buttons'
-import { ChevronDownIcon, ChevronUpIcon } from 'uiSrc/components/base/icons'
-import { NspSummary } from 'apiSrc/modules/database-analysis/models/nsp-summary'
-import { NspTypeSummary } from 'apiSrc/modules/database-analysis/models/nsp-type-summary'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
+import { ColorText } from 'uiSrc/components/base/text'
+import { NspSummary } from 'apiSrc/modules/database-analysis/models'
 
 import styles from './styles.module.scss'
 
@@ -55,21 +46,14 @@ export interface Props {
   dataTestid?: string
 }
 
-const NameSpacesTable = (props: Props) => {
-  const {
-    data,
-    defaultSortField,
-    delimiter,
-    isExtrapolated,
-    extrapolation,
-    dataTestid = '',
-  } = props
-  const [sort, setSort] = useState<PropertySort>({
-    field: defaultSortField,
-    direction: 'desc',
-  })
-  const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState<any>({})
-
+const NameSpacesTable = ({
+  data = [],
+  defaultSortField,
+  delimiter,
+  isExtrapolated,
+  extrapolation,
+  dataTestid = '',
+}: Props) => {
   const history = useHistory()
   const dispatch = useDispatch()
 
@@ -77,22 +61,7 @@ const NameSpacesTable = (props: Props) => {
 
   const { viewType } = useSelector(keysSelector)
 
-  useEffect(() => {
-    setItemIdToExpandedRowMap((prev: any) => {
-      const items: any = {}
-      forIn(prev, (_val, nsp: string) => {
-        const item = data?.find((d) => d.nsp === nsp)
-
-        if (item) {
-          items[nsp] = expandedRow(item)
-        }
-      })
-
-      return items
-    })
-  }, [isExtrapolated])
-
-  const handleRedirect = (nsp: string, filter: string) => {
+  const handleRedirect = (nsp: string, filter: string | null) => {
     dispatch(changeSearchMode(SearchMode.Pattern))
     dispatch(setBrowserTreeDelimiter([{ label: delimiter }]))
     dispatch(setFilter(filter))
@@ -116,24 +85,8 @@ const NameSpacesTable = (props: Props) => {
     history.push(Pages.browser(instanceId))
   }
 
-  const toggleDetails = (item: NspSummary) => {
-    const itemIdToExpandedRowMapValues = { ...itemIdToExpandedRowMap }
-    const nsp = item.nsp as string
-
-    if (itemIdToExpandedRowMapValues[nsp]) {
-      delete itemIdToExpandedRowMapValues[nsp]
-    } else {
-      itemIdToExpandedRowMapValues[nsp] = expandedRow(item)
-    }
-    setItemIdToExpandedRowMap(itemIdToExpandedRowMapValues)
-  }
-
-  const setDataTestId = ({ nsp }: { nsp: string }) => ({
-    'data-testid': `row-${nsp}`,
-  })
-
   const expandedRow = (item: NspSummary) => (
-    <div style={{ width: '100%' }}>
+    <div>
       {item.types.map((type, index) => {
         const extrapolated = extrapolate(type.memory, {
           apply: isExtrapolated,
@@ -150,9 +103,8 @@ const NameSpacesTable = (props: Props) => {
             data-testid={`expanded-${item.nsp}-${index}`}
           >
             <div className="truncateText">
-              <EuiToolTip
+              <RiTooltip
                 title="Key Pattern"
-                anchorClassName={styles.tooltip}
                 position="bottom"
                 content={`${item.nsp}:*`}
               >
@@ -162,23 +114,24 @@ const NameSpacesTable = (props: Props) => {
                 >
                   {`${item.nsp}${delimiter}*`}
                 </TableTextBtn>
-              </EuiToolTip>
+              </RiTooltip>
             </div>
-            <div className={styles.badgesContainer}>
+            <div>
               <GroupBadge type={type.type} />
             </div>
-            <div className={styles.rightAlign}>
-              <span className={styles.count} data-testid="usedMemory-value">
-                {formatNumber}
-              </span>
-              <span className={styles.valueUnit}>{size}</span>
+            <div>
+              <ColorText color="subdued" data-testid="usedMemory-value">
+                {formatNumber} {size}
+              </ColorText>
             </div>
-            <div className={styles.rightAlign}>
-              {extrapolate(
-                type.keys,
-                { extrapolation, apply: isExtrapolated },
-                (val: number) => numberWithSpaces(Math.round(val)),
-              )}
+            <div>
+              <ColorText color="subdued">
+                {extrapolate(
+                  type.keys,
+                  { extrapolation, apply: isExtrapolated },
+                  (val: number) => numberWithSpaces(Math.round(val)),
+                )}
+              </ColorText>
             </div>
           </div>
         )
@@ -186,59 +139,64 @@ const NameSpacesTable = (props: Props) => {
     </div>
   )
 
-  const columns: EuiBasicTableColumn<NspSummary>[] = [
+  const columns: ColumnDefinition<NspSummary>[] = [
     {
-      name: 'Key Pattern',
-      field: 'nsp',
-      dataType: 'string',
-      height: '42px',
-      align: 'left',
-      width: 'auto',
-      sortable: true,
-      truncateText: true,
-      className: 'nsp-cell',
-      render: (nsp: string, { types }: { types: any[] }) => {
+      header: 'Key Pattern',
+      id: 'nsp',
+      accessorKey: 'nsp',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { nsp, types },
+        },
+      }) => {
         const filterType = types.length > 1 ? null : types[0].type
         const textWithDelimiter = `${nsp}${delimiter}*`
         const cellContent = textWithDelimiter?.substring(0, 200)
         const tooltipContent = formatLongName(textWithDelimiter)
         return (
-          <div className={cx(styles.delimiter, 'truncateText')}>
-            <EuiToolTip
+          <div className="truncateText">
+            <RiTooltip
               title="Key Pattern"
-              anchorClassName={styles.tooltip}
               position="bottom"
               content={tooltipContent}
             >
-              <TableTextBtn onClick={() => handleRedirect(nsp, filterType)}>
+              <TableTextBtn
+                onClick={() => handleRedirect(nsp as string, filterType)}
+              >
                 {cellContent}
               </TableTextBtn>
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
     },
     {
-      name: 'Data Type',
-      field: 'types',
-      width: '32%',
-      align: 'left',
-      className: 'dataType',
-      render: (value: NspTypeSummary[]) => (
-        <div className={styles.badgesContainer}>
+      header: 'Data Type',
+      id: 'types',
+      accessorKey: 'types',
+      cell: ({
+        row: {
+          original: { types: value },
+        },
+      }) => (
+        <div>
           {value.map(({ type }) => (
-            <GroupBadge key={type} type={type} className={styles.badge} />
+            <GroupBadge key={type} type={type} />
           ))}
         </div>
       ),
     },
     {
-      name: 'Total Memory',
-      field: 'memory',
-      width: '13%',
-      sortable: true,
-      align: 'right',
-      render: (value: number) => {
+      header: 'Total Memory',
+      id: 'memory',
+      accessorKey: 'memory',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { memory: value },
+        },
+      }) => {
         const extrapolated = extrapolate(value, {
           apply: isExtrapolated,
           extrapolation,
@@ -253,93 +211,65 @@ const NameSpacesTable = (props: Props) => {
         )
 
         return (
-          <EuiToolTip
+          <RiTooltip
             content={`${formatValueBytes} B`}
             data-testid="usedMemory-tooltip"
           >
-            <>
-              <span
-                className={styles.count}
-                data-testid={`nsp-usedMemory-value=${value}`}
-              >
-                {formatValue}
-              </span>
-              <span className={styles.valueUnit}>{size}</span>
-            </>
-          </EuiToolTip>
+            <ColorText
+              color="subdued"
+              data-testid={`nsp-usedMemory-value=${value}`}
+            >
+              {formatValue} {size}
+            </ColorText>
+          </RiTooltip>
         )
       },
     },
     {
-      name: 'Total Keys',
-      field: 'keys',
-      width: '11%',
-      sortable: true,
-      align: 'right',
-      render: (value: number) => (
-        <span className={styles.count} data-testid={`keys-value-${value}`}>
-          {extrapolate(
-            value,
-            { extrapolation, apply: isExtrapolated },
-            (val: number) => numberWithSpaces(Math.round(val)),
-          )}
+      header: 'Total Keys',
+      id: 'keys',
+      accessorKey: 'keys',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { keys: value },
+        },
+      }) => (
+        <span data-testid={`keys-value-${value}`}>
+          <ColorText color="subdued">
+            {extrapolate(
+              value,
+              { extrapolation, apply: isExtrapolated },
+              (val: number) => numberWithSpaces(Math.round(val)),
+            )}
+          </ColorText>
         </span>
       ),
     },
     {
-      name: '\u00A0',
-      width: '42px',
-      className: 'expandBtn',
-      isExpander: true,
-      render: (item: NspSummary) => {
-        const { types, nsp } = item
-        return (
-          <>
-            {types.length > 1 && (
-              <IconButton
-                size="S"
-                style={{ marginRight: '6px' }}
-                onClick={() => toggleDetails(item)}
-                aria-label={
-                  itemIdToExpandedRowMap[nsp as string] ? 'Collapse' : 'Expand'
-                }
-                icon={
-                  itemIdToExpandedRowMap[nsp as string]
-                    ? ChevronUpIcon
-                    : ChevronDownIcon
-                }
-                data-testid={`expand-arrow-${nsp}`}
-              />
-            )}
-          </>
-        )
-      },
+      id: 'expand',
+      header: () => null,
+      size: 40,
+      cell: ({ row }) => <Table.ExpandRowButton row={row} />,
     },
   ]
 
   return (
-    <div className={styles.wrapper} data-testid={dataTestid}>
-      <div className={styles.tableWrapper}>
-        <EuiInMemoryTable
-          items={data ?? []}
-          columns={columns}
-          className={cx(
-            'inMemoryTableDefault',
-            'noHeaderBorders',
-            'stickyHeader',
-            'fixedLayout',
-            styles.table,
-          )}
-          responsive={false}
-          itemId="nsp"
-          itemIdToExpandedRowMap={itemIdToExpandedRowMap}
-          isExpandable
-          rowProps={setDataTestId}
-          sorting={{ sort }}
-          onTableChange={({ sort }: any) => setSort(sort)}
-          data-testid="nsp-table"
-        />
-      </div>
+    <div data-testid={dataTestid}>
+      <Table
+        columns={columns}
+        data={data ?? []}
+        defaultSorting={[
+          {
+            id: defaultSortField,
+            desc: true,
+          },
+        ]}
+        stripedRows
+        expandRowOnClick
+        getIsRowExpandable={(row) => row.types.length > 1}
+        renderExpandedRow={({ original }) => expandedRow(original)}
+      />
     </div>
   )
 }

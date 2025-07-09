@@ -1,11 +1,11 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiToolTip } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
 import { LoadingContent } from 'uiSrc/components/base/layout'
 import { Text } from 'uiSrc/components/base/text'
 import { Maybe, formatBytes } from 'uiSrc/utils'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -55,15 +55,14 @@ const KeyRowSize = (props: Props) => {
           className="truncateText"
           data-testid={`size-${nameString}`}
         >
-          <EuiToolTip
+          <RiTooltip
             title="Key Size"
             className={styles.tooltip}
-            anchorClassName="truncateText"
             position="right"
             content={<>{formatBytes(size, 3)}</>}
           >
             <>{formatBytes(size, 0)}</>
-          </EuiToolTip>
+          </RiTooltip>
         </div>
       </Text>
     </>

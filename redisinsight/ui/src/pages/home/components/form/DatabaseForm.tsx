@@ -2,7 +2,7 @@ import React, { ChangeEvent } from 'react'
 import { useSelector } from 'react-redux'
 import { FormikProps } from 'formik'
 
-import { EuiFieldText, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiIcon } from '@elastic/eui'
 import { BuildType } from 'uiSrc/constants/env'
 import { SECURITY_FIELD } from 'uiSrc/constants'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
@@ -13,6 +13,7 @@ import {
   selectOnFocus,
   validateField,
 } from 'uiSrc/utils'
+import { RiTooltip } from 'uiSrc/components'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
@@ -45,7 +46,7 @@ const DatabaseForm = (props: Props) => {
   const { server } = useSelector(appInfoSelector)
 
   const AppendHostName = () => (
-    <EuiToolTip
+    <RiTooltip
       title={
         <div>
           <p>
@@ -57,7 +58,6 @@ const DatabaseForm = (props: Props) => {
         </div>
       }
       className="homePage_tooltip"
-      anchorClassName="inputAppendIcon"
       position="right"
       content={
         <ul className="homePage_toolTipUl">
@@ -77,7 +77,7 @@ const DatabaseForm = (props: Props) => {
       }
     >
       <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   const isShowPort =

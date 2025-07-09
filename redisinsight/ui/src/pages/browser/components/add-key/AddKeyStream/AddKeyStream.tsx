@@ -1,6 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { EuiForm, EuiPanel } from '@elastic/eui'
+import { EuiForm } from '@elastic/eui'
 import { addStreamKey } from 'uiSrc/slices/browser/keys'
 import {
   entryIdRegex,
@@ -106,14 +106,8 @@ const AddKeyStream = (props: Props) => {
         Submit
       </PrimaryButton>
       <AddKeyFooter>
-        <EuiPanel
-          color="transparent"
-          className="flexItemNoFullWidth"
-          hasShadow={false}
-          borderRadius="none"
-          style={{ border: 'none' }}
-        >
-          <Row justify="end" gap="m">
+        <>
+          <Row justify="end" gap="m" style={{ padding: 18 }}>
             <FlexItem>
               <div>
                 <SecondaryButton
@@ -137,7 +131,7 @@ const AddKeyStream = (props: Props) => {
               </div>
             </FlexItem>
           </Row>
-        </EuiPanel>
+        </>
       </AddKeyFooter>
     </EuiForm>
   )

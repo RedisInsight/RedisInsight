@@ -2,18 +2,12 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty } from 'lodash'
-import {
-  EuiFieldText,
-  EuiForm,
-  EuiRadioGroup,
-  EuiToolTip,
-  keys,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm, keys } from '@elastic/eui'
 
 import { useSelector } from 'react-redux'
 import { validateField } from 'uiSrc/utils/validations'
 import validationErrors from 'uiSrc/constants/validationErrors'
-import { FeatureFlagComponent } from 'uiSrc/components'
+import { FeatureFlagComponent, RiTooltip } from 'uiSrc/components'
 import { FeatureFlags } from 'uiSrc/constants'
 import { CloudConnectionOptions } from 'uiSrc/pages/home/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
@@ -30,6 +24,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { Text } from 'uiSrc/components/base/text'
+import { RiRadioGroup } from 'uiSrc/components/base/forms/radio-group/RadioGroup'
 import { ICloudConnectionSubmit } from '../CloudConnectionFormWrapper'
 
 import styles from '../styles.module.scss'
@@ -58,8 +53,16 @@ const fieldDisplayNames: Values = {
 }
 
 const options = [
-  { id: CloudConnectionOptions.Account, label: 'Redis Cloud account' },
-  { id: CloudConnectionOptions.ApiKeys, label: 'Redis Cloud API keys' },
+  {
+    id: CloudConnectionOptions.Account,
+    value: CloudConnectionOptions.Account,
+    label: 'Redis Cloud account',
+  },
+  {
+    id: CloudConnectionOptions.ApiKeys,
+    value: CloudConnectionOptions.ApiKeys,
+    label: 'Redis Cloud API keys',
+  },
 ]
 
 const CloudConnectionForm = (props: Props) => {
@@ -127,9 +130,8 @@ const CloudConnectionForm = (props: Props) => {
   )
 
   const SubmitButton = ({ onClick, submitIsDisabled }: ISubmitButton) => (
-    <EuiToolTip
+    <RiTooltip
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       title={
         submitIsDisabled
           ? validationErrors.REQUIRED_TITLE(Object.values(errors).length)
@@ -137,7 +139,7 @@ const CloudConnectionForm = (props: Props) => {
       }
       content={
         submitIsDisabled ? (
-          <span className="euiToolTip__content">
+          <span>
             {Object.values(errors).map((err) => [err, <br key={err} />])}
           </span>
         ) : null
@@ -154,7 +156,7 @@ const CloudConnectionForm = (props: Props) => {
       >
         Submit
       </PrimaryButton>
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   const Footer = () => {
@@ -232,23 +234,23 @@ const CloudConnectionForm = (props: Props) => {
   return (
     <div className="getStartedForm eui-yScroll">
       <FeatureFlagComponent name={FeatureFlags.cloudSso}>
-        <Col gap="s">
+        <Col gap="m">
           <FlexItem grow>
             <Text color="subdued" size="s">
               Connect with:
             </Text>
           </FlexItem>
           <FlexItem grow>
-            <EuiRadioGroup
-              options={options}
-              idSelected={type}
-              className={styles.cloudOptions}
+            <RiRadioGroup
+              layout="horizontal"
+              items={options}
+              value={type}
               onChange={(id) => setType(id as CloudConnectionOptions)}
               data-testid="cloud-options"
             />
           </FlexItem>
         </Col>
-        <Spacer size="s" />
+        <Spacer size="m" />
       </FeatureFlagComponent>
       {type === CloudConnectionOptions.Account && (
         <OAuthAutodiscovery

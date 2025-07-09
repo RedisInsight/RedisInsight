@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiToolTip } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import ExploreGuides from 'uiSrc/components/explore-guides'
 import { Nullable } from 'uiSrc/utils'
@@ -9,6 +8,7 @@ import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -44,19 +44,17 @@ export const NoKeySelected = (props: Props) => {
 
   return (
     <>
-      <EuiToolTip
-        content="Close"
-        position="left"
-        anchorClassName={styles.closeRightPanel}
-      >
-        <IconButton
-          icon={CancelSlimIcon}
-          aria-label="Close panel"
-          className={styles.closeBtn}
-          onClick={handleClosePanel}
-          data-testid="close-right-panel-btn"
-        />
-      </EuiToolTip>
+      <div className={styles.closeRightPanel}>
+        <RiTooltip content="Close" position="left">
+          <IconButton
+            icon={CancelSlimIcon}
+            aria-label="Close panel"
+            className={styles.closeBtn}
+            onClick={handleClosePanel}
+            data-testid="close-right-panel-btn"
+          />
+        </RiTooltip>
+      </div>
 
       <div className={styles.placeholder}>
         <Text textAlign="center" color="subdued" size="s">

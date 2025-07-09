@@ -23,9 +23,9 @@ describe('ValidationTooltip', () => {
   it('should not show tooltip when no errors are present', async () => {
     render(<ValidationTooltip {...mockedProps} />)
 
-    fireEvent.mouseOver(screen.getByTestId('child'))
+    fireEvent.focus(screen.getByTestId('child'))
 
-    const tooltip = screen.queryByTestId('connection-form-validation-tooltip')
+    const tooltip = screen.queryByTestId('validation-errors-list')
 
     expect(tooltip).not.toBeInTheDocument()
   })
@@ -39,7 +39,7 @@ describe('ValidationTooltip', () => {
       />,
     )
 
-    fireEvent.mouseOver(screen.getByTestId('child'))
+    fireEvent.focus(screen.getByTestId('child'))
 
     const tooltip = await screen.findByTestId(
       'connection-form-validation-tooltip',
@@ -58,7 +58,7 @@ describe('ValidationTooltip', () => {
       />,
     )
 
-    fireEvent.mouseOver(screen.getByTestId('child'))
+    fireEvent.focus(screen.getByTestId('child'))
 
     const tooltip = await screen.findByTestId(
       'connection-form-validation-tooltip',

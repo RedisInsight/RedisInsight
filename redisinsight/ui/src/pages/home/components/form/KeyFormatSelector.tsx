@@ -1,11 +1,11 @@
 import React from 'react'
 import { FormikProps } from 'formik'
-import { EuiSuperSelect, EuiSuperSelectOption } from '@elastic/eui'
 
 import { KeyValueFormat } from 'uiSrc/constants'
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 
 export interface Props {
   formik: FormikProps<DbConnectionInfo>
@@ -14,14 +14,14 @@ export interface Props {
 const KeyFormatSelector = (props: Props) => {
   const { formik } = props
 
-  const options: EuiSuperSelectOption<string>[] = [
+  const options = [
     {
       value: KeyValueFormat.Unicode,
-      inputDisplay: 'Unicode',
+      label: 'Unicode',
     },
     {
       value: KeyValueFormat.HEX,
-      inputDisplay: 'HEX',
+      label: 'HEX',
     },
   ]
 
@@ -29,11 +29,11 @@ const KeyFormatSelector = (props: Props) => {
     <Row gap="m">
       <FlexItem grow>
         <FormField label="Key name format">
-          <EuiSuperSelect
+          <RiSelect
             name="key-name-format"
             placeholder="Key name format"
             // TODO: fix the type
-            valueOfSelected={
+            value={
               (formik.values.keyNameFormat as unknown as string) ||
               KeyValueFormat.Unicode
             }

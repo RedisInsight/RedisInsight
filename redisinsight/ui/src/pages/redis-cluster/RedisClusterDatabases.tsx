@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import {
-  EuiBasicTableColumn,
-  EuiInMemoryTable,
-  EuiPopover,
-  EuiTableSelectionType,
-  EuiToolTip,
-  PropertySort,
-} from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import { map } from 'lodash'
 import { useSelector } from 'react-redux'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Maybe } from 'uiSrc/utils'
+import { RiTooltip } from 'uiSrc/components'
 import { InstanceRedisCluster } from 'uiSrc/slices/interfaces'
 import { clusterSelector } from 'uiSrc/slices/instances/cluster'
 import validationErrors from 'uiSrc/constants/validationErrors'
@@ -27,10 +21,11 @@ import {
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import styles from './styles.module.scss'
 
 interface Props {
-  columns: EuiBasicTableColumn<InstanceRedisCluster>[]
+  columns: ColumnDefinition<InstanceRedisCluster>[]
   onClose: () => void
   onBack: () => void
   onSubmit: (uids: Maybe<number>[]) => void
@@ -71,11 +66,6 @@ const RedisClusterDatabases = ({
     }
   }, [instances])
 
-  const sort: PropertySort = {
-    field: 'name',
-    direction: 'asc',
-  }
-
   const handleSubmit = () => {
     onSubmit(map(selection, 'uid'))
   }
@@ -90,9 +80,15 @@ const RedisClusterDatabases = ({
 
   const isSubmitDisabled = () => selection.length < 1
 
-  const selectionValue: EuiTableSelectionType<InstanceRedisCluster> = {
-    onSelectionChange: (selected: InstanceRedisCluster[]) =>
-      setSelection(selected),
+  const selectionValue = {
+    onSelectionChange: (selected: InstanceRedisCluster) =>
+      setSelection((previous) => {
+        const isSelected = previous.some((item) => item.uid === selected.uid)
+        if (isSelected) {
+          return previous.filter((item) => item.uid !== selected.uid)
+        }
+        return [...previous, selected]
+      }),
   }
 
   const onQueryChange = (term: string) => {
@@ -180,16 +176,16 @@ const RedisClusterDatabases = ({
             styles.databaseListWrapper,
           )}
         >
-          <EuiInMemoryTable
-            items={items}
-            itemId="uid"
-            loading={loading}
-            message={message}
+          <Table
             columns={columns}
-            sorting={{ sort }}
-            selection={selectionValue}
-            className={cx(styles.table, { [styles.tableEmpty]: !items.length })}
-            isSelectable
+            data={items}
+            onRowClick={selectionValue.onSelectionChange}
+            defaultSorting={[
+              {
+                id: 'name',
+                desc: false,
+              },
+            ]}
           />
           {!items.length && (
             <Text className={styles.noDatabases}>{message}</Text>
@@ -214,9 +210,8 @@ const RedisClusterDatabases = ({
           </SecondaryButton>
           <FlexItem direction="row" className={styles.footerButtonsGroup}>
             <CancelButton isPopoverOpen={isPopoverOpen} />
-            <EuiToolTip
+            <RiTooltip
               position="top"
-              anchorClassName="euiToolTip__btn-disabled"
               title={
                 isSubmitDisabled()
                   ? validationErrors.SELECT_AT_LEAST_ONE('database')
@@ -224,7 +219,7 @@ const RedisClusterDatabases = ({
               }
               content={
                 isSubmitDisabled() ? (
-                  <span className="euiToolTip__content">
+                  <span>
                     {validationErrors.NO_DBS_SELECTED}
                   </span>
                 ) : null
@@ -241,7 +236,7 @@ const RedisClusterDatabases = ({
               >
                 Add selected Databases
               </PrimaryButton>
-            </EuiToolTip>
+            </RiTooltip>
           </FlexItem>
         </Row>
       </FlexItem>

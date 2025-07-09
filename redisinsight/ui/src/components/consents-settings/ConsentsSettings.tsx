@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, forEach } from 'lodash'
-import { EuiToolTip, EuiForm, EuiLink } from '@elastic/eui'
+import { EuiForm } from '@elastic/eui'
 import cx from 'classnames'
 
-import { HorizontalRule } from 'uiSrc/components'
+import { HorizontalRule, RiTooltip } from 'uiSrc/components'
 import { compareConsents } from 'uiSrc/utils'
 import {
   updateUserConfigSettingsAction,
@@ -20,6 +20,7 @@ import { Title } from 'uiSrc/components/base/text/Title'
 import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
 import { Text } from 'uiSrc/components/base/text'
 import { SwitchInput } from 'uiSrc/components/base/inputs'
+import { Link } from 'uiSrc/components/base/link/Link'
 import ConsentOption from './ConsentOption'
 
 import styles from './styles.module.scss'
@@ -34,6 +35,7 @@ export interface IConsent {
   required: boolean
   editable: boolean
   disabled: boolean
+  linkToPrivacyPolicy: boolean
   category?: string
   since: string
   title: string
@@ -218,17 +220,6 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         <Spacer size="m" />
         {consents.length > 1 && (
           <>
-            <CallOut variant="attention">
-              <Text
-                size="s"
-                className={styles.smallText}
-                data-testid="plugin-section"
-              >
-                To avoid automatic execution of malicious code, when adding new
-                Workbench plugins, use files from trusted authors only.
-              </Text>
-            </CallOut>
-            <Spacer />
             <FlexItem>
               <Row gap="m">
                 <FlexItem>
@@ -303,14 +294,20 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
           <HorizontalRule margin="l" className={styles.requiredHR} />
           <Spacer size="m" />
           <Text color="subdued" size="s" className={styles.smallText}>
-            To use Redis Insight, please accept the terms and conditions:{' '}
-            <EuiLink
-              external={false}
+            Use of Redis Insight is governed by your signed agreement with Redis, or, if none, by the{' '}
+            <Link
+              target="_blank"
+              href="https://redis.io/software-subscription-agreement/?utm_source=redisinsight&utm_medium=app&utm_campaign=EULA"
+            >
+              Redis Enterprise Software Subscription Agreement
+            </Link>
+            . If no agreement applies, use is subject to the{' '}
+            <Link
               target="_blank"
               href="https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE"
             >
               Server Side Public License
-            </EuiLink>
+            </Link>
           </Text>
           <Spacer size="m" />
         </>
@@ -331,12 +328,11 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
           ))}
         </FlexItem>
         <FlexItem>
-          <EuiToolTip
+          <RiTooltip
             position="top"
-            anchorClassName="euiToolTip__btn-disabled"
             content={
               submitIsDisabled() ? (
-                <span className="euiToolTip__content">
+                <span>
                   {Object.values(errors).map((err) => [
                     spec?.agreements[err as string]?.requiredText,
                     <br key={err} />,
@@ -348,14 +344,14 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             <PrimaryButton
               className="btn-add"
               type="submit"
-              onClick={() => {}}
+              onClick={() => { }}
               disabled={submitIsDisabled()}
               icon={submitIsDisabled() ? InfoIcon : undefined}
               data-testid="btn-submit"
             >
               Submit
             </PrimaryButton>
-          </EuiToolTip>
+          </RiTooltip>
         </FlexItem>
       </Row>
     </EuiForm>

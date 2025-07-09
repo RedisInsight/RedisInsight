@@ -358,16 +358,10 @@ describe('slices', () => {
   describe('setWorkbenchVerticalPanelSizes', () => {
     it('should properly set wb panel sizes', () => {
       // Arrange
-      const panelSizes = {
-        first: 100,
-        second: 200,
-      }
+      const panelSizes = [100, 200]
       const state = {
         ...initialState.workbench,
-        panelSizes: {
-          ...initialState.workbench.panelSizes,
-          vertical: panelSizes,
-        },
+        panelSizes,
       }
 
       // Act

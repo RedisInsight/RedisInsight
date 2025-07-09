@@ -1,8 +1,8 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiToolTip } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
+import { RiTooltip } from 'uiSrc/components'
 import { LoadingContent } from 'uiSrc/components/base/layout'
 import { ColorText, Text } from 'uiSrc/components/base/text'
 import {
@@ -58,10 +58,9 @@ const KeyRowTTL = (props: Props) => {
         className="truncateText"
         data-testid={`ttl-${nameString}`}
       >
-        <EuiToolTip
+        <RiTooltip
           title="Time to Live"
           className={styles.tooltip}
-          anchorClassName="truncateText"
           position="right"
           content={
             <>
@@ -72,7 +71,7 @@ const KeyRowTTL = (props: Props) => {
           }
         >
           <>{truncateNumberToFirstUnit(ttl)}</>
-        </EuiToolTip>
+        </RiTooltip>
       </div>
     </Text>
   )

@@ -1,8 +1,9 @@
 import React, { ReactNode } from 'react'
 import { useHistory } from 'react-router-dom'
-import { EuiBreadcrumbs, EuiToolTip } from '@elastic/eui'
+import { EuiBreadcrumbs } from '@elastic/eui'
 import { EuiBreadcrumb } from '@elastic/eui/src/components/breadcrumbs/breadcrumbs'
 
+import { RiTooltip } from 'uiSrc/components'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
@@ -41,7 +42,7 @@ const PageBreadcrumbs = (props: Props) => {
     }
 
     modifiedBreadcrumb.text = (
-      <EuiToolTip
+      <RiTooltip
         position="bottom"
         className={styles.tooltip}
         content={
@@ -67,7 +68,7 @@ const PageBreadcrumbs = (props: Props) => {
             </span>
           )}
         </>
-      </EuiToolTip>
+      </RiTooltip>
     )
 
     return modifiedBreadcrumb

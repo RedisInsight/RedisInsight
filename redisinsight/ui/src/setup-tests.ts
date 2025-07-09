@@ -7,6 +7,20 @@ export const URL = 'URL'
 window.URL.revokeObjectURL = () => {}
 window.URL.createObjectURL = () => URL
 
+class ResizeObserver {
+  observe() {}
+
+  unobserve() {}
+
+  disconnect() {}
+}
+
+Object.defineProperty(window, 'ResizeObserver', {
+  writable: true,
+  configurable: true,
+  value: ResizeObserver,
+})
+
 beforeAll(() => {
   mswServer.listen()
 })
@@ -25,3 +39,6 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   unobserve: jest.fn(),
   disconnect: jest.fn(),
 }))
+
+// we need this since jsdom doesn't support PointerEvent
+window.HTMLElement.prototype.hasPointerCapture = jest.fn()

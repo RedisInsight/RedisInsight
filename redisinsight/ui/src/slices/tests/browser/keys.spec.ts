@@ -1,9 +1,9 @@
 import { cloneDeep } from 'lodash'
 import { AxiosError } from 'axios'
 import { configureStore } from '@reduxjs/toolkit'
+import { getConfig } from 'uiSrc/config'
 import {
   BrowserColumns,
-  DEFAULT_SHOWN_COLUMNS,
   KeyTypes,
   KeyValueFormat,
   ModulesKeyTypes,
@@ -19,7 +19,6 @@ import {
   clearStoreActions,
   initialStateDefault,
   mockedStore,
-  mockStore,
 } from 'uiSrc/utils/test-utils'
 import {
   addErrorNotification,
@@ -33,7 +32,10 @@ import {
 } from 'uiSrc/slices/app/context'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import { rootReducer } from 'uiSrc/slices/store'
-import { setEditorType } from 'uiSrc/slices/browser/rejson'
+import {
+  setEditorType,
+  setIsWithinThreshold,
+} from 'uiSrc/slices/browser/rejson'
 import { EditorType } from 'uiSrc/slices/interfaces'
 import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/hash/dto'
 import {
@@ -108,6 +110,9 @@ import reducer, {
   updateSelectedKeyRefreshTime,
   refreshKey,
 } from '../../browser/keys'
+
+const riConfig = getConfig()
+const REJSON_THRESHOLD = riConfig.browser.rejsonMonacoEditorMaxThreshold
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -1397,6 +1402,54 @@ describe('keys slice', () => {
         expect(store.getActions()).toEqual(
           expect.arrayContaining([
             expect.objectContaining(setEditorType(EditorType.Default)),
+          ]),
+        )
+      })
+
+      it('should set isWithinThreshold to true when length is within threshold', async () => {
+        // Arrange
+        const data = {
+          name: stringToBuffer('rejson'),
+          type: KeyTypes.ReJSON,
+          ttl: -1,
+          size: REJSON_THRESHOLD,
+          length: REJSON_THRESHOLD + 100, // just to make sure this isn't used instead of size
+        }
+        const responsePayload = { data, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchKeyInfo(data.name))
+
+        // Assert
+        expect(store.getActions()).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining(setIsWithinThreshold(true)),
+          ]),
+        )
+      })
+
+      it('should set isWithinThreshold to false when length exceeds threshold', async () => {
+        // Arrange
+        const data = {
+          name: stringToBuffer('rejson'),
+          type: KeyTypes.ReJSON,
+          ttl: -1,
+          size: REJSON_THRESHOLD + 1,
+          length: REJSON_THRESHOLD, // just to make sure this isn't used instead of size
+        }
+        const responsePayload = { data, status: 200 }
+
+        apiService.post = jest.fn().mockResolvedValue(responsePayload)
+
+        // Act
+        await store.dispatch<any>(fetchKeyInfo(data.name))
+
+        // Assert
+        expect(store.getActions()).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining(setIsWithinThreshold(false)),
           ]),
         )
       })

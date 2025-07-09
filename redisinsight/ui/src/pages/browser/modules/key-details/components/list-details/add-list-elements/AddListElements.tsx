@@ -1,12 +1,8 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
 import cx from 'classnames'
-import {
-  EuiFieldText,
-  EuiPanel,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-} from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 
 import {
   selectedKeyDataSelector,
@@ -28,6 +24,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import { PushElementToListDto } from 'apiSrc/modules/browser/list/dto'
 
 import styles from '../styles.module.scss'
@@ -46,14 +43,16 @@ export const TAIL_DESTINATION: ListElementDestination =
 export const HEAD_DESTINATION: ListElementDestination =
   ListElementDestination.Head
 
-export const optionsDestinations: EuiSuperSelectOption<string>[] = [
+export const optionsDestinations = [
   {
     value: TAIL_DESTINATION,
     inputDisplay: 'Push to tail',
+    label: 'Push to tail',
   },
   {
     value: HEAD_DESTINATION,
     inputDisplay: 'Push to head',
+    label: 'Push to head',
   },
 ]
 
@@ -126,20 +125,9 @@ const AddListElements = (props: Props) => {
 
   return (
     <>
-      <EuiPanel
-        color="transparent"
-        hasShadow={false}
-        borderRadius="none"
-        data-test-subj="add-list-field-panel"
-        className={cx(
-          styles.container,
-          'eui-yScroll',
-          'flexItemNoFullWidth',
-          'inlineFieldsNoSpace',
-        )}
-      >
-        <EuiSuperSelect
-          valueOfSelected={destination}
+      <div className={styles.container}>
+        <RiSelect
+          value={destination}
           options={optionsDestinations}
           onChange={(value) => setDestination(value as ListElementDestination)}
           data-testid="destination-select"
@@ -164,14 +152,9 @@ const AddListElements = (props: Props) => {
             />
           )}
         </AddMultipleFields>
-      </EuiPanel>
-      <EuiPanel
-        style={{ border: 'none' }}
-        color="transparent"
-        hasShadow={false}
-        className="flexItemNoFullWidth"
-      >
-        <Row justify="end" gap="m">
+      </div>
+      <>
+        <Row justify="end" gap="m" style={{ padding: 18 }}>
           <FlexItem>
             <div>
               <SecondaryButton
@@ -193,7 +176,7 @@ const AddListElements = (props: Props) => {
             </div>
           </FlexItem>
         </Row>
-      </EuiPanel>
+      </>
     </>
   )
 }

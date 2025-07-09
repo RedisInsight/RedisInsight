@@ -279,7 +279,7 @@ export const getSubmitButtonContent = (
     errorsArr.splice(maxErrorsCount, errorsArr.length, ['...'])
   }
   return submitIsDisabled ? (
-    <span className="euiToolTip__content">{errorsArr}</span>
+    <span>{errorsArr}</span>
   ) : null
 }
 

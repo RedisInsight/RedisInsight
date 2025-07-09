@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/no-nested-template-literals */
 import React, { useContext } from 'react'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 
 import { Theme } from 'uiSrc/constants'
@@ -12,6 +12,7 @@ import { DEFAULT_MODULES_INFO } from 'uiSrc/constants/modules'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { UnknownDarkIcon, UnknownLightIcon } from 'uiSrc/components/base/icons'
 import { ColorText } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import styles from './styles.module.scss'
@@ -141,15 +142,9 @@ const DatabaseListModules = React.memo((props: Props) => {
       !inCircle ? (
         Module(moduleName, abbreviation, icon, content)
       ) : (
-        <EuiToolTip
-          position="bottom"
-          display="inlineBlock"
-          content={Content[i]}
-          anchorClassName={styles.anchorModuleTooltip}
-          key={moduleName}
-        >
+        <RiTooltip position="bottom" content={Content[i]} key={moduleName}>
           <>{Module(moduleName, abbreviation, icon, content)}</>
-        </EuiToolTip>
+        </RiTooltip>
       ),
     )
 
@@ -164,15 +159,14 @@ const DatabaseListModules = React.memo((props: Props) => {
       {inCircle ? (
         Modules()
       ) : (
-        <EuiToolTip
+        <RiTooltip
           position="bottom"
           title={tooltipTitle ?? undefined}
-          display="inlineBlock"
           content={Content}
           data-testid="modules-tooltip"
         >
           <>{content ?? Modules()}</>
-        </EuiToolTip>
+        </RiTooltip>
       )}
     </div>
   )

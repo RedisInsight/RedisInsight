@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { EuiIcon, EuiToolTip } from '@elastic/eui'
+
+import { EuiIcon } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
@@ -12,10 +13,12 @@ import {
 import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { EAItemActions } from 'uiSrc/constants'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
-import { OnboardingTour } from 'uiSrc/components'
+
 import { RiAccordion } from 'uiSrc/components/base/display/accordion/RiAccordion'
 import { Col } from 'uiSrc/components/base/layout/flex'
+import { RiTooltip, OnboardingTour } from 'uiSrc/components'
 import { Text } from 'uiSrc/components/base/text'
+
 import DeleteTutorialButton from '../DeleteTutorialButton'
 
 import './styles.scss'
@@ -93,7 +96,7 @@ const Group = (props: Props) => {
             panelClassName={cx({ hide: isPageOpened })}
             preventPropagation
           >
-            <EuiToolTip content="Upload Tutorial">
+            <RiTooltip content="Upload Tutorial">
               <div
                 className="group-header__btn group-header__create-btn"
                 role="presentation"
@@ -102,7 +105,7 @@ const Group = (props: Props) => {
               >
                 <EuiIcon type="plus" />
               </div>
-            </EuiToolTip>
+            </RiTooltip>
           </OnboardingTour>
         )}
       {actions?.includes(EAItemActions.Delete) && (

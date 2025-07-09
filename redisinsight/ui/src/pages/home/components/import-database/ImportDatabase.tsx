@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiFilePicker,
-  EuiIcon,
-  EuiLoadingSpinner,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFilePicker, EuiIcon } from '@elastic/eui'
 import ReactDOM from 'react-dom'
 import {
   fetchInstancesAction,
@@ -15,7 +10,7 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { UploadWarning } from 'uiSrc/components'
+import { RiTooltip, UploadWarning } from 'uiSrc/components'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
@@ -26,6 +21,7 @@ import {
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { Loader } from 'uiSrc/components/base/display'
 import ResultsLog from './components/ResultsLog'
 
 import styles from './styles.module.scss'
@@ -145,9 +141,8 @@ const ImportDatabase = (props: Props) => {
         >
           Cancel
         </SecondaryButton>
-        <EuiToolTip
+        <RiTooltip
           position="top"
-          anchorClassName="euiToolTip__btn-disabled"
           content={isSubmitDisabled ? 'Upload a file' : undefined}
         >
           <PrimaryButton
@@ -161,7 +156,7 @@ const ImportDatabase = (props: Props) => {
           >
             Submit
           </PrimaryButton>
-        </EuiToolTip>
+        </RiTooltip>
       </div>,
       footerEl,
     )
@@ -208,7 +203,7 @@ const ImportDatabase = (props: Props) => {
                 className={styles.loading}
                 data-testid="file-loading-indicator"
               >
-                <EuiLoadingSpinner size="xl" />
+                <Loader size="xl" />
                 <Text color="subdued" style={{ marginTop: 12 }}>
                   Uploading...
                 </Text>

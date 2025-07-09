@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState, useEffect, useContext } from 'react'
-import { EuiFieldText, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
@@ -36,6 +36,7 @@ import {
 import { FlexItem, Grid, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -164,7 +165,7 @@ const DatabaseAlias = (props: Props) => {
           <Row justify="between" gap="s">
             {isRediStack && (
               <FlexItem>
-                <EuiToolTip
+                <RiTooltip
                   content={
                     <EuiIcon
                       type={
@@ -187,7 +188,7 @@ const DatabaseAlias = (props: Props) => {
                     className={styles.redistackIcon}
                     data-testid="redis-stack-icon"
                   />
-                </EuiToolTip>
+                </RiTooltip>
               </FlexItem>
             )}
             <FlexItem

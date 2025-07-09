@@ -1,21 +1,13 @@
 import React, { useCallback, useState } from 'react'
-import {
-  EuiBasicTableColumn,
-  EuiIcon,
-  EuiInMemoryTable,
-  EuiLink,
-  EuiToolTip,
-  PropertySort,
-} from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { format } from 'date-fns'
-import cx from 'classnames'
 import { useDispatch } from 'react-redux'
 import { isNull } from 'lodash'
 
-import { formatLongName, Maybe, Nullable } from 'uiSrc/utils'
+import { formatLongName, Nullable } from 'uiSrc/utils'
 import PopoverDelete from 'uiSrc/pages/browser/components/popover-delete/PopoverDelete'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { OAuthSsoHandlerDialog, RiTooltip } from 'uiSrc/components'
 import {
   CloudCapiKey,
   OAuthSocialAction,
@@ -34,6 +26,8 @@ import {
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
+import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -42,12 +36,7 @@ export interface Props {
 }
 
 const UserApiKeysTable = ({ items, loading }: Props) => {
-  const [sort, setSort] = useState<Maybe<PropertySort>>({
-    field: 'createdAt',
-    direction: 'desc',
-  })
   const [deleting, setDeleting] = useState('')
-
   const dispatch = useDispatch()
 
   const handleCopy = (value: string) => {
@@ -61,17 +50,6 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
     setDeleting(id)
   }, [])
 
-  const handleSorting = ({ sort }: any) => {
-    setSort(sort)
-    sendEventTelemetry({
-      event: TelemetryEvent.SETTINGS_CLOUD_API_KEY_SORTED,
-      eventData: {
-        ...sort,
-        numberOfKeys: items?.length || 0,
-      },
-    })
-  }
-
   const handleClickDeleteApiKey = () => {
     sendEventTelemetry({
       event: TelemetryEvent.SETTINGS_CLOUD_API_KEY_REMOVE_CLICKED,
@@ -83,7 +61,6 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
 
   const handleDeleteApiKey = (id: string, name: string) => {
     setDeleting('')
-
     dispatch(
       removeCapiKeyAction({ id, name }, () => {
         sendEventTelemetry({
@@ -96,78 +73,85 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
     )
   }
 
-  const columns: EuiBasicTableColumn<any>[] = [
+  const columns: ColumnDefinition<CloudCapiKey>[] = [
     {
-      name: 'API Key Name',
-      field: 'name',
-      sortable: true,
-      truncateText: true,
-      width: '100%',
-      render: (value: string, { valid }) => {
-        const tooltipContent = formatLongName(value)
-
+      header: 'API Key Name',
+      id: 'name',
+      accessorKey: 'name',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { name, valid },
+        },
+      }) => {
+        const tooltipContent = formatLongName(name)
         return (
           <div className={styles.nameField}>
             {!valid && (
-              <EuiToolTip
-                content="This API key is invalid. Remove it from   and Redis Cloud and create a new one instead."
-                anchorClassName={styles.invalidIconAnchor}
-              >
+              <RiTooltip content="This API key is invalid. Remove it from Redis Cloud and create a new one instead.">
                 <EuiIcon
                   className={styles.invalidIcon}
                   type="alert"
                   color="danger"
                 />
-              </EuiToolTip>
+              </RiTooltip>
             )}
-            <EuiToolTip title="API Key Name" content={tooltipContent}>
-              <>{value}</>
-            </EuiToolTip>
+            <RiTooltip title="API Key Name" content={tooltipContent}>
+              <>{name}</>
+            </RiTooltip>
           </div>
         )
       },
     },
     {
-      name: 'Created',
-      field: 'createdAt',
-      sortable: true,
-      truncateText: true,
-      width: '120x',
-      render: (value: number) => (
-        <EuiToolTip content={format(new Date(value), 'HH:mm:ss d LLL yyyy')}>
-          <>{format(new Date(value), 'd MMM yyyy')}</>
-        </EuiToolTip>
+      header: 'Created',
+      id: 'createdAt',
+      accessorKey: 'createdAt',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { createdAt },
+        },
+      }) => (
+        <RiTooltip content={format(new Date(createdAt), 'HH:mm:ss d LLL yyyy')}>
+          <>{format(new Date(createdAt), 'd MMM yyyy')}</>
+        </RiTooltip>
       ),
     },
     {
-      name: 'Last used',
-      field: 'lastUsed',
-      sortable: true,
-      width: '120x',
-      render: (value: number) => (
+      header: 'Last used',
+      id: 'lastUsed',
+      accessorKey: 'lastUsed',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { lastUsed },
+        },
+      }) => (
         <>
-          {value && (
-            <EuiToolTip
-              content={format(new Date(value), 'HH:mm:ss d LLL yyyy')}
+          {lastUsed ? (
+            <RiTooltip
+              content={format(new Date(lastUsed), 'HH:mm:ss d LLL yyyy')}
             >
-              <>{format(new Date(value), 'd MMM yyyy')}</>
-            </EuiToolTip>
+              <>{format(new Date(lastUsed), 'd MMM yyyy')}</>
+            </RiTooltip>
+          ) : (
+            'Never'
           )}
-          {!value && 'Never'}
         </>
       ),
     },
     {
-      name: '',
-      field: 'actions',
-      align: 'right',
-      width: '80px',
-      render: (_value, { id, name }) => (
+      header: '',
+      id: 'actions',
+      accessorKey: 'id',
+      cell: ({
+        row: {
+          original: { id, name },
+        },
+      }) => (
         <div>
-          <EuiToolTip
-            content="Copy API Key Name"
-            anchorClassName={styles.copyBtnAnchor}
-          >
+          <RiTooltip content="Copy API Key Name">
             <IconButton
               icon={CopyIcon}
               aria-label="Copy API key"
@@ -175,7 +159,7 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
               style={{ marginRight: 4 }}
               data-testid={`copy-api-key-${name}`}
             />
-          </EuiToolTip>
+          </RiTooltip>
           <PopoverDelete
             header={
               <>
@@ -186,15 +170,14 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
             text={
               <>
                 {'To delete this API key from Redis Cloud, '}
-                <EuiLink
+                <Link
                   target="_blank"
                   color="text"
-                  external={false}
                   tabIndex={-1}
                   href="https://redis.io/redis-enterprise-cloud/overview/?utm_source=redisinsight&utm_medium=settings&utm_campaign=clear_keys"
                 >
                   sign in to Redis Cloud
-                </EuiLink>
+                </Link>
                 {' and delete it manually.'}
               </>
             }
@@ -273,23 +256,15 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
   }
 
   return (
-    <EuiInMemoryTable
-      loading={loading}
-      items={items ?? []}
+    <Table
       columns={columns}
-      sorting={sort ? { sort } : true}
-      responsive={false}
-      message="No Api Keys"
-      onTableChange={handleSorting}
-      className={cx(
-        'inMemoryTableDefault',
-        'stickyHeader',
-        'noBorders',
-        styles.table,
-      )}
-      rowProps={(row) => ({
-        'data-testid': `row-${row.name}`,
-      })}
+      data={items}
+      defaultSorting={[
+        {
+          id: 'createdAt',
+          desc: true,
+        },
+      ]}
       data-testid="api-keys-table"
     />
   )

@@ -46,11 +46,7 @@ const NotificationCenter = () => {
     <EuiPopover
       anchorPosition="rightUp"
       isOpen={isCenterOpen}
-      panelClassName={cx(
-        'euiToolTip',
-        'popoverLikeTooltip',
-        styles.popoverCenterWrapper,
-      )}
+      panelClassName={cx('popoverLikeTooltip', styles.popoverCenterWrapper)}
       anchorClassName={styles.popoverAnchor}
       closePopover={() => dispatch(setIsCenterOpen(false))}
       button={<div className={styles.popoverAnchor} />}

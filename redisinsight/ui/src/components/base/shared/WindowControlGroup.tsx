@@ -1,8 +1,8 @@
-import { EuiToolTip } from '@elastic/eui'
 import React from 'react'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CancelSlimIcon, MinusIcon } from 'uiSrc/components/base/icons'
+import { RiTooltip } from 'uiSrc/components'
 
 type Props = {
   onClose: () => void
@@ -22,12 +22,7 @@ export const WindowControlGroup = ({
 }: Props) => (
   <Row gap="m" justify="end">
     <FlexItem>
-      <EuiToolTip
-        content={hideContent}
-        position="top"
-        display="inlineBlock"
-        anchorClassName="flex-row"
-      >
+      <RiTooltip content={hideContent} position="top">
         <IconButton
           size="S"
           icon={MinusIcon}
@@ -36,15 +31,10 @@ export const WindowControlGroup = ({
           data-testid={`hide-${id}`}
           onClick={onHide}
         />
-      </EuiToolTip>
+      </RiTooltip>
     </FlexItem>
     <FlexItem>
-      <EuiToolTip
-        content={closeContent}
-        position="top"
-        display="inlineBlock"
-        anchorClassName="flex-row"
-      >
+      <RiTooltip content={closeContent} position="top">
         <IconButton
           size="S"
           icon={CancelSlimIcon}
@@ -53,7 +43,7 @@ export const WindowControlGroup = ({
           data-testid={`close-${id}`}
           onClick={onClose}
         />
-      </EuiToolTip>
+      </RiTooltip>
     </FlexItem>
   </Row>
 )

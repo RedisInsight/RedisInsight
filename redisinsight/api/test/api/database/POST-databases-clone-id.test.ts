@@ -115,18 +115,18 @@ describe(`POST /databases/clone/:id`, () => {
     const dbName = constants.getRandomString();
     [
       {
-        name: 'Should return 503 error if incorrect connection data provided',
+        name: 'Should return 424 error if incorrect connection data provided',
         data: {
           name: 'new name',
           port: 1111,
           ssh: false,
         },
-        statusCode: 503,
+        statusCode: 424,
         responseBody: {
-          statusCode: 503,
-          // message: `Could not connect to ${constants.TEST_REDIS_HOST}:1111, please check the connection details.`,
-          // todo: verify error handling because right now messages are different
-          error: 'Service Unavailable',
+          statusCode: 424,
+          message: `Could not connect to ${constants.TEST_REDIS_HOST}:1111, please check the connection details.`,
+          error: 'RedisConnectionUnavailableException',
+          errorCode: 10904,
         },
         after: async () => {
           expect(await localDb.getInstanceByName('new name')).to.eq(null);
@@ -212,7 +212,7 @@ describe(`POST /databases/clone/:id`, () => {
         it('Should throw an error if db index specified', async () => {
           await validateApiCall({
             endpoint,
-            statusCode: 400,
+            statusCode: 424,
             data: {
               db: constants.TEST_REDIS_DB_INDEX,
             },
@@ -759,7 +759,7 @@ describe(`POST /databases/clone/:id`, () => {
 
         await validateApiCall({
           endpoint: () => endpoint(constants.TEST_INSTANCE_ID_3),
-          statusCode: 400,
+          statusCode: 424,
           data: {
             name: dbName,
             host: constants.TEST_REDIS_HOST,
@@ -802,7 +802,7 @@ describe(`POST /databases/clone/:id`, () => {
           data: {
             caCert: null,
           },
-          statusCode: 503,
+          statusCode: 424,
         });
       });
       it('Should throw an error without invalid cert', async () => {

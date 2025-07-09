@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { EuiLoadingSpinner } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { checkConnectToRdiInstanceAction } from 'uiSrc/slices/rdi/instances'
@@ -13,6 +12,7 @@ import {
   TelemetryEvent,
   getRedisModulesSummary,
   sendEventTelemetry,
+  getRedisInfoSummary,
 } from 'uiSrc/telemetry'
 import { getDbIndex } from 'uiSrc/utils'
 import {
@@ -20,6 +20,7 @@ import {
   Item as ListGroupItem,
 } from 'uiSrc/components/base/layout/list'
 import { Text } from 'uiSrc/components/base/text'
+import { Loader } from 'uiSrc/components/base/display'
 import { InstancesTabs } from '../../InstancesNavigationPopover'
 import styles from '../../styles.module.scss'
 
@@ -57,20 +58,22 @@ const InstancesList = ({
     history.push(Pages.browser(id))
   }
 
-  const goToInstance = (instance: Instance) => {
+  const goToInstance = async (instance: Instance) => {
     if (instanceId === instance.id) {
       // already connected so do nothing
       return
     }
     setLoading(true)
     const modulesSummary = getRedisModulesSummary(instance.modules)
-    sendEventTelemetry({
+    const infoData = await getRedisInfoSummary(instance.id)
+    await sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
         databaseId: instance.id,
         source: 'navigation_panel',
         provider: instance.provider,
         ...modulesSummary,
+        ...infoData,
       },
     })
     dispatch(
@@ -141,7 +144,7 @@ const InstancesList = ({
                 component="div"
               >
                 {loading && instance?.id === selected && (
-                  <EuiLoadingSpinner size="s" className={styles.loading} />
+                  <Loader size="s" className={styles.loading} />
                 )}
                 {instance.name} {getDbIndex(instance.db)}
               </Text>

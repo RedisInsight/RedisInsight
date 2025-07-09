@@ -3,7 +3,7 @@
 import React, { useCallback, useState } from 'react'
 
 import cx from 'classnames'
-import { EuiModal, EuiModalBody, EuiToolTip } from '@elastic/eui'
+import { EuiModal, EuiModalBody } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   BulkActions as BulkActionsIcon,
@@ -15,6 +15,7 @@ import {
   FeatureFlagComponent,
   ModuleNotLoaded,
   OnboardingTour,
+  RiTooltip,
 } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
@@ -218,13 +219,13 @@ const BrowserSearchPanel = (props: Props) => {
       data-testid="search-mode-switcher"
     >
       {searchModes.map((mode) => (
-        <EuiToolTip
+        <RiTooltip
           content={mode.tooltipText}
           position="bottom"
           key={mode.tooltipText}
         >
           {SwitchModeBtn(mode)}
-        </EuiToolTip>
+        </RiTooltip>
       ))}
     </div>
   )

@@ -1,7 +1,8 @@
 import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { EuiIcon, EuiLink, EuiPanel, EuiToolTip } from '@elastic/eui'
+
+import { EuiIcon } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
 import { findTutorialPath, Maybe, Nullable } from 'uiSrc/utils'
@@ -11,6 +12,7 @@ import {
   RecommendationBody,
   RecommendationCopyComponent,
   RecommendationVoting,
+  RiTooltip,
 } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -36,12 +38,15 @@ import {
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Card } from 'uiSrc/components/base/layout'
 import {
   IconButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
 import { RiAccordion } from 'uiSrc/components/base/display/accordion/RiAccordion'
+import { Link } from 'uiSrc/components/base/link/Link'
+
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -239,45 +244,70 @@ const Recommendation = ({
   )
 
   const renderButtonContent = (
-    <Row className={styles.fullWidth} align="end" gap="m">
-      <FlexItem>
-        <EuiToolTip
-          title="Snooze tip"
-          content="This tip will be removed from the list and displayed again when relevant."
-          position="top"
-          display="inlineBlock"
-          anchorClassName="flex-row"
-        >
-          <IconButton
-            icon={SnoozeIcon}
-            className={styles.snoozeBtn}
-            onClick={handleDelete}
-            aria-label="snooze tip"
-            data-testid={`${name}-delete-btn`}
-          />
-        </EuiToolTip>
-      </FlexItem>
-      <FlexItem>
-        <EuiToolTip
-          title={`${hide ? 'Show' : 'Hide'} tip`}
-          content={`${
-            hide
-              ? 'This tip will be shown in the list.'
-              : 'This tip will be removed from the list and not displayed again.'
-          }`}
-          position="top"
-          display="inlineBlock"
-          anchorClassName="flex-row"
-        >
-          <IconButton
-            icon={hide ? HideIcon : ShowIcon}
-            className={styles.hideBtn}
-            onClick={toggleHide}
-            aria-label="hide/unhide tip"
-            data-testid={`toggle-hide-${name}-btn`}
-          />
-        </EuiToolTip>
-      </FlexItem>
+    redisStack: Maybe<boolean>,
+    title: string,
+    id: string,
+  ) => (
+    <Row className={styles.fullWidth} align="center" justify="between">
+      <Row className={styles.fullWidth} align="center">
+        <FlexItem>
+          {redisStack && (
+            <Link
+              target="_blank"
+              href={EXTERNAL_LINKS.redisStack}
+              className={styles.redisStackLink}
+              data-testid={`${id}-redis-stack-link`}
+            >
+              <RiTooltip content="Redis Stack" position="top">
+                <EuiIcon
+                  type={
+                    theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
+                  }
+                  className={styles.redisStackIcon}
+                  data-testid={`${id}-redis-stack-icon`}
+                />
+              </RiTooltip>
+            </Link>
+          )}
+        </FlexItem>
+        <FlexItem grow className="truncateText">
+          {title}
+        </FlexItem>
+        <FlexItem>
+          <RiTooltip
+            title="Snooze tip"
+            content="This tip will be removed from the list and displayed again when relevant."
+            position="top"
+          >
+            <IconButton
+              icon={SnoozeIcon}
+              className={styles.snoozeBtn}
+              onClick={handleDelete}
+              aria-label="snooze tip"
+              data-testid={`${name}-delete-btn`}
+            />
+          </RiTooltip>
+        </FlexItem>
+        <FlexItem>
+          <RiTooltip
+            title={`${hide ? 'Show' : 'Hide'} tip`}
+            content={`${
+              hide
+                ? 'This tip will be shown in the list.'
+                : 'This tip will be removed from the list and not displayed again.'
+            }`}
+            position="top"
+          >
+            <IconButton
+              icon={hide ? HideIcon : ShowIcon}
+              className={styles.hideBtn}
+              onClick={toggleHide}
+              aria-label="hide/unhide tip"
+              data-testid={`toggle-hide-${name}-btn`}
+            />
+          </RiTooltip>
+        </FlexItem>
+      </Row>
     </Row>
   )
 
@@ -304,9 +334,9 @@ const Recommendation = ({
         data-testid={`${name}-accordion`}
         aria-label={`${name}-accordion`}
       >
-        <EuiPanel className={styles.accordionContent} color="subdued">
+        <Card className={styles.accordionContent} color="subdued">
           {recommendationContent()}
-        </EuiPanel>
+        </Card>
       </RiAccordion>
     </div>
   )

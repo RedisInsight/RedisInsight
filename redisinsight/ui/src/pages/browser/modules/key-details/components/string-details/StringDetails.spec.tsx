@@ -8,7 +8,7 @@ import {
   screen,
   fireEvent,
   act,
-  waitForEuiToolTipVisible,
+  waitForRiTooltipVisible,
 } from 'uiSrc/utils/test-utils'
 import { stringDataSelector, stringSelector } from 'uiSrc/slices/browser/string'
 import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
@@ -128,9 +128,9 @@ describe('StringDetails', () => {
       expect(editValueBtn).toBeDisabled()
 
       await act(async () => {
-        fireEvent.mouseOver(editValueBtn)
+        fireEvent.focus(editValueBtn)
       })
-      await waitForEuiToolTipVisible()
+      await waitForRiTooltipVisible()
 
       expect(screen.getByTestId('edit-key-value-tooltip')).toHaveTextContent(
         TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA,

@@ -1,9 +1,10 @@
 import { isEmpty } from 'lodash'
 import React, { ChangeEvent, useState } from 'react'
-import { EuiFieldText, EuiForm, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiForm } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { validateEmail, validateField } from 'uiSrc/utils'
 
+import { RiTooltip } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
@@ -58,9 +59,8 @@ const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
     disabled: boolean
     text: string
   }) => (
-    <EuiToolTip
+    <RiTooltip
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       data-testid="btn-submit-tooltip"
       content={
         disabled ? (
@@ -80,7 +80,7 @@ const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
       >
         {text}
       </PrimaryButton>
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   return (

@@ -2,34 +2,29 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { toNumber } from 'lodash'
-import {
-  EuiFieldText,
-  EuiPanel,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiPopover,
-  EuiIcon,
-} from '@elastic/eui'
+import { EuiFieldText, EuiIcon, EuiPopover } from '@elastic/eui'
+
+
 
 import { Text } from 'uiSrc/components/base/text'
 import { KeyTypes } from 'uiSrc/constants'
 import {
-  validateCountNumber,
-  isVersionHigherOrEquals,
-  formatNameShort,
   bufferToString,
+  formatNameShort,
+  isVersionHigherOrEquals,
+  validateCountNumber,
 } from 'uiSrc/utils'
 import {
+  getBasedOnViewTypeEvent,
   sendEventTelemetry,
   TelemetryEvent,
-  getBasedOnViewTypeEvent,
 } from 'uiSrc/telemetry'
 import HelpTexts from 'uiSrc/constants/help-texts'
 import { CommandsVersions } from 'uiSrc/constants/commandsVersions'
 
 import {
-  selectedKeyDataSelector,
   keysSelector,
+  selectedKeyDataSelector,
 } from 'uiSrc/slices/browser/keys'
 import { deleteListElementsAction } from 'uiSrc/slices/browser/list'
 import {
@@ -47,12 +42,13 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { DeleteIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import { DeleteListElementsDto } from 'apiSrc/modules/browser/list/dto'
 
 import {
-  TAIL_DESTINATION,
   HEAD_DESTINATION,
   ListElementDestination,
+  TAIL_DESTINATION,
 } from '../add-list-elements/AddListElements'
 
 import styles from './styles.module.scss'
@@ -62,14 +58,14 @@ export interface Props {
   onRemoveKey: () => void
 }
 
-const optionsDestinations: EuiSuperSelectOption<string>[] = [
+const optionsDestinations = [
   {
     value: TAIL_DESTINATION,
-    inputDisplay: 'Remove from tail',
+    label: 'Remove from tail',
   },
   {
     value: HEAD_DESTINATION,
-    inputDisplay: 'Remove from head',
+    label: 'Remove from head',
   },
 ]
 
@@ -224,7 +220,7 @@ const RemoveListElements = (props: Props) => {
 
   const InfoBoxPopover = () => (
     <EuiPopover
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip')}
+      panelClassName={cx('popoverLikeTooltip')}
       anchorPosition="leftCenter"
       isOpen={isInfoPopoverOpen}
       closePopover={() => setIsInfoPopoverOpen(false)}
@@ -249,24 +245,16 @@ const RemoveListElements = (props: Props) => {
 
   return (
     <>
-      <EuiPanel
-        color="transparent"
-        hasShadow={false}
-        borderRadius="none"
-        className={cx(
-          styles.content,
-          'eui-yScroll',
-          'flexItemNoFullWidth',
-          'inlineFieldsNoSpace',
-        )}
-      >
+      <div className={styles.content}>
         <FlexItem grow>
           <Row align="center">
             <FlexItem style={{ minWidth: '220px' }}>
               <FormField>
-                <EuiSuperSelect
-                  className={styles.select}
-                  valueOfSelected={destination}
+                <RiSelect
+                  style={{
+                    height: 43,
+                  }}
+                  value={destination}
                   options={optionsDestinations}
                   onChange={(value) =>
                     setDestination(value as ListElementDestination)
@@ -297,14 +285,9 @@ const RemoveListElements = (props: Props) => {
             </FlexItem>
           </Row>
         </FlexItem>
-      </EuiPanel>
-      <EuiPanel
-        style={{ border: 'none' }}
-        color="transparent"
-        hasShadow={false}
-        className="flexItemNoFullWidth"
-      >
-        <Row justify="end" gap="xl">
+      </div>
+      <>
+        <Row justify="end" gap="xl" style={{ padding: 18 }}>
           <FlexItem>
             <div>
               <SecondaryButton
@@ -319,7 +302,7 @@ const RemoveListElements = (props: Props) => {
             <div>{RemoveButton()}</div>
           </FlexItem>
         </Row>
-      </EuiPanel>
+      </>
     </>
   )
 }

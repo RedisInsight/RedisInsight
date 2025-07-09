@@ -50,13 +50,3 @@
   font-family: "Graphik", sans-serif;
   color: var(--euiTextSubduedColor) !important;
 }
-
-.cloudOptions {
-  display: flex;
-  align-items: center;
-
-  :global(.euiRadioGroup__item) {
-    margin-top: 0 !important;
-    margin-right: 12px;
-  }
-}

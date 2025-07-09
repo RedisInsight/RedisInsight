@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiIcon, EuiLink, EuiLoadingSpinner, EuiPopover } from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import { useHistory } from 'react-router-dom'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
@@ -21,6 +21,8 @@ import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { getConfig } from 'uiSrc/config'
 import { Text } from 'uiSrc/components/base/text'
+import { UserProfileLink } from 'uiSrc/components/base/link/UserProfileLink'
+import { Loader } from 'uiSrc/components/base/display'
 import { CloudUser } from 'apiSrc/modules/cloud/user/models'
 import styles from './styles.module.scss'
 
@@ -114,7 +116,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
         anchorPosition="upRight"
         isOpen={isProfileOpen}
         closePopover={() => setIsProfileOpen(false)}
-        panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+        panelClassName={cx('popoverLikeTooltip', styles.popover)}
         button={
           <div
             role="presentation"
@@ -173,7 +175,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                     />
                   )}
                   {id === selectingAccountId && (
-                    <EuiLoadingSpinner
+                    <Loader
                       className={styles.loadingSpinner}
                       size="m"
                       data-testid={`user-profile-selecting-account-${id}`}
@@ -187,17 +189,14 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
             name={FeatureFlags.envDependent}
             otherwise={
               <>
-                <EuiLink
-                  className={cx(styles.option, styles.clickableOption)}
+                <UserProfileLink
                   href={riDesktopLink}
                   data-testid="open-ri-desktop-link"
                 >
                   <Text>Open in Redis Insight Desktop version</Text>
-                </EuiLink>
-                <EuiLink
-                  external={false}
+                </UserProfileLink>
+                <UserProfileLink
                   target="_blank"
-                  className={cx(styles.option, styles.clickableOption)}
                   href={riConfig.app.smConsoleRedirect}
                   data-testid="cloud-admin-console-link"
                 >
@@ -208,7 +207,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                     viewBox="-1 0 30 20"
                     strokeWidth={1.8}
                   />
-                </EuiLink>
+                </UserProfileLink>
               </>
             }
           >
@@ -222,15 +221,13 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
             >
               <Text className={styles.optionTitle}>Import Cloud databases</Text>
               {isImportLoading ? (
-                <EuiLoadingSpinner className={styles.loadingSpinner} size="m" />
+                <Loader className={styles.loadingSpinner} size="m" />
               ) : (
                 <EuiIcon type="importAction" />
               )}
             </div>
-            <EuiLink
-              external={false}
+            <UserProfileLink
               target="_blank"
-              className={cx(styles.option, styles.clickableOption)}
               href={getUtmExternalLink(EXTERNAL_LINKS.cloudConsole, {
                 campaign: 'cloud_account',
               })}
@@ -252,7 +249,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
                 viewBox="-1 0 30 20"
                 strokeWidth={1.8}
               />
-            </EuiLink>
+            </UserProfileLink>
             <div
               role="presentation"
               className={cx(styles.option, styles.clickableOption)}

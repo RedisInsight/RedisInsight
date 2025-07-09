@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiLink, EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
 import { get, throttle } from 'lodash'
 import cx from 'classnames'
 import { monaco as monacoEditor } from 'react-monaco-editor'
@@ -26,7 +25,7 @@ import {
   yamlToJson,
 } from 'uiSrc/utils'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
-import { KeyboardShortcut } from 'uiSrc/components'
+import { KeyboardShortcut, RiTooltip } from 'uiSrc/components'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import {
@@ -34,6 +33,8 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { Loader } from 'uiSrc/components/base/display'
 import TemplateButton from '../../components/template-button'
 import styles from './styles.module.scss'
 
@@ -180,7 +181,7 @@ const Job = (props: Props) => {
         <div className="rdi__content-header">
           <Text className={cx('rdi__title', 'line-clamp-2')}>{name}</Text>
           <div className={styles.actionContainer}>
-            <EuiToolTip
+            <RiTooltip
               position="top"
               className={styles.tooltip}
               content={
@@ -204,7 +205,7 @@ const Job = (props: Props) => {
               >
                 SQL and JMESPath Editor
               </SecondaryButton>
-            </EuiToolTip>
+            </RiTooltip>
             <TemplateButton
               value={value}
               setFieldValue={(template) => {
@@ -221,8 +222,7 @@ const Job = (props: Props) => {
         </div>
         <Text className="rdi__text" color="subdued">
           {'Create a job per source table to filter, transform, and '}
-          <EuiLink
-            external={false}
+          <Link
             data-testid="rdi-pipeline-transformation-link"
             target="_blank"
             href={getUtmExternalLink(EXTERNAL_LINKS.rdiPipelineTransforms, {
@@ -231,7 +231,7 @@ const Job = (props: Props) => {
             })}
           >
             map data
-          </EuiLink>
+          </Link>
           {' to Redis.'}
         </Text>
         {loading ? (
@@ -242,7 +242,7 @@ const Job = (props: Props) => {
             <Text color="subdued" style={{ marginBottom: 12 }}>
               Loading data...
             </Text>
-            <EuiLoadingSpinner color="secondary" size="l" />
+            <Loader color="secondary" size="l" />
           </div>
         ) : (
           <MonacoYaml

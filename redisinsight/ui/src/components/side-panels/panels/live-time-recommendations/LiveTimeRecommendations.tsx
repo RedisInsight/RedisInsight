@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { EuiLink, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { remove } from 'lodash'
 
 import { FeatureFlags, DEFAULT_DELIMITER, Pages } from 'uiSrc/constants'
@@ -30,10 +30,15 @@ import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import GithubSVG from 'uiSrc/assets/img/github.svg?react'
-import { FeatureFlagComponent, LoadingContent } from 'uiSrc/components'
+import {
+  FeatureFlagComponent,
+  LoadingContent,
+  RiTooltip,
+} from 'uiSrc/components'
 import { ColorText, Text } from 'uiSrc/components/base/text'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 
+import { Link } from 'uiSrc/components/base/link/Link'
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import PopoverRunAnalyze from './components/popover-run-analyze'
@@ -137,9 +142,8 @@ const LiveTimeRecommendations = () => {
     <div className={styles.actions}>
       <div>
         <ColorText className={styles.boldText}>Our Tips</ColorText>
-        <EuiToolTip
+        <RiTooltip
           position="bottom"
-          anchorClassName={styles.tooltipAnchor}
           className={styles.tooltip}
           content={
             <>
@@ -162,10 +166,9 @@ const LiveTimeRecommendations = () => {
             size="s"
             data-testid="recommendations-info-icon"
           />
-        </EuiToolTip>
+        </RiTooltip>
         <FeatureFlagComponent name={FeatureFlags.envDependent}>
-          <EuiLink
-            external={false}
+          <Link
             href={EXTERNAL_LINKS.githubRepo}
             target="_blank"
             style={{ marginLeft: 6 }}
@@ -178,7 +181,7 @@ const LiveTimeRecommendations = () => {
               size="s"
               data-testid="github-repo-icon"
             />
-          </EuiLink>
+          </Link>
         </FeatureFlagComponent>
       </div>
 
@@ -225,13 +228,13 @@ const LiveTimeRecommendations = () => {
                     : ANALYZE_TOOLTIP_MESSAGE
                 }
               >
-                <EuiLink
+                <Link
                   className={styles.link}
                   onClick={() => setIsShowApproveRun(true)}
                   data-testid="footer-db-analysis-link"
                 >
                   Database Analysis
-                </EuiLink>
+                </Link>
               </PopoverRunAnalyze>
               {' to get more tips'}
             </Text>

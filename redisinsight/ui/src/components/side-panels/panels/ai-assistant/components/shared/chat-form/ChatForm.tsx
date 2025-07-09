@@ -1,14 +1,10 @@
 import React, { Ref, useRef, useState } from 'react'
-import {
-  EuiForm,
-  EuiPopover,
-  EuiToolTip,
-  keys,
-} from '@elastic/eui'
+import { EuiForm, EuiPopover, keys } from '@elastic/eui'
 
 import cx from 'classnames'
 import { isModifiedEvent } from 'uiSrc/services'
 
+import { RiTooltip } from 'uiSrc/components'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { SendIcon } from 'uiSrc/components/base/icons'
@@ -96,7 +92,7 @@ const ChatForm = (props: Props) => {
 
   return (
     <div>
-      <EuiToolTip
+      <RiTooltip
         content={
           validation ? (
             <div className={styles.tooltipContent}>
@@ -116,7 +112,6 @@ const ChatForm = (props: Props) => {
           ) : undefined
         }
         className={styles.validationTooltip}
-        display="block"
       >
         <EuiForm
           className={cx(styles.wrapper, {
@@ -140,11 +135,7 @@ const ChatForm = (props: Props) => {
             isOpen={isAgreementsPopoverOpen}
             anchorPosition="downRight"
             closePopover={() => setIsAgreementsPopoverOpen(false)}
-            panelClassName={cx(
-              'euiToolTip',
-              'popoverLikeTooltip',
-              styles.popover,
-            )}
+            panelClassName={cx('popoverLikeTooltip', styles.popover)}
             anchorClassName={styles.popoverAnchor}
             button={
               <PrimaryButton
@@ -174,7 +165,7 @@ const ChatForm = (props: Props) => {
             </>
           </EuiPopover>
         </EuiForm>
-      </EuiToolTip>
+      </RiTooltip>
       <Text textAlign="center" size="xs" className={styles.agreementText}>
         Verify the accuracy of any information provided by Redis Copilot before
         using it

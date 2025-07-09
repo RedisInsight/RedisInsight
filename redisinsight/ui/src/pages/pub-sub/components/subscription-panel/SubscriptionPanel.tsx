@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiFieldText, EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -26,6 +26,7 @@ import {
 } from 'uiSrc/components/base/icons'
 import { Button, IconButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 import PatternsInfo from './components/patternsInfo'
 import ClickableAppendInfo from './components/clickable-append-info'
 import styles from './styles.module.scss'
@@ -131,17 +132,14 @@ const SubscriptionPanel = () => {
           </FlexItem>
           {!!messages.length && (
             <FlexItem style={{ marginLeft: 8 }}>
-              <EuiToolTip
-                content="Clear Messages"
-                anchorClassName={cx('inline-flex')}
-              >
+              <RiTooltip content="Clear Messages">
                 <IconButton
                   icon={DeleteIcon}
                   onClick={onClickClear}
                   aria-label="clear pub sub"
                   data-testid="clear-pubsub-btn"
                 />
-              </EuiToolTip>
+              </RiTooltip>
             </FlexItem>
           )}
         </Row>

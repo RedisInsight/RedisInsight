@@ -1,8 +1,9 @@
 import React from 'react'
 import { JSONTree } from 'react-json-tree'
+import { Table } from 'uiSrc/components/base/layout/table'
+
 import { ResultsParser } from './parser'
 import Graph from './Graph'
-import { Table } from './Table'
 import { COMPACT_FLAG } from './constants'
 
 const isDarkTheme = document.body.classList.contains('theme_DARK')
@@ -40,9 +41,10 @@ export function TableApp(props: { command?: string; data: any }) {
       <Table
         data={tableData.results}
         columns={tableData.headers.map((h) => ({
-          field: h,
-          name: h,
-          render: (d) => (
+          id: h,
+          header: h,
+          accessorKey: h,
+          cell: ({ row: { original: d } }) => (
             <JSONTree
               invertTheme={isDarkTheme}
               theme={{

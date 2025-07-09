@@ -9,7 +9,7 @@ import {
   mockedStore,
   cleanup,
   act,
-  waitForEuiToolTipVisible,
+  waitForRiTooltipVisible,
 } from 'uiSrc/utils/test-utils'
 import { KeyTypes } from 'uiSrc/constants'
 import { RootState } from 'uiSrc/slices/store'
@@ -202,9 +202,9 @@ describe('KeyDetailsHeader', () => {
     expect(store.getActions()).toEqual([...afterRenderActions])
 
     await act(async () => {
-      fireEvent.mouseOver(screen.getByTestId('apply-btn'))
+      fireEvent.focus(screen.getByTestId('apply-btn'))
     })
-    await waitForEuiToolTipVisible()
+    await waitForRiTooltipVisible()
 
     expect(screen.queryByTestId('apply-tooltip')).toBeInTheDocument()
   })
@@ -285,9 +285,9 @@ describe('KeyDetailsWrapper', () => {
     ])
 
     await act(async () => {
-      fireEvent.mouseOver(screen.getByTestId('apply-btn'))
+      fireEvent.focus(screen.getByTestId('apply-btn'))
     })
-    await waitForEuiToolTipVisible()
+    await waitForRiTooltipVisible()
 
     expect(screen.queryByTestId('apply-tooltip')).toBeInTheDocument()
   })

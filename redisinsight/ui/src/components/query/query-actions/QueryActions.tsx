@@ -1,10 +1,9 @@
-import React, { useRef } from 'react'
+import React from 'react'
 
 import cx from 'classnames'
-import { EuiToolTip } from '@elastic/eui'
 import { ResultsMode, RunQueryMode } from 'uiSrc/slices/interfaces'
 import { KEYBOARD_SHORTCUTS } from 'uiSrc/constants'
-import { KeyboardShortcut } from 'uiSrc/components'
+import { KeyboardShortcut, RiTooltip } from 'uiSrc/components'
 import { isGroupMode } from 'uiSrc/utils'
 
 import {
@@ -39,8 +38,6 @@ const QueryActions = (props: Props) => {
     onChangeGroupMode,
     onSubmit,
   } = props
-  const runTooltipRef = useRef<EuiToolTip>(null)
-
   const KeyBoardTooltipContent = KEYBOARD_SHORTCUTS?.workbench?.runQuery && (
     <>
       <Text className={styles.tooltipText} size="s">
@@ -60,7 +57,7 @@ const QueryActions = (props: Props) => {
       className={cx(styles.actions, { [styles.disabledActions]: isDisabled })}
     >
       {onChangeMode && (
-        <EuiToolTip
+        <RiTooltip
           position="left"
           content="Enables the raw output mode"
           data-testid="change-mode-tooltip"
@@ -76,10 +73,10 @@ const QueryActions = (props: Props) => {
           >
             Raw mode
           </EmptyButton>
-        </EuiToolTip>
+        </RiTooltip>
       )}
       {onChangeGroupMode && (
-        <EuiToolTip
+        <RiTooltip
           position="left"
           content={
             <>
@@ -102,15 +99,14 @@ const QueryActions = (props: Props) => {
           >
             Group results
           </EmptyButton>
-        </EuiToolTip>
+        </RiTooltip>
       )}
       <Divider
         orientation="vertical"
         colorVariable="separatorColor"
         className={styles.divider}
       />
-      <EuiToolTip
-        ref={runTooltipRef}
+      <RiTooltip
         position="left"
         content={
           isLoading
@@ -122,7 +118,6 @@ const QueryActions = (props: Props) => {
         <EmptyButton
           onClick={() => {
             onSubmit()
-            setTimeout(() => runTooltipRef?.current?.hideToolTip?.(), 0)
           }}
           loading={isLoading}
           disabled={isLoading}
@@ -133,7 +128,7 @@ const QueryActions = (props: Props) => {
         >
           Run
         </EmptyButton>
-      </EuiToolTip>
+      </RiTooltip>
     </div>
   )
 }

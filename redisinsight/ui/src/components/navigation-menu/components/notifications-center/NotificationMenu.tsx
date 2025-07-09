@@ -1,4 +1,3 @@
-import { EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,6 +6,7 @@ import {
   setIsCenterOpen,
 } from 'uiSrc/slices/app/notifications'
 
+import { RiTooltip } from 'uiSrc/components'
 import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
 import { NotificationsIcon } from 'uiSrc/components/base/icons'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
@@ -46,9 +46,9 @@ const NavButton = () => {
   return (
     <div className={styles.navBtnWrapper}>
       {!isCenterOpen && !isNotificationOpen ? (
-        <EuiToolTip content="Notification Center" position="right">
+        <RiTooltip content="Notification Center" position="right">
           {Btn}
-        </EuiToolTip>
+        </RiTooltip>
       ) : (
         Btn
       )}

@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/no-this-in-sfc */
-import { EuiIcon, EuiPopover, EuiToolTip } from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import React, { Ref, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -46,7 +46,7 @@ import {
 
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
-import { AutoRefresh, OnboardingTour } from 'uiSrc/components'
+import { AutoRefresh, OnboardingTour, RiTooltip } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { BrowserColumns, KeyValueFormat } from 'uiSrc/constants'
 
@@ -292,7 +292,7 @@ const KeysHeader = (props: Props) => {
       <OnboardingTour options={ONBOARDING_FEATURES.BROWSER_TREE_VIEW}>
         <>
           {viewTypes.map((view) => (
-            <EuiToolTip
+            <RiTooltip
               content={view.tooltipText}
               position="top"
               key={view.tooltipText}
@@ -306,7 +306,7 @@ const KeysHeader = (props: Props) => {
                 data-testid={view.dataTestId}
                 disabled={view.disabled || false}
               />
-            </EuiToolTip>
+            </RiTooltip>
           ))}
         </>
       </OnboardingTour>
@@ -401,11 +401,9 @@ const KeysHeader = (props: Props) => {
                         />
                       </FlexItem>
                       <FlexItem grow>
-                        <EuiToolTip
+                        <RiTooltip
                           content="Hide the key size to avoid performance issues when working with large keys."
                           position="top"
-                          display="inlineBlock"
-                          anchorClassName="flex-row"
                         >
                           <EuiIcon
                             className={styles.infoIcon}
@@ -414,7 +412,7 @@ const KeysHeader = (props: Props) => {
                             style={{ cursor: 'pointer' }}
                             data-testid="key-size-info-icon"
                           />
-                        </EuiToolTip>
+                        </RiTooltip>
                       </FlexItem>
                     </Row>
                     <Checkbox

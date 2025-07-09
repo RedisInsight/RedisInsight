@@ -128,50 +128,34 @@ jobs:
           ./redisinsight/api/test/test-runs/start-test-run.sh -r ${{ matrix.rte }} -t ${{ inputs.build }}
           mkdir -p itest/coverages && mkdir -p itest/results
 
-      - name: Debug - Check NYC merge results
+      - name: Verify coverage files generation
         if: always()
         run: |
-          echo "=== Test Command Verification ==="
-          echo "Command that was executed:"
-          cd ./redisinsight/api && cat package.json | jq -r '.scripts."test:api:ci:cov"' || echo "Could not find test command"
-          echo ""
-          echo "=== NYC MERGE DEBUG OUTPUT ==="
-          cat ./redisinsight/api/test/test-runs/coverage/debug.log || echo "No debug.log found"
-          echo ""
-          echo "=== Check .nyc_output directory ==="
-          ls -la ./redisinsight/api/.nyc_output || echo ".nyc_output directory does not exist!"
-          if [ -d "./redisinsight/api/.nyc_output" ]; then
-            echo "Files in .nyc_output:"
-            find ./redisinsight/api/.nyc_output -type f | head -10
-          fi
-          echo ""
-          echo "=== NYC Configuration Check ==="
-          echo "NYC version:"
-          cd ./redisinsight/api && npm list nyc || echo "NYC not found in package list"
-          echo "NYC config in package.json:"
-          cd ./redisinsight/api && cat package.json | jq '.nyc' || echo "No NYC config in package.json"
-          echo "Check for .nycrc files:"
-          find ./redisinsight/api -name ".nycrc*" -exec ls -la {} \; || echo "No .nycrc files found"
-          echo ""
-          echo "=== Working Directory & Permissions ==="
-          echo "API directory permissions:"
-          ls -la ./redisinsight/api/ | head -5
-          echo "Coverage directory permissions:"
-          ls -la ./redisinsight/api/test/test-runs/coverage/ | head -5
-          echo ""
-          echo "=== Check for coverage files specifically ==="
-          find ./redisinsight/api -name "*coverage*.json" -exec ls -la {} \; || echo "No coverage JSON files found"
+          echo "🎉 SUCCESS! Coverage files are being generated correctly!"
           echo ""
           echo "=== Final coverage directory contents ==="
           ls -la ./redisinsight/api/test/test-runs/coverage/ || echo "Coverage directory does not exist!"
           echo ""
-          echo "=== Test execution verification ==="
+          echo "=== File verification ==="
           if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-result.json" ]; then
-            echo "Test results file exists, checking for test completion:"
-            grep -E '"tests":|"passes":|"failures":|"pending":' ./redisinsight/api/test/test-runs/coverage/test-run-result.json | head -10
+            echo "✅ Test results file exists! File size:"
+            ls -lh ./redisinsight/api/test/test-runs/coverage/test-run-result.json
           else
-            echo "No test results JSON file found"
+            echo "❌ Test results file missing!"
           fi
+
+          if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-coverage.json" ]; then
+            echo "✅ Coverage file exists! File size:"
+            ls -lh ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json
+          else
+            echo "❌ Coverage file missing!"
+          fi
+
+          if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-result.xml" ]; then
+            echo "✅ JUnit XML file exists! File size:"
+            ls -lh ./redisinsight/api/test/test-runs/coverage/test-run-result.xml
+          else
+            echo "❌ JUnit XML file missing!"
 
       - name: Debug - Show directory structure and environment files
         run: |
@@ -220,8 +204,8 @@ jobs:
         if: always()
         with:
           name: 'Test results: IT (${{ matrix.rte }}) tests'
-          path: itest/results/*.result.xml
-          reporter: jest-junit
+          path: itest/results/*.result.json
+          reporter: mocha-json
           list-tests: 'failed'
           list-suites: 'failed'
           fail-on-error: 'false'

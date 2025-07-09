@@ -128,6 +128,30 @@ jobs:
           ./redisinsight/api/test/test-runs/start-test-run.sh -r ${{ matrix.rte }} -t ${{ inputs.build }}
           mkdir -p itest/coverages && mkdir -p itest/results
 
+      - name: Debug - Show directory structure and environment files
+        run: |
+          echo "=== DEBUGGING COVERAGE ISSUE ==="
+          echo "Current working directory: $(pwd)"
+          echo ""
+          echo "=== Environment files content ==="
+          echo "local.build.env:"
+          cat ./redisinsight/api/test/test-runs/local.build.env
+          echo ""
+          echo "docker.build.env:"
+          cat ./redisinsight/api/test/test-runs/docker.build.env
+          echo ""
+          echo "=== Directory structure under redisinsight/api ==="
+          find ./redisinsight/api -type d -name "*coverage*" -o -name "*test-runs*" | head -10
+          echo ""
+          echo "=== Files in expected coverage directory ==="
+          ls -la ./redisinsight/api/test/test-runs/coverage/ || echo "Coverage directory does not exist!"
+          echo ""
+          echo "=== All files under test-runs ==="
+          find ./redisinsight/api/test/test-runs -name "*.json" -o -name "*.xml" | head -20
+          echo ""
+          echo "=== Looking for test result files anywhere ==="
+          find ./redisinsight/api -name "test-run-result.*" -o -name "*coverage*.json" | head -10
+
           cp ./redisinsight/api/test/test-runs/coverage/test-run-result.json ./itest/results/${{ matrix.rte }}.result.json
           cp ./redisinsight/api/test/test-runs/coverage/test-run-result.xml ./itest/results/${{ matrix.rte }}.result.xml
           cp ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json ./itest/coverages/${{ matrix.rte }}.coverage.json

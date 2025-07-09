@@ -136,6 +136,9 @@ jobs:
           echo "=== Final coverage directory contents ==="
           ls -la ./redisinsight/api/test/test-runs/coverage/ || echo "Coverage directory does not exist!"
           echo ""
+          echo "=== Nyc coverage directory contents ==="
+          ls -la ./redisinsight/api/test/test-runs/coverage/.nyc_output || echo "Nyc directory does not exist!"
+          echo ""
           echo "=== File verification ==="
           if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-result.json" ]; then
             echo "✅ Test results file exists! File size:"

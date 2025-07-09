@@ -1,12 +1,6 @@
 import React from 'react'
-import styled from 'styled-components'
 import { Badge } from '@redis-ui/components'
-
-const StyledTabBarTrigger = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`
+import { StyledTabBarTrigger } from './TabBarTrigger.styles'
 
 export const TabBarTrigger = () => (
   <StyledTabBarTrigger>

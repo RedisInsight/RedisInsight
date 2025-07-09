@@ -53,6 +53,8 @@ const NoKeysFound = (props: Props) => {
         count: SCAN_TREE_COUNT_DEFAULT,
       }),
     )
+
+    onAddKeyPanel(false)
   }
 
   return (

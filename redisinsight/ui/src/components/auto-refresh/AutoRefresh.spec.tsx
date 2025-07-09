@@ -6,6 +6,7 @@ import {
   screen,
   render,
   act,
+  waitForRiPopoverVisible,
 } from 'uiSrc/utils/test-utils'
 import { localStorageService } from 'uiSrc/services'
 import AutoRefresh, { Props } from './AutoRefresh'
@@ -74,10 +75,11 @@ describe('AutoRefresh', () => {
     expect(screen.getByTestId('refresh-message')).toHaveTextContent('now')
   })
 
-  it.skip('refresh text should contain "Auto-refresh" time with enabled auto-refresh', async () => {
+  it('refresh text should contain "Auto-refresh" time with enabled auto-refresh', async () => {
     render(<AutoRefresh {...instance(mockedProps)} displayText />)
 
-    fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+    await userEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+    await waitForRiPopoverVisible()
     await userEvent.click(screen.getByTestId('auto-refresh-switch'))
 
     expect(screen.getByTestId('refresh-message-label')).toHaveTextContent(
@@ -154,11 +156,12 @@ describe('AutoRefresh', () => {
       expect(queryByTestId('auto-refresh-switch')).toBeInTheDocument()
     })
 
-    it.skip('should call onRefresh after enable auto-refresh and set 1 sec', async () => {
+    it('should call onRefresh after enable auto-refresh and set 1 sec', async () => {
       const onRefresh = jest.fn()
       render(<AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} />)
 
-      fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+      await userEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+      await waitForRiPopoverVisible()
       await userEvent.click(screen.getByTestId('auto-refresh-switch'))
       fireEvent.click(screen.getByTestId('refresh-rate'))
 
@@ -258,13 +261,14 @@ describe('AutoRefresh', () => {
     })
   })
 
-  it.skip('should NOT call onRefresh with disabled state', async () => {
+  it('should NOT call onRefresh with disabled state', async () => {
     const onRefresh = jest.fn()
     const { rerender } = render(
       <AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} />,
     )
 
-    fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+    await userEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+    await waitForRiPopoverVisible()
     await userEvent.click(screen.getByTestId('auto-refresh-switch'))
     fireEvent.click(screen.getByTestId('refresh-rate'))
     fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {

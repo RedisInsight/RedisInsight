@@ -254,8 +254,15 @@ const waitForRiTooltipHidden = async () => {
 const waitForRiPopoverVisible = async (timeout = 500) => {
   await waitFor(
     () => {
-      const tooltip = document.querySelector('div[data-radix-popper-content-wrapper]')
+      const tooltip = document.querySelector(
+        'div[data-radix-popper-content-wrapper]',
+      ) as HTMLElement | null
       expect(tooltip).toBeInTheDocument()
+
+      if (tooltip) {
+        // Note: during unit tests, the popover is not interactive by default so we need to enable pointer events
+        tooltip.style.pointerEvents = 'all'
+      }
     },
     { timeout }, // Account for long delay on popover
   )

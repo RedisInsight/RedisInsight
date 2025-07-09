@@ -23,6 +23,7 @@ import {
   mockedStore,
   render,
   screen,
+  waitForRiPopoverVisible,
 } from 'uiSrc/utils/test-utils'
 import { PageNames, Pages } from 'uiSrc/constants'
 import { setLastPageContext } from 'uiSrc/slices/app/context'
@@ -209,12 +210,13 @@ describe('StatisticsPage', () => {
     })
   })
 
-  it.skip('should call proper telemetry event when auto refresh is disabled for processing performance section', async () => {
+  it('should call proper telemetry event when auto refresh is disabled for processing performance section', async () => {
     render(<StatisticsPage />)
 
     const testid = 'processing-performance-info'
 
-    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
+    await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
+    await waitForRiPopoverVisible()
     await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
 
     expect(sendEventTelemetry).toBeCalledWith({
@@ -228,12 +230,13 @@ describe('StatisticsPage', () => {
     })
   })
 
-  it.skip('should call proper telemetry event when auto refresh is enabled for processing performance section', async () => {
+  it('should call proper telemetry event when auto refresh is enabled for processing performance section', async () => {
     render(<StatisticsPage />)
 
     const testid = 'processing-performance-info'
 
-    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
+    await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
+    await waitForRiPopoverVisible()
     await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
     await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // enabled
 

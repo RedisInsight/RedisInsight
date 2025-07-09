@@ -7,6 +7,7 @@ import {
   mockedStore,
   render,
   screen,
+  userEvent,
   waitForRiPopoverVisible,
 } from 'uiSrc/utils/test-utils'
 
@@ -50,7 +51,7 @@ describe('CloudSettings', () => {
     })
     render(<CloudSettings />)
 
-    fireEvent.click(screen.getByTestId('delete-key-btn'))
+    await userEvent.click(screen.getByTestId('delete-key-btn'))
     await waitForRiPopoverVisible()
 
     fireEvent.click(screen.getByTestId('delete-key-confirm-btn'))

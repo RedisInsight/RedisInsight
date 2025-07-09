@@ -149,6 +149,7 @@
     "tsconfig-paths-webpack-plugin": "^3.3.0",
     "typescript": "^4.8.2"
   },
+
   "jest": {
     "moduleFileExtensions": [
       "js",

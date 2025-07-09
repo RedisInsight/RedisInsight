@@ -164,20 +164,37 @@ jobs:
           echo "=== Debugging missing test-run-coverage.json file ==="
           echo "Working directory: $(pwd)"
           echo ""
-          echo "=== Check .nyc_output directory in API folder ==="
+          echo "=== Check .nyc_output directory in API folder (HOST) ==="
           cd ./redisinsight/api
           if [ -d ".nyc_output" ]; then
-            echo "✅ .nyc_output directory exists"
+            echo "✅ .nyc_output directory exists on host"
             echo "Contents:"
             ls -la .nyc_output
             echo "File count: $(find .nyc_output -name "*.json" | wc -l)"
             echo "Sample file content (first 5 lines):"
             find .nyc_output -name "*.json" | head -1 | xargs head -5 2>/dev/null || echo "No JSON files to sample"
           else
-            echo "❌ .nyc_output directory does not exist!"
+            echo "❌ .nyc_output directory does not exist on host!"
           fi
           echo ""
-          echo "=== Try manual NYC merge ==="
+          echo "=== Check .nyc_output directory in DOCKER CONTAINER ==="
+          cd /home/runner/work/RedisInsight/RedisInsight
+          export COV_FOLDER="./redisinsight/api/test/test-runs/coverage"
+          export ID="debug-test"
+          export RTE="debug"
+          cd ./redisinsight/api/test/test-runs
+          echo "Running debug command inside container to check .nyc_output..."
+          if [ -f "./docker.build.yml" ]; then
+            echo "Using Docker build..."
+            echo "Command: docker-compose -f ./docker.build.yml -f ./docker.build.env exec test ls -la /usr/src/app/.nyc_output"
+            docker-compose -f ./docker.build.yml --env-file ./docker.build.env exec test ls -la /usr/src/app/.nyc_output 2>/dev/null || echo "Container not running or .nyc_output not found in container"
+          else
+            echo "Docker compose file not found"
+          fi
+          echo ""
+          echo "=== Try manual NYC merge in HOST ==="
+          cd /home/runner/work/RedisInsight/RedisInsight/redisinsight/api
+
           if [ -d ".nyc_output" ] && [ "$(find .nyc_output -name "*.json" | wc -l)" -gt 0 ]; then
             echo "Attempting manual NYC merge..."
             echo "Command: nyc merge .nyc_output coverage/test-run-coverage.json"
@@ -240,17 +257,17 @@ jobs:
           ITEST_NAME=${{ matrix.rte }} node ./.github/itest-results.js
           curl -H "Content-type: application/json" --data @itests.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
 
-      - name: Generate test results
-        uses: dorny/test-reporter@v1
-        id: test-reporter
-        if: always()
-        with:
-          name: 'Test results: IT (${{ matrix.rte }}) tests'
-          path: itest/results/*.result.json
-          reporter: mocha-json
-          list-tests: 'failed'
-          list-suites: 'failed'
-          fail-on-error: 'false'
+      # - name: Generate test results
+      #   uses: dorny/test-reporter@v1
+      #   id: test-reporter
+      #   if: always()
+      #   with:
+      #     name: 'Test results: IT (${{ matrix.rte }}) tests'
+      #     path: itest/results/*.result.json
+      #     reporter: mocha-json
+      #     list-tests: 'failed'
+      #     list-suites: 'failed'
+      #     fail-on-error: 'false'
 
       - name: Add link to report in the workflow summary
         if: always()

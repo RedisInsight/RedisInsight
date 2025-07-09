@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
+import { render, screen, userEvent } from 'uiSrc/utils/test-utils'
 import ConsentOption from './ConsentOption'
 import { IConsent } from '../ConsentsSettings'
 
@@ -39,10 +39,10 @@ describe('ConsentOption', () => {
     expect(screen.getByTestId('switch-option-analytics')).toBeInTheDocument()
   })
 
-  it('should call onChangeAgreement when switch is clicked', () => {
+  it('should call onChangeAgreement when switch is clicked', async () => {
     render(<ConsentOption {...defaultProps} />)
 
-    fireEvent.click(screen.getByTestId('switch-option-analytics'))
+    await userEvent.click(screen.getByTestId('switch-option-analytics'))
 
     expect(mockOnChangeAgreement).toHaveBeenCalledWith(true, 'analytics')
   })
@@ -56,7 +56,9 @@ describe('ConsentOption', () => {
 
     render(<ConsentOption {...defaultProps} consent={consentWithDescription} />)
 
-    expect(screen.getByText('Help us improve Redis Insight by sharing usage data.')).toBeInTheDocument()
+    expect(
+      screen.getByText('Help us improve Redis Insight by sharing usage data.'),
+    ).toBeInTheDocument()
     expect(screen.queryByText('Privacy Policy')).not.toBeInTheDocument()
   })
 
@@ -75,7 +77,7 @@ describe('ConsentOption', () => {
     const privacyPolicyLink = screen.getByText('Privacy Policy')
     expect(privacyPolicyLink.closest('a')).toHaveAttribute(
       'href',
-      'https://redis.io/legal/privacy-policy/?utm_source=redisinsight&utm_medium=app&utm_campaign=telemetry'
+      'https://redis.io/legal/privacy-policy/?utm_source=redisinsight&utm_medium=app&utm_campaign=telemetry',
     )
   })
 
@@ -86,7 +88,13 @@ describe('ConsentOption', () => {
       linkToPrivacyPolicy: true,
     }
 
-    render(<ConsentOption {...defaultProps} consent={consentWithPrivacyLink} isSettingsPage />)
+    render(
+      <ConsentOption
+        {...defaultProps}
+        consent={consentWithPrivacyLink}
+        isSettingsPage
+      />,
+    )
 
     // Verify that the Privacy Policy link is rendered
     expect(screen.getByText('Privacy Policy')).toBeInTheDocument()
@@ -99,9 +107,17 @@ describe('ConsentOption', () => {
       linkToPrivacyPolicy: false,
     }
 
-    render(<ConsentOption {...defaultProps} consent={consentWithoutPrivacyLink} isSettingsPage />)
+    render(
+      <ConsentOption
+        {...defaultProps}
+        consent={consentWithoutPrivacyLink}
+        isSettingsPage
+      />,
+    )
 
-    expect(screen.getByText('Help us improve Redis Insight by sharing usage data.')).toBeInTheDocument()
+    expect(
+      screen.getByText('Help us improve Redis Insight by sharing usage data.'),
+    ).toBeInTheDocument()
     expect(screen.queryByText('Privacy Policy')).not.toBeInTheDocument()
   })
 

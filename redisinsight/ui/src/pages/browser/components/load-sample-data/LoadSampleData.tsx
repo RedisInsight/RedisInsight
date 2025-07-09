@@ -66,7 +66,7 @@ const LoadSampleData = (props: Props) => {
         </PrimaryButton>
       }
     >
-      <Row gap="m" responsive={false}>
+      <Row gap="m" responsive={false} style={{ padding: 8 }}>
         <FlexItem>
           <EuiIcon type="alert" className={styles.popoverIcon} />
         </FlexItem>

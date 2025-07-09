@@ -26,3 +26,5 @@ const ChangeEditorTypeButton = () => {
 }
 
 export default ChangeEditorTypeButton
+
+export class ButtonMode {}

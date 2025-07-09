@@ -19,7 +19,7 @@ export interface Props {
 const SummaryContainer = styled(Row)`
   padding-top: 18px;
 `
-const SummaryValue = styled(EuiText)`
+const SummaryValue = styled(Text)`
   font-size: 18px !important;
   line-height: 24px;
   font-weight: 500 !important;
@@ -36,27 +36,21 @@ const BulkActionSummary = ({
   <SummaryContainer data-testid={testId} gap="xl">
     <FlexItem>
       <SummaryValue>{numberWithSpaces(processed)}</SummaryValue>
-      <Text color="subdued" className={styles.summaryLabel}>
+      <SummaryValue color="subdued">
         {type === BulkActionsType.Delete ? 'Keys' : 'Commands'} Processed
-      </Text>
+      </SummaryValue>
     </FlexItem>
     <FlexItem>
       <SummaryValue>{numberWithSpaces(succeed)}</SummaryValue>
-      <Text color="subdued" className={styles.summaryLabel}>
-        Success
-      </Text>
+      <SummaryValue color="subdued">Success</SummaryValue>
     </FlexItem>
     <FlexItem>
       <SummaryValue>{numberWithSpaces(failed)}</SummaryValue>
-      <Text color="subdued" className={styles.summaryLabel}>
-        Errors
-      </Text>
+      <SummaryValue color="subdued">Errors</SummaryValue>
     </FlexItem>
     <FlexItem>
       <SummaryValue>{millisecondsFormat(duration, 'H:mm:ss.SSS')}</SummaryValue>
-      <Text color="subdued" className={styles.summaryLabel}>
-        Time Taken
-      </Text>
+      <SummaryValue color="subdued">Time Taken</SummaryValue>
     </FlexItem>
   </SummaryContainer>
 )

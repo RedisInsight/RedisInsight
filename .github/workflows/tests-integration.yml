@@ -164,52 +164,21 @@ jobs:
       - name: Debug NYC coverage generation
         if: always()
         run: |
-          echo "=== Debugging missing test-run-coverage.json file ==="
+          echo "=== Debugging NYC merge process ==="
           echo "Working directory: $(pwd)"
           echo ""
-          echo "=== Check .nyc_output directory in API folder (HOST) ==="
-          cd ./redisinsight/api
-          if [ -d ".nyc_output" ]; then
-            echo "✅ .nyc_output directory exists on host"
-            echo "Contents:"
-            ls -la .nyc_output
-            echo "File count: $(find .nyc_output -name "*.json" | wc -l)"
-            echo "Sample file content (first 5 lines):"
-            find .nyc_output -name "*.json" | head -1 | xargs head -5 2>/dev/null || echo "No JSON files to sample"
-          else
-            echo "❌ .nyc_output directory does not exist on host!"
-          fi
-          echo ""
-          echo "=== Check .nyc_output directory in DOCKER CONTAINER ==="
-          cd /home/runner/work/RedisInsight/RedisInsight
-          export COV_FOLDER="./redisinsight/api/test/test-runs/coverage"
-          export ID="debug-test"
-          export RTE="debug"
+          echo "=== Try manual NYC merge on HOST ==="
           cd ./redisinsight/api/test/test-runs
-          echo "Running debug command inside container to check .nyc_output..."
-          if [ -f "./docker.build.yml" ]; then
-            echo "Using Docker build..."
-            echo "Command: docker-compose -f ./docker.build.yml -f ./docker.build.env exec test ls -la /usr/src/app/.nyc_output"
-            docker-compose -f ./docker.build.yml --env-file ./docker.build.env exec test ls -la /usr/src/app/.nyc_output 2>/dev/null || echo "Container not running or .nyc_output not found in container"
-          else
-            echo "Docker compose file not found"
-          fi
-          echo ""
-          echo "=== Try manual NYC merge in HOST ==="
-          cd /home/runner/work/RedisInsight/RedisInsight/redisinsight/api
-
-          if [ -d ".nyc_output" ] && [ "$(find .nyc_output -name "*.json" | wc -l)" -gt 0 ]; then
+          if [ -d "coverage/.nyc_output" ] && [ "$(find coverage/.nyc_output -name "*.json" | wc -l)" -gt 0 ]; then
+            echo "✅ .nyc_output directory found with $(find coverage/.nyc_output -name "*.json" | wc -l) files"
             echo "Attempting manual NYC merge..."
-            echo "Command: nyc merge .nyc_output coverage/test-run-coverage.json"
-            nyc merge .nyc_output coverage/test-run-coverage.json || echo "NYC merge failed with exit code $?"
+            echo "Command: cd ../.. && nyc merge ./test/test-runs/coverage/.nyc_output ./test/test-runs/coverage/test-run-coverage.json"
+            cd ../.. && nyc merge ./test/test-runs/coverage/.nyc_output ./test/test-runs/coverage/test-run-coverage.json || echo "NYC merge failed with exit code $?"
             echo "Checking result:"
-            ls -la coverage/test-run-coverage.json 2>/dev/null || echo "File not created"
+            ls -la ./test/test-runs/coverage/test-run-coverage.json 2>/dev/null || echo "File not created"
           else
-            echo "Skipping merge - no coverage data files found"
+            echo "❌ No coverage data files found in coverage/.nyc_output"
           fi
-          echo ""
-          echo "=== Final coverage directory check ==="
-          ls -la coverage/ | head -10
 
       - name: Copy test results to artifacts
         run: |

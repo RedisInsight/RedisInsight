@@ -83,19 +83,13 @@ const RecommendationTitle = ({
     >
       {redisStack && (
         <FlexItem>
-          <EuiLink
-            external={false}
+          <Link
             target="_blank"
             href={EXTERNAL_LINKS.redisStack}
             className={styles.redisStackLink}
             data-testid={`${id}-redis-stack-link`}
           >
-            <EuiToolTip
-              content="Redis Stack"
-              position="top"
-              display="inlineBlock"
-              anchorClassName="flex-row"
-            >
+            <RiTooltip content="Redis Stack" position="top">
               <EuiIcon
                 type={
                   theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
@@ -103,8 +97,8 @@ const RecommendationTitle = ({
                 className={styles.redisStackIcon}
                 data-testid={`${id}-redis-stack-icon`}
               />
-            </EuiToolTip>
-          </EuiLink>
+            </RiTooltip>
+          </Link>
         </FlexItem>
       )}
       <FlexItem className="truncateText">{title}</FlexItem>
@@ -244,32 +238,8 @@ const Recommendation = ({
   )
 
   const renderButtonContent = (
-    redisStack: Maybe<boolean>,
-    title: string,
-    id: string,
-  ) => (
     <Row className={styles.fullWidth} align="center" justify="between">
       <Row className={styles.fullWidth} align="center">
-        <FlexItem>
-          {redisStack && (
-            <Link
-              target="_blank"
-              href={EXTERNAL_LINKS.redisStack}
-              className={styles.redisStackLink}
-              data-testid={`${id}-redis-stack-link`}
-            >
-              <RiTooltip content="Redis Stack" position="top">
-                <EuiIcon
-                  type={
-                    theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
-                  }
-                  className={styles.redisStackIcon}
-                  data-testid={`${id}-redis-stack-icon`}
-                />
-              </RiTooltip>
-            </Link>
-          )}
-        </FlexItem>
         <FlexItem grow className="truncateText">
           {title}
         </FlexItem>

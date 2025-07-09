@@ -199,6 +199,7 @@ jobs:
           echo "=== Files in expected coverage directory ==="
           ls -la ./redisinsight/api/test/test-runs/coverage/ || echo "Coverage directory does not exist!"
           echo ""
+
           echo "=== Copying files with error handling ==="
 
           # Copy JSON result file (should exist)

@@ -194,6 +194,7 @@ jobs:
           echo ""
           echo "=== Try manual NYC merge in HOST ==="
           cd /home/runner/work/RedisInsight/RedisInsight/redisinsight/api
+
           if [ -d ".nyc_output" ] && [ "$(find .nyc_output -name "*.json" | wc -l)" -gt 0 ]; then
             echo "Attempting manual NYC merge..."
             echo "Command: nyc merge .nyc_output coverage/test-run-coverage.json"
@@ -215,6 +216,7 @@ jobs:
           echo "=== Files in expected coverage directory ==="
           ls -la ./redisinsight/api/test/test-runs/coverage/ || echo "Coverage directory does not exist!"
           echo ""
+
           echo "=== Copying files with error handling ==="
 
           # Copy JSON result file (should exist)

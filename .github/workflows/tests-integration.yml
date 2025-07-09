@@ -156,7 +156,6 @@ jobs:
             ls -lh ./redisinsight/api/test/test-runs/coverage/test-run-result.xml
           else
             echo "❌ JUnit XML file missing!"
-          fi
 
       - name: Debug - Show directory structure and environment files
         run: |

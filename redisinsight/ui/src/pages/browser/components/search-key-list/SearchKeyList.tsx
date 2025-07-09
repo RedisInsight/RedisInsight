@@ -1,4 +1,4 @@
-import { EuiButtonEmpty, EuiIcon, keys } from '@elastic/eui'
+import { EuiIcon, keys } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -39,6 +39,7 @@ import { SidePanels } from 'uiSrc/slices/interfaces/insights'
 
 import { FeatureFlags } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 const placeholders = {
@@ -185,14 +186,14 @@ const SearchKeyList = () => {
         appendRight={
           searchMode === SearchMode.Redisearch ? (
             <FeatureFlagComponent name={FeatureFlags.databaseChat}>
-              <EuiButtonEmpty
+              <EmptyButton
                 className={styles.askCopilotBtn}
-                size="xs"
+                size="small"
                 onClick={handleClickAskCopilot}
                 data-testid="ask-redis-copilot-btn"
               >
                 <EuiIcon className={styles.cloudIcon} type={CloudStars} />
-              </EuiButtonEmpty>
+              </EmptyButton>
             </FeatureFlagComponent>
           ) : undefined
         }

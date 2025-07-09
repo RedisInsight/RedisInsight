@@ -52,26 +52,19 @@
 
     .euiFieldText,
     .euiFieldNumber,
-    .euiFieldPassword,
-    .euiFieldSearch,
     .euiSelect,
     .euiSuperSelectControl,
-    .euiComboBox .euiComboBox__inputWrap,
-    .euiTextArea {
+    .euiComboBox .euiComboBox__inputWrap {
       background-color: var(--browserTableRowEven) !important;
       padding: 12px;
       border-color: var(--separatorColor) !important;
-    }
-
-    .euiTextArea {
-      min-height: 80px;
     }
 
     .euiFormControlLayout--group {
       border-color: var(--separatorColor) !important;
     }
 
-    .euiFormRow, .euiFormControlLayout {
+    .euiFormControlLayout {
       max-width: none;
 
       .euiFormControlLayout:not(.euiFormControlLayout--compressed) {
@@ -81,8 +74,7 @@
       .euiSuperSelectControl:not(.euiSuperSelectControl--compressed),
       .euiSelect:not(.euiSelect--compressed),
       .euiFieldText:not(.euiFieldText--compressed),
-      .euiFieldNumber:not(.euiFieldNumber--compressed),
-      .euiFieldPassword {
+      .euiFieldNumber:not(.euiFieldNumber--compressed) {
         height: 40px !important;
       }
     }

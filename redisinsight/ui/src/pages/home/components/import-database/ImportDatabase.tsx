@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiButton,
-  EuiFilePicker,
-  EuiIcon,
-  EuiLoadingSpinner,
-  EuiText,
-  EuiTextColor,
-  EuiTitle,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFilePicker, EuiIcon } from '@elastic/eui'
 import ReactDOM from 'react-dom'
 import {
   fetchInstancesAction,
@@ -19,10 +10,18 @@ import {
 } from 'uiSrc/slices/instances/instances'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { UploadWarning } from 'uiSrc/components'
+import { RiTooltip, UploadWarning } from 'uiSrc/components'
 import { useModalHeader } from 'uiSrc/contexts/ModalTitleProvider'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { ColorText, Text } from 'uiSrc/components/base/text'
+import { Loader } from 'uiSrc/components/base/display'
 import ResultsLog from './components/ResultsLog'
 
 import styles from './styles.module.scss'
@@ -48,12 +47,7 @@ const ImportDatabase = (props: Props) => {
   useEffect(() => {
     setDomReady(true)
 
-    setModalHeader(
-      <EuiTitle size="s">
-        <h4>Import from file</h4>
-      </EuiTitle>,
-      true,
-    )
+    setModalHeader(<Title size="M">Import from file</Title>, true)
 
     return () => {
       setModalHeader(null)
@@ -108,15 +102,14 @@ const ImportDatabase = (props: Props) => {
     if (error) {
       return ReactDOM.createPortal(
         <div className="footerAddDatabase">
-          <EuiButton
-            fill
+          <PrimaryButton
             size="s"
             color="secondary"
             onClick={onClickRetry}
             data-testid="btn-retry"
           >
             Retry
-          </EuiButton>
+          </PrimaryButton>
         </div>,
         footerEl,
       )
@@ -125,16 +118,14 @@ const ImportDatabase = (props: Props) => {
     if (data) {
       return ReactDOM.createPortal(
         <div className="footerAddDatabase">
-          <EuiButton
-            fill
+          <PrimaryButton
             size="s"
-            color="secondary"
             type="submit"
             onClick={handleOnClose}
             data-testid="btn-close"
           >
             Ok
-          </EuiButton>
+          </PrimaryButton>
         </div>,
         footerEl,
       )
@@ -142,34 +133,30 @@ const ImportDatabase = (props: Props) => {
 
     return ReactDOM.createPortal(
       <div className="footerAddDatabase">
-        <EuiButton
+        <SecondaryButton
           size="s"
-          color="secondary"
           className="btn-cancel"
           onClick={handleOnClose}
           style={{ marginRight: 12 }}
         >
           Cancel
-        </EuiButton>
-        <EuiToolTip
+        </SecondaryButton>
+        <RiTooltip
           position="top"
-          anchorClassName="euiToolTip__btn-disabled"
           content={isSubmitDisabled ? 'Upload a file' : undefined}
         >
-          <EuiButton
-            fill
+          <PrimaryButton
             size="s"
-            color="secondary"
             type="submit"
             onClick={onSubmit}
-            isLoading={loading}
+            loading={loading}
             disabled={isSubmitDisabled}
-            iconType={isSubmitDisabled ? 'iInCircle' : undefined}
+            icon={isSubmitDisabled ? InfoIcon : undefined}
             data-testid="btn-submit"
           >
             Submit
-          </EuiButton>
-        </EuiToolTip>
+          </PrimaryButton>
+        </RiTooltip>
       </div>,
       footerEl,
     )
@@ -184,11 +171,11 @@ const ImportDatabase = (props: Props) => {
           <FlexItem grow>
             {isShowForm && (
               <>
-                <EuiText color="subdued" size="s">
+                <Text color="subdued" size="s">
                   Use a JSON file to import your database connections. Ensure
                   that you only use files from trusted sources to prevent the
                   risk of automatically executing malicious code.
-                </EuiText>
+                </Text>
                 <Spacer />
                 <EuiFilePicker
                   id="import-file-modal-filepicker"
@@ -201,13 +188,13 @@ const ImportDatabase = (props: Props) => {
                   aria-label="Select or drag and drop file"
                 />
                 {isInvalid && (
-                  <EuiTextColor
+                  <ColorText
                     color="danger"
                     className={styles.errorFileMsg}
                     data-testid="input-file-error-msg"
                   >
                     {`File should not exceed ${MAX_MB_FILE} MB`}
-                  </EuiTextColor>
+                  </ColorText>
                 )}
               </>
             )}
@@ -216,10 +203,10 @@ const ImportDatabase = (props: Props) => {
                 className={styles.loading}
                 data-testid="file-loading-indicator"
               >
-                <EuiLoadingSpinner size="xl" />
-                <EuiText color="subdued" style={{ marginTop: 12 }}>
+                <Loader size="xl" />
+                <Text color="subdued" style={{ marginTop: 12 }}>
                   Uploading...
-                </EuiText>
+                </Text>
               </div>
             )}
             {error && (
@@ -229,10 +216,10 @@ const ImportDatabase = (props: Props) => {
                   size="xxl"
                   color="danger"
                 />
-                <EuiText color="subdued" style={{ marginTop: 16 }}>
+                <Text color="subdued" style={{ marginTop: 16 }}>
                   Failed to add database connections
-                </EuiText>
-                <EuiText color="subdued">{error}</EuiText>
+                </Text>
+                <Text color="subdued">{error}</Text>
               </div>
             )}
           </FlexItem>

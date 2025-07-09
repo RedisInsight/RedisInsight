@@ -1,7 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiButton, EuiLink } from '@elastic/eui'
 import { useHistory } from 'react-router-dom'
 import {
   FeatureFlags,
@@ -18,6 +17,8 @@ import {
   OAuthSocialSource,
   RedisDefaultModules,
 } from 'uiSrc/slices/interfaces'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Link } from 'uiSrc/components/base/link/Link'
 
 export interface IProps {
   moduleName: RedisDefaultModules
@@ -48,9 +49,8 @@ const ModuleNotLoadedButton = ({
 
   return (
     <>
-      <EuiLink
+      <Link
         className={cx(styles.text, styles.link)}
-        external={false}
         target="_blank"
         href={getUtmExternalLink(CONTENT[moduleName]?.link, {
           campaign: utmCampaign,
@@ -58,13 +58,12 @@ const ModuleNotLoadedButton = ({
         data-testid="learn-more-link"
       >
         Learn More
-      </EuiLink>
+      </Link>
       <FeatureFlagComponent
         name={FeatureFlags.cloudAds}
         otherwise={
-          <EuiLink
+          <Link
             className={styles.link}
-            external={false}
             target="_blank"
             href=""
             onClick={(e) => {
@@ -75,22 +74,16 @@ const ModuleNotLoadedButton = ({
             }}
             data-testid="get-started-link"
           >
-            <EuiButton
-              fill
-              size="s"
-              color="secondary"
-              className={styles.btnLink}
-            >
+            <PrimaryButton size="s" className={styles.btnLink}>
               Redis Databases page
-            </EuiButton>
-          </EuiLink>
+            </PrimaryButton>
+          </Link>
         }
       >
         <OAuthSsoHandlerDialog>
           {(ssoCloudHandlerClick) => (
-            <EuiLink
+            <Link
               className={styles.link}
-              external={false}
               target="_blank"
               href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
                 campaign: utmCampaign,
@@ -101,23 +94,18 @@ const ModuleNotLoadedButton = ({
                     type === 'browser'
                       ? OAuthSocialSource.BrowserSearch
                       : OAuthSocialSource[
-                          module as keyof typeof OAuthSocialSource
-                        ],
+                      module as keyof typeof OAuthSocialSource
+                      ],
                   action: OAuthSocialAction.Create,
                 })
                 onClose?.()
               }}
               data-testid="get-started-link"
             >
-              <EuiButton
-                fill
-                size="s"
-                color="secondary"
-                className={styles.btnLink}
-              >
+              <PrimaryButton size="s" className={styles.btnLink}>
                 Get Started For Free
-              </EuiButton>
-            </EuiLink>
+              </PrimaryButton>
+            </Link>
           )}
         </OAuthSsoHandlerDialog>
       </FeatureFlagComponent>

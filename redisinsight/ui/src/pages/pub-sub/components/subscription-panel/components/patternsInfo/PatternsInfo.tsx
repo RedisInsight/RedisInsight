@@ -1,6 +1,8 @@
-import { EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import React from 'react'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
+import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 
 import styles from './styles.module.scss'
 
@@ -16,19 +18,18 @@ const PatternsInfo = ({ channels }: PatternsInfoProps) => {
 
   return (
     <div className={styles.patternsContainer}>
-      <EuiText color="subdued" size="s" data-testid="patterns-count">
+      <Text color="subdued" size="s" data-testid="patterns-count">
         Patterns:&nbsp;{getChannelsCount()}{' '}
-      </EuiText>
-      <EuiToolTip
-        anchorClassName={styles.appendIcon}
+      </Text>
+      <RiTooltip
         position="right"
         title={
-          <>
+          <span className={styles.appendIcon}>
             {channels
               ?.trim()
               .split(' ')
               .map((ch) => <p key={`${ch}`}>{ch}</p>)}
-          </>
+          </span>
         }
       >
         <EuiIcon
@@ -36,7 +37,7 @@ const PatternsInfo = ({ channels }: PatternsInfoProps) => {
           style={{ cursor: 'pointer' }}
           data-testid="append-info-icon"
         />
-      </EuiToolTip>
+      </RiTooltip>
     </div>
   )
 }

@@ -1,9 +1,12 @@
 import React from 'react'
-import { EuiSwitch, EuiText } from '@elastic/eui'
 import parse from 'html-react-parser'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+
+import { Text } from 'uiSrc/components/base/text'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
+
 import { ItemDescription } from './components'
 import { IConsent } from '../ConsentsSettings'
 
@@ -30,42 +33,39 @@ const ConsentOption = (props: Props) => {
     <FlexItem key={consent.agreementName} grow>
       {isSettingsPage && consent.description && (
         <>
-          <EuiText
+          <Text
             size="s"
             className={styles.smallText}
             color="subdued"
             style={{ marginTop: '12px' }}
           >
             <ItemDescription description={consent.description} withLink={consent.linkToPrivacyPolicy} />
-          </EuiText>
+          </Text>
           <Spacer size="m" />
         </>
       )}
       <Row gap="m">
         <FlexItem>
-          <EuiSwitch
-            showLabel={false}
-            label=""
+          <SwitchInput
             checked={checked}
-            onChange={(e) =>
-              onChangeAgreement(e.target.checked, consent.agreementName)
+            onCheckedChange={(checked) =>
+              onChangeAgreement(checked, consent.agreementName)
             }
-            className={styles.switchOption}
             data-testid={`switch-option-${consent.agreementName}`}
             disabled={consent?.disabled}
           />
         </FlexItem>
         <FlexItem>
-          <EuiText className={styles.smallText}>{parse(consent.label)}</EuiText>
+          <Text className={styles.smallText}>{parse(consent.label)}</Text>
           {!isSettingsPage && consent.description && (
-            <EuiText
+            <Text
               size="s"
               className={styles.smallText}
               color="subdued"
               style={{ marginTop: '12px' }}
             >
               <ItemDescription description={consent.description} withLink={consent.linkToPrivacyPolicy} />
-            </EuiText>
+            </Text>
           )}
         </FlexItem>
       </Row>

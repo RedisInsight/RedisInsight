@@ -1,9 +1,11 @@
-import { EuiLink, EuiTextColor } from '@elastic/eui'
 import React, { Fragment } from 'react'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { getDbIndex } from 'uiSrc/utils'
 import { FeatureFlagComponent } from 'uiSrc/components'
+import { ColorText } from 'uiSrc/components/base/text'
 import { FeatureFlags } from 'uiSrc/constants/featureFlags'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 
 export const InitOutputText = (
   host: string = '',
@@ -12,31 +14,31 @@ export const InitOutputText = (
   emptyOutput: boolean,
   onClick: () => void,
 ) => [
-  <Fragment key={Math.random()}>
-    {emptyOutput && (
-      <span className="color-green" key={Math.random()}>
-        {'Try '}
-        <EuiLink
-          onClick={onClick}
-          className="color-green"
-          style={{ fontSize: 'inherit', fontFamily: 'inherit' }}
-          data-test-subj="cli-workbench-page-btn"
-        >
-          Workbench
-        </EuiLink>
-        , our advanced CLI. Check out our Quick Guides to learn more about Redis
-        capabilities.
-      </span>
-    )}
-  </Fragment>,
-  '\n\n',
-  'Connecting...',
-  '\n\n',
-  'Pinging Redis server on ',
-  <EuiTextColor color="default" key={Math.random()}>
-    {`${host}:${port}${getDbIndex(dbIndex)}`}
-  </EuiTextColor>,
-]
+    <Fragment key={Math.random()}>
+      {emptyOutput && (
+        <span className="color-green" key={Math.random()}>
+          {'Try '}
+          <Link
+            onClick={onClick}
+            className="color-green"
+            style={{ fontSize: 'inherit', fontFamily: 'inherit' }}
+            data-test-subj="cli-workbench-page-btn"
+          >
+            Workbench
+          </Link>
+          , our advanced CLI. Check out our Quick Guides to learn more about Redis
+          capabilities.
+        </span>
+      )}
+    </Fragment>,
+    '\n\n',
+    'Connecting...',
+    '\n\n',
+    'Pinging Redis server on ',
+    <ColorText color="default" key={Math.random()}>
+      {`${host}:${port}${getDbIndex(dbIndex)}`}
+    </ColorText>,
+  ]
 
 export const ConnectionSuccessOutputText = [
   '\n',
@@ -69,21 +71,17 @@ export const cliTexts = {
     </div>
   ),
   USE_PSUBSCRIBE_COMMAND: (path: string = '') => (
-    <EuiTextColor
-      color="danger"
-      key={Date.now()}
-      data-testid="user-pub-sub-link"
-    >
+    <ColorText color="danger" key={Date.now()} data-testid="user-pub-sub-link">
       {'Use '}
-      <EuiLink
+      <Link
         {...getRouterLinkProps(path)}
         color="text"
         data-test-subj="pubsub-page-btn"
       >
         Pub/Sub
-      </EuiLink>
+      </Link>
       {' to see the messages published to all channels in your database.'}
-    </EuiTextColor>
+    </ColorText>
   ),
   PSUBSCRIBE_COMMAND: (path: string = '') => (
     <FeatureFlagComponent
@@ -106,18 +104,18 @@ export const cliTexts = {
     </div>
   ),
   USE_PROFILER_TOOL: (onClick: () => void) => (
-    <EuiTextColor color="danger" key={Date.now()}>
+    <ColorText color="danger" key={Date.now()}>
       {'Use '}
-      <EuiLink
+      <EmptyButton
         onClick={onClick}
         className="btnLikeLink"
         color="text"
         data-testid="monitor-btn"
       >
         Profiler
-      </EuiLink>
+      </EmptyButton>
       {' tool to see all the requests processed by the server.'}
-    </EuiTextColor>
+    </ColorText>
   ),
   MONITOR_COMMAND: (onClick: () => void) => (
     <FeatureFlagComponent
@@ -128,21 +126,17 @@ export const cliTexts = {
     </FeatureFlagComponent>
   ),
   USE_PUB_SUB_TOOL: (path: string = '') => (
-    <EuiTextColor
-      color="danger"
-      key={Date.now()}
-      data-testid="user-pub-sub-link"
-    >
+    <ColorText color="danger" key={Date.now()} data-testid="user-pub-sub-link">
       {'Use '}
-      <EuiLink
+      <Link
         {...getRouterLinkProps(path)}
         color="text"
         data-test-subj="pubsub-page-btn"
       >
         Pub/Sub
-      </EuiLink>
+      </Link>
       {' tool to subscribe to channels.'}
-    </EuiTextColor>
+    </ColorText>
   ),
   SUBSCRIBE_COMMAND_CLI: (path: string = '') => (
     <FeatureFlagComponent
@@ -153,27 +147,26 @@ export const cliTexts = {
     </FeatureFlagComponent>
   ),
   HELLO3_COMMAND: () => (
-    <EuiTextColor color="danger" key={Date.now()}>
+    <ColorText color="danger" key={Date.now()}>
       {'Redis Insight does not support '}
-      <EuiLink
+      <Link
         href="https://github.com/redis/redis-specifications/blob/master/protocol/RESP3.md"
         className="btnLikeLink"
         color="text"
         target="_blank"
-        external={false}
         data-test-subj="hello3-btn"
       >
         RESP3
-      </EuiLink>
+      </Link>
       {' at the moment, but we are working on it.'}
-    </EuiTextColor>
+    </ColorText>
   ),
   HELLO3_COMMAND_CLI: () => [cliTexts.HELLO3_COMMAND(), '\n'],
   CLI_ERROR_MESSAGE: (message: string) => [
     '\n',
-    <EuiTextColor color="danger" key={Date.now()}>
+    <ColorText color="danger" key={Date.now()}>
       {message}
-    </EuiTextColor>,
+    </ColorText>,
     '\n\n',
   ],
 }

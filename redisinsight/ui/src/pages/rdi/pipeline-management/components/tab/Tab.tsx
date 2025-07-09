@@ -1,7 +1,10 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiLoadingSpinner, EuiText } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
+
 import statusErrorIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/status_error.svg?react'
+import { Text } from 'uiSrc/components/base/text'
+import { Loader } from 'uiSrc/components/base/display'
 
 import styles from './styles.module.scss'
 
@@ -33,17 +36,15 @@ const Tab = (props: IProps) => {
       className={cx(styles.wrapper, className, { [styles.active]: isSelected })}
       data-testid={testID}
     >
-      <EuiText className="rdi-pipeline-nav__title" size="m">
+      <Text className="rdi-pipeline-nav__title" size="m">
         {title}
-      </EuiText>
+      </Text>
       {fileName ? (
         <div className="rdi-pipeline-nav__file">
           <EuiIcon type="document" className="rdi-pipeline-nav__fileIcon" />
-          <EuiText
-            className={cx('rdi-pipeline-nav__text', { invalid: !isValid })}
-          >
+          <Text className={cx('rdi-pipeline-nav__text', { invalid: !isValid })}>
             {fileName}
-          </EuiText>
+          </Text>
 
           {!isValid && (
             <EuiIcon
@@ -54,7 +55,7 @@ const Tab = (props: IProps) => {
           )}
 
           {isLoading && (
-            <EuiLoadingSpinner
+            <Loader
               data-testid="rdi-nav-config-loader"
               className={styles.loader}
             />

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { EuiButtonIcon } from '@elastic/eui'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -23,9 +24,8 @@ const MessageBar = ({ children, opened }: Props) => {
             {children}
           </FlexItem>
           <FlexItem className={styles.cross}>
-            <EuiButtonIcon
-              iconType="cross"
-              color="primary"
+            <IconButton
+              icon={CancelSlimIcon}
               aria-label="Close"
               onClick={() => setIsOpen(false)}
               data-testid="close-button"

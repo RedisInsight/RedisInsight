@@ -1,13 +1,4 @@
-import {
-  EuiBasicTableColumn,
-  EuiButtonIcon,
-  EuiLoadingSpinner,
-  EuiTextColor,
-  EuiText,
-  EuiIcon,
-  EuiButton,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { pick } from 'lodash'
 import { useHistory } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
@@ -28,10 +19,15 @@ import {
 import { removeEmpty, setTitle } from 'uiSrc/utils'
 import { ApiStatusCode, Pages } from 'uiSrc/constants'
 import { ApiEncryptionErrors } from 'uiSrc/constants/apiErrors'
-import { InputFieldSentinel } from 'uiSrc/components'
+import { InputFieldSentinel, RiTooltip } from 'uiSrc/components'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/InputFieldSentinel'
 
+import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon, CopyIcon } from 'uiSrc/components/base/icons'
+import { ColorText, Text } from 'uiSrc/components/base/text'
+import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
+import { Loader } from 'uiSrc/components/base/display'
 import SentinelDatabasesResult from './components'
 
 import styles from '../styles.module.scss'
@@ -112,58 +108,54 @@ const SentinelDatabasesResultPage = () => {
     )
   }
 
-  const columns: EuiBasicTableColumn<ModifiedSentinelMaster>[] = [
+  const columns: ColumnDefinition<ModifiedSentinelMaster>[] = [
     {
-      field: 'message',
-      className: 'column_status',
-      name: 'Result',
-      dataType: 'string',
-      align: 'left',
-      width: '110px',
-      sortable: true,
-      render: function Message(
-        _status: string,
-        { status, message, name, loading = false },
-      ) {
-        return (
-          <div data-testid={`status_${name}_${status}`}>
-            {loading && <EuiLoadingSpinner />}
-            {!loading && status === AddRedisDatabaseStatus.Success && (
-              <EuiText>{message}</EuiText>
-            )}
-            {!loading && status !== AddRedisDatabaseStatus.Success && (
-              <EuiToolTip position="right" title="Error" content={message}>
-                <EuiTextColor color="danger" style={{ cursor: 'pointer' }}>
-                  Error&nbsp;
-                  <EuiIcon type="alert" color="danger" />
-                </EuiTextColor>
-              </EuiToolTip>
-            )}
-          </div>
-        )
-      },
-    },
-    {
-      field: 'name',
-      className: 'column_masterName',
-      name: 'Primary Group',
-      truncateText: true,
-      sortable: true,
-      width: '175px',
-      render: (name: string) => (
-        <span data-testid={`primary-group_${name}`}>{name}</span>
+      header: 'Result',
+      id: 'message',
+      accessorKey: 'message',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { status, message, name, loading = false },
+        },
+      }) => (
+        <div data-testid={`status_${name}_${status}`}>
+          {loading && <Loader />}
+          {!loading && status === AddRedisDatabaseStatus.Success && (
+            <Text>{message}</Text>
+          )}
+          {!loading && status !== AddRedisDatabaseStatus.Success && (
+            <RiTooltip position="right" title="Error" content={message}>
+              <ColorText color="danger" style={{ cursor: 'pointer' }}>
+                Error&nbsp;
+                <EuiIcon type="alert" color="danger" />
+              </ColorText>
+            </RiTooltip>
+          )}
+        </div>
       ),
     },
     {
-      field: 'alias',
-      className: 'column_db_alias',
-      name: 'Database Alias*',
-      width: '300px',
-      sortable: true,
-      render: function InstanceAliasCell(
-        _alias: string,
-        { id, alias, error, loading = false, status },
-      ) {
+      header: 'Primary Group',
+      id: 'name',
+      accessorKey: 'name',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { name },
+        },
+      }) => <span data-testid={`primary-group_${name}`}>{name}</span>,
+    },
+    {
+      header: 'Database Alias*',
+      id: 'alias',
+      accessorKey: 'alias',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { id, alias, error, loading = false, status },
+        },
+      }) => {
         if (
           error?.statusCode !== ApiStatusCode.Unauthorized ||
           status === AddRedisDatabaseStatus.Success
@@ -171,74 +163,61 @@ const SentinelDatabasesResultPage = () => {
           return alias
         }
         return (
-          <div role="presentation">
-            <InputFieldSentinel
-              name={`alias-${id}`}
-              value={alias}
-              placeholder="Database"
-              disabled={loading}
-              className={styles.input}
-              inputType={SentinelInputFieldType.Text}
-              onChangedInput={handleChangedInput}
-              maxLength={500}
-            />
-          </div>
+          <InputFieldSentinel
+            name={`alias-${id}`}
+            value={alias}
+            placeholder="Database"
+            disabled={loading}
+            className={styles.input}
+            inputType={SentinelInputFieldType.Text}
+            onChangedInput={handleChangedInput}
+            maxLength={500}
+          />
         )
       },
     },
     {
-      field: 'host',
-      className: 'column_address',
-      name: 'Address',
-      width: '190px',
-      dataType: 'auto',
-      truncateText: true,
-      sortable: ({ host, port }) => `${host}:${port}`,
-      render: function Address(
-        _host: string,
-        { host, port }: ModifiedSentinelMaster,
-      ) {
+      header: 'Address',
+      id: 'host',
+      accessorKey: 'host',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { host, port },
+        },
+      }) => {
         const text = `${host}:${port}`
         return (
           <div className="host_port">
-            <EuiText className="copyHostPortText">{text}</EuiText>
-            <EuiToolTip
-              position="right"
-              content="Copy"
-              anchorClassName="copyPublicEndpointTooltip"
-            >
-              <EuiButtonIcon
-                iconType="copy"
+            <Text className="copyHostPortText">{text}</Text>
+            <RiTooltip position="right" content="Copy">
+              <IconButton
+                icon={CopyIcon}
                 aria-label="Copy public endpoint"
                 className="copyPublicEndpointBtn"
                 onClick={() => handleCopy(text)}
                 tabIndex={-1}
               />
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
     },
     {
-      field: 'numberOfSlaves',
-      className: 'column_numberOfSlaves',
-      name: '# of replicas',
-      dataType: 'number',
-      align: 'center',
-      sortable: true,
-      width: '135px',
-      truncateText: true,
-      hideForMobile: true,
+      header: '# of replicas',
+      id: 'numberOfSlaves',
+      accessorKey: 'numberOfSlaves',
+      enableSorting: true,
     },
     {
-      field: 'username',
-      className: 'column_username',
-      name: 'Username',
-      width: '285px',
-      render: function UsernameCell(
-        _username: string,
-        { username, id, loading = false, error, status },
-      ) {
+      header: 'Username',
+      id: 'username',
+      accessorKey: 'username',
+      cell: ({
+        row: {
+          original: { username, id, loading = false, error, status },
+        },
+      }) => {
         if (
           error?.statusCode !== ApiStatusCode.Unauthorized ||
           status === AddRedisDatabaseStatus.Success
@@ -263,14 +242,14 @@ const SentinelDatabasesResultPage = () => {
       },
     },
     {
-      field: 'password',
-      className: 'column_password',
-      name: 'Password',
-      width: '285px',
-      render: function PasswordCell(
-        _password: string,
-        { password, id, error, loading = false, status },
-      ) {
+      header: 'Password',
+      id: 'password',
+      accessorKey: 'password',
+      cell: ({
+        row: {
+          original: { password, id, error, loading = false, status },
+        },
+      }) => {
         if (
           error?.statusCode !== ApiStatusCode.Unauthorized ||
           status === AddRedisDatabaseStatus.Success
@@ -294,15 +273,14 @@ const SentinelDatabasesResultPage = () => {
       },
     },
     {
-      field: 'db',
-      className: 'column_db',
-      width: '170px',
-      align: 'center',
-      name: 'Database Index',
-      render: function DbCell(
-        _password: string,
-        { db, id, loading = false, status, error },
-      ) {
+      header: 'Database Index',
+      id: 'db',
+      accessorKey: 'db',
+      cell: ({
+        row: {
+          original: { db, id, loading = false, status, error },
+        },
+      }) => {
         if (status === AddRedisDatabaseStatus.Success) {
           return db || <i>not assigned</i>
         }
@@ -326,18 +304,16 @@ const SentinelDatabasesResultPage = () => {
     },
   ]
 
-  // add column with actions if someone error has come
   if (countSuccessAdded !== items.length) {
-    const columnActions: EuiBasicTableColumn<ModifiedSentinelMaster> = {
-      field: 'actions',
-      className: 'column_actions',
-      align: 'left',
-      name: '',
-      width: '200px',
-      render: function ButtonCell(
-        _password: string,
-        { name, error, alias, loading = false },
-      ) {
+    const columnActions: ColumnDefinition<ModifiedSentinelMaster> = {
+      header: '',
+      id: 'actions',
+      accessorKey: 'actions',
+      cell: ({
+        row: {
+          original: { name, error, alias, loading = false },
+        },
+      }) => {
         const isDisabled = !alias
         if (
           error?.statusCode !== ApiStatusCode.Unauthorized &&
@@ -348,28 +324,25 @@ const SentinelDatabasesResultPage = () => {
         }
         return (
           <div role="presentation">
-            <EuiToolTip
+            <RiTooltip
               position="top"
-              anchorClassName="euiToolTip__btn-disabled"
               title={isDisabled ? validationErrors.REQUIRED_TITLE(1) : null}
               content={
                 isDisabled ? (
-                  <span className="euiToolTip__content">Database Alias</span>
+                  <span>Database Alias</span>
                 ) : null
               }
             >
-              <EuiButton
-                fill
+              <PrimaryButton
                 size="s"
-                color="secondary"
-                isDisabled={isDisabled}
-                isLoading={loading}
+                disabled={isDisabled}
+                loading={loading}
                 onClick={() => handleAddInstance(name)}
-                iconType={isDisabled ? 'iInCircle' : undefined}
+                icon={isDisabled ? InfoIcon : undefined}
               >
                 Add Primary Group
-              </EuiButton>
-            </EuiToolTip>
+              </PrimaryButton>
+            </RiTooltip>
           </div>
         )
       },

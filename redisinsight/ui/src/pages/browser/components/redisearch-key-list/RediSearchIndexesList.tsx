@@ -1,15 +1,9 @@
-import {
-  EuiButtonEmpty,
-  EuiButtonIcon,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiToolTip,
-} from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { isString } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 
+import styled from 'styled-components'
 import {
   setSelectedIndex,
   redisearchSelector,
@@ -39,6 +33,11 @@ import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
 
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
+import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
+import { RefreshIcon } from 'uiSrc/components/base/icons'
+import { RiTooltip } from 'uiSrc/components'
+import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export const CREATE = 'create'
@@ -93,24 +92,35 @@ const RediSearchIndexesList = (props: Props) => {
     [],
   )
 
-  const options: EuiSuperSelectOption<string>[] = list.map((index) => {
+  const options = list.map((index) => {
     const value = formatLongName(bufferToString(index))
 
     return {
       value: JSON.stringify(index),
-      inputDisplay: value,
-      dropdownDisplay: value,
-      'data-test-subj': `mode-option-type-${value}`,
+      inputDisplay: (
+        <Text component="span" data-test-subj={`mode-option-type-${value}`}>
+          {value}
+        </Text>
+      ),
+      dropdownDisplay: (
+        <Text component="span" data-test-subj={`mode-option-type-${value}`}>
+          {value}
+        </Text>
+      ),
     }
   })
 
   options.unshift({
     value: JSON.stringify(CREATE),
-    inputDisplay: CREATE,
+    inputDisplay: <span>CREATE</span>,
     dropdownDisplay: (
-      <div className={styles.createIndexBtn} data-testid="create-index-btn">
+      <Text
+        size="M"
+        className={cx(styles.createIndexBtn)}
+        data-testid="create-index-btn"
+      >
         Create Index
-      </div>
+      </Text>
     ),
   })
 
@@ -166,43 +176,54 @@ const RediSearchIndexesList = (props: Props) => {
     <OutsideClickDetector onOutsideClick={() => setIsSelectOpen(false)}>
       <div className={cx(styles.container)}>
         <div className={styles.select}>
-          <EuiSuperSelect
-            fullWidth
-            itemClassName={cx('withColorDefinition', styles.searchMode)}
+          <RiSelect
             disabled={loading}
-            isLoading={loading}
+            loading={loading}
             options={options}
-            isOpen={isSelectOpen}
-            valueOfSelected={index || ''}
+            valueRender={({ option, isOptionValue }): JSX.Element => {
+              if (isOptionValue) {
+                return option.dropdownDisplay as JSX.Element
+              }
+              return option.inputDisplay as JSX.Element
+            }}
+            defaultOpen={isSelectOpen}
+            value={index || ''}
             onChange={onChangeIndex}
             data-testid="select-search-mode"
+            placeholder={
+              <Button
+                className={styles.placeholder}
+                onClick={() => setIsSelectOpen(true)}
+                data-testid="select-index-placeholder"
+              >
+                Select Index
+              </Button>
+            }
           />
-          {!selectedIndex && (
-            <EuiButtonEmpty
-              className={styles.placeholder}
-              onClick={() => setIsSelectOpen(true)}
-              data-testid="select-index-placeholder"
-            >
-              Select Index
-            </EuiButtonEmpty>
-          )}
         </div>
         <div className={styles.refresh}>
-          <EuiToolTip content="Refresh Indexes">
-            <EuiButtonIcon
-              size="s"
-              iconType="refresh"
+          <RiTooltip content="Refresh Indexes">
+            <IconButton
+              size="S"
+              icon={RefreshIcon}
               disabled={loading}
               className={styles.refreshBtn}
               onClick={handleRefresh}
               aria-label="refresh indexes list"
               data-testid="refresh-indexes-btn"
             />
-          </EuiToolTip>
+          </RiTooltip>
         </div>
       </div>
     </OutsideClickDetector>
   )
 }
+
+const Button = styled(EmptyButton)`
+  justify-content: flex-start;
+  max-width: 200px;
+  padding-left: 1.275rem;
+  padding-right: 2.4rem;
+`
 
 export default RediSearchIndexesList

@@ -1,10 +1,9 @@
-import { EuiBasicTableColumn } from '@elastic/eui'
 import React from 'react'
 
 import { IClients } from 'uiSrc/slices/interfaces'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
-import Table from '../components/table'
 
 type ClientsData = {
   id: string
@@ -15,36 +14,42 @@ type ClientsData = {
   user: string
 }
 
-const columns: EuiBasicTableColumn<ClientsData>[] = [
+const columns: ColumnDefinition<ClientsData>[] = [
   {
-    name: 'ID',
-    field: 'id',
-    sortable: true,
+    header: 'ID',
+    id: 'id',
+    accessorKey: 'id',
+    enableSorting: true,
   },
   {
-    name: 'ADDR',
-    field: 'addr',
-    sortable: true,
+    header: 'ADDR',
+    id: 'addr',
+    accessorKey: 'addr',
+    enableSorting: true,
   },
   {
-    name: 'Age',
-    field: 'ageSec',
-    sortable: true,
+    header: 'Age',
+    id: 'ageSec',
+    accessorKey: 'ageSec',
+    enableSorting: true,
   },
   {
-    name: 'Name',
-    field: 'name',
-    sortable: true,
+    header: 'Name',
+    id: 'name',
+    accessorKey: 'name',
+    enableSorting: true,
   },
   {
-    name: 'Idle',
-    field: 'idleSec',
-    sortable: true,
+    header: 'Idle',
+    id: 'idleSec',
+    accessorKey: 'idleSec',
+    enableSorting: true,
   },
   {
-    name: 'User',
-    field: 'user',
-    sortable: true,
+    header: 'User',
+    id: 'user',
+    accessorKey: 'user',
+    enableSorting: true,
   },
 ]
 
@@ -63,7 +68,7 @@ const Clients = ({
   onRefreshClicked,
   onChangeAutoRefresh,
 }: Props) => {
-  const clients = Object.keys(data).map((key) => {
+  const clients: ClientsData[] = Object.keys(data).map((key) => {
     const client = data[key]
     return {
       id: key,
@@ -82,11 +87,10 @@ const Clients = ({
         onRefreshClicked={onRefreshClicked}
         onChangeAutoRefresh={onChangeAutoRefresh}
       >
-        <Table<ClientsData>
-          id="clients"
+        <Table
           columns={columns}
-          items={clients}
-          initialSortField="id"
+          data={clients}
+          defaultSorting={[{ id: 'id', desc: false }]}
         />
       </Accordion>
     </Panel>

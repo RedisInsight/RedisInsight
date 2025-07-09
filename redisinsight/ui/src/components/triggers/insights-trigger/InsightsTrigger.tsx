@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiToolTip } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
@@ -11,8 +10,6 @@ import {
   sidePanelsSelector,
   toggleSidePanel,
 } from 'uiSrc/slices/panels/sidePanels'
-
-import TriggerIcon from 'uiSrc/assets/img/bulb.svg?react'
 
 import {
   recommendationsSelector,
@@ -26,6 +23,9 @@ import {
 } from 'uiSrc/telemetry'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { LightBulbIcon } from 'uiSrc/components/base/icons'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -80,7 +80,7 @@ const InsightsTrigger = (props: Props) => {
 
   return (
     <div className={cx(styles.container, { [styles.isOpen]: isInsightsOpen })}>
-      <EuiToolTip
+      <RiTooltip
         title={isHighlighted && instanceId ? undefined : 'Insights'}
         content={
           isHighlighted && instanceId
@@ -88,21 +88,19 @@ const InsightsTrigger = (props: Props) => {
             : 'Open interactive tutorials to learn more about Redis or Redis Stack capabilities, or use tips to improve your database.'
         }
       >
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
+        <IconButton
+          size="S"
           className={styles.btn}
           role="button"
-          iconType={TriggerIcon}
+          icon={LightBulbIcon}
           onClick={handleClickTrigger}
           data-testid="insights-trigger"
         >
           {isHighlighted && instanceId && (
             <span className={styles.highlighting} />
           )}
-        </EuiButton>
-      </EuiToolTip>
+        </IconButton>
+      </RiTooltip>
     </div>
   )
 }

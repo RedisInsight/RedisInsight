@@ -1,15 +1,12 @@
 import React, { useState } from 'react'
-import {
-  EuiIcon,
-  EuiPopover,
-  EuiText,
-} from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 
 import { formatLongName } from 'uiSrc/utils'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -72,7 +69,7 @@ const ConfirmationPopover = (props: Props) => {
             <EuiIcon type="alert" className={styles.alertIcon} />
           </FlexItem>
           <FlexItem className="eui-textNoWrap">
-            <EuiText>{formatLongName(title, 58, 0, '...')}</EuiText>
+            <Text>{formatLongName(title, 58, 0, '...')}</Text>
           </FlexItem>
         </Row>
         <Spacer size="xs" />

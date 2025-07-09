@@ -1,16 +1,6 @@
-import cx from 'classnames'
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  EuiIcon,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiText,
-  EuiTextColor,
-  EuiToolTip,
-} from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-
 import {
   KeyTypes,
   KeyValueFormat,
@@ -34,8 +24,15 @@ import FormattersLight from 'uiSrc/assets/img/icons/formatter_light.svg'
 import FormattersDark from 'uiSrc/assets/img/icons/formatter_dark.svg'
 import { stringDataSelector } from 'uiSrc/slices/browser/string'
 import { isFullStringLoaded } from 'uiSrc/utils'
+import { RiTooltip } from 'uiSrc/components'
+import { Text } from 'uiSrc/components/base/text'
+import {
+  Container,
+  ControlsIcon,
+  KeyDetailsSelect,
+  OptionText,
+} from 'uiSrc/pages/browser/modules/key-details-header/components/key-details-header-formatter/KeyDetailsHeaderFormatter.styles'
 import { getKeyValueFormatterOptions } from './constants'
-import styles from './styles.module.scss'
 
 export interface Props {
   width: number
@@ -52,9 +49,7 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
 
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(false)
   const [typeSelected, setTypeSelected] = useState<KeyValueFormat>(viewFormat)
-  const [options, setOptions] = useState<
-    EuiSuperSelectOption<KeyValueFormat>[]
-  >([])
+  const [options, setOptions] = useState<any[]>([])
 
   const dispatch = useDispatch()
 
@@ -64,43 +59,43 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
       : true
 
   useEffect(() => {
-    const newOptions: EuiSuperSelectOption<KeyValueFormat>[] =
-      getKeyValueFormatterOptions(keyType).map(({ value, text }) => ({
+    const newOptions = getKeyValueFormatterOptions(keyType).map(
+      ({ value, text }) => ({
         value,
+        label: value,
         inputDisplay: (
-          <EuiToolTip
+          <RiTooltip
+            data-test-subj={`format-option-${value}`}
             content={
               !isStringFormattingEnabled
                 ? TEXT_DISABLED_STRING_FORMATTING
                 : typeSelected
             }
             position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
           >
             <>
-              {width > MIDDLE_SCREEN_RESOLUTION && (
-                <EuiTextColor color="subdued" className={styles.optionText}>
-                  {text}
-                </EuiTextColor>
-              )}
-              {width <= MIDDLE_SCREEN_RESOLUTION && (
-                <EuiIcon
+              {width >= MIDDLE_SCREEN_RESOLUTION ? (
+                <OptionText color="subdued">{text}</OptionText>
+              ) : (
+                <ControlsIcon
                   type={theme === Theme.Dark ? FormattersDark : FormattersLight}
-                  className={styles.controlsIcon}
                   data-testid={`key-value-formatter-option-selected-${value}`}
                 />
               )}
             </>
-          </EuiToolTip>
+          </RiTooltip>
         ),
         dropdownDisplay: (
-          <EuiText size="s" className={styles.dropdownDisplay}>
+          <Text
+            component="span"
+            size="s"
+            data-test-subj={`format-option-${value}`}
+          >
             {text}
-          </EuiText>
+          </Text>
         ),
-        'data-test-subj': `format-option-${value}`,
-      }))
+      }),
+    )
 
     setOptions(newOptions)
   }, [viewFormat, keyType, width, isStringFormattingEnabled])
@@ -130,25 +125,25 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
   }
 
   return (
-    <div
-      className={cx(styles.container, {
-        [styles.fullWidth]: width > MIDDLE_SCREEN_RESOLUTION,
-      })}
-    >
-      <div className={styles.selectWrapper}>
-        <EuiSuperSelect
+    <Container className={width >= MIDDLE_SCREEN_RESOLUTION ? 'fullWidth' : ''}>
+      <div className="selectWrapper">
+        <KeyDetailsSelect
+          $fullWidth={width >= MIDDLE_SCREEN_RESOLUTION}
           disabled={!isStringFormattingEnabled}
-          fullWidth
-          isOpen={isSelectOpen}
+          defaultOpen={isSelectOpen}
           options={options}
-          valueOfSelected={typeSelected}
-          className={styles.changeView}
-          itemClassName={styles.formatType}
-          onChange={(value: KeyValueFormat) => onChangeType(value)}
+          valueRender={({ option, isOptionValue }) => {
+            if (isOptionValue) {
+              return option.dropdownDisplay as JSX.Element
+            }
+            return option.inputDisplay as JSX.Element
+          }}
+          value={typeSelected}
+          onChange={(value: any) => onChangeType(value)}
           data-testid="select-format-key-value"
         />
       </div>
-    </div>
+    </Container>
   )
 }
 

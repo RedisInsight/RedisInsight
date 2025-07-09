@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { EuiButton, EuiText, EuiTitle } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import { find } from 'lodash'
@@ -21,9 +20,10 @@ import OAuthForm from 'uiSrc/components/oauth/shared/oauth-form'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 
 import { OAuthSsoHandlerDialog } from 'uiSrc/components'
-import { getUtmExternalLink } from 'uiSrc/utils/links'
-import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -73,22 +73,20 @@ const OAuthAutodiscovery = (props: Props) => {
 
     return (
       <div className={styles.container} data-testid="oauth-container-import">
-        <EuiText className={styles.text} color="subdued">
+        <Text className={styles.text} color="subdued">
           Use{' '}
           <strong>
             {currentAccountName?.name} #{currentAccountId}
           </strong>{' '}
           account to auto-discover subscriptions and add your databases.
-        </EuiText>
-        <EuiButton
-          fill
-          color="secondary"
+        </Text>
+        <PrimaryButton
           onClick={handleClickDiscover}
           disabled={isDiscoverDisabled}
           data-testid="oauth-discover-btn"
         >
           Discover
-        </EuiButton>
+        </PrimaryButton>
       </div>
     )
   }
@@ -115,12 +113,11 @@ const OAuthAutodiscovery = (props: Props) => {
       </div>
       <OAuthSsoHandlerDialog>
         {(ssoCloudHandlerClick) => (
-          <EuiButton
-            fill
-            color="secondary"
+          <PrimaryButton
             size="s"
-            href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: '' })}
-            target="_blank"
+            // todo: choose either href or on click
+            // href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, { campaign: '' })}
+            // target="_blank"
             onClick={(e: React.MouseEvent) => {
               ssoCloudHandlerClick(e, {
                 source: OAuthSocialSource.DiscoveryForm,
@@ -130,7 +127,7 @@ const OAuthAutodiscovery = (props: Props) => {
             }}
           >
             Quick start
-          </EuiButton>
+          </PrimaryButton>
         )}
       </OAuthSsoHandlerDialog>
     </div>
@@ -146,17 +143,17 @@ const OAuthAutodiscovery = (props: Props) => {
       >
         {(form: React.ReactNode) => (
           <>
-            <EuiText className={styles.text} color="subdued">
+            <Text className={styles.text} color="subdued">
               Discover subscriptions and add your databases. A new Redis Cloud
               account will be created for you if you don’t have one.
-            </EuiText>
+            </Text>
             <Spacer size="m" />
             <CreateFreeDb />
             <Spacer size="xl" />
-            <EuiText>Get started with</EuiText>
-            <EuiTitle className={styles.title} size="l">
-              <h3>Redis Cloud account</h3>
-            </EuiTitle>
+            <Text>Get started with</Text>
+            <Title className={styles.title} size="L">
+              Redis Cloud account
+            </Title>
             <Spacer size="xl" />
             {form}
             <Spacer size="xxl" />

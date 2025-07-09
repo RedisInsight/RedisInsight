@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiText, EuiTitle } from '@elastic/eui'
+
 import { ExternalLink, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { EXTERNAL_LINKS, UTM_CAMPAINGS } from 'uiSrc/constants/links'
@@ -7,6 +7,8 @@ import TelescopeImg from 'uiSrc/assets/img/telescope-dark.svg'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -20,14 +22,14 @@ const DatabaseNotOpened = (props: Props) => {
   return (
     <div className={styles.wrapper} data-testid="database-not-opened-popover">
       <div>
-        <EuiTitle size="xxs" className={styles.title}>
-          <h5>Open a database</h5>
-        </EuiTitle>
+        <Title size="S" className={styles.title}>
+          Open a database
+        </Title>
         <Spacer size="s" />
         <>
-          <EuiText color="subdued" size="s">
+          <Text color="subdued" size="s">
             Open your Redis database, or create a new database to get started.
-          </EuiText>
+          </Text>
           <Spacer size="s" />
           <OAuthSsoHandlerDialog>
             {(ssoCloudHandlerClick) => (

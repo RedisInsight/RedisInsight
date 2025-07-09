@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { EuiAccordion, EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+
+import { EuiIcon } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
@@ -12,7 +13,12 @@ import {
 import { workbenchCustomTutorialsSelector } from 'uiSrc/slices/workbench/wb-custom-tutorials'
 import { EAItemActions } from 'uiSrc/constants'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
-import { OnboardingTour } from 'uiSrc/components'
+
+import { RiAccordion } from 'uiSrc/components/base/display/accordion/RiAccordion'
+import { Col } from 'uiSrc/components/base/layout/flex'
+import { RiTooltip, OnboardingTour } from 'uiSrc/components'
+import { Text } from 'uiSrc/components/base/text'
+
 import DeleteTutorialButton from '../DeleteTutorialButton'
 
 import './styles.scss'
@@ -21,19 +27,16 @@ export interface Props {
   id: string
   label: string
   actions?: string[]
-  isShowActions?: boolean
-  isShowFolder?: boolean
   onCreate?: () => void
   onDelete?: (id: string) => void
   children: React.ReactNode
   withBorder?: boolean
   initialIsOpen?: boolean
   forceState?: 'open' | 'closed'
-  arrowDisplay?: 'left' | 'right' | 'none'
   onToggle?: (isOpen: boolean) => void
-  triggerStyle?: any
-  buttonClassName?: string
   isPageOpened?: boolean
+  isShowActions?: boolean
+  isShowFolder?: boolean
 }
 
 const Group = (props: Props) => {
@@ -45,15 +48,12 @@ const Group = (props: Props) => {
     id,
     forceState,
     withBorder = false,
-    arrowDisplay = 'right',
-    isShowFolder = true,
     initialIsOpen = false,
     onToggle,
     onCreate,
     onDelete,
-    triggerStyle,
-    buttonClassName,
     isPageOpened,
+    isShowFolder,
   } = props
   const { deleting: deletingCustomTutorials } = useSelector(
     workbenchCustomTutorialsSelector,
@@ -96,7 +96,7 @@ const Group = (props: Props) => {
             panelClassName={cx({ hide: isPageOpened })}
             preventPropagation
           >
-            <EuiToolTip content="Upload Tutorial">
+            <RiTooltip content="Upload Tutorial">
               <div
                 className="group-header__btn group-header__create-btn"
                 role="presentation"
@@ -105,7 +105,7 @@ const Group = (props: Props) => {
               >
                 <EuiIcon type="plus" />
               </div>
-            </EuiToolTip>
+            </RiTooltip>
           </OnboardingTour>
         )}
       {actions?.includes(EAItemActions.Delete) && (
@@ -119,39 +119,33 @@ const Group = (props: Props) => {
     </>
   )
 
-  const buttonContent = (
-    <div className="group-header-wrapper">
-      <EuiText className="group-header" size="m">
-        {isShowFolder && (
-          <EuiIcon type={isGroupOpen ? 'folderOpen' : 'folderClosed'} />
-        )}
-        {label}
-      </EuiText>
-      {isShowActions && actionsContent}
-    </div>
-  )
-
-  const buttonProps: any = {
-    'data-testid': `accordion-button-${id}`,
-    style: triggerStyle,
-    className: buttonClassName,
-  }
-
   return (
-    <EuiAccordion
+    <RiAccordion
       id={id}
       data-testid={`accordion-${id}`}
-      buttonContent={buttonContent}
-      buttonProps={buttonProps}
-      forceState={forceState}
-      arrowDisplay={arrowDisplay}
-      onToggle={handleOpen}
-      initialIsOpen={initialIsOpen}
-      style={{ whiteSpace: 'nowrap', width: 'auto' }}
-      className={[withBorder ? 'withBorder' : ''].join(' ')}
+      defaultOpen={initialIsOpen}
+      open={forceState === 'open' || isGroupOpen}
+      label={
+        <Text className="group-header" size="m">
+          {isShowFolder && (
+            <EuiIcon
+              type={isGroupOpen ? 'folderOpen' : 'folderClosed'}
+              style={{ marginRight: '10px' }}
+            />
+          )}
+          {label}
+        </Text>
+      }
+      onOpenChange={handleOpen}
+      style={{
+        whiteSpace: 'nowrap',
+        width: 'auto',
+      }}
+      className={cx({ withBorder })}
+      actions={isShowActions ? actionsContent : null}
     >
-      {children}
-    </EuiAccordion>
+      <Col gap="l">{children}</Col>
+    </RiAccordion>
   )
 }
 

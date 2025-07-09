@@ -1,9 +1,9 @@
 import React from 'react'
-import { EuiButton, EuiToolTip } from '@elastic/eui'
-import cx from 'classnames'
-import ResetIcon from 'uiSrc/assets/img/rdi/reset.svg?react'
+
+import { RiResetIcon } from 'uiSrc/components/base/icons'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
-import styles from '../styles.module.scss'
+import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
+import { RiTooltip } from 'uiSrc/components'
 
 export interface PipelineButtonProps {
   onClick: () => void
@@ -16,7 +16,7 @@ const ResetPipelineButton = ({
   disabled,
   loading,
 }: PipelineButtonProps) => (
-  <EuiToolTip
+  <RiTooltip
     content={
       !(disabled || loading) ? (
         <>
@@ -32,22 +32,19 @@ const ResetPipelineButton = ({
         </>
       ) : null
     }
-    anchorClassName={disabled || loading ? styles.disabled : styles.tooltip}
   >
-    <EuiButton
+    <SecondaryButton
       aria-label="Reset pipeline button"
-      type="secondary"
       size="s"
-      iconType={ResetIcon}
-      className={cx(styles.pipelineBtn, { [styles.btnDisabled]: disabled })}
+      icon={RiResetIcon}
       data-testid="reset-pipeline-btn"
       onClick={onClick}
-      isDisabled={disabled}
-      isLoading={loading}
+      disabled={disabled}
+      loading={loading}
     >
       Reset Pipeline
-    </EuiButton>
-  </EuiToolTip>
+    </SecondaryButton>
+  </RiTooltip>
 )
 
 export default ResetPipelineButton

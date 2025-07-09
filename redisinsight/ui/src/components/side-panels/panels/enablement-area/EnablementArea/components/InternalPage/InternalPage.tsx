@@ -1,16 +1,12 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react'
-import {
-  EuiFlyoutHeader,
-  EuiText,
-  EuiButtonEmpty,
-  EuiPopover,
-} from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import JsxParser from 'react-jsx-parser'
 import cx from 'classnames'
 import { debounce } from 'lodash'
 import { useLocation, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
+import { ChevronLeftIcon } from 'uiSrc/components/base/icons'
 import { ExternalLink, HorizontalRule, LoadingContent } from 'uiSrc/components'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import {
@@ -33,6 +29,8 @@ import {
   CloudLink,
   RedisInsightLink,
 } from 'uiSrc/components/markdown'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import { getTutorialSection } from '../../utils'
 import { EmptyPrompt, Pagination, Code } from '..'
 
@@ -167,40 +165,37 @@ const InternalPage = (props: Props) => {
 
   return (
     <div className={styles.container} data-test-subj="internal-page">
-      <EuiFlyoutHeader className={styles.header}>
+      <div className={styles.header}>
         <div style={{ padding: 0 }}>
           <EuiPopover
             initialFocus={false}
-            panelClassName={cx(
-              'euiToolTip',
-              'popoverLikeTooltip',
-              styles.popover,
-            )}
+            panelClassName={cx('popoverLikeTooltip', styles.popover)}
             anchorClassName={styles.popoverAnchor}
             anchorPosition="leftCenter"
             isOpen={showCapabilityPopover}
             panelPaddingSize="m"
             closePopover={() => setShowCapabilityPopover(false)}
             button={
-              <EuiButtonEmpty
-                data-testid="enablement-area__page-close"
-                iconType="arrowLeft"
-                onClick={onClose}
-                className={styles.backButton}
-                aria-label="Back"
-              >
-                {backTitle}
-              </EuiButtonEmpty>
+              <div className={styles.backButton}>
+                <EmptyButton
+                  data-testid="enablement-area__page-close"
+                  icon={ChevronLeftIcon}
+                  onClick={onClose}
+                  aria-label="Back"
+                >
+                  {backTitle}
+                </EmptyButton>
+              </div>
             }
           >
             <div data-testid="explore-capability-popover">
               <RocketIcon className={styles.rocketIcon} />
-              <EuiText className={styles.popoverTitle}>Explore Redis</EuiText>
-              <EuiText className={styles.popoverText}>
+              <Text className={styles.popoverTitle}>Explore Redis</Text>
+              <Text className={styles.popoverText}>
                 {'You expressed interest in learning about the '}
                 <b>{tutorialCapability?.name}</b>. Try this tutorial to get
                 started.
-              </EuiText>
+              </Text>
             </div>
           </EuiPopover>
         </div>
@@ -208,11 +203,11 @@ const InternalPage = (props: Props) => {
           <HorizontalRule margin="xs" />
         </div>
         <div>
-          <EuiText className={styles.pageTitle} color="default">
+          <Text className={styles.pageTitle} color="default">
             {title?.toUpperCase()}
-          </EuiText>
+          </Text>
         </div>
-      </EuiFlyoutHeader>
+      </div>
       <div
         ref={containerRef}
         className={cx(styles.content, 'jsx-markdown')}

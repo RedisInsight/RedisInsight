@@ -1,10 +1,15 @@
-import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 import React, { ReactElement } from 'react'
 import { isUndefined } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
-import { GroupBadge, AutoRefresh, FullScreen, LoadingContent } from 'uiSrc/components'
+import {
+  GroupBadge,
+  AutoRefresh,
+  FullScreen,
+  LoadingContent,
+  RiTooltip,
+} from 'uiSrc/components'
 import { HIDE_LAST_REFRESH } from 'uiSrc/constants'
 import {
   deleteSelectedKeyAction,
@@ -25,6 +30,8 @@ import {
 } from 'uiSrc/telemetry'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { KeyDetailsHeaderName } from './components/key-details-header-name'
 import { KeyDetailsHeaderTTL } from './components/key-details-header-ttl'
 import { KeyDetailsHeaderDelete } from './components/key-details-header-delete'
@@ -119,7 +126,7 @@ const KeyDetailsHeader = ({
   }
 
   return (
-    <div
+    <FlexItem
       className={`key-details-header ${styles.container}`}
       data-testid="key-details-header"
     >
@@ -147,16 +154,15 @@ const KeyDetailsHeader = ({
                 )}
                 <FlexItem>
                   {(!arePanelsCollapsed || isFullScreen) && (
-                    <EuiToolTip content="Close" position="left">
-                      <EuiButtonIcon
-                        iconType="cross"
-                        color="primary"
+                    <RiTooltip content="Close" position="left">
+                      <IconButton
+                        icon={CancelSlimIcon}
                         aria-label="Close key"
                         className={styles.closeBtn}
                         onClick={() => onCloseKey()}
                         data-testid="close-key-btn"
                       />
-                    </EuiToolTip>
+                    </RiTooltip>
                   )}
                 </FlexItem>
               </Row>
@@ -186,7 +192,7 @@ const KeyDetailsHeader = ({
           )}
         </AutoSizer>
       )}
-    </div>
+    </FlexItem>
   )
 }
 

@@ -1,13 +1,17 @@
-import { EuiButton, EuiTextColor } from '@elastic/eui'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory } from 'react-router-dom'
+import { ColorText } from 'uiSrc/components/base/text'
 import { removeCapiKeyAction } from 'uiSrc/slices/oauth/cloud'
 import { Pages } from 'uiSrc/constants'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  DestructiveButton,
+  EmptyButton,
+} from 'uiSrc/components/base/forms/buttons'
 
 export interface Props {
   resourceId: string
@@ -44,31 +48,30 @@ const CloudCapiUnAuthorizedErrorContent = ({
 
   return (
     <>
-      <EuiTextColor color="ghost">{text}</EuiTextColor>
+
+      <ColorText color="danger">{text}</ColorText>
       <Spacer />
       <Row justify="end">
         <FlexItem>
-          <EuiButton
-            size="s"
-            color="warning"
+          <EmptyButton
+            variant="destructive"
+            size="small"
             onClick={handleGoToSettings}
             className="toast-danger-btn euiBorderWidthThick"
             data-testid="go-to-settings-btn"
           >
             Go to Settings
-          </EuiButton>
+          </EmptyButton>
         </FlexItem>
         <FlexItem>
-          <EuiButton
-            fill
+          <DestructiveButton
             size="s"
-            color="warning"
             onClick={handleRemoveCapi}
             className="toast-danger-btn"
             data-testid="remove-api-key-btn"
           >
             Remove API key
-          </EuiButton>
+          </DestructiveButton>
         </FlexItem>
       </Row>
     </>

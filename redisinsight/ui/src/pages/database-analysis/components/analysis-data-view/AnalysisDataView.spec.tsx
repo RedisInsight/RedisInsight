@@ -9,7 +9,7 @@ import { SectionName } from 'uiSrc/pages/database-analysis'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { formatBytes, getGroupTypeDisplay } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
-import { fireEvent, render, screen, within } from 'uiSrc/utils/test-utils'
+import { fireEvent, userEvent, render, screen, within } from 'uiSrc/utils/test-utils'
 
 import AnalysisDataView from './AnalysisDataView'
 
@@ -172,7 +172,7 @@ describe('AnalysisDataView', () => {
     ).toHaveTextContent(`~${numberWithSpaces(arcItemkeys.total * 2)}`)
   })
 
-  it('should render properly not extrapolated data for summary per data after switching off', () => {
+  it('should render properly not extrapolated data for summary per data after switching off', async () => {
     const mockedData = {
       ...MOCK_ANALYSIS_REPORT_DATA,
       progress: {
@@ -191,7 +191,7 @@ describe('AnalysisDataView', () => {
     }))
     render(<AnalysisDataView />)
 
-    fireEvent.click(
+    await userEvent.click(
       within(screen.getByTestId(summaryContainerId)).getByTestId(
         extrapolateResultsId,
       ),
@@ -260,7 +260,7 @@ describe('AnalysisDataView', () => {
     )
   })
 
-  it('should render properly not extrapolated data for ttl chart after switching off', () => {
+  it('should render properly not extrapolated data for ttl chart after switching off', async () => {
     const mockedData = {
       ...MOCK_ANALYSIS_REPORT_DATA,
       progress: {
@@ -278,7 +278,7 @@ describe('AnalysisDataView', () => {
       data: mockReports,
     }))
     render(<AnalysisDataView />)
-    fireEvent.click(
+    await userEvent.click(
       within(screen.getByTestId(analyticsTTLContainerId)).getByTestId(
         extrapolateResultsId,
       ),
@@ -325,7 +325,7 @@ describe('AnalysisDataView', () => {
     ).toHaveTextContent(`~${numberWithSpaces(nspTopKeyItem.keys * 2)}`)
   })
 
-  it('should render properly not extrapolated data for top namespaces table after switching off', () => {
+  it('should render properly not extrapolated data for top namespaces table after switching off', async () => {
     const mockedData = {
       ...MOCK_ANALYSIS_REPORT_DATA,
       progress: {
@@ -343,7 +343,7 @@ describe('AnalysisDataView', () => {
       data: mockReports,
     }))
     render(<AnalysisDataView />)
-    fireEvent.click(
+    await userEvent.click(
       within(screen.getByTestId(topNameSpacesContainerId)).getByTestId(
         extrapolateResultsId,
       ),
@@ -430,11 +430,11 @@ describe('AnalysisDataView', () => {
 
     render(<AnalysisDataView />)
 
-    const clickAndCheckTelemetry = (
+    const clickAndCheckTelemetry = async (
       el: HTMLInputElement,
       section: SectionName,
     ) => {
-      fireEvent.click(el)
+      await userEvent.click(el)
       expect(sendEventTelemetry).toBeCalledWith({
         event: TelemetryEvent.DATABASE_ANALYSIS_EXTRAPOLATION_CHANGED,
         eventData: {

@@ -1,13 +1,4 @@
-import {
-  EuiAccordion,
-  EuiButton,
-  EuiButtonIcon,
-  EuiIcon,
-  EuiLoadingSpinner,
-  EuiText,
-  EuiTextColor,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiAccordion, EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -28,7 +19,15 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { isEqualPipelineFile, Nullable } from 'uiSrc/utils'
 import statusErrorIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/status_error.svg?react'
 
+import { Text, ColorText } from 'uiSrc/components/base/text'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { DeleteIcon, EditIcon, PlusIcon } from 'uiSrc/components/base/icons'
+import { RiTooltip } from 'uiSrc/components'
+import {
+  DestructiveButton,
+  IconButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -180,14 +179,9 @@ const JobsTree = (props: IProps) => {
         className={styles.actions}
         data-testid={`rdi-nav-job-actions-${name}`}
       >
-        <EuiToolTip
-          content="Edit job file name"
-          position="top"
-          display="inlineBlock"
-          anchorClassName="flex-row"
-        >
-          <EuiButtonIcon
-            iconType="pencil"
+        <RiTooltip content="Edit job file name" position="top">
+          <IconButton
+            icon={EditIcon}
             onClick={() => {
               setCurrentJobName(name)
               setIsNewJob(false)
@@ -195,40 +189,34 @@ const JobsTree = (props: IProps) => {
             aria-label="edit job file name"
             data-testid={`edit-job-name-${name}`}
           />
-        </EuiToolTip>
-        <EuiToolTip
-          content="Delete job"
-          position="top"
-          display="inlineBlock"
-          anchorClassName="flex-row"
-        >
+        </RiTooltip>
+        <RiTooltip content="Delete job" position="top">
           <ConfirmationPopover
             title={`Delete ${name}`}
             body={
-              <EuiText size="s">
+              <Text size="s">
                 Changes will not be applied until the pipeline is deployed.
-              </EuiText>
+              </Text>
             }
             submitBtn={
-              <EuiButton
-                fill
+              <DestructiveButton
                 size="s"
                 color="secondary"
                 data-testid="delete-confirm-btn"
               >
                 Delete
-              </EuiButton>
+              </DestructiveButton>
             }
             onConfirm={() => handleDeleteClick(name)}
             button={
-              <EuiButtonIcon
-                iconType="trash"
+              <IconButton
+                icon={DeleteIcon}
                 aria-label="delete job"
                 data-testid={`delete-job-${name}`}
               />
             }
           />
-        </EuiToolTip>
+        </RiTooltip>
       </FlexItem>
     </>
   )
@@ -278,17 +266,17 @@ const JobsTree = (props: IProps) => {
       >
         <div className={styles.dotWrapper}>
           {!!changes[name] && (
-            <EuiToolTip
+            <RiTooltip
               content="This file contains undeployed changes."
               position="top"
-              display="inlineBlock"
-              anchorClassName={styles.dotWrapper}
             >
-              <span
-                className={styles.dot}
-                data-testid={`updated-file-${name}-highlight`}
-              />
-            </EuiToolTip>
+              <span className={styles.dotWrapper}>
+                <span
+                  className={styles.dot}
+                  data-testid={`updated-file-${name}-highlight`}
+                />
+              </span>
+            </RiTooltip>
           )}
         </div>
         <Row className={styles.fullWidth} align="center">
@@ -319,16 +307,16 @@ const JobsTree = (props: IProps) => {
         <FlexItem grow className="truncateText">
           {'Jobs '}
           {!loading && (
-            <EuiTextColor
+            <ColorText
               className={styles.jobsCount}
               component="span"
               data-testid="rdi-jobs-count"
             >
               {jobs?.length ? `(${jobs?.length})` : ''}
-            </EuiTextColor>
+            </ColorText>
           )}
           {loading && (
-            <EuiLoadingSpinner
+            <Loader
               data-testid="rdi-nav-jobs-loader"
               className={styles.loader}
             />
@@ -346,14 +334,12 @@ const JobsTree = (props: IProps) => {
       className={styles.wrapper}
       forceState={accordionState}
       extraAction={
-        <EuiToolTip
+        <RiTooltip
           content={!hideTooltip ? 'Add a job file' : null}
           position="top"
-          display="inlineBlock"
-          anchorClassName="flex-row"
         >
-          <EuiButtonIcon
-            iconType="plus"
+          <IconButton
+            icon={PlusIcon}
             onClick={() => {
               setAccordionState('open')
               setIsNewJob(true)
@@ -368,7 +354,7 @@ const JobsTree = (props: IProps) => {
             aria-label="add new job file"
             data-testid="add-new-job"
           />
-        </EuiToolTip>
+        </RiTooltip>
       }
     >
       {/* // TODO confirm with RDI team and put sort in separate component */}

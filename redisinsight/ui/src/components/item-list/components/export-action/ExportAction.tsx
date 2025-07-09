@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
-import {
-  EuiButton,
-  EuiCheckbox,
-  EuiFormRow,
-  EuiIcon,
-  EuiPopover,
-  EuiText,
-} from '@elastic/eui'
+
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import { formatLongName } from 'uiSrc/utils'
 
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { ExportIcon } from 'uiSrc/components/base/icons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+
+import { Text } from 'uiSrc/components/base/text'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import styles from '../styles.module.scss'
 
 export interface Props<T> {
@@ -26,17 +26,15 @@ const ExportAction = <T extends { id: string; name?: string }>(
   const [withSecrets, setWithSecrets] = useState(true)
 
   const exportBtn = (
-    <EuiButton
+    <PrimaryButton
       onClick={() => setIsPopoverOpen((prevState) => !prevState)}
-      fill
-      color="secondary"
-      size="s"
-      iconType="exportAction"
+      size="small"
+      icon={ExportIcon}
       className={styles.actionBtn}
       data-testid="export-btn"
     >
       Export
-    </EuiButton>
+    </PrimaryButton>
   )
 
   return (
@@ -49,9 +47,9 @@ const ExportAction = <T extends { id: string; name?: string }>(
       panelPaddingSize="l"
       data-testid="export-popover"
     >
-      <EuiText size="m">
-        <p className={styles.popoverSubTitle}>{subTitle}</p>
-      </EuiText>
+      <Text size="m" className={styles.popoverSubTitle}>
+        {subTitle}
+      </Text>
       <div className={styles.boxSection}>
         {selection.map((select) => (
           <Row key={select.id} gap="s" className={styles.nameList}>
@@ -64,8 +62,8 @@ const ExportAction = <T extends { id: string; name?: string }>(
           </Row>
         ))}
       </div>
-      <EuiFormRow style={{ marginTop: 16 }}>
-        <EuiCheckbox
+      <FormField style={{ marginTop: 16 }}>
+        <Checkbox
           id="export-passwords"
           name="export-passwords"
           label="Export passwords"
@@ -73,13 +71,11 @@ const ExportAction = <T extends { id: string; name?: string }>(
           onChange={(e) => setWithSecrets(e.target.checked)}
           data-testid="export-passwords"
         />
-      </EuiFormRow>
+      </FormField>
       <div className={styles.popoverFooter}>
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
-          iconType="exportAction"
+        <PrimaryButton
+          size="small"
+          icon={ExportIcon}
           onClick={() => {
             setIsPopoverOpen(false)
             onExport(selection, withSecrets)
@@ -87,7 +83,7 @@ const ExportAction = <T extends { id: string; name?: string }>(
           data-testid="export-selected-dbs"
         >
           Export
-        </EuiButton>
+        </PrimaryButton>
       </div>
     </EuiPopover>
   )

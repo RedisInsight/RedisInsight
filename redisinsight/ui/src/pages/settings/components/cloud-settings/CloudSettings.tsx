@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-
-import { EuiButton, EuiLink, EuiPopover, EuiText, EuiTitle } from '@elastic/eui'
-
 import { useDispatch, useSelector } from 'react-redux'
+import { EuiPopover } from '@elastic/eui'
+
+import { DeleteIcon } from 'uiSrc/components/base/icons'
 import {
   getCapiKeysAction,
   oauthCapiKeysSelector,
@@ -11,6 +11,13 @@ import {
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  DestructiveButton,
+  PrimaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
 import UserApiKeysTable from './components/user-api-keys-table'
 
 import styles from './styles.module.scss'
@@ -45,27 +52,26 @@ const CloudSettings = () => {
 
   return (
     <div className={styles.container}>
-      <EuiTitle className={styles.title} size="xxs">
-        <span>API user keys</span>
-      </EuiTitle>
+      <Title className={styles.title} size="XS">
+        API user keys
+      </Title>
       <Spacer size="s" />
       <Row gap="m" responsive>
         <FlexItem grow>
-          <EuiText size="s" className={styles.smallText} color="subdued">
+          <Text size="s" className={styles.smallText} color="subdued">
             The list of API user keys that are stored locally in Redis Insight.{' '}
             <br />
             API user keys grant programmatic access to Redis Cloud. <br />
             {'To delete API keys from Redis Cloud, '}
-            <EuiLink
+            <Link
               target="_blank"
               color="text"
-              external={false}
               href="https://redis.io/redis-enterprise-cloud/overview/?utm_source=redisinsight&utm_medium=settings&utm_campaign=clear_keys"
             >
               sign in to Redis Cloud
-            </EuiLink>
+            </Link>
             {' and delete them manually.'}
-          </EuiText>
+          </Text>
         </FlexItem>
         <FlexItem grow={false}>
           <EuiPopover
@@ -76,46 +82,41 @@ const CloudSettings = () => {
             panelPaddingSize="l"
             panelClassName={styles.deletePopover}
             button={
-              <EuiButton
-                fill
-                size="s"
-                color="secondary"
+              <PrimaryButton
+                size="small"
                 onClick={handleClickDelete}
                 disabled={loading || !data?.length}
                 data-testid="delete-key-btn"
               >
                 Remove all API keys
-              </EuiButton>
+              </PrimaryButton>
             }
           >
             <div className={styles.popoverDeleteContainer}>
-              <EuiText size="m">
+              <Text size="m" component="div">
                 <h4>All API user keys will be removed from Redis Insight.</h4>
                 {'To delete API keys from Redis Cloud, '}
-                <EuiLink
+                <Link
                   target="_blank"
                   color="text"
-                  external={false}
                   tabIndex={-1}
                   href="https://redis.io/redis-enterprise-cloud/overview/?utm_source=redisinsight&utm_medium=settings&utm_campaign=clear_keys"
                 >
                   sign in to Redis Cloud
-                </EuiLink>
+                </Link>
                 {' and delete them manually.'}
-              </EuiText>
+              </Text>
               <Spacer />
               <div className={styles.popoverFooter}>
-                <EuiButton
-                  fill
-                  size="s"
-                  color="warning"
-                  iconType="trash"
+                <DestructiveButton
+                  size="small"
+                  icon={DeleteIcon}
                   onClick={handleDeleteAllKeys}
                   className={styles.popoverDeleteBtn}
                   data-testid="delete-key-confirm-btn"
                 >
                   Remove all API keys
-                </EuiButton>
+                </DestructiveButton>
               </div>
             </div>
           </EuiPopover>

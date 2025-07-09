@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiButton, EuiPopover } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -8,6 +8,7 @@ import { fetchPipelineStrategies } from 'uiSrc/slices/rdi/pipeline'
 import { RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 
+import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -52,8 +53,8 @@ const TemplatePopover = (props: Props) => {
         className={styles.anchor}
         panelClassName={styles.popoverWrapper}
         button={
-          <EuiButton
-            fill
+          <SecondaryButton
+            inverted
             size="s"
             className={styles.btn}
             aria-label="Insert template"
@@ -62,7 +63,7 @@ const TemplatePopover = (props: Props) => {
             data-testid={`template-trigger-${source}`}
           >
             Insert template
-          </EuiButton>
+          </SecondaryButton>
         }
       >
         <TemplateForm

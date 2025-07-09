@@ -1,8 +1,14 @@
 import React from 'react'
-import { EuiBadge, EuiButtonIcon, EuiText, EuiTextColor } from '@elastic/eui'
+
 
 import { GroupBadge } from 'uiSrc/components'
 import { CommandGroup } from 'uiSrc/constants'
+
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { ArrowLeftIcon } from 'uiSrc/components/base/icons'
+import { ColorText } from 'uiSrc/components/base/text'
+import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
+import { Row } from 'uiSrc/components/base/layout/flex'
 
 import styles from './styles.module.scss'
 
@@ -22,36 +28,34 @@ const CHCommandInfo = (props: Props) => {
   } = props
 
   return (
-    <div className={styles.container} data-testid="cli-helper-title">
-      <EuiButtonIcon
-        iconType="sortLeft"
+    <Row
+      align="center"
+      className={styles.container}
+      data-testid="cli-helper-title"
+    >
+      <IconButton
+        icon={ArrowLeftIcon}
         onClick={onBackClick}
         data-testid="cli-helper-back-to-list-btn"
         style={{ marginRight: '4px' }}
       />
       <GroupBadge type={group} className={styles.groupBadge} />
-      <EuiTextColor
+      <ColorText
         className={styles.title}
         color="subdued"
         data-testid="cli-helper-title-args"
       >
         {args}
-      </EuiTextColor>
+      </ColorText>
       {complexity && (
-        <EuiBadge
+        <RiBadge
+          label={complexity}
+          variant="light"
           className={styles.badge}
           data-testid="cli-helper-complexity-short"
-        >
-          <EuiText
-            style={{ color: 'white' }}
-            className="text-capitalize"
-            size="xs"
-          >
-            {complexity}
-          </EuiText>
-        </EuiBadge>
+        />
       )}
-    </div>
+    </Row>
   )
 }
 

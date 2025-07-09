@@ -63,7 +63,7 @@
   }
 
   :global {
-    .euiContextMenu__icon {
+    svg {
       margin-left: 8px;
       margin-right: 2px;
       width: 16px;
@@ -128,13 +128,4 @@
 
 .dropdownOption {
   padding-left: 6px;
-}
-
-.dropdownDisplay {
-  :global {
-    .euiFlexGroup {
-      margin: 0;
-      line-height: 1;
-    }
-  }
 }

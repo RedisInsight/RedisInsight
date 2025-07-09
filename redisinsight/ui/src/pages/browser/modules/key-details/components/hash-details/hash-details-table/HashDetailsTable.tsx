@@ -1,10 +1,11 @@
-import { EuiProgress, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiProgress } from '@elastic/eui'
 import cx from 'classnames'
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { CellMeasurerCache } from 'react-virtualized'
 
 import { isNumber, toNumber } from 'lodash'
+import { Text } from 'uiSrc/components/base/text'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import {
@@ -81,6 +82,7 @@ import {
   EditableTextArea,
   FormattedValue,
 } from 'uiSrc/pages/browser/modules/key-details/shared'
+import { RiTooltip } from 'uiSrc/components'
 import {
   AddFieldsToHashDto,
   GetHashFieldsResponse,
@@ -382,10 +384,11 @@ const HashDetailsTable = (props: Props) => {
         )
 
         return (
-          <EuiText
+          <Text
             color="subdued"
             size="s"
             style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}
+            component="div"
           >
             <div
               style={{ display: 'flex' }}
@@ -402,7 +405,7 @@ const HashDetailsTable = (props: Props) => {
                 tooltipContent={tooltipContent}
               />
             </div>
-          </EuiText>
+          </Text>
         )
       },
     },
@@ -579,15 +582,14 @@ const HashDetailsTable = (props: Props) => {
               {expire === -1 ? (
                 'No Limit'
               ) : (
-                <EuiToolTip
+                <RiTooltip
                   title="Time to Live"
                   className={styles.tooltip}
-                  anchorClassName="truncateText"
                   position="right"
                   content={truncateNumberToDuration(expire || 0)}
                 >
                   <>{expire}</>
-                </EuiToolTip>
+                </RiTooltip>
               )}
             </div>
           </EditableInput>

@@ -1,11 +1,17 @@
 import React from 'react'
-import { EuiButton, EuiButtonEmpty, EuiToolTip, } from '@elastic/eui'
 import { FormikErrors } from 'formik'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { getSubmitButtonContent } from 'uiSrc/pages/home/utils'
 import { DbConnectionInfo, ISubmitButton } from 'uiSrc/pages/home/interfaces'
 import { SubmitBtnText } from 'uiSrc/pages/home/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  EmptyButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
+import { RiTooltip } from 'uiSrc/components'
 
 export interface Props {
   submitIsDisable: () => boolean
@@ -33,9 +39,8 @@ const FooterActions = (props: Props) => {
     onClick,
     submitIsDisabled,
   }: ISubmitButton) => (
-    <EuiToolTip
+    <RiTooltip
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       title={
         submitIsDisabled
           ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
@@ -43,28 +48,25 @@ const FooterActions = (props: Props) => {
       }
       content={getSubmitButtonContent(errors, submitIsDisabled)}
     >
-      <EuiButton
-        fill
-        size="s"
-        color="secondary"
+      <PrimaryButton
+        size="small"
         type="submit"
         onClick={onClick}
         disabled={submitIsDisabled}
-        isLoading={isLoading}
-        iconType={submitIsDisabled ? 'iInCircle' : undefined}
+        loading={isLoading}
+        icon={submitIsDisabled ? InfoIcon : undefined}
         data-testid="btn-submit"
       >
         {text}
-      </EuiButton>
-    </EuiToolTip>
+      </PrimaryButton>
+    </RiTooltip>
   )
 
   return (
     <Row justify="between" align="center">
       <FlexItem className="btn-back">
-        <EuiToolTip
+        <RiTooltip
           position="top"
-          anchorClassName="euiToolTip__btn-disabled"
           title={
             submitIsDisable()
               ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
@@ -72,33 +74,32 @@ const FooterActions = (props: Props) => {
           }
           content={getSubmitButtonContent(errors, submitIsDisable())}
         >
-          <EuiButtonEmpty
-            size="s"
+          <EmptyButton
+            size="small"
             className="empty-btn"
-            onClick={onClickTestConnection}
             disabled={submitIsDisable()}
-            isLoading={isLoading}
-            iconType={submitIsDisable() ? 'iInCircle' : undefined}
+            icon={submitIsDisable() ? InfoIcon : undefined}
+            onClick={onClickTestConnection}
+            loading={isLoading}
             data-testid="btn-test-connection"
           >
             Test Connection
-          </EuiButtonEmpty>
-        </EuiToolTip>
+          </EmptyButton>
+        </RiTooltip>
       </FlexItem>
 
       <FlexItem>
         <Row>
           {onClose && (
-            <EuiButton
-              size="s"
+            <SecondaryButton
+              size="small"
               onClick={onClose}
-              color="secondary"
               className="btn-cancel"
               data-testid="btn-cancel"
               style={{ marginRight: 12 }}
             >
               Cancel
-            </EuiButton>
+            </SecondaryButton>
           )}
           <SubmitButton
             onClick={onClickSubmit}

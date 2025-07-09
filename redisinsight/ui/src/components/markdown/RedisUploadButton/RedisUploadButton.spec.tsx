@@ -3,12 +3,12 @@ import { cloneDeep } from 'lodash'
 import reactRouterDom from 'react-router-dom'
 import { AxiosError } from 'axios'
 import {
+  act,
   cleanup,
   fireEvent,
   mockedStore,
   render,
   screen,
-  act,
 } from 'uiSrc/utils/test-utils'
 import {
   customTutorialsBulkUploadSelector,
@@ -105,18 +105,21 @@ describe('RedisUploadButton', () => {
   })
 
   it('should show error when file is not exists', async () => {
-    const checkResourseMock = jest.fn().mockRejectedValue('')
-    ;(checkResourse as jest.Mock).mockImplementation(checkResourseMock)
+    const checkResourceMock = jest.fn().mockRejectedValue('')
+    ;(checkResourse as jest.Mock).mockImplementation(checkResourceMock)
 
     render(<RedisUploadButton {...props} />)
 
     fireEvent.click(screen.getByTestId('upload-data-bulk-btn'))
-    await act(() => {
+    await act(async () => {
       fireEvent.click(screen.getByTestId('download-redis-upload-file'))
     })
 
-    expect(checkResourseMock).toBeCalledWith('http://localhost:5001/text')
-    expect(store.getActions()).toEqual([addErrorNotification(error)])
+    expect(checkResourceMock).toHaveBeenCalledWith('http://localhost:5001/text')
+    const expected = addErrorNotification(error)
+    expect(store.getActions()).toEqual(
+      expect.arrayContaining([expect.objectContaining(expected)]),
+    )
   })
 
   it('should call proper telemetry events', async () => {
@@ -128,7 +131,7 @@ describe('RedisUploadButton', () => {
 
     fireEvent.click(screen.getByTestId('upload-data-bulk-btn'))
 
-    expect(sendEventTelemetry).toBeCalledWith({
+    expect(sendEventTelemetry).toHaveBeenCalledWith({
       event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_CLICKED,
       eventData: {
         databaseId: 'instanceId',
@@ -136,11 +139,11 @@ describe('RedisUploadButton', () => {
     })
     ;(sendEventTelemetry as jest.Mock).mockRestore()
 
-    await act(() => {
+    await act(async () => {
       fireEvent.click(screen.getByTestId('download-redis-upload-file'))
     })
 
-    expect(sendEventTelemetry).toBeCalledWith({
+    expect(sendEventTelemetry).toHaveBeenCalledWith({
       event: TelemetryEvent.EXPLORE_PANEL_DOWNLOAD_BULK_FILE_CLICKED,
       eventData: {
         databaseId: 'instanceId',
@@ -150,7 +153,7 @@ describe('RedisUploadButton', () => {
 
     fireEvent.click(screen.getByTestId('upload-data-bulk-apply-btn'))
 
-    expect(sendEventTelemetry).toBeCalledWith({
+    expect(sendEventTelemetry).toHaveBeenCalledWith({
       event: TelemetryEvent.EXPLORE_PANEL_DATA_UPLOAD_SUBMITTED,
       eventData: {
         databaseId: 'instanceId',

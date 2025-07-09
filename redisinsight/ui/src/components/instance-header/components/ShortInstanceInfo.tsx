@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { capitalize } from 'lodash'
-import { EuiIcon, EuiText } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 
 import cx from 'classnames'
 import {
@@ -18,9 +18,9 @@ import MessageInfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 import { DEFAULT_MODULES_INFO } from 'uiSrc/constants/modules'
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
-import UnknownDark from 'uiSrc/assets/img/modules/UnknownDark.svg'
-import UnknownLight from 'uiSrc/assets/img/modules/UnknownLight.svg'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { UnknownDarkIcon, UnknownLightIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import styles from './styles.module.scss'
 
@@ -50,7 +50,7 @@ const ShortInstanceInfo = ({ info, databases, modules }: Props) => {
       return icon
     }
 
-    return theme === Theme.Dark ? UnknownDark : UnknownLight
+    return theme === Theme.Dark ? UnknownDarkIcon : UnknownLightIcon
   }
 
   return (
@@ -64,10 +64,7 @@ const ShortInstanceInfo = ({ info, databases, modules }: Props) => {
         </span>
       </div>
       {databases > 1 && (
-        <Row
-          className={styles.dbIndexInfo}
-          align="center"
-        >
+        <Row className={styles.dbIndexInfo} align="center">
           <FlexItem style={{ marginRight: 16 }}>
             <EuiIcon
               className={styles.messageInfoIcon}
@@ -76,11 +73,11 @@ const ShortInstanceInfo = ({ info, databases, modules }: Props) => {
             />
           </FlexItem>
           <FlexItem grow>
-            <EuiText size="s">Logical Databases</EuiText>
-            <EuiText color="subdued" size="xs">
+            <Text size="s">Logical Databases</Text>
+            <Text color="subdued" size="xs">
               Select logical databases to work with in Browser, Workbench, and
               Database Analysis.
-            </EuiText>
+            </Text>
           </FlexItem>
         </Row>
       )}

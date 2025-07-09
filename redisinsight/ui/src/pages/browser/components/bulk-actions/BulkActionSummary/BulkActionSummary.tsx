@@ -1,10 +1,10 @@
 import React from 'react'
-import { EuiText } from '@elastic/eui'
+
 import styled from 'styled-components'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { millisecondsFormat } from 'uiSrc/utils'
 import { BulkActionsType } from 'uiSrc/constants'
-
+import { Text } from 'uiSrc/components/base/text'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 
 export interface Props {
@@ -19,7 +19,7 @@ export interface Props {
 const SummaryContainer = styled(Row)`
   padding-top: 18px;
 `
-const SummaryValue = styled(EuiText)`
+const SummaryValue = styled(Text)`
   font-size: 18px !important;
   line-height: 24px;
   font-weight: 500 !important;
@@ -36,21 +36,21 @@ const BulkActionSummary = ({
   <SummaryContainer data-testid={testId} gap="xl">
     <FlexItem>
       <SummaryValue>{numberWithSpaces(processed)}</SummaryValue>
-      <EuiText color="subdued">
+      <SummaryValue color="subdued">
         {type === BulkActionsType.Delete ? 'Keys' : 'Commands'} Processed
-      </EuiText>
+      </SummaryValue>
     </FlexItem>
     <FlexItem>
       <SummaryValue>{numberWithSpaces(succeed)}</SummaryValue>
-      <EuiText color="subdued">Success</EuiText>
+      <SummaryValue color="subdued">Success</SummaryValue>
     </FlexItem>
     <FlexItem>
       <SummaryValue>{numberWithSpaces(failed)}</SummaryValue>
-      <EuiText color="subdued">Errors</EuiText>
+      <SummaryValue color="subdued">Errors</SummaryValue>
     </FlexItem>
     <FlexItem>
       <SummaryValue>{millisecondsFormat(duration, 'H:mm:ss.SSS')}</SummaryValue>
-      <EuiText color="subdued">Time Taken</EuiText>
+      <SummaryValue color="subdued">Time Taken</SummaryValue>
     </FlexItem>
   </SummaryContainer>
 )

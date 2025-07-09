@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import {
-  EuiButtonIcon,
-  EuiIcon,
-  EuiPopover,
-  EuiSwitch,
-  EuiTextColor,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
-
-import { EuiButtonIconSizes } from '@elastic/eui/src/components/button/button_icon/button_icon'
+import { ChevronDownIcon, RefreshIcon } from 'uiSrc/components/base/icons'
 import {
   errorValidateRefreshRateNumber,
   MIN_REFRESH_RATE,
@@ -19,10 +11,14 @@ import {
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { localStorageService } from 'uiSrc/services'
 import { BrowserStorageItem } from 'uiSrc/constants'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { ColorText } from 'uiSrc/components/base/text'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
+import { RiTooltip } from 'uiSrc/components'
 import {
-  getTextByRefreshTime,
   DEFAULT_REFRESH_RATE,
   DURATION_FIRST_REFRESH_TIME,
+  getTextByRefreshTime,
   MINUTE,
   NOW,
 } from './utils'
@@ -50,7 +46,7 @@ export interface Props {
   ) => void
   minimumRefreshRate?: number
   defaultRefreshRate?: string
-  iconSize?: EuiButtonIconSizes
+  iconSize?: 'S' | 'M' | 'L'
   disabled?: boolean
   disabledRefreshButtonMessage?: string
   enableAutoRefreshDefault?: boolean
@@ -71,7 +67,7 @@ const AutoRefresh = ({
   onRefreshClicked,
   onEnableAutoRefresh,
   onChangeAutoRefreshRate,
-  iconSize = 'm',
+  iconSize = 'M',
   disabled,
   disabledRefreshButtonMessage,
   minimumRefreshRate,
@@ -210,7 +206,7 @@ const AutoRefresh = ({
       })}
       data-testid={getDataTestid('auto-refresh-container')}
     >
-      <EuiTextColor className={styles.summary}>
+      <ColorText className={styles.summary}>
         {displayText && (
           <span data-testid={getDataTestid('refresh-message-label')}>
             {enableAutoRefresh ? 'Auto refresh:' : 'Last refresh:'}
@@ -226,18 +222,18 @@ const AutoRefresh = ({
             {` ${enableAutoRefresh ? refreshRateMessage : refreshMessage}`}
           </span>
         )}
-      </EuiTextColor>
+      </ColorText>
 
-      <EuiToolTip
+      <RiTooltip
         title={!disabled && 'Last Refresh'}
         className={styles.tooltip}
         position="top"
         content={disabled ? disabledRefreshButtonMessage : refreshMessage}
         data-testid={getDataTestid('refresh-tooltip')}
       >
-        <EuiButtonIcon
+        <IconButton
           size={iconSize}
-          iconType="refresh"
+          icon={RefreshIcon}
           disabled={loading || disabled}
           onClick={handleRefreshClick}
           onMouseEnter={updateLastRefresh}
@@ -247,7 +243,7 @@ const AutoRefresh = ({
           aria-labelledby={getDataTestid('refresh-btn')?.replaceAll?.('-', ' ')}
           data-testid={getDataTestid('refresh-btn')}
         />
-      </EuiToolTip>
+      </RiTooltip>
 
       <EuiPopover
         ownFocus={false}
@@ -257,9 +253,10 @@ const AutoRefresh = ({
         panelClassName={cx('popover-without-top-tail', styles.popoverWrapper)}
         closePopover={closePopover}
         button={
-          <EuiButtonIcon
+          <IconButton
             disabled={disabled}
-            iconType="arrowDown"
+            size="S"
+            icon={ChevronDownIcon}
             aria-label="Auto-refresh config popover"
             className={cx(styles.anchorBtn, {
               [styles.anchorBtnOpen]: isPopoverOpen,
@@ -269,20 +266,17 @@ const AutoRefresh = ({
           />
         }
       >
-        <div className={styles.switch}>
-          <EuiSwitch
-            compressed
-            label="Auto Refresh"
-            checked={enableAutoRefresh}
-            onChange={(e) => onChangeEnableAutoRefresh(e.target.checked)}
-            className={styles.switchOption}
-            data-testid={getDataTestid('auto-refresh-switch')}
-          />
-        </div>
+        <SwitchInput
+          title="Auto Refresh"
+          checked={enableAutoRefresh}
+          onCheckedChange={onChangeEnableAutoRefresh}
+          className={styles.switchOption}
+          data-testid={getDataTestid('auto-refresh-switch')}
+        />
         <div className={styles.inputContainer}>
           <div className={styles.inputLabel}>Refresh rate:</div>
           {!editingRate && (
-            <EuiTextColor
+            <ColorText
               color="subdued"
               className={styles.refreshRateText}
               onClick={() => setEditingRate(true)}
@@ -292,7 +286,7 @@ const AutoRefresh = ({
               <div className={styles.refreshRatePencil}>
                 <EuiIcon type="pencil" />
               </div>
-            </EuiTextColor>
+            </ColorText>
           )}
           {editingRate && (
             <>
@@ -311,7 +305,7 @@ const AutoRefresh = ({
                   onApply={(value) => handleApplyAutoRefreshRate(value)}
                 />
               </div>
-              <EuiTextColor color="subdued">{' s'}</EuiTextColor>
+              <ColorText color="subdued">{' s'}</ColorText>
             </>
           )}
         </div>

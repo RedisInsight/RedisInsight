@@ -1,6 +1,6 @@
 import { cloneDeep, last } from 'lodash'
 import React from 'react'
-import { keys } from '@elastic/eui'
+import { KeyboardKeys as keys } from 'uiSrc/constants/keys'
 import { instance, mock } from 'ts-mockito'
 import {
   cleanup,

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 import { get, throttle } from 'lodash'
@@ -33,6 +32,11 @@ import { appContextPipelineManagement } from 'uiSrc/slices/app/context'
 import { createAxiosError, isEqualPipelineFile, yamlToJson } from 'uiSrc/utils'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
+
+import { Link } from 'uiSrc/components/base/link/Link'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 const Config = () => {
@@ -144,9 +148,7 @@ const Config = () => {
         })}
       >
         <div className="rdi__content-header">
-          <EuiText className="rdi__title">
-            Target database configuration
-          </EuiText>
+          <Text className="rdi__title">Target database configuration</Text>
           <TemplatePopover
             isPopoverOpen={isPopoverOpen && !isOpenDialog}
             setIsPopoverOpen={setIsPopoverOpen}
@@ -156,10 +158,9 @@ const Config = () => {
             source={RdiPipelineTabs.Config}
           />
         </div>
-        <EuiText className="rdi__text" color="subdued">
+        <Text className="rdi__text" color="subdued">
           {'Provide '}
-          <EuiLink
-            external={false}
+          <Link
             data-testid="rdi-pipeline-config-link"
             target="_blank"
             href={getUtmExternalLink(EXTERNAL_LINKS.rdiPipeline, {
@@ -168,20 +169,20 @@ const Config = () => {
             })}
           >
             connection details
-          </EuiLink>
+          </Link>
           {
             ' for source and target databases and other collector configurations, such as tables and columns to track.'
           }
-        </EuiText>
+        </Text>
         {pipelineLoading ? (
           <div
             className={cx('rdi__editorWrapper', 'rdi__loading')}
             data-testid="rdi-config-loading"
           >
-            <EuiText color="subdued" style={{ marginBottom: 12 }}>
+            <Text color="subdued" style={{ marginBottom: 12 }}>
               Loading data...
-            </EuiText>
-            <EuiLoadingSpinner color="secondary" size="l" />
+            </Text>
+            <Loader color="secondary" size="l" />
           </div>
         ) : (
           <MonacoYaml
@@ -194,17 +195,15 @@ const Config = () => {
           />
         )}
         <div className="rdi__actions">
-          <EuiButton
-            fill
-            color="secondary"
+          <PrimaryButton
             size="s"
             onClick={testConnections}
-            isLoading={testingConnections || pipelineLoading}
+            loading={testingConnections || pipelineLoading}
             aria-labelledby="test target connections"
             data-testid="rdi-test-connection-btn"
           >
             Test Connection
-          </EuiButton>
+          </PrimaryButton>
         </div>
       </div>
       {isPanelOpen && <TestConnectionsPanel onClose={handleClosePanel} />}

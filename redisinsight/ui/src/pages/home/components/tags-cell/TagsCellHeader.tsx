@@ -1,14 +1,10 @@
-import {
-  EuiFieldText,
-  EuiFormRow,
-  EuiIcon,
-  EuiPopover,
-  EuiCheckbox,
-} from '@elastic/eui'
+import { EuiFieldText,  EuiIcon, EuiPopover } from '@elastic/eui'
 import React, { memo } from 'react'
 
 import FilterSvg from 'uiSrc/assets/img/icons/filter.svg'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { useFilterTags } from './useFilterTags'
 import styles from './styles.module.scss'
 
@@ -52,7 +48,7 @@ export const TagsCellHeader = memo(() => {
         {/* stop propagation to prevent sorting by column header */}
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div style={{ width: 300 }} onClick={(e) => e.stopPropagation()}>
-          <EuiFormRow>
+          <FormField>
             <EuiFieldText
               icon="search"
               role="search"
@@ -64,11 +60,11 @@ export const TagsCellHeader = memo(() => {
                 setTagSearch(e.target.value)
               }}
             />
-          </EuiFormRow>
+          </FormField>
           <Spacer size="m" />
           {Object.keys(groupedTags).map((key) => (
             <div key={key}>
-              <EuiCheckbox
+              <Checkbox
                 id={key}
                 className={styles.filterTagLabel}
                 label={key}
@@ -80,8 +76,8 @@ export const TagsCellHeader = memo(() => {
                 }}
               />
               {groupedTags[key].map((value) => (
-                <div key={value} style={{ paddingLeft: '20px' }}>
-                  <EuiCheckbox
+                <div key={value} style={{ margin: '10px 0 0 20px' }}>
+                  <Checkbox
                     id={`${key}:${value}`}
                     className={styles.filterTagLabel}
                     data-testid={`${key}:${value}`}

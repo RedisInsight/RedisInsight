@@ -1,11 +1,13 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { EuiText, EuiTextColor, EuiButtonIcon } from '@elastic/eui'
 import cx from 'classnames'
 
 import { bufferToString } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
+import { Text, ColorText } from 'uiSrc/components/base/text'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -41,11 +43,11 @@ const RecommendationCopyComponent = ({
 
   return (
     <div className={styles.wrapper}>
-      <EuiText className={styles.text}>
+      <Text className={styles.text}>
         Example of a key that may be relevant:
-      </EuiText>
+      </Text>
       <div className={styles.keyNameWrapper}>
-        <EuiTextColor
+        <ColorText
           color="subdued"
           className={cx(styles.keyName, 'truncateText', {
             [styles.dbAnalysis]: !live,
@@ -54,11 +56,11 @@ const RecommendationCopyComponent = ({
           data-testid="recommendation-key-name"
         >
           {formattedName}
-        </EuiTextColor>
-        <EuiButtonIcon
+        </ColorText>
+        <IconButton
           onClick={handleCopy}
           className={styles.btn}
-          iconType="copy"
+          icon={CopyIcon}
           data-testid="copy-key-name-btn"
           aria-label="copy key name"
         />

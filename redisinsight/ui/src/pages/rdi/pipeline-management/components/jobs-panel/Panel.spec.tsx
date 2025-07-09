@@ -1,17 +1,16 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { cloneDeep } from 'lodash'
-import { EuiText } from '@elastic/eui'
 import { AxiosError } from 'axios'
+
 import {
-  act,
   cleanup,
   fireEvent,
   mockedStore,
   render,
   screen,
 } from 'uiSrc/utils/test-utils'
-
+import { Text } from 'uiSrc/components/base/text'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { dryRunJob, rdiDryRunJobSelector } from 'uiSrc/slices/rdi/dryRun'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
@@ -94,12 +93,12 @@ describe('JobsPanel', () => {
     expect(queryByTestId('transformations-output')).toBeInTheDocument()
     expect(queryByTestId('commands-output')).not.toBeInTheDocument()
 
-    fireEvent.click(screen.getByTestId('output-tab'))
+    fireEvent.mouseDown(screen.getByText('Job output'))
 
     expect(queryByTestId('transformations-output')).not.toBeInTheDocument()
     expect(queryByTestId('commands-output')).toBeInTheDocument()
 
-    fireEvent.click(screen.getByTestId('transformations-tab'))
+    fireEvent.mouseDown(screen.getByText('Transformation output'))
 
     expect(queryByTestId('transformations-output')).toBeInTheDocument()
     expect(queryByTestId('commands-output')).not.toBeInTheDocument()
@@ -123,9 +122,7 @@ describe('JobsPanel', () => {
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
 
-    await act(() => {
-      fireEvent.click(screen.getByTestId('output-tab'))
-    })
+    fireEvent.mouseDown(screen.getByText('Job output'))
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
   })
@@ -142,9 +139,7 @@ describe('JobsPanel', () => {
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
 
-    await act(() => {
-      fireEvent.click(screen.getByTestId('output-tab'))
-    })
+    fireEvent.mouseDown(screen.getByText('Job output'))
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
   })
@@ -164,9 +159,7 @@ describe('JobsPanel', () => {
 
     expect(queryByTestId('target-select')).not.toBeInTheDocument()
 
-    await act(() => {
-      fireEvent.click(screen.getByTestId('output-tab'))
-    })
+    fireEvent.mouseDown(screen.getByText('Job output'))
 
     expect(queryByTestId('target-select')).toBeInTheDocument()
   })
@@ -192,10 +185,10 @@ describe('JobsPanel', () => {
           data: {
             message: (
               <>
-                <EuiText>JobName has an invalid structure.</EuiText>
-                <EuiText>
+                <Text>JobName has an invalid structure.</Text>
+                <Text>
                   end of the stream or a document separator is expected
-                </EuiText>
+                </Text>
               </>
             ),
           },

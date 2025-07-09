@@ -1,5 +1,5 @@
-import { EuiLink } from '@elastic/eui'
 import React from 'react'
+import { Link } from 'uiSrc/components/base/link/Link'
 import { Pages } from 'uiSrc/constants'
 import { getRouterLinkProps } from 'uiSrc/services'
 import { render, fireEvent, screen } from 'uiSrc/utils/test-utils'
@@ -9,12 +9,12 @@ describe('getRouterLinkProps', () => {
     const mockOnClick = jest.fn()
 
     render(
-      <EuiLink
+      <Link
         {...getRouterLinkProps(Pages.browser, mockOnClick)}
         data-testid="link"
       >
         Text
-      </EuiLink>,
+      </Link>,
     )
     fireEvent.click(screen.getByTestId('link'))
 

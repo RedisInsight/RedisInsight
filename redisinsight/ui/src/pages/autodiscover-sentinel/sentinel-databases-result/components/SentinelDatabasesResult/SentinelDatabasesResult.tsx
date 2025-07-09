@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import cx from 'classnames'
-import {
-  EuiInMemoryTable,
-  EuiBasicTableColumn,
-  PropertySort,
-  EuiButton,
-  EuiText,
-  EuiTitle,
-  EuiFieldSearch,
-  EuiFormRow,
-} from '@elastic/eui'
 import { useSelector } from 'react-redux'
+import { SearchInput } from 'uiSrc/components/base/inputs'
 
 import { sentinelSelector } from 'uiSrc/slices/instances/sentinel'
 import { ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
@@ -18,11 +8,19 @@ import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import styles from './styles.module.scss'
 
 export interface Props {
   countSuccessAdded: number
-  columns: EuiBasicTableColumn<ModifiedSentinelMaster>[]
+  columns: ColumnDefinition<ModifiedSentinelMaster>[]
   masters: ModifiedSentinelMaster[]
   onBack: () => void
   onViewDatabases: () => void
@@ -45,11 +43,6 @@ const SentinelDatabasesResult = ({
 
   const countFailAdded = masters?.length - countSuccessAdded
 
-  const sort: PropertySort = {
-    field: 'message',
-    direction: 'asc',
-  }
-
   useEffect(() => {
     if (masters.length) {
       setItems(masters)
@@ -60,8 +53,8 @@ const SentinelDatabasesResult = ({
     onViewDatabases()
   }
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
 
     const itemsTemp = masters.filter(
       (item: ModifiedSentinelMaster) =>
@@ -80,7 +73,7 @@ const SentinelDatabasesResult = ({
   }
 
   const SummaryText = () => (
-    <EuiText className={styles.subTitle} data-testid="summary">
+    <Text className={styles.subTitle} data-testid="summary">
       <b>Summary: </b>
       {countSuccessAdded ? (
         <span>
@@ -95,15 +88,15 @@ const SentinelDatabasesResult = ({
           {' primary group(s)'}
         </span>
       ) : null}
-    </EuiText>
+    </Text>
   )
 
   return (
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
-        <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>Auto-Discover Redis Sentinel Primary Groups</h1>
-        </EuiTitle>
+        <Title size="XXL" className={styles.title} data-testid="title">
+          Auto-Discover Redis Sentinel Primary Groups
+        </Title>
 
         <Row align="end" gap="s">
           <FlexItem grow>
@@ -113,49 +106,51 @@ const SentinelDatabasesResult = ({
           </FlexItem>
         </Row>
         <FlexItem>
-          <EuiFormRow className={styles.searchForm}>
-            <EuiFieldSearch
+          <FormField className={styles.searchForm}>
+            <SearchInput
               placeholder="Search..."
-              className={styles.search}
               onChange={onQueryChange}
-              isClearable
               aria-label="Search"
               data-testid="search"
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
         <br />
         <div className="itemList databaseList sentinelDatabaseListResult">
-          <EuiInMemoryTable
-            items={items}
-            itemId="id"
-            loading={loading}
-            message={message}
-            columns={columns}
-            sorting={{ sort }}
-            className={styles.table}
-          />
+          {!items.length || loading ? (
+            <Text>{message}</Text>
+          ) : (
+            <Table
+              columns={columns}
+              data={items}
+              defaultSorting={[
+                {
+                  id: 'message',
+                  desc: false,
+                },
+              ]}
+            />
+          )}
         </div>
       </div>
-      <div className={cx(styles.footer, 'footerAddDatabase')}>
-        <EuiButton
-          onClick={onBack}
-          color="secondary"
-          className="btn-cancel btn-back"
-          data-testid="btn-back-to-adding"
-        >
-          Back to adding databases
-        </EuiButton>
-        <EuiButton
-          fill
-          size="m"
-          onClick={handleViewDatabases}
-          color="secondary"
-          data-testid="btn-view-databases"
-        >
-          View Databases
-        </EuiButton>
-      </div>
+      <FlexItem padding={4}>
+        <Row gap="m" justify="between">
+          <SecondaryButton
+            onClick={onBack}
+            className="btn-cancel btn-back"
+            data-testid="btn-back-to-adding"
+          >
+            Back to adding databases
+          </SecondaryButton>
+          <PrimaryButton
+            size="m"
+            onClick={handleViewDatabases}
+            data-testid="btn-view-databases"
+          >
+            View Databases
+          </PrimaryButton>
+        </Row>
+      </FlexItem>
     </AutodiscoveryPageTemplate>
   )
 }

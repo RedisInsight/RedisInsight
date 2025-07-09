@@ -1,13 +1,6 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import cx from 'classnames'
-import {
-  EuiButton,
-  EuiFieldText,
-  EuiFormRow,
-  EuiPanel,
-  EuiTextColor,
-} from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import {
   keysSelector,
@@ -33,6 +26,11 @@ import {
   INITIAL_HASH_FIELD_STATE,
 } from 'uiSrc/pages/browser/components/add-key/AddKeyHash/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import {
   AddFieldsToHashDto,
   HashFieldDto,
@@ -167,18 +165,7 @@ const AddHashFields = (props: Props) => {
 
   return (
     <>
-      <EuiPanel
-        color="transparent"
-        hasShadow={false}
-        borderRadius="none"
-        data-test-subj="add-hash-field-panel"
-        className={cx(
-          styles.container,
-          'eui-yScroll',
-          'flexItemNoFullWidth',
-          'inlineFieldsNoSpace',
-        )}
-      >
+      <div className={styles.container}>
         <AddMultipleFields
           items={fields}
           isClearDisabled={isClearDisabled}
@@ -188,7 +175,7 @@ const AddHashFields = (props: Props) => {
           {(item, index) => (
             <Row align="center">
               <FlexItem grow={2}>
-                <EuiFormRow fullWidth>
+                <FormField>
                   <EuiFieldText
                     fullWidth
                     name={`fieldName-${item.id}`}
@@ -204,10 +191,10 @@ const AddHashFields = (props: Props) => {
                     }
                     data-testid="hash-field"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
               <FlexItem grow={2}>
-                <EuiFormRow fullWidth>
+                <FormField>
                   <EuiFieldText
                     fullWidth
                     name={`fieldValue-${item.id}`}
@@ -220,11 +207,11 @@ const AddHashFields = (props: Props) => {
                     }
                     data-testid="hash-value"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
               {isExpireFieldsAvailable && (
                 <FlexItem grow={1}>
-                  <EuiFormRow fullWidth>
+                  <FormField>
                     <EuiFieldText
                       fullWidth
                       name={`fieldTTL-${item.id}`}
@@ -241,48 +228,39 @@ const AddHashFields = (props: Props) => {
                       }
                       data-testid="hash-ttl"
                     />
-                  </EuiFormRow>
+                  </FormField>
                 </FlexItem>
               )}
             </Row>
           )}
         </AddMultipleFields>
-      </EuiPanel>
-      <EuiPanel
-        style={{ border: 'none' }}
-        color="transparent"
-        hasShadow={false}
-        className="flexItemNoFullWidth"
-      >
-        <Row justify="end" gap="l">
+      </div>
+      <>
+        <Row justify="end" gap="m">
           <FlexItem>
             <div>
-              <EuiButton
-                color="secondary"
+              <SecondaryButton
                 onClick={() => closePanel(true)}
                 data-testid="cancel-fields-btn"
               >
-                <EuiTextColor color="default">Cancel</EuiTextColor>
-              </EuiButton>
+                Cancel
+              </SecondaryButton>
             </div>
           </FlexItem>
           <FlexItem>
             <div>
-              <EuiButton
-                fill
-                size="m"
-                color="secondary"
+              <PrimaryButton
                 disabled={loading}
-                isLoading={loading}
+                loading={loading}
                 onClick={submitData}
                 data-testid="save-fields-btn"
               >
                 Save
-              </EuiButton>
+              </PrimaryButton>
             </div>
           </FlexItem>
         </Row>
-      </EuiPanel>
+      </>
     </>
   )
 }

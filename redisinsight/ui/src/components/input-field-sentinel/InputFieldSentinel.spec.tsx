@@ -65,7 +65,7 @@ describe('InputFieldSentinel', () => {
     expect(screen.getByTestId(inputNumberTestId)).toBeInTheDocument()
   })
 
-  it('should change Number field properly', () => {
+  it('should default to 0 when Number field properly is set to string with letters and Number field was not previously set', () => {
     render(
       <InputFieldSentinel
         {...instance(mockedProps)}
@@ -74,6 +74,37 @@ describe('InputFieldSentinel', () => {
     )
     fireEvent.change(screen.getByTestId(inputNumberTestId), {
       target: { value: 'val13' },
+    })
+    expect(screen.getByTestId(inputNumberTestId)).toHaveValue('0')
+  })
+
+  it('should default to previous value when Number field properly is set to string with letters', () => {
+    render(
+      <InputFieldSentinel
+        {...instance(mockedProps)}
+        inputType={SentinelInputFieldType.Number}
+      />,
+    )
+    fireEvent.change(screen.getByTestId(inputNumberTestId), {
+      target: { value: '1' },
+    })
+    expect(screen.getByTestId(inputNumberTestId)).toHaveValue('1')
+
+    fireEvent.change(screen.getByTestId(inputNumberTestId), {
+      target: { value: 'val13' },
+    })
+    expect(screen.getByTestId(inputNumberTestId)).toHaveValue('1')
+  })
+
+  it('should set Number field properly when is set to string with numbers only', () => {
+    render(
+      <InputFieldSentinel
+        {...instance(mockedProps)}
+        inputType={SentinelInputFieldType.Number}
+      />,
+    )
+    fireEvent.change(screen.getByTestId(inputNumberTestId), {
+      target: { value: '13' },
     })
     expect(screen.getByTestId(inputNumberTestId)).toHaveValue('13')
   })

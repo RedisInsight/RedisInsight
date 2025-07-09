@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect } from 'react'
-import { EuiToolTip } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -23,6 +22,7 @@ import {
   PipelineStatus,
 } from 'uiSrc/slices/interfaces'
 
+import { RiTooltip } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import DeployPipelineButton from '../buttons/deploy-pipeline-button'
 import ResetPipelineButton from '../buttons/reset-pipeline-button'
@@ -168,22 +168,20 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
         )}
       </FlexItem>
       <FlexItem>
-        <EuiToolTip
+        <RiTooltip
           content={
             isPipelineValid
               ? ''
               : 'Please fix the validation errors before deploying'
           }
           position="left"
-          display="inlineBlock"
-          anchorClassName="flex-row"
         >
           <DeployPipelineButton
             loading={deployLoading}
             disabled={isDeployButtonDisabled}
             onReset={resetPipeline}
           />
-        </EuiToolTip>
+        </RiTooltip>
       </FlexItem>
       <FlexItem style={{ margin: 0 }}>
         <RdiConfigFileActionMenu />

@@ -1,4 +1,3 @@
-import { EuiText, EuiToolTip } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
@@ -13,8 +12,9 @@ import {
 import { convertNumberByUnits } from 'uiSrc/pages/slow-log/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
+import { Text } from 'uiSrc/components/base/text'
 
-import { FormatedDate } from 'uiSrc/components'
+import { FormatedDate, RiTooltip } from 'uiSrc/components'
 import styles from '../styles.module.scss'
 
 export const DATE_FORMAT = 'HH:mm:ss d LLL yyyy'
@@ -54,14 +54,14 @@ const SlowLogTable = (props: Props) => {
       minWidth: 190,
       isSortable: true,
       render: (timestamp) => (
-        <EuiText
+        <Text
           size="s"
           color="subdued"
           data-testid="timestamp-value"
           className={styles.timestampCell}
         >
           <FormatedDate date={timestamp * 1000} />
-        </EuiText>
+        </Text>
       ),
     },
     {
@@ -72,24 +72,22 @@ const SlowLogTable = (props: Props) => {
       textAlignment: TableCellTextAlignment.Right,
       alignment: TableCellAlignment.Right,
       render: (duration) => (
-        <EuiText size="s" color="subdued" data-testid="duration-value">
+        <Text size="s" color="subdued" data-testid="duration-value">
           {numberWithSpaces(convertNumberByUnits(duration, durationUnit))}
-        </EuiText>
+        </Text>
       ),
     },
     {
       id: 'args',
       label: 'Command',
       render: (command) => (
-        <EuiToolTip
-          position="bottom"
-          content={command}
-          anchorClassName={styles.commandTooltip}
-        >
-          <span className={styles.commandText} data-testid="command-value">
-            {command}
+        <RiTooltip position="bottom" content={command}>
+          <span className={styles.commandTooltip}>
+            <span className={styles.commandText} data-testid="command-value">
+              {command}
+            </span>
           </span>
-        </EuiToolTip>
+        </RiTooltip>
       ),
     },
   ]

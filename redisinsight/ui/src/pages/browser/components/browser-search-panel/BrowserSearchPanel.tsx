@@ -1,30 +1,27 @@
 /* eslint-disable react/no-this-in-sfc */
 /* eslint-disable react/destructuring-assignment */
-import React, { FC, SVGProps, useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 
 import cx from 'classnames'
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiModal,
-  EuiModalBody,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiModal, EuiModalBody } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
+import {
+  BulkActions as BulkActionsIcon,
+  FilterTableIcon,
+  QuerySearchIcon,
+  IconType,
+} from 'uiSrc/components/base/icons'
 import {
   FeatureFlagComponent,
   ModuleNotLoaded,
   OnboardingTour,
+  RiTooltip,
 } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { KeyViewType, SearchMode } from 'uiSrc/slices/interfaces/keys'
 import FilterKeyType from 'uiSrc/pages/browser/components/filter-key-type'
 import RediSearchIndexesList from 'uiSrc/pages/browser/components/redisearch-key-list'
 import SearchKeyList from 'uiSrc/pages/browser/components/search-key-list'
-
-import BulkActionsIcon from 'uiSrc/assets/img/icons/bulk_actions.svg?react'
-import VectorIcon from 'uiSrc/assets/img/icons/vector.svg?react'
-import RediSearchIcon from 'uiSrc/assets/img/modules/RedisSearchLight.svg?react'
 
 import { changeSearchMode, keysSelector } from 'uiSrc/slices/browser/keys'
 import { isRedisearchAvailable } from 'uiSrc/utils'
@@ -44,6 +41,11 @@ import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { setBulkActionType } from 'uiSrc/slices/browser/bulkActions'
 
 import { RedisDefaultModules } from 'uiSrc/slices/interfaces'
+import {
+  IconButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 interface ISwitchType<T> {
@@ -55,7 +57,7 @@ interface ISwitchType<T> {
   getClassName: () => string
   onClick: () => void
   isActiveView: () => boolean
-  getIconType: () => string | FC<SVGProps<SVGSVGElement>>
+  getIconType: () => IconType
 }
 
 export interface Props {
@@ -89,7 +91,7 @@ const BrowserSearchPanel = (props: Props) => {
         })
       },
       getIconType() {
-        return VectorIcon
+        return FilterTableIcon
       },
       onClick() {
         handleSwitchSearchMode(this.type)
@@ -110,7 +112,7 @@ const BrowserSearchPanel = (props: Props) => {
         })
       },
       getIconType() {
-        return RediSearchIcon
+        return QuerySearchIcon
       },
       onClick() {
         if (this.disabled) {
@@ -179,9 +181,9 @@ const BrowserSearchPanel = (props: Props) => {
   }, [])
 
   const SwitchModeBtn = (item: ISwitchType<SearchMode>) => (
-    <EuiButtonIcon
+    <IconButton
       className={item.getClassName()}
-      iconType={item.getIconType()}
+      icon={item.getIconType()}
       aria-label={item.ariaLabel}
       onClick={() => item.onClick?.()}
       data-testid={item.dataTestId}
@@ -189,30 +191,26 @@ const BrowserSearchPanel = (props: Props) => {
   )
 
   const AddKeyBtn = (
-    <EuiButton
-      fill
-      size="s"
-      color="secondary"
+    <PrimaryButton
       onClick={openAddKeyPanel}
       className={styles.addKey}
       data-testid="btn-add-key"
     >
       + <span className={styles.addKeyText}>Key</span>
-    </EuiButton>
+    </PrimaryButton>
   )
 
   const BulkActionsBtn = (
-    <EuiButton
-      size="s"
+    <SecondaryButton
       color="secondary"
-      iconType={BulkActionsIcon}
+      icon={BulkActionsIcon}
       onClick={openBulkActions}
       className={styles.bulkActions}
       data-testid="btn-bulk-actions"
       aria-label="bulk actions"
     >
       <span className={styles.bulkActionsText}>Bulk Actions</span>
-    </EuiButton>
+    </SecondaryButton>
   )
 
   const SearchModeSwitch = () => (
@@ -221,13 +219,13 @@ const BrowserSearchPanel = (props: Props) => {
       data-testid="search-mode-switcher"
     >
       {searchModes.map((mode) => (
-        <EuiToolTip
+        <RiTooltip
           content={mode.tooltipText}
           position="bottom"
           key={mode.tooltipText}
         >
           {SwitchModeBtn(mode)}
-        </EuiToolTip>
+        </RiTooltip>
       ))}
     </div>
   )
@@ -261,7 +259,7 @@ const BrowserSearchPanel = (props: Props) => {
         )}
         <SearchKeyList />
       </div>
-      <div style={{ flexShrink: 0 }}>
+      <div style={{ flexShrink: 0, marginLeft: 12 }}>
         <FeatureFlagComponent name={FeatureFlags.envDependent}>
           {BulkActionsBtn}
         </FeatureFlagComponent>

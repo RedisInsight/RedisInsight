@@ -1,22 +1,19 @@
 import React, { ChangeEvent, Ref, useEffect, useRef, useState } from 'react'
 import { capitalize } from 'lodash'
 import cx from 'classnames'
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiFieldText,
-  EuiForm,
-  EuiToolTip,
-  EuiPopover,
-  EuiText,
-  keys,
-} from '@elastic/eui'
-import { IconSize } from '@elastic/eui/src/components/icon/icon'
+import { EuiFieldText, EuiForm, EuiPopover, keys } from '@elastic/eui'
 
+import { RiTooltip } from 'uiSrc/components'
 import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
+import { CancelSlimIcon, CheckThinIcon } from 'uiSrc/components/base/icons'
+import {
+  DestructiveButton,
+  IconButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 
 import styles from './styles.module.scss'
 
@@ -45,7 +42,7 @@ export interface Props {
     value: string,
   ) => { title: string; content: string | React.ReactNode } | undefined
   declineOnUnmount?: boolean
-  iconSize?: IconSize
+  iconSize?: 'S' | 'M' | 'L'
   viewChildrenMode?: boolean
   autoComplete?: string
   controlsClassName?: string
@@ -167,10 +164,8 @@ const InlineItemEditor = (props: Props) => {
     !!(isLoading || isError || isDisabled || (disableEmpty && !value.length))
 
   const ApplyBtn = (
-    <EuiToolTip
-      anchorClassName={styles.tooltip}
+    <RiTooltip
       position="bottom"
-      display="inlineBlock"
       title={
         (isDisabled && disabledTooltipText?.title) ||
         (getError && getError?.(value)?.title)
@@ -181,17 +176,17 @@ const InlineItemEditor = (props: Props) => {
       }
       data-testid="apply-tooltip"
     >
-      <EuiButtonIcon
-        iconSize={iconSize ?? 'l'}
-        iconType="check"
+      <IconButton
+        size={iconSize ?? 'M'}
+        icon={CheckThinIcon}
         color="primary"
         aria-label="Apply"
         className={cx(styles.btn, styles.applyBtn)}
-        isDisabled={isDisabledApply()}
+        disabled={isDisabledApply()}
         onClick={handleApplyClick}
         data-testid="apply-btn"
       />
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   return (
@@ -244,14 +239,13 @@ const InlineItemEditor = (props: Props) => {
                     controlsClassName,
                   )}
                 >
-                  <EuiButtonIcon
-                    iconSize={iconSize ?? 'l'}
-                    iconType="cross"
-                    color="primary"
+                  <IconButton
+                    size={iconSize ?? 'M'}
+                    icon={CancelSlimIcon}
                     aria-label="Cancel editing"
                     className={cx(styles.btn, styles.declineBtn)}
                     onClick={onDecline}
-                    isDisabled={isLoading}
+                    disabled={isLoading}
                     data-testid="cancel-btn"
                   />
                   {!approveByValidation && ApplyBtn}
@@ -269,32 +263,30 @@ const InlineItemEditor = (props: Props) => {
                         className={styles.popover}
                         data-testid="approve-popover"
                       >
-                        <EuiText size="m">
+                        <Text size="m" component="div">
                           {!!approveText?.title && (
                             <h4>
                               <b>{approveText?.title}</b>
                             </h4>
                           )}
-                          <EuiText
+                          <Text
                             size="s"
                             color="subdued"
                             className={styles.approveText}
                           >
                             {approveText?.text}
-                          </EuiText>
-                        </EuiText>
+                          </Text>
+                        </Text>
                         <div className={styles.popoverFooter}>
-                          <EuiButton
-                            fill
-                            color="warning"
+                          <DestructiveButton
                             aria-label="Save"
                             className={cx(styles.btn, styles.saveBtn)}
-                            isDisabled={isDisabledApply()}
+                            disabled={isDisabledApply()}
                             onClick={handleFormSubmit}
                             data-testid="save-btn"
                           >
                             Save
-                          </EuiButton>
+                          </DestructiveButton>
                         </div>
                       </div>
                     </EuiPopover>

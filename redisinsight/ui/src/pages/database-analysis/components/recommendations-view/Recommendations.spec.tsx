@@ -387,25 +387,18 @@ describe('Recommendations', () => {
     )
 
     const { container } = render(<Recommendations />)
-
-    expect(
-      screen
-        .queryAllByTestId('luaScript-accordion')[0]
-        ?.classList.contains('euiAccordion-isOpen'),
-    ).toBeTruthy()
+    let [element] = screen.queryAllByTestId('luaScript-accordion')
+    expect(element).toBeInTheDocument()
+    expect(element?.querySelector('[data-state="open"]')).toBeTruthy()
 
     fireEvent.click(
       container.querySelector(
         '[data-test-subj="luaScript-button"]',
       ) as HTMLInputElement,
     )
-
-    expect(
-      screen
-        .queryAllByTestId('luaScript-accordion')[0]
-        ?.classList.contains('euiAccordion-isOpen'),
-    ).not.toBeTruthy()
-    expect(sendEventTelemetry).toBeCalledWith({
+    ;[element] = screen.queryAllByTestId('luaScript-accordion')
+    expect(element?.querySelector('[data-state="open"]')).not.toBeTruthy()
+    expect(sendEventTelemetry).toHaveBeenCalledWith({
       event: TelemetryEvent.DATABASE_ANALYSIS_TIPS_COLLAPSED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
@@ -420,13 +413,9 @@ describe('Recommendations', () => {
         '[data-test-subj="luaScript-button"]',
       ) as HTMLInputElement,
     )
-
-    expect(
-      screen
-        .queryAllByTestId('luaScript-accordion')[0]
-        ?.classList.contains('euiAccordion-isOpen'),
-    ).toBeTruthy()
-    expect(sendEventTelemetry).toBeCalledWith({
+    ;[element] = screen.queryAllByTestId('luaScript-accordion')
+    expect(element?.querySelector('[data-state="open"]')).toBeTruthy()
+    expect(sendEventTelemetry).toHaveBeenCalledWith({
       event: TelemetryEvent.DATABASE_ANALYSIS_TIPS_EXPANDED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
@@ -463,7 +452,7 @@ describe('Recommendations', () => {
     expect(screen.queryByTestId('badges-legend')).toBeInTheDocument()
   })
 
-  it('should render redisstack link', () => {
+  it('should render redis-stack link', () => {
     ;(dbAnalysisSelector as jest.Mock).mockImplementation(() => ({
       ...mockdbAnalysisSelector,
       data: {
@@ -510,7 +499,7 @@ describe('Recommendations', () => {
     expect(screen.getByTestId('bigHashes-to-tutorial-btn')).toBeInTheDocument()
     fireEvent.click(screen.getByTestId('bigHashes-to-tutorial-btn'))
 
-    expect(sendEventTelemetry).toBeCalledWith({
+    expect(sendEventTelemetry).toHaveBeenCalledWith({
       event: TelemetryEvent.DATABASE_TIPS_TUTORIAL_CLICKED,
       eventData: {
         databaseId: INSTANCE_ID_MOCK,
@@ -538,7 +527,7 @@ describe('Recommendations', () => {
     expect(screen.getByTestId('bigHashes-to-tutorial-btn')).toBeInTheDocument()
     fireEvent.click(screen.getByTestId('bigHashes-to-tutorial-btn'))
 
-    expect(pushMock).toBeCalledWith({
+    expect(pushMock).toHaveBeenCalledWith({
       search: 'path=tutorials/path',
     })
     pushMock.mockRestore()

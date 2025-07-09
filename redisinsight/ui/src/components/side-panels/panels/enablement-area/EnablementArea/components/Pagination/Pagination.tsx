@@ -1,16 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  EuiButton,
-  EuiContextMenuPanel,
-  EuiContextMenuItem,
-  EuiPopover,
-} from '@elastic/eui'
 import cx from 'classnames'
 import { isNil } from 'lodash'
+import { ChevronLeftIcon, ChevronRightIcon } from 'uiSrc/components/base/icons'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 
 import { Nullable } from 'uiSrc/utils'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import {
+  Menu,
+  MenuContent,
+  MenuDropdownArrow,
+  MenuItem,
+  MenuTrigger,
+} from 'uiSrc/components/base/layout/menu'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -26,7 +30,7 @@ const Pagination = ({
   activePageKey,
   compressed,
 }: Props) => {
-  const [isPopoverOpen, setPopover] = useState(false)
+  const [isMenuOpen, setMenuOpen] = useState(false)
   const [activePage, setActivePage] = useState(0)
   const { openPage } = useContext(EnablementAreaContext)
 
@@ -37,12 +41,12 @@ const Pagination = ({
     }
   }, [activePageKey])
 
-  const togglePopover = () => {
-    setPopover(!isPopoverOpen)
+  const toggleMenuOpen = () => {
+    setMenuOpen(!isMenuOpen)
   }
 
-  const closePopover = () => {
-    setPopover(false)
+  const closeMenu = () => {
+    setMenuOpen(false)
   }
 
   const handleOpenPage = (index: number) => {
@@ -50,7 +54,7 @@ const Pagination = ({
     const groupPath = items[index]?._groupPath
     const key = items[index]?._key
 
-    closePopover()
+    closeMenu()
     if (index !== activePage && openPage && path) {
       openPage({
         path: sourcePath + path,
@@ -59,46 +63,41 @@ const Pagination = ({
     }
   }
 
-  const pages = items.map((item, index) => (
-    <EuiContextMenuItem
-      className={cx(styles.pagesItem, {
-        [styles.pagesItemActive]: index === activePage,
-      })}
-      key={item.id}
-      onClick={() => handleOpenPage(index)}
-    >
-      <span>{item.label}</span>
-    </EuiContextMenuItem>
-  ))
-
   const PagesControl = () => (
-    <EuiPopover
-      id="enablementAreaPagesMenu"
-      button={
+    <Menu open={isMenuOpen}>
+      <MenuTrigger>
         <button
-          data-testid="enablement-area__pagination-popover-btn"
-          className={styles.popoverButton}
+          data-testid="enablement-area__toggle-pagination-menu-btn"
           type="button"
-          onClick={togglePopover}
+          onClick={toggleMenuOpen}
         >
-          {`${activePage + 1} of ${items.length}`}
+          <Text size="S">
+            <strong
+              className={styles.underline}
+            >{`${activePage + 1} of ${items.length}`}</strong>
+          </Text>
         </button>
-      }
-      isOpen={isPopoverOpen}
-      closePopover={closePopover}
-      panelClassName={styles.popover}
-      panelPaddingSize="none"
-    >
-      <EuiContextMenuPanel
-        data-testid="enablement-area__pagination-popover"
-        style={{ minWidth: !compressed ? '280px' : 'none' }}
-        className={styles.panel}
-        size="s"
-        items={pages}
-      />
-    </EuiPopover>
+      </MenuTrigger>
+      <MenuContent
+        data-testid="enablement-area__pagination-menu"
+        placement="top"
+        onInteractOutside={() => setMenuOpen(false)}
+      >
+        {items.map((item, index) => (
+          <MenuItem
+            data-testid={`menu-item-${index}`}
+            key={item.id}
+            onClick={() => handleOpenPage(index)}
+            text={item.label}
+            className={cx({ [styles.activeMenuItem]: activePage === index })}
+          />
+        ))}
+        <MenuDropdownArrow />
+      </MenuContent>
+    </Menu>
   )
 
+  const size = compressed ? 'small' : 'medium'
   return (
     <div
       className={cx(styles.pagination, {
@@ -107,21 +106,19 @@ const Pagination = ({
     >
       <div>
         {activePage > 0 && (
-          <EuiButton
+          <PrimaryButton
             aria-label="Previous page"
-            fill
             data-testid="enablement-area__prev-page-btn"
-            color="secondary"
-            iconType="arrowLeft"
+            icon={ChevronLeftIcon}
             iconSide="left"
             onClick={() => handleOpenPage(activePage - 1)}
-            size={compressed ? 's' : 'm'}
+            size={size}
             className={cx(styles.prevPage, {
               [styles.prevPageCompressed]: compressed,
             })}
           >
             Back
-          </EuiButton>
+          </PrimaryButton>
         )}
       </div>
       <div>
@@ -129,21 +126,19 @@ const Pagination = ({
       </div>
       <div>
         {activePage < items.length - 1 && (
-          <EuiButton
+          <PrimaryButton
             aria-label="Next page"
-            fill
             data-testid="enablement-area__next-page-btn"
-            color="secondary"
-            iconType="arrowRight"
+            icon={ChevronRightIcon}
             iconSide="right"
             onClick={() => handleOpenPage(activePage + 1)}
             className={cx(styles.nextPage, {
               [styles.nextPageCompressed]: compressed,
             })}
-            size={compressed ? 's' : 'm'}
+            size={size}
           >
             Next
-          </EuiButton>
+          </PrimaryButton>
         )}
       </div>
     </div>

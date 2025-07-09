@@ -1,15 +1,15 @@
 import React, { ChangeEvent } from 'react'
 import {
-  EuiCheckbox,
-  EuiFormRow,
   EuiIcon,
-  EuiToolTip,
   htmlIdGenerator,
 } from '@elastic/eui'
 import { FormikProps } from 'formik'
 
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
+import { RiTooltip } from 'uiSrc/components'
 
 export interface Props {
   formik: FormikProps<DbConnectionInfo>
@@ -18,7 +18,7 @@ export interface Props {
 const ForceStandaloneLabel = () => (
   <p>
     <span>Force Standalone Connection</span>
-    <EuiToolTip
+    <RiTooltip
       className="homePage_tooltip"
       position="right"
       content={
@@ -35,7 +35,7 @@ const ForceStandaloneLabel = () => (
           marginLeft: '5px',
         }}
       />
-    </EuiToolTip>
+    </RiTooltip>
   </p>
 )
 const ForceStandalone = (props: Props) => {
@@ -50,8 +50,8 @@ const ForceStandalone = (props: Props) => {
   return (
     <Row gap="s">
       <FlexItem>
-        <EuiFormRow>
-          <EuiCheckbox
+        <FormField>
+          <Checkbox
             id={`${htmlIdGenerator()()} over forceStandalone`}
             name="forceStandalone"
             label={<ForceStandaloneLabel />}
@@ -59,7 +59,7 @@ const ForceStandalone = (props: Props) => {
             onChange={handleChangeForceStandaloneCheckbox}
             data-testid="forceStandalone"
           />
-        </EuiFormRow>
+        </FormField>
       </FlexItem>
     </Row>
   )

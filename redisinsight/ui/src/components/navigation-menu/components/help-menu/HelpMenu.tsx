@@ -1,12 +1,4 @@
-import {
-  EuiButtonIcon,
-  EuiIcon,
-  EuiLink,
-  EuiPopover,
-  EuiText,
-  EuiTitle,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -27,9 +19,15 @@ import GithubHelpCenterSVG from 'uiSrc/assets/img/github.svg?react'
 import BulbSVG from 'uiSrc/assets/img/bulb.svg?react'
 
 import { FeatureFlags } from 'uiSrc/constants'
-import { FeatureFlagComponent } from 'uiSrc/components'
+import { FeatureFlagComponent, RiTooltip } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { SupportIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
+import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
+import { Link } from 'uiSrc/components/base/link/Link'
 import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
 
@@ -72,16 +70,19 @@ const HelpMenu = () => {
   }
 
   const HelpMenuButton = () => (
-    <EuiButtonIcon
+    <NavigationItemWrapper
       className={cx(navStyles.navigationButton, {
         [navStyles.navigationButtonNotified]: isReleaseNotesViewed === false,
       })}
-      iconType="questionInCircle"
-      iconSize="l"
-      aria-label="Help Menu"
-      onClick={() => setIsHelpMenuActive((value) => !value)}
-      data-testid="help-menu-button"
-    />
+    >
+      <IconButton
+        size="L"
+        icon={SupportIcon}
+        aria-label="Help Menu"
+        onClick={() => setIsHelpMenuActive((value) => !value)}
+        data-testid="help-menu-button"
+      />
+    </NavigationItemWrapper>
   )
 
   return (
@@ -89,18 +90,14 @@ const HelpMenu = () => {
       anchorPosition="rightUp"
       isOpen={isHelpMenuActive}
       anchorClassName={styles.unsupportedInfo}
-      panelClassName={cx(
-        'euiToolTip',
-        'popoverLikeTooltip',
-        styles.popoverWrapper,
-      )}
+      panelClassName={cx('popoverLikeTooltip', styles.popoverWrapper)}
       closePopover={() => setIsHelpMenuActive(false)}
       button={
         <>
           {!isHelpMenuActive && (
-            <EuiToolTip content="Help" position="right" key="help-menu">
+            <RiTooltip content="Help" position="right" key="help-menu">
               {HelpMenuButton()}
-            </EuiToolTip>
+            </RiTooltip>
           )}
 
           {isHelpMenuActive && HelpMenuButton()}
@@ -108,9 +105,9 @@ const HelpMenu = () => {
       }
     >
       <div className={styles.popover} data-testid="help-center">
-        <EuiTitle size="xs" className={styles.helpMenuTitle}>
-          <span>Help Center</span>
-        </EuiTitle>
+        <Title size="XS" className={styles.helpMenuTitle}>
+          Help Center
+        </Title>
         <Spacer size="l" />
         <Row
           className={styles.helpMenuItems}
@@ -120,8 +117,7 @@ const HelpMenu = () => {
         >
           <FeatureFlagComponent name={FeatureFlags.envDependent}>
             <FlexItem grow={2} className={styles.helpMenuItem}>
-              <EuiLink
-                external={false}
+              <Link
                 className={styles.helpMenuItemLink}
                 href={EXTERNAL_LINKS.githubIssues}
                 target="_blank"
@@ -129,27 +125,27 @@ const HelpMenu = () => {
               >
                 <EuiIcon type={GithubHelpCenterSVG} size="xxl" />
                 <Spacer size="m" />
-                <EuiText
+                <Text
                   size="xs"
                   textAlign="center"
                   className={styles.helpMenuText}
                 >
                   Provide <br /> Feedback
-                </EuiText>
-              </EuiLink>
+                </Text>
+              </Link>
             </FlexItem>
           </FeatureFlagComponent>
           <FlexItem className={styles.helpMenuItemRow} grow={4}>
             <div className={styles.helpMenuItemLink}>
               <EuiIcon type="keyboardShortcut" size="l" />
-              <EuiText
+              <Text
                 size="xs"
                 className={styles.helpMenuTextLink}
                 onClick={() => onKeyboardShortcutClick()}
                 data-testid="shortcuts-btn"
               >
                 Keyboard Shortcuts
-              </EuiText>
+              </Text>
             </div>
 
             <div className={styles.helpMenuItemLink}>
@@ -161,30 +157,29 @@ const HelpMenu = () => {
               >
                 <EuiIcon type="package" size="l" />
               </div>
-              <EuiLink
-                external={false}
+              <Link
                 onClick={onClickReleaseNotes}
                 className={styles.helpMenuTextLink}
                 href={EXTERNAL_LINKS.releaseNotes}
                 target="_blank"
                 data-testid="release-notes-btn"
               >
-                <EuiText size="xs" className={styles.helpMenuTextLink}>
+                <Text size="xs" className={styles.helpMenuTextLink}>
                   Release Notes
-                </EuiText>
-              </EuiLink>
+                </Text>
+              </Link>
             </div>
             <FeatureFlagComponent name={FeatureFlags.envDependent}>
               <div className={styles.helpMenuItemLink}>
                 <EuiIcon type={BulbSVG} size="l" />
-                <EuiText
+                <Text
                   size="xs"
                   className={styles.helpMenuTextLink}
                   onClick={() => onResetOnboardingClick()}
                   data-testid="reset-onboarding-btn"
                 >
                   Reset Onboarding
-                </EuiText>
+                </Text>
               </div>
             </FeatureFlagComponent>
           </FlexItem>

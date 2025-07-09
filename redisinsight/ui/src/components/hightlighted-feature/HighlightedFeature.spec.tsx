@@ -1,12 +1,12 @@
-import { EuiToolTip } from '@elastic/eui'
 import { fireEvent } from '@testing-library/react'
 import React from 'react'
 import {
   act,
   render,
   screen,
-  waitForEuiToolTipVisible,
+  waitForRiTooltipVisible,
 } from 'uiSrc/utils/test-utils'
+import { RiTooltip } from 'uiSrc/components'
 
 import HighlightedFeature from './HighlightedFeature'
 
@@ -59,12 +59,10 @@ describe('HighlightedFeature', () => {
     expect(screen.getByTestId('badge-highlighting')).toBeInTheDocument()
 
     await act(async () => {
-      fireEvent.mouseOver(
-        screen.getByTestId('tooltip-badge-highlighting-inner'),
-      )
+      fireEvent.focus(screen.getByTestId('tooltip-badge-highlighting-inner'))
     })
 
-    await waitForEuiToolTipVisible()
+    await waitForRiTooltipVisible()
 
     expect(
       screen.queryByTestId('tooltip-badge-highlighting'),
@@ -104,10 +102,10 @@ describe('HighlightedFeature', () => {
     expect(screen.getByTestId('dot-highlighting')).toBeInTheDocument()
 
     await act(async () => {
-      fireEvent.mouseOver(screen.getByTestId('tooltip-highlighting-inner'))
+      fireEvent.focus(screen.getByTestId('tooltip-highlighting-inner'))
     })
 
-    await waitForEuiToolTipVisible()
+    await waitForRiTooltipVisible()
 
     expect(screen.queryByTestId('tooltip-highlighting')).toBeInTheDocument()
     expect(screen.queryByTestId('tooltip-highlighting')).toHaveTextContent(
@@ -145,17 +143,17 @@ describe('HighlightedFeature', () => {
         isHighlight
         hideFirstChild
       >
-        <EuiToolTip title="PrevTooltipTitle" data-testid="no-render-tooltip">
+        <RiTooltip title="PrevTooltipTitle" data-testid="no-render-tooltip">
           <Content />
-        </EuiToolTip>
+        </RiTooltip>
       </HighlightedFeature>,
     )
 
     await act(async () => {
-      fireEvent.mouseOver(screen.getByTestId('some-feature'))
+      fireEvent.focus(screen.getByTestId('some-feature'))
     })
 
-    await waitForEuiToolTipVisible()
+    await waitForRiTooltipVisible()
 
     expect(screen.queryByTestId('tooltip-highlighting')).toBeInTheDocument()
     expect(screen.queryByTestId('no-render-tooltip')).not.toBeInTheDocument()

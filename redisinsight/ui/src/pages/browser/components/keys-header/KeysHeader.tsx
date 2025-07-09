@@ -1,19 +1,16 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/no-this-in-sfc */
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiCheckbox,
-  EuiIcon,
-  EuiPopover,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
-import React, { FC, Ref, SVGProps, useRef, useState } from 'react'
+import React, { Ref, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import ColumnsIcon from 'uiSrc/assets/img/icons/columns.svg?react'
-import TreeViewIcon from 'uiSrc/assets/img/icons/treeview.svg?react'
+import {
+  IconType,
+  ColumnsIcon,
+  EqualIcon,
+  FoldersIcon,
+} from 'uiSrc/components/base/icons'
 import KeysSummary from 'uiSrc/components/keys-summary'
 import {
   SCAN_COUNT_DEFAULT,
@@ -49,12 +46,17 @@ import {
 
 import { OnboardingStepName, OnboardingSteps } from 'uiSrc/constants/onboarding'
 import { incrementOnboardStepAction } from 'uiSrc/slices/app/features'
-import { AutoRefresh, OnboardingTour } from 'uiSrc/components'
+import { AutoRefresh, OnboardingTour, RiTooltip } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { BrowserColumns, KeyValueFormat } from 'uiSrc/constants'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { setConnectivityError } from 'uiSrc/slices/app/connectivity'
+import {
+  IconButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from './styles.module.scss'
 
 const HIDE_REFRESH_LABEL_WIDTH = 640
@@ -68,7 +70,7 @@ interface ISwitchType<T> {
   getClassName: () => string
   onClick: () => void
   isActiveView: () => boolean
-  getIconType: () => string | FC<SVGProps<SVGSVGElement>>
+  getIconType: () => IconType
 }
 
 export interface Props {
@@ -120,7 +122,7 @@ const KeysHeader = (props: Props) => {
         return cx(styles.viewTypeBtn, { [styles.active]: this.isActiveView() })
       },
       getIconType() {
-        return 'menu'
+        return EqualIcon
       },
       onClick() {
         handleSwitchView(this.type)
@@ -141,7 +143,7 @@ const KeysHeader = (props: Props) => {
         return cx(styles.viewTypeBtn, { [styles.active]: this.isActiveView() })
       },
       getIconType() {
-        return TreeViewIcon
+        return FoldersIcon
       },
       onClick() {
         handleSwitchView(this.type)
@@ -290,21 +292,21 @@ const KeysHeader = (props: Props) => {
       <OnboardingTour options={ONBOARDING_FEATURES.BROWSER_TREE_VIEW}>
         <>
           {viewTypes.map((view) => (
-            <EuiToolTip
+            <RiTooltip
               content={view.tooltipText}
               position="top"
               key={view.tooltipText}
             >
-              <EuiButtonIcon
-                iconSize="s"
+              <IconButton
+                size="S"
                 className={view.getClassName()}
-                iconType={view.getIconType()}
+                icon={view.getIconType()}
                 aria-label={view.ariaLabel}
                 onClick={() => view.onClick()}
                 data-testid={view.dataTestId}
                 disabled={view.disabled || false}
               />
-            </EuiToolTip>
+            </RiTooltip>
           ))}
         </>
       </OnboardingTour>
@@ -347,7 +349,7 @@ const KeysHeader = (props: Props) => {
                     searchMode === SearchMode.Redisearch && !selectedIndex
                   }
                   disabledRefreshButtonMessage="Select an index to refresh keys."
-                  iconSize="xs"
+                  iconSize="S"
                   postfix="keys"
                   loading={loading}
                   lastRefreshTime={keysState.lastRefreshTime}
@@ -367,10 +369,9 @@ const KeysHeader = (props: Props) => {
                     panelClassName={styles.popoverWrapper}
                     closePopover={() => setColumnsConfigShown(false)}
                     button={
-                      <EuiButton
-                        size="s"
-                        color="secondary"
-                        iconType={ColumnsIcon}
+                      <SecondaryButton
+                        size="small"
+                        icon={ColumnsIcon}
                         onClick={toggleColumnsConfigVisibility}
                         className={styles.columnsButton}
                         data-testid="btn-columns-actions"
@@ -379,12 +380,12 @@ const KeysHeader = (props: Props) => {
                         <span className={styles.columnsButtonText}>
                           Columns
                         </span>
-                      </EuiButton>
+                      </SecondaryButton>
                     }
                   >
                     <Row align="center" gap="m">
                       <FlexItem grow>
-                        <EuiCheckbox
+                        <Checkbox
                           id="show-key-size"
                           name="show-key-size"
                           label="Key size"
@@ -400,11 +401,9 @@ const KeysHeader = (props: Props) => {
                         />
                       </FlexItem>
                       <FlexItem grow>
-                        <EuiToolTip
+                        <RiTooltip
                           content="Hide the key size to avoid performance issues when working with large keys."
                           position="top"
-                          display="inlineBlock"
-                          anchorClassName="flex-row"
                         >
                           <EuiIcon
                             className={styles.infoIcon}
@@ -413,10 +412,10 @@ const KeysHeader = (props: Props) => {
                             style={{ cursor: 'pointer' }}
                             data-testid="key-size-info-icon"
                           />
-                        </EuiToolTip>
+                        </RiTooltip>
                       </FlexItem>
                     </Row>
-                    <EuiCheckbox
+                    <Checkbox
                       id="show-ttl"
                       name="show-ttl"
                       label="TTL"

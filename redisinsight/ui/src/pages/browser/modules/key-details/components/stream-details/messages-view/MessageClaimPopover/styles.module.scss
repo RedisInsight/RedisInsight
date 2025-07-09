@@ -28,10 +28,6 @@
   &:global(.euiFlexGroup--gutterLarge) > :global(.euiFlexItem) {
     margin-left: 0;
   }
-
-  :global(.euiSwitch) :global(.euiSwitch__button) {
-    width: 30px;
-  }
 }
 
 .footer .footerBtn {
@@ -85,10 +81,6 @@
   margin-left: 0;
 }
 
-.popoverWrapper .hiddenLabel :global(.euiFormRow__label) {
-  font-size: 0;
-}
-
 .popoverWrapper :global(.euiFlexGroup--gutterLarge > .euiFlexItem) {
   margin: 9px;
 }
@@ -99,6 +91,7 @@
 
 .consumerField {
   width: 389px !important;
+  height: 36px !important;
 }
 
 .fieldWithAppend {
@@ -108,7 +101,7 @@
 }
 
 .timeOptionField {
-  width: 120px !important;
+  width: 100px !important;
   height: 38px !important;
 }
 
@@ -124,4 +117,15 @@
 .consumerName {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.timeWrapper {
+  position: relative;
+
+  .timeUnit {
+    position: absolute;
+    top: 12px;
+    right: 5px;
+    font-size: 12px;
+  }
 }

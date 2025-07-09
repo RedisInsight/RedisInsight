@@ -9,23 +9,6 @@ div.plotly-notifier {
   --body-color: white;
   --text-color: #B5B6C0;
 
-  // switches
-  .euiSwitch .euiSwitch__body {
-    background-color: #465282;
-  }
-  .euiSwitch.euiSwitch--compressed .euiSwitch__button[aria-checked=true] .euiSwitch__thumb {
-    border-color: #6B6B6B;
-  }
-  .euiSwitch.euiSwitch--compressed .euiSwitch__label {
-    font: 13px medium;
-  }
-  .euiSwitch .euiSwitch__button[aria-checked=false] .euiSwitch__body {
-    background-color: #6B6B6B;
-  }
-  .euiSwitch.euiSwitch--compressed .euiSwitch__thumb {
-    background-color: white;
-  }
-
   // Text field
   .euiFieldText {
     color: #B5B6C0;
@@ -167,24 +150,6 @@ div.plotly-notifier {
   .rangeslider-mask-min, .rangeslider-mask-max {
     fill: #F6F7F9 !important;
     fill-opacity: 1 !important;
-  }
-
-
-  // switches
-  .euiSwitch .euiSwitch__body {
-    background-color: #243DAC;
-  }
-  .euiSwitch.euiSwitch--compressed .euiSwitch__button[aria-checked=true] .euiSwitch__thumb {
-    border-color: #C1CBD9;
-  }
-  .euiSwitch.euiSwitch--compressed .euiSwitch__label {
-    font: 13px medium;
-  }
-  .euiSwitch .euiSwitch__button[aria-checked=false] .euiSwitch__body {
-    background-color: #C1CBD9;
-  }
-  .euiSwitch.euiSwitch--compressed .euiSwitch__thumb {
-    background-color: white;
   }
 
   // Text field
@@ -418,10 +383,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.switch-staircase-label {
-  padding-right: 10px !important;
 }
 
 

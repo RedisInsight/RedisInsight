@@ -2,15 +2,8 @@ import React, { useContext } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
-import {
-  EuiAccordion,
-  EuiButton,
-  EuiIcon,
-  EuiLink,
-  EuiPanel,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
+import cx from 'classnames'
 
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
@@ -20,6 +13,7 @@ import {
   RecommendationBody,
   RecommendationCopyComponent,
   RecommendationVoting,
+  RiTooltip,
 } from 'uiSrc/components'
 import { dbAnalysisSelector } from 'uiSrc/slices/analytics/dbAnalysis'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -36,6 +30,13 @@ import { sortRecommendations } from 'uiSrc/utils/recommendation'
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
 import { findTutorialPath } from 'uiSrc/utils'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
+
+import { RiAccordion } from 'uiSrc/components/base/display/accordion/RiAccordion'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { Card } from 'uiSrc/components/base/layout'
+
 import styles from './styles.module.scss'
 
 const Recommendations = () => {
@@ -78,32 +79,31 @@ const Recommendations = () => {
   }
 
   const onRedisStackClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => event.stopPropagation()
 
-  const renderButtonContent = (
-    redisStack: boolean,
-    title: string,
-    badges: string[],
-    id: string,
-  ) => (
-    <Row className={styles.accordionButton} align="center" justify="between">
-      <Row align="center">
-        <FlexItem onClick={onRedisStackClick}>
-          {redisStack && (
-            <EuiLink
-              external={false}
+  const renderButtonContent = (badges: string[], id: string) => (
+    <FlexItem className="recommendation-badges" data-test-subj={`${id}-button`}>
+      <RecommendationBadges badges={badges} />
+    </FlexItem>
+  )
+  const renderLabel = (redisStack: boolean, title: string, id: string) => (
+    <Row
+      className={cx(styles.accordionBtn, styles.accordionButton)}
+      align="center"
+      justify="start"
+      gap="m"
+      data-test-subj={`${id}-label`}
+    >
+      <FlexItem onClick={onRedisStackClick}>
+        {redisStack && (
+            <Link
               target="_blank"
               href={EXTERNAL_LINKS.redisStack}
               className={styles.redisStackLink}
               data-testid={`${id}-redis-stack-link`}
             >
-              <EuiToolTip
-                content="Redis Stack"
-                position="top"
-                display="inlineBlock"
-                anchorClassName="flex-row"
-              >
+              <RiTooltip content="Redis Stack" position="top">
                 <EuiIcon
                   type={
                     theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
@@ -111,15 +111,11 @@ const Recommendations = () => {
                   className={styles.redisStackIcon}
                   data-testid={`${id}-redis-stack-icon`}
                 />
-              </EuiToolTip>
-            </EuiLink>
+              </RiTooltip>
+            </Link>
           )}
-        </FlexItem>
-        <FlexItem>{title}</FlexItem>
-      </Row>
-      <FlexItem>
-        <RecommendationBadges badges={badges} />
       </FlexItem>
+      <FlexItem>{title}</FlexItem>
     </Row>
   )
 
@@ -147,10 +143,10 @@ const Recommendations = () => {
           className={styles.noRecommendationsIcon}
           data-testid="no=recommendations-icon"
         />
-        <EuiText className={styles.bigText}>AMAZING JOB!</EuiText>
-        <EuiText size="m">No Tips at the moment,</EuiText>
+        <Text className={styles.bigText}>AMAZING JOB!</Text>
+        <Text size="m">No Tips at the moment,</Text>
         <br />
-        <EuiText size="m">keep up the good work!</EuiText>
+        <Text size="m">keep up the good work!</Text>
       </div>
     )
   }
@@ -181,24 +177,17 @@ const Recommendations = () => {
                 className={styles.recommendation}
                 data-testid={`${id}-recommendation`}
               >
-                <EuiAccordion
+                <RiAccordion
                   id={name}
                   key={`${name}-accordion`}
-                  arrowDisplay="right"
-                  buttonContent={renderButtonContent(
-                    redisStack,
-                    title,
-                    badges,
-                    id,
-                  )}
-                  buttonClassName={styles.accordionBtn}
-                  buttonProps={{ 'data-test-subj': `${id}-button` }}
+                  label={renderLabel(redisStack, title, id)}
+                  actions={renderButtonContent(badges, id)}
                   className={styles.accordion}
-                  initialIsOpen
-                  onToggle={(isOpen) => handleToggle(isOpen, id)}
+                  defaultOpen
+                  onOpenChange={(isOpen) => handleToggle(isOpen, id)}
                   data-testid={`${id}-accordion`}
                 >
-                  <EuiPanel className={styles.accordionContent} color="subdued">
+                  <Card className={styles.accordionContent}>
                     <RecommendationBody
                       elements={content}
                       params={params}
@@ -213,22 +202,20 @@ const Recommendations = () => {
                         }
                       />
                     )}
-                  </EuiPanel>
-                </EuiAccordion>
+                  </Card>
+                </RiAccordion>
                 <div className={styles.footer}>
                   <FeatureFlagComponent name={FeatureFlags.envDependent}>
                     <RecommendationVoting vote={vote as Vote} name={name} />
                   </FeatureFlagComponent>
                   {tutorialId && (
-                    <EuiButton
-                      fill
-                      color="secondary"
+                    <PrimaryButton
                       size="s"
                       onClick={() => goToTutorial(tutorialId, id)}
                       data-testid={`${id}-to-tutorial-btn`}
                     >
                       Tutorial
-                    </EuiButton>
+                    </PrimaryButton>
                   )}
                 </div>
               </div>

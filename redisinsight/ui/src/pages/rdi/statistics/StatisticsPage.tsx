@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiLoadingSpinner, EuiText } from '@elastic/eui'
 
+import { Text } from 'uiSrc/components/base/text'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import { getPipelineStatusAction } from 'uiSrc/slices/rdi/pipeline'
 import {
@@ -18,7 +18,9 @@ import {
 import { formatLongName, Nullable, setTitle } from 'uiSrc/utils'
 import { setLastPageContext } from 'uiSrc/slices/app/context'
 import { PageNames } from 'uiSrc/constants'
+import { Loader } from 'uiSrc/components/base/display'
 import { IRdiStatistics, RdiPipelineStatus } from 'uiSrc/slices/interfaces'
+
 import Clients from './clients'
 import DataStreams from './data-streams'
 import Empty from './empty'
@@ -110,9 +112,9 @@ const StatisticsPage = () => {
   // todo add interface
   if (statisticsResults.status === 'failed') {
     return (
-      <EuiText style={{ margin: '20px auto' }}>
+      <Text style={{ margin: '20px auto' }}>
         Unexpected error in your RDI endpoint, please refresh the page
-      </EuiText>
+      </Text>
     )
   }
 
@@ -123,7 +125,7 @@ const StatisticsPage = () => {
       <div className={styles.bodyContainer}>
         {pageLoading && (
           <div className={styles.cover}>
-            <EuiLoadingSpinner size="xl" />
+            <Loader size="xl" />
           </div>
         )}
         {!shouldShowStatistics(statisticsResults) ? (

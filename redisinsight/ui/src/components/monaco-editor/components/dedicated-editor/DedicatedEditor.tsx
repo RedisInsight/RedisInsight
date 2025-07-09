@@ -1,14 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
+import styled from 'styled-components'
 import { compact, findIndex, first, merge } from 'lodash'
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import ReactMonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
 import { Rnd } from 'react-rnd'
 import cx from 'classnames'
-import {
-  EuiButtonIcon,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-} from '@elastic/eui'
 
 import {
   decoration,
@@ -27,7 +23,25 @@ import {
 import { IEditorMount } from 'uiSrc/pages/workbench/interfaces'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CancelSlimIcon, CheckThinIcon } from 'uiSrc/components/base/icons'
+import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import styles from './styles.module.scss'
+
+const LangSelect = styled(RiSelect)`
+  appearance: none;
+  border: 0 none;
+  outline: none;
+  background-color: transparent;
+  max-width: 200px;
+  max-height: 26px;
+  &:active,
+  &:focus,
+  &:hover,
+  &[data-state='open'] {
+    background-color: transparent;
+  }
+`
 
 export interface Props {
   query?: string
@@ -69,15 +83,14 @@ const DedicatedEditor = (props: Props) => {
   const [selectedLang, setSelectedLang] = useState(
     DEDICATED_EDITOR_LANGUAGES[!langs.length ? langId! : first(langs)!],
   )
-
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
   const rndRef = useRef<Nullable<any>>(null)
 
   const { theme } = useContext(ThemeContext)
 
-  const optionsLangs: EuiSuperSelectOption<DSL>[] = langs.map((lang) => ({
+  const optionsLangs = langs.map((lang) => ({
     value: lang,
-    inputDisplay: DEDICATED_EDITOR_LANGUAGES[lang]?.name,
+    label: DEDICATED_EDITOR_LANGUAGES[lang]?.name,
   }))
 
   let disposeCompletionItemProvider = () => {}
@@ -156,7 +169,10 @@ const DedicatedEditor = (props: Props) => {
     editor: monacoEditor.editor.IStandaloneCodeEditor,
     monaco: typeof monacoEditor,
   ) => {
-    monacoObjects.current = { editor, monaco }
+    monacoObjects.current = {
+      editor,
+      monaco,
+    }
 
     setTimeout(() => editor.focus(), 0)
 
@@ -287,30 +303,25 @@ const DedicatedEditor = (props: Props) => {
               <div className={cx(styles.actions)}>
                 {langs?.length < 2 && <span>{selectedLang?.name}</span>}
                 {langs?.length >= 2 && (
-                  <EuiSuperSelect
+                  <LangSelect
                     name="dedicated-editor-language-select"
                     placeholder="Select language"
-                    valueOfSelected={selectedLang.id}
+                    value={selectedLang.id}
                     options={optionsLangs}
-                    className={styles.selectLanguage}
                     onChange={onChangeLanguageSelect}
                     data-testid="dedicated-editor-language-select"
                   />
                 )}
                 <div>
-                  <EuiButtonIcon
-                    iconSize="m"
-                    iconType="cross"
-                    color="primary"
+                  <IconButton
+                    icon={CancelSlimIcon}
                     aria-label="Cancel editing"
                     className={styles.declineBtn}
                     onClick={() => onCancel(selectedLang.id as DSL)}
                     data-testid="cancel-btn"
                   />
-                  <EuiButtonIcon
-                    iconSize="m"
-                    iconType="check"
-                    color="primary"
+                  <IconButton
+                    icon={CheckThinIcon}
                     type="submit"
                     aria-label="Apply"
                     onClick={handleSubmit}

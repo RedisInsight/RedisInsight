@@ -1,4 +1,4 @@
-import { EuiButton, EuiIcon, EuiText } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { format, formatDuration, intervalToDuration } from 'date-fns'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -14,6 +14,12 @@ import { downloadFile } from 'uiSrc/utils/dom/downloadFile'
 import { fetchMonitorLog } from 'uiSrc/slices/cli/cli-output'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { RefreshIcon, DownloadIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 const PADDINGS_OUTSIDE = 12
@@ -63,7 +69,7 @@ const MonitorLog = () => {
         style={{ display: 'none' }}
       />
       <AutoSizer disableHeight>
-        {({ width }) => (
+        {({ width = 0 }) => (
           <div
             className={styles.container}
             style={{
@@ -73,7 +79,7 @@ const MonitorLog = () => {
             }}
             data-testid="download-log-panel"
           >
-            <EuiText
+            <Text
               size="xs"
               color="subdued"
               className={styles.time}
@@ -86,14 +92,13 @@ const MonitorLog = () => {
               &nbsp;(
               {duration}
               {width > SMALL_SCREEN_RESOLUTION && ' Running time'})
-            </EuiText>
+            </Text>
             <Row className={styles.actions} justify="between" align="center">
               <FlexItem>
                 {isSaveToFile && (
-                  <EuiButton
-                    size="s"
-                    color="secondary"
-                    iconType="download"
+                  <SecondaryButton
+                    size="small"
+                    icon={DownloadIcon}
                     className={styles.btn}
                     data-testid="download-log-btn"
                     onClick={handleDownloadLog}
@@ -101,22 +106,20 @@ const MonitorLog = () => {
                   >
                     {width > SMALL_SCREEN_RESOLUTION && ' Download '}
                     Log
-                  </EuiButton>
+                  </SecondaryButton>
                 )}
               </FlexItem>
               <FlexItem>
-                <EuiButton
-                  fill
-                  size="s"
-                  color="secondary"
+                <PrimaryButton
+                  size="small"
                   onClick={onResetProfiler}
-                  iconType="refresh"
+                  icon={RefreshIcon}
                   className={styles.btn}
                   data-testid="reset-profiler-btn"
                 >
                   Reset
                   {width > SMALL_SCREEN_RESOLUTION && ' Profiler'}
-                </EuiButton>
+                </PrimaryButton>
               </FlexItem>
             </Row>
           </div>

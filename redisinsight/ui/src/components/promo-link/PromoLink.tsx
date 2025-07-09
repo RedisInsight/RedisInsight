@@ -1,8 +1,8 @@
 import React from 'react'
-import { EuiIcon, EuiText } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 
-import { Nullable } from 'uiSrc/utils'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud_color.svg?react'
+import { ColorText } from 'uiSrc/components/base/text'
 
 import styles from './styles.module.scss'
 
@@ -12,20 +12,11 @@ export interface Props {
   description?: string
   onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void
   testId?: string
-  icon?: Nullable<string>
   styles?: any
 }
 
 const PromoLink = (props: Props) => {
-  const {
-    title,
-    description,
-    url,
-    onClick,
-    testId,
-    icon,
-    styles: linkStyles,
-  } = props
+  const { title, description, url, onClick, testId, styles: linkStyles } = props
 
   return (
     <a
@@ -38,12 +29,12 @@ const PromoLink = (props: Props) => {
       style={{ ...linkStyles }}
     >
       <EuiIcon type={CloudIcon} size="m" className={styles.cloudIcon} />
-      <EuiText className={styles.title}>
-        <span style={{ color: linkStyles?.color }}>{title}</span>
-      </EuiText>
-      <EuiText className={styles.description}>
-        <span style={{ color: linkStyles?.color }}>{description}</span>
-      </EuiText>
+      <ColorText color={linkStyles?.color} className={styles.title}>
+        {title}
+      </ColorText>
+      <ColorText color={linkStyles?.color} className={styles.description}>
+        {description}
+      </ColorText>
     </a>
   )
 }

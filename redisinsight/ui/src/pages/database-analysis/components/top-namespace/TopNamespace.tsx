@@ -1,6 +1,4 @@
-import { EuiButton, EuiLink, EuiSwitch, EuiTitle } from '@elastic/eui'
 import { isNull } from 'lodash'
-import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
@@ -15,6 +13,10 @@ import { resetBrowserTree } from 'uiSrc/slices/app/context'
 import { changeKeyViewType } from 'uiSrc/slices/browser/keys'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
 import { Nullable } from 'uiSrc/utils'
+import { TextBtn } from 'uiSrc/pages/database-analysis/components/base/TextBtn'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import Table from './Table'
 import styles from './styles.module.scss'
@@ -47,7 +49,7 @@ const TopNamespace = (props: Props) => {
     return null
   }
 
-  const handleTreeViewClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleTreeViewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
 
     dispatch(resetBrowserTree())
@@ -61,82 +63,65 @@ const TopNamespace = (props: Props) => {
 
   if (!data?.topMemoryNsp?.length && !data?.topKeysNsp?.length) {
     return (
-      <div
-        className={cx('section', styles.wrapper)}
-        data-testid="top-namespaces-empty"
-      >
+      <div className="section" data-testid="top-namespaces-empty">
         <div className="section-title-wrapper">
-          <EuiTitle className="section-title">
-            <h4>TOP NAMESPACES</h4>
-          </EuiTitle>
+          <Title size="M" className="section-title">
+            TOP NAMESPACES
+          </Title>
         </div>
         <div className="section-content" data-testid="top-namespaces-message">
           <div className={styles.noNamespaceMsg}>
-            <EuiTitle size="xs">
-              <span>No namespaces to display</span>
-            </EuiTitle>
-            <p>
+            <Title size="L">No namespaces to display</Title>
+            <p className={styles.noNamespaceParagraph}>
               {'Configure the delimiter in '}
-              <EuiLink
-                color="text"
-                onClick={handleTreeViewClick}
+              <EmptyButton
                 data-testid="tree-view-page-link"
+                className={styles.treeViewBtn}
+                onClick={handleTreeViewClick}
               >
                 Tree View
-              </EuiLink>
+              </EmptyButton>
               {' to customize the namespaces displayed.'}
             </p>
           </div>
         </div>
-      </div>
+      </div >
     )
   }
 
   return (
-    <div className={cx('section', styles.wrapper)} data-testid="top-namespaces">
+    <div className="section" data-testid="top-namespaces">
       <div className="section-title-wrapper">
-        <EuiTitle className="section-title">
-          <h4>TOP NAMESPACES</h4>
-        </EuiTitle>
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
+        <Title size="M" className="section-title">
+          TOP NAMESPACES
+        </Title>
+        <TextBtn
+          $active={tableView === TableView.MEMORY}
+          size="small"
           onClick={() => setTableView(TableView.MEMORY)}
           disabled={tableView === TableView.MEMORY}
-          className={cx(styles.textBtn, {
-            [styles.activeBtn]: tableView === TableView.MEMORY,
-          })}
           data-testid="btn-change-table-memory"
         >
           by Memory
-        </EuiButton>
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
+        </TextBtn>
+        <TextBtn
+          $active={tableView === TableView.KEYS}
+          size="small"
           onClick={() => setTableView(TableView.KEYS)}
           disabled={tableView === TableView.KEYS}
-          className={cx(styles.textBtn, {
-            [styles.activeBtn]: tableView === TableView.KEYS,
-          })}
           data-testid="btn-change-table-keys"
         >
           by Number of Keys
-        </EuiButton>
+        </TextBtn>
         {extrapolation !== DEFAULT_EXTRAPOLATION && (
-          <EuiSwitch
-            compressed
+          <SwitchInput
             color="subdued"
             className="switch-extrapolate-results"
-            label="Extrapolate results"
+            title="Extrapolate results"
             checked={isExtrapolated}
-            onChange={(e) => {
-              setIsExtrapolated(e.target.checked)
-              onSwitchExtrapolation?.(
-                e.target.checked,
-                SectionName.TOP_NAMESPACES,
-              )
+            onCheckedChange={(checked) => {
+              setIsExtrapolated(checked)
+              onSwitchExtrapolation?.(checked, SectionName.TOP_NAMESPACES)
             }}
             data-testid="extrapolate-results"
           />

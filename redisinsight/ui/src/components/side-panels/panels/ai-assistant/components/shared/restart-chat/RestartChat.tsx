@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiPopover, EuiText, EuiTitle } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -31,7 +34,7 @@ const RestartChat = (props: Props) => {
       ownFocus
       initialFocus={false}
       className={styles.popoverAnchor}
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+      panelClassName={cx('popoverLikeTooltip', styles.popover)}
       anchorClassName={cx(styles.popoverAnchor, anchorClassName)}
       anchorPosition="downLeft"
       isOpen={isPopoverOpen}
@@ -41,25 +44,21 @@ const RestartChat = (props: Props) => {
       button={extendedButton}
     >
       <>
-        <EuiTitle size="xxs">
-          <h5>Restart session</h5>
-        </EuiTitle>
+        <Title size="S">Restart session</Title>
         <Spacer size="s" />
-        <EuiText size="xs">
+        <Text size="xs">
           This will delete the current message history and initiate a new
           session.
-        </EuiText>
+        </Text>
         <Spacer size="s" />
-        <EuiButton
-          fill
+        <PrimaryButton
           size="s"
-          color="secondary"
           onClick={handleConfirm}
           className={styles.confirmBtn}
           data-testid="ai-chat-restart-confirm"
         >
           Restart
-        </EuiButton>
+        </PrimaryButton>
       </>
     </EuiPopover>
   )

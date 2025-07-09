@@ -1,16 +1,11 @@
 import React from 'react'
 import cx from 'classnames'
-import {
-  EuiButton,
-  EuiIcon,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
+import styled from 'styled-components'
+import { CaretRightIcon } from 'uiSrc/components/base/icons'
 import { createNewAnalysis } from 'uiSrc/slices/analytics/dbAnalysis'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { getApproximatePercentage } from 'uiSrc/utils/validations'
@@ -24,15 +19,21 @@ import {
   ANALYZE_CLUSTER_TOOLTIP_MESSAGE,
   ANALYZE_TOOLTIP_MESSAGE,
 } from 'uiSrc/constants/recommendations'
-import { FormatedDate } from 'uiSrc/components'
+import { FormatedDate, RiTooltip } from 'uiSrc/components'
 import { DEFAULT_DELIMITER } from 'uiSrc/constants'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { HideFor } from 'uiSrc/components/base/utils/ShowHide'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
+import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import { ShortDatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
 import { AnalysisProgress } from 'apiSrc/modules/database-analysis/models/analysis-progress'
 
 import styles from './styles.module.scss'
 
+const HeaderSelect = styled(RiSelect)`
+  border: 0 none;
+`
 export interface Props {
   items: ShortDatabaseAnalysis[]
   selectedValue: Nullable<string>
@@ -57,17 +58,19 @@ const Header = (props: Props) => {
   const { treeViewDelimiter = [DEFAULT_DELIMITER] } =
     useSelector(appContextDbConfig)
 
-  const analysisOptions: EuiSuperSelectOption<any>[] = items.map((item) => {
+  const analysisOptions = items.map((item) => {
     const { createdAt, id, db } = item
     return {
-      value: id,
+      value: id || '',
+      label: createdAt?.toString() || '',
       inputDisplay: (
         <>
-          <span>{`${getDbIndex(db)} `}</span>
+          <span
+            data-test-subj={`items-report-${id}`}
+          >{`${getDbIndex(db)} `}</span>
           <FormatedDate date={createdAt || ''} />
         </>
       ),
-      'data-test-subj': `items-report-${id}`,
     }
   })
 
@@ -95,25 +98,25 @@ const Header = (props: Props) => {
             <Row align="center" wrap>
               <HideFor sizes={['xs', 's']}>
                 <FlexItem>
-                  <EuiText className={styles.text} size="s">
+                  <Text className={styles.text} size="s">
                     Report generated on:
-                  </EuiText>
+                  </Text>
                 </FlexItem>
               </HideFor>
               <FlexItem grow>
-                <EuiSuperSelect
+                <HeaderSelect
                   options={analysisOptions}
-                  style={{ border: 'none !important' }}
-                  className={styles.changeReport}
-                  popoverClassName={styles.changeReport}
-                  valueOfSelected={selectedValue ?? ''}
+                  valueRender={({ option }) =>
+                    option.inputDisplay as JSX.Element
+                  }
+                  value={selectedValue ?? ''}
                   onChange={(value: string) => onChangeSelectedAnalysis(value)}
                   data-testid="select-report"
                 />
               </FlexItem>
               {!!progress && (
                 <FlexItem>
-                  <EuiText
+                  <Text
                     className={cx(
                       styles.progress,
                       styles.text,
@@ -122,7 +125,8 @@ const Header = (props: Props) => {
                     size="s"
                     data-testid="bulk-delete-summary"
                   >
-                    <EuiText
+                    <Text
+                      component="span"
                       color={
                         progress.total === progress.processed
                           ? undefined
@@ -137,11 +141,11 @@ const Header = (props: Props) => {
                         progress.total,
                         progress.processed,
                       )}
-                    </EuiText>
+                    </Text>
                     {` (${numberWithSpaces(progress.processed)}`}/
                     {numberWithSpaces(progress.total)}
                     {' keys) '}
-                  </EuiText>
+                  </Text>
                 </FlexItem>
               )}
             </Row>
@@ -150,24 +154,20 @@ const Header = (props: Props) => {
         <FlexItem>
           <Row align="center">
             <FlexItem grow>
-              <EuiButton
+              <PrimaryButton
                 aria-label="New reports"
-                fill
                 data-testid="start-database-analysis-btn"
-                color="secondary"
-                iconType="playFilled"
+                icon={CaretRightIcon}
                 iconSide="left"
                 disabled={analysisLoading}
                 onClick={handleClick}
-                size="s"
               >
                 New Report
-              </EuiButton>
+              </PrimaryButton>
             </FlexItem>
             <FlexItem style={{ paddingLeft: 6 }}>
-              <EuiToolTip
+              <RiTooltip
                 position="bottom"
-                anchorClassName={styles.tooltipAnchor}
                 className={styles.tooltip}
                 title="Database Analysis"
                 data-testid="db-new-reports-tooltip"
@@ -183,7 +183,7 @@ const Header = (props: Props) => {
                   size="l"
                   data-testid="db-new-reports-icon"
                 />
-              </EuiToolTip>
+              </RiTooltip>
             </FlexItem>
           </Row>
         </FlexItem>

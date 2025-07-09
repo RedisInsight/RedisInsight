@@ -1,6 +1,5 @@
 import React from 'react'
 import { isArray, isString } from 'lodash'
-import { EuiTextColor, EuiLink } from '@elastic/eui'
 import cx from 'classnames'
 import { OAuthSsoHandlerDialog, OAuthConnectFreeDb } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
@@ -9,6 +8,8 @@ import { IRecommendationContent } from 'uiSrc/slices/interfaces/recommendations'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { UTM_MEDIUMS } from 'uiSrc/constants/links'
 import { Spacer, SpacerSize } from 'uiSrc/components/base/layout/spacer'
+import { ColorText } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
 import InternalLink from '../internal-link'
 import RecommendationBody from '../recommendation-body'
 
@@ -39,7 +40,7 @@ const ContentElement = (props: Props) => {
   switch (type) {
     case 'paragraph':
       return (
-        <EuiTextColor
+        <ColorText
           data-testid={`paragraph-${telemetryName}-${idx}`}
           key={`${telemetryName}-${idx}`}
           component="div"
@@ -47,22 +48,22 @@ const ContentElement = (props: Props) => {
           color="subdued"
         >
           {value}
-        </EuiTextColor>
+        </ColorText>
       )
     case 'code':
       return (
-        <EuiTextColor
+        <ColorText
           data-testid={`code-${telemetryName}-${idx}`}
           className={cx(styles.code, { [styles.insights]: insights })}
           key={`${telemetryName}-${idx}`}
           color="subdued"
         >
           <code className={cx(styles.span, styles.text)}>{value}</code>
-        </EuiTextColor>
+        </ColorText>
       )
     case 'span':
       return (
-        <EuiTextColor
+        <ColorText
           data-testid={`span-${telemetryName}-${idx}`}
           key={`${telemetryName}-${idx}`}
           color="subdued"
@@ -71,13 +72,12 @@ const ContentElement = (props: Props) => {
           })}
         >
           {value}
-        </EuiTextColor>
+        </ColorText>
       )
     case 'link':
       return (
-        <EuiLink
+        <Link
           key={`${telemetryName}-${idx}`}
-          external={false}
           data-testid={`link-${telemetryName}-${idx}`}
           target="_blank"
           href={getUtmExternalLink(value.href, {
@@ -87,15 +87,14 @@ const ContentElement = (props: Props) => {
           onClick={() => onLinkClick?.()}
         >
           {value.name}
-        </EuiLink>
+        </Link>
       )
     case 'link-sso':
       return (
         <OAuthSsoHandlerDialog>
           {(ssoCloudHandlerClick) => (
-            <EuiLink
+            <Link
               key={`${telemetryName}-${idx}`}
-              external={false}
               data-testid={`link-sso-${telemetryName}-${idx}`}
               target="_blank"
               onClick={(e) => {
@@ -110,7 +109,7 @@ const ContentElement = (props: Props) => {
               })}
             >
               {value.name}
-            </EuiLink>
+            </Link>
           )}
         </OAuthSsoHandlerDialog>
       )
@@ -118,9 +117,8 @@ const ContentElement = (props: Props) => {
       return <OAuthConnectFreeDb source={telemetryName as OAuthSocialSource} />
     case 'code-link':
       return (
-        <EuiLink
+        <Link
           key={`${telemetryName}-${idx}`}
-          external={false}
           data-testid={`code-link-${telemetryName}-${idx}`}
           target="_blank"
           href={getUtmExternalLink(value.href, {
@@ -128,13 +126,13 @@ const ContentElement = (props: Props) => {
             campaign: telemetryName,
           })}
         >
-          <EuiTextColor
+          <ColorText
             className={cx(styles.code, { [styles.insights]: insights })}
             color="subdued"
           >
             <code className={cx(styles.span, styles.text)}>{value.name}</code>
-          </EuiTextColor>
-        </EuiLink>
+          </ColorText>
+        </Link>
       )
     case 'spacer':
       return (

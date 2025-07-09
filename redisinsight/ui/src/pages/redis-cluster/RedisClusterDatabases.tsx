@@ -1,31 +1,31 @@
 import React, { useEffect, useState } from 'react'
-import {
-  EuiBasicTableColumn,
-  EuiButton,
-  EuiFieldSearch,
-  EuiFormRow,
-  EuiInMemoryTable,
-  EuiPopover,
-  EuiTableSelectionType,
-  EuiText,
-  EuiTitle,
-  EuiToolTip,
-  PropertySort,
-} from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import { map } from 'lodash'
 import { useSelector } from 'react-redux'
+import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Maybe } from 'uiSrc/utils'
+import { RiTooltip } from 'uiSrc/components'
 import { InstanceRedisCluster } from 'uiSrc/slices/interfaces'
 import { clusterSelector } from 'uiSrc/slices/instances/cluster'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { InfoIcon } from 'uiSrc/components/base/icons'
+import {
+  DestructiveButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import styles from './styles.module.scss'
 
 interface Props {
-  columns: EuiBasicTableColumn<InstanceRedisCluster>[]
+  columns: ColumnDefinition<InstanceRedisCluster>[]
   onClose: () => void
   onBack: () => void
   onSubmit: (uids: Maybe<number>[]) => void
@@ -66,11 +66,6 @@ const RedisClusterDatabases = ({
     }
   }, [instances])
 
-  const sort: PropertySort = {
-    field: 'name',
-    direction: 'asc',
-  }
-
   const handleSubmit = () => {
     onSubmit(map(selection, 'uid'))
   }
@@ -85,13 +80,19 @@ const RedisClusterDatabases = ({
 
   const isSubmitDisabled = () => selection.length < 1
 
-  const selectionValue: EuiTableSelectionType<InstanceRedisCluster> = {
-    onSelectionChange: (selected: InstanceRedisCluster[]) =>
-      setSelection(selected),
+  const selectionValue = {
+    onSelectionChange: (selected: InstanceRedisCluster) =>
+      setSelection((previous) => {
+        const isSelected = previous.some((item) => item.uid === selected.uid)
+        if (isSelected) {
+          return previous.filter((item) => item.uid !== selected.uid)
+        }
+        return [...previous, selected]
+      }),
   }
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
     const itemsTemp =
       instances?.filter(
         (item: InstanceRedisCluster) =>
@@ -114,33 +115,28 @@ const RedisClusterDatabases = ({
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
       button={
-        <EuiButton
+        <SecondaryButton
           onClick={showPopover}
-          color="secondary"
           className="btn-cancel"
           data-testid="btn-back"
         >
           Cancel
-        </EuiButton>
+        </SecondaryButton>
       }
     >
-      <EuiText size="m">
-        <p>
-          Your changes have not been saved.&#10;&#13; Do you want to proceed to
-          the list of databases?
-        </p>
-      </EuiText>
+      <Text size="m">
+        Your changes have not been saved.&#10;&#13; Do you want to proceed to
+        the list of databases?
+      </Text>
       <br />
       <div>
-        <EuiButton
-          fill
+        <DestructiveButton
           size="s"
-          color="warning"
           onClick={onClose}
           data-testid="btn-back-proceed"
         >
           Proceed
-        </EuiButton>
+        </DestructiveButton>
       </div>
     </EuiPopover>
   )
@@ -148,33 +144,29 @@ const RedisClusterDatabases = ({
   return (
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
-        <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>Auto-Discover Redis Enterprise Databases</h1>
-        </EuiTitle>
+        <Title size="M" className={styles.title} data-testid="title">
+          Auto-Discover Redis Enterprise Databases
+        </Title>
         <Row align="end" responsive gap="s">
           <FlexItem grow>
             {!!items.length && (
-              <EuiText color="subdued" className={styles.subTitle}>
-                <span>
-                  These are the {items.length > 1 ? 'databases ' : 'database '}
-                  in your Redis Enterprise Cluster. Select the
-                  {items.length > 1 ? ' databases ' : ' database '} that you
-                  want to add.
-                </span>
-              </EuiText>
+              <Text color="subdued" className={styles.subTitle}>
+                These are the {items.length > 1 ? 'databases ' : 'database '}
+                in your Redis Enterprise Cluster. Select the
+                {items.length > 1 ? ' databases ' : ' database '} that you want
+                to add.
+              </Text>
             )}
           </FlexItem>
           <FlexItem>
-            <EuiFormRow className={styles.searchForm}>
-              <EuiFieldSearch
+            <FormField className={styles.searchForm}>
+              <SearchInput
                 placeholder="Search..."
-                className={styles.search}
                 onChange={onQueryChange}
-                isClearable
                 aria-label="Search"
                 data-testid="search"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
         <br />
@@ -184,70 +176,70 @@ const RedisClusterDatabases = ({
             styles.databaseListWrapper,
           )}
         >
-          <EuiInMemoryTable
-            items={items}
-            itemId="uid"
-            loading={loading}
-            message={message}
+          <Table
             columns={columns}
-            sorting={{ sort }}
-            selection={selectionValue}
-            className={cx(styles.table, { [styles.tableEmpty]: !items.length })}
-            isSelectable
+            data={items}
+            onRowClick={selectionValue.onSelectionChange}
+            defaultSorting={[
+              {
+                id: 'name',
+                desc: false,
+              },
+            ]}
           />
           {!items.length && (
-            <EuiText className={styles.noDatabases}>{message}</EuiText>
+            <Text className={styles.noDatabases}>{message}</Text>
           )}
         </div>
       </div>
-      <div
-        className={cx(
-          styles.footer,
-          'footerAddDatabase',
-          styles.footerClusterDatabases,
-        )}
-      >
-        <EuiButton
-          onClick={onBack}
-          color="secondary"
-          className="btn-cancel btn-back"
-          data-testid="btn-back-to-adding"
+      <FlexItem>
+        <Row
+          justify="between"
+          className={cx(
+            styles.footer,
+            'footerAddDatabase',
+            styles.footerClusterDatabases,
+          )}
         >
-          Back to adding databases
-        </EuiButton>
-        <div className={styles.footerButtonsGroup}>
-          <CancelButton isPopoverOpen={isPopoverOpen} />
-          <EuiToolTip
-            position="top"
-            anchorClassName="euiToolTip__btn-disabled"
-            title={
-              isSubmitDisabled()
-                ? validationErrors.SELECT_AT_LEAST_ONE('database')
-                : null
-            }
-            content={
-              isSubmitDisabled() ? (
-                <span className="euiToolTip__content">
-                  {validationErrors.NO_DBS_SELECTED}
-                </span>
-              ) : null
-            }
+          <SecondaryButton
+            onClick={onBack}
+            className="btn-cancel btn-back"
+            data-testid="btn-back-to-adding"
           >
-            <EuiButton
-              fill
-              size="m"
-              disabled={isSubmitDisabled()}
-              onClick={handleSubmit}
-              isLoading={loading}
-              color="secondary"
-              iconType={isSubmitDisabled() ? 'iInCircle' : undefined}
-              data-testid="btn-add-databases"
+            Back to adding databases
+          </SecondaryButton>
+          <FlexItem direction="row" className={styles.footerButtonsGroup}>
+            <CancelButton isPopoverOpen={isPopoverOpen} />
+            <RiTooltip
+              position="top"
+              title={
+                isSubmitDisabled()
+                  ? validationErrors.SELECT_AT_LEAST_ONE('database')
+                  : null
+              }
+              content={
+                isSubmitDisabled() ? (
+                  <span>
+                    {validationErrors.NO_DBS_SELECTED}
+                  </span>
+                ) : null
+              }
             >
-              Add selected Databases
-            </EuiButton>
-          </EuiToolTip>
-        </div>
-      </div>
+              <PrimaryButton
+                size="m"
+                disabled={isSubmitDisabled()}
+                onClick={handleSubmit}
+                loading={loading}
+                color="secondary"
+                icon={isSubmitDisabled() ? InfoIcon : undefined}
+                data-testid="btn-add-databases"
+              >
+                Add selected Databases
+              </PrimaryButton>
+            </RiTooltip>
+          </FlexItem>
+        </Row>
+      </FlexItem>
     </AutodiscoveryPageTemplate>
   )
 }

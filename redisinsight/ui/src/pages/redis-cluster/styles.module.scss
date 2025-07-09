@@ -28,32 +28,8 @@ $breakpoint-to-wrap-buttons: 660px;
   padding-bottom: 5px !important;
 }
 
-.subTitle {
-}
-
-.table {
-  @include eui.scrollBar;
-  max-height: calc(100vh - 250px) !important;
-  overflow: auto;
-}
-
 .searchForm {
   width: 266px !important;
-}
-
-.search {
-  background-color: var(--euiColorLightestShade) !important;
-  height: 40px !important;
-}
-
-.table {
-  @include eui.scrollBar;
-  overflow: auto;
-  max-height: calc(100vh - 370px) !important;
-}
-
-.tableEmpty tbody {
-  display: none;
 }
 
 .panelCancelBtn {

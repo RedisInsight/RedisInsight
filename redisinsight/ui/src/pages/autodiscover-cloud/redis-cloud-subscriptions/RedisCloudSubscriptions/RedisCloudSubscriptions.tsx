@@ -1,18 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { map } from 'lodash'
-import {
-  EuiInMemoryTable,
-  EuiBasicTableColumn,
-  EuiTableSelectionType,
-  PropertySort,
-  EuiButton,
-  EuiPopover,
-  EuiText,
-  EuiTitle,
-  EuiFieldSearch,
-  EuiFormRow,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import {
   InstanceRedisCloud,
@@ -25,12 +13,24 @@ import { LoadingContent } from 'uiSrc/components/base/layout'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  DestructiveButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
+import { SearchInput } from 'uiSrc/components/base/inputs'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { RiTooltip } from 'uiSrc/components'
 import styles from '../styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<RedisCloudSubscription>[]
+  columns: ColumnDefinition<RedisCloudSubscription>[]
   subscriptions: Nullable<RedisCloudSubscription[]>
   loading: boolean
   account: Nullable<RedisCloudAccount>
@@ -85,11 +85,6 @@ const RedisCloudSubscriptions = ({
 
   const countStatusFailed = items.length - countStatusActive
 
-  const sort: PropertySort = {
-    field: 'status',
-    direction: 'asc',
-  }
-
   const handleSubmit = () => {
     onSubmit(
       map(selection, ({ id, type, free }) => ({
@@ -108,15 +103,31 @@ const RedisCloudSubscriptions = ({
     setIsPopoverOpen(false)
   }
 
-  const selectionValue: EuiTableSelectionType<RedisCloudSubscription> = {
-    selectable: ({ status, numberOfDatabases }) =>
-      status === RedisCloudSubscriptionStatus.Active && numberOfDatabases !== 0,
-    onSelectionChange: (selected: RedisCloudSubscription[]) =>
-      setSelection(selected),
+  const selectionValue = {
+    onSelectionChange: (selected: RedisCloudSubscription) =>
+      setSelection((previous) => {
+        const canSelect =
+          selected.status === RedisCloudSubscriptionStatus.Active &&
+          selected.numberOfDatabases !== 0
+
+        if (!canSelect) {
+          return previous
+        }
+
+        const isSelected = previous.some(
+          (item) => item.id === selected.id && item.type === selected.type,
+        )
+        if (isSelected) {
+          return previous.filter(
+            (item) => !(item.id === selected.id && item.type === selected.type),
+          )
+        }
+        return [...previous, selected]
+      }),
   }
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
     const itemsTemp =
       subscriptions?.filter(
         (item: RedisCloudSubscription) =>
@@ -138,89 +149,79 @@ const RedisCloudSubscriptions = ({
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
       button={
-        <EuiButton
+        <SecondaryButton
           onClick={showPopover}
-          color="secondary"
           className="btn-cancel"
           data-testid="btn-cancel"
         >
           Cancel
-        </EuiButton>
+        </SecondaryButton>
       }
     >
-      <EuiText size="m">
-        <p>
-          Your changes have not been saved.&#10;&#13; Do you want to proceed to
-          the list of databases?
-        </p>
-      </EuiText>
+      <Text size="m">
+        Your changes have not been saved.&#10;&#13; Do you want to proceed to
+        the list of databases?
+      </Text>
       <br />
       <div>
-        <EuiButton
-          fill
+        <DestructiveButton
           size="s"
-          color="warning"
           onClick={onClose}
           data-testid="btn-cancel-proceed"
         >
           Proceed
-        </EuiButton>
+        </DestructiveButton>
       </div>
     </EuiPopover>
   )
 
   const SubmitButton = ({ isDisabled }: { isDisabled: boolean }) => (
-    <EuiToolTip
+    <RiTooltip
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       title={
         isDisabled ? validationErrors.SELECT_AT_LEAST_ONE('subscription') : null
       }
       content={
         isDisabled ? (
-          <span className="euiToolTip__content">
+          <span>
             {validationErrors.NO_SUBSCRIPTIONS_CLOUD}
           </span>
         ) : null
       }
     >
-      <EuiButton
-        fill
+      <PrimaryButton
         size="m"
         disabled={isDisabled}
         onClick={handleSubmit}
-        isLoading={loading}
-        color="secondary"
-        iconType={isDisabled ? 'iInCircle' : undefined}
+        loading={loading}
+        icon={isDisabled ? InfoIcon : undefined}
         data-testid="btn-show-databases"
       >
         Show databases
-      </EuiButton>
-    </EuiToolTip>
+      </PrimaryButton>
+    </RiTooltip>
   )
 
   const SummaryText = () => (
-    <EuiText className={styles.subTitle}>
-      <>
-        <b>Summary: </b>
-        {countStatusActive ? (
-          <span>
-            Successfully discovered database(s) in {countStatusActive}
-            &nbsp;
-            {countStatusActive > 1 ? 'subscriptions' : 'subscription'}
-            .&nbsp;
-          </span>
-        ) : null}
+    <Text className={styles.subTitle}>
+      <b>Summary: </b>
+      {countStatusActive ? (
+        <span>
+          Successfully discovered database(s) in {countStatusActive}
+          &nbsp;
+          {countStatusActive > 1 ? 'subscriptions' : 'subscription'}
+          .&nbsp;
+        </span>
+      ) : null}
 
-        {countStatusFailed ? (
-          <span>
-            Failed to discover database(s) in {countStatusFailed}
-            &nbsp;
-            {countStatusFailed > 1 ? 'subscriptions.' : ' subscription.'}
-          </span>
-        ) : null}
-      </>
-    </EuiText>
+      {countStatusFailed ? (
+        <span>
+          Failed to discover database(s) in {countStatusFailed}
+          &nbsp;
+          {countStatusFailed > 1 ? 'subscriptions.' : ' subscription.'}
+        </span>
+      ) : null}
+    </Text>
   )
 
   const Account = () => (
@@ -255,9 +256,9 @@ const RedisCloudSubscriptions = ({
   return (
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
-        <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>Redis Cloud Subscriptions</h1>
-        </EuiTitle>
+        <Title size="XXL" className={styles.title} data-testid="title">
+          Redis Cloud Subscriptions
+        </Title>
 
         <Row align="end" gap="s">
           <FlexItem grow>
@@ -266,16 +267,15 @@ const RedisCloudSubscriptions = ({
             </MessageBar>
           </FlexItem>
           <FlexItem>
-            <EuiFormRow className={styles.searchForm}>
-              <EuiFieldSearch
+            <FormField className={styles.searchForm}>
+              <SearchInput
                 placeholder="Search..."
                 className={styles.search}
                 onChange={onQueryChange}
-                isClearable
                 aria-label="Search"
                 data-testid="search"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
         <br />
@@ -286,33 +286,37 @@ const RedisCloudSubscriptions = ({
           <div className={styles.account}>
             <Account />
           </div>
-          <EuiInMemoryTable
-            items={items}
-            itemId="id"
-            loading={loading}
+          <Table
             columns={columns}
-            sorting={{ sort }}
-            selection={selectionValue}
-            className={cx(styles.table, { [styles.tableEmpty]: !items.length })}
-            isSelectable
+            data={items}
+            defaultSorting={[
+              {
+                id: 'name',
+                desc: false,
+              },
+            ]}
+            onRowClick={selectionValue.onSelectionChange}
           />
           {!items.length && (
-            <EuiText className={styles.noSubscriptions}>{message}</EuiText>
+            <Text className={styles.noSubscriptions}>{message}</Text>
           )}
         </div>
       </div>
-      <div className={cx(styles.footer, 'footerAddDatabase')}>
-        <EuiButton
-          onClick={onBack}
-          color="secondary"
-          className="btn-cancel btn-back"
-          data-testid="btn-back-adding"
-        >
-          Back to adding databases
-        </EuiButton>
-        <CancelButton isPopoverOpen={isPopoverOpen} />
-        <SubmitButton isDisabled={selection.length < 1} />
-      </div>
+      <FlexItem padding={4}>
+        <Row gap="m" justify="between">
+          <SecondaryButton
+            onClick={onBack}
+            className="btn-cancel btn-back"
+            data-testid="btn-back-adding"
+          >
+            Back to adding databases
+          </SecondaryButton>
+          <FlexItem direction="row">
+            <CancelButton isPopoverOpen={isPopoverOpen} />
+            <SubmitButton isDisabled={selection.length < 1} />
+          </FlexItem>
+        </Row>
+      </FlexItem>
     </AutodiscoveryPageTemplate>
   )
 }

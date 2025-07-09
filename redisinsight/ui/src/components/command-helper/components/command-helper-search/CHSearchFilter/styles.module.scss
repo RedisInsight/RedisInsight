@@ -1,5 +1,4 @@
 .container {
-  position: absolute;
   height: 36px;
   width: 180px;
 
@@ -53,7 +52,7 @@
   margin-left: 3px;
   height: 20px !important;
   width: 20px !important;
-  &:global(.euiIcon) {
+  &:global(svg) {
     color: var(--inputTextColor) !important;
   }
 }
@@ -69,7 +68,7 @@
 
 .allTypes {
   position: absolute;
-  top: 0;
+  top: 5px;
   display: flex;
   align-items: center;
 

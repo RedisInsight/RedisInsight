@@ -1,6 +1,11 @@
 import React from 'react'
-import { EuiText, EuiPopover, EuiButton } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 
+import { Text } from 'uiSrc/components/base/text'
+import {
+  DestructiveButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -30,34 +35,31 @@ const AckPopover = (props: Props) => {
       anchorClassName="ackMessagePopover"
       panelClassName={styles.popoverWrapper}
       button={
-        <EuiButton
+        <SecondaryButton
           size="s"
-          color="secondary"
           aria-label="Acknowledge pending message"
           onClick={showPopover}
           className={styles.ackBtn}
           data-testid="acknowledge-btn"
         >
           ACK
-        </EuiButton>
+        </SecondaryButton>
       }
     >
       <div className={styles.popover}>
-        <EuiText size="m">
+        <Text size="m">
           <b>{id}</b>
           <br />
           will be acknowledged and removed from the pending messages list
-        </EuiText>
+        </Text>
         <div className={styles.popoverFooter}>
-          <EuiButton
-            fill
+          <DestructiveButton
             size="s"
-            color="warning"
             onClick={() => acknowledge(id)}
             data-testid="acknowledge-submit"
           >
             Acknowledge
-          </EuiButton>
+          </DestructiveButton>
         </div>
       </div>
     </EuiPopover>

@@ -1,4 +1,4 @@
-import { EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import React from 'react'
 import { useSelector } from 'react-redux'
 
@@ -13,6 +13,8 @@ import {
 import { formatBytes } from 'uiSrc/utils'
 
 import { FlexItem } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -29,14 +31,13 @@ const KeyDetailsHeaderSizeLength = ({ width }: Props) => {
     <>
       {size && (
         <FlexItem>
-          <EuiText
-            grow
+          <Text
             color="subdued"
             size="s"
             className={styles.subtitleText}
             data-testid="key-size-text"
           >
-            <EuiToolTip
+            <RiTooltip
               title="Key Size"
               position="left"
               content={
@@ -63,13 +64,12 @@ const KeyDetailsHeaderSizeLength = ({ width }: Props) => {
                   </>
                 )}
               </>
-            </EuiToolTip>
-          </EuiText>
+            </RiTooltip>
+          </Text>
         </FlexItem>
       )}
       <FlexItem>
-        <EuiText
-          grow
+        <Text
           color="subdued"
           size="s"
           className={styles.subtitleText}
@@ -78,7 +78,7 @@ const KeyDetailsHeaderSizeLength = ({ width }: Props) => {
           {LENGTH_NAMING_BY_TYPE[type] ?? 'Length'}
           {': '}
           {length ?? '-'}
-        </EuiText>
+        </Text>
       </FlexItem>
     </>
   )

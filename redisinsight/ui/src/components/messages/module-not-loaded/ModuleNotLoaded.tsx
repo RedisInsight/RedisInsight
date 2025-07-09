@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiIcon, EuiText, EuiTextColor, EuiTitle } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import MobileIcon from 'uiSrc/assets/img/icons/mobile_module_not_loaded.svg?react'
@@ -19,6 +19,8 @@ import { freeInstancesSelector } from 'uiSrc/slices/instances/instances'
 import { getDbWithModuleLoaded } from 'uiSrc/utils'
 import { useCapability } from 'uiSrc/services'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import ModuleNotLoadedButton from './ModuleNotLoadedButton'
 import styles from './styles.module.scss'
 
@@ -42,13 +44,11 @@ const MIN_ELEMENT_WIDTH = 1210
 const MAX_ELEMENT_WIDTH = 1440
 
 const renderTitle = (width: number, moduleName?: string) => (
-  <EuiTitle size="m" className={styles.title} data-testid="welcome-page-title">
-    <h4>
-      {`${moduleName?.substring(0, 1).toUpperCase()}${moduleName?.substring(1)} ${[MODULE_TEXT_VIEW.redisgears, MODULE_TEXT_VIEW.bf].includes(moduleName) ? 'are' : 'is'} not available `}
-      {width > MAX_ELEMENT_WIDTH && <br />}
-      for this database
-    </h4>
-  </EuiTitle>
+  <Title size="M" className={styles.title} data-testid="welcome-page-title">
+    {`${moduleName?.substring(0, 1).toUpperCase()}${moduleName?.substring(1)} ${[MODULE_TEXT_VIEW.redisgears, MODULE_TEXT_VIEW.bf].includes(moduleName) ? 'are' : 'is'} not available `}
+    {width > MAX_ELEMENT_WIDTH && <br />}
+    for this database
+  </Title>
 )
 
 const ListItem = ({ item }: { item: string }) => (
@@ -56,7 +56,7 @@ const ListItem = ({ item }: { item: string }) => (
     <div className={styles.iconWrapper}>
       <CheerIcon className={styles.listIcon} />
     </div>
-    <EuiTextColor className={styles.text}>{item}</EuiTextColor>
+    <ColorText className={styles.text}>{item}</ColorText>
   </li>
 )
 
@@ -93,24 +93,24 @@ const ModuleNotLoaded = ({
     (moduleName?: string) => {
       if (!cloudAdsFeature?.flag) {
         return (
-          <EuiText className={cx(styles.text, styles.marginBottom)}>
+          <Text className={cx(styles.text, styles.marginBottom)}>
             Open a database with {moduleName}.
-          </EuiText>
+          </Text>
         )
       }
 
       return !freeDbWithModule ? (
-        <EuiText className={cx(styles.text, styles.marginBottom)}>
+        <Text className={cx(styles.text, styles.marginBottom)}>
           Create a free trial Redis Stack database with {moduleName} which
           extends the core capabilities of your Redis.
-        </EuiText>
+        </Text>
       ) : (
-        <EuiText
+        <Text
           className={cx(styles.text, styles.marginBottom, styles.textFooter)}
         >
           Use your free trial all-in-one Redis Cloud database to start exploring
           these capabilities.
-        </EuiText>
+        </Text>
       )
     },
     [freeDbWithModule],
@@ -144,7 +144,7 @@ const ModuleNotLoaded = ({
           data-testid="module-not-loaded-content"
         >
           {renderTitle(width, MODULE_TEXT_VIEW[moduleName])}
-          <EuiText className={styles.bigText}>
+          <Text className={styles.bigText}>
             {CONTENT[moduleName]?.text.map((item: string) =>
               width > MIN_ELEMENT_WIDTH ? (
                 <>
@@ -155,7 +155,7 @@ const ModuleNotLoaded = ({
                 item
               ),
             )}
-          </EuiText>
+          </Text>
           <ul
             className={cx(styles.list, {
               [styles.bloomList]: moduleName === RedisDefaultModules.Bloom,
@@ -166,7 +166,7 @@ const ModuleNotLoaded = ({
             ))}
           </ul>
           {!!CONTENT[moduleName]?.additionalText && (
-            <EuiText
+            <Text
               className={cx(
                 styles.text,
                 styles.additionalText,
@@ -183,7 +183,7 @@ const ModuleNotLoaded = ({
                   item
                 ),
               )}
-            </EuiText>
+            </Text>
           )}
           {renderText(MODULE_TEXT_VIEW[moduleName])}
         </div>

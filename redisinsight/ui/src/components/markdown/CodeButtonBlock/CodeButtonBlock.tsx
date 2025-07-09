@@ -1,4 +1,4 @@
-import { EuiButton, EuiPopover, EuiTitle, EuiToolTip } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useState } from 'react'
 import { monaco } from 'react-monaco-editor'
@@ -16,7 +16,7 @@ import {
   MonacoLanguage,
 } from 'uiSrc/constants'
 
-import { CodeBlock } from 'uiSrc/components'
+import { CodeBlock, RiTooltip } from 'uiSrc/components'
 import { getDBConfigStorageField } from 'uiSrc/services'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import {
@@ -27,6 +27,9 @@ import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { ButtonLang } from 'uiSrc/utils/formatters/markdown/remarkCode'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { PlayIcon, CheckBoldIcon, CopyIcon } from 'uiSrc/components/base/icons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import { RunConfirmationPopover } from './components'
@@ -157,35 +160,31 @@ const CodeButtonBlock = (props: Props) => {
       <Row>
         <FlexItem grow>
           {!!label && (
-            <EuiTitle
-              size="xxxs"
+            <Title
+              size="XS"
               className={styles.label}
               data-testid="code-button-block-label"
             >
-              <span>{truncateText(label, 86)}</span>
-            </EuiTitle>
+              {truncateText(label, 86)}
+            </Title>
           )}
         </FlexItem>
         <FlexItem className={styles.actions}>
-          <EuiButton
+          <EmptyButton
             onClick={handleCopy}
-            iconType="copy"
-            size="s"
+            icon={CopyIcon}
+            size="small"
             className={cx(styles.actionBtn, styles.copyBtn)}
             data-testid={`copy-btn-${label}`}
           >
             Copy
-          </EuiButton>
+          </EmptyButton>
           {!isRunButtonHidden && (
             <EuiPopover
               ownFocus
               initialFocus={false}
               className={styles.popoverAnchor}
-              panelClassName={cx(
-                'euiToolTip',
-                'popoverLikeTooltip',
-                styles.popover,
-              )}
+              panelClassName={cx('popoverLikeTooltip', styles.popover)}
               anchorClassName={styles.popoverAnchor}
               anchorPosition="upLeft"
               isOpen={isPopoverOpen}
@@ -195,8 +194,7 @@ const CodeButtonBlock = (props: Props) => {
                 scrollLock: true,
               }}
               button={
-                <EuiToolTip
-                  anchorClassName={styles.popoverAnchor}
+                <RiTooltip
                   content={
                     isPopoverOpen
                       ? undefined
@@ -204,21 +202,20 @@ const CodeButtonBlock = (props: Props) => {
                   }
                   data-testid="run-btn-open-workbench-tooltip"
                 >
-                  <EuiButton
+                  <EmptyButton
                     onClick={handleRunClicked}
-                    iconType={isRunned ? 'check' : 'play'}
+                    icon={isRunned ? CheckBoldIcon : PlayIcon}
                     iconSide="right"
-                    color="success"
-                    size="s"
+                    size="small"
                     disabled={isLoading || isRunned}
-                    isLoading={isLoading}
+                    loading={isLoading}
                     className={cx(styles.actionBtn, styles.runBtn)}
                     {...rest}
                     data-testid={`run-btn-${label}`}
                   >
                     Run
-                  </EuiButton>
-                </EuiToolTip>
+                  </EmptyButton>
+                </RiTooltip>
               }
             >
               {getPopoverMessage()}

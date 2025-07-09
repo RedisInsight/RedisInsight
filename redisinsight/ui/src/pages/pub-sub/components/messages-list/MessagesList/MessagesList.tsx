@@ -5,10 +5,11 @@ import {
   VariableSizeList as List,
 } from 'react-window'
 import { useParams } from 'react-router-dom'
-import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { FormatedDate } from 'uiSrc/components'
+import { FormatedDate, RiTooltip } from 'uiSrc/components'
+import { ChevronDownIcon } from 'uiSrc/components/base/icons'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { IMessage } from 'apiSrc/modules/pub-sub/interfaces/message.interface'
 
 import styles from './styles.module.scss'
@@ -138,9 +139,9 @@ const MessagesList = (props: Props) => {
           <FormatedDate date={time} />
         </div>
         <div className={styles.channel}>
-          <EuiToolTip content={channel} position="bottom" display="inlineBlock">
+          <RiTooltip content={channel} position="bottom">
             <div className={styles.channelAnchor}>{channel}</div>
-          </EuiToolTip>
+          </RiTooltip>
         </div>
         <div className={styles.message} ref={rowRef}>
           <span>{message}</span>
@@ -165,8 +166,8 @@ const MessagesList = (props: Props) => {
         {Row}
       </List>
       {showAnchor && (
-        <EuiButtonIcon
-          iconType="arrowDown"
+        <IconButton
+          icon={ChevronDownIcon}
           className={styles.anchorBtn}
           onClick={handleAnchorClick}
           data-testid="messages-list-anchor-btn"

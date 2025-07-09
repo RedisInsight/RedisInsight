@@ -108,10 +108,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
-  margin-left: -28px;
+  padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--separatorColor);
-  position: absolute;
   width: 100%;
   height: 100%;
   top: 0;
@@ -162,10 +160,10 @@
   right: 1px;
   transform: translateY(-50%);
   z-index: 6;
+  height: 100%;
+  width: 32px;
 
   .refreshBtn {
-    width: 30px;
-
     &:hover {
       transform: translateY(0) !important;
     }

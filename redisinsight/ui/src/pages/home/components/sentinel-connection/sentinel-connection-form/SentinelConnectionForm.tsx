@@ -1,4 +1,4 @@
-import { EuiButton, EuiForm, EuiToolTip, keys } from '@elastic/eui'
+import { EuiForm, keys } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, pick } from 'lodash'
 import React, { useRef, useState } from 'react'
@@ -14,6 +14,12 @@ import {
   TlsDetails,
 } from 'uiSrc/pages/home/components/form'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { InfoIcon } from 'uiSrc/components/base/icons'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { RiTooltip } from 'uiSrc/components'
 
 export interface Props {
   loading: boolean
@@ -75,9 +81,8 @@ const SentinelConnectionForm = (props: Props) => {
   }
 
   const SubmitButton = ({ onClick, submitIsDisabled }: ISubmitButton) => (
-    <EuiToolTip
+    <RiTooltip
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       title={
         submitIsDisabled
           ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
@@ -85,21 +90,19 @@ const SentinelConnectionForm = (props: Props) => {
       }
       content={getSubmitButtonContent(errors, submitIsDisabled)}
     >
-      <EuiButton
-        fill
+      <PrimaryButton
         size="s"
-        color="secondary"
         type="submit"
         onClick={onClick}
         disabled={submitIsDisabled}
-        isLoading={loading}
-        iconType={submitIsDisabled ? 'iInCircle' : undefined}
+        loading={loading}
+        icon={submitIsDisabled ? InfoIcon : undefined}
         data-testid="btn-submit"
         style={{ marginLeft: 12 }}
       >
         Discover Database
-      </EuiButton>
-    </EuiToolTip>
+      </PrimaryButton>
+    </RiTooltip>
   )
 
   const Footer = () => {
@@ -109,15 +112,14 @@ const SentinelConnectionForm = (props: Props) => {
       return ReactDOM.createPortal(
         <div className="footerAddDatabase">
           {onClose && (
-            <EuiButton
+            <SecondaryButton
               size="s"
               onClick={onClose}
-              color="secondary"
               className="btn-cancel"
               data-testid="btn-cancel"
             >
               Cancel
-            </EuiButton>
+            </SecondaryButton>
           )}
           <SubmitButton
             onClick={formik.submitForm}

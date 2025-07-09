@@ -1,9 +1,10 @@
 import React from 'react'
-import { EuiFieldText, EuiFormRow } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { FormikProps } from 'formik'
 
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 
 export interface Props {
   flexGroupClassName?: string
@@ -17,7 +18,7 @@ const PrimaryGroupSentinel = (props: Props) => {
     <>
       <Row gap="m" responsive className={flexGroupClassName}>
         <FlexItem grow className={flexItemClassName}>
-          <EuiFormRow label="Database Alias*">
+          <FormField label="Database Alias*">
             <EuiFieldText
               fullWidth
               name="name"
@@ -28,12 +29,12 @@ const PrimaryGroupSentinel = (props: Props) => {
               maxLength={500}
               onChange={formik.handleChange}
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
       </Row>
       <Row gap="m" responsive className={flexGroupClassName}>
         <FlexItem grow className={flexItemClassName}>
-          <EuiFormRow label="Primary Group Name*">
+          <FormField label="Primary Group Name*">
             <EuiFieldText
               fullWidth
               name="sentinelMasterName"
@@ -45,7 +46,7 @@ const PrimaryGroupSentinel = (props: Props) => {
               onChange={formik.handleChange}
               disabled
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
       </Row>
     </>

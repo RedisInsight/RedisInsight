@@ -17,10 +17,12 @@ describe('ResetPipelineButton', () => {
   it('should show reset info text when hovered', async () => {
     render(<ResetPipelineButton {...mockedProps} />)
 
-    fireEvent.mouseOver(screen.getByTestId('reset-pipeline-btn'))
-    await waitFor(() => screen.getByText(/flushing the target Redis database/))
+    fireEvent.focus(screen.getByTestId('reset-pipeline-btn'))
+    await waitFor(() =>
+      screen.getAllByText(/flushing the target Redis database/),
+    )
     expect(
-      screen.getByText(/flushing the target Redis database/),
+      screen.getAllByText(/flushing the target Redis database/)[0],
     ).toBeInTheDocument()
   })
 

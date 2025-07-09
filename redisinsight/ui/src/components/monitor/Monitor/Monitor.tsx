@@ -1,18 +1,17 @@
 import React, { useState } from 'react'
 import cx from 'classnames'
-import {
-  EuiButtonIcon,
-  EuiIcon,
-  EuiSwitch,
-  EuiTextColor,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import AutoSizer from 'react-virtualized-auto-sizer'
 
 import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
 import BanIcon from 'uiSrc/assets/img/monitor/ban.svg?react'
 
+import { RiTooltip } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { PlayFilledIcon } from 'uiSrc/components/base/icons'
+import { ColorText } from 'uiSrc/components/base/text'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
 import MonitorLog from '../MonitorLog'
 import MonitorOutputList from '../MonitorOutputList'
 
@@ -47,16 +46,15 @@ const Monitor = (props: Props) => {
   const MonitorNotStarted = () => (
     <div className={styles.startContainer} data-testid="monitor-not-started">
       <div className={styles.startContent}>
-        <EuiToolTip content="Start" display="inlineBlock">
-          <EuiButtonIcon
-            iconType="playFilled"
+        <RiTooltip content="Start">
+          <IconButton
+            icon={PlayFilledIcon}
             className={styles.startTitleIcon}
-            size="m"
             onClick={() => handleRunMonitor(saveLogValue)}
             aria-label="start monitor"
             data-testid="start-monitor"
           />
-        </EuiToolTip>
+        </RiTooltip>
         <div className={styles.startTitle}>Start Profiler</div>
         <Row style={{ flexGrow: 0 }}>
           <FlexItem>
@@ -70,7 +68,7 @@ const Monitor = (props: Props) => {
             />
           </FlexItem>
           <FlexItem>
-            <EuiTextColor
+            <ColorText
               color="warning"
               className="warning--light"
               style={{ paddingLeft: 4 }}
@@ -78,25 +76,24 @@ const Monitor = (props: Props) => {
             >
               Running Profiler will decrease throughput, avoid running it in
               production databases.
-            </EuiTextColor>
+            </ColorText>
           </FlexItem>
         </Row>
       </div>
       <div className={styles.saveLogContainer} data-testid="save-log-container">
-        <EuiToolTip
+        <RiTooltip
           title="Allows you to download the generated log file after pausing the Profiler"
           content="Profiler log is saved to a file on your local machine with no size limitation.
           The temporary log file will be automatically rewritten when the Profiler is reset."
           data-testid="save-log-tooltip"
         >
-          <EuiSwitch
-            compressed
-            label={<span>Save Log</span>}
+          <SwitchInput
+            title="Save Log"
             checked={saveLogValue}
-            onChange={(e) => setSaveLogValue(e.target.checked)}
+            onCheckedChange={setSaveLogValue}
             data-testid="save-log-switch"
           />
-        </EuiToolTip>
+        </RiTooltip>
       </div>
     </div>
   )
@@ -114,13 +111,13 @@ const Monitor = (props: Props) => {
             />
           </FlexItem>
           <FlexItem grow>
-            <EuiTextColor
+            <ColorText
               color="danger"
               style={{ paddingLeft: 4 }}
               data-testid="monitor-error-message"
             >
               {error}
-            </EuiTextColor>
+            </ColorText>
           </FlexItem>
         </Row>
       </div>

@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo } from 'react'
-import { EuiButton, EuiTextColor } from '@elastic/eui'
+import { Link } from 'uiSrc/components/base/link/Link'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { DestructiveButton } from 'uiSrc/components/base/forms/buttons'
+import { ColorText } from 'uiSrc/components/base/text'
 
 export interface Props {
   message: string
@@ -26,39 +28,36 @@ const RdiDeployErrorContent = (props: Props) => {
 
   return (
     <>
-      <EuiTextColor color="ghost">
+      <ColorText color="danger">
         <Col>
-          <FlexItem>Review the error log for details.</FlexItem>
           <FlexItem>
-            <EuiButton
-              fill
-              size="s"
-              color="warning"
-              download="error-log.txt"
+            <div>Review the error log for details.</div>
+            <Link
+              variant="small"
+              isExternalLink
               href={fileUrl}
-              className="toast-danger-btn"
+              download="error-log.txt"
               data-testid="donwload-log-file-btn"
+              style={{ marginTop: '10px', paddingLeft: 0 }}
             >
               Download Error Log File
-            </EuiButton>
+            </Link>
           </FlexItem>
         </Col>
-      </EuiTextColor>
+      </ColorText>
 
       <Spacer />
       {/* // TODO remove display none when logs column will be available */}
       <Row style={{ display: 'none' }} justify="end">
         <FlexItem>
-          <EuiButton
-            fill
+          <DestructiveButton
             size="s"
-            color="warning"
             onClick={() => {}}
             className="toast-danger-btn"
             data-testid="see-errors-btn"
           >
             Remove API key
-          </EuiButton>
+          </DestructiveButton>
         </FlexItem>
       </Row>
     </>

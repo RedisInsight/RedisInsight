@@ -18,16 +18,16 @@ describe('StopPipelineButton', () => {
   it('should show reset info text when hovered', async () => {
     render(<StopPipelineButton {...mockedProps} />)
 
-    fireEvent.mouseOver(screen.getByTestId('stop-pipeline-btn'))
+    fireEvent.focus(screen.getByTestId('stop-pipeline-btn'))
     await waitFor(() =>
-      screen.getByText(
+      screen.getAllByText(
         /Stop the pipeline to prevent processing of new data arrivals/,
       ),
     )
     expect(
-      screen.getByText(
+      screen.getAllByText(
         /Stop the pipeline to prevent processing of new data arrivals/,
-      ),
+      )[0],
     ).toBeInTheDocument()
   })
 

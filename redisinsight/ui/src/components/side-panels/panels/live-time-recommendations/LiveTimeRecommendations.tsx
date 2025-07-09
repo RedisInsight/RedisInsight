@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import {
-  EuiLink,
-  EuiText,
-  EuiIcon,
-  EuiToolTip,
-  EuiCheckbox,
-  EuiTextColor,
-} from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { remove } from 'lodash'
 
 import { FeatureFlags, DEFAULT_DELIMITER, Pages } from 'uiSrc/constants'
@@ -37,7 +30,15 @@ import InfoIcon from 'uiSrc/assets/img/icons/help_illus.svg'
 
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import GithubSVG from 'uiSrc/assets/img/github.svg?react'
-import { FeatureFlagComponent, LoadingContent } from 'uiSrc/components'
+import {
+  FeatureFlagComponent,
+  LoadingContent,
+  RiTooltip,
+} from 'uiSrc/components'
+import { ColorText, Text } from 'uiSrc/components/base/text'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
+
+import { Link } from 'uiSrc/components/base/link/Link'
 import Recommendation from './components/recommendation'
 import WelcomeScreen from './components/welcome-screen'
 import PopoverRunAnalyze from './components/popover-run-analyze'
@@ -140,10 +141,9 @@ const LiveTimeRecommendations = () => {
   const renderHeader = () => (
     <div className={styles.actions}>
       <div>
-        <EuiTextColor className={styles.boldText}>Our Tips</EuiTextColor>
-        <EuiToolTip
+        <ColorText className={styles.boldText}>Our Tips</ColorText>
+        <RiTooltip
           position="bottom"
-          anchorClassName={styles.tooltipAnchor}
           className={styles.tooltip}
           content={
             <>
@@ -166,10 +166,9 @@ const LiveTimeRecommendations = () => {
             size="s"
             data-testid="recommendations-info-icon"
           />
-        </EuiToolTip>
+        </RiTooltip>
         <FeatureFlagComponent name={FeatureFlags.envDependent}>
-          <EuiLink
-            external={false}
+          <Link
             href={EXTERNAL_LINKS.githubRepo}
             target="_blank"
             style={{ marginLeft: 6 }}
@@ -182,12 +181,12 @@ const LiveTimeRecommendations = () => {
               size="s"
               data-testid="github-repo-icon"
             />
-          </EuiLink>
+          </Link>
         </FeatureFlagComponent>
       </div>
 
       {isShowHiddenDisplayed && (
-        <EuiCheckbox
+        <Checkbox
           id="showHidden"
           name="showHidden"
           label="Show hidden"
@@ -217,7 +216,7 @@ const LiveTimeRecommendations = () => {
         <FeatureFlagComponent name={FeatureFlags.envDependent}>
           <div className={styles.footer}>
             <EuiIcon className={styles.footerIcon} size="m" type={InfoIcon} />
-            <EuiText className={styles.text}>
+            <Text className={styles.text}>
               {'Run '}
               <PopoverRunAnalyze
                 isShowPopover={isShowApproveRun}
@@ -229,16 +228,16 @@ const LiveTimeRecommendations = () => {
                     : ANALYZE_TOOLTIP_MESSAGE
                 }
               >
-                <EuiLink
+                <Link
                   className={styles.link}
                   onClick={() => setIsShowApproveRun(true)}
                   data-testid="footer-db-analysis-link"
                 >
                   Database Analysis
-                </EuiLink>
+                </Link>
               </PopoverRunAnalyze>
               {' to get more tips'}
-            </EuiText>
+            </Text>
           </div>
         </FeatureFlagComponent>
       )}

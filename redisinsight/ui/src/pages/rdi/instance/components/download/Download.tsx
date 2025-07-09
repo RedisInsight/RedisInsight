@@ -1,14 +1,14 @@
-import { EuiButtonEmpty } from '@elastic/eui'
 import { saveAs } from 'file-saver'
 import JSZip from 'jszip'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
+import { SaveIcon } from 'uiSrc/components/base/icons'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import saveIcon from 'uiSrc/assets/img/rdi/save.svg?react'
 
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -44,18 +44,17 @@ const Download = ({ dataTestid, onClose }: Props) => {
   }
 
   return (
-    <EuiButtonEmpty
+    <EmptyButton
       color="text"
       className={styles.downloadBtn}
-      iconSize="m"
-      iconType={saveIcon}
+      icon={SaveIcon}
       disabled={loading}
       onClick={handleDownloadClick}
       aria-labelledby="Download pipeline button"
       data-testid={dataTestid || 'download-pipeline-btn'}
     >
       Save to file
-    </EuiButtonEmpty>
+    </EmptyButton>
   )
 }
 

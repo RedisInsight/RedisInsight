@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { EuiLink, EuiPopover } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import cx from 'classnames'
 import { isNull } from 'lodash'
 import { getRedirectionPage } from 'uiSrc/utils/routing'
 import DatabaseNotOpened from 'uiSrc/components/messages/database-not-opened'
 
+import { Link } from 'uiSrc/components/base/link/Link'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -40,7 +41,7 @@ const RedisInsightLink = (props: Props) => {
       ownFocus
       initialFocus={false}
       className={styles.popoverAnchor}
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+      panelClassName={cx('popoverLikeTooltip', styles.popover)}
       anchorClassName={styles.popoverAnchor}
       anchorPosition="upLeft"
       isOpen={isPopoverOpen}
@@ -50,16 +51,15 @@ const RedisInsightLink = (props: Props) => {
         scrollLock: true,
       }}
       button={
-        <EuiLink
+        <Link
           color="text"
-          external={false}
           href="/"
           onClick={handleLinkClick}
           className={styles.link}
           data-testid="redisinsight-link"
         >
           {text}
-        </EuiLink>
+        </Link>
       }
     >
       <DatabaseNotOpened />

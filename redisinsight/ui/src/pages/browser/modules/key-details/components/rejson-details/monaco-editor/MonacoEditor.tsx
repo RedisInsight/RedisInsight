@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { EuiButton, EuiFlexItem } from '@elastic/eui'
+import { EuiFlexItem } from '@elastic/eui'
 import { monaco } from 'react-monaco-editor'
 import JSONbig from 'json-bigint'
 
@@ -9,6 +9,10 @@ import {
   useMonacoValidation,
 } from 'uiSrc/components/monaco-editor'
 import { setReJSONDataAction } from 'uiSrc/slices/browser/rejson'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { BaseProps } from '../interfaces'
 import { useChangeEditorType } from '../../change-editor-type-button'
 
@@ -62,25 +66,20 @@ const MonacoEditor = (props: BaseProps) => {
       />
 
       <EuiFlexItem className={styles.actions}>
-        <EuiButton
+        <SecondaryButton
           onClick={switchEditorType}
-          color="secondary"
-          size="s"
           data-testid="json-data-cancel-btn"
         >
           Close
-        </EuiButton>
+        </SecondaryButton>
 
-        <EuiButton
+        <PrimaryButton
           disabled={!isButtonEnabled}
-          fill
           onClick={submitUpdate}
-          color="secondary"
-          size="s"
           data-testid="json-data-update-btn"
         >
           Overwrite Data
-        </EuiButton>
+        </PrimaryButton>
       </EuiFlexItem>
     </div>
   )

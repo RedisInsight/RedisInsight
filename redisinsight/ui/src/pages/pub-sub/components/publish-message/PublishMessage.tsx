@@ -1,11 +1,4 @@
-import {
-  EuiBadge,
-  EuiButton,
-  EuiFieldText,
-  EuiForm,
-  EuiFormRow,
-  EuiIcon,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import React, {
   ChangeEvent,
@@ -26,6 +19,10 @@ import UserIcon from 'uiSrc/assets/img/icons/user.svg?react'
 import { useConnectionType } from 'uiSrc/components/hooks/useConnectionType'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
+import { CheckThinIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 const HIDE_BADGE_TIMER = 3000
@@ -94,7 +91,7 @@ const PublishMessage = () => {
       >
         <Row align="center">
           <FlexItem className={styles.channelWrapper} grow>
-            <EuiFormRow fullWidth>
+            <FormField>
               <EuiFieldText
                 fullWidth
                 name="channel"
@@ -107,10 +104,10 @@ const PublishMessage = () => {
                 autoComplete="off"
                 data-testid="field-channel-name"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
           <FlexItem className={styles.messageWrapper} grow>
-            <EuiFormRow fullWidth>
+            <FormField>
               <>
                 <EuiFieldText
                   fullWidth
@@ -127,41 +124,34 @@ const PublishMessage = () => {
                   autoComplete="off"
                   data-testid="field-message"
                 />
-                <EuiBadge
+                <RiBadge
+                  withIcon
+                  icon={CheckThinIcon}
                   className={cx(styles.badge, { [styles.show]: isShowBadge })}
                   data-testid="affected-clients-badge"
                 >
-                  <EuiIcon className={styles.iconCheckBadge} type="check" />
                   {connectionType !== ConnectionType.Cluster && (
-                    <>
+                    <Row align="center">
                       <span
                         className={styles.affectedClients}
                         data-testid="affected-clients"
                       >
                         {affectedClients}
                       </span>
-                      <EuiIcon
-                        className={styles.iconUserBadge}
-                        type={UserIcon || 'user'}
-                      />
-                    </>
+                      <EuiIcon type={UserIcon || 'user'} />
+                    </Row>
                   )}
-                </EuiBadge>
+                </RiBadge>
               </>
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
       </FlexItem>
       <Row justify="end" style={{ marginTop: 6 }}>
         <FlexItem>
-          <EuiButton
-            fill
-            color="secondary"
-            type="submit"
-            data-testid="publish-message-submit"
-          >
+          <PrimaryButton type="submit" data-testid="publish-message-submit">
             Publish
-          </EuiButton>
+          </PrimaryButton>
         </FlexItem>
       </Row>
     </EuiForm>

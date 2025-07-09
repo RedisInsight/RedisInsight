@@ -1,4 +1,3 @@
-import { EuiText } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { last, mergeWith, toNumber } from 'lodash'
@@ -38,6 +37,7 @@ import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 
 import { FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
 import { FormatedDate } from 'uiSrc/components'
+import { Text } from 'uiSrc/components/base/text'
 import { StreamEntryDto } from 'apiSrc/modules/browser/stream/dto'
 import StreamDataView from './StreamDataView'
 import styles from './StreamDataView/styles.module.scss'
@@ -280,7 +280,11 @@ const StreamDataViewWrapper = (props: Props) => {
       )
 
       return (
-        <EuiText size="s" style={{ maxWidth: '100%', minHeight: '36px' }}>
+        <Text
+          size="s"
+          style={{ maxWidth: '100%', minHeight: '36px' }}
+          component="div"
+        >
           <div
             style={{ display: 'flex', whiteSpace: 'break-spaces' }}
             className="streamItem"
@@ -296,10 +300,9 @@ const StreamDataViewWrapper = (props: Props) => {
               tooltipContent={tooltipContent}
               expanded={expanded}
               truncateLength={650}
-              anchorClassName="streamItem line-clamp-2"
             />
           </div>
-        </EuiText>
+        </Text>
       )
     },
   })
@@ -319,7 +322,12 @@ const StreamDataViewWrapper = (props: Props) => {
       return (
         <div style={{ minHeight: '38px' }}>
           {id.length < MAX_VISIBLE_LENGTH_STREAM_TIMESTAMP && (
-            <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
+            <Text
+              color="subdued"
+              size="s"
+              style={{ maxWidth: '100%' }}
+              component="div"
+            >
               <div
                 className="streamItem truncateText"
                 style={{ display: 'flex' }}
@@ -331,13 +339,9 @@ const StreamDataViewWrapper = (props: Props) => {
                   <FormatedDate date={timestamp} />
                 )}
               </div>
-            </EuiText>
+            </Text>
           )}
-          <EuiText
-            size="s"
-            style={{ maxWidth: '100%' }}
-            className="truncateText"
-          >
+          <Text size="s" style={{ maxWidth: '100%' }} className="truncateText">
             <div
               className="streamItemId truncateText"
               data-testid={`stream-entry-${id}`}
@@ -345,7 +349,7 @@ const StreamDataViewWrapper = (props: Props) => {
             >
               {id}
             </div>
-          </EuiText>
+          </Text>
         </div>
       )
     },

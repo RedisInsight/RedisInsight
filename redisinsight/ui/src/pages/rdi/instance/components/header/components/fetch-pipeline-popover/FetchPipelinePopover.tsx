@@ -1,4 +1,3 @@
-import { EuiButton, EuiButtonEmpty, EuiText } from '@elastic/eui'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -10,8 +9,10 @@ import {
 } from 'uiSrc/slices/rdi/pipeline'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import Download from 'uiSrc/pages/rdi/instance/components/download/Download'
-import downloadIcon from 'uiSrc/assets/img/rdi/download.svg?react'
 
+import { Text } from 'uiSrc/components/base/text'
+import { DownloadIcon } from 'uiSrc/components/base/icons'
+import { EmptyButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -47,36 +48,29 @@ const FetchPipelinePopover = ({ onClose }: Props) => {
     <ConfirmationPopover
       title="Download a pipeline from the server"
       body={
-        <>
-          <EuiText size="s">
-            When downloading a new pipeline from the server, it will overwrite
-            the existing one displayed in Redis Insight.
-          </EuiText>
-        </>
+        <Text size="s">
+          When downloading a new pipeline from the server, it will overwrite the
+          existing one displayed in Redis Insight.
+        </Text>
       }
       submitBtn={
-        <EuiButton
-          fill
-          size="s"
-          color="secondary"
-          data-testid="upload-confirm-btn"
-        >
+        <PrimaryButton size="s" data-testid="upload-confirm-btn">
           Download from server
-        </EuiButton>
+        </PrimaryButton>
       }
       onConfirm={handleRefreshClick}
       button={
-        <EuiButtonEmpty
+        <EmptyButton
           color="text"
+          size="small"
           className={styles.downloadBtn}
-          iconSize="m"
-          iconType={downloadIcon}
+          icon={DownloadIcon}
           disabled={loading}
           aria-labelledby="Upload pipeline button"
           data-testid="upload-pipeline-btn"
         >
           Download from server
-        </EuiButtonEmpty>
+        </EmptyButton>
       }
       onButtonClick={handleRefreshWarning}
       appendAction={<Download />}

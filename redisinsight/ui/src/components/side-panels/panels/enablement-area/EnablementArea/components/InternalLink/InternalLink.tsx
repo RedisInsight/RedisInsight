@@ -1,9 +1,9 @@
 import React, { useContext } from 'react'
-import { EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { truncateText } from 'uiSrc/utils'
 import EnablementAreaContext from 'uiSrc/pages/workbench/contexts/enablementAreaContext'
 import { Item as ListItem } from 'uiSrc/components/base/layout/list'
+import { RiTooltip } from 'uiSrc/components'
 
 import styles from './styles.module.scss'
 import './styles.scss'
@@ -45,14 +45,14 @@ const InternalLink = (props: Props) => {
   }
 
   const content = (
-    <EuiToolTip content={toolTip} anchorClassName={styles.content}>
-      <>
+    <RiTooltip content={toolTip}>
+      <span className={styles.content}>
         <div className={styles.title}>{children || label}</div>
         {!!summary && (
           <div className={styles.summary}>{truncateText(summary, 140)}</div>
         )}
-      </>
-    </EuiToolTip>
+      </span>
+    </RiTooltip>
   )
   return (
     <ListItem

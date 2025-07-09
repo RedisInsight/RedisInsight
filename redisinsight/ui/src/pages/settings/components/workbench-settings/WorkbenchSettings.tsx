@@ -1,10 +1,8 @@
-import { EuiFormRow, EuiLink, EuiSwitch, EuiTitle } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { SettingItem } from 'uiSrc/components'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
-import styles from 'uiSrc/pages/settings/styles.module.scss'
 import {
   setWorkbenchCleanUp,
   updateUserConfigSettingsAction,
@@ -14,6 +12,10 @@ import {
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { validateNumber } from 'uiSrc/utils'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Link } from 'uiSrc/components/base/link/Link'
 
 const WorkbenchSettings = () => {
   const { cleanup } = useSelector(userSettingsWBSelector)
@@ -39,19 +41,16 @@ const WorkbenchSettings = () => {
 
   return (
     <>
-      <EuiTitle size="xs">
-        <h4>Editor Cleanup</h4>
-      </EuiTitle>
+      <Title size="M">Editor Cleanup</Title>
       <Spacer size="m" />
-      <EuiFormRow>
-        <EuiSwitch
-          label="Clear the Editor after running commands"
+      <FormField>
+        <SwitchInput
           checked={cleanup}
-          onChange={(e) => onSwitchWbCleanUp(e.target.checked)}
-          className={styles.switchOption}
+          onCheckedChange={onSwitchWbCleanUp}
+          title="Clear the Editor after running commands"
           data-testid="switch-workbench-cleanup"
         />
-      </EuiFormRow>
+      </FormField>
       <Spacer size="xl" />
       <SettingItem
         initValue={batchSize.toString()}
@@ -64,15 +63,14 @@ const WorkbenchSettings = () => {
         summary={
           <>
             {'Sets the size of a command batch for the '}
-            <EuiLink
-              color="text"
-              external={false}
+            <Link
               href="https://redis.io/docs/latest/develop/use/pipelining/"
               target="_blank"
               data-testid="pipelining-link"
+              style={{ padding: 0 }}
             >
               pipeline
-            </EuiLink>
+            </Link>
             {' mode in Workbench. 0 or 1 pipelines every command.'}
           </>
         }

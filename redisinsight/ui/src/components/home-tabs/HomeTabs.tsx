@@ -1,72 +1,48 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { EuiTab, EuiTabs } from '@elastic/eui'
+import React, { useMemo } from 'react'
 import { useHistory, useLocation } from 'react-router-dom'
-import { Pages, PageValues } from 'uiSrc/constants'
-import { FeatureFlagComponent } from 'uiSrc/components'
+import { useSelector } from 'react-redux'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import Tabs from 'uiSrc/components/base/layout/tabs'
 import { tabs } from './constants'
 
-import styles from './styles.module.scss'
-
 const HomeTabs = () => {
-  const [activeTab, setActiveTab] = useState('')
-
   const history = useHistory()
   const { pathname } = useLocation()
+  const featureFlags = useSelector(appFeatureFlagsFeaturesSelector)
 
-  useEffect(() => {
-    setActiveTab(pathname.startsWith(Pages.rdi) ? Pages.rdi : Pages.home)
-  }, [pathname])
+  const filteredTabs = useMemo(
+    () =>
+      tabs.filter(
+        (tab) => !tab.featureFlag || featureFlags?.[tab.featureFlag]?.flag,
+      ),
+    [featureFlags],
+  )
 
-  const onSelectedTabChanged = (path: PageValues, title: string) => {
+  const activeTab =
+    filteredTabs.find((tab) => tab.path.startsWith(pathname)) ?? filteredTabs[0]
+
+  const onSelectedTabChanged = (newValue: string) => {
+    const tab =
+      filteredTabs.find((tab) => tab.value === newValue) ?? filteredTabs[0]
+
     sendEventTelemetry({
       event: TelemetryEvent.INSTANCES_TAB_CHANGED,
       eventData: {
-        tab: title,
+        tab: tab.label,
       },
     })
 
-    if (path === Pages.rdi) {
-      history.push(Pages.rdi)
-      return
-    }
-
-    history.push(Pages.home)
+    history.push(tab.path)
   }
 
-  const renderTabs = useCallback(
-    () =>
-      tabs.map(({ id, title, path, featureFlag }) =>
-        featureFlag ? (
-          <FeatureFlagComponent name={featureFlag} key={id}>
-            <EuiTab
-              isSelected={path === activeTab}
-              onClick={() => onSelectedTabChanged(path, title)}
-              className={styles.tab}
-              data-testid={`home-tab-${id}`}
-            >
-              {title}
-            </EuiTab>
-          </FeatureFlagComponent>
-        ) : (
-          <EuiTab
-            key={id}
-            isSelected={path === activeTab}
-            onClick={() => onSelectedTabChanged(path, title)}
-            className={styles.tab}
-            data-testid={`home-tab-${id}`}
-          >
-            {title}
-          </EuiTab>
-        ),
-      ),
-    [activeTab],
-  )
-
   return (
-    <EuiTabs data-testid="home-tabs" className={styles.tabs}>
-      {renderTabs()}
-    </EuiTabs>
+    <Tabs
+      tabs={filteredTabs}
+      value={activeTab.value}
+      onChange={onSelectedTabChanged}
+      data-testid="home-tabs"
+    />
   )
 }
 

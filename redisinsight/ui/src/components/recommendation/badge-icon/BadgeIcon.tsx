@@ -1,5 +1,6 @@
 import React from 'react'
-import { EuiToolTip } from '@elastic/eui'
+
+import { RiTooltip } from 'uiSrc/components'
 import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from '../styles.module.scss'
 
@@ -15,14 +16,9 @@ const BadgeIcon = ({ id, icon, name }: Props) => (
     data-testid={`recommendation-badge-${id}`}
   >
     <div data-testid={id} className={styles.badgeWrapper}>
-      <EuiToolTip
-        content={name}
-        position="top"
-        display="inlineBlock"
-        anchorClassName="flex-row"
-      >
+      <RiTooltip content={name} position="top">
         {icon}
-      </EuiToolTip>
+      </RiTooltip>
     </div>
   </FlexItem>
 )

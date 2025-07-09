@@ -1,6 +1,6 @@
 import { cloneDeep } from 'lodash'
 import React from 'react'
-import { keys } from '@elastic/eui'
+import { KeyboardKeys as keys } from 'uiSrc/constants/keys'
 import {
   act,
   cleanup,

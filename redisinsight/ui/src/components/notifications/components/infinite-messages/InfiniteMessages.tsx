@@ -1,11 +1,6 @@
 import React from 'react'
 import {
-  EuiButton,
   EuiIcon,
-  EuiLink,
-  EuiLoadingSpinner,
-  EuiText,
-  EuiTitle,
 } from '@elastic/eui'
 import { find } from 'lodash'
 import cx from 'classnames'
@@ -19,6 +14,7 @@ import { CloudSuccessResult } from 'uiSrc/slices/interfaces'
 
 import { Maybe } from 'uiSrc/utils'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
+import { Text } from 'uiSrc/components/base/text'
 import {
   EXTERNAL_LINKS,
   UTM_CAMPAINGS,
@@ -26,6 +22,13 @@ import {
 } from 'uiSrc/constants/links'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 export enum InfiniteMessagesIds {
@@ -51,17 +54,15 @@ export const INFINITE_MESSAGES = {
       <div role="presentation" data-testid="authenticating-notification">
         <Row justify="end">
           <FlexItem>
-            <EuiLoadingSpinner
+            <Loader
               className={cx('infiniteMessage__icon', styles.loading)}
             />
           </FlexItem>
           <FlexItem grow>
-            <EuiTitle className="infiniteMessage__title">
-              <span>Authenticating…</span>
-            </EuiTitle>
-            <EuiText size="xs">
+            <Title className="infiniteMessage__title">Authenticating…</Title>
+            <Text size="xs">
               This may take several seconds, but it is totally worth it!
-            </EuiText>
+            </Text>
           </FlexItem>
         </Row>
       </div>
@@ -73,12 +74,12 @@ export const INFINITE_MESSAGES = {
       <div role="presentation" data-testid="pending-create-db-notification">
         <Row justify="end">
           <FlexItem grow={false}>
-            <EuiLoadingSpinner
+            <Loader
               className={cx('infiniteMessage__icon', styles.loading)}
             />
           </FlexItem>
           <FlexItem grow>
-            <EuiTitle className="infiniteMessage__title">
+            <Title className="infiniteMessage__title">
               <span>
                 {(step === CloudJobStep.Credentials || !step) &&
                   'Processing Cloud API keys…'}
@@ -89,15 +90,15 @@ export const INFINITE_MESSAGES = {
                 {step === CloudJobStep.Import &&
                   'Importing a free trial Cloud database…'}
               </span>
-            </EuiTitle>
-            <EuiText size="xs">
+            </Title>
+            <Text size="xs">
               This may take several minutes, but it is totally worth it!
-            </EuiText>
+            </Text>
             <Spacer size="m" />
-            <EuiText size="xs">
+            <Text size="xs">
               You can continue working in Redis Insight, and we will notify you
               once done.
-            </EuiText>
+            </Text>
           </FlexItem>
         </Row>
       </div>
@@ -135,15 +136,13 @@ export const INFINITE_MESSAGES = {
               <EuiIcon type={ChampagneIcon} size="original" />
             </FlexItem>
             <FlexItem grow>
-              <EuiTitle className="infiniteMessage__title">
-                <span>Congratulations!</span>
-              </EuiTitle>
-              <EuiText size="xs">
+              <Title className="infiniteMessage__title">Congratulations!</Title>
+              <Text size="xs">
                 {text}
                 <Spacer size="s" />
                 <b>Notice:</b> the database will be deleted after 15 days of
                 inactivity.
-              </EuiText>
+              </Text>
               {!!details && (
                 <>
                   <Spacer size="m" />
@@ -151,30 +150,30 @@ export const INFINITE_MESSAGES = {
                   <Spacer size="m" />
                   <Row className={styles.detailsRow} justify="between">
                     <FlexItem>
-                      <EuiText size="xs">Plan</EuiText>
+                      <Text size="xs">Plan</Text>
                     </FlexItem>
                     <FlexItem data-testid="notification-details-plan">
-                      <EuiText size="xs">Free</EuiText>
+                      <Text size="xs">Free</Text>
                     </FlexItem>
                   </Row>
                   <Row className={styles.detailsRow} justify="between">
                     <FlexItem>
-                      <EuiText size="xs">Cloud Vendor</EuiText>
+                      <Text size="xs">Cloud Vendor</Text>
                     </FlexItem>
                     <FlexItem
                       className={styles.vendorLabel}
                       data-testid="notification-details-vendor"
                     >
                       {!!vendor?.icon && <EuiIcon type={vendor?.icon} />}
-                      <EuiText size="xs">{vendor?.label}</EuiText>
+                      <Text size="xs">{vendor?.label}</Text>
                     </FlexItem>
                   </Row>
                   <Row className={styles.detailsRow} justify="between">
                     <FlexItem>
-                      <EuiText size="xs">Region</EuiText>
+                      <Text size="xs">Region</Text>
                     </FlexItem>
                     <FlexItem data-testid="notification-details-region">
-                      <EuiText size="xs">{details.region}</EuiText>
+                      <Text size="xs">{details.region}</Text>
                     </FlexItem>
                   </Row>
                 </>
@@ -185,15 +184,13 @@ export const INFINITE_MESSAGES = {
                   <ExternalLink href={MANAGE_DB_LINK}>Manage DB</ExternalLink>
                 </FlexItem>
                 <FlexItem>
-                  <EuiButton
-                    fill
+                  <PrimaryButton
                     size="s"
-                    color="secondary"
                     onClick={() => onSuccess()}
                     data-testid="notification-connect-db"
                   >
                     Connect
-                  </EuiButton>
+                  </PrimaryButton>
                 </FlexItem>
               </Row>
             </FlexItem>
@@ -215,35 +212,32 @@ export const INFINITE_MESSAGES = {
         }}
         data-testid="database-exists-notification"
       >
-        <EuiTitle className="infiniteMessage__title">
-          <span>You already have a free trial Redis Cloud subscription.</span>
-        </EuiTitle>
-        <EuiText size="xs">
+        <Title className="infiniteMessage__title">
+          You already have a free trial Redis Cloud subscription.
+        </Title>
+        <Text size="xs">
           Do you want to import your existing database into Redis Insight?
-        </EuiText>
+        </Text>
         <Spacer size="m" />
         <Row justify="between">
           <FlexItem>
-            <EuiButton
-              fill
+            <PrimaryButton
               size="s"
-              color="secondary"
               onClick={() => onSuccess?.()}
               data-testid="import-db-sso-btn"
             >
               Import
-            </EuiButton>
+            </PrimaryButton>
           </FlexItem>
           <FlexItem>
-            <EuiButton
+            <SecondaryButton
               size="s"
-              color="secondary"
               className="infiniteMessage__btn"
               onClick={() => onClose?.()}
               data-testid="cancel-import-db-sso-btn"
             >
               Cancel
-            </EuiButton>
+            </SecondaryButton>
           </FlexItem>
         </Row>
       </div>
@@ -262,37 +256,34 @@ export const INFINITE_MESSAGES = {
         }}
         data-testid="database-import-forbidden-notification"
       >
-        <EuiTitle className="infiniteMessage__title">
-          <span>Unable to import Cloud database.</span>
-        </EuiTitle>
-        <EuiText size="xs">
+        <Title className="infiniteMessage__title">
+          Unable to import Cloud database.
+        </Title>
+        <Text size="xs">
           Adding your Redis Cloud database to Redis Insight is disabled due to a
           setting restricting database connection management.
           <Spacer size="m" />
           Log in to{' '}
-          <EuiLink
+          <Link
             target="_blank"
             color="text"
-            external={false}
             tabIndex={-1}
             href="https://cloud.redis.io/#/databases?utm_source=redisinsight&utm_medium=main&utm_campaign=disabled_db_management"
           >
             Redis Cloud
-          </EuiLink>{' '}
+          </Link>{' '}
           to check your database.
-        </EuiText>
+        </Text>
         <Spacer size="m" />
         <Row justify="end">
           <FlexItem>
-            <EuiButton
-              fill
+            <PrimaryButton
               size="s"
-              color="secondary"
               onClick={() => onClose?.()}
               data-testid="database-import-forbidden-notification-ok-btn"
             >
               Ok
-            </EuiButton>
+            </PrimaryButton>
           </FlexItem>
         </Row>
       </div>
@@ -311,38 +302,33 @@ export const INFINITE_MESSAGES = {
         }}
         data-testid="subscription-exists-notification"
       >
-        <EuiTitle className="infiniteMessage__title">
-          <span>
-            Your subscription does not have a free trial Redis Cloud database.
-          </span>
-        </EuiTitle>
-        <EuiText size="xs">
+        <Title className="infiniteMessage__title">
+          Your subscription does not have a free trial Redis Cloud database.
+        </Title>
+        <Text size="xs">
           Do you want to create a free trial database in your existing
           subscription?
-        </EuiText>
+        </Text>
         <Spacer size="m" />
         <Row justify="between">
           <FlexItem>
-            <EuiButton
-              fill
+            <PrimaryButton
               size="s"
-              color="secondary"
               onClick={() => onSuccess?.()}
               data-testid="create-subscription-sso-btn"
             >
               Create
-            </EuiButton>
+            </PrimaryButton>
           </FlexItem>
           <FlexItem>
-            <EuiButton
+            <SecondaryButton
               size="s"
-              color="secondary"
               className="infiniteMessage__btn"
               onClick={() => onClose?.()}
               data-testid="cancel-create-subscription-sso-btn"
             >
               Cancel
-            </EuiButton>
+            </SecondaryButton>
           </FlexItem>
         </Row>
       </div>
@@ -354,17 +340,17 @@ export const INFINITE_MESSAGES = {
       <div role="presentation" data-testid="pending-create-db-notification">
         <Row justify="end">
           <FlexItem>
-            <EuiLoadingSpinner
+            <Loader
               className={cx('infiniteMessage__icon', styles.loading)}
             />
           </FlexItem>
           <FlexItem grow>
-            <EuiTitle className="infiniteMessage__title">
-              <span>Connecting to your database</span>
-            </EuiTitle>
-            <EuiText size="xs">
+            <Title className="infiniteMessage__title">
+              Connecting to your database
+            </Title>
+            <Text size="xs">
               This may take several minutes, but it is totally worth it!
-            </EuiText>
+            </Text>
           </FlexItem>
         </Row>
       </div>
@@ -383,10 +369,10 @@ export const INFINITE_MESSAGES = {
         }}
         data-testid="app-update-available-notification"
       >
-        <EuiTitle className="infiniteMessage__title">
-          <span>New version is now available</span>
-        </EuiTitle>
-        <EuiText size="s">
+        <Title className="infiniteMessage__title">
+          New version is now available
+        </Title>
+        <Text size="s">
           <>
             With Redis Insight
             {` ${version} `}
@@ -394,17 +380,15 @@ export const INFINITE_MESSAGES = {
             <br />
             Restart Redis Insight to install updates.
           </>
-        </EuiText>
+        </Text>
         <br />
-        <EuiButton
-          fill
+        <PrimaryButton
           size="s"
-          color="secondary"
           onClick={() => onSuccess?.()}
           data-testid="app-restart-btn"
         >
           Restart
-        </EuiButton>
+        </PrimaryButton>
       </div>
     ),
   }),
@@ -427,27 +411,23 @@ export const INFINITE_MESSAGES = {
             <EuiIcon type={ChampagneIcon} size="original" />
           </FlexItem>
           <FlexItem grow>
-            <EuiTitle className="infiniteMessage__title">
-              <span>Congratulations!</span>
-            </EuiTitle>
-            <EuiText size="xs">
+            <Title className="infiniteMessage__title">Congratulations!</Title>
+            <Text size="xs">
               Deployment completed successfully!
               <br />
               Check out the pipeline statistics page.
-            </EuiText>
+            </Text>
             <Spacer size="m" />
             {/* // TODO remove display none when statistics page will be available */}
             <Row style={{ display: 'none' }} justify="end" align="center">
               <FlexItem>
-                <EuiButton
-                  fill
+                <PrimaryButton
                   size="s"
-                  color="secondary"
-                  onClick={() => {}}
+                  onClick={() => { }}
                   data-testid="notification-connect-db"
                 >
                   Statistics
-                </EuiButton>
+                </PrimaryButton>
               </FlexItem>
             </Row>
           </FlexItem>

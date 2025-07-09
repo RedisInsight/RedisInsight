@@ -1,17 +1,15 @@
 import React, { ChangeEvent, useState, useEffect, useContext } from 'react'
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiFieldText,
-  EuiIcon,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFieldText, EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
 import { useHistory } from 'react-router'
 
+import {
+  CopyIcon,
+  ArrowLeftIcon,
+  DoubleChevronRightIcon,
+} from 'uiSrc/components/base/icons'
 import { BuildType } from 'uiSrc/constants/env'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
 import { Nullable, getDbIndex } from 'uiSrc/utils'
@@ -23,10 +21,7 @@ import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight
 import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
 import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
 
-import {
-  sendEventTelemetry,
-  TelemetryEvent,
-} from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
   changeInstanceAliasAction,
   checkConnectToInstanceAction,
@@ -39,7 +34,9 @@ import {
   setAppContextInitialState,
 } from 'uiSrc/slices/app/context'
 import { FlexItem, Grid, Row } from 'uiSrc/components/base/layout/flex'
-import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
+import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -50,9 +47,7 @@ export interface Props {
   isRediStack?: boolean
   isCloneMode: boolean
   id?: string
-  provider?: string
   setIsCloneMode: (value: boolean) => void
-  modules: AdditionalRedisModule[]
 }
 
 const DatabaseAlias = (props: Props) => {
@@ -60,13 +55,11 @@ const DatabaseAlias = (props: Props) => {
     alias,
     database,
     id,
-    provider,
     onAliasEdited,
     isLoading,
     isRediStack,
     isCloneMode,
     setIsCloneMode,
-    modules,
   } = props
 
   const { server } = useSelector(appInfoSelector)
@@ -159,10 +152,9 @@ const DatabaseAlias = (props: Props) => {
       <Row responsive={false} justify="start" align="center" gap="s">
         {isCloneMode && (
           <FlexItem>
-            <EuiButtonIcon
+            <IconButton
               onClick={handleCloneBack}
-              iconSize="m"
-              iconType="sortLeft"
+              icon={ArrowLeftIcon}
               className={styles.iconLeftArrow}
               aria-label="back"
               data-testid="back-btn"
@@ -173,7 +165,7 @@ const DatabaseAlias = (props: Props) => {
           <Row justify="between" gap="s">
             {isRediStack && (
               <FlexItem>
-                <EuiToolTip
+                <RiTooltip
                   content={
                     <EuiIcon
                       type={
@@ -196,7 +188,7 @@ const DatabaseAlias = (props: Props) => {
                     className={styles.redistackIcon}
                     data-testid="redis-stack-icon"
                   />
-                </EuiToolTip>
+                </RiTooltip>
               </FlexItem>
             )}
             <FlexItem
@@ -210,44 +202,42 @@ const DatabaseAlias = (props: Props) => {
             >
               {!isCloneMode && (isEditing || isLoading) ? (
                 <Grid responsive className="relative">
-                  <FlexItem grow={1} inline className="fluid">
-                    <>
-                      <InlineItemEditor
-                        onApply={handleApplyChanges}
-                        onDecline={handleDeclineChanges}
-                        viewChildrenMode={!isEditing}
+                  <FlexItem grow={1} className="fluid">
+                    <InlineItemEditor
+                      onApply={handleApplyChanges}
+                      onDecline={handleDeclineChanges}
+                      viewChildrenMode={!isEditing}
+                      isLoading={isLoading}
+                      isDisabled={!value}
+                      declineOnUnmount={false}
+                    >
+                      <EuiFieldText
+                        name="alias"
+                        id="alias"
+                        className={cx(styles.input)}
+                        placeholder="Enter Database Alias"
+                        value={value}
+                        fullWidth={false}
+                        maxLength={500}
+                        compressed
                         isLoading={isLoading}
-                        isDisabled={!value}
-                        declineOnUnmount={false}
-                      >
-                        <EuiFieldText
-                          name="alias"
-                          id="alias"
-                          className={cx(styles.input)}
-                          placeholder="Enter Database Alias"
-                          value={value}
-                          fullWidth={false}
-                          maxLength={500}
-                          compressed
-                          isLoading={isLoading}
-                          onChange={onChange}
-                          append={
-                            !isEditing ? (
-                              <EuiIcon type="pencil" color="subdued" />
-                            ) : (
-                              ''
-                            )
-                          }
-                          autoComplete="off"
-                          data-testid="alias-input"
-                        />
-                      </InlineItemEditor>
-                      <p className={styles.hiddenText}>{value}</p>
-                    </>
+                        onChange={onChange}
+                        append={
+                          !isEditing ? (
+                            <EuiIcon type="pencil" color="subdued" />
+                          ) : (
+                            ''
+                          )
+                        }
+                        autoComplete="off"
+                        data-testid="alias-input"
+                      />
+                    </InlineItemEditor>
+                    <p className={styles.hiddenText}>{value}</p>
                   </FlexItem>
                 </Grid>
               ) : (
-                <EuiText
+                <Text
                   className={cx(styles.alias, {
                     [styles.aliasEditing]: !isCloneMode,
                   })}
@@ -267,7 +257,7 @@ const DatabaseAlias = (props: Props) => {
                       className={cx(styles.aliasEditIcon)}
                     />
                   )}
-                </EuiText>
+                </Text>
               )}
             </FlexItem>
           </Row>
@@ -276,31 +266,29 @@ const DatabaseAlias = (props: Props) => {
       {!isCloneMode && (
         <Row gap="m" style={{ marginTop: 6, flexGrow: 0 }}>
           <FlexItem>
-            <EuiButton
+            <PrimaryButton
               size="s"
-              color="secondary"
-              iconType="kqlFunction"
+              icon={DoubleChevronRightIcon}
               aria-label="Connect to database"
               data-testid="connect-to-db-btn"
               className={styles.btnOpen}
               onClick={handleOpen}
             >
               Open
-            </EuiButton>
+            </PrimaryButton>
           </FlexItem>
           {server?.buildType !== BuildType.RedisStack && (
             <FlexItem>
-              <EuiButton
+              <PrimaryButton
                 size="s"
-                color="secondary"
-                iconType="copy"
+                icon={CopyIcon}
                 aria-label="Clone database"
                 data-testid="clone-db-btn"
                 className={styles.btnClone}
                 onClick={handleClone}
               >
                 Clone
-              </EuiButton>
+              </PrimaryButton>
             </FlexItem>
           )}
         </Row>

@@ -1,17 +1,11 @@
 .euiFormControlLayout--group {
   .euiFieldText,
   .euiFieldNumber,
-  .euiFieldPassword,
   .euiSelect,
-  .euiSuperSelectControl,
-  .euiTextArea {
+  .euiSuperSelectControl {
     box-shadow: none !important;
     border: 0 !important;
   }
-}
-.euiFieldSearch.euiFieldSearch--inGroup {
-  box-shadow: none !important;
-  border: 0 !important;
 }
 
 .euiTableCellContent__text {
@@ -29,10 +23,6 @@ input[name='sentinelMasterPassword'] ~ .euiFormControlLayoutIcons,
 input[name='sshPassword'] ~ .euiFormControlLayoutIcons,
 input[name='sshPassphrase'] ~ .euiFormControlLayoutIcons {
   display: none;
-}
-
-.euiFieldPassword.euiFieldPassword--compressed {
-  padding: 8px !important;
 }
 
 .inputAppendIcon.inputAppendIcon {

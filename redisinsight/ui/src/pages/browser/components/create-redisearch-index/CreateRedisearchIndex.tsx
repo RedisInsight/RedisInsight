@@ -1,18 +1,7 @@
 import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiComboBox,
   EuiFieldText,
   EuiFormFieldset,
-  EuiFormRow,
-  EuiHealth,
-  EuiLink,
-  EuiPanel,
   EuiPopover,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiText,
-  EuiTextColor,
 } from '@elastic/eui'
 import { EuiComboBoxOptionOption } from '@elastic/eui/src/components/combo_box/types'
 import cx from 'classnames'
@@ -32,6 +21,17 @@ import { getFieldTypeOptions } from 'uiSrc/utils/redisearch'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  IconButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { AutoTag } from 'uiSrc/components/base/forms/combo-box/AutoTag'
+import { InfoIcon } from 'uiSrc/components/base/icons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { HealthText, Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
@@ -48,21 +48,18 @@ const keyTypeOptions = KEY_TYPE_OPTIONS.map((item) => {
   return {
     value,
     inputDisplay: (
-      <EuiHealth
+      <HealthText
         color={color}
         style={{ lineHeight: 'inherit' }}
         data-test-subj={value}
       >
         {text}
-      </EuiHealth>
+      </HealthText>
     ),
   }
 })
 
-const initialFieldValue = (
-  fieldTypeOptions: EuiSuperSelectOption<string>[],
-  id = 0,
-) => ({
+const initialFieldValue = (fieldTypeOptions: any[], id = 0) => ({
   id,
   identifier: '',
   fieldType: fieldTypeOptions[0]?.value || '',
@@ -78,7 +75,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
   const [prefixes, setPrefixes] = useState<EuiComboBoxOptionOption[]>([])
   const [indexName, setIndexName] = useState<string>('')
   const [fieldTypeOptions, setFieldTypeOptions] =
-    useState<EuiSuperSelectOption<string>[]>(getFieldTypeOptions)
+    useState<ReturnType<typeof getFieldTypeOptions>>(getFieldTypeOptions)
   const [fields, setFields] = useState<any[]>([
     initialFieldValue(fieldTypeOptions),
   ])
@@ -175,13 +172,12 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
       anchorPosition="upCenter"
       isOpen={isInfoPopoverOpen}
       anchorClassName={styles.unsupportedInfo}
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip')}
+      panelClassName={cx('popoverLikeTooltip')}
       closePopover={() => setIsInfoPopoverOpen(false)}
       initialFocus={false}
       button={
-        <EuiButtonIcon
-          iconType="iInCircle"
-          color="subdued"
+        <IconButton
+          icon={InfoIcon}
           id="identifier-info-icon"
           aria-label="identifier info icon"
           data-testid="identifier-info-icon"
@@ -193,8 +189,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
       }
     >
       <>
-        <EuiLink
-          external={false}
+        <Link
           href={getUtmExternalLink(
             'https://redis.io/commands/ft.create/#SCHEMA',
             {
@@ -204,7 +199,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
           target="_blank"
         >
           Declares
-        </EuiLink>
+        </Link>
         {' fields to index. '}
         {keyTypeSelected === RedisearchIndexKeyType.HASH
           ? 'Enter a hash field name.'
@@ -220,7 +215,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
           <div className={styles.fieldsContainer}>
             <Row className={styles.row}>
               <FlexItem grow>
-                <EuiFormRow label="Index Name" fullWidth>
+                <FormField label="Index Name">
                   <EuiFieldText
                     fullWidth
                     name="Index name"
@@ -231,53 +226,51 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                     autoComplete="off"
                     data-testid="index-name"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
               <FlexItem grow>
                 <EuiFormFieldset
                   legend={{ children: 'Select key type', display: 'hidden' }}
                 >
-                  <EuiFormRow label="Key Type*" fullWidth>
-                    <EuiSuperSelect
-                      itemClassName="withColorDefinition"
-                      fullWidth
+                  <FormField label="Key Type*">
+                    <RiSelect
                       options={keyTypeOptions}
-                      valueOfSelected={keyTypeSelected}
+                      valueRender={({ option }) =>
+                        option.inputDisplay || option.value
+                      }
+                      value={keyTypeSelected}
                       onChange={(value: RedisearchIndexKeyType) =>
                         setKeyTypeSelected(value)
                       }
                       data-testid="key-type"
                     />
-                  </EuiFormRow>
+                  </FormField>
                 </EuiFormFieldset>
               </FlexItem>
             </Row>
             <Row className={styles.row} style={{ maxWidth: '100%' }}>
               <FlexItem grow style={{ minWidth: '100%', maxWidth: '100%' }}>
-                <EuiFormRow label="Key Prefixes" fullWidth>
-                  <EuiComboBox
-                    noSuggestions
-                    isClearable={false}
-                    placeholder="Enter Prefix"
-                    selectedOptions={prefixes}
-                    onCreateOption={(searchValue) =>
-                      setPrefixes([...prefixes, { label: searchValue }])
-                    }
-                    onChange={(selectedOptions) => setPrefixes(selectedOptions)}
-                    className={styles.combobox}
-                    data-testid="prefix-combobox"
-                  />
-                </EuiFormRow>
+                <AutoTag
+                  label="Key Prefixes"
+                  placeholder="Enter Prefix"
+                  selectedOptions={prefixes}
+                  onCreateOption={(searchValue) =>
+                    setPrefixes([...prefixes, { label: searchValue }])
+                  }
+                  onChange={(selectedOptions) => setPrefixes(selectedOptions)}
+                  className={styles.combobox}
+                  data-testid="prefix-combobox"
+                />
               </FlexItem>
             </Row>
             <Divider
               colorVariable="separatorColor"
               className={styles.controlsDivider}
             />
-            <EuiText color="subdued">
+            <Text color="subdued">
               Identifier
               {IdentifierInfo()}
-            </EuiText>
+            </Text>
 
             <AddMultipleFields
               items={fields}
@@ -288,7 +281,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
               {(item, index) => (
                 <Row align="center">
                   <FlexItem grow>
-                    <EuiFormRow fullWidth>
+                    <FormField>
                       <EuiFieldText
                         fullWidth
                         name={`identifier-${item.id}`}
@@ -310,20 +303,19 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                         autoComplete="off"
                         data-testid={`identifier-${item.id}`}
                       />
-                    </EuiFormRow>
+                    </FormField>
                   </FlexItem>
                   <FlexItem grow>
-                    <EuiFormRow>
-                      <EuiSuperSelect
-                        itemClassName="withColorDefinition"
+                    <FormField>
+                      <RiSelect
                         options={fieldTypeOptions}
-                        valueOfSelected={item.fieldType}
+                        value={item.fieldType}
                         onChange={(value: string) =>
                           handleFieldChange('fieldType', item.id, value)
                         }
                         data-testid={`field-type-${item.id}`}
                       />
-                    </EuiFormRow>
+                    </FormField>
                   </FlexItem>
                 </Row>
               )}
@@ -331,39 +323,31 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
           </div>
         </div>
       </div>
-      <EuiPanel
-        style={{ border: 'none' }}
-        color="transparent"
-        hasShadow={false}
-        borderRadius="none"
-        className={styles.footer}
-      >
-        <Row justify="end">
+      <>
+        <Row justify="end" gap="m" style={{ padding: 18 }}>
           <FlexItem>
-            <EuiButton
+            <SecondaryButton
               color="secondary"
               onClick={() => onClosePanel?.()}
               className="btn-cancel btn-back"
               data-testid="create-index-cancel-btn"
             >
-              <EuiTextColor>Cancel</EuiTextColor>
-            </EuiButton>
+              Cancel
+            </SecondaryButton>
           </FlexItem>
           <FlexItem>
-            <EuiButton
-              fill
+            <PrimaryButton
               size="m"
-              color="secondary"
-              isLoading={loading}
-              isDisabled={loading}
+              loading={loading}
+              disabled={loading}
               onClick={submitData}
               data-testid="create-index-btn"
             >
               Create Index
-            </EuiButton>
+            </PrimaryButton>
           </FlexItem>
         </Row>
-      </EuiPanel>
+      </>
     </>
   )
 }

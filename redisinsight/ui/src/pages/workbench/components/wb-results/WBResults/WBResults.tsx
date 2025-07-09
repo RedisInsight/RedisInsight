@@ -1,6 +1,6 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiButtonEmpty, EuiProgress } from '@elastic/eui'
+import { EuiProgress } from '@elastic/eui'
 
 import { CodeButtonParams } from 'uiSrc/constants'
 import { ProfileQueryType } from 'uiSrc/pages/workbench/constants'
@@ -10,6 +10,8 @@ import { QueryCard } from 'uiSrc/components/query'
 import { CommandExecutionUI } from 'uiSrc/slices/interfaces'
 import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 
+import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
+import { DeleteIcon } from 'uiSrc/components/base/icons'
 import WbNoResultsMessage from '../../wb-no-results-message'
 
 import styles from './styles.module.scss'
@@ -83,16 +85,16 @@ const WBResults = (props: Props) => {
       )}
       {!!items?.length && (
         <div className={styles.header}>
-          <EuiButtonEmpty
-            size="s"
-            iconType="trash"
+          <EmptyButton
+            size="small"
+            icon={DeleteIcon}
             className={styles.clearAllBtn}
             onClick={() => onAllQueriesDelete?.()}
             disabled={clearing || processing}
             data-testid="clear-history-btn"
           >
             Clear Results
-          </EuiButtonEmpty>
+          </EmptyButton>
         </div>
       )}
       <div className={cx(styles.container)}>

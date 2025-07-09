@@ -1,14 +1,5 @@
 import React, { useCallback } from 'react'
-import {
-  EuiButton,
-  EuiModal,
-  EuiModalBody,
-  EuiRadioGroup,
-  EuiRadioGroupOption,
-  EuiText,
-  EuiTextColor,
-  EuiTitle,
-} from '@elastic/eui'
+import { EuiModal, EuiModalBody } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
 import { useHistory } from 'react-router-dom'
@@ -41,6 +32,19 @@ import {
 import { CloudJobName, CloudJobStep } from 'uiSrc/electron/constants'
 import { OAuthSocialAction } from 'uiSrc/slices/interfaces'
 
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { ColorText, Text } from 'uiSrc/components/base/text'
+import {
+  RiRadioGroupItemIndicator,
+  RiRadioGroupItemLabel,
+  RiRadioGroupItemRoot,
+  RiRadioGroupRoot,
+} from 'uiSrc/components/base/forms/radio-group/RadioGroup'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import styles from './styles.module.scss'
 
 interface FormValues {
@@ -166,13 +170,15 @@ const OAuthSelectAccountDialog = () => {
     formik.setFieldValue('accountId', value)
   }
 
-  const radios: EuiRadioGroupOption[] = accounts.map(({ id, name = '' }) => ({
+  const radios = accounts.map(({ id, name = '' }) => ({
     id: `${id}`,
     label: (
-      <EuiTextColor className={styles.label}>
+      <ColorText color="subdued">
         {name}
-        <span>{id}</span>
-      </EuiTextColor>
+        <ColorText color="accent" style={{ paddingLeft: 6 }}>
+          {id}
+        </ColorText>
+      </ColorText>
     ),
   }))
 
@@ -184,41 +190,44 @@ const OAuthSelectAccountDialog = () => {
     >
       <EuiModalBody className={styles.modalBody}>
         <section className={styles.content}>
-          <EuiTitle size="s">
-            <h3 className={styles.title}>Connect to Redis Cloud</h3>
-          </EuiTitle>
-          <EuiText className={styles.subTitle}>
+          <Title size="M" className={styles.title}>
+            Connect to Redis Cloud
+          </Title>
+          <Text className={styles.subTitle}>
             Select an account to connect to:
-          </EuiText>
-          <EuiRadioGroup
-            options={radios}
-            className={styles.radios}
-            idSelected={formik.values.accountId ?? ''}
+          </Text>
+          <Spacer size="xl" />
+          <RiRadioGroupRoot
+            value={formik.values.accountId ?? ''}
             onChange={(id) => handleChangeAccountIdFormat(id)}
-            name="radio accounts group"
-          />
+          >
+            {radios.map(({ id, label }) => (
+              <RiRadioGroupItemRoot value={id} key={id}>
+                <RiRadioGroupItemIndicator />
+                <RiRadioGroupItemLabel>{label}</RiRadioGroupItemLabel>
+              </RiRadioGroupItemRoot>
+            ))}
+          </RiRadioGroupRoot>
         </section>
         <div className={styles.footer}>
-          <EuiButton
+          <SecondaryButton
             className={styles.button}
             onClick={handleOnClose}
             data-testid="close-oauth-select-account-dialog"
             aria-labelledby="close oauth select account dialog"
           >
             Cancel
-          </EuiButton>
-          <EuiButton
-            fill
-            isDisabled={loading || plansLoadings}
-            isLoading={loading || plansLoadings}
-            color="secondary"
+          </SecondaryButton>
+          <PrimaryButton
+            disabled={loading || plansLoadings}
+            loading={loading || plansLoadings}
             className={styles.button}
             onClick={() => formik.handleSubmit()}
             data-testid="submit-oauth-select-account-dialog"
             aria-labelledby="submit oauth select account dialog"
           >
             Select account
-          </EuiButton>
+          </PrimaryButton>
         </div>
       </EuiModalBody>
     </EuiModal>

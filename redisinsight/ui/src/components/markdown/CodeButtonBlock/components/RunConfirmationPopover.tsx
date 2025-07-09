@@ -1,4 +1,3 @@
-import { EuiButton, EuiCheckbox, EuiText, EuiTitle } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
@@ -8,6 +7,13 @@ import { setDBConfigStorageField } from 'uiSrc/services'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
+import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import styles from '../styles.module.scss'
 
 interface Props {
@@ -43,16 +49,14 @@ const RunConfirmationPopover = ({ onApply }: Props) => {
 
   return (
     <>
-      <EuiTitle size="xxs">
-        <span>Run commands</span>
-      </EuiTitle>
+      <Title size="XS">Run commands</Title>
       <Spacer size="s" />
-      <EuiText size="s">
+      <Text size="s">
         This tutorial will change data in your database, are you sure you want
         to run commands in this database?
-      </EuiText>
+      </Text>
       <Spacer size="s" />
-      <EuiCheckbox
+      <Checkbox
         id="showAgain"
         name="showAgain"
         label="Don't show again for this database"
@@ -65,26 +69,23 @@ const RunConfirmationPopover = ({ onApply }: Props) => {
       <div className={styles.popoverFooter}>
         <div>
           <FeatureFlagComponent name={FeatureFlags.envDependent}>
-            <EuiButton
-              color="secondary"
+            <SecondaryButton
               size="s"
               className={styles.popoverBtn}
               onClick={handleChangeDatabase}
               data-testid="tutorial-popover-change-db"
             >
               Change Database
-            </EuiButton>
+            </SecondaryButton>
           </FeatureFlagComponent>
-          <EuiButton
-            color="secondary"
-            fill
+          <PrimaryButton
             size="s"
             className={styles.popoverBtn}
             onClick={handleApply}
             data-testid="tutorial-popover-apply-run"
           >
             Run
-          </EuiButton>
+          </PrimaryButton>
         </div>
       </div>
     </>

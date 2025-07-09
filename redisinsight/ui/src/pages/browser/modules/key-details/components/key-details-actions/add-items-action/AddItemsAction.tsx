@@ -1,8 +1,13 @@
 import React from 'react'
-import { EuiButton, EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
 import { MIDDLE_SCREEN_RESOLUTION } from 'uiSrc/constants'
+import { RiTooltip } from 'uiSrc/components'
 
+import { PlusInCircleIcon } from 'uiSrc/components/base/icons'
+import {
+  IconButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -12,36 +17,35 @@ export interface Props {
 }
 
 const AddItemsAction = ({ width, title, openAddItemPanel }: Props) => (
-  <EuiToolTip
+  <RiTooltip
     content={width > MIDDLE_SCREEN_RESOLUTION ? '' : title}
     position="left"
-    anchorClassName={cx(styles.actionBtn, {
-      [styles.withText]: width > MIDDLE_SCREEN_RESOLUTION,
-    })}
   >
-    <>
+    <span
+      className={cx(styles.actionBtn, {
+        [styles.withText]: width > MIDDLE_SCREEN_RESOLUTION,
+      })}
+    >
       {width > MIDDLE_SCREEN_RESOLUTION ? (
-        <EuiButton
-          size="s"
-          iconType="plusInCircle"
-          color="secondary"
+        <SecondaryButton
+          size="small"
+          icon={PlusInCircleIcon}
           aria-label={title}
           onClick={openAddItemPanel}
           data-testid="add-key-value-items-btn"
         >
           {title}
-        </EuiButton>
+        </SecondaryButton>
       ) : (
-        <EuiButtonIcon
-          iconType="plusInCircle"
-          color="primary"
+        <IconButton
+          icon={PlusInCircleIcon}
           aria-label={title}
           onClick={openAddItemPanel}
           data-testid="add-key-value-items-btn"
         />
       )}
-    </>
-  </EuiToolTip>
+    </span>
+  </RiTooltip>
 )
 
 export { AddItemsAction }

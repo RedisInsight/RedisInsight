@@ -1,14 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import {
-  EuiInMemoryTable,
-  EuiBasicTableColumn,
-  PropertySort,
-  EuiButton,
-  EuiText,
-  EuiTitle,
-  EuiFieldSearch,
-  EuiFormRow,
-} from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
 
@@ -22,10 +12,19 @@ import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { SearchInput } from 'uiSrc/components/base/inputs'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import styles from './styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<InstanceRedisCluster>[]
+  columns: ColumnDefinition<InstanceRedisCluster>[]
   onView: (sendEvent?: boolean) => void
   onBack: (sendEvent?: boolean) => void
 }
@@ -37,16 +36,11 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
   const [items, setItems] = useState<InstanceRedisCluster[]>([])
   const [message, setMessage] = useState(loadingMsg)
 
-  const { loading, dataAdded: instances } = useSelector(clusterSelector)
+  const { dataAdded: instances } = useSelector(clusterSelector)
 
   setTitle('Redis Enterprise Databases Added')
 
   useEffect(() => setItems(instances), [instances])
-
-  const sort: PropertySort = {
-    field: 'name',
-    direction: 'asc',
-  }
 
   const countSuccessAdded = instances.filter(
     ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Success,
@@ -56,8 +50,8 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
     ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Fail,
   )?.length
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
     const itemsTemp = instances.filter(
       (item: InstanceRedisCluster) =>
         item.name?.toLowerCase().indexOf(value) !== -1 ||
@@ -72,7 +66,7 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
   }
 
   const SummaryText = () => (
-    <EuiText className={styles.subTitle}>
+    <Text>
       <b>Summary: </b>
       {countSuccessAdded ? (
         <span>
@@ -83,21 +77,19 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
       {countFailAdded ? (
         <span>Failed to add {countFailAdded} database(s).</span>
       ) : null}
-    </EuiText>
+    </Text>
   )
 
   return (
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
-        <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>
-            Redis Enterprise
-            {countSuccessAdded + countFailAdded > 1
-              ? ' Databases '
-              : ' Database '}
-            Added
-          </h1>
-        </EuiTitle>
+        <Title size="XXL" className={styles.title} data-testid="title">
+          Redis Enterprise
+          {countSuccessAdded + countFailAdded > 1
+            ? ' Databases '
+            : ' Database '}
+          Added
+        </Title>
         <Row align="end" gap="s">
           <FlexItem grow>
             <MessageBar opened={!!countSuccessAdded || !!countFailAdded}>
@@ -105,50 +97,52 @@ const RedisClusterDatabasesResult = ({ columns, onBack, onView }: Props) => {
             </MessageBar>
           </FlexItem>
           <FlexItem>
-            <EuiFormRow className={styles.searchForm}>
-              <EuiFieldSearch
+            <FormField className={styles.searchForm}>
+              <SearchInput
                 placeholder="Search..."
                 className={styles.search}
                 onChange={onQueryChange}
-                isClearable
                 aria-label="Search"
                 data-testid="search"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
         <br />
         <div className="itemList databaseList clusterDatabaseListResult">
-          <EuiInMemoryTable
-            items={items}
-            itemId="uid"
-            loading={loading}
-            message={message}
+          <Table
             columns={columns}
-            sorting={{ sort }}
-            className={styles.table}
+            data={items}
+            defaultSorting={[
+              {
+                id: 'name',
+                desc: false,
+              },
+            ]}
           />
+          {!items.length && (
+            <Text className={styles.noDatabases}>{message}</Text>
+          )}
         </div>
       </div>
-      <div className={cx(styles.footer, 'footerAddDatabase')}>
-        <EuiButton
-          onClick={() => onBack(false)}
-          color="secondary"
-          className="btn-cancel btn-back"
-          data-testid="btn-back-to-adding"
-        >
-          Back to adding databases
-        </EuiButton>
-        <EuiButton
-          fill
-          size="m"
-          onClick={() => onView(false)}
-          color="secondary"
-          data-testid="btn-view-databases"
-        >
-          View Databases
-        </EuiButton>
-      </div>
+      <FlexItem className={cx(styles.footer, 'footerAddDatabase')}>
+        <Row justify="between">
+          <SecondaryButton
+            onClick={() => onBack(false)}
+            className="btn-cancel btn-back"
+            data-testid="btn-back-to-adding"
+          >
+            Back to adding databases
+          </SecondaryButton>
+          <PrimaryButton
+            size="m"
+            onClick={() => onView(false)}
+            data-testid="btn-view-databases"
+          >
+            View Databases
+          </PrimaryButton>
+        </Row>
+      </FlexItem>
     </AutodiscoveryPageTemplate>
   )
 }

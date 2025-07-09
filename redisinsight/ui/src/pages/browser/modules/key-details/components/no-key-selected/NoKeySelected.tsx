@@ -1,11 +1,14 @@
 import React from 'react'
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import ExploreGuides from 'uiSrc/components/explore-guides'
 import { Nullable } from 'uiSrc/utils'
 
 import { toggleBrowserFullScreen } from 'uiSrc/slices/browser/keys'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -41,29 +44,26 @@ export const NoKeySelected = (props: Props) => {
 
   return (
     <>
-      <EuiToolTip
-        content="Close"
-        position="left"
-        anchorClassName={styles.closeRightPanel}
-      >
-        <EuiButtonIcon
-          iconType="cross"
-          color="primary"
-          aria-label="Close panel"
-          className={styles.closeBtn}
-          onClick={handleClosePanel}
-          data-testid="close-right-panel-btn"
-        />
-      </EuiToolTip>
+      <div className={styles.closeRightPanel}>
+        <RiTooltip content="Close" position="left">
+          <IconButton
+            icon={CancelSlimIcon}
+            aria-label="Close panel"
+            className={styles.closeBtn}
+            onClick={handleClosePanel}
+            data-testid="close-right-panel-btn"
+          />
+        </RiTooltip>
+      </div>
 
       <div className={styles.placeholder}>
-        <EuiText textAlign="center" grow color="subdued" size="m">
+        <Text textAlign="center" color="subdued" size="s">
           {error ? (
-            <p data-testid="no-keys-selected-text">{error}</p>
+            <span data-testid="no-keys-selected-text">{error}</span>
           ) : (
             !!keysLastRefreshTime && <NoKeysSelectedMessage />
           )}
-        </EuiText>
+        </Text>
       </div>
     </>
   )

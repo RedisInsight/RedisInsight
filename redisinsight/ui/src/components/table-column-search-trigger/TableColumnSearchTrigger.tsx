@@ -1,8 +1,11 @@
-import React, { ChangeEvent, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiFieldSearch, keys } from '@elastic/eui'
+import { keys } from '@elastic/eui'
 
+import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Maybe, Nullable } from 'uiSrc/utils'
+import { SearchIcon } from 'uiSrc/components/base/icons'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -23,7 +26,6 @@ const TableColumnSearchTrigger = (props: Props) => {
     fieldName,
     appliedValue,
     initialValue = '',
-    prependSearchName,
     onApply = () => {},
     searchValidation,
   } = props
@@ -70,29 +72,24 @@ const TableColumnSearchTrigger = (props: Props) => {
 
   return (
     <div style={{ paddingRight: 10 }}>
-      <EuiButtonIcon
-        iconType="search"
+      <IconButton
+        icon={SearchIcon}
         aria-label={`Search ${fieldName}`}
-        color="primary"
         onClick={handleOpen}
         data-testid="search-button"
       />
       <div
         className={cx(styles.search)}
-        style={{ display: isOpen ? 'block' : 'none' }}
+        style={{ display: isOpen ? 'flex' : 'none' }}
       >
-        <EuiFieldSearch
+        <SearchInput
           onKeyDown={onKeyDown}
-          onBlur={handleOnBlur}
-          inputRef={setInputEl}
+          // onBlur={handleOnBlur}
+          ref={setInputEl}
           name={fieldName}
-          fullWidth
-          prepend={prependSearchName}
           placeholder="Search"
           value={value || ''}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            handleChangeValue(e.target.value)
-          }
+          onChange={handleChangeValue}
           data-testid="search"
         />
       </div>

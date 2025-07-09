@@ -9,16 +9,6 @@
   }
 }
 
-:global(.euiFieldSearch) {
-  &.input {
-    height: 34px !important;
-    max-width: 100% !important;
-
-    box-shadow: none !important;
-    border: 1px solid var(--euiColorLightShade) !important;
-  }
-}
-
 .hiddenText {
   display: inline-block;
   visibility: hidden;

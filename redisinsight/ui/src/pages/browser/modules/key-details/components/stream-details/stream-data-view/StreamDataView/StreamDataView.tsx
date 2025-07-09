@@ -99,9 +99,6 @@ const StreamDataView = (props: Props) => {
         )}
         data-testid="stream-entries-container"
       >
-        {/* <div className={styles.columnManager}>
-          <EuiButtonIcon iconType="boxesVertical" aria-label="manage columns" />
-        </div> */}
         <VirtualGrid
           hideProgress
           stickLastColumnHeaderCell

@@ -1,4 +1,3 @@
-import { EuiSuperSelect, EuiSuperSelectOption, EuiText } from '@elastic/eui'
 import { minBy, toNumber } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -34,6 +33,11 @@ import { AnalyticsViewTab } from 'uiSrc/slices/interfaces/analytics'
 
 import { FormatedDate } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
+import {
+  defaultValueRender,
+  RiSelect,
+} from 'uiSrc/components/base/forms/select/RiSelect'
 import { SlowLog } from 'apiSrc/modules/slow-log/models'
 
 import { Actions, EmptySlowLog, SlowLogTable } from './components'
@@ -43,7 +47,7 @@ import styles from './styles.module.scss'
 const HIDE_TIMESTAMP_FROM_WIDTH = 850
 const DEFAULT_COUNT_VALUE = '50'
 const MAX_COUNT_VALUE = '-1'
-const countOptions: EuiSuperSelectOption<string>[] = [
+const countOptions = [
   { value: '10', inputDisplay: '10' },
   { value: '25', inputDisplay: '25' },
   { value: '50', inputDisplay: '50' },
@@ -141,18 +145,14 @@ const SlowLogPage = () => {
 
   return (
     <div className={styles.main} data-testid="slow-log-page">
-      <Row
-        className={styles.header}
-        align="center"
-        justify="between"
-      >
+      <Row className={styles.header} align="center" justify="between">
         <FlexItem>
           <AnalyticsTabs />
         </FlexItem>
 
         <FlexItem>
           {connectionType !== ConnectionType.Cluster && config && (
-            <EuiText size="xs" color="subdued" data-testid="config-info">
+            <Text size="xs" color="subdued" data-testid="config-info">
               Execution time:{' '}
               {numberWithSpaces(
                 convertNumberByUnits(slowlogLogSlowerThan, durationUnit),
@@ -162,7 +162,7 @@ const SlowLogPage = () => {
                 ? DurationUnits.mSeconds
                 : DurationUnits.microSeconds}
               , Max length: {numberWithSpaces(slowlogMaxLen)}
-            </EuiText>
+            </Text>
           )}
         </FlexItem>
       </Row>
@@ -178,25 +178,25 @@ const SlowLogPage = () => {
               <FlexItem>
                 <Row align="center" gap="s">
                   <FlexItem>
-                    <EuiText color="subdued">
+                    <Text color="subdued">
                       {connectionType === ConnectionType.Cluster
                         ? 'Display per node:'
                         : 'Display up to:'}
-                    </EuiText>
+                    </Text>
                   </FlexItem>
                   <FlexItem>
-                    <EuiSuperSelect
+                    <RiSelect
                       options={countOptions}
-                      valueOfSelected={count}
+                      valueRender={defaultValueRender}
+                      value={count}
                       onChange={(value) => setCount(value)}
                       className={styles.countSelect}
-                      popoverClassName={styles.countSelectWrapper}
                       data-testid="count-select"
                     />
                   </FlexItem>
                   {width > HIDE_TIMESTAMP_FROM_WIDTH && (
                     <FlexItem style={{ marginLeft: 12 }}>
-                      <EuiText
+                      <Text
                         size="xs"
                         color="subdued"
                         data-testid="entries-from-timestamp"
@@ -209,7 +209,7 @@ const SlowLogPage = () => {
                           </>
                         )}
                         )
-                      </EuiText>
+                      </Text>
                     </FlexItem>
                   )}
                 </Row>

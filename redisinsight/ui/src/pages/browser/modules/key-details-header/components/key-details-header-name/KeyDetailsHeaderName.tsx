@@ -1,10 +1,4 @@
-import {
-  EuiButtonIcon,
-  EuiFieldText,
-  EuiIcon,
-  EuiText,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFieldText, EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import { isNull } from 'lodash'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
@@ -34,6 +28,10 @@ import {
 } from 'uiSrc/utils'
 
 import { FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -163,13 +161,12 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
           data-testid="edit-key-grid"
         >
           <FlexItem grow className={styles.flexItemKeyInput}>
-            <EuiToolTip
+            <RiTooltip
               title="Key Name"
               position="left"
               content={tooltipContent}
-              anchorClassName={styles.toolTipAnchorKey}
             >
-              <>
+              <span className={styles.toolTipAnchorKey}>
                 <InlineItemEditor
                   onApply={() => applyEditKey()}
                   isDisabled={!keyIsEditable}
@@ -202,30 +199,25 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
                   />
                 </InlineItemEditor>
                 <p className={styles.keyHiddenText}>{key}</p>
-              </>
-            </EuiToolTip>
+              </span>
+            </RiTooltip>
             {keyIsHovering && (
-              <EuiToolTip
-                position="right"
-                content="Copy"
-                anchorClassName={styles.copyKey}
-              >
-                <EuiButtonIcon
-                  iconType="copy"
+              <RiTooltip position="right" content="Copy">
+                <IconButton
+                  icon={CopyIcon}
                   id={COPY_KEY_NAME_ICON}
                   aria-label="Copy key name"
-                  color="primary"
                   onClick={(event: any) =>
                     handleCopy(event, key!, keyIsEditing, keyNameRef)
                   }
                   data-testid="copy-key-name-btn"
                 />
-              </EuiToolTip>
+              </RiTooltip>
             )}
           </FlexItem>
         </Grid>
       )}
-      <EuiText
+      <Text
         className={cx(styles.key, {
           [styles.hidden]: keyIsEditing || keyIsHovering,
         })}
@@ -234,7 +226,7 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
         <b className="truncateText">
           {replaceSpaces(keyProp?.substring(0, 200))}
         </b>
-      </EuiText>
+      </Text>
     </FlexItem>
   )
 }

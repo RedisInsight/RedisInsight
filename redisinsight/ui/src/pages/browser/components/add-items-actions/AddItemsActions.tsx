@@ -1,6 +1,8 @@
 import React from 'react'
-import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { PlusInCircleIcon, DeleteIcon } from 'uiSrc/components/base/icons'
+import { RiTooltip } from 'uiSrc/components'
 
 export interface Props {
   id: number
@@ -48,38 +50,32 @@ const AddItemsActions = (props: Props) => {
         >
           {!clearIsDisabled && (
             <div>
-              <EuiToolTip
+              <RiTooltip
                 content={length === 1 ? 'Clear' : 'Remove'}
                 position="left"
-                anchorClassName={anchorClassName}
               >
-                <EuiButtonIcon
-                  iconType="trash"
-                  color="primary"
+                <IconButton
+                  icon={DeleteIcon}
                   aria-label={length === 1 ? 'Clear Item' : 'Remove Item'}
                   disabled={loading}
                   onClick={handleClick}
                   data-testid="remove-item"
                 />
-              </EuiToolTip>
+              </RiTooltip>
             </div>
           )}
           {index === length - 1 && (
             <div>
-              <EuiToolTip
-                content="Add"
-                position="left"
-                anchorClassName={anchorClassName}
-              >
-                <EuiButtonIcon
-                  iconType="plusInCircle"
-                  color="primary"
+              <RiTooltip content="Add" position="left">
+                <IconButton
+                  icon={PlusInCircleIcon}
                   disabled={loading || addItemIsDisabled}
                   aria-label="Add new item"
                   onClick={addItem}
                   data-testid={dataTestId || 'add-new-item'}
+                  className={anchorClassName}
                 />
-              </EuiToolTip>
+              </RiTooltip>
             </div>
           )}
         </div>

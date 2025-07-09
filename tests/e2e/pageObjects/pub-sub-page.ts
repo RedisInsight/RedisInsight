@@ -16,7 +16,7 @@ export class PubSubPage extends InstancePage {
     totalMessagesCount = Selector('[data-testid=messages-count]');
     pubSubPageContainer = Selector('[data-testid=pub-sub-page]');
     clientBadge = Selector('[data-testid=affected-clients-badge]');
-    clearButtonTooltip = Selector('.euiToolTipPopover');
+    clearButtonTooltip = Selector('[data-radix-popper-content-wrapper]');
     ossClusterEmptyMessage = Selector('[data-testid=empty-messages-list-cluster]');
     //BUTTONS
     subscribeButton = Selector('[data-testid=subscribe-btn]').withText('Subscribe');

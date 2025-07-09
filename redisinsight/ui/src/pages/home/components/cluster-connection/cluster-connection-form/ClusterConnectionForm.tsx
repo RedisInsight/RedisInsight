@@ -2,23 +2,9 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { isEmpty } from 'lodash'
 import { FormikErrors, useFormik } from 'formik'
-import {
-  EuiButton,
-  EuiFieldNumber,
-  EuiFieldPassword,
-  EuiFieldText,
-  EuiForm,
-  EuiFormRow,
-  EuiIcon,
-  EuiToolTip,
-  keys,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm, EuiIcon, keys } from '@elastic/eui'
 
-import {
-  MAX_PORT_NUMBER,
-  validateField,
-  validatePortNumber,
-} from 'uiSrc/utils/validations'
+import { MAX_PORT_NUMBER, validateField } from 'uiSrc/utils/validations'
 import { handlePasteHostName } from 'uiSrc/utils'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { ICredentialsRedisCluster } from 'uiSrc/slices/interfaces'
@@ -26,6 +12,14 @@ import { ICredentialsRedisCluster } from 'uiSrc/slices/interfaces'
 import { MessageEnterpriceSoftware } from 'uiSrc/pages/home/components/form/Messages'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { NumericInput, PasswordInput } from 'uiSrc/components/base/inputs'
+import { RiTooltip } from 'uiSrc/components'
 
 export interface Props {
   host: string
@@ -126,7 +120,7 @@ const ClusterConnectionForm = (props: Props) => {
   }
 
   const AppendHostName = () => (
-    <EuiToolTip
+    <RiTooltip
       title={
         <div>
           <p>
@@ -138,7 +132,6 @@ const ClusterConnectionForm = (props: Props) => {
         </div>
       }
       className="homePage_tooltip"
-      anchorClassName="inputAppendIcon"
       position="right"
       content={
         <ul className="homePage_toolTipUl">
@@ -158,25 +151,23 @@ const ClusterConnectionForm = (props: Props) => {
       }
     >
       <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
-    </EuiToolTip>
+    </RiTooltip>
   )
 
   const CancelButton = ({ onClick }: { onClick: () => void }) => (
-    <EuiButton
+    <SecondaryButton
       size="s"
-      color="secondary"
       className="btn-cancel"
       onClick={onClick}
       style={{ marginRight: 12 }}
     >
       Cancel
-    </EuiButton>
+    </SecondaryButton>
   )
 
   const SubmitButton = ({ onClick, submitIsDisabled }: ISubmitButton) => (
-    <EuiToolTip
+    <RiTooltip
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       title={
         submitIsDisabled
           ? validationErrors.REQUIRED_TITLE(Object.values(errors).length)
@@ -184,26 +175,24 @@ const ClusterConnectionForm = (props: Props) => {
       }
       content={
         submitIsDisabled ? (
-          <span className="euiToolTip__content">
+          <span>
             {Object.values(errors).map((err) => [err, <br key={err} />])}
           </span>
         ) : null
       }
     >
-      <EuiButton
-        fill
+      <PrimaryButton
         size="s"
-        color="secondary"
         type="submit"
         onClick={onClick}
         disabled={submitIsDisabled}
-        isLoading={loading}
-        iconType={submitIsDisabled ? 'iInCircle' : undefined}
+        loading={loading}
+        icon={submitIsDisabled ? InfoIcon : undefined}
         data-testid="btn-submit"
       >
         Submit
-      </EuiButton>
-    </EuiToolTip>
+      </PrimaryButton>
+    </RiTooltip>
   )
 
   const Footer = () => {
@@ -232,7 +221,7 @@ const ClusterConnectionForm = (props: Props) => {
         <WindowEvent event="keydown" handler={onKeyDown} />
         <Row responsive>
           <FlexItem grow={4}>
-            <EuiFormRow label="Cluster Host*">
+            <FormField label="Cluster Host*">
               <EuiFieldText
                 name="host"
                 id="host"
@@ -251,39 +240,32 @@ const ClusterConnectionForm = (props: Props) => {
                 }
                 append={<AppendHostName />}
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
 
           <FlexItem grow={2}>
-            <EuiFormRow
+            <FormField
               label="Cluster Port*"
-              helpText="Should not exceed 65535."
+              additionalText="Should not exceed 65535."
             >
-              <EuiFieldNumber
+              <NumericInput
+                autoValidate
+                min={0}
+                max={MAX_PORT_NUMBER}
                 name="port"
                 id="port"
                 data-testid="port"
-                style={{ width: '100%' }}
                 placeholder="Enter Cluster Port"
-                value={formik.values.port || ''}
-                maxLength={6}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  formik.setFieldValue(
-                    e.target.name,
-                    validatePortNumber(e.target.value.trim()),
-                  )
-                }}
-                type="text"
-                min={0}
-                max={MAX_PORT_NUMBER}
+                value={Number(formik.values.port)}
+                onChange={(value) => formik.setFieldValue('port', value)}
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
 
         <Row responsive>
           <FlexItem grow>
-            <EuiFormRow label="Admin Username*">
+            <FormField label="Admin Username*">
               <EuiFieldText
                 name="username"
                 id="username"
@@ -294,26 +276,23 @@ const ClusterConnectionForm = (props: Props) => {
                 value={formik.values.username}
                 onChange={formik.handleChange}
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
 
           <FlexItem grow>
-            <EuiFormRow label="Admin Password*">
-              <EuiFieldPassword
+            <FormField label="Admin Password*">
+              <PasswordInput
                 type="dual"
                 name="password"
                 id="password"
                 data-testid="password"
-                fullWidth
-                className="passwordField"
                 maxLength={200}
                 placeholder="Enter Password"
                 value={formik.values.password}
                 onChange={formik.handleChange}
-                dualToggleProps={{ color: 'text' }}
                 autoComplete="new-password"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
       </EuiForm>

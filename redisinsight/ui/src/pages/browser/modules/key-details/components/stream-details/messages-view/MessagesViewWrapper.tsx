@@ -1,4 +1,3 @@
-import { EuiText } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -22,6 +21,8 @@ import { SortOrder, TEXT_CONSUMER_NAME_TOO_LONG } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { isTruncatedString } from 'uiSrc/utils'
+import { Text } from 'uiSrc/components/base/text'
+import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import {
   AckPendingEntriesResponse,
   PendingEntryDto,
@@ -123,25 +124,25 @@ const MessagesViewWrapper = (props: Props) => {
       render: function Id(_name: string, { id }: PendingEntryDto) {
         const timestamp = id?.split('-')?.[0]
         return (
-          <div>
-            <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-              <div
-                className="truncateText streamItem"
-                style={{ display: 'flex' }}
-                data-testid={`stream-message-${id}-date`}
-              >
-                {getFormatTime(timestamp)}
-              </div>
-            </EuiText>
-            <EuiText size="s" style={{ maxWidth: '100%' }}>
-              <div
-                className="streamItemId"
-                data-testid={`stream-message-${id}`}
-              >
-                {id}
-              </div>
-            </EuiText>
-          </div>
+          <FlexItem>
+            <Text
+              color="subdued"
+              size="s"
+              style={{ maxWidth: '100%' }}
+              className="truncateText streamItem"
+              data-testid={`stream-message-${id}-date`}
+            >
+              {getFormatTime(timestamp)}
+            </Text>
+            <Text
+              size="s"
+              className="streamItemId"
+              data-testid={`stream-message-${id}`}
+              style={{ maxWidth: '100%' }}
+            >
+              {id}
+            </Text>
+          </FlexItem>
         )
       },
     },
@@ -156,16 +157,15 @@ const MessagesViewWrapper = (props: Props) => {
       render: function Idle(_name: string, { id, idle }: PendingEntryDto) {
         const timestamp = id?.split('-')?.[0]
         return (
-          <div>
-            <EuiText color="subdued" size="s" style={{ maxWidth: '100%' }}>
-              <div
-                className="truncateText streamItem"
-                data-testid={`stream-message-${id}-idle`}
-              >
-                {getFormatTime(`${toNumber(timestamp) + idle}`)}
-              </div>
-            </EuiText>
-          </div>
+          <Text
+            className="truncateText streamItem"
+            color="subdued"
+            size="s"
+            data-testid={`stream-message-${id}-idle`}
+            style={{ maxWidth: '100%' }}
+          >
+            {getFormatTime(`${toNumber(timestamp) + idle}`)}
+          </Text>
         )
       },
     },
@@ -186,7 +186,7 @@ const MessagesViewWrapper = (props: Props) => {
       absoluteWidth: actionsWidth,
       render: function Actions(_act: any, { id }: PendingEntryDto) {
         return (
-          <div>
+          <FlexItem direction="row">
             <MessageAckPopover
               id={id}
               isOpen={openPopover === id + ackPrefix}
@@ -202,7 +202,7 @@ const MessagesViewWrapper = (props: Props) => {
               claimMessage={handleClaimingId}
               handleCancelClaim={handleCancelClaim}
             />
-          </div>
+          </FlexItem>
         )
       },
     },

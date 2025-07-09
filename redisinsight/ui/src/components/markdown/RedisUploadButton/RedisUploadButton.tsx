@@ -1,4 +1,4 @@
-import { EuiButton, EuiIcon, EuiLink, EuiPopover, EuiText, } from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
@@ -23,7 +23,14 @@ import {
 } from 'uiSrc/services/resourcesService'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { PlayFilledIcon, ContractsIcon } from 'uiSrc/components/base/icons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
+import { Link } from 'uiSrc/components/base/link/Link'
 
 export interface Props {
   label: string
@@ -107,27 +114,26 @@ const RedisUploadButton = ({ label, path }: Props) => {
         anchorPosition="downLeft"
         isOpen={isPopoverOpen}
         closePopover={() => setIsPopoverOpen(false)}
-        panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+        panelClassName={cx('popoverLikeTooltip', styles.popover)}
         anchorClassName={styles.popoverAnchor}
         panelPaddingSize="none"
         button={
-          <EuiButton
-            isLoading={isLoading}
+          <SecondaryButton
+            loading={isLoading}
             iconSide="right"
-            iconType="indexRuntime"
+            icon={ContractsIcon}
             size="s"
             className={styles.button}
             onClick={openPopover}
-            fullWidth
             color="secondary"
             data-testid="upload-data-bulk-btn"
           >
             {truncateText(label, 86)}
-          </EuiButton>
+          </SecondaryButton>
         }
       >
         {instanceId ? (
-          <EuiText
+          <Text
             color="subdued"
             className={styles.containerPopover}
             data-testid="upload-data-bulk-tooltip"
@@ -144,27 +150,25 @@ const RedisUploadButton = ({ label, path }: Props) => {
             </div>
             <Spacer size="m" />
             <div className={styles.popoverActions}>
-              <EuiLink
+              <Link
                 onClick={handleDownload}
                 className={styles.link}
                 data-testid="download-redis-upload-file"
               >
                 Download file
-              </EuiLink>
-              <EuiButton
-                fill
+              </Link>
+              <PrimaryButton
                 size="s"
-                color="secondary"
-                iconType="playFilled"
+                icon={PlayFilledIcon}
                 iconSide="right"
                 className={styles.uploadApproveBtn}
                 onClick={uploadData}
                 data-testid="upload-data-bulk-apply-btn"
               >
                 Execute
-              </EuiButton>
+              </PrimaryButton>
             </div>
-          </EuiText>
+          </Text>
         ) : (
           <DatabaseNotOpened />
         )}

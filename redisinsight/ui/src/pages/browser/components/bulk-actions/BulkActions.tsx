@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiButtonIcon, EuiTitle, EuiToolTip } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 
 import {
@@ -17,9 +16,12 @@ import {
   TelemetryEvent,
 } from 'uiSrc/telemetry'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
-import { FullScreen } from 'uiSrc/components'
+import { FullScreen, RiTooltip } from 'uiSrc/components'
 
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
+import { Title } from 'uiSrc/components/base/text/Title'
 import BulkUpload from './BulkUpload'
 import BulkDelete from './BulkDelete'
 import BulkActionsTabs from './BulkActionsTabs'
@@ -99,9 +101,9 @@ const BulkActions = (props: Props) => {
     <div className={styles.page}>
       <Col justify="center" className={cx(styles.container, 'relative')}>
         <FlexItem grow style={{ marginBottom: '16px' }}>
-          <EuiTitle size="xs" className={styles.title}>
-            <h4>Bulk Actions</h4>
-          </EuiTitle>
+          <Title size="M" className={styles.title}>
+            Bulk Actions
+          </Title>
           {!arePanelsCollapsed && (
             <FullScreen
               isFullScreen={isFullScreen}
@@ -113,20 +115,15 @@ const BulkActions = (props: Props) => {
             />
           )}
           {(!arePanelsCollapsed || isFullScreen) && (
-            <EuiToolTip
-              content="Close"
-              position="left"
-              anchorClassName={styles.anchorTooltip}
-            >
-              <EuiButtonIcon
-                iconType="cross"
-                color="primary"
+            <RiTooltip content="Close" position="left">
+              <IconButton
+                icon={CancelSlimIcon}
                 aria-label="Close panel"
-                className={styles.closeBtn}
+                className={cx(styles.closeBtn, styles.anchorTooltip)}
                 data-testid="bulk-close-panel"
                 onClick={closePanel}
               />
-            </EuiToolTip>
+            </RiTooltip>
           )}
         </FlexItem>
         <div className="eui-yScroll">

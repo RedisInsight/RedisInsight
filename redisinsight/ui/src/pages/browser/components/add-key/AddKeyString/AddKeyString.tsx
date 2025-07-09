@@ -1,19 +1,18 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import {
-  EuiButton,
-  EuiForm,
-  EuiFormRow,
-  EuiPanel,
-  EuiTextArea,
-  EuiTextColor,
-} from '@elastic/eui'
+import { EuiForm } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 
 import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/browser/keys'
 
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { TextArea } from 'uiSrc/components/base/inputs'
 import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import { AddStringFormConfig as config } from '../constants/fields-config'
@@ -56,61 +55,48 @@ const AddKeyString = (props: Props) => {
 
   return (
     <EuiForm component="form" onSubmit={onFormSubmit}>
-      <EuiFormRow label={config.value.label} fullWidth>
-        <EuiTextArea
-          fullWidth
+      <FormField label={config.value.label}>
+        <TextArea
           name="value"
           id="value"
-          resize="vertical"
           placeholder={config.value.placeholder}
           value={value}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            setValue(e.target.value)
-          }
+          onChange={setValue}
           disabled={loading}
           data-testid="string-value"
         />
-      </EuiFormRow>
-      <EuiButton type="submit" fill style={{ display: 'none' }}>
+      </FormField>
+      <PrimaryButton type="submit" style={{ display: 'none' }}>
         Submit
-      </EuiButton>
+      </PrimaryButton>
       <AddKeyFooter>
-        <EuiPanel
-          style={{ border: 'none' }}
-          color="transparent"
-          hasShadow={false}
-          borderRadius="none"
-        >
-          <Row justify="end">
+        <>
+          <Row justify="end" gap="m" style={{ padding: 18 }}>
             <FlexItem>
               <div>
-                <EuiButton
-                  color="secondary"
+                <SecondaryButton
                   onClick={() => onCancel(true)}
                   className="btn-cancel btn-back"
                 >
-                  <EuiTextColor>Cancel</EuiTextColor>
-                </EuiButton>
+                  Cancel
+                </SecondaryButton>
               </div>
             </FlexItem>
             <FlexItem>
               <div>
-                <EuiButton
-                  fill
-                  size="m"
-                  color="secondary"
+                <PrimaryButton
                   className="btn-add"
-                  isLoading={loading}
+                  loading={loading}
                   onClick={submitData}
                   disabled={!isFormValid || loading}
                   data-testid="add-key-string-btn"
                 >
                   Add Key
-                </EuiButton>
+                </PrimaryButton>
               </div>
             </FlexItem>
           </Row>
-        </EuiPanel>
+        </>
       </AddKeyFooter>
     </EuiForm>
   )

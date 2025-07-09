@@ -4,14 +4,7 @@ import { useHistory, useLocation } from 'react-router-dom'
 import cx from 'classnames'
 import { last } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiBadge,
-  EuiButtonIcon,
-  EuiIcon,
-  EuiLink,
-  EuiPageSideBar,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon, EuiPageSideBar } from '@elastic/eui'
 import HighlightedFeature, {
   Props as HighlightedFeatureProps,
 } from 'uiSrc/components/hightlighted-feature/HighlightedFeature'
@@ -26,29 +19,36 @@ import {
 } from 'uiSrc/slices/app/features'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { connectedInstanceSelector as connectedRdiInstanceSelector } from 'uiSrc/slices/rdi/instances'
-import SettingsSVG from 'uiSrc/assets/img/sidebar/settings.svg'
-import SettingsActiveSVG from 'uiSrc/assets/img/sidebar/settings_active.svg'
-import BrowserSVG from 'uiSrc/assets/img/sidebar/browser.svg'
-import BrowserActiveSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
-import WorkbenchSVG from 'uiSrc/assets/img/sidebar/workbench.svg'
-import WorkbenchActiveSVG from 'uiSrc/assets/img/sidebar/workbench_active.svg'
-import SlowLogSVG from 'uiSrc/assets/img/sidebar/slowlog.svg'
-import SlowLogActiveSVG from 'uiSrc/assets/img/sidebar/slowlog_active.svg'
-import PubSubSVG from 'uiSrc/assets/img/sidebar/pubsub.svg'
-import PubSubActiveSVG from 'uiSrc/assets/img/sidebar/pubsub_active.svg'
-import PipelineManagementSVG from 'uiSrc/assets/img/sidebar/pipeline.svg'
-import PipelineManagementActiveSVG from 'uiSrc/assets/img/sidebar/pipeline_active.svg'
-import PipelineStatisticsSvg from 'uiSrc/assets/img/sidebar/pipeline_statistics.svg'
-import PipelineStatisticsActiveSvg from 'uiSrc/assets/img/sidebar/pipeline_statistics_active.svg'
-import GithubSVG from 'uiSrc/assets/img/sidebar/github.svg'
+
 import Divider from 'uiSrc/components/divider/Divider'
 import { renderOnboardingTourWithChild } from 'uiSrc/utils/onboarding'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 import { BUILD_FEATURES } from 'uiSrc/constants/featuresHighlighting'
-import { FeatureFlagComponent } from 'uiSrc/components'
+import { FeatureFlagComponent, RiTooltip } from 'uiSrc/components'
 
 import { appContextSelector } from 'uiSrc/slices/app/context'
 import { AppWorkspace } from 'uiSrc/slices/interfaces'
+import { IconButton, IconType } from 'uiSrc/components/base/forms/buttons'
+import {
+  BrowserActiveIcon,
+  BrowserIcon,
+  PipelineManagementActiveIcon,
+  PipelineManagementIcon,
+  PipelineStatisticsActiveIcon,
+  PipelineStatisticsIcon,
+  PubSubActiveIcon,
+  PubSubIcon,
+  SettingsActiveIcon,
+  RISettingsIcon,
+  SlowLogActiveIcon,
+  SlowLogIcon,
+  WorkbenchActiveIcon,
+  WorkbenchIcon,
+  GithubIcon,
+} from 'uiSrc/components/base/icons'
+import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
+import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
+import { Link } from 'uiSrc/components/base/link/Link'
 import CreateCloud from './components/create-cloud'
 import HelpMenu from './components/help-menu/HelpMenu'
 import NotificationMenu from './components/notifications-center'
@@ -68,7 +68,7 @@ interface INavigations {
   connectedInstanceId?: string
   onClick: () => void
   getClassName: () => string
-  getIconType: () => string
+  getIconType: () => IconType
   onboard?: any
   featureFlag?: FeatureFlags
 }
@@ -142,7 +142,7 @@ const NavigationMenu = () => {
         return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
       },
       getIconType() {
-        return this.isActivePage ? BrowserSVG : BrowserActiveSVG
+        return this.isActivePage ? BrowserIcon : BrowserActiveIcon
       },
       onboard: ONBOARDING_FEATURES.BROWSER_PAGE,
     },
@@ -158,7 +158,7 @@ const NavigationMenu = () => {
         return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
       },
       getIconType() {
-        return this.isActivePage ? WorkbenchSVG : WorkbenchActiveSVG
+        return this.isActivePage ? WorkbenchIcon : WorkbenchActiveIcon
       },
       onboard: ONBOARDING_FEATURES.WORKBENCH_PAGE,
     },
@@ -174,7 +174,7 @@ const NavigationMenu = () => {
         return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
       },
       getIconType() {
-        return this.isActivePage ? SlowLogActiveSVG : SlowLogSVG
+        return this.isActivePage ? SlowLogActiveIcon : SlowLogIcon
       },
       featureFlag: FeatureFlags.envDependent,
     },
@@ -190,7 +190,7 @@ const NavigationMenu = () => {
         return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
       },
       getIconType() {
-        return this.isActivePage ? PubSubActiveSVG : PubSubSVG
+        return this.isActivePage ? PubSubActiveIcon : PubSubIcon
       },
       onboard: ONBOARDING_FEATURES.PUB_SUB_PAGE,
       featureFlag: FeatureFlags.envDependent,
@@ -210,8 +210,8 @@ const NavigationMenu = () => {
       },
       getIconType() {
         return this.isActivePage
-          ? PipelineStatisticsActiveSvg
-          : PipelineStatisticsSvg
+          ? PipelineStatisticsActiveIcon
+          : PipelineStatisticsIcon
       },
     },
     {
@@ -227,8 +227,8 @@ const NavigationMenu = () => {
       },
       getIconType() {
         return this.isActivePage
-          ? PipelineManagementActiveSVG
-          : PipelineManagementSVG
+          ? PipelineManagementActiveIcon
+          : PipelineManagementIcon
       },
     },
   ]
@@ -245,7 +245,7 @@ const NavigationMenu = () => {
         return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
       },
       getIconType() {
-        return this.isActivePage ? SettingsActiveSVG : SettingsSVG
+        return this.isActivePage ? SettingsActiveIcon : RISettingsIcon
       },
       featureFlag: FeatureFlags.envDependent,
     },
@@ -265,20 +265,25 @@ const NavigationMenu = () => {
             tooltipPosition="right"
             transformOnHover
           >
-            <EuiToolTip content={nav.tooltipText} position="right">
+            <RiTooltip content={nav.tooltipText} position="right">
               <div className={styles.navigationButtonWrapper}>
-                <EuiButtonIcon
+                <NavigationItemWrapper
+                  active={nav.isActivePage}
                   className={nav.getClassName()}
-                  iconType={nav.getIconType()}
-                  aria-label={nav.ariaLabel}
-                  onClick={nav.onClick}
-                  data-testid={nav.dataTestId}
-                />
+                >
+                  <IconButton
+                    onClick={nav.onClick}
+                    size="M"
+                    icon={nav.getIconType()}
+                    aria-label={nav.ariaLabel}
+                    data-testid={nav.dataTestId}
+                  />
+                </NavigationItemWrapper>
                 {nav.isBeta && (
-                  <EuiBadge className={styles.betaLabel}>BETA</EuiBadge>
+                  <RiBadge className={styles.betaLabel} label="BETA" />
                 )}
               </div>
-            </EuiToolTip>
+            </RiTooltip>
           </HighlightedFeature>,
           { options: nav.onboard },
           nav.isActivePage,
@@ -309,15 +314,20 @@ const NavigationMenu = () => {
         })}
         transformOnHover
       >
-        <EuiToolTip content={nav.tooltipText} position="right">
-          <EuiButtonIcon
+        <RiTooltip content={nav.tooltipText} position="right">
+          <NavigationItemWrapper
+            active={nav.isActivePage}
             className={nav.getClassName()}
-            iconType={nav.getIconType()}
-            aria-label={nav.ariaLabel}
-            onClick={nav.onClick}
-            data-testid={nav.dataTestId}
-          />
-        </EuiToolTip>
+          >
+            <IconButton
+              onClick={nav.onClick}
+              size="M"
+              icon={nav.getIconType()}
+              aria-label={nav.ariaLabel}
+              data-testid={nav.dataTestId}
+            />
+          </NavigationItemWrapper>
+        </RiTooltip>
       </HighlightedFeature>
     )
 
@@ -383,10 +393,9 @@ const NavigationMenu = () => {
             variant="middle"
             orientation="vertical"
           />
-          <EuiToolTip content="Star us on GitHub" position="right">
+          <RiTooltip content="Star us on GitHub" position="right">
             <span className={cx(styles.iconNavItem, styles.githubLink)}>
-              <EuiLink
-                external={false}
+              <Link
                 href={EXTERNAL_LINKS.githubRepo}
                 target="_blank"
                 data-test-subj="github-repo-btn"
@@ -394,12 +403,12 @@ const NavigationMenu = () => {
                 <EuiIcon
                   className={styles.githubIcon}
                   aria-label="redis insight github repository"
-                  type={GithubSVG}
+                  type={GithubIcon}
                   data-testid="github-repo-icon"
                 />
-              </EuiLink>
+              </Link>
             </span>
-          </EuiToolTip>
+          </RiTooltip>
         </FeatureFlagComponent>
       </div>
     </EuiPageSideBar>

@@ -1,14 +1,14 @@
 import React from 'react'
-import { EuiText } from '@elastic/eui'
 import cx from 'classnames'
 import { APPLICATION_NAME } from 'uiSrc/constants'
+import { Text } from 'uiSrc/components/base/text'
 
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { ExternalLink } from 'uiSrc/components'
 import styles from '../styles.module.scss'
 
 const MessageCloudApiKeys = () => (
-  <EuiText
+  <Text
     color="subdued"
     size="s"
     className={styles.message}
@@ -24,11 +24,11 @@ const MessageCloudApiKeys = () => (
     >
       documentation.
     </ExternalLink>
-  </EuiText>
+  </Text>
 )
 
 const MessageStandalone = () => (
-  <EuiText
+  <Text
     color="subdued"
     size="s"
     className={styles.message}
@@ -45,11 +45,11 @@ const MessageStandalone = () => (
     >
       Learn more here.
     </ExternalLink>
-  </EuiText>
+  </Text>
 )
 
 const MessageSentinel = () => (
-  <EuiText
+  <Text
     color="subdued"
     size="s"
     className={styles.message}
@@ -67,11 +67,11 @@ const MessageSentinel = () => (
     >
       Learn more here.
     </ExternalLink>
-  </EuiText>
+  </Text>
 )
 
 const MessageEnterpriceSoftware = () => (
-  <EuiText
+  <Text
     color="subdued"
     size="s"
     className={styles.message}
@@ -89,7 +89,7 @@ const MessageEnterpriceSoftware = () => (
     >
       Learn more here.
     </ExternalLink>
-  </EuiText>
+  </Text>
 )
 
 export {

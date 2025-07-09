@@ -13,21 +13,6 @@
   width: 266px !important;
 }
 
-.table {
-  @include eui.scrollBar;
-  overflow: auto;
-  max-height: calc(100vh - 320px) !important;
-
-  @media (min-width: 1130px) {
-    max-height: calc(100vh - 260px) !important;
-  }
-}
-
-.search {
-  background-color: var(--euiColorLightestShade) !important;
-  height: 40px !important;
-}
-
 .panelCancelBtn {
   max-width: 350px !important;
   margin-left: -10px;

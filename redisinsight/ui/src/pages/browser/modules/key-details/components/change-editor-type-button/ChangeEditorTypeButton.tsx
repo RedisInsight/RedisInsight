@@ -1,5 +1,7 @@
 import React from 'react'
-import { EuiButtonIcon, EuiToolTip } from '@elastic/eui'
+import { RiTooltip } from 'uiSrc/components'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { EditIcon } from 'uiSrc/components/base/icons'
 import { useChangeEditorType } from './useChangeEditorType'
 
 const ChangeEditorTypeButton = () => {
@@ -11,15 +13,18 @@ const ChangeEditorTypeButton = () => {
     : 'Edit value in text editor'
 
   return (
-    <EuiToolTip content={tooltip} position="right">
-      <EuiButtonIcon
-        iconType="pencil"
+    <RiTooltip content={tooltip} position="right">
+      <IconButton
+        size="S"
+        icon={EditIcon}
         onClick={switchEditorType}
         aria-label="Change editor type"
         disabled={isDisabled}
       />
-    </EuiToolTip>
+    </RiTooltip>
   )
 }
 
 export default ChangeEditorTypeButton
+
+export class ButtonMode {}

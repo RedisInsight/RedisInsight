@@ -34,6 +34,6 @@ describe('EncryptionErrorContent', () => {
     render(<EncryptionErrorContent onClose={onClose} />)
     fireEvent.click(screen.getByTestId('toast-action-btn'))
 
-    expect(onClose).toBeCalled()
+    expect(onClose).toHaveBeenCalled()
   })
 })

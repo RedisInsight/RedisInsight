@@ -1,33 +1,32 @@
 import React, { useState, useEffect } from 'react'
-import {
-  EuiInMemoryTable,
-  EuiBasicTableColumn,
-  EuiTableSelectionType,
-  PropertySort,
-  EuiButton,
-  EuiPopover,
-  EuiText,
-  EuiTitle,
-  EuiFieldSearch,
-  EuiFormRow,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import { map, pick } from 'lodash'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import cx from 'classnames'
 
-import { Pages } from 'uiSrc/constants'
 import { cloudSelector } from 'uiSrc/slices/instances/cloud'
 import { InstanceRedisCloud } from 'uiSrc/slices/interfaces'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { InfoIcon } from 'uiSrc/components/base/icons'
+import {
+  DestructiveButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { RiTooltip } from 'uiSrc/components'
+import { Pages } from 'uiSrc/constants'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { SearchInput } from 'uiSrc/components/base/inputs'
+import { Text } from 'uiSrc/components/base/text'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import styles from '../styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<InstanceRedisCloud>[]
+  columns: ColumnDefinition<InstanceRedisCloud>[]
   onClose: () => void
   onBack: () => void
   onSubmit: (
@@ -81,11 +80,6 @@ const RedisCloudDatabasesPage = ({
     }
   }, [instances])
 
-  const sort: PropertySort = {
-    field: 'name',
-    direction: 'asc',
-  }
-
   const handleSubmit = () => {
     onSubmit(
       map(selection, (i) =>
@@ -102,13 +96,23 @@ const RedisCloudDatabasesPage = ({
     setIsPopoverOpen(false)
   }
 
-  const selectionValue: EuiTableSelectionType<InstanceRedisCloud> = {
-    onSelectionChange: (selected: InstanceRedisCloud[]) =>
-      setSelection(selected),
+  const selectionValue = {
+    onSelectionChange: (selected: InstanceRedisCloud) =>
+      setSelection((previous) => {
+        const isSelected = previous.some(
+          (item) => item.databaseId === selected.databaseId,
+        )
+        if (isSelected) {
+          return previous.filter(
+            (item) => item.databaseId !== selected.databaseId,
+          )
+        }
+        return [...previous, selected]
+      }),
   }
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
 
     const itemsTemp =
       instances?.filter(
@@ -134,126 +138,118 @@ const RedisCloudDatabasesPage = ({
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
       button={
-        <EuiButton
+        <SecondaryButton
           onClick={showPopover}
-          color="secondary"
           className="btn-cancel"
           data-testid="btn-cancel"
         >
           Cancel
-        </EuiButton>
+        </SecondaryButton>
       }
     >
-      <EuiText size="m">
-        <p>
-          Your changes have not been saved.&#10;&#13; Do you want to proceed to
-          the list of databases?
-        </p>
-      </EuiText>
+      <Text size="m">
+        Your changes have not been saved.&#10;&#13; Do you want to proceed to
+        the list of databases?
+      </Text>
       <br />
       <div>
-        <EuiButton
-          fill
+        <DestructiveButton
           size="s"
-          color="warning"
           onClick={onClose}
           data-testid="btn-cancel-proceed"
         >
           Proceed
-        </EuiButton>
+        </DestructiveButton>
       </div>
     </EuiPopover>
   )
 
   const SubmitButton = ({ isDisabled }: { isDisabled: boolean }) => (
-    <EuiToolTip
+    <RiTooltip
       position="top"
-      anchorClassName="euiToolTip__btn-disabled"
       title={
         isDisabled ? validationErrors.SELECT_AT_LEAST_ONE('database') : null
       }
       content={
         isDisabled ? (
-          <span className="euiToolTip__content">
+          <span>
             {validationErrors.NO_DBS_SELECTED}
           </span>
         ) : null
       }
     >
-      <EuiButton
-        fill
+      <PrimaryButton
         size="m"
         disabled={isDisabled}
         onClick={handleSubmit}
-        isLoading={loading}
-        color="secondary"
-        iconType={isDisabled ? 'iInCircle' : undefined}
+        loading={loading}
+        icon={isDisabled ? InfoIcon : undefined}
         data-testid="btn-add-databases"
       >
         Add selected Databases
-      </EuiButton>
-    </EuiToolTip>
+      </PrimaryButton>
+    </RiTooltip>
   )
 
   return (
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
-        <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>Redis Cloud Databases</h1>
-        </EuiTitle>
+        <Title size="XXL" className={styles.title} data-testid="title">
+          Redis Cloud Databases
+        </Title>
 
         <Row align="end" gap="s">
           <FlexItem grow>
-            <EuiText color="subdued" className={styles.subTitle}>
-              <span>
-                These are {items.length > 1 ? 'databases ' : 'database '}
-                in your Redis Cloud. Select the
-                {items.length > 1 ? ' databases ' : ' database '} that you want
-                to add.
-              </span>
-            </EuiText>
+            <Text color="subdued" className={styles.subTitle} component="span">
+              These are {items.length > 1 ? 'databases ' : 'database '}
+              in your Redis Cloud. Select the
+              {items.length > 1 ? ' databases ' : ' database '} that you want to
+              add.
+            </Text>
           </FlexItem>
         </Row>
         <FlexItem>
-          <EuiFormRow className={styles.searchForm}>
-            <EuiFieldSearch
+          <FormField className={styles.searchForm}>
+            <SearchInput
               placeholder="Search..."
-              className={styles.search}
               onChange={onQueryChange}
-              isClearable
               aria-label="Search"
               data-testid="search"
             />
-          </EuiFormRow>
+          </FormField>
         </FlexItem>
         <br />
 
         <div className="itemList databaseList cloudDatabaseList">
-          <EuiInMemoryTable
-            items={items}
-            itemId="databaseId"
-            loading={loading}
-            message={message}
+          <Table
             columns={columns}
-            sorting={{ sort }}
-            selection={selectionValue}
-            className={styles.table}
-            isSelectable
+            data={items}
+            defaultSorting={[
+              {
+                id: 'name',
+                desc: false,
+              },
+            ]}
+            onRowClick={selectionValue.onSelectionChange}
           />
+          {!items.length && <Text>{message}</Text>}
         </div>
       </div>
-      <div className={cx(styles.footer, 'footerAddDatabase')}>
-        <EuiButton
-          onClick={onBack}
-          color="secondary"
-          className="btn-cancel btn-back"
-          data-testid="btn-back-to-adding"
-        >
-          Back to adding databases
-        </EuiButton>
-        <CancelButton isPopoverOpen={isPopoverOpen} />
-        <SubmitButton isDisabled={selection.length < 1} />
-      </div>
+      <FlexItem padding={4}>
+        <Row justify="between" gap="m">
+          <SecondaryButton
+            onClick={onBack}
+            className="btn-cancel btn-back"
+            data-testid="btn-back-to-adding"
+          >
+            Back to adding databases
+          </SecondaryButton>
+          <div>
+            <CancelButton isPopoverOpen={isPopoverOpen} />
+            <SubmitButton isDisabled={selection.length < 1} />
+          </div>
+        </Row>
+      </FlexItem>
     </AutodiscoveryPageTemplate>
   )
 }

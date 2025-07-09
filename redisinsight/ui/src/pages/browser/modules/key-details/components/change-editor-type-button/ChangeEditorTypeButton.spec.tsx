@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 
+import { userEvent } from 'uiSrc/utils/test-utils'
 import ChangeEditorTypeButton from './ChangeEditorTypeButton'
 
 const mockSwitchEditorType = jest.fn()
@@ -29,7 +29,7 @@ describe('ChangeEditorTypeButton', () => {
 
     await userEvent.hover(button)
     expect(
-      await screen.findByText('Edit value in text editor'),
+      (await screen.findAllByText('Edit value in text editor'))[0],
     ).toBeInTheDocument()
   })
 
@@ -43,9 +43,11 @@ describe('ChangeEditorTypeButton', () => {
 
     await userEvent.hover(button)
     expect(
-      await screen.findByText(
-        'This JSON document is too large to view or edit in full.',
-      ),
+      (
+        await screen.findAllByText(
+          'This JSON document is too large to view or edit in full.',
+        )
+      )[0],
     ).toBeInTheDocument()
   })
 

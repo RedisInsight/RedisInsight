@@ -6,14 +6,7 @@ import React, {
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiButton,
-  EuiFieldText,
-  EuiFormRow,
-  EuiTextColor,
-  EuiForm,
-  EuiPanel,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import {
   isVersionHigherOrEquals,
@@ -29,6 +22,11 @@ import { connectedInstanceOverviewSelector } from 'uiSrc/slices/instances/instan
 import { FeatureFlags } from 'uiSrc/constants'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import {
   CreateHashWithExpireDto,
   HashFieldDto,
@@ -175,7 +173,7 @@ const AddKeyHash = (props: Props) => {
         {(item, index) => (
           <Row align="center">
             <FlexItem grow={2}>
-              <EuiFormRow fullWidth>
+              <FormField>
                 <EuiFieldText
                   fullWidth
                   name={`fieldName-${item.id}`}
@@ -191,10 +189,10 @@ const AddKeyHash = (props: Props) => {
                   }
                   data-testid="field-name"
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
             <FlexItem grow={2}>
-              <EuiFormRow fullWidth>
+              <FormField>
                 <EuiFieldText
                   fullWidth
                   name={`fieldValue-${item.id}`}
@@ -207,11 +205,11 @@ const AddKeyHash = (props: Props) => {
                   }
                   data-testid="field-value"
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
             {isTTLAvailable && (
               <FlexItem grow={1}>
-                <EuiFormRow fullWidth>
+                <FormField>
                   <EuiFieldText
                     fullWidth
                     name={`fieldTTL-${item.id}`}
@@ -228,50 +226,40 @@ const AddKeyHash = (props: Props) => {
                     }
                     data-testid="hash-ttl"
                   />
-                </EuiFormRow>
+                </FormField>
               </FlexItem>
             )}
           </Row>
         )}
       </AddMultipleFields>
 
-      <EuiButton type="submit" fill style={{ display: 'none' }}>
+      <PrimaryButton type="submit" style={{ display: 'none' }}>
         Submit
-      </EuiButton>
+      </PrimaryButton>
       <AddKeyFooter>
-        <EuiPanel
-          color="transparent"
-          className="flexItemNoFullWidth"
-          hasShadow={false}
-          borderRadius="none"
-          style={{ border: 'none' }}
-        >
-          <Row justify="end">
+        <>
+          <Row justify="end" style={{ padding: 18 }}>
             <FlexItem>
-              <EuiButton
-                color="secondary"
+              <SecondaryButton
                 onClick={() => onCancel(true)}
                 className="btn-cancel btn-back"
               >
-                <EuiTextColor>Cancel</EuiTextColor>
-              </EuiButton>
+                Cancel
+              </SecondaryButton>
             </FlexItem>
             <FlexItem>
-              <EuiButton
-                fill
-                size="m"
-                color="secondary"
+              <PrimaryButton
                 className="btn-add"
-                isLoading={loading}
+                loading={loading}
                 onClick={submitData}
                 disabled={!isFormValid || loading}
                 data-testid="add-key-hash-btn"
               >
                 Add Key
-              </EuiButton>
+              </PrimaryButton>
             </FlexItem>
           </Row>
-        </EuiPanel>
+        </>
       </AddKeyFooter>
     </EuiForm>
   )

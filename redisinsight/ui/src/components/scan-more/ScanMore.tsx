@@ -1,8 +1,10 @@
 import React from 'react'
 import { isNull } from 'lodash'
-import { EuiButton, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
+import { RiTooltip } from 'uiSrc/components'
+import { Button } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -33,10 +35,9 @@ const ScanMore = ({
 }: Props) => (
   <>
     {(scanned || isNull(totalItemsCount)) && nextCursor !== '0' && (
-      <EuiButton
-        fill={fill}
+      <Button
+        variant={fill ? 'primary' : 'secondary-ghost'}
         size="s"
-        color="secondary"
         style={style ?? { marginLeft: 25, height: 26 }}
         disabled={loading}
         className={styles.btn}
@@ -49,16 +50,12 @@ const ScanMore = ({
         data-testid="scan-more"
       >
         {withAlert && (
-          <EuiToolTip
-            content={WARNING_MESSAGE}
-            position="top"
-            display="inlineBlock"
-          >
+          <RiTooltip content={WARNING_MESSAGE} position="top">
             <EuiIcon type="iInCircle" />
-          </EuiToolTip>
+          </RiTooltip>
         )}
         Scan more
-      </EuiButton>
+      </Button>
     )}
   </>
 )

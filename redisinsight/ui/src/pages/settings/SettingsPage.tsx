@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import {
-  EuiCallOut,
-  EuiCollapsibleNavGroup,
-  EuiLoadingSpinner,
-  EuiText,
-  EuiTitle,
-} from '@elastic/eui'
+
+import { EuiCollapsibleNavGroup, EuiForm } from '@elastic/eui'
+
 import { useDispatch, useSelector } from 'react-redux'
 
 import { setTitle } from 'uiSrc/utils'
@@ -32,6 +28,15 @@ import {
   PageHeader,
   PageContentBody,
 } from 'uiSrc/components/base/layout/page'
+import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
+import { Loader } from 'uiSrc/components/base/display'
+import {
+  defaultValueRender,
+  RiSelect,
+} from 'uiSrc/components/base/forms/select/RiSelect'
 import {
   AdvancedSettings,
   CloudSettings,
@@ -78,7 +83,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <EuiLoadingSpinner size="xl" />
+          <Loader size="xl" />
         </div>
       )}
       <ConsentsPrivacy />
@@ -89,7 +94,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <EuiLoadingSpinner size="xl" />
+          <Loader size="xl" />
         </div>
       )}
       <WorkbenchSettings />
@@ -100,7 +105,7 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <EuiLoadingSpinner size="xl" />
+          <Loader size="xl" />
         </div>
       )}
       <CloudSettings />
@@ -111,15 +116,15 @@ const SettingsPage = () => {
     <div>
       {loading && (
         <div className={styles.cover}>
-          <EuiLoadingSpinner size="xl" />
+          <Loader size="xl" />
         </div>
       )}
-      <EuiCallOut className={styles.warning}>
-        <EuiText size="s" className={styles.smallText}>
+      <CallOut className={styles.warning}>
+        <Text size="s" className={styles.smallText}>
           Advanced settings should only be changed if you understand their
           impact.
-        </EuiText>
-      </EuiCallOut>
+        </Text>
+      </CallOut>
       <AdvancedSettings />
     </div>
   )
@@ -128,9 +133,9 @@ const SettingsPage = () => {
     <Page className={styles.container}>
       <PageBody component="div">
         <PageHeader>
-          <EuiTitle size="l">
-            <h1 className={styles.title}>Settings</h1>
-          </EuiTitle>
+          <Title size="XXL" className={styles.title}>
+            Settings
+          </Title>
         </PageHeader>
 
         <PageContentBody style={{ maxWidth: 792 }}>

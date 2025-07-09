@@ -15,6 +15,7 @@ import {
 } from 'uiSrc/telemetry'
 import {
   cleanup,
+  userEvent,
   fireEvent,
   mockedStore,
   render,
@@ -237,7 +238,7 @@ describe('StatisticsPage', () => {
     const testid = 'processing-performance-info'
 
     fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
-    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
+    await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_STATISTICS_AUTO_REFRESH_DISABLED,
@@ -256,8 +257,8 @@ describe('StatisticsPage', () => {
     const testid = 'processing-performance-info'
 
     fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
-    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
-    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // enabled
+    await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
+    await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // enabled
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.RDI_STATISTICS_AUTO_REFRESH_ENABLED,

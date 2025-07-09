@@ -1,7 +1,12 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiButton, EuiPopover, EuiText } from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
 import styles from '../../styles.module.scss'
 
 interface ConfirmOverwriteProps {
@@ -23,38 +28,35 @@ const ConfirmOverwrite = ({
     anchorPosition="downRight"
     isOpen={isOpen}
     closePopover={onCancel}
-    panelClassName={cx('euiToolTip', 'popoverLikeTooltip')}
+    panelClassName={cx('popoverLikeTooltip')}
     button={children}
   >
-    <EuiText size="m" style={{ fontWeight: 'bold' }}>
+    <Text size="m" style={{ fontWeight: 'bold' }}>
       Duplicate JSON key detected
-    </EuiText>
-    <EuiText size="s">
+    </Text>
+    <Text size="s">
       You already have the same JSON key. If you proceed, a value of the
       existing JSON key will be overwritten.
-    </EuiText>
+    </Text>
 
     <div className={styles.confirmDialogActions}>
-      <EuiButton
-        color="secondary"
+      <SecondaryButton
         aria-label="Cancel"
-        size="s"
+        size="small"
         onClick={onCancel}
         data-testid="cancel-confirmation-btn"
       >
         Cancel
-      </EuiButton>
+      </SecondaryButton>
 
-      <EuiButton
-        fill
-        color="secondary"
+      <PrimaryButton
         aria-label="Overwrite"
-        size="s"
+        size="small"
         onClick={onConfirm}
         data-testid="overwrite-btn"
       >
         Overwrite
-      </EuiButton>
+      </PrimaryButton>
     </div>
   </EuiPopover>
 )

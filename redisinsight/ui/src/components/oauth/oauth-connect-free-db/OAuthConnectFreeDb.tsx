@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiButton } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { useLocation } from 'react-router-dom'
@@ -21,6 +20,8 @@ import { openNewWindowDatabase } from 'uiSrc/utils'
 import { Pages } from 'uiSrc/constants'
 import { setCapability } from 'uiSrc/slices/app/context'
 
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { ExportIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 interface Props {
@@ -84,19 +85,17 @@ const OAuthConnectFreeDb = ({
   }
 
   return (
-    <EuiButton
-      fill
+    <PrimaryButton
       size="s"
-      iconType="popout"
-      isDisabled={loading}
-      isLoading={loading}
-      color="secondary"
+      icon={ExportIcon}
+      disabled={loading}
+      loading={loading}
       onClick={handleCheckConnectToInstance}
       className={cx(styles.btn, className)}
       data-testid="connect-free-db-btn"
     >
       Launch database
-    </EuiButton>
+    </PrimaryButton>
   )
 }
 

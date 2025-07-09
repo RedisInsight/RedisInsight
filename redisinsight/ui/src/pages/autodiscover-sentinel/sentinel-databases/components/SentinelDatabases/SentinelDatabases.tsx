@@ -1,18 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import cx from 'classnames'
-import {
-  EuiInMemoryTable,
-  EuiBasicTableColumn,
-  EuiTableSelectionType,
-  PropertySort,
-  EuiButton,
-  EuiPopover,
-  EuiText,
-  EuiTitle,
-  EuiFieldSearch,
-  EuiFormRow,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiPopover } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import { sentinelSelector } from 'uiSrc/slices/instances/sentinel'
@@ -21,10 +9,22 @@ import validationErrors from 'uiSrc/constants/validationErrors'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  DestructiveButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
+import { SearchInput } from 'uiSrc/components/base/inputs'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import styles from '../../../styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<ModifiedSentinelMaster>[]
+  columns: ColumnDefinition<ModifiedSentinelMaster>[]
   masters: ModifiedSentinelMaster[]
   onClose: () => void
   onBack: () => void
@@ -52,11 +52,6 @@ const SentinelDatabases = ({
   const [selection, setSelection] = useState<ModifiedSentinelMaster[]>([])
 
   const { loading } = useSelector(sentinelSelector)
-
-  const sort: PropertySort = {
-    field: 'name',
-    direction: 'asc',
-  }
 
   const updateSelection = (
     selected: ModifiedSentinelMaster[],
@@ -95,13 +90,19 @@ const SentinelDatabases = ({
     return selected || emptyAliases.length !== 0
   }
 
-  const selectionValue: EuiTableSelectionType<ModifiedSentinelMaster> = {
-    onSelectionChange: (selected: ModifiedSentinelMaster[]) =>
-      setSelection(selected),
+  const selectionValue = {
+    onSelectionChange: (selected: ModifiedSentinelMaster) =>
+      setSelection((previous) => {
+        const isSelected = previous.some((item) => item.id === selected.id)
+        if (isSelected) {
+          return previous.filter((item) => item.id !== selected.id)
+        }
+        return [...previous, selected]
+      }),
   }
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
 
     const itemsTemp = masters.filter(
       (item: ModifiedSentinelMaster) =>
@@ -112,6 +113,8 @@ const SentinelDatabases = ({
         item.port?.toString()?.includes(value) ||
         item.numberOfSlaves?.toString().includes(value),
     )
+
+    console.log('+++onQueryChange', itemsTemp)
 
     if (!itemsTemp.length) {
       setMessage(notFoundMsg)
@@ -127,33 +130,29 @@ const SentinelDatabases = ({
       panelClassName={styles.panelCancelBtn}
       panelPaddingSize="l"
       button={
-        <EuiButton
+        <SecondaryButton
           onClick={showPopover}
           color="secondary"
           className="btn-cancel"
           data-testid="btn-cancel"
         >
           Cancel
-        </EuiButton>
+        </SecondaryButton>
       }
     >
-      <EuiText size="m">
-        <p>
-          Your changes have not been saved.&#10;&#13; Do you want to proceed to
-          the list of databases?
-        </p>
-      </EuiText>
+      <Text size="m">
+        Your changes have not been saved.&#10;&#13; Do you want to proceed to
+        the list of databases?
+      </Text>
       <br />
       <div>
-        <EuiButton
-          fill
+        <DestructiveButton
           size="s"
-          color="warning"
           onClick={onClose}
           data-testid="btn-cancel-proceed"
         >
           Proceed
-        </EuiButton>
+        </DestructiveButton>
       </div>
     </EuiPopover>
   )
@@ -174,96 +173,95 @@ const SentinelDatabases = ({
     }
 
     return (
-      <EuiToolTip
+      <RiTooltip
         position="top"
-        anchorClassName="euiToolTip__btn-disabled"
         title={title}
         content={
           isSubmitDisabled() ? (
-            <span className="euiToolTip__content">{content}</span>
+            <span>{content}</span>
           ) : null
         }
       >
-        <EuiButton
-          fill
-          color="secondary"
+        <PrimaryButton
           type="submit"
           onClick={onClick}
           disabled={isSubmitDisabled()}
-          isLoading={loading}
-          iconType={isSubmitDisabled() ? 'iInCircle' : undefined}
+          loading={loading}
+          icon={isSubmitDisabled() ? InfoIcon : undefined}
           data-testid="btn-add-primary-group"
         >
           Add Primary Group
-        </EuiButton>
-      </EuiToolTip>
+        </PrimaryButton>
+      </RiTooltip>
     )
   }
 
   return (
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
-        <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>Auto-Discover Redis Sentinel Primary Groups</h1>
-        </EuiTitle>
+        <Title size="XXL" className={styles.title} data-testid="title">
+          Auto-Discover Redis Sentinel Primary Groups
+        </Title>
 
         <Row align="end" gap="s">
           <FlexItem grow>
-            <EuiText color="subdued" className={styles.subTitle}>
-              <span>
-                Redis Sentinel instance found. <br />
-                Here is a list of primary groups your Sentinel instance is
-                managing. Select the primary group(s) you want to add:
-              </span>
-            </EuiText>
+            <Text color="subdued" className={styles.subTitle} component="span">
+              Redis Sentinel instance found. <br />
+              Here is a list of primary groups your Sentinel instance is
+              managing. Select the primary group(s) you want to add:
+            </Text>
           </FlexItem>
           <FlexItem>
-            <EuiFormRow className={styles.searchForm}>
-              <EuiFieldSearch
+            <FormField className={styles.searchForm}>
+              <SearchInput
                 placeholder="Search..."
-                className={styles.search}
                 onChange={onQueryChange}
-                isClearable
                 aria-label="Search"
                 data-testid="search"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Row>
         <br />
 
         <div className="itemList databaseList sentinelDatabaseList">
-          <EuiInMemoryTable
-            isSelectable
-            items={items}
-            itemId="id"
-            loading={loading}
-            message={message}
+          <Table
             columns={columns}
-            sorting={{ sort }}
-            selection={selectionValue}
-            className={cx(styles.table, !masters.length && styles.tableEmpty)}
-            data-testid="table"
+            data={items}
+            defaultSorting={[
+              {
+                id: 'name',
+                desc: false,
+              },
+            ]}
+            onRowClick={selectionValue.onSelectionChange}
           />
+          {!items.length && <Text color="subdued">{message}</Text>}
           {!masters.length && (
-            <EuiText className={styles.notFoundMsg} color="subdued">
+            <Text className={styles.notFoundMsg} color="subdued">
               {notMastersMsg}
-            </EuiText>
+            </Text>
           )}
         </div>
       </div>
-      <div className={cx(styles.footer, 'footerAddDatabase')}>
-        <EuiButton
-          onClick={onBack}
-          color="secondary"
-          className="btn-cancel btn-back"
-          data-testid="btn-back-to-adding"
+      <FlexItem>
+        <Row
+          justify="between"
+          className={cx(styles.footer, 'footerAddDatabase')}
         >
-          Back to adding databases
-        </EuiButton>
-        <CancelButton isPopoverOpen={isPopoverOpen} />
-        <SubmitButton onClick={handleSubmit} />
-      </div>
+          <SecondaryButton
+            onClick={onBack}
+            className="btn-cancel btn-back"
+            data-testid="btn-back-to-adding"
+          >
+            Back to adding databases
+          </SecondaryButton>
+          <div>
+            <CancelButton isPopoverOpen={isPopoverOpen} />
+            <SubmitButton onClick={handleSubmit} />
+          </div>
+        </Row>
+      </FlexItem>
     </AutodiscoveryPageTemplate>
   )
 }

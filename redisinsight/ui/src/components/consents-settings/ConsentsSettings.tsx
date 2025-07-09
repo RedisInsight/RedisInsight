@@ -2,20 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty, forEach } from 'lodash'
-import {
-  EuiSwitch,
-  EuiText,
-  EuiButton,
-  EuiTitle,
-  EuiToolTip,
-  EuiForm,
-  EuiCallOut,
-  EuiLink,
-} from '@elastic/eui'
-import { EuiSwitchEvent } from '@elastic/eui/src/components/form/switch'
+import { EuiForm } from '@elastic/eui'
 import cx from 'classnames'
 
-import { HorizontalRule } from 'uiSrc/components'
+import { HorizontalRule, RiTooltip } from 'uiSrc/components'
 import { compareConsents } from 'uiSrc/utils'
 import {
   updateUserConfigSettingsAction,
@@ -24,6 +14,13 @@ import {
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { InfoIcon } from 'uiSrc/components/base/icons'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
+import { Text } from 'uiSrc/components/base/text'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
+import { Link } from 'uiSrc/components/base/link/Link'
 import ConsentOption from './ConsentOption'
 
 import styles from './styles.module.scss'
@@ -85,10 +82,10 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
     return errs
   }
 
-  const selectAll = (e: EuiSwitchEvent) => {
-    setIsRecommended(e.target.checked)
+  const selectAll = (checked: boolean) => {
+    setIsRecommended(checked)
 
-    if (e.target.checked) {
+    if (checked) {
       const newBufferValues: Values = {}
       consents.forEach((consent) => {
         if (!consent.required && !consent.disabled) {
@@ -226,27 +223,22 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
             <FlexItem>
               <Row gap="m">
                 <FlexItem>
-                  <EuiSwitch
-                    showLabel={false}
-                    label=""
+                  <SwitchInput
                     checked={isRecommended}
-                    onChange={selectAll}
-                    className={styles.switchOption}
+                    onCheckedChange={selectAll}
                     data-testid="switch-option-recommended"
                   />
                 </FlexItem>
                 <FlexItem>
-                  <EuiText className={styles.label}>
-                    Use recommended settings
-                  </EuiText>
-                  <EuiText
+                  <Text className={styles.label}>Use recommended settings</Text>
+                  <Text
                     size="s"
                     className={styles.smallText}
                     color="subdued"
                     style={{ marginTop: '12px' }}
                   >
                     Select to activate all listed options.
-                  </EuiText>
+                  </Text>
                 </FlexItem>
               </Row>
             </FlexItem>
@@ -261,13 +253,13 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         {!!privacyConsents.length && (
           <>
             <Spacer />
-            <EuiTitle size="m">
-              <h1 className={styles.title}>Privacy Settings</h1>
-            </EuiTitle>
+            <Title size="M" className={styles.title}>
+              Privacy Settings
+            </Title>
             <Spacer size="m" />
-            <EuiText className={styles.smallText} size="s" color="subdued">
+            <Text className={styles.smallText} size="s" color="subdued">
               To optimize your experience, Redis Insight uses third-party tools.
-            </EuiText>
+            </Text>
             <Spacer />
           </>
         )}
@@ -282,9 +274,9 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         {!!notificationConsents.length && (
           <>
             <Spacer size="m" />
-            <EuiTitle size="m">
-              <h1 className={styles.title}>Notifications</h1>
-            </EuiTitle>
+            <Title size="M" className={styles.title}>
+              Notifications
+            </Title>
             <Spacer size="m" />
           </>
         )}
@@ -301,24 +293,22 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         <>
           <HorizontalRule margin="l" className={styles.requiredHR} />
           <Spacer size="m" />
-          <EuiText color="subdued" size="s" className={styles.smallText}>
+          <Text color="subdued" size="s" className={styles.smallText}>
             Use of Redis Insight is governed by your signed agreement with Redis, or, if none, by the{' '}
-            <EuiLink
-              external={false}
+            <Link
               target="_blank"
               href="https://redis.io/software-subscription-agreement/?utm_source=redisinsight&utm_medium=app&utm_campaign=EULA"
             >
               Redis Enterprise Software Subscription Agreement
-            </EuiLink>
+            </Link>
             . If no agreement applies, use is subject to the{' '}
-            <EuiLink
-              external={false}
+            <Link
               target="_blank"
               href="https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE"
             >
               Server Side Public License
-            </EuiLink>
-          </EuiText>
+            </Link>
+          </Text>
           <Spacer size="m" />
         </>
       ) : (
@@ -338,12 +328,11 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
           ))}
         </FlexItem>
         <FlexItem>
-          <EuiToolTip
+          <RiTooltip
             position="top"
-            anchorClassName="euiToolTip__btn-disabled"
             content={
               submitIsDisabled() ? (
-                <span className="euiToolTip__content">
+                <span>
                   {Object.values(errors).map((err) => [
                     spec?.agreements[err as string]?.requiredText,
                     <br key={err} />,
@@ -352,19 +341,17 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
               ) : null
             }
           >
-            <EuiButton
-              fill
-              color="secondary"
+            <PrimaryButton
               className="btn-add"
               type="submit"
-              onClick={() => {}}
+              onClick={() => { }}
               disabled={submitIsDisabled()}
-              iconType={submitIsDisabled() ? 'iInCircle' : undefined}
+              icon={submitIsDisabled() ? InfoIcon : undefined}
               data-testid="btn-submit"
             >
               Submit
-            </EuiButton>
-          </EuiToolTip>
+            </PrimaryButton>
+          </RiTooltip>
         </FlexItem>
       </Row>
     </EuiForm>

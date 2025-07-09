@@ -1,16 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiSuperSelect,
-  EuiSuperSelectOption,
-  EuiTab,
-  EuiTabs,
-  EuiText,
-  EuiToolTip,
-  keys,
-} from '@elastic/eui'
+import { keys } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { isArray, upperFirst } from 'lodash'
@@ -28,7 +18,22 @@ import DryRunJobTransformations from 'uiSrc/pages/rdi/pipeline-management/compon
 import { createAxiosError, formatLongName, yamlToJson } from 'uiSrc/utils'
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 
+import { Text } from 'uiSrc/components/base/text'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
+import {
+  PlayFilledIcon,
+  CancelSlimIcon,
+  ExtendIcon,
+  ShrinkIcon,
+} from 'uiSrc/components/base/icons'
+import Tabs, { TabInfo } from 'uiSrc/components/base/layout/tabs'
+import { RiTooltip } from 'uiSrc/components'
+import {
+  RiSelect,
+  RiSelectOption,
+  defaultValueRender,
+} from 'uiSrc/components/base/forms/select/RiSelect'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -58,9 +63,7 @@ const DryRunJobPanel = (props: Props) => {
   )
   const [input, setInput] = useState<string>('')
   const [isFormValid, setIsFormValid] = useState<boolean>(false)
-  const [targetOptions, setTargetOptions] = useState<
-    EuiSuperSelectOption<string>[]
-  >([])
+  const [targetOptions, setTargetOptions] = useState<RiSelectOption[]>([])
   const [selectedTarget, setSelectedTarget] = useState<string>()
 
   const dispatch = useDispatch()
@@ -107,12 +110,6 @@ const DryRunJobPanel = (props: Props) => {
     }
   }
 
-  const handleChangeTab = (name: PipelineJobsTabs) => {
-    if (selectedTab === name) return
-
-    changeSelectedTab(name)
-  }
-
   const handleFullScreen = () => {
     setIsFullScreen((value) => !value)
   }
@@ -130,8 +127,8 @@ const DryRunJobPanel = (props: Props) => {
           createAxiosError({
             message: (
               <>
-                <EuiText>{`${upperFirst(name)} has an invalid structure.`}</EuiText>
-                <EuiText>{msg}</EuiText>
+                <Text>{`${upperFirst(name)} has an invalid structure.`}</Text>
+                <Text>{msg}</Text>
               </>
             ),
           }),
@@ -153,53 +150,51 @@ const DryRunJobPanel = (props: Props) => {
     results?.output?.length > 1 &&
     !!targetOptions.length
 
-  const Tabs = useCallback(
-    () => (
-      <EuiTabs className={styles.tabs}>
-        <EuiTab
-          isSelected={selectedTab === PipelineJobsTabs.Transformations}
-          onClick={() => handleChangeTab(PipelineJobsTabs.Transformations)}
-          className={styles.tab}
-          data-testid="transformations-tab"
+  const tabs: TabInfo[] = [
+    {
+      value: PipelineJobsTabs.Transformations,
+      label: (
+        <RiTooltip
+          content={
+            <Text color="subdued" size="s">
+              Displays the results of the transformations you defined. The data
+              is presented in JSON format.
+              <br />
+              No data is written to the target database.
+            </Text>
+          }
+          data-testid="transformation-output-tooltip"
         >
-          <EuiToolTip
-            content={
-              <EuiText color="subdued" size="s">
-                Displays the results of the transformations you defined. The
-                data is presented in JSON format.
-                <br />
-                No data is written to the target database.
-              </EuiText>
-            }
-            data-testid="transformation-output-tooltip"
-          >
-            <span className={styles.tabName}>Transformation output</span>
-          </EuiToolTip>
-        </EuiTab>
-        <EuiTab
-          isSelected={selectedTab === PipelineJobsTabs.Output}
-          onClick={() => handleChangeTab(PipelineJobsTabs.Output)}
-          className={styles.tab}
-          data-testid="output-tab"
+          <Text>Transformation output</Text>
+        </RiTooltip>
+      ),
+      content: null,
+    },
+    {
+      value: PipelineJobsTabs.Output,
+      label: (
+        <RiTooltip
+          content={
+            <Text color="subdued" size="s">
+              Displays the list of Redis commands that will be generated based
+              on your job details.
+              <br />
+              No data is written to the target database.
+            </Text>
+          }
+          data-testid="job-output-tooltip"
         >
-          <EuiToolTip
-            content={
-              <EuiText color="subdued" size="s">
-                Displays the list of Redis commands that will be generated based
-                on your job details.
-                <br />
-                No data is written to the target database.
-              </EuiText>
-            }
-            data-testid="job-output-tooltip"
-          >
-            <span className={styles.tabName}>Job output</span>
-          </EuiToolTip>
-        </EuiTab>
-      </EuiTabs>
-    ),
-    [selectedTab, isFullScreen],
-  )
+          <Text>Job output</Text>
+        </RiTooltip>
+      ),
+      content: null,
+    },
+  ]
+
+  const handleTabChange = (name: string) => {
+    if (selectedTab === name) return
+    changeSelectedTab(name as PipelineJobsTabs)
+  }
 
   return (
     <div
@@ -208,21 +203,17 @@ const DryRunJobPanel = (props: Props) => {
     >
       <div className={styles.panelInner}>
         <div className={styles.header}>
-          <EuiText className={styles.title}>Test transformation logic</EuiText>
+          <Text className={styles.title}>Test transformation logic</Text>
           <div>
-            <EuiButtonIcon
-              iconSize="m"
-              iconType={isFullScreen ? 'fullScreenExit' : 'fullScreen'}
-              color="primary"
+            <IconButton
+              icon={isFullScreen ? ShrinkIcon : ExtendIcon}
               aria-label="toggle fullscrenn dry run panel"
               className={styles.fullScreenBtn}
               onClick={handleFullScreen}
               data-testid="fullScreen-dry-run-btn"
             />
-            <EuiButtonIcon
-              iconSize="m"
-              iconType="cross"
-              color="primary"
+            <IconButton
+              icon={CancelSlimIcon}
               aria-label="close dry run panel"
               className={styles.closeBtn}
               onClick={onClose}
@@ -231,11 +222,11 @@ const DryRunJobPanel = (props: Props) => {
           </div>
         </div>
         <div className={styles.body}>
-          <EuiText className={styles.text}>
+          <Text className={styles.text}>
             Add input data to test the transformation logic.
-          </EuiText>
+          </Text>
           <div className={styles.codeLabel}>
-            <EuiText>Input</EuiText>
+            <Text>Input</Text>
           </div>
           <MonacoJson
             value={input}
@@ -246,37 +237,41 @@ const DryRunJobPanel = (props: Props) => {
           />
           <Row responsive justify="end">
             <FlexItem>
-              <EuiToolTip
+              <RiTooltip
                 content={isFormValid ? null : 'Input should have JSON format'}
                 position="top"
               >
-                <EuiButton
+                <EmptyButton
                   onClick={handleDryRun}
-                  iconType="play"
+                  icon={PlayFilledIcon}
                   iconSide="right"
-                  color="success"
-                  size="s"
+                  size="small"
                   disabled={isDryRunning || !isFormValid}
-                  isLoading={isDryRunning}
+                  loading={isDryRunning}
                   className={cx(styles.actionBtn, styles.runBtn)}
                   data-testid="dry-run-btn"
                 >
                   Dry run
-                </EuiButton>
-              </EuiToolTip>
+                </EmptyButton>
+              </RiTooltip>
             </FlexItem>
           </Row>
-          <div className={cx(styles.tabsWrapper, styles.codeLabel)}>
+          <div className={styles.codeLabel}>
             {isSelectAvailable && (
-              <EuiSuperSelect
+              <RiSelect
                 options={targetOptions}
-                valueOfSelected={selectedTarget}
+                valueRender={defaultValueRender}
+                value={selectedTarget}
                 onChange={(value) => setSelectedTarget(value)}
-                popoverClassName={styles.selectWrapper}
                 data-testid="target-select"
               />
             )}
-            <Tabs />
+            <Tabs
+              tabs={tabs}
+              value={selectedTab}
+              onChange={handleTabChange}
+              data-testid="pipeline-jobs-tabs"
+            />
           </div>
           {selectedTab === PipelineJobsTabs.Transformations && (
             <DryRunJobTransformations />

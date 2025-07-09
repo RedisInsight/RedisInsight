@@ -1,4 +1,4 @@
-import { EuiBasicTableColumn, EuiIcon, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import React from 'react'
 
 import {
@@ -6,66 +6,75 @@ import {
   StatisticsConnectionStatus,
 } from 'uiSrc/slices/interfaces'
 import { formatLongName } from 'uiSrc/utils'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
+import { RiTooltip } from 'uiSrc/components'
 import Accordion from '../components/accordion'
 import Panel from '../components/panel'
-import Table from '../components/table'
 
 type ConnectionData = {
-  status: string
   name: string
+  status: string
   type: string
   hostPort: string
   database: string
   user: string
 }
 
-const columns: EuiBasicTableColumn<ConnectionData>[] = [
+const columns: ColumnDefinition<ConnectionData>[] = [
   {
-    name: 'Status',
-    field: 'status',
-    width: '80px',
-    render: (status: string) =>
+    header: 'Status',
+    id: 'status',
+    accessorKey: 'status',
+    enableSorting: true,
+    cell: ({
+      row: {
+        original: { status },
+      },
+    }) =>
       status === StatisticsConnectionStatus.connected ? (
         <EuiIcon type="dot" color="var(--buttonSuccessColor)" />
       ) : (
         <EuiIcon type="alert" color="danger" />
       ),
-    align: 'center',
-    sortable: true,
   },
   {
-    name: 'Name',
-    field: 'name',
-    width: '15%',
-    sortable: true,
+    header: 'Name',
+    id: 'name',
+    accessorKey: 'name',
+    enableSorting: true,
   },
   {
-    name: 'Type',
-    field: 'type',
-    width: '10%',
-    sortable: true,
+    header: 'Type',
+    id: 'type',
+    accessorKey: 'type',
+    enableSorting: true,
   },
   {
-    name: 'Host:port',
-    field: 'hostPort',
-    sortable: true,
-    render: (hostPort: string) => (
-      <EuiToolTip content={hostPort}>
+    header: 'Host:port',
+    id: 'hostPort',
+    accessorKey: 'hostPort',
+    enableSorting: true,
+    cell: ({
+      row: {
+        original: { hostPort },
+      },
+    }) => (
+      <RiTooltip content={hostPort}>
         <span>{formatLongName(hostPort, 80, 0, '...')}</span>
-      </EuiToolTip>
+      </RiTooltip>
     ),
   },
   {
-    name: 'Database',
-    field: 'database',
-    width: '15%',
-    sortable: true,
+    header: 'Database',
+    id: 'database',
+    accessorKey: 'database',
+    enableSorting: true,
   },
   {
-    name: 'Username',
-    field: 'user',
-    width: '15%',
-    sortable: true,
+    header: 'Username',
+    id: 'user',
+    accessorKey: 'user',
+    enableSorting: true,
   },
 ]
 
@@ -74,7 +83,7 @@ interface Props {
 }
 
 const TargetConnections = ({ data }: Props) => {
-  const connections = Object.keys(data).map((key) => {
+  const connections: ConnectionData[] = Object.keys(data).map((key) => {
     const connection = data[key]
     return {
       name: key,
@@ -90,11 +99,10 @@ const TargetConnections = ({ data }: Props) => {
         title="Target connections"
         hideAutoRefresh
       >
-        <Table<ConnectionData>
-          id="target-connections"
+        <Table
           columns={columns}
-          items={connections}
-          initialSortField="name"
+          data={connections}
+          defaultSorting={[{ id: 'name', desc: false }]}
         />
       </Accordion>
     </Panel>

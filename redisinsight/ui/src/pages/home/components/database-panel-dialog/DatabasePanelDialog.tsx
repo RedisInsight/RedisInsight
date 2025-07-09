@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiButtonIcon, EuiTitle } from '@elastic/eui'
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
 import { UrlHandlingActions } from 'uiSrc/slices/interfaces/urlHandling'
@@ -31,8 +30,11 @@ import CloudConnectionFormWrapper from 'uiSrc/pages/home/components/cloud-connec
 import ImportDatabase from 'uiSrc/pages/home/components/import-database'
 import { FormDialog } from 'uiSrc/components'
 import { ModalHeaderProvider } from 'uiSrc/contexts/ModalTitleProvider'
+import { Title } from 'uiSrc/components/base/text/Title'
 import ClusterConnectionFormWrapper from 'uiSrc/pages/home/components/cluster-connection'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { ArrowLeftIcon } from 'uiSrc/components/base/icons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -165,10 +167,9 @@ const DatabasePanelDialog = (props: Props) => {
       withBack && content ? (
         <Row align="center" gap="s">
           <FlexItem>
-            <EuiButtonIcon
+            <IconButton
               onClick={handleClickBack}
-              iconSize="m"
-              iconType="sortLeft"
+              icon={ArrowLeftIcon}
               aria-label="back"
               data-testid="back-btn"
             />
@@ -186,13 +187,7 @@ const DatabasePanelDialog = (props: Props) => {
     <FormDialog
       isOpen
       onClose={onClose}
-      header={
-        modalHeader ?? (
-          <EuiTitle size="s">
-            <h4>Add Database</h4>
-          </EuiTitle>
-        )
-      }
+      header={modalHeader ?? <Title size="M">Add Database</Title>}
       footer={<div id="footerDatabaseForm" />}
     >
       <div

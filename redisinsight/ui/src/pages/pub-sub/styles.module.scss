@@ -41,7 +41,7 @@
 }
 
 .onboardAnchor {
-  position: fixed;
+  position: relative;
   visibility: hidden;
   opacity: 0;
 }
@@ -49,5 +49,4 @@
 .onboardPanel {
   position: fixed;
   top: calc(100% - 214px) !important;
-  left: calc(100% - 328px) !important;
 }

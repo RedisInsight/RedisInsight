@@ -1,11 +1,14 @@
 import React from 'react'
-import { EuiButtonIcon, EuiText, EuiLoadingSpinner } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import TestConnectionsLog from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-log'
 import { rdiTestConnectionsSelector } from 'uiSrc/slices/rdi/testConnections'
 
+import { Text } from 'uiSrc/components/base/text'
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 interface TestConnectionPanelWrapperProps {
@@ -19,11 +22,9 @@ const TestConnectionPanelWrapper = ({
 }: TestConnectionPanelWrapperProps) => (
   <div className={styles.panel} data-testid="test-connection-panel">
     <div className={styles.header}>
-      <EuiText className={styles.title}>Connection test results</EuiText>
-      <EuiButtonIcon
-        iconSize="m"
-        iconType="cross"
-        color="primary"
+      <Text className={styles.title}>Connection test results</Text>
+      <IconButton
+        icon={CancelSlimIcon}
         aria-label="close test connections panel"
         className={styles.closeBtn}
         onClick={onClose}
@@ -47,10 +48,10 @@ const TestConnectionsPanel = (props: Props) => {
       <TestConnectionPanelWrapper onClose={onClose}>
         <Col className={styles.content} centered>
           <FlexItem>
-            <EuiText className={styles.loaderText}>Loading results...</EuiText>
+            <Text className={styles.loaderText}>Loading results...</Text>
           </FlexItem>
           <FlexItem>
-            <EuiLoadingSpinner
+            <Loader
               data-testid="test-connections-loader"
               className={styles.loaderIcon}
               color="secondary"
@@ -65,9 +66,9 @@ const TestConnectionsPanel = (props: Props) => {
   if (!results) {
     return (
       <TestConnectionPanelWrapper onClose={onClose}>
-        <EuiText className={styles.subtitle}>
+        <Text className={styles.subtitle}>
           No results found. Please try again.
-        </EuiText>
+        </Text>
       </TestConnectionPanelWrapper>
     )
   }
@@ -75,21 +76,21 @@ const TestConnectionsPanel = (props: Props) => {
   return (
     <TestConnectionPanelWrapper onClose={onClose}>
       <div className={styles.content}>
-        <EuiText
+        <Text
           className={styles.subtitle}
           style={{ marginTop: 16, marginBottom: 10 }}
         >
           Source connections
-        </EuiText>
+        </Text>
 
         <TestConnectionsLog data={results.source} />
 
-        <EuiText
+        <Text
           className={styles.subtitle}
           style={{ marginTop: 16, marginBottom: 10 }}
         >
           Target connections
-        </EuiText>
+        </Text>
 
         <TestConnectionsLog data={results.target} />
       </div>

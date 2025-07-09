@@ -1,17 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import {
-  EuiInMemoryTable,
-  EuiBasicTableColumn,
-  PropertySort,
-  EuiButton,
-  EuiText,
-  EuiTitle,
-  EuiFieldSearch,
-  EuiFormRow,
-} from '@elastic/eui'
-import cx from 'classnames'
-import {
   InstanceRedisCloud,
   AddRedisDatabaseStatus,
 } from 'uiSrc/slices/interfaces'
@@ -19,11 +8,20 @@ import { cloudSelector } from 'uiSrc/slices/instances/cloud'
 import MessageBar from 'uiSrc/components/message-bar/MessageBar'
 import { AutodiscoveryPageTemplate } from 'uiSrc/templates'
 
-import { Flex, FlexItem } from 'uiSrc/components/base/layout/flex'
+import { Flex, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { SearchInput } from 'uiSrc/components/base/inputs'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import styles from './styles.module.scss'
 
 export interface Props {
-  columns: EuiBasicTableColumn<InstanceRedisCloud>[]
+  columns: ColumnDefinition<InstanceRedisCloud>[]
   onView: () => void
   onBack: () => void
 }
@@ -35,14 +33,9 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
   const [items, setItems] = useState<InstanceRedisCloud[]>([])
   const [message, setMessage] = useState(loadingMsg)
 
-  const { loading, dataAdded: instances } = useSelector(cloudSelector)
+  const { dataAdded: instances } = useSelector(cloudSelector)
 
   useEffect(() => setItems(instances), [instances])
-
-  const sort: PropertySort = {
-    field: 'name',
-    direction: 'asc',
-  }
 
   const countSuccessAdded = instances.filter(
     ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Success,
@@ -52,8 +45,8 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
     ({ statusAdded }) => statusAdded === AddRedisDatabaseStatus.Fail,
   )?.length
 
-  const onQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e?.target?.value?.toLowerCase()
+  const onQueryChange = (term: string) => {
+    const value = term?.toLowerCase()
 
     const itemsTemp = instances.filter(
       (item: InstanceRedisCloud) =>
@@ -71,7 +64,7 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
   }
 
   const SummaryText = () => (
-    <EuiText className={styles.subTitle}>
+    <Text className={styles.subTitle}>
       <b>Summary: </b>
       {countSuccessAdded ? (
         <span>
@@ -82,15 +75,15 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
       {countFailAdded ? (
         <span>Failed to add {countFailAdded} database(s).</span>
       ) : null}
-    </EuiText>
+    </Text>
   )
 
   return (
     <AutodiscoveryPageTemplate>
       <div className="databaseContainer">
-        <EuiTitle size="s" className={styles.title} data-testid="title">
-          <h1>Redis Enterprise Databases Added</h1>
-        </EuiTitle>
+        <Title size="XXL" className={styles.title} data-testid="title">
+          Redis Enterprise Databases Added
+        </Title>
         <Flex align="end" gap="s">
           <FlexItem grow>
             <MessageBar opened={!!countSuccessAdded || !!countFailAdded}>
@@ -98,50 +91,45 @@ const RedisCloudDatabaseListResult = ({ columns, onBack, onView }: Props) => {
             </MessageBar>
           </FlexItem>
           <FlexItem>
-            <EuiFormRow className={styles.searchForm}>
-              <EuiFieldSearch
+            <FormField className={styles.searchForm}>
+              <SearchInput
                 placeholder="Search..."
-                className={styles.search}
                 onChange={onQueryChange}
-                isClearable
                 aria-label="Search"
                 data-testid="search"
               />
-            </EuiFormRow>
+            </FormField>
           </FlexItem>
         </Flex>
         <br />
         <div className="itemList databaseList cloudDatabaseListResult">
-          <EuiInMemoryTable
-            items={items}
-            itemId="uid"
-            loading={loading}
-            message={message}
+          <Table
             columns={columns}
-            className={styles.table}
-            sorting={{ sort }}
+            data={items}
+            defaultSorting={[
+              {
+                id: 'name',
+                desc: false,
+              },
+            ]}
           />
+          {!items.length && <Text>{message}</Text>}
         </div>
       </div>
-      <div className={cx(styles.footer, 'footerAddDatabase')}>
-        <EuiButton
-          onClick={onBack}
-          color="secondary"
-          className="btn-cancel btn-back"
-          data-testid="btn-back-to-adding"
-        >
-          Back to adding databases
-        </EuiButton>
-        <EuiButton
-          fill
-          size="m"
-          onClick={onView}
-          color="secondary"
-          data-testid="btn-view-databases"
-        >
-          View Databases
-        </EuiButton>
-      </div>
+      <FlexItem padding={4}>
+        <Row justify="between">
+          <SecondaryButton
+            onClick={onBack}
+            className="btn-cancel btn-back"
+            data-testid="btn-back-to-adding"
+          >
+            Back to adding databases
+          </SecondaryButton>
+          <PrimaryButton onClick={onView} data-testid="btn-view-databases">
+            View Databases
+          </PrimaryButton>
+        </Row>
+      </FlexItem>
     </AutodiscoveryPageTemplate>
   )
 }

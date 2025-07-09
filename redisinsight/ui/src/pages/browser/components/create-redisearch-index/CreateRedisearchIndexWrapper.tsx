@@ -1,14 +1,13 @@
 import React from 'react'
-import {
-  EuiButtonIcon,
-  EuiLink,
-  EuiText,
-  EuiTitle,
-  EuiToolTip,
-} from '@elastic/eui'
 import cx from 'classnames'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { RiTooltip } from 'uiSrc/components'
 import CreateRedisearchIndex from './CreateRedisearchIndex'
 
 import styles from './styles.module.scss'
@@ -28,42 +27,36 @@ const CreateRedisearchIndexWrapper = ({
     <Col justify="center" className={cx(styles.container, 'relative')}>
       <div className={styles.headerWrapper}>
         <FlexItem grow style={{ marginBottom: '16px' }}>
-          <EuiTitle size="xs" className={styles.header}>
-            <h4>New Index</h4>
-          </EuiTitle>
+          <Title size="M" className={styles.header}>
+            New Index
+          </Title>
           {!arePanelsCollapsed && (
-            <EuiToolTip
-              content="Close"
-              position="left"
-              anchorClassName={styles.closeBtnTooltip}
-            >
-              <EuiButtonIcon
-                iconType="cross"
-                color="primary"
+            <RiTooltip content="Close" position="left">
+              <IconButton
+                icon={CancelSlimIcon}
                 aria-label="Close panel"
                 className={styles.closeBtn}
                 data-testid="create-index-close-panel"
                 onClick={onClosePanel}
               />
-            </EuiToolTip>
+            </RiTooltip>
           )}
         </FlexItem>
         <FlexItem grow className={styles.header}>
-          <EuiText size="s">
+          <Text size="s">
             Use CLI or Workbench to create more advanced indexes. See more
             details in the{' '}
-            <EuiLink
+            <Link
               color="text"
               href={getUtmExternalLink('https://redis.io/commands/ft.create/', {
                 campaign: 'browser_search',
               })}
               className={styles.link}
-              external={false}
               target="_blank"
             >
               documentation.
-            </EuiLink>
-          </EuiText>
+            </Link>
+          </Text>
         </FlexItem>
       </div>
       <CreateRedisearchIndex

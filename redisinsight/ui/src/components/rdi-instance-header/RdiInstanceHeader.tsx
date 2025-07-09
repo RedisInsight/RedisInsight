@@ -1,16 +1,20 @@
 import React from 'react'
-import { EuiText, EuiToolTip } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
 import { CopilotTrigger, InsightsTrigger } from 'uiSrc/components/triggers'
-import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
+import {
+  FeatureFlagComponent,
+  OAuthUserProfile,
+  RiTooltip,
+} from 'uiSrc/components'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
 import InstancesNavigationPopover from '../instance-header/components/instances-navigation-popover'
 import styles from './styles.module.scss'
 
@@ -32,14 +36,14 @@ const RdiInstanceHeader = () => {
 
   return (
     <Row className={styles.container} align="center">
-      <FlexItem style={{ overflow: 'hidden' }}>
+      <FlexItem style={{ overflow: 'hidden' }} grow>
         <div
           className={styles.breadcrumbsContainer}
           data-testid="breadcrumbs-container"
         >
           <div>
-            <EuiToolTip position="bottom" content="My RDI instances">
-              <EuiText
+            <RiTooltip position="bottom" content="My RDI instances">
+              <Text
                 className={styles.breadCrumbLink}
                 aria-label="My RDI instances"
                 data-testid="my-rdi-instances-btn"
@@ -47,14 +51,14 @@ const RdiInstanceHeader = () => {
                 onKeyDown={goHome}
               >
                 RDI instances
-              </EuiText>
-            </EuiToolTip>
+              </Text>
+            </RiTooltip>
           </div>
           <div style={{ flex: 1, overflow: 'hidden' }}>
             <div style={{ maxWidth: '100%' }}>
               <Row align="center">
                 <FlexItem>
-                  <EuiText className={styles.divider}>&#62;</EuiText>
+                  <Text className={styles.divider}>&#62;</Text>
                 </FlexItem>
                 <FlexItem grow style={{ overflow: 'hidden' }}>
                   <InstancesNavigationPopover name={name} />

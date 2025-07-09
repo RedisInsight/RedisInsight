@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiText,
-  EuiLink,
-  EuiButton,
-  EuiLoadingSpinner,
-  EuiToolTip,
-} from '@elastic/eui'
 import { get, throttle } from 'lodash'
 import cx from 'classnames'
 import { monaco as monacoEditor } from 'react-monaco-editor'
@@ -18,7 +11,6 @@ import {
   fetchPipelineStrategies,
   rdiPipelineSelector,
   setChangedFile,
-  setPipeline,
   setPipelineJobs,
 } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
@@ -33,9 +25,16 @@ import {
   yamlToJson,
 } from 'uiSrc/utils'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
-import { KeyboardShortcut } from 'uiSrc/components'
+import { KeyboardShortcut, RiTooltip } from 'uiSrc/components'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { Text } from 'uiSrc/components/base/text'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { Loader } from 'uiSrc/components/base/display'
 import TemplateButton from '../../components/template-button'
 import styles from './styles.module.scss'
 
@@ -180,15 +179,15 @@ const Job = (props: Props) => {
     <>
       <div className={cx('content', { isSidePanelOpen: isPanelOpen })}>
         <div className="rdi__content-header">
-          <EuiText className={cx('rdi__title', 'line-clamp-2')}>{name}</EuiText>
+          <Text className={cx('rdi__title', 'line-clamp-2')}>{name}</Text>
           <div className={styles.actionContainer}>
-            <EuiToolTip
+            <RiTooltip
               position="top"
               className={styles.tooltip}
               content={
                 KEYBOARD_SHORTCUTS?.rdi?.openDedicatedEditor && (
                   <div className={styles.tooltipContent}>
-                    <EuiText size="s">{`${KEYBOARD_SHORTCUTS.rdi.openDedicatedEditor?.description}\u00A0\u00A0`}</EuiText>
+                    <Text size="s">{`${KEYBOARD_SHORTCUTS.rdi.openDedicatedEditor?.description}\u00A0\u00A0`}</Text>
                     <KeyboardShortcut
                       separator={KEYBOARD_SHORTCUTS?._separator}
                       items={KEYBOARD_SHORTCUTS.rdi.openDedicatedEditor.keys}
@@ -198,16 +197,15 @@ const Job = (props: Props) => {
               }
               data-testid="open-dedicated-editor-tooltip"
             >
-              <EuiButton
-                color="secondary"
+              <SecondaryButton
                 size="s"
                 style={{ marginRight: '16px' }}
                 onClick={() => setShouldOpenDedicatedEditor(true)}
                 data-testid="open-dedicated-editor-btn"
               >
                 SQL and JMESPath Editor
-              </EuiButton>
-            </EuiToolTip>
+              </SecondaryButton>
+            </RiTooltip>
             <TemplateButton
               value={value}
               setFieldValue={(template) => {
@@ -222,10 +220,9 @@ const Job = (props: Props) => {
             />
           </div>
         </div>
-        <EuiText className="rdi__text" color="subdued">
+        <Text className="rdi__text" color="subdued">
           {'Create a job per source table to filter, transform, and '}
-          <EuiLink
-            external={false}
+          <Link
             data-testid="rdi-pipeline-transformation-link"
             target="_blank"
             href={getUtmExternalLink(EXTERNAL_LINKS.rdiPipelineTransforms, {
@@ -234,18 +231,18 @@ const Job = (props: Props) => {
             })}
           >
             map data
-          </EuiLink>
+          </Link>
           {' to Redis.'}
-        </EuiText>
+        </Text>
         {loading ? (
           <div
             className={cx('rdi__editorWrapper', 'rdi__loading')}
             data-testid="rdi-job-loading"
           >
-            <EuiText color="subdued" style={{ marginBottom: 12 }}>
+            <Text color="subdued" style={{ marginBottom: 12 }}>
               Loading data...
-            </EuiText>
-            <EuiLoadingSpinner color="secondary" size="l" />
+            </Text>
+            <Loader color="secondary" size="l" />
           </div>
         ) : (
           <MonacoYaml
@@ -271,16 +268,15 @@ const Job = (props: Props) => {
         )}
 
         <div className="rdi__actions">
-          <EuiButton
-            fill
+          <PrimaryButton
             color="secondary"
             size="s"
             onClick={handleDryRunJob}
-            isDisabled={isPanelOpen}
+            disabled={isPanelOpen}
             data-testid="rdi-job-dry-run"
           >
             Dry Run
-          </EuiButton>
+          </PrimaryButton>
         </div>
       </div>
       {isPanelOpen && (

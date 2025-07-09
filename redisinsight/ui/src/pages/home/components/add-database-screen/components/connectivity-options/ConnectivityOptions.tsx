@@ -1,6 +1,7 @@
 import React from 'react'
-import { EuiBadge, EuiButton, EuiTitle, } from '@elastic/eui'
 import cx from 'classnames'
+
+import styled from 'styled-components'
 import { AddDbType } from 'uiSrc/pages/home/constants'
 import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { getUtmExternalLink } from 'uiSrc/utils/links'
@@ -11,8 +12,13 @@ import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'
 import RocketIcon from 'uiSrc/assets/img/oauth/rocket.svg?react'
 
-import { FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
+import { Col, FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
+
+import { Link } from 'uiSrc/components/base/link/Link'
 import { CONNECTIVITY_OPTIONS } from '../../constants'
 
 import styles from './styles.module.scss'
@@ -22,39 +28,73 @@ export interface Props {
   onClose?: () => void
 }
 
+const NewCloudLink = styled(Link)`
+  min-width: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none !important;
+  & * {
+    text-decoration: none !important;
+  }
+  position: relative;
+  width: 100%;
+  height: 84px !important;
+  padding: 0 12px;
+  color: var(--buttonSecondaryTextColor) !important;
+  border: 1px solid ${({ theme }) => theme.semantic.color.border.primary500};
+  border-radius: 5px;
+  & .freeBadge {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+
+    text-transform: uppercase;
+    background-color: var(--euiColorLightestShade);
+    border: 1px solid var(--euiColorPrimary);
+    border-radius: 2px !important;
+  }
+
+  & .btnIcon {
+    margin-bottom: 8px;
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+`
+
 const ConnectivityOptions = (props: Props) => {
   const { onClickOption, onClose } = props
 
   return (
     <>
       <section className={styles.cloudSection}>
-        <EuiTitle size="xs" className={styles.sectionTitle}>
-          <span>Get started with Redis Cloud account</span>
-        </EuiTitle>
+        <Title size="XS" className={styles.sectionTitle}>
+          Get started with Redis Cloud account
+        </Title>
         <Spacer />
         <Grid gap="l" columns={3} responsive>
           <FlexItem>
-            <EuiButton
-              color="secondary"
+            <SecondaryButton
               className={styles.typeBtn}
               onClick={() => onClickOption(AddDbType.cloud)}
               data-testid="discover-cloud-btn"
             >
-              <CloudIcon className={styles.btnIcon} />
-              Add databases
-            </EuiButton>
+              <Col align="center">
+                <CloudIcon className={styles.btnIcon} />
+                Add databases
+              </Col>
+            </SecondaryButton>
           </FlexItem>
           <FeatureFlagComponent name={FeatureFlags.cloudAds}>
             <FlexItem>
               <OAuthSsoHandlerDialog>
                 {(ssoCloudHandlerClick, isSSOEnabled) => (
-                  <EuiButton
-                    color="secondary"
-                    className={styles.typeBtn}
-                    href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
-                      campaign: UTM_CAMPAINGS[OAuthSocialSource.AddDbForm],
-                    })}
-                    target="_blank"
+                  <NewCloudLink
+                    data-testid="create-free-db-btn"
+                    color="primary"
                     onClick={(e: React.MouseEvent) => {
                       ssoCloudHandlerClick(e, {
                         source: OAuthSocialSource.AddDbForm,
@@ -62,14 +102,17 @@ const ConnectivityOptions = (props: Props) => {
                       })
                       isSSOEnabled && onClose?.()
                     }}
-                    data-testid="create-free-db-btn"
+                    href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
+                      campaign: UTM_CAMPAINGS[OAuthSocialSource.AddDbForm],
+                    })}
+                    target="_blank"
                   >
-                    <EuiBadge color="subdued" className={styles.freeBadge}>
-                      Free
-                    </EuiBadge>
-                    <RocketIcon className={cx(styles.btnIcon, styles.rocket)} />
-                    New database
-                  </EuiButton>
+                    <RiBadge className="freeBadge" label="Free" />
+                    <Col align="center">
+                      <RocketIcon className="btnIcon" />
+                      New database
+                    </Col>
+                  </NewCloudLink>
                 )}
               </OAuthSsoHandlerDialog>
             </FlexItem>
@@ -79,14 +122,14 @@ const ConnectivityOptions = (props: Props) => {
       </section>
       <Spacer size="xxl" />
       <section>
-        <EuiTitle size="xs" className={styles.sectionTitle}>
-          <span>More connectivity options</span>
-        </EuiTitle>
+        <Title size="XS" className={styles.sectionTitle}>
+          More connectivity options
+        </Title>
         <Spacer />
         <Grid gap="l" responsive columns={3}>
           {CONNECTIVITY_OPTIONS.map(({ id, type, title, icon }) => (
             <FlexItem key={id}>
-              <EuiButton
+              <SecondaryButton
                 color="secondary"
                 className={cx(styles.typeBtn, styles.small)}
                 onClick={() => onClickOption(type)}
@@ -94,7 +137,7 @@ const ConnectivityOptions = (props: Props) => {
               >
                 {icon?.({ className: styles.btnIcon })}
                 {title}
-              </EuiButton>
+              </SecondaryButton>
             </FlexItem>
           ))}
         </Grid>

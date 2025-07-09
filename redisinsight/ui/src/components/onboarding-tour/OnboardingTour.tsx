@@ -1,12 +1,4 @@
 import React, { useEffect, useState } from 'react'
-
-import {
-  EuiText,
-  EuiTourStep,
-  EuiButtonEmpty,
-  EuiButton,
-  EuiButtonIcon,
-} from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import cx from 'classnames'
 
@@ -15,6 +7,17 @@ import {
   setOnboardNextStep,
   setOnboardPrevStep,
 } from 'uiSrc/slices/app/features'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
+import {
+  EmptyButton,
+  IconButton,
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { ColorText } from 'uiSrc/components/base/text'
+import { TourStep } from 'uiSrc/components/base/display/tour/TourStep'
+import { Col, Row } from 'uiSrc/components/base/layout/flex'
+import { Title } from 'uiSrc/components/base/text/Title'
 import { Props as OnboardingWrapperProps } from './OnboardingTourWrapper'
 
 import styles from './styles.module.scss'
@@ -77,67 +80,61 @@ const OnboardingTour = (props: Props) => {
   }
 
   const Header = (
-    <div className={styles.header}>
+    <Col className={styles.header}>
       {!isLastStep ? (
-        <EuiButtonEmpty
+        <EmptyButton
           onClick={handleSkip}
           className={styles.skipTourBtn}
-          size="xs"
+          size="small"
           data-testid="skip-tour-btn"
         >
           Skip tour
-        </EuiButtonEmpty>
+        </EmptyButton>
       ) : (
-        <EuiButtonIcon
-          iconType="cross"
+        <IconButton
+          icon={CancelSlimIcon}
           className={styles.skipTourBtn}
           onClick={handleSkip}
-          size="xs"
+          size="S"
           aria-label="close-tour"
           data-testid="close-tour-btn"
         />
       )}
-      <div className={styles.title} data-testid="step-title">
+      <Title size="XS" data-testid="step-title">
         {title}
-      </div>
-    </div>
+      </Title>
+    </Col>
   )
 
   const StepContent = (
-    <>
-      <div className={styles.content}>
-        <EuiText>
-          <div data-testid="step-content">{content}</div>
-        </EuiText>
+    <Col>
+      <div className={styles.content} data-testid="step-content">
+        {content}
       </div>
-      <div className={styles.footer}>
-        <EuiText color="subdued" className={styles.stepCount}>
+      <Row className={styles.footer} align="center" justify="between">
+        <ColorText color="subdued" className={styles.stepCount}>
           {currentStep} of {totalSteps}
-        </EuiText>
-        <div className={styles.backNext}>
+        </ColorText>
+        <Row grow={false} gap="m">
           {currentStep > 1 && (
-            <EuiButton
+            <SecondaryButton
               onClick={handleClickBack}
-              color="secondary"
               size="s"
               data-testid="back-btn"
             >
               Back
-            </EuiButton>
+            </SecondaryButton>
           )}
-          <EuiButton
+          <PrimaryButton
             onClick={handleClickNext}
-            color="secondary"
             size="s"
-            fill
             data-testid="next-btn"
-            style={{ marginLeft: 8 }}
           >
             {!isLastStep ? 'Next' : 'Take me back'}
-          </EuiButton>
-        </div>
-      </div>
-    </>
+          </PrimaryButton>
+        </Row>
+      </Row>
+    </Col>
   )
 
   return (
@@ -148,28 +145,21 @@ const OnboardingTour = (props: Props) => {
       })}
       role="presentation"
     >
-      <EuiTourStep
+      <TourStep
         content={StepContent}
-        decoration="none"
-        isStepOpen={isOpen}
+        open={isOpen}
         minWidth={300}
-        onFinish={() => setIsOpen(false)}
-        step={step}
-        stepsTotal={totalSteps}
-        title=""
-        subtitle={Header}
-        anchorPosition={anchorPosition}
-        className={styles.popover}
-        anchorClassName={styles.popoverAnchor}
-        panelClassName={cx(styles.popoverPanel, panelClassName, {
+        maxWidth={360}
+        title={Header}
+        placement={anchorPosition}
+        className={cx(styles.popoverPanel, panelClassName, {
           [styles.lastStep]: isLastStep,
         })}
-        zIndex={9999}
         offset={5}
         data-testid="onboarding-tour"
       >
         {children}
-      </EuiTourStep>
+      </TourStep>
     </div>
   )
 }

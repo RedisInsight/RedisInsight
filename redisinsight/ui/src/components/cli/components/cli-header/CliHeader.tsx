@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiButtonIcon, EuiText, EuiToolTip, EuiIcon } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 
 import {
   toggleCli,
@@ -16,6 +16,8 @@ import { OnboardingTour } from 'uiSrc/components'
 import { ONBOARDING_FEATURES } from 'uiSrc/components/onboarding-features'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
+import { WindowControlGroup } from 'uiSrc/components/base/shared/WindowControlGroup'
 import styles from './styles.module.scss'
 
 const CliHeader = () => {
@@ -62,53 +64,22 @@ const CliHeader = () => {
   return (
     <div className={styles.container} id="cli-header">
       <Row justify="between" align="center" style={{ height: '100%' }}>
-        <FlexItem className={styles.title}>
+        <FlexItem className={styles.title} direction="row">
           <EuiIcon type="console" size="m" />
           <OnboardingTour
             options={ONBOARDING_FEATURES.BROWSER_CLI}
             anchorPosition="upLeft"
             panelClassName={styles.cliOnboardPanel}
           >
-            <EuiText>CLI</EuiText>
+            <Text>CLI</Text>
           </OnboardingTour>
         </FlexItem>
         <FlexItem grow />
-        <FlexItem grow={false}>
-          <EuiToolTip
-            content="Minimize"
-            position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
-          >
-            <EuiButtonIcon
-              iconType="minus"
-              color="primary"
-              id="hide-cli"
-              aria-label="hide cli"
-              data-testid="hide-cli"
-              className={styles.icon}
-              onClick={handleHideCli}
-            />
-          </EuiToolTip>
-        </FlexItem>
-        <FlexItem>
-          <EuiToolTip
-            content="Close"
-            position="top"
-            display="inlineBlock"
-            anchorClassName="flex-row"
-          >
-            <EuiButtonIcon
-              iconType="cross"
-              color="primary"
-              id="close-cli"
-              aria-label="close cli"
-              data-testid="close-cli"
-              className={styles.icon}
-              onClick={handleCloseCli}
-            />
-          </EuiToolTip>
-        </FlexItem>
+        <WindowControlGroup
+          onClose={handleCloseCli}
+          onHide={handleHideCli}
+          id="cli"
+        />
       </Row>
     </div>
   )

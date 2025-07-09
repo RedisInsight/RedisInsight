@@ -1,9 +1,6 @@
 import {
   Criteria,
-  EuiButtonIcon,
   EuiTableFieldDataColumnType,
-  EuiText,
-  EuiToolTip,
   PropertySort,
 } from '@elastic/eui'
 import React, { useEffect, useRef, useState } from 'react'
@@ -25,6 +22,10 @@ import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
 import { Nullable, formatLongName, lastConnectionFormat } from 'uiSrc/utils'
 
 import { setAppContextConnectedRdiInstanceId } from 'uiSrc/slices/app/context'
+import { Text } from 'uiSrc/components/base/text'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon, EditIcon } from 'uiSrc/components/base/icons'
+import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -158,12 +159,12 @@ const RdiInstancesListWrapper = ({
       sortable: ({ name }) => name?.toLowerCase(),
       width: '30%',
       render: (_, { name, id }) => (
-        <EuiText
+        <Text
           data-testid={`rdi-alias-${id}`}
           onClick={() => handleCheckConnectToInstance(id)}
         >
           {name}
-        </EuiText>
+        </Text>
       ),
     },
     {
@@ -176,19 +177,16 @@ const RdiInstancesListWrapper = ({
       sortable: ({ url }) => url?.toLowerCase(),
       render: (name: string, { id }) => (
         <div className="url" data-testid="url">
-          <EuiText className="copyUrlText">{name}</EuiText>
-          <EuiToolTip
-            position="right"
-            content="Copy"
-            anchorClassName="copyUrlTooltip"
-          >
-            <EuiButtonIcon
-              iconType="copy"
+          <Text className="copyUrlText">{name}</Text>
+          <RiTooltip position="right" content="Copy">
+            <IconButton
+              size="L"
+              icon={CopyIcon}
               aria-label="Copy URL"
               className="copyUrlBtn"
               onClick={() => handleCopy(name, id)}
             />
-          </EuiToolTip>
+          </RiTooltip>
         </div>
       ),
     },
@@ -220,8 +218,8 @@ const RdiInstancesListWrapper = ({
       name: '',
       render: (_act: any, instance: RdiInstance) => (
         <>
-          <EuiButtonIcon
-            iconType="pencil"
+          <IconButton
+            icon={EditIcon}
             className="editInstanceBtn"
             aria-label="Edit instance"
             data-testid={`edit-instance-${instance.id}`}

@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiText } from '@elastic/eui'
 import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { Nullable } from 'uiSrc/utils'
 
 import { Row } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
 import VoteOption from './components/vote-option'
 import styles from './styles.module.scss'
 
@@ -35,9 +35,9 @@ const RecommendationVoting = ({
       gap={live ? 'none' : 'l'}
       data-testid="recommendation-voting"
     >
-      <EuiText size="m" className={cx({ [styles.highlightText]: live })}>
+      <Text size="m" className={cx({ [styles.highlightText]: live })}>
         Is this useful?
-      </EuiText>
+      </Text>
       <div className="voteContent">
         {Object.values(Vote).map((option) => (
           <VoteOption

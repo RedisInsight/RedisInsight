@@ -1,16 +1,11 @@
 import {
-  EuiButton,
   EuiFilePicker,
   EuiIcon,
-  EuiLoadingSpinner,
   EuiModal,
   EuiModalBody,
   EuiModalFooter,
   EuiModalHeader,
   EuiModalHeaderTitle,
-  EuiText,
-  EuiTextColor,
-  EuiTitle,
 } from '@elastic/eui'
 import cx from 'classnames'
 import React from 'react'
@@ -19,6 +14,13 @@ import { Nullable } from 'uiSrc/utils'
 
 import { UploadWarning } from 'uiSrc/components'
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { Title } from 'uiSrc/components/base/text/Title'
+import { ColorText, Text } from 'uiSrc/components/base/text'
+import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 export interface Props<T> {
@@ -69,11 +71,11 @@ const ImportFileModal = <T,>({
     >
       <EuiModalHeader>
         <EuiModalHeaderTitle>
-          <EuiTitle size="xs" data-testid="import-file-modal-title">
+          <Title size="XS" data-testid="import-file-modal-title">
             <span>
               {!data && !error ? title : resultsTitle || 'Import Results'}
             </span>
-          </EuiTitle>
+          </Title>
         </EuiModalHeaderTitle>
       </EuiModalHeader>
 
@@ -95,13 +97,13 @@ const ImportFileModal = <T,>({
                   aria-label="Select or drag and drop file"
                 />
                 {isInvalid && (
-                  <EuiTextColor
+                  <ColorText
                     color="danger"
                     className={styles.errorFileMsg}
                     data-testid="input-file-error-msg"
                   >
                     {invalidMessage}
-                  </EuiTextColor>
+                  </ColorText>
                 )}
               </>
             )}
@@ -110,10 +112,10 @@ const ImportFileModal = <T,>({
                 className={styles.loading}
                 data-testid="file-loading-indicator"
               >
-                <EuiLoadingSpinner size="xl" />
-                <EuiText color="subdued" style={{ marginTop: 12 }}>
+                <Loader size="xl" />
+                <Text color="subdued" style={{ marginTop: 12 }}>
                   Uploading...
-                </EuiText>
+                </Text>
               </div>
             )}
             {error && (
@@ -123,10 +125,10 @@ const ImportFileModal = <T,>({
                   size="xxl"
                   color="danger"
                 />
-                <EuiText color="subdued" style={{ marginTop: 16 }}>
+                <Text color="subdued" style={{ marginTop: 16 }}>
                   {errorMessage}
-                </EuiText>
-                <EuiText color="subdued">{error}</EuiText>
+                </Text>
+                <Text color="subdued">{error}</Text>
               </div>
             )}
           </FlexItem>
@@ -147,36 +149,25 @@ const ImportFileModal = <T,>({
 
       {data && (
         <EuiModalFooter>
-          <EuiButton
-            color="secondary"
-            onClick={onClose}
-            fill
-            data-testid="ok-btn"
-          >
+          <PrimaryButton onClick={onClose} data-testid="ok-btn">
             Ok
-          </EuiButton>
+          </PrimaryButton>
         </EuiModalFooter>
       )}
 
       {isShowForm && (
         <EuiModalFooter>
-          <EuiButton
-            color="secondary"
-            onClick={onClose}
-            data-testid="cancel-btn"
-          >
+          <SecondaryButton onClick={onClose} data-testid="cancel-btn">
             Cancel
-          </EuiButton>
+          </SecondaryButton>
 
-          <EuiButton
-            color="secondary"
+          <PrimaryButton
             onClick={onSubmit}
-            fill
-            isDisabled={isSubmitDisabled}
+            disabled={isSubmitDisabled}
             data-testid="submit-btn"
           >
             {submitBtnText || 'Import'}
-          </EuiButton>
+          </PrimaryButton>
         </EuiModalFooter>
       )}
     </EuiModal>

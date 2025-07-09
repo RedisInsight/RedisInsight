@@ -1,14 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiButton,
-  EuiFilePicker,
-  EuiIcon,
-  EuiPopover,
-  EuiText,
-  EuiTextColor,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiFilePicker, EuiIcon, EuiPopover } from '@elastic/eui'
 
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
@@ -28,8 +20,14 @@ import BulkActionSummary from 'uiSrc/pages/browser/components/bulk-actions/BulkA
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { isProcessedBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
-import { UploadWarning } from 'uiSrc/components'
+import { RiTooltip, UploadWarning } from 'uiSrc/components'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
+import { RefreshIcon } from 'uiSrc/components/base/icons'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -106,15 +104,15 @@ const BulkUpload = (props: Props) => {
     <div className={styles.container} data-testid="bulk-upload-container">
       {!isCompleted ? (
         <div className={styles.content}>
-          <EuiText color="subdued">
+          <Text color="subdued">
             Upload the text file with the list of Redis commands
-            <EuiToolTip
+            <RiTooltip
               content={
                 <>
-                  <EuiText size="xs">SET Key0 Value0</EuiText>
-                  <EuiText size="xs">SET Key1 Value1</EuiText>
-                  <EuiText size="xs">...</EuiText>
-                  <EuiText size="xs">SET KeyN ValueN</EuiText>
+                  <Text size="xs">SET Key0 Value0</Text>
+                  <Text size="xs">SET Key1 Value1</Text>
+                  <Text size="xs">...</Text>
+                  <Text size="xs">SET KeyN ValueN</Text>
                 </>
               }
               data-testid="bulk-upload-tooltip-example"
@@ -123,8 +121,8 @@ const BulkUpload = (props: Props) => {
                 type="iInCircle"
                 style={{ marginLeft: 4, marginBottom: 2 }}
               />
-            </EuiToolTip>
-          </EuiText>
+            </RiTooltip>
+          </Text>
           <Spacer size="l" />
           <EuiFilePicker
             id="bulk-upload-file-input"
@@ -137,13 +135,13 @@ const BulkUpload = (props: Props) => {
             aria-label="Select or drag and drop file"
           />
           {isInvalid && (
-            <EuiTextColor
+            <ColorText
               color="danger"
               className={styles.errorFileMsg}
               data-testid="input-file-error-msg"
             >
               File should not exceed {MAX_MB_FILE} MB
-            </EuiTextColor>
+            </ColorText>
           )}
           <UploadWarning />
           <Spacer size="l" />
@@ -171,14 +169,13 @@ const BulkUpload = (props: Props) => {
         </BulkActionsInfo>
       )}
       <div className={styles.footer}>
-        <EuiButton
-          color="secondary"
+        <SecondaryButton
           onClick={handleClickCancel}
           className={styles.cancelBtn}
           data-testid="bulk-action-cancel-btn"
         >
           {isProcessedBulkAction(status) ? 'Close' : 'Cancel'}
-        </EuiButton>
+        </SecondaryButton>
         {!isCompleted ? (
           <EuiPopover
             id="bulk-upload-warning-popover"
@@ -188,19 +185,17 @@ const BulkUpload = (props: Props) => {
             panelClassName={styles.panelPopover}
             panelPaddingSize="none"
             button={
-              <EuiButton
-                fill
-                color="secondary"
+              <PrimaryButton
                 onClick={handleUploadWarning}
                 disabled={isSubmitDisabled || loading}
-                isLoading={loading}
+                loading={loading}
                 data-testid="bulk-action-warning-btn"
               >
                 Upload
-              </EuiButton>
+              </PrimaryButton>
             }
           >
-            <EuiText
+            <Text
               color="subdued"
               className={styles.containerPopover}
               data-testid="bulk-action-tooltip"
@@ -213,28 +208,25 @@ const BulkUpload = (props: Props) => {
                 All commands from the file will be executed against your
                 database.
               </div>
-              <EuiButton
-                fill
+              <PrimaryButton
                 size="s"
-                color="secondary"
                 className={styles.uploadApproveBtn}
                 onClick={handleUpload}
                 data-testid="bulk-action-apply-btn"
               >
                 Upload
-              </EuiButton>
-            </EuiText>
+              </PrimaryButton>
+            </Text>
           </EuiPopover>
         ) : (
-          <EuiButton
-            fill
-            iconType="refresh"
+          <PrimaryButton
+            icon={RefreshIcon}
             color="secondary"
             onClick={onStartAgain}
             data-testid="bulk-action-start-new-btn"
           >
             Start New
-          </EuiButton>
+          </PrimaryButton>
         )}
       </div>
     </div>

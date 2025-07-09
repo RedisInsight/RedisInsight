@@ -6,19 +6,17 @@ import React, {
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  EuiButton,
-  EuiFieldText,
-  EuiForm,
-  EuiFormRow,
-  EuiPanel,
-  EuiTextColor,
-} from '@elastic/eui'
+import { EuiFieldText, EuiForm } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addSetKey } from 'uiSrc/slices/browser/keys'
 
 import AddMultipleFields from 'uiSrc/pages/browser/components/add-multiple-fields'
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from 'uiSrc/components/base/forms/buttons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
 
 import { INITIAL_SET_MEMBER_STATE, ISetMemberState } from './interfaces'
@@ -140,7 +138,7 @@ const AddKeySet = (props: Props) => {
         {(item, index) => (
           <Row align="center">
             <FlexItem grow>
-              <EuiFormRow fullWidth>
+              <FormField>
                 <EuiFieldText
                   fullWidth
                   name={`member-${item.id}`}
@@ -156,48 +154,38 @@ const AddKeySet = (props: Props) => {
                   disabled={loading}
                   data-testid="member-name"
                 />
-              </EuiFormRow>
+              </FormField>
             </FlexItem>
           </Row>
         )}
       </AddMultipleFields>
-      <EuiButton type="submit" fill style={{ display: 'none' }}>
+      <PrimaryButton type="submit" style={{ display: 'none' }}>
         Submit
-      </EuiButton>
+      </PrimaryButton>
       <AddKeyFooter>
-        <EuiPanel
-          color="transparent"
-          className="flexItemNoFullWidth"
-          hasShadow={false}
-          borderRadius="none"
-          style={{ border: 'none' }}
-        >
-          <Row justify="end">
+        <>
+          <Row justify="end" style={{ padding: 18 }}>
             <FlexItem>
-              <EuiButton
-                color="secondary"
+              <SecondaryButton
                 onClick={() => onCancel(true)}
                 className="btn-cancel btn-back"
               >
-                <EuiTextColor>Cancel</EuiTextColor>
-              </EuiButton>
+                Cancel
+              </SecondaryButton>
             </FlexItem>
             <FlexItem>
-              <EuiButton
-                fill
-                size="m"
-                color="secondary"
+              <PrimaryButton
                 className="btn-add"
-                isLoading={loading}
+                loading={loading}
                 onClick={submitData}
                 disabled={!isFormValid || loading}
                 data-testid="add-key-set-btn"
               >
                 Add Key
-              </EuiButton>
+              </PrimaryButton>
             </FlexItem>
           </Row>
-        </EuiPanel>
+        </>
       </AddKeyFooter>
     </EuiForm>
   )

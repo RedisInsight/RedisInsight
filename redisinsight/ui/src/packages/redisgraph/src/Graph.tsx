@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react'
 import * as d3 from 'd3'
 import { executeRedisCommand, formatRedisReply } from 'redisinsight-plugin-sdk'
-import { EuiButtonIcon, EuiToolTip, EuiSwitch } from '@elastic/eui'
 import Graphd3, { IGraphD3 } from './graphd3'
 import { responseParser } from './parser'
 import {
@@ -20,6 +19,11 @@ import {
   NODE_COLORS,
   NODE_COLORS_DARK,
 } from './constants'
+import { IconButton } from '../../../components/base/forms/buttons'
+import { CancelSlimIcon } from '../../../components/base/icons'
+import { SwitchInput } from 'uiSrc/components/base/inputs'
+import { RiTooltip } from 'uiSrc/components'
+import { TOOLTIP_DELAY_LONG } from 'uiSrc/constants'
 
 enum EntityType {
   Node = 'Node',
@@ -404,20 +408,20 @@ export default function Graph(props: {
   return (
     <div className="core-container" data-testid="query-graph-container">
       <div className="automatic-edges-switch">
-        <EuiToolTip
+        <RiTooltip
           position="bottom"
-          delay="long"
+          delay={TOOLTIP_DELAY_LONG}
           content="Toggle visibility of automatically fetched relationships"
         >
-          <EuiSwitch
-            label="All relationships"
+          <SwitchInput
+            title="All relationships"
             checked={showAutomaticEdges}
-            onChange={() => {
+            onCheckedChange={() => {
               container.toggleShowAutomaticEdges()
               setShowAutomaticEdges(!showAutomaticEdges)
             }}
           />
-        </EuiToolTip>
+        </RiTooltip>
       </div>
       <div className="d3-info">
         <div className="graph-legends">
@@ -478,11 +482,9 @@ export default function Graph(props: {
                   {selectedEntity.property}
                 </div>
               )}
-              <EuiButtonIcon
-                color="text"
+              <IconButton
                 onClick={() => setSelectedEntity(null)}
-                display="empty"
-                iconType="cross"
+                icon={CancelSlimIcon}
                 aria-label="Close"
               />
             </div>
@@ -531,14 +533,13 @@ export default function Graph(props: {
             icon: 'editorItemAlignCenter',
           },
         ].map((item) => (
-          <EuiToolTip position="left" content={item.name}>
-            <EuiButtonIcon
-              color="text"
+          <RiTooltip position="left" content={item.name}>
+            <IconButton
               onClick={item.onClick}
-              iconType={item.icon}
+              icon={item.icon}
               aria-label={item.name}
             />
-          </EuiToolTip>
+          </RiTooltip>
         ))}
       </div>
     </div>

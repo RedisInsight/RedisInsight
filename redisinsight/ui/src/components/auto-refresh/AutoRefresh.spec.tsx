@@ -1,6 +1,12 @@
 import React from 'react'
 import { instance, mock } from 'ts-mockito'
-import { fireEvent, screen, render, act } from 'uiSrc/utils/test-utils'
+import {
+  userEvent,
+  fireEvent,
+  screen,
+  render,
+  act,
+} from 'uiSrc/utils/test-utils'
 import { localStorageService } from 'uiSrc/services'
 import AutoRefresh, { Props } from './AutoRefresh'
 import { DEFAULT_REFRESH_RATE } from './utils'
@@ -72,7 +78,7 @@ describe('AutoRefresh', () => {
     render(<AutoRefresh {...instance(mockedProps)} displayText />)
 
     fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
-    fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+    await userEvent.click(screen.getByTestId('auto-refresh-switch'))
 
     expect(screen.getByTestId('refresh-message-label')).toHaveTextContent(
       /Auto refresh:/i,
@@ -153,7 +159,7 @@ describe('AutoRefresh', () => {
       render(<AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} />)
 
       fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
-      fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+      await userEvent.click(screen.getByTestId('auto-refresh-switch'))
       fireEvent.click(screen.getByTestId('refresh-rate'))
 
       fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
@@ -259,7 +265,7 @@ describe('AutoRefresh', () => {
     )
 
     fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
-    fireEvent.click(screen.getByTestId('auto-refresh-switch'))
+    await userEvent.click(screen.getByTestId('auto-refresh-switch'))
     fireEvent.click(screen.getByTestId('refresh-rate'))
     fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {
       target: { value: '1' },
@@ -310,15 +316,15 @@ describe('AutoRefresh', () => {
     render(
       <AutoRefresh
         {...instance(mockedProps)}
-        disabled={true}
+        disabled
         disabledRefreshButtonMessage={tooltipText}
       />,
     )
 
-    fireEvent.mouseOver(screen.getByTestId('refresh-btn'))
+    fireEvent.focus(screen.getByTestId('refresh-btn'))
     await screen.findByTestId('refresh-tooltip')
     expect(screen.getByTestId('refresh-tooltip')).toHaveTextContent(
-      new RegExp(`^${tooltipText}$`),
+      new RegExp(`^${tooltipText}`),
     )
   })
 })

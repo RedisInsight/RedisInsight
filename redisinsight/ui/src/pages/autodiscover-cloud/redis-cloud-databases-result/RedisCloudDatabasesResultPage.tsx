@@ -1,11 +1,4 @@
-import {
-  EuiBasicTableColumn,
-  EuiButtonIcon,
-  EuiIcon,
-  EuiText,
-  EuiTextColor,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -20,7 +13,6 @@ import {
   InstanceRedisCloud,
   AddRedisDatabaseStatus,
   LoadedCloud,
-  RedisCloudSubscriptionType,
   RedisCloudSubscriptionTypeText,
 } from 'uiSrc/slices/interfaces'
 import {
@@ -29,8 +21,16 @@ import {
   replaceSpaces,
   setTitle,
 } from 'uiSrc/utils'
-import { DatabaseListModules, DatabaseListOptions } from 'uiSrc/components'
+import {
+  DatabaseListModules,
+  DatabaseListOptions,
+  RiTooltip,
+} from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { CopyIcon } from 'uiSrc/components/base/icons'
+import { ColorText, Text } from 'uiSrc/components/base/text'
+import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import RedisCloudDatabasesResult from './RedisCloudDatabasesResult'
 
 import styles from './styles.module.scss'
@@ -64,123 +64,112 @@ const RedisCloudDatabasesResultPage = () => {
     navigator.clipboard.writeText(text)
   }
 
-  const columns: EuiBasicTableColumn<InstanceRedisCloud>[] = [
+  const columns: ColumnDefinition<InstanceRedisCloud>[] = [
     {
-      field: 'name',
-      className: 'column_name',
-      name: 'Database',
-      dataType: 'auto',
-      truncateText: true,
-      sortable: true,
-      width: '195px',
-      render: function InstanceCell(name: string = '') {
+      header: 'Database',
+      id: 'name',
+      accessorKey: 'name',
+      enableSorting: true,
+      cell: function InstanceCell({
+        row: {
+          original: { name },
+        },
+      }) {
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
           <div role="presentation" data-testid={`db_name_${name}`}>
-            <EuiToolTip
+            <RiTooltip
               position="bottom"
               title="Database"
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
-              <EuiText>{cellContent}</EuiText>
-            </EuiToolTip>
+              <Text>{cellContent}</Text>
+            </RiTooltip>
           </div>
         )
       },
     },
     {
-      field: 'subscriptionId',
-      className: 'column_subscriptionId',
-      name: 'Subscription ID',
-      dataType: 'string',
-      sortable: true,
-      width: '170px',
-      truncateText: true,
+      header: 'Subscription ID',
+      id: 'subscriptionId',
+      accessorKey: 'subscriptionId',
+      enableSorting: true,
     },
     {
-      field: 'subscriptionName',
-      className: 'column_subscriptionName',
-      name: 'Subscription',
-      dataType: 'string',
-      sortable: true,
-      width: '300px',
-      truncateText: true,
-      render: function SubscriptionCell(name: string = '') {
+      header: 'Subscription',
+      id: 'subscriptionName',
+      accessorKey: 'subscriptionName',
+      enableSorting: true,
+      cell: function SubscriptionCell({
+        row: {
+          original: { subscriptionName: name },
+        },
+      }) {
         const cellContent = replaceSpaces(name.substring(0, 200))
         return (
           <div role="presentation">
-            <EuiToolTip
+            <RiTooltip
               position="bottom"
               title="Subscription"
               className={styles.tooltipColumnName}
               content={formatLongName(name)}
             >
-              <EuiText>{cellContent}</EuiText>
-            </EuiToolTip>
+              <Text>{cellContent}</Text>
+            </RiTooltip>
           </div>
         )
       },
     },
     {
-      field: 'subscriptionType',
-      className: 'column_subscriptionType',
-      name: 'Type',
-      width: '95px',
-      dataType: 'string',
-      sortable: true,
-      truncateText: true,
-      render: (type: RedisCloudSubscriptionType) =>
-        RedisCloudSubscriptionTypeText[type] ?? '-',
+      header: 'Type',
+      id: 'subscriptionType',
+      accessorKey: 'subscriptionType',
+      enableSorting: true,
+      cell: ({
+        row: {
+          original: { subscriptionType },
+        },
+      }) => RedisCloudSubscriptionTypeText[subscriptionType!] ?? '-',
     },
     {
-      field: 'status',
-      className: 'column_status',
-      name: 'Status',
-      dataType: 'string',
-      sortable: true,
-      width: '95px',
-      truncateText: true,
-      hideForMobile: true,
+      header: 'Status',
+      id: 'status',
+      accessorKey: 'status',
+      enableSorting: true,
     },
     {
-      field: 'publicEndpoint',
-      className: 'column_publicEndpoint',
-      name: 'Endpoint',
-      width: '310px',
-      dataType: 'auto',
-      truncateText: true,
-      sortable: true,
-      render: function PublicEndpoint(publicEndpoint: string) {
+      header: 'Endpoint',
+      id: 'publicEndpoint',
+      accessorKey: 'publicEndpoint',
+      enableSorting: true,
+      cell: function PublicEndpoint({
+        row: {
+          original: { publicEndpoint },
+        },
+      }) {
         const text = publicEndpoint
         return (
           <div className="public_endpoint">
-            <EuiText className="copyPublicEndpointText">{text}</EuiText>
-            <EuiToolTip
-              position="right"
-              content="Copy"
-              anchorClassName="copyPublicEndpointTooltip"
-            >
-              <EuiButtonIcon
-                iconType="copy"
+            <Text className="copyPublicEndpointText">{text}</Text>
+            <RiTooltip position="right" content="Copy">
+              <IconButton
+                icon={CopyIcon}
                 aria-label="Copy public endpoint"
                 className="copyPublicEndpointBtn"
                 onClick={() => handleCopy(text)}
               />
-            </EuiToolTip>
+            </RiTooltip>
           </div>
         )
       },
     },
     {
-      field: 'modules',
-      className: 'column_modules',
-      name: 'Capabilities',
-      dataType: 'auto',
-      align: 'left',
-      width: '200px',
-      sortable: true,
-      render: function Modules(modules: any[], instance: InstanceRedisCloud) {
+      header: 'Capabilities',
+      id: 'modules',
+      accessorKey: 'modules',
+      enableSorting: true,
+      cell: function Modules({ row: { original: instance } }) {
         return (
           <DatabaseListModules
             modules={instance.modules?.map((name) => ({ name }))}
@@ -189,14 +178,11 @@ const RedisCloudDatabasesResultPage = () => {
       },
     },
     {
-      field: 'options',
-      className: 'column_options',
-      name: 'Options',
-      dataType: 'auto',
-      align: 'left',
-      width: '180px',
-      sortable: true,
-      render: function Opitions(opts: any[], instance: InstanceRedisCloud) {
+      header: 'Options',
+      id: 'options',
+      accessorKey: 'options',
+      enableSorting: true,
+      cell: function Opitions({ row: { original: instance } }) {
         const options = parseInstanceOptionsCloud(
           instance.databaseId,
           instancesForOptions,
@@ -205,38 +191,36 @@ const RedisCloudDatabasesResultPage = () => {
       },
     },
     {
-      field: 'messageAdded',
-      className: 'column_message',
-      name: 'Result',
-      dataType: 'string',
-      align: 'left',
-      width: '110px',
-      sortable: true,
-      render: function Message(
-        messageAdded: string,
-        { statusAdded }: InstanceRedisCloud,
-      ) {
+      header: 'Result',
+      id: 'messageAdded',
+      accessorKey: 'messageAdded',
+      enableSorting: true,
+      cell: function Message({
+        row: {
+          original: { statusAdded, messageAdded },
+        },
+      }) {
         return (
           <>
             {statusAdded === AddRedisDatabaseStatus.Success ? (
-              <EuiText>{messageAdded}</EuiText>
+              <Text>{messageAdded}</Text>
             ) : (
-              <EuiToolTip position="left" title="Error" content={messageAdded}>
+              <RiTooltip position="left" title="Error" content={messageAdded}>
                 <Row align="center" gap="s">
                   <FlexItem>
                     <EuiIcon type="alert" color="danger" />
                   </FlexItem>
 
                   <FlexItem>
-                    <EuiTextColor
+                    <ColorText
                       color="danger"
                       className="flex-row euiTextAlign--center"
                     >
                       Error
-                    </EuiTextColor>
+                    </ColorText>
                   </FlexItem>
                 </Row>
-              </EuiToolTip>
+              </RiTooltip>
             )}
           </>
         )

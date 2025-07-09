@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
-import { EuiButtonIcon, EuiText, EuiToolTip } from '@elastic/eui'
 import cx from 'classnames'
+
+import { RiTooltip } from 'uiSrc/components'
 import { StopPropagation } from 'uiSrc/components/virtual-table'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 
+import { Text } from 'uiSrc/components/base/text'
+import { EditIcon } from 'uiSrc/components/base/icons'
+import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -47,25 +51,23 @@ const EditableInput = (props: Props) => {
         onMouseLeave={() => setIsHovering(false)}
         data-testid={`${testIdPrefix}_content-value-${field}`}
       >
-        <EuiText
+        <Text
           color="subdued"
           size="s"
           style={{ maxWidth: '100%', whiteSpace: 'break-spaces' }}
         >
           <div style={{ display: 'flex' }}>{children}</div>
-        </EuiText>
+        </Text>
         {isHovering && (
-          <EuiToolTip
+          <RiTooltip
             content={editToolTipContent}
-            anchorClassName={styles.editBtnAnchor}
             data-testid={`${testIdPrefix}_edit-tooltip-${field}`}
           >
-            <EuiButtonIcon
-              iconType="pencil"
+            <IconButton
+              icon={EditIcon}
               aria-label="Edit field"
               className={cx('editFieldBtn', styles.editBtn)}
-              color="primary"
-              isDisabled={isEditDisabled}
+              disabled={isEditDisabled}
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation()
                 onEdit?.(true)
@@ -73,7 +75,7 @@ const EditableInput = (props: Props) => {
               }}
               data-testid={`${testIdPrefix}_edit-btn-${field}`}
             />
-          </EuiToolTip>
+          </RiTooltip>
         )}
       </div>
     )
@@ -89,7 +91,7 @@ const EditableInput = (props: Props) => {
           placeholder={placeholder}
           fieldName={field}
           expandable
-          iconSize="m"
+          iconSize="M"
           onDecline={(event) => {
             onDecline(event)
             onEdit?.(false)

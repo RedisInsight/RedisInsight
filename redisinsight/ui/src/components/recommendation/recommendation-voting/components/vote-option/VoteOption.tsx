@@ -1,15 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import {
-  EuiButton,
-  EuiButtonIcon,
-  EuiText,
-  EuiIcon,
-  EuiLink,
-  EuiPopover,
-  EuiToolTip,
-} from '@elastic/eui'
+import { EuiIcon, EuiPopover } from '@elastic/eui'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { putRecommendationVote } from 'uiSrc/slices/analytics/dbAnalysis'
@@ -24,6 +16,11 @@ import PetardIcon from 'uiSrc/assets/img/icons/petard.svg?react'
 import GithubSVG from 'uiSrc/assets/img/icons/github-white.svg?react'
 
 import { Col, FlexItem, Row } from 'uiSrc/components/base/layout/flex'
+import { Text } from 'uiSrc/components/base/text'
+import { CancelSlimIcon } from 'uiSrc/components/base/icons'
+import { IconButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
+import { Link } from 'uiSrc/components/base/link/Link'
+import { RiTooltip } from 'uiSrc/components'
 import { getVotedText, voteTooltip, iconType } from './utils'
 import styles from './styles.module.scss'
 
@@ -102,22 +99,22 @@ const VoteOption = (props: Props) => {
       isOpen={popover === voteOption}
       closePopover={() => setPopover('')}
       anchorClassName={styles.popoverAnchor}
-      panelClassName={cx('euiToolTip', 'popoverLikeTooltip', styles.popover)}
+      panelClassName={cx('popoverLikeTooltip', styles.popover)}
       button={
-        <EuiToolTip
+        <RiTooltip
           content={getTooltipContent(voteOption)}
           position="bottom"
           data-testid={`${voteOption}-vote-tooltip`}
         >
-          <EuiButtonIcon
+          <IconButton
             disabled={!isAnalyticsEnable}
-            iconType={iconType[voteOption] ?? 'default'}
+            icon={iconType[voteOption] ?? 'default'}
             className={cx('vote__btn', { selected: vote === voteOption })}
             aria-label="vote useful"
             data-testid={`${voteOption}-vote-btn`}
             onClick={() => handleClick(name)}
           />
-        </EuiToolTip>
+        </RiTooltip>
       }
     >
       <div
@@ -132,18 +129,17 @@ const VoteOption = (props: Props) => {
               </FlexItem>
               <FlexItem grow>
                 <div>
-                  <EuiText className={styles.text} data-testid="common-text">
+                  <Text className={styles.text} data-testid="common-text">
                     Thank you for the feedback.
-                  </EuiText>
-                  <EuiText className={styles.text} data-testid="custom-text">
+                  </Text>
+                  <Text className={styles.text} data-testid="custom-text">
                     {getVotedText(voteOption)}
-                  </EuiText>
+                  </Text>
                 </div>
               </FlexItem>
               <FlexItem>
-                <EuiButtonIcon
-                  iconType="cross"
-                  color="primary"
+                <IconButton
+                  icon={CancelSlimIcon}
                   id="close-voting-popover"
                   aria-label="close popover"
                   data-testid="close-popover"
@@ -154,16 +150,13 @@ const VoteOption = (props: Props) => {
             </Row>
           </FlexItem>
           <FlexItem grow>
-            <EuiButton
+            <PrimaryButton
               aria-label="recommendation feedback"
-              fill
               data-testid="recommendation-feedback-btn"
               className={styles.feedbackBtn}
-              color="secondary"
               size="s"
             >
-              <EuiLink
-                external={false}
+              <Link
                 className={styles.link}
                 href={EXTERNAL_LINKS.recommendationFeedback}
                 target="_blank"
@@ -176,8 +169,8 @@ const VoteOption = (props: Props) => {
                   data-testid="github-repo-icon"
                 />
                 To Github
-              </EuiLink>
-            </EuiButton>
+              </Link>
+            </PrimaryButton>
           </FlexItem>
         </Col>
       </div>

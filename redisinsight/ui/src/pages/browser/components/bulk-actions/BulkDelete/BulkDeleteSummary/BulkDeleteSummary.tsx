@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { EuiIcon, EuiText, EuiToolTip } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { isUndefined } from 'lodash'
 
@@ -11,6 +11,8 @@ import {
   bulkActionsDeleteSummarySelector,
 } from 'uiSrc/slices/browser/bulkActions'
 import BulkActionSummary from 'uiSrc/pages/browser/components/bulk-actions/BulkActionSummary'
+import { Text } from 'uiSrc/components/base/text'
+import { RiTooltip } from 'uiSrc/components'
 
 import styles from './styles.module.scss'
 
@@ -39,11 +41,10 @@ const BulkDeleteSummary = () => {
     <div className={styles.container}>
       {isUndefined(status) && (
         <>
-          <EuiText className={styles.title}>
+          <Text className={styles.title}>
             <span>{title}</span>
-            <EuiToolTip
+            <RiTooltip
               position="right"
-              anchorClassName={styles.tooltipAnchor}
               content="Expected amount is estimated based on
               the number of keys scanned and the scan percentage.
               The final number may be different."
@@ -53,9 +54,9 @@ const BulkDeleteSummary = () => {
                 type="iInCircle"
                 data-testid="bulk-delete-tooltip"
               />
-            </EuiToolTip>
-          </EuiText>
-          <EuiText
+            </RiTooltip>
+          </Text>
+          <Text
             color="subdued"
             className={styles.summaryApproximate}
             data-testid="bulk-delete-summary"
@@ -63,7 +64,7 @@ const BulkDeleteSummary = () => {
             {`Scanned ${getApproximatePercentage(total, scanned)} `}
             {`(${numberWithSpaces(scanned)}/${nullableNumberWithSpaces(total)}) `}
             {`and found ${numberWithSpaces(keys.length)} keys`}
-          </EuiText>
+          </Text>
         </>
       )}
       {!isUndefined(status) && (

@@ -98,6 +98,7 @@ const DatabaseAnalysisPage = () => {
         onChangeSelectedAnalysis={handleSelectAnalysis}
         progress={data?.progress}
         analysisLoading={analysisLoading}
+        hasReportGenerated={reports && reports.length > 0}
       />
       <DatabaseAnalysisTabs
         loading={analysisLoading}

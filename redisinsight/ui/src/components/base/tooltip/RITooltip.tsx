@@ -8,6 +8,7 @@ export interface RiTooltipProps
   title?: React.ReactNode
   position?: TooltipProps['placement']
   delay?: TooltipProps['openDelayDuration']
+  anchorClassName?: string
 }
 
 export const RiTooltip = ({
@@ -16,6 +17,7 @@ export const RiTooltip = ({
   content,
   position,
   delay,
+  anchorClassName,
   ...props
 }: RiTooltipProps) => (
   <TooltipProvider>
@@ -25,7 +27,7 @@ export const RiTooltip = ({
       placement={position}
       openDelayDuration={delay}
     >
-      <span>{children}</span>
+      <span className={anchorClassName}>{children}</span>
     </Tooltip>
   </TooltipProvider>
 )

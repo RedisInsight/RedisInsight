@@ -13,7 +13,6 @@ import KeyRowType from 'uiSrc/pages/browser/components/key-row-type'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { appContextDbConfig } from 'uiSrc/slices/app/context'
 import { RiTooltip } from 'uiSrc/components'
-import { Col, Row } from 'uiSrc/components/base/layout/flex'
 import { DeleteKeyPopover } from '../../../delete-key-popover/DeleteKeyPopover'
 import { TreeData } from '../../interfaces'
 import styles from './styles.module.scss'
@@ -112,12 +111,8 @@ const Node = ({
   }
 
   const Folder = () => (
-    <RiTooltip
-      content={tooltipContent}
-      position="bottom"
-      style={{ width: '100%' }}
-    >
-      <Row responsive align="center" grow className={styles.anchorTooltipNode}>
+    <RiTooltip content={tooltipContent} position="bottom" anchorClassName={styles.anchorTooltipNode}>
+      <>
         <div className={styles.nodeName}>
           <EuiIcon
             type={isOpen ? 'arrowDown' : 'arrowRight'}
@@ -146,7 +141,7 @@ const Node = ({
             {keyCount ?? ''}
           </div>
         </div>
-      </Row>
+      </>
     </RiTooltip>
   )
 
@@ -184,9 +179,7 @@ const Node = ({
   )
 
   const Node = (
-    <Row
-      justify="between"
-      align="center"
+    <div
       className={cx(styles.nodeContent, 'rowKey', {
         [styles.nodeContentOpen]: isOpen && !isLeaf,
       })}
@@ -199,11 +192,11 @@ const Node = ({
     >
       {!isLeaf && <Folder />}
       {isLeaf && <Leaf />}
-    </Row>
+    </div>
   )
 
   const tooltipContent = (
-    <Col gap="m">
+    <>
       <div className={styles.folderTooltipHeader}>
         <span
           className={styles.folderPattern}
@@ -217,7 +210,7 @@ const Node = ({
         )}
       </div>
       <span>{`${keyCount} key(s) (${Math.round(keyApproximate * 100) / 100}%)`}</span>
-    </Col>
+    </>
   )
 
   return (

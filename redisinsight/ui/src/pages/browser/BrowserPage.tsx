@@ -285,7 +285,6 @@ const BrowserPage = () => {
 
   return (
     <div className={`browserPage ${styles.container}`}>
-      <OnboardingStartPopover />
       {arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen && (
         <EmptyButton
           icon={ArrowLeftIcon}

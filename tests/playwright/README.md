@@ -77,6 +77,8 @@ For more details, refer to the [Playwright documentation](https://playwright.dev
 
 ## Running Tests
 
+*Note: Make sure to run the commands bellow from the `e2e/playwright` directory.*
+
 ### Docker RI Build
 Run end-to-end tests in Chromium:
 ```shell

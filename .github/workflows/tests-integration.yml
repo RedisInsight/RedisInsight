@@ -137,14 +137,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverages-${{ matrix.rte }}
-          path: itest/coverages
-
-      - name: Send report to Slack
-        if: inputs.report && always()
-        run: |
-          ITEST_NAME=${{ matrix.rte }} node ./.github/itest-results.js
-          curl -H "Content-type: application/json" --data @itests.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
-
+          path: ./itest/coverages
+      
       - name: Generate test results
         uses: dorny/test-reporter@v1
         id: test-reporter

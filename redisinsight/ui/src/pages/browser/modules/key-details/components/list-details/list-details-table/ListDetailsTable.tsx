@@ -272,6 +272,7 @@ const ListDetailsTable = () => {
               <RiTooltip
                 title="Index"
                 className={styles.tooltip}
+                anchorClassName="truncateText"
                 position="bottom"
                 content={tooltipContent}
               >

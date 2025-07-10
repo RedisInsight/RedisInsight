@@ -132,6 +132,7 @@ const ClusterConnectionForm = (props: Props) => {
         </div>
       }
       className="homePage_tooltip"
+      anchorClassName="inputAppendIcon"
       position="right"
       content={
         <ul className="homePage_toolTipUl">
@@ -168,6 +169,7 @@ const ClusterConnectionForm = (props: Props) => {
   const SubmitButton = ({ onClick, submitIsDisabled }: ISubmitButton) => (
     <RiTooltip
       position="top"
+      anchorClassName="euiToolTip__btn-disabled"
       title={
         submitIsDisabled
           ? validationErrors.REQUIRED_TITLE(Object.values(errors).length)

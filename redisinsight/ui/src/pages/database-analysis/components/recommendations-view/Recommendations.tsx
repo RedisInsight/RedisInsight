@@ -103,7 +103,7 @@ const Recommendations = () => {
               className={styles.redisStackLink}
               data-testid={`${id}-redis-stack-link`}
             >
-              <RiTooltip content="Redis Stack" position="top">
+              <RiTooltip content="Redis Stack" position="top" anchorClassName="flex-row">
                 <EuiIcon
                   type={
                     theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin

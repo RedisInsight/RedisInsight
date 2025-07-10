@@ -187,6 +187,7 @@ const MessageClaimPopover = (props: Props) => {
     <RiTooltip
       content="There is no consumer to claim the message."
       position="top"
+      anchorClassName="flex-row"
       data-testid="claim-pending-message-tooltip"
     >
       {button}

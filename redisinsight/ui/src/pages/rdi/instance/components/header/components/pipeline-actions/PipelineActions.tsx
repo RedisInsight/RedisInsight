@@ -175,6 +175,7 @@ const PipelineActions = ({ collectorStatus, pipelineStatus }: Props) => {
               : 'Please fix the validation errors before deploying'
           }
           position="left"
+          anchorClassName="flex-row"
         >
           <DeployPipelineButton
             loading={deployLoading}

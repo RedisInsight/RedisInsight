@@ -405,6 +405,7 @@ const KeysHeader = (props: Props) => {
                         <RiTooltip
                           content="Hide the key size to avoid performance issues when working with large keys."
                           position="top"
+                          anchorClassName="flex-row"
                         >
                           <EuiIcon
                             className={styles.infoIcon}

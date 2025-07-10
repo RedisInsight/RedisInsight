@@ -251,7 +251,11 @@ const QueryCardHeader = (props: Props) => {
       disabled: false,
       inputDisplay: (
         <div className={styles.changeViewWrapper}>
-          <RiTooltip content={truncateText(text, 500)} position="left">
+          <RiTooltip
+            content={truncateText(text, 500)}
+            position="left"
+            anchorClassName={styles.changeViewWrapper}
+          >
             <EuiIcon
               className={styles.iconDropdownOption}
               type={theme === Theme.Dark ? iconDark : iconLight}
@@ -390,6 +394,7 @@ const QueryCardHeader = (props: Props) => {
                   title="Processing Time"
                   content={getExecutionTimeString(executionTime)}
                   position="left"
+                  anchorClassName={styles.executionTime}
                   data-testid="execution-time-tooltip"
                 >
                   <>
@@ -481,7 +486,11 @@ const QueryCardHeader = (props: Props) => {
             </FlexItem>
             {!isFullScreen && (
               <FlexItem className={cx(styles.buttonIcon, styles.playIcon)}>
-                <RiTooltip content="Run again" position="left">
+                <RiTooltip
+                  content="Run again"
+                  position="left"
+                  anchorClassName={cx(styles.buttonIcon, styles.playIcon)}
+                >
                   <IconButton
                     disabled={emptyCommand}
                     icon={PlayIcon}
@@ -506,6 +515,7 @@ const QueryCardHeader = (props: Props) => {
               {(isRawMode(mode) || isGroupResults(resultsMode)) && (
                 <RiTooltip
                   className={styles.tooltip}
+                  anchorClassName={styles.buttonIcon}
                   content={
                     <>
                       {isGroupMode(resultsMode) && (

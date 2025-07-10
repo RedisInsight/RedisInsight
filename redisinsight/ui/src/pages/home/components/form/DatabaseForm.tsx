@@ -58,6 +58,7 @@ const DatabaseForm = (props: Props) => {
         </div>
       }
       className="homePage_tooltip"
+      anchorClassName="inputAppendIcon"
       position="right"
       content={
         <ul className="homePage_toolTipUl">

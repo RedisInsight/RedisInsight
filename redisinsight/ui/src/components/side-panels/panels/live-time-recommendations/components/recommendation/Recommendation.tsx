@@ -89,7 +89,11 @@ const RecommendationTitle = ({
             className={styles.redisStackLink}
             data-testid={`${id}-redis-stack-link`}
           >
-            <RiTooltip content="Redis Stack" position="top">
+            <RiTooltip
+              content="Redis Stack"
+              position="top"
+              anchorClassName="flex-row"
+            >
               <EuiIcon
                 type={
                   theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
@@ -248,6 +252,7 @@ const Recommendation = ({
             title="Snooze tip"
             content="This tip will be removed from the list and displayed again when relevant."
             position="top"
+            anchorClassName="flex-row"
           >
             <IconButton
               icon={SnoozeIcon}
@@ -267,6 +272,7 @@ const Recommendation = ({
                 : 'This tip will be removed from the list and not displayed again.'
             }`}
             position="top"
+            anchorClassName="flex-row"
           >
             <IconButton
               icon={hide ? HideIcon : ShowIcon}

@@ -404,6 +404,7 @@ const ZSetDetailsTable = (props: Props) => {
                 <RiTooltip
                   title="Score"
                   className={styles.tooltip}
+                  anchorClassName="truncateText"
                   position="bottom"
                   content={tooltipContent}
                 >

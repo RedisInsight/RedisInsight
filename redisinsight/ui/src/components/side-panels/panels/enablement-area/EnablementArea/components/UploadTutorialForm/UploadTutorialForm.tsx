@@ -115,6 +115,7 @@ const UploadTutorialForm = (props: Props) => {
               </SecondaryButton>
               <RiTooltip
                 position="top"
+                anchorClassName="euiToolTip__btn-disabled"
                 title={
                   isSubmitDisabled
                     ? validationErrors.REQUIRED_TITLE(

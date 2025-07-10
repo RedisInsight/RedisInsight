@@ -77,13 +77,12 @@ const Navigation = () => {
               <RiTooltip
                 content="This file contains undeployed changes."
                 position="top"
+                anchorClassName={styles.dotWrapper}
               >
-                <span className={styles.dotWrapper}>
-                  <span
-                    className={styles.dot}
-                    data-testid="updated-file-config-highlight"
-                  />
-                </span>
+                <span
+                  className={styles.dot}
+                  data-testid="updated-file-config-highlight"
+                />
               </RiTooltip>
             )}
           </div>

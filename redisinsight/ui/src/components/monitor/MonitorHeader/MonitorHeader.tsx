@@ -1,5 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 import { EuiIcon } from '@elastic/eui'
 
@@ -100,6 +101,7 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
                     ? 'Pause'
                     : 'Resume'
               }
+              anchorClassName="inline-flex"
             >
               <IconButton
                 icon={
@@ -119,6 +121,9 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
               content={
                 !isStarted || !items.length ? '' : 'Clear Profiler Window'
               }
+              anchorClassName={cx('inline-flex', {
+                transparent: !isStarted || !items.length,
+              })}
             >
               <IconButton
                 icon={DeleteIcon}

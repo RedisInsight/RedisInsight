@@ -24,6 +24,7 @@ const ValidationTooltip = ({ isValid, errors, children }: Props) => {
     <RiTooltip
       data-testid="connection-form-validation-tooltip"
       position="top"
+      anchorClassName="euiToolTip__btn-disabled"
       title={
         !isValid
           ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)

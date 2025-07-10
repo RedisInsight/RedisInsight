@@ -78,9 +78,10 @@ const DbStatus = (props: Props) => {
       }
       position="right"
       className={styles.tooltip}
+      anchorClassName={cx(styles.statusAnchor, styles.warning)}
     >
       <div
-        className={cx(styles.statusAnchor, styles.status, styles.warning)}
+        className={cx(styles.status, styles.warning)}
         data-testid={`database-status-${type}-${id}`}
       >
         !
@@ -103,9 +104,13 @@ const DbStatus = (props: Props) => {
 
   if (isNew) {
     return (
-      <RiTooltip content="New" position="top">
+      <RiTooltip
+        content="New"
+        position="top"
+        anchorClassName={cx(styles.statusAnchor)}
+      >
         <div
-          className={cx(styles.statusAnchor, styles.status, styles.new)}
+          className={cx(styles.status, styles.new)}
           data-testid={`database-status-new-${id}`}
         />
       </RiTooltip>

@@ -86,6 +86,7 @@ const PopoverDelete = (props: Props) => {
   const deleteButtonWithTooltip = (
     <RiTooltip
       content={TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA}
+      anchorClassName={styles.editBtnAnchor}
       data-testid={testid ? `${testid}-tooltip` : 'remove-tooltip'}
     >
       {deleteButton}

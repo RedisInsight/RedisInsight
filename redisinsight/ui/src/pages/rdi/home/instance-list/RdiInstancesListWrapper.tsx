@@ -178,7 +178,11 @@ const RdiInstancesListWrapper = ({
       render: (name: string, { id }) => (
         <div className="url" data-testid="url">
           <Text className="copyUrlText">{name}</Text>
-          <RiTooltip position="right" content="Copy">
+          <RiTooltip
+            position="right"
+            content="Copy"
+            anchorClassName="copyUrlTooltip"
+          >
             <IconButton
               size="L"
               icon={CopyIcon}

@@ -79,6 +79,7 @@ const TableResult = React.memo((props: Props) => {
                 position="bottom"
                 title={title}
                 className="text-multiline-ellipsis"
+                anchorClassName={cx('tooltip')}
                 content={formatLongName(value.toString())}
               >
                 <div className="copy-btn-wrapper">

@@ -17,7 +17,6 @@ import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
-import { CallOut } from 'uiSrc/components/base/display/call-out/CallOut'
 import { Text } from 'uiSrc/components/base/text'
 import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { Link } from 'uiSrc/components/base/link/Link'
@@ -330,6 +329,7 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         <FlexItem>
           <RiTooltip
             position="top"
+            anchorClassName="euiToolTip__btn-disabled"
             content={
               submitIsDisabled() ? (
                 <span>

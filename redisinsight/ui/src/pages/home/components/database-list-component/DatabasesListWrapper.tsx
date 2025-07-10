@@ -455,7 +455,11 @@ const DatabasesListWrapper = (props: Props) => {
           return (
             <div className="host_port" data-testid="host-port">
               <Text className="copyHostPortText">{text}</Text>
-              <RiTooltip position="right" content="Copy">
+              <RiTooltip
+                position="right"
+                content="Copy"
+                anchorClassName="copyHostPortTooltip"
+              >
                 <IconButton
                   icon={CopyIcon}
                   aria-label="Copy host:port"

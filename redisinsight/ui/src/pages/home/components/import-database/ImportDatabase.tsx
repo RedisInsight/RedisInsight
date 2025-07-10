@@ -143,6 +143,7 @@ const ImportDatabase = (props: Props) => {
         </SecondaryButton>
         <RiTooltip
           position="top"
+          anchorClassName="euiToolTip__btn-disabled"
           content={isSubmitDisabled ? 'Upload a file' : undefined}
         >
           <PrimaryButton

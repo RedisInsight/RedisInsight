@@ -4,6 +4,7 @@ import { RiResetIcon } from 'uiSrc/components/base/icons'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import { RiTooltip } from 'uiSrc/components'
+import styles from '../styles.module.scss'
 
 export interface PipelineButtonProps {
   onClick: () => void
@@ -32,6 +33,7 @@ const ResetPipelineButton = ({
         </>
       ) : null
     }
+    anchorClassName={disabled || loading ? styles.disabled : styles.tooltip}
   >
     <SecondaryButton
       aria-label="Reset pipeline button"

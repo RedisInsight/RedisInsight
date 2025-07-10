@@ -122,7 +122,11 @@ const RedisClusterDatabasesPage = () => {
           !!dnsName && (
             <div className="host_port">
               <Text className="copyHostPortText">{text}</Text>
-              <RiTooltip position="right" content="Copy">
+              <RiTooltip
+                position="right"
+                content="Copy"
+                anchorClassName="copyHostPortTooltip"
+              >
                 <IconButton
                   icon={CopyIcon}
                   aria-label="Copy host:port"

@@ -45,7 +45,7 @@ const InternalLink = (props: Props) => {
   }
 
   const content = (
-    <RiTooltip content={toolTip}>
+    <RiTooltip content={toolTip} anchorClassName={styles.content}>
       <span className={styles.content}>
         <div className={styles.title}>{children || label}</div>
         {!!summary && (

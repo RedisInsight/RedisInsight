@@ -145,6 +145,7 @@ const LiveTimeRecommendations = () => {
         <RiTooltip
           position="bottom"
           className={styles.tooltip}
+          anchorClassName={styles.tooltipAnchor}
           content={
             <>
               Tips will help you improve your database.

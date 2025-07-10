@@ -168,6 +168,7 @@ const Header = (props: Props) => {
             <FlexItem style={{ paddingLeft: 6 }}>
               <RiTooltip
                 position="bottom"
+                anchorClassName={styles.tooltipAnchor}
                 className={styles.tooltip}
                 title="Database Analysis"
                 data-testid="db-new-reports-tooltip"

@@ -142,7 +142,12 @@ const DatabaseListModules = React.memo((props: Props) => {
       !inCircle ? (
         Module(moduleName, abbreviation, icon, content)
       ) : (
-        <RiTooltip position="bottom" content={Content[i]} key={moduleName}>
+        <RiTooltip
+          position="bottom"
+          content={Content[i]}
+          anchorClassName={styles.anchorModuleTooltip}
+          key={moduleName}
+        >
           <>{Module(moduleName, abbreviation, icon, content)}</>
         </RiTooltip>
       ),

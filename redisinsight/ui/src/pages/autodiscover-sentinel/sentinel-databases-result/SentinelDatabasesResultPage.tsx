@@ -190,7 +190,11 @@ const SentinelDatabasesResultPage = () => {
         return (
           <div className="host_port">
             <Text className="copyHostPortText">{text}</Text>
-            <RiTooltip position="right" content="Copy">
+            <RiTooltip
+              position="right"
+              content="Copy"
+              anchorClassName="copyPublicEndpointTooltip"
+            >
               <IconButton
                 icon={CopyIcon}
                 aria-label="Copy public endpoint"
@@ -326,12 +330,9 @@ const SentinelDatabasesResultPage = () => {
           <div role="presentation">
             <RiTooltip
               position="top"
+              anchorClassName="euiToolTip__btn-disabled"
               title={isDisabled ? validationErrors.REQUIRED_TITLE(1) : null}
-              content={
-                isDisabled ? (
-                  <span>Database Alias</span>
-                ) : null
-              }
+              content={isDisabled ? <span>Database Alias</span> : null}
             >
               <PrimaryButton
                 size="s"

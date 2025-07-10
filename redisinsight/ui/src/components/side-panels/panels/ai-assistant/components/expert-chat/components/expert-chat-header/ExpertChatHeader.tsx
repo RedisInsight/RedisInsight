@@ -62,7 +62,10 @@ const ExpertChatHeader = (props: Props) => {
   return (
     <div className={styles.header}>
       {connectedInstanceName ? (
-        <RiTooltip content={connectedInstanceName}>
+        <RiTooltip
+          content={connectedInstanceName}
+          anchorClassName={styles.dbName}
+        >
           <Text size="xs" className="truncateText">
             {connectedInstanceName}
           </Text>
@@ -77,6 +80,7 @@ const ExpertChatHeader = (props: Props) => {
               ? undefined
               : 'Open relevant tutorials to learn more'
           }
+          anchorClassName={styles.headerBtnAnchor}
           position="bottom"
         >
           <RiPopover

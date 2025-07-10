@@ -72,6 +72,7 @@ const QueryCardTooltip = (props: Props) => {
   return (
     <RiTooltip
       className={styles.tooltip}
+      anchorClassName={styles.tooltipAnchor}
       content={<>{contentItems}</>}
       position="bottom"
     >

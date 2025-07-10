@@ -132,7 +132,10 @@ const SubscriptionPanel = () => {
           </FlexItem>
           {!!messages.length && (
             <FlexItem style={{ marginLeft: 8 }}>
-              <RiTooltip content="Clear Messages">
+              <RiTooltip
+                content="Clear Messages"
+                anchorClassName={cx('inline-flex')}
+              >
                 <IconButton
                   icon={DeleteIcon}
                   onClick={onClickClear}

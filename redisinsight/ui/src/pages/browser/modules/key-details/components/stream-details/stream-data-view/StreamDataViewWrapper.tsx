@@ -300,6 +300,7 @@ const StreamDataViewWrapper = (props: Props) => {
               tooltipContent={tooltipContent}
               expanded={expanded}
               truncateLength={650}
+              anchorClassName="streamItem line-clamp-2"
             />
           </div>
         </Text>

@@ -35,6 +35,7 @@ const OAuthRecommendedSettings = (props: Props) => {
             </>
           }
           position="top"
+          anchorClassName={styles.recommendedSettingsToolTip}
         >
           <EuiIcon type="iInCircle" size="s" />
         </RiTooltip>

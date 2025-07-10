@@ -45,6 +45,7 @@ const BulkDeleteSummary = () => {
             <span>{title}</span>
             <RiTooltip
               position="right"
+              anchorClassName={styles.tooltipAnchor}
               content="Expected amount is estimated based on
               the number of keys scanned and the scan percentage.
               The final number may be different."

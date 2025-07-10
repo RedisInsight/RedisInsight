@@ -60,6 +60,7 @@ const OAuthSocialButtons = (props: Props) => {
         <RiTooltip
           key={label}
           position="top"
+          anchorClassName={!agreement ? 'euiToolTip__btn-disabled' : ''}
           content={agreement ? null : 'Acknowledge the agreement'}
           data-testid={`${label}-tooltip`}
         >

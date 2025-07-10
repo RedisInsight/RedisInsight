@@ -178,7 +178,11 @@ const Actions = (props: Props) => {
             closePopover={closePopoverClear}
             panelPaddingSize="m"
             button={
-              <RiTooltip position="left" content="Clear Slow Log">
+              <RiTooltip
+                position="left"
+                content="Clear Slow Log"
+                anchorClassName={styles.icon}
+              >
                 <IconButton
                   icon={EraserIcon}
                   aria-label="Clear Slow Log"
@@ -196,6 +200,7 @@ const Actions = (props: Props) => {
         <RiTooltip
           title="Slow Log"
           position="bottom"
+          anchorClassName={styles.icon}
           content={
             <span data-testid="slowlog-tooltip-text">
               Slow Log is a list of slow operations for your Redis instance.

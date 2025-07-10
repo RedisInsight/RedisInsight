@@ -199,17 +199,17 @@ jobs:
             ls -la ./itest/results/ 2>/dev/null || echo "Directory doesn't exist"
           fi
 
-      # - name: Generate test results
-      #   uses: dorny/test-reporter@v1
-      #   id: test-reporter
-      #   if: always()
-      #   with:
-      #     name: 'Test results: IT (${{ matrix.rte }}) tests'
-      #     path: ./itest/results/*.result.xml
-      #     reporter: jest-junit
-      #     list-tests: 'failed'
-      #     list-suites: 'failed'
-      #     fail-on-error: 'false'
+      - name: Generate test results
+        uses: dorny/test-reporter@v1
+        id: test-reporter
+        if: always()
+        with:
+          name: 'Test results: IT (${{ matrix.rte }}) tests'
+          path: ./itest/results/*.result.xml
+          reporter: java-junit
+          list-tests: 'failed'
+          list-suites: 'failed'
+          fail-on-error: 'false'
 
       - name: Add link to report in the workflow summary
         if: always()

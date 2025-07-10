@@ -3,7 +3,7 @@ import React from 'react'
 import { RiTooltip } from 'uiSrc/components'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { MinusInCircleIcon } from 'uiSrc/components/base/icons'
-import styles from './styles.module.scss'
+import styles from '../styles.module.scss'
 
 export interface Props {
   title: string

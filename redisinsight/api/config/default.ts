@@ -94,6 +94,8 @@ export default {
     secretStoragePassword: process.env.RI_SECRET_STORAGE_PASSWORD,
     agreementsPath: process.env.RI_AGREEMENTS_PATH,
     encryptionKey: process.env.RI_ENCRYPTION_KEY,
+    acceptTermsAndConditions:
+      process.env.RI_ACCEPT_TERMS_AND_CONDITIONS === 'true',
     tlsCert: process.env.RI_SERVER_TLS_CERT,
     tlsKey: process.env.RI_SERVER_TLS_KEY,
     staticContent: !!process.env.RI_SERVE_STATICS || true,
@@ -105,7 +107,7 @@ export default {
       : true,
     buildType: process.env.RI_BUILD_TYPE || 'DOCKER_ON_PREMISE',
     appType: process.env.RI_APP_TYPE,
-    appVersion: process.env.RI_APP_VERSION || '2.68.0',
+    appVersion: process.env.RI_APP_VERSION || '2.70.0',
     requestTimeout: parseInt(process.env.RI_REQUEST_TIMEOUT, 10) || 25000,
     excludeRoutes: [],
     excludeAuthRoutes: [],
@@ -184,6 +186,7 @@ export default {
   modules: {
     json: {
       sizeThreshold: parseInt(process.env.RI_JSON_SIZE_THRESHOLD, 10) || 1024,
+      lengthThreshold: parseInt(process.env.RI_JSON_LENGTH_THRESHOLD, 10) || -1,
     },
   },
   redis_cli: {

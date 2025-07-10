@@ -84,6 +84,24 @@ export const hostedAuthInterceptor = (error: AxiosError) => {
   return Promise.reject(error)
 }
 
+export const isConnectivityError = (
+  status?: number,
+  data?: { code?: string; error?: string }
+): boolean  => {
+  if (!status || !data) {
+    return false
+  }
+
+  switch (status) {
+    case 424:
+      return !!data.error?.startsWith?.('RedisConnection')
+    case 503:
+      return data.code === 'serviceUnavailable' || data.error === 'Service Unavailable'
+    default:
+      return false
+  }
+}
+
 export const connectivityErrorsInterceptor = (error: AxiosError) => {
   const { response } = error
   const responseData = response?.data as {
@@ -92,11 +110,7 @@ export const connectivityErrorsInterceptor = (error: AxiosError) => {
     error?: string
   }
 
-  if (
-    response?.status === 503 &&
-    (responseData.code === 'serviceUnavailable' ||
-      responseData.error === 'Service Unavailable')
-  ) {
+  if (isConnectivityError(response?.status, responseData)) {
     store?.dispatch<any>(setConnectivityError(ApiErrors.ConnectionLost))
   }
 

@@ -1,7 +1,6 @@
 import {
   InternalServerErrorException,
   NotFoundException,
-  ServiceUnavailableException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -33,11 +32,14 @@ import { DatabaseRepository } from 'src/modules/database/repositories/database.r
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
-import { RedisErrorCodes } from 'src/constants';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { Compressor } from 'src/modules/database/entities/database.entity';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
+import {
+  RedisConnectionSentinelMasterRequiredException,
+  RedisConnectionUnavailableException,
+} from 'src/modules/redis/exceptions/connection';
 import { ExportDatabase } from './models/export-database';
 
 const updateDatabaseTests = [
@@ -347,7 +349,7 @@ describe('DatabaseService', () => {
       });
       it('should successfully test valid sentinel config (without sentinelMaster)', async () => {
         databaseFactory.createDatabaseModel.mockRejectedValueOnce(
-          new Error(RedisErrorCodes.SentinelParamsRequired),
+          new RedisConnectionSentinelMasterRequiredException(),
         );
         expect(
           await service.testConnection(mockSessionMetadata, mockDatabase),
@@ -355,12 +357,12 @@ describe('DatabaseService', () => {
       });
       it('should throw connection error', async () => {
         databaseFactory.createDatabaseModel.mockRejectedValueOnce(
-          new Error(RedisErrorCodes.ConnectionRefused),
+          new RedisConnectionUnavailableException(),
         );
 
         await expect(
           service.testConnection(mockSessionMetadata, mockDatabase),
-        ).rejects.toThrow(ServiceUnavailableException);
+        ).rejects.toThrow(RedisConnectionUnavailableException);
       });
       it('should not call get database by id', async () => {
         const spy = jest.spyOn(service as any, 'get');

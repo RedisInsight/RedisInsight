@@ -58,14 +58,22 @@
   font-family: "Inconsolata", monospace !important;
   letter-spacing: 0.15px;
   flex-grow: 1;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
 
   input {
     width: 100%;
     min-width: 140px;
   }
+}
+
+.monacoEditorJsonData {
+  font-size: 14px;
+  line-height: 25px;
+  font-family: "Inconsolata", monospace !important;
+  letter-spacing: 0.15px;
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .defaultFont {

@@ -8,7 +8,7 @@
   overflow-x: hidden;
   max-height: calc(100% - 70px);
 
-  .accordionButton :global(.euiFlexItem) {
+  .accordionButton :global(.RI-flex-item) {
     margin: 0;
 
     .redisStackLink {

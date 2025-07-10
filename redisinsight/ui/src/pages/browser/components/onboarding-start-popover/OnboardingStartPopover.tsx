@@ -52,6 +52,7 @@ const OnboardingStartPopover = () => {
       panelClassName={styles.onboardingStartPopover}
       anchorPosition="upCenter"
       data-testid="onboarding-start-popover"
+      style={{ display: 'none' }}
     >
       <Title size="S">Take a quick tour of Redis Insight?</Title>
       <Spacer size="s" />

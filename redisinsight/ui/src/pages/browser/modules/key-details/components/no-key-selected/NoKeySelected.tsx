@@ -44,15 +44,17 @@ export const NoKeySelected = (props: Props) => {
 
   return (
     <>
-      <RiTooltip content="Close" position="left">
-        <IconButton
-          icon={CancelSlimIcon}
-          aria-label="Close panel"
-          className={styles.closeBtn}
-          onClick={handleClosePanel}
-          data-testid="close-right-panel-btn"
-        />
-      </RiTooltip>
+      <div className={styles.closeRightPanel}>
+        <RiTooltip content="Close" position="left">
+          <IconButton
+            icon={CancelSlimIcon}
+            aria-label="Close panel"
+            className={styles.closeBtn}
+            onClick={handleClosePanel}
+            data-testid="close-right-panel-btn"
+          />
+        </RiTooltip>
+      </div>
 
       <div className={styles.placeholder}>
         <Text textAlign="center" color="subdued" size="s">

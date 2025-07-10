@@ -36,6 +36,11 @@ on:
         type: boolean
         required: false
 
+      build_linux_rpm_x64:
+        description: Build Linux rpm x64
+        type: boolean
+        required: false
+
       environment:
         description: Environment to run build
         type: environment

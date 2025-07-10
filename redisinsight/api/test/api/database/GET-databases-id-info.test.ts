@@ -36,8 +36,24 @@ const responseSchema = Joi.object()
         hitRatio: Joi.number().required(),
         cashedScripts: Joi.number(),
         server: Joi.object().required(),
+        stats: Joi.object().keys({
+          instantaneous_ops_per_sec: Joi.string(),
+          instantaneous_input_kbps: Joi.string(),
+          instantaneous_output_kbps: Joi.string(),
+          uptime_in_days: Joi.string(),
+          maxmemory_policy: Joi.string(),
+          numberOfKeysRange: Joi.string(),
+        }),
       }),
     ),
+    stats: Joi.object().keys({
+      instantaneous_ops_per_sec: Joi.string(),
+      instantaneous_input_kbps: Joi.string(),
+      instantaneous_output_kbps: Joi.string(),
+      uptime_in_days: Joi.string(),
+      maxmemory_policy: Joi.string(),
+      numberOfKeysRange: Joi.string(),
+    }),
   })
   .required()
   .strict();
@@ -58,10 +74,11 @@ describe(`GET /databases/:id/info`, () => {
     {
       endpoint: () => endpoint(constants.TEST_INSTANCE_ID_2),
       name: 'Should not get info due to misconfiguration',
-      statusCode: 503,
+      statusCode: 424,
       responseBody: {
-        statusCode: 503,
-        error: 'Service Unavailable',
+        statusCode: 424,
+        error: 'RedisConnectionUnavailableException',
+        errorCode: 10904,
       },
     },
     {

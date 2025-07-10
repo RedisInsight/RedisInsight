@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { EuiFlexItem } from '@elastic/eui'
 import { monaco } from 'react-monaco-editor'
+import JSONbig from 'json-bigint'
 
 import {
   MonacoEditor as Editor,
@@ -19,7 +20,12 @@ import styles from '../styles.module.scss'
 
 const ROOT_PATH = '$'
 
-const jsonToReadableString = (data: any) => JSON.stringify(data, null, 2)
+// We use `storeAsString: true` to ensure large numbers are serialized as strings.
+// This avoids precision loss for values larger than Number.MAX_SAFE_INTEGER (2^53 - 1),
+// which would otherwise be inaccurately represented in JavaScript.
+// Ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
+const jsonToReadableString = (data: any) =>
+  JSONbig({ storeAsString: true }).stringify(data, null, 2)
 
 const MonacoEditor = (props: BaseProps) => {
   const { data, length, selectedKey } = props
@@ -39,11 +45,15 @@ const MonacoEditor = (props: BaseProps) => {
   const { switchEditorType } = useChangeEditorType()
 
   const submitUpdate = () => {
-    dispatch(setReJSONDataAction(selectedKey, ROOT_PATH, value, false, length))
+    dispatch(setReJSONDataAction(selectedKey, ROOT_PATH, value, true, length))
   }
 
   return (
-    <div className={styles.jsonData} id="jsonData" data-testid="json-data">
+    <div
+      className={styles.monacoEditorJsonData}
+      id="monaco-editor-json-data"
+      data-testid="monaco-editor-json-data"
+    >
       <Editor
         language="json"
         value={value}
@@ -60,7 +70,7 @@ const MonacoEditor = (props: BaseProps) => {
           onClick={switchEditorType}
           data-testid="json-data-cancel-btn"
         >
-          Cancel
+          Close
         </SecondaryButton>
 
         <PrimaryButton

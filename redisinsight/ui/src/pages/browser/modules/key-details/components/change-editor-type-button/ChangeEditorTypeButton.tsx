@@ -4,24 +4,12 @@ import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { EditIcon } from 'uiSrc/components/base/icons'
 import { useChangeEditorType } from './useChangeEditorType'
 
-export enum ButtonMode {
-  editable = 'editable',
-  readOnly = 'readOnly',
-}
+const ChangeEditorTypeButton = () => {
+  const { switchEditorType, isTextEditorDisabled } = useChangeEditorType()
 
-export type ChangeEditorTypeButtonProps = {
-  mode?: ButtonMode
-}
-
-const ChangeEditorTypeButton = ({
-  mode = ButtonMode.editable,
-}: ChangeEditorTypeButtonProps) => {
-  const { switchEditorType } = useChangeEditorType()
-  const isReadMode = mode === ButtonMode.readOnly
-
-  const isDisabled = isReadMode
-  const tooltip = isReadMode
-    ? 'This JSON is too large to edit'
+  const isDisabled = isTextEditorDisabled
+  const tooltip = isTextEditorDisabled
+    ? 'This JSON document is too large to view or edit in full.'
     : 'Edit value in text editor'
 
   return (
@@ -38,3 +26,5 @@ const ChangeEditorTypeButton = ({
 }
 
 export default ChangeEditorTypeButton
+
+export class ButtonMode {}

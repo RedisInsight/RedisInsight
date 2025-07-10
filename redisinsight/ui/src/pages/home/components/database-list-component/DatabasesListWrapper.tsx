@@ -1,7 +1,6 @@
 import {
   Criteria,
   EuiIcon,
-  EuiResizeObserver,
   EuiTableFieldDataColumnType,
   PropertySort,
 } from '@elastic/eui'
@@ -64,6 +63,7 @@ import {
   OAuthSocialSource,
 } from 'uiSrc/slices/interfaces'
 import {
+  getRedisInfoSummary,
   getRedisModulesSummary,
   sendEventTelemetry,
   TelemetryEvent,
@@ -87,10 +87,12 @@ import { FeatureFlagComponent } from 'uiSrc/components'
 import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
 import { Link } from 'uiSrc/components/base/link/Link'
-import DbStatus from '../db-status'
+import { RIResizeObserver } from 'uiSrc/components/base/utils'
 
+import DbStatus from '../db-status'
 import { TagsCell } from '../tags-cell/TagsCell'
 import { TagsCellHeader } from '../tags-cell/TagsCellHeader'
+
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -186,12 +188,13 @@ const DatabasesListWrapper = (props: Props) => {
 
     history.push(Pages.browser(id))
   }
-  const handleCheckConnectToInstance = (
+  const handleCheckConnectToInstance = async (
     event: React.MouseEvent | React.KeyboardEvent,
     { id, provider, modules }: Instance,
   ) => {
     event.preventDefault()
     const modulesSummary = getRedisModulesSummary(modules)
+    const infoData = await getRedisInfoSummary(id)
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
@@ -199,6 +202,7 @@ const DatabasesListWrapper = (props: Props) => {
         provider,
         source: 'db_list',
         ...modulesSummary,
+        ...infoData,
       },
     })
     dispatch(
@@ -676,7 +680,7 @@ const DatabasesListWrapper = (props: Props) => {
   )
 
   return (
-    <EuiResizeObserver onResize={onResize}>
+    <RIResizeObserver onResize={onResize}>
       {(resizeRef) => (
         <div className={styles.container} ref={resizeRef}>
           <ItemList<Instance>
@@ -697,7 +701,7 @@ const DatabasesListWrapper = (props: Props) => {
           />
         </div>
       )}
-    </EuiResizeObserver>
+    </RIResizeObserver>
   )
 }
 

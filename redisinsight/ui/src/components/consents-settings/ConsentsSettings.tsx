@@ -35,6 +35,7 @@ export interface IConsent {
   required: boolean
   editable: boolean
   disabled: boolean
+  linkToPrivacyPolicy: boolean
   category?: string
   since: string
   title: string
@@ -219,17 +220,6 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
         <Spacer size="m" />
         {consents.length > 1 && (
           <>
-            <CallOut variant="attention">
-              <Text
-                size="s"
-                className={styles.smallText}
-                data-testid="plugin-section"
-              >
-                To avoid automatic execution of malicious code, when adding new
-                Workbench plugins, use files from trusted authors only.
-              </Text>
-            </CallOut>
-            <Spacer />
             <FlexItem>
               <Row gap="m">
                 <FlexItem>
@@ -304,7 +294,14 @@ const ConsentsSettings = ({ onSubmitted }: Props) => {
           <HorizontalRule margin="l" className={styles.requiredHR} />
           <Spacer size="m" />
           <Text color="subdued" size="s" className={styles.smallText}>
-            To use Redis Insight, please accept the terms and conditions:{' '}
+            Use of Redis Insight is governed by your signed agreement with Redis, or, if none, by the{' '}
+            <Link
+              target="_blank"
+              href="https://redis.io/software-subscription-agreement/?utm_source=redisinsight&utm_medium=app&utm_campaign=EULA"
+            >
+              Redis Enterprise Software Subscription Agreement
+            </Link>
+            . If no agreement applies, use is subject to the{' '}
             <Link
               target="_blank"
               href="https://github.com/RedisInsight/RedisInsight/blob/main/LICENSE"

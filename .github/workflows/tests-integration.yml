@@ -128,119 +128,30 @@ jobs:
           ./redisinsight/api/test/test-runs/start-test-run.sh -r ${{ matrix.rte }} -t ${{ inputs.build }}
           mkdir -p itest/coverages && mkdir -p itest/results
 
-      - name: Verify coverage files generation
-        if: always()
-        run: |
-          echo "🎉 SUCCESS! Coverage files are being generated correctly!"
-          echo ""
-          echo "=== Final coverage directory contents ==="
-          ls -la ./redisinsight/api/test/test-runs/coverage/ || echo "Coverage directory does not exist!"
-          echo ""
-          echo "=== Nyc coverage directory contents ==="
-          ls -la ./redisinsight/api/test/test-runs/coverage/.nyc_output || echo "Nyc directory does not exist!"
-          echo ""
-          echo "=== File verification ==="
-          if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-result.json" ]; then
-            echo "✅ Test results file exists! File size:"
-            ls -lh ./redisinsight/api/test/test-runs/coverage/test-run-result.json
-          else
-            echo "❌ Test results file missing!"
-          fi
-
-          if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-coverage.json" ]; then
-            echo "✅ Coverage file exists! File size:"
-            ls -lh ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json
-          else
-            echo "❌ Coverage file missing!"
-          fi
-
-          if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-result.xml" ]; then
-            echo "✅ JUnit XML file exists! File size:"
-            ls -lh ./redisinsight/api/test/test-runs/coverage/test-run-result.xml
-          else
-            echo "❌ JUnit XML file missing!"
-          fi
-
-      - name: Debug NYC coverage generation
-        if: always()
-        run: |
-          echo "=== Checking coverage generation results ==="
-          echo "Working directory: $(pwd)"
-          echo ""
-          echo "=== Docker container debug log ==="
-          cd ./redisinsight/api/test/test-runs
-          if [ -f "coverage/debug.log" ]; then
-            echo "📋 Debug log from Docker container:"
-            cat coverage/debug.log
-          else
-            echo "❌ No debug log found from Docker container"
-          fi
-          echo ""
-          echo "=== Coverage files status ==="
-          if [ -d "coverage/.nyc_output" ] && [ "$(find coverage/.nyc_output -name "*.json" | wc -l)" -gt 0 ]; then
-            echo "✅ .nyc_output directory found with $(find coverage/.nyc_output -name "*.json" | wc -l) files"
-            echo "✅ NYC raw coverage data generated successfully"
-            if [ -f "coverage/test-run-coverage.json" ]; then
-              echo "✅ test-run-coverage.json file exists!"
-              ls -lh coverage/test-run-coverage.json
-            else
-              echo "❌ test-run-coverage.json file missing - NYC merge failed in Docker container"
-            fi
-          else
-            echo "❌ No coverage data files found in coverage/.nyc_output"
-          fi
-
-      - name: Copy test results to artifacts
-        run: |
-          echo "=== COPYING TEST RESULTS ==="
-          echo "Current working directory: $(pwd)"
-          echo ""
-          echo "=== Files in expected coverage directory ==="
-          ls -la ./redisinsight/api/test/test-runs/coverage/ || echo "Coverage directory does not exist!"
-          echo ""
-
-          echo "=== Copying files with error handling ==="
-
-          # Copy JSON result file (should exist)
-          if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-result.json" ]; then
-            cp ./redisinsight/api/test/test-runs/coverage/test-run-result.json ./itest/results/${{ matrix.rte }}.result.json
-            echo "✅ Copied test-run-result.json"
-          else
-            echo "❌ test-run-result.json not found"
-          fi
-
-          # Copy XML result file (should exist)
-          if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-result.xml" ]; then
-            cp ./redisinsight/api/test/test-runs/coverage/test-run-result.xml ./itest/results/${{ matrix.rte }}.result.xml
-            echo "✅ Copied test-run-result.xml"
-          else
-            echo "❌ test-run-result.xml not found"
-          fi
-
-          # Copy coverage file (may be missing)
-          if [ -f "./redisinsight/api/test/test-runs/coverage/test-run-coverage.json" ]; then
-            cp ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json ./itest/coverages/${{ matrix.rte }}.coverage.json
-            echo "✅ Copied test-run-coverage.json"
-          else
-            echo "❌ test-run-coverage.json not found - creating empty file"
-            echo "{}" > ./itest/coverages/${{ matrix.rte }}.coverage.json
-          fi
+          cp ./redisinsight/api/test/test-runs/coverage/test-run-result.json ./itest/results/${{ matrix.rte }}.result.json
+          cp ./redisinsight/api/test/test-runs/coverage/test-run-result.xml ./itest/results/${{ matrix.rte }}.result.xml
+          cp ./redisinsight/api/test/test-runs/coverage/test-run-coverage.json ./itest/coverages/${{ matrix.rte }}.coverage.json
 
       - name: Upload coverage files as artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverages-${{ matrix.rte }}
-          path: ./itest/coverages
-      
+          path: itest/coverages
+
+      - name: Send report to Slack
+        if: inputs.report && always()
+        run: |
+          ITEST_NAME=${{ matrix.rte }} node ./.github/itest-results.js
+          curl -H "Content-type: application/json" --data @itests.report.json -H "Authorization: Bearer $SLACK_TEST_REPORT_KEY" -X POST https://slack.com/api/chat.postMessage
+
       - name: Generate test results
         uses: dorny/test-reporter@v1
         id: test-reporter
         if: always()
         with:
           name: 'Test results: IT (${{ matrix.rte }}) tests'
-          path: ./redisinsight/api/test/test-runs/coverage/*.result.xml
-          # path: itest/results/*.result.xml
+          path: itest/results/*.result.xml
           reporter: jest-junit
           list-tests: 'failed'
           list-suites: 'failed'

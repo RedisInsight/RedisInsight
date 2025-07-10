@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { HTMLAttributes } from 'react'
 import { BoxSelectionGroup, BoxSelectionGroupBox } from '@redis-ui/components'
 import {
   DisabledBar,
@@ -12,17 +12,28 @@ export interface BoxSelectionOption<T extends string = string>
   text?: string
 }
 
-const SelectionBox = ({ label, text, disabled, ...rest }: any) => (
-  <BoxSelectionGroup.Item.Compose {...rest}>
-    {disabled && <DisabledBar />}
+type SelectionBoxProps<T extends string = string> = {
+  box: BoxSelectionOption<T>
+} & HTMLAttributes<HTMLButtonElement>
 
-    <StyledBoxContent>
-      <BoxSelectionGroup.Item.Icon color="neutral700" customSize="32px" />
+const SelectionBox = <T extends string = string>({
+  box,
+  ...rest
+}: SelectionBoxProps<T>) => {
+  const { label, text, disabled } = box
 
-      <StyledTitle size="S">{label}</StyledTitle>
-      {text && <StyledText size="M">{text}</StyledText>}
-    </StyledBoxContent>
-  </BoxSelectionGroup.Item.Compose>
-)
+  return (
+    <BoxSelectionGroup.Item.Compose box={box} {...rest}>
+      {disabled && <DisabledBar />}
+
+      <StyledBoxContent>
+        <BoxSelectionGroup.Item.Icon color="neutral700" customSize="32px" />
+
+        <StyledTitle size="S">{label}</StyledTitle>
+        {text && <StyledText size="M">{text}</StyledText>}
+      </StyledBoxContent>
+    </BoxSelectionGroup.Item.Compose>
+  )
+}
 
 export default SelectionBox

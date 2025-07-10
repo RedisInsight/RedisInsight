@@ -98,9 +98,11 @@ jobs:
 
       - uses: jwalton/gh-find-current-pr@v1
         id: findPr
+        continue-on-error: true
 
       - name: Post or Update Coverage Summary Comment
         uses: actions/github-script@v7
+        if: ${{ steps.findPr.outputs.number != '' }}
         with:
           script: |
             const fs = require('fs');

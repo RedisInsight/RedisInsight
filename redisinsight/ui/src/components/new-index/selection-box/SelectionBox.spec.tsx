@@ -20,7 +20,7 @@ describe('SelectionBox', () => {
   })
 
   it('should render label and text', () => {
-    renderWithBoxSelectionGroup(<SelectionBox {...mockBox} box={mockBox} />)
+    renderWithBoxSelectionGroup(<SelectionBox box={mockBox} />)
 
     expect(screen.getByText('Test Label')).toBeInTheDocument()
     expect(screen.getByText('Test Description')).toBeInTheDocument()
@@ -28,7 +28,7 @@ describe('SelectionBox', () => {
 
   it('should render label without text when text is not provided', () => {
     renderWithBoxSelectionGroup(
-      <SelectionBox {...mockBox} box={mockBox} text={undefined} />,
+      <SelectionBox box={{ ...mockBox, text: undefined }} />,
     )
 
     expect(screen.getByText(mockBox.label)).toBeInTheDocument()
@@ -37,7 +37,7 @@ describe('SelectionBox', () => {
 
   it('should show disabled bar when disabled is true', () => {
     renderWithBoxSelectionGroup(
-      <SelectionBox {...mockBox} box={mockBox} disabled />,
+      <SelectionBox box={{ ...mockBox, disabled: true }} />,
     )
 
     expect(screen.getByText(/coming soon/i)).toBeInTheDocument()
@@ -45,7 +45,7 @@ describe('SelectionBox', () => {
 
   it('should not show disabled bar when disabled is false', () => {
     renderWithBoxSelectionGroup(
-      <SelectionBox {...mockBox} box={mockBox} disabled={false} />,
+      <SelectionBox box={{ ...mockBox, disabled: false }} />,
     )
 
     expect(screen.queryByText(/coming soon/i)).not.toBeInTheDocument()
@@ -55,7 +55,7 @@ describe('SelectionBox', () => {
     const onClick = jest.fn()
 
     renderWithBoxSelectionGroup(
-      <SelectionBox {...mockBox} box={mockBox} onClick={onClick} />,
+      <SelectionBox box={mockBox} onClick={onClick} />,
     )
 
     fireEvent.click(screen.getByText(mockBox.label))

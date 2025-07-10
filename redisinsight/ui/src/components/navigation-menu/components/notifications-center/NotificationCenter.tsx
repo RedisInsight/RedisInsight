@@ -1,4 +1,3 @@
-import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,6 +10,7 @@ import {
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
+import { RiPopover } from 'uiSrc/components/base'
 import Notification from './Notification'
 
 import styles from './styles.module.scss'
@@ -43,14 +43,13 @@ const NotificationCenter = () => {
   const hasNotifications = !!notifications?.length
 
   return (
-    <EuiPopover
+    <RiPopover
       anchorPosition="rightUp"
       isOpen={isCenterOpen}
       panelClassName={cx('popoverLikeTooltip', styles.popoverCenterWrapper)}
       anchorClassName={styles.popoverAnchor}
       closePopover={() => dispatch(setIsCenterOpen(false))}
       button={<div className={styles.popoverAnchor} />}
-      initialFocus={false}
     >
       <div
         className={styles.popoverNotificationCenter}
@@ -85,7 +84,7 @@ const NotificationCenter = () => {
           </div>
         )}
       </div>
-    </EuiPopover>
+    </RiPopover>
   )
 }
 

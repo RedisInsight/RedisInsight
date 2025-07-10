@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState, useMemo } from 'react'
-import { EuiFieldText, EuiIcon, EuiPopover } from '@elastic/eui'
+import { EuiFieldText, EuiIcon } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
 import { instancesSelector as rdiInstancesSelector } from 'uiSrc/slices/rdi/instances'
@@ -15,6 +15,7 @@ import { filterAndSort } from 'uiSrc/utils'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Text } from 'uiSrc/components/base/text'
 import Tabs, { TabInfo } from 'uiSrc/components/base/layout/tabs'
+import { RiPopover } from 'uiSrc/components/base'
 import InstancesList from './components/instances-list'
 import styles from './styles.module.scss'
 
@@ -110,7 +111,7 @@ const InstancesNavigationPopover = ({ name }: Props) => {
   )
 
   return (
-    <EuiPopover
+    <RiPopover
       ownFocus
       anchorPosition="downRight"
       panelPaddingSize="none"
@@ -169,7 +170,7 @@ const InstancesNavigationPopover = ({ name }: Props) => {
           </div>
         </div>
       </div>
-    </EuiPopover>
+    </RiPopover>
   )
 }
 

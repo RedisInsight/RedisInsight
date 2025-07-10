@@ -1,4 +1,3 @@
-import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,6 +11,7 @@ import { IGlobalNotification } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CancelSlimIcon } from 'uiSrc/components/base/icons'
+import { RiPopover } from 'uiSrc/components/base'
 import Notification from '../Notification'
 
 import styles from '../styles.module.scss'
@@ -88,8 +88,7 @@ const PopoverNotification = () => {
   return (
     <>
       {lastReceivedNotification && (
-        <EuiPopover
-          initialFocus={false}
+        <RiPopover
           anchorPosition="rightUp"
           isOpen={isShowNotification}
           closePopover={() => {}}
@@ -117,7 +116,7 @@ const PopoverNotification = () => {
             />
             <Notification notification={lastReceivedNotification} />
           </div>
-        </EuiPopover>
+        </RiPopover>
       )}
     </>
   )

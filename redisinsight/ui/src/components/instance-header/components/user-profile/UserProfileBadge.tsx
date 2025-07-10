@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiIcon, EuiPopover } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import { useHistory } from 'react-router-dom'
 import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
@@ -19,6 +19,7 @@ import {
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
 import { FeatureFlagComponent } from 'uiSrc/components'
+import { RiPopover } from 'uiSrc/components/base'
 import { getConfig } from 'uiSrc/config'
 import { Text } from 'uiSrc/components/base/text'
 import { UserProfileLink } from 'uiSrc/components/base/link/UserProfileLink'
@@ -110,9 +111,8 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
 
   return (
     <div className={styles.wrapper} data-testid={dataTestId}>
-      <EuiPopover
+      <RiPopover
         ownFocus
-        initialFocus={false}
         anchorPosition="upRight"
         isOpen={isProfileOpen}
         closePopover={() => setIsProfileOpen(false)}
@@ -261,7 +261,7 @@ const UserProfileBadge = (props: UserProfileBadgeProps) => {
             </div>
           </FeatureFlagComponent>
         </div>
-      </EuiPopover>
+      </RiPopover>
     </div>
   )
 }

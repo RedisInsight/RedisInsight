@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiPopover } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 
@@ -9,6 +8,7 @@ import { RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 
 import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
+import { RiPopover } from 'uiSrc/components/base'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -45,12 +45,11 @@ const TemplatePopover = (props: Props) => {
 
   return (
     <OutsideClickDetector onOutsideClick={handleClose}>
-      <EuiPopover
+      <RiPopover
         ownFocus
         anchorPosition="downRight"
         isOpen={isPopoverOpen}
         closePopover={handleClose}
-        className={styles.anchor}
         panelClassName={styles.popoverWrapper}
         button={
           <SecondaryButton
@@ -72,7 +71,7 @@ const TemplatePopover = (props: Props) => {
           source={source}
           value={value}
         />
-      </EuiPopover>
+      </RiPopover>
     </OutsideClickDetector>
   )
 }

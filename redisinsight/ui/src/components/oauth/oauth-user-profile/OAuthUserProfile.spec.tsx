@@ -8,7 +8,7 @@ import {
   mockedStore,
   render,
   screen,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
   mockedStoreFn,
 } from 'uiSrc/utils/test-utils'
 
@@ -123,7 +123,7 @@ describe('OAuthUserProfile', () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId('user-profile-btn'))
     })
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     expect(screen.getByTestId('account-full-name')).toHaveTextContent(
       'Bill Russell',
@@ -145,7 +145,7 @@ describe('OAuthUserProfile', () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId('user-profile-btn'))
     })
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
     ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     fireEvent.click(screen.getByTestId('profile-import-cloud-databases'))
@@ -174,7 +174,7 @@ describe('OAuthUserProfile', () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId('user-profile-btn'))
     })
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.CLOUD_PROFILE_OPENED,
@@ -198,7 +198,7 @@ describe('OAuthUserProfile', () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId('user-profile-btn'))
     })
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
     ;(sendEventTelemetry as jest.Mock).mockRestore()
 
     fireEvent.click(screen.getByTestId('cloud-console-link'))
@@ -219,7 +219,7 @@ describe('OAuthUserProfile', () => {
       fireEvent.click(screen.getByTestId('user-profile-btn'))
     })
 
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     fireEvent.click(screen.getByTestId('profile-logout'))
 

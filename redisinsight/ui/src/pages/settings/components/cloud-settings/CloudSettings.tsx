@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiPopover } from '@elastic/eui'
 
 import { DeleteIcon } from 'uiSrc/components/base/icons'
 import {
@@ -18,6 +17,7 @@ import {
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
 import { Link } from 'uiSrc/components/base/link/Link'
+import { RiPopover } from 'uiSrc/components/base'
 import UserApiKeysTable from './components/user-api-keys-table'
 
 import styles from './styles.module.scss'
@@ -74,7 +74,7 @@ const CloudSettings = () => {
           </Text>
         </FlexItem>
         <FlexItem grow={false}>
-          <EuiPopover
+          <RiPopover
             anchorPosition="downCenter"
             ownFocus
             isOpen={isDeleteOpen}
@@ -119,7 +119,7 @@ const CloudSettings = () => {
                 </DestructiveButton>
               </div>
             </div>
-          </EuiPopover>
+          </RiPopover>
         </FlexItem>
       </Row>
       <Spacer />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EuiIcon, EuiPopover } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import { formatLongName } from 'uiSrc/utils'
 
 import {
@@ -9,6 +9,7 @@ import {
 import { DeleteIcon } from 'uiSrc/components/base/icons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Text } from 'uiSrc/components/base/text'
+import { RiPopover } from 'uiSrc/components'
 import styles from '../styles.module.scss'
 
 export interface Props<T> {
@@ -44,7 +45,7 @@ const DeleteAction = <T extends { id: string; name?: string }>(
   )
 
   return (
-    <EuiPopover
+    <RiPopover
       id="deletePopover"
       ownFocus
       button={deleteBtn}
@@ -81,7 +82,7 @@ const DeleteAction = <T extends { id: string; name?: string }>(
           Delete
         </DestructiveButton>
       </div>
-    </EuiPopover>
+    </RiPopover>
   )
 }
 

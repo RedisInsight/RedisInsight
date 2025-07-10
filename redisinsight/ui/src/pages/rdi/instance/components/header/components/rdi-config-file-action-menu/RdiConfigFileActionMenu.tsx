@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import UploadModal from 'uiSrc/pages/rdi/pipeline-management/components/upload-modal/UploadModal'
 import Download from 'uiSrc/pages/rdi/instance/components/download'
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
 import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
 import { UploadIcon, MoreactionsIcon } from 'uiSrc/components/base/icons'
+import { RiPopover } from 'uiSrc/components/base'
 import FetchPipelinePopover from '../fetch-pipeline-popover'
 
 import styles from './styles.module.scss'
@@ -33,7 +33,7 @@ const RdiConfigFileActionMenu = () => {
   )
 
   return (
-    <EuiPopover
+    <RiPopover
       id="rdiConfigFileActionsMenu"
       initialFocus={false}
       button={button}
@@ -64,7 +64,7 @@ const RdiConfigFileActionMenu = () => {
           <Download onClose={closePopover} />
         </FlexItem>
       </Col>
-    </EuiPopover>
+    </RiPopover>
   )
 }
 

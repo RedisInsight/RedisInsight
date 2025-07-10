@@ -4,7 +4,7 @@ import {
   render,
   screen,
   fireEvent,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
   mockedStore,
   cleanup,
   waitForStack,
@@ -56,7 +56,7 @@ describe('LoadSampleData', () => {
     render(<LoadSampleData />)
 
     fireEvent.click(screen.getByTestId('load-sample-data-btn'))
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     fireEvent.click(screen.getByTestId('load-sample-data-btn-confirm'))
 

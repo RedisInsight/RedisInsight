@@ -15,7 +15,7 @@ import {
   render,
   screen,
   act,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
   waitForRedisUiSelectVisible,
   userEvent,
 } from 'uiSrc/utils/test-utils'
@@ -67,7 +67,7 @@ describe('KeyTreeDelimiter', () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId(TREE_SETTINGS_TRIGGER_BTN))
     })
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     const comboboxInput = document.querySelector(
       '[data-testid="delimiter-combobox"] [data-test-subj="autoTagInput"]',
@@ -89,7 +89,7 @@ describe('KeyTreeDelimiter', () => {
       fireEvent.click(screen.getByTestId(TREE_SETTINGS_TRIGGER_BTN))
     })
 
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     const comboboxInput = document.querySelector(
       '[data-testid="delimiter-combobox"] [data-test-subj="autoTagInput"]',
@@ -159,7 +159,7 @@ describe('KeyTreeDelimiter', () => {
       fireEvent.click(screen.getByTestId(TREE_SETTINGS_TRIGGER_BTN))
     })
 
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     const containerLabels = document.querySelector(
       '[data-test-subj="autoTagWrapper"]',

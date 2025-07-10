@@ -20,6 +20,7 @@ import {
   mockedStore,
   render,
   screen,
+  waitForRiPopoverVisible,
 } from 'uiSrc/utils/test-utils'
 import { PageNames, Pages } from 'uiSrc/constants'
 import { setLastPageContext } from 'uiSrc/slices/app/context'
@@ -237,7 +238,8 @@ describe('StatisticsPage', () => {
 
     const testid = 'processing-performance-info'
 
-    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
+    await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
+    await waitForRiPopoverVisible()
     await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
 
     expect(sendEventTelemetry).toBeCalledWith({
@@ -256,7 +258,8 @@ describe('StatisticsPage', () => {
 
     const testid = 'processing-performance-info'
 
-    fireEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
+    await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-config-btn`))
+    await waitForRiPopoverVisible()
     await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // disabled
     await userEvent.click(screen.getByTestId(`${testid}-auto-refresh-switch`)) // enabled
 

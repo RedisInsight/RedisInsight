@@ -1,8 +1,4 @@
-import {
-  EuiFieldText,
-  EuiFormFieldset,
-  EuiPopover,
-} from '@elastic/eui'
+import { EuiFieldText, EuiFormFieldset } from '@elastic/eui'
 import { EuiComboBoxOptionOption } from '@elastic/eui/src/components/combo_box/types'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
@@ -32,6 +28,7 @@ import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { HealthText, Text } from 'uiSrc/components/base/text'
 import { Link } from 'uiSrc/components/base/link/Link'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
+import { RiPopover } from 'uiSrc/components/base'
 import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
@@ -168,13 +165,12 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
     fields.length === 1 && !item.identifier.length
 
   const IdentifierInfo = () => (
-    <EuiPopover
+    <RiPopover
       anchorPosition="upCenter"
       isOpen={isInfoPopoverOpen}
       anchorClassName={styles.unsupportedInfo}
       panelClassName={cx('popoverLikeTooltip')}
       closePopover={() => setIsInfoPopoverOpen(false)}
-      initialFocus={false}
       button={
         <IconButton
           icon={InfoIcon}
@@ -205,7 +201,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
           ? 'Enter a hash field name.'
           : 'Enter a JSON path expression.'}
       </>
-    </EuiPopover>
+    </RiPopover>
   )
 
   return (

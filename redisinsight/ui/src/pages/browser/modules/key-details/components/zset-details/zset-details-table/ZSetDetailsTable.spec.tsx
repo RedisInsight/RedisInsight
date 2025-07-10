@@ -10,7 +10,7 @@ import {
   act,
   mockedStore,
   cleanup,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
   waitForRiTooltipVisible,
 } from 'uiSrc/utils/test-utils'
 import {
@@ -78,7 +78,7 @@ describe('ZSetDetailsTable', () => {
     render(<ZSetDetailsTable {...instance(mockedProps)} />)
 
     fireEvent.click(screen.getByTestId('zset-remove-button-1-icon'))
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
     expect(screen.getByTestId('zset-remove-button-1')).toBeInTheDocument()
   })
 

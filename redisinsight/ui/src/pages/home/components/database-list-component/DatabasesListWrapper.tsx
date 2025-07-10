@@ -1,7 +1,6 @@
 import {
   Criteria,
   EuiIcon,
-  EuiPopover,
   EuiTableFieldDataColumnType,
   PropertySort,
 } from '@elastic/eui'
@@ -84,8 +83,8 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
 
 import { Tag } from 'uiSrc/slices/interfaces/tag'
-
-import { FeatureFlagComponent, RiTooltip } from 'uiSrc/components'
+import { FeatureFlagComponent } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
 import { Link } from 'uiSrc/components/base/link/Link'
 import { RIResizeObserver } from 'uiSrc/components/base/utils'
@@ -612,9 +611,8 @@ const DatabasesListWrapper = (props: Props) => {
                 </RiTooltip>
               )}
               <FeatureFlagComponent name={FeatureFlags.databaseManagement}>
-                <EuiPopover
+                <RiPopover
                   ownFocus
-                  initialFocus={false}
                   anchorPosition="leftUp"
                   isOpen={controlsOpenIdRef.current === instance.id}
                   closePopover={() => toggleControlsPopover('')}
@@ -653,7 +651,7 @@ const DatabasesListWrapper = (props: Props) => {
                       />
                     </div>
                   </div>
-                </EuiPopover>
+                </RiPopover>
               </FeatureFlagComponent>
             </>
           )

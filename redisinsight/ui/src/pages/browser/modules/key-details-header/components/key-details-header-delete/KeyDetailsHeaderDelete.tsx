@@ -1,4 +1,3 @@
-import { EuiPopover } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 
@@ -22,6 +21,7 @@ import {
   IconButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiPopover } from 'uiSrc/components/base'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -62,7 +62,7 @@ const KeyDetailsHeaderDelete = ({ onDelete }: Props) => {
   }
 
   return (
-    <EuiPopover
+    <RiPopover
       key={keyProp}
       anchorPosition="leftCenter"
       ownFocus
@@ -98,7 +98,7 @@ const KeyDetailsHeaderDelete = ({ onDelete }: Props) => {
           </DestructiveButton>
         </div>
       </div>
-    </EuiPopover>
+    </RiPopover>
   )
 }
 

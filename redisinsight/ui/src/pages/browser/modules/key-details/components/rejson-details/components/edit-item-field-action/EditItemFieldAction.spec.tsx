@@ -4,7 +4,7 @@ import {
   fireEvent,
   render,
   screen,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
   act,
 } from 'uiSrc/utils/test-utils'
 import EditItemFieldAction, { Props } from './EditItemFieldAction'
@@ -45,7 +45,7 @@ describe('EditItemFieldAction Component', () => {
       fireEvent.click(screen.getByTestId('remove-json-field-icon'))
     })
 
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     fireEvent.click(screen.getByTestId('remove-json-field'))
 

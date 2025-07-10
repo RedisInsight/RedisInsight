@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { EuiPopover } from '@elastic/eui'
 import { useSelector, useDispatch } from 'react-redux'
 import { isEmpty } from 'lodash'
 import cx from 'classnames'
@@ -13,6 +12,7 @@ import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import PromoLink from 'uiSrc/components/promo-link/PromoLink'
 
 import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
+import { RiPopover } from 'uiSrc/components/base'
 import { getPathToResource } from 'uiSrc/services/resourcesService'
 import { ContentCreateRedis } from 'uiSrc/slices/interfaces/content'
 import { HELP_LINKS } from 'uiSrc/pages/home/constants'
@@ -213,7 +213,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
           <FlexItem grow>
             <Row justify="end" align="center" gap="s">
               <FlexItem className={styles.columnsButtonItem}>
-                <EuiPopover
+                <RiPopover
                   ownFocus={false}
                   anchorPosition="downLeft"
                   isOpen={columnsConfigShown}
@@ -240,7 +240,7 @@ const DatabaseListHeader = ({ onAddInstance }: Props) => {
                   >
                     {columnCheckboxes}
                   </div>
-                </EuiPopover>
+                </RiPopover>
               </FlexItem>
               <FlexItem>
                 <SearchDatabasesList />

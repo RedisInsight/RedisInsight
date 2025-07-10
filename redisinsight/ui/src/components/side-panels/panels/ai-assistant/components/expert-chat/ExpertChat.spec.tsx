@@ -8,7 +8,7 @@ import {
   mockedStoreFn,
   render,
   screen,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
 } from 'uiSrc/utils/test-utils'
 
 import {
@@ -180,7 +180,7 @@ describe('ExpertChat', () => {
 
     fireEvent.click(screen.getByTestId('ai-submit-message-btn'))
 
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.AI_CHAT_BOT_TERMS_DISPLAYED,
@@ -229,7 +229,7 @@ describe('ExpertChat', () => {
 
     fireEvent.click(screen.getByTestId('ai-expert-restart-session-btn'))
 
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
     await act(async () => {
       fireEvent.click(screen.getByTestId('ai-chat-restart-confirm'))
     })

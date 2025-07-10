@@ -13,6 +13,8 @@ export const StyledTitle = styled(Title)`
 
 export const StyledText = styled(Text)`
   margin-top: ${({ theme }) => theme.core.space.space050};
+  white-space: normal;
+  overflow-wrap: break-word;
 `
 
 export const StyledDisabledBar = styled.div`

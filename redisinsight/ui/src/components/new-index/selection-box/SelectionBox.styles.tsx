@@ -1,12 +1,6 @@
-import { BoxSelectionGroupBox } from '@redis-ui/components'
 import React from 'react'
 import styled from 'styled-components'
 import { Text, Title } from 'uiSrc/components/base/text'
-
-export interface BoxSelectionOption<T extends string = string>
-  extends BoxSelectionGroupBox<T> {
-  text?: string
-}
 
 export const StyledBoxContent = styled.div`
   padding: 16px;

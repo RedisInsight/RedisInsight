@@ -5,7 +5,6 @@ import {
   EuiIcon,
   EuiLink,
   EuiPopover,
-  EuiResizeObserver,
   EuiTableFieldDataColumnType,
   EuiText,
   EuiTextColor,
@@ -86,10 +85,12 @@ import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
 
 import { Tag } from 'uiSrc/slices/interfaces/tag'
 import { FeatureFlagComponent } from 'uiSrc/components'
+import { RIResizeObserver } from 'uiSrc/components/base/utils'
 import DbStatus from '../db-status'
 
 import { TagsCell } from '../tags-cell/TagsCell'
 import { TagsCellHeader } from '../tags-cell/TagsCellHeader'
+
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -683,7 +684,7 @@ const DatabasesListWrapper = (props: Props) => {
   )
 
   return (
-    <EuiResizeObserver onResize={onResize}>
+    <RIResizeObserver onResize={onResize}>
       {(resizeRef) => (
         <div className={styles.container} ref={resizeRef}>
           <ItemList<Instance>
@@ -704,7 +705,7 @@ const DatabasesListWrapper = (props: Props) => {
           />
         </div>
       )}
-    </EuiResizeObserver>
+    </RIResizeObserver>
   )
 }
 

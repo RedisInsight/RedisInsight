@@ -37,6 +37,18 @@ export default defineConfig({
     svgr({ include: ['**/*.svg?react'] }),
     reactClickToComponent(),
     ViteEjsPlugin(),
+    // Inject app info to window global object via custom plugin
+    {
+      name: 'app-info',
+      transformIndexHtml(html) {
+        const script = `<script>window.appInfo = ${JSON.stringify({
+          version: defaultConfig.app.version,
+          sha: defaultConfig.app.sha,
+        })};</script>`;
+
+        return html.replace(/<head>/, `<head>\n  ${script}`);
+      }
+    }
     // !isElectron && compression({
     //   include: [/\.(js)$/, /\.(css)$/],
     //   deleteOriginalAssets: true

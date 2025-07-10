@@ -1,3 +1,5 @@
+import * as packageJson from '../../../package.json'
+
 const intEnv = (envName: string, defaultValue: number): number => {
   const value = parseInt(process?.env?.[envName] || '', 10)
 
@@ -44,6 +46,8 @@ export const defaultConfig = {
     ),
   },
   app: {
+    version: packageJson.version,
+    sha: process.env.GITHUB_SHA,
     env: process.env.NODE_ENV,
     type: process.env.RI_APP_TYPE,
     resourcesBaseUrl: process.env.RI_RESOURCES_BASE_URL ?? apiUrl, // todo: no usage found
@@ -83,6 +87,10 @@ export const defaultConfig = {
     databaseOverviewMinimumRefreshInterval: intEnv(
       'RI_DATABASE_OVERVIEW_MINIMUM_REFRESH_INTERVAL',
       1,
+    ),
+    rejsonMonacoEditorMaxThreshold: intEnv(
+      'RI_REJSON_MONACO_EDITOR_MAX_THRESHOLD',
+      10_000,
     ),
   },
   features: {

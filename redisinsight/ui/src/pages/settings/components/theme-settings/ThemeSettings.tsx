@@ -8,11 +8,11 @@ import {
 } from 'uiSrc/slices/user/user-settings'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
-import { THEMES } from 'uiSrc/constants'
+import { DEFAULT_THEME, THEMES } from 'uiSrc/constants'
 
 const ThemeSettings = () => {
   const dispatch = useDispatch()
-  const [selectedTheme, setSelectedTheme] = useState('')
+  const [selectedTheme, setSelectedTheme] = useState<string>(DEFAULT_THEME)
   const options = THEMES
   const themeContext = useContext(ThemeContext)
   const { theme, changeTheme } = themeContext
@@ -20,9 +20,10 @@ const ThemeSettings = () => {
   const previousThemeRef = useRef<string>(theme)
 
   useEffect(() => {
-    if (config) {
-      setSelectedTheme(config.theme)
-      previousThemeRef.current = config.theme
+    if (config && config.theme) {
+      const configTheme = config.theme
+      setSelectedTheme(configTheme)
+      previousThemeRef.current = configTheme
     }
   }, [config])
 

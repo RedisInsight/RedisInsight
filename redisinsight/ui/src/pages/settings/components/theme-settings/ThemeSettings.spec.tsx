@@ -8,7 +8,7 @@ import {
   screen,
   waitFor,
 } from 'uiSrc/utils/test-utils'
-import { Theme, THEMES } from 'uiSrc/constants'
+import { DEFAULT_THEME, Theme, THEMES } from 'uiSrc/constants'
 import { TelemetryEvent } from 'uiSrc/telemetry'
 import { updateUserConfigSettingsAction } from 'uiSrc/slices/user/user-settings'
 
@@ -40,6 +40,17 @@ describe('ThemeSettings', () => {
 
   it('should render', () => {
     expect(render(<ThemeSettings />)).toBeTruthy()
+  })
+
+  it('should render the default theme option selected when there is no previous config', async () => {
+    render(<ThemeSettings />)
+
+    const selectedTheme = THEMES.find((t) => t.value === DEFAULT_THEME)
+    expect(selectedTheme).not.toBeUndefined()
+
+    await waitFor(() => {
+      expect(screen.getByText(selectedTheme?.inputDisplay as string)).toBeInTheDocument()
+    })
   })
 
   it('should update the selected theme and dispatch telemetry on change', async () => {

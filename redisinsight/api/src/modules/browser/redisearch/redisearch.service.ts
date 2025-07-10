@@ -1,13 +1,11 @@
 import { isUndefined, toNumber, uniq } from 'lodash';
 import {
-  BadRequestException,
   ConflictException,
-  HttpException,
   Injectable,
   Logger,
 } from '@nestjs/common';
 import ERROR_MESSAGES from 'src/constants/error-messages';
-import { catchAclError } from 'src/utils';
+import { catchRedisSearchError } from 'src/utils';
 import { ClientMetadata } from 'src/common/models';
 import {
   CreateRedisearchIndexDto,
@@ -17,9 +15,8 @@ import {
   SearchRedisearchDto,
 } from 'src/modules/browser/redisearch/dto';
 import { GetKeysWithDetailsResponse } from 'src/modules/browser/keys/dto';
-import { DEFAULT_MATCH, RedisErrorCodes } from 'src/constants';
+import { DEFAULT_MATCH } from 'src/constants';
 import { plainToInstance } from 'class-transformer';
-import { numberWithSpaces } from 'src/utils/base.helper';
 import { BrowserHistoryMode, RedisString } from 'src/common/constants';
 import { CreateBrowserHistoryDto } from 'src/modules/browser/browser-history/dto';
 import { BrowserHistoryService } from 'src/modules/browser/browser-history/browser-history.service';
@@ -68,7 +65,8 @@ export class RedisearchService {
       });
     } catch (e) {
       this.logger.error('Failed to get redisearch indexes', e, clientMetadata);
-      throw catchAclError(e);
+
+      throw catchRedisSearchError(e);
     }
   }
 
@@ -142,7 +140,8 @@ export class RedisearchService {
       return undefined;
     } catch (e) {
       this.logger.error('Failed to create redisearch index', e, clientMetadata);
-      throw catchAclError(e);
+
+      throw catchRedisSearchError(e);
     }
   }
 
@@ -174,7 +173,8 @@ export class RedisearchService {
       return plainToInstance(IndexInfoDto, convertIndexInfoReply(infoReply));
     } catch (e) {
       this.logger.error('Failed to get index info', e, clientMetadata);
-      throw catchAclError(e);
+
+      throw catchRedisSearchError(e);
     }
   }
 
@@ -264,15 +264,8 @@ export class RedisearchService {
         e,
         clientMetadata,
       );
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      if (e.message?.includes(RedisErrorCodes.RedisearchLimit)) {
-        throw new BadRequestException(
-          ERROR_MESSAGES.INCREASE_MINIMUM_LIMIT(numberWithSpaces(dto.limit)),
-        );
-      }
-      throw catchAclError(e);
+
+      throw catchRedisSearchError(e, { searchLimit: dto.limit });
     }
   }
 

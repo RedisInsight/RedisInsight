@@ -201,10 +201,9 @@ const Config = () => {
   const checkSettingsToShowPopup = () => {
     const specConsents = spec?.agreements
     const appliedConsents = config?.agreements
-
     dispatch(
       setSettingsPopupState(
-        isDifferentConsentsExists(specConsents, appliedConsents),
+        config?.acceptTermsAndConditionsOverwritten ? false : isDifferentConsentsExists(specConsents, appliedConsents),
       ),
     )
   }

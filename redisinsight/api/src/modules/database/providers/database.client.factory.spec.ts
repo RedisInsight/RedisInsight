@@ -1,4 +1,3 @@
-import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   mockCommonClientMetadata,
@@ -6,7 +5,6 @@ import {
   mockDatabaseAnalytics,
   mockDatabaseRepository,
   mockDatabaseService,
-  mockRedisNoAuthError,
   MockType,
   mockRedisClientFactory,
   mockStandaloneRedisClient,
@@ -16,7 +14,6 @@ import {
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
 import { DatabaseService } from 'src/modules/database/database.service';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
-import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
 import { RedisClientFactory } from 'src/modules/redis/redis.client.factory';
@@ -31,6 +28,10 @@ import {
 } from 'src/__mocks__/redis-client';
 import { RedisClient } from 'src/modules/redis/client';
 import { ConnectionType } from 'src/modules/database/entities/database.entity';
+import {
+  RedisConnectionTimeoutException,
+  RedisConnectionUnauthorizedException,
+} from 'src/modules/redis/exceptions/connection';
 
 describe('DatabaseClientFactory', () => {
   let service: DatabaseClientFactory;
@@ -246,17 +247,17 @@ describe('DatabaseClientFactory', () => {
         },
       );
     });
-    it('should throw Unauthorized error in case of NOAUTH', async () => {
+    it('should throw original error', async () => {
       jest
         .spyOn(redisClientFactory, 'createClient')
-        .mockRejectedValue(mockRedisNoAuthError);
+        .mockRejectedValue(new RedisConnectionTimeoutException());
       await expect(
         service.createClient(mockCommonClientMetadata),
-      ).rejects.toThrow(UnauthorizedException);
+      ).rejects.toThrow(RedisConnectionTimeoutException);
       expect(analytics.sendConnectionFailedEvent).toHaveBeenCalledWith(
         mockSessionMetadata,
         mockDatabase,
-        new UnauthorizedException(ERROR_MESSAGES.AUTHENTICATION_FAILED()),
+        new RedisConnectionTimeoutException(),
       );
     });
   });

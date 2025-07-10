@@ -10,6 +10,11 @@ const mockStore = configureStore({
     browser: {
       rejson: {},
     },
+    app: {
+      features: {
+        featureFlags: { features: { envDependent: { flag: true } } },
+      },
+    },
   }),
 })
 

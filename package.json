@@ -48,7 +48,7 @@
     "test:api": "yarn --cwd redisinsight/api test",
     "test:api:integration": "yarn --cwd redisinsight/api test:api",
     "test:watch": "jest ./redisinsight/ui --watch -w 1",
-    "test:cov": "cross-env NODE_OPTIONS='' jest ./redisinsight/ui --silent --coverage --no-cache --forceExit -w 3",
+    "test:cov": "cross-env NODE_OPTIONS='' jest ./redisinsight/ui --testLocationInResults --json --outputFile=\"report/coverage/report.json\" --silent --coverage --no-cache --forceExit -w 3",
     "test:cov:unit": "jest ./redisinsight/ui --group=-component --coverage -w 1",
     "test:cov:component": "jest ./redisinsight/ui --group=component --coverage -w 1",
     "type-check:ui": "tsc --project redisinsight/ui --noEmit"
@@ -236,6 +236,7 @@
     "@elastic/eui": "34.6.0",
     "@reduxjs/toolkit": "^1.6.2",
     "@stablelib/snappy": "^1.0.2",
+    "@types/json-dup-key-validator": "^1.0.2",
     "ajv": "^8.17.1",
     "axios": "^1.8.4",
     "brotli-dec-wasm": "^2.3.0",
@@ -259,6 +260,7 @@
     "java-object-serialization": "^0.1.2",
     "js-yaml": "^4.1.0",
     "json-bigint": "^1.0.0",
+    "json-dup-key-validator": "^1.0.3",
     "jsonpath": "^1.1.1",
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
@@ -279,6 +281,7 @@
     "react-jsx-parser": "^1.28.4",
     "react-monaco-editor": "^0.55.0",
     "react-redux": "^7.2.2",
+    "react-resizable-panels": "^3.0.2",
     "react-rnd": "^10.3.5",
     "react-router-dom": "^5.3.4",
     "react-virtualized": "^9.22.2",
@@ -297,8 +300,13 @@
     "url-parse": "^1.5.10",
     "uuid": "^8.3.2"
   },
+  "engines": {
+    "node": ">=22.x",
+    "npm": ">=6.x",
+    "yarn": ">=1.21.3"
+  },
   "devEngines": {
-    "node": ">=16.x",
+    "node": ">=22.x",
     "npm": ">=6.x",
     "yarn": ">=1.21.3"
   },

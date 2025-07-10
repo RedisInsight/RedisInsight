@@ -41,7 +41,7 @@ const MonacoEditor = (props: BaseProps) => {
   const { switchEditorType } = useChangeEditorType()
 
   const submitUpdate = () => {
-    dispatch(setReJSONDataAction(selectedKey, ROOT_PATH, value, false, length))
+    dispatch(setReJSONDataAction(selectedKey, ROOT_PATH, value, true, length))
   }
 
   return (
@@ -68,7 +68,7 @@ const MonacoEditor = (props: BaseProps) => {
           size="s"
           data-testid="json-data-cancel-btn"
         >
-          Cancel
+          Close
         </EuiButton>
 
         <EuiButton

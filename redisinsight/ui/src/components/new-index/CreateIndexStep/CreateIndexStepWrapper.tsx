@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { TabsProps } from '@redis-ui/components'
 import Tabs, { TabInfo } from 'uiSrc/components/base/layout/tabs'
-import { UsePresetIndex } from './UsePresetIndex'
-import { BuildNewIndex } from './BuildNewIndex'
+import { BuildNewIndexTabTrigger } from './BuildNewIndex/BuildNewIndexTabTrigger'
 
-enum VectorIndexTab {
+export enum VectorIndexTab {
   BuildNewIndex = 'build-new-index',
   UsePresetIndex = 'use-preset-index',
 }
@@ -11,33 +11,26 @@ enum VectorIndexTab {
 const VECTOR_INDEX_TABS: TabInfo<string>[] = [
   {
     value: VectorIndexTab.BuildNewIndex,
-    label: <BuildNewIndex.TabBarTrigger />,
+    label: <BuildNewIndexTabTrigger />,
     content: null,
     disabled: true,
   },
   {
     value: VectorIndexTab.UsePresetIndex,
-    label: <UsePresetIndex.TabBarTrigger />,
-    content: <UsePresetIndex.TabContentPane />,
+    label: 'Use preset index',
+    content: <div>TODO: Add content later</div>,
   },
 ]
 
-export const CreateIndexStepWrapper = () => {
-  // TODO: Link it with the parent context defined by the wizard, so we can keep the selected tab state
-  const [activeTab, setActiveTab] = useState<VectorIndexTab>(
-    VectorIndexTab.UsePresetIndex,
-  )
-
-  const handleTabChange = (newValue: string) => {
-    setActiveTab(newValue as VectorIndexTab)
-  }
+export const CreateIndexStepWrapper = (props: Partial<TabsProps>) => {
+  const { tabs, defaultValue, ...restProps } = props
 
   return (
     <Tabs
-      tabs={VECTOR_INDEX_TABS}
-      value={activeTab}
-      onChange={handleTabChange}
+      tabs={tabs ?? VECTOR_INDEX_TABS}
+      defaultValue={defaultValue ?? VectorIndexTab.UsePresetIndex}
       variant="sub"
+      {...restProps}
     />
   )
 }

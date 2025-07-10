@@ -128,6 +128,7 @@ const AddStreamGroup = (props: Props) => {
                       onFocus={() => setIsIdFocused(true)}
                       append={
                         <RiTooltip
+                          anchorClassName="inputAppendIcon"
                           className={styles.entryIdTooltip}
                           position="left"
                           title="Enter Valid ID, 0 or $"

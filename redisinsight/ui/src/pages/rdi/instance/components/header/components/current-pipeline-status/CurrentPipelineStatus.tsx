@@ -45,7 +45,10 @@ const CurrentPipelineStatus = ({
       {headerLoading ? (
         <Loader size="m" style={{ marginLeft: '8px' }} />
       ) : (
-        <RiTooltip content={errorTooltipContent}>
+        <RiTooltip
+          content={errorTooltipContent}
+          anchorClassName={statusError && styles.tooltip}
+        >
           <div className={styles.stateBadge} data-testid="pipeline-state-badge">
             <EuiIcon type={stateInfo.icon} />
             <span>{stateInfo.label}</span>

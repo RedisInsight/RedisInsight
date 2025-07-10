@@ -212,6 +212,7 @@ const TemplateForm = (props: Props) => {
           content={getTooltipContent(value, isNoTemplateOptions)}
           position="bottom"
           className={styles.btn}
+          anchorClassName="flex-row"
         >
           <PrimaryButton
             disabled={isNoTemplateOptions || !!value}

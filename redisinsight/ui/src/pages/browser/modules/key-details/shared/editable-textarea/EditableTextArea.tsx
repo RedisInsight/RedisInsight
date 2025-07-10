@@ -103,6 +103,7 @@ const EditableTextArea = (props: Props) => {
         {isHovering && (
           <RiTooltip
             content={editToolTipContent}
+            anchorClassName={styles.editBtnAnchor}
             data-testid={`${testIdPrefix}_edit-tooltip-${field}`}
           >
             <IconButton

@@ -58,6 +58,7 @@ const KeyRowSize = (props: Props) => {
           <RiTooltip
             title="Key Size"
             className={styles.tooltip}
+            anchorClassName="truncateText"
             position="right"
             content={<>{formatBytes(size, 3)}</>}
           >

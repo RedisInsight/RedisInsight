@@ -81,11 +81,13 @@ const SlowLogTable = (props: Props) => {
       id: 'args',
       label: 'Command',
       render: (command) => (
-        <RiTooltip position="bottom" content={command}>
-          <span className={styles.commandTooltip}>
-            <span className={styles.commandText} data-testid="command-value">
-              {command}
-            </span>
+        <RiTooltip
+          position="bottom"
+          content={command}
+          anchorClassName={styles.commandTooltip}
+        >
+          <span className={styles.commandText} data-testid="command-value">
+            {command}
           </span>
         </RiTooltip>
       ),

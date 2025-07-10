@@ -61,6 +61,7 @@ const KeyRowTTL = (props: Props) => {
         <RiTooltip
           title="Time to Live"
           className={styles.tooltip}
+          anchorClassName="truncateText"
           position="right"
           content={
             <>

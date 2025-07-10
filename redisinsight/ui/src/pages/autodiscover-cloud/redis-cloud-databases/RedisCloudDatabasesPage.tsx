@@ -140,6 +140,7 @@ const RedisCloudDatabasesPage = () => {
               position="bottom"
               title="Database"
               className={styles.tooltipColumnName}
+              anchorClassName="truncateText"
               content={formatLongName(name)}
             >
               <Text>{cellContent}</Text>
@@ -178,6 +179,7 @@ const RedisCloudDatabasesPage = () => {
               position="bottom"
               title="Subscription"
               className={styles.tooltipColumnName}
+              anchorClassName="truncateText"
               content={formatLongName(name)}
             >
               <Text>{cellContent}</Text>
@@ -217,7 +219,7 @@ const RedisCloudDatabasesPage = () => {
         return (
           <div className="public_endpoint">
             <Text className="copyPublicEndpointText">{text}</Text>
-            <RiTooltip position="right" content="Copy">
+            <RiTooltip position="right" content="Copy" anchorClassName="copyPublicEndpointTooltip">
               <IconButton
                 icon={CopyIcon}
                 aria-label="Copy public endpoint"

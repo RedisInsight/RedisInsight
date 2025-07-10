@@ -179,7 +179,11 @@ const JobsTree = (props: IProps) => {
         className={styles.actions}
         data-testid={`rdi-nav-job-actions-${name}`}
       >
-        <RiTooltip content="Edit job file name" position="top">
+        <RiTooltip
+          content="Edit job file name"
+          position="top"
+          anchorClassName="flex-row"
+        >
           <IconButton
             icon={EditIcon}
             onClick={() => {
@@ -190,7 +194,11 @@ const JobsTree = (props: IProps) => {
             data-testid={`edit-job-name-${name}`}
           />
         </RiTooltip>
-        <RiTooltip content="Delete job" position="top">
+        <RiTooltip
+          content="Delete job"
+          position="top"
+          anchorClassName="flex-row"
+        >
           <ConfirmationPopover
             title={`Delete ${name}`}
             body={
@@ -269,6 +277,7 @@ const JobsTree = (props: IProps) => {
             <RiTooltip
               content="This file contains undeployed changes."
               position="top"
+              anchorClassName={styles.dotWrapper}
             >
               <span className={styles.dotWrapper}>
                 <span
@@ -337,6 +346,7 @@ const JobsTree = (props: IProps) => {
         <RiTooltip
           content={!hideTooltip ? 'Add a job file' : null}
           position="top"
+          anchorClassName="flex-row"
         >
           <IconButton
             icon={PlusIcon}

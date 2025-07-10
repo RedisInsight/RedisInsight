@@ -163,6 +163,7 @@ const TopKeysTable = ({
           <span data-testid={`ttl-${name}`}>
             <RiTooltip
               title="Time to Live"
+              anchorClassName="truncateText"
               position="bottom"
               content={
                 <>

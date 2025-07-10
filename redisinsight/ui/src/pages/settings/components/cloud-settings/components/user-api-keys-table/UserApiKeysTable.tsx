@@ -88,7 +88,10 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
         return (
           <div className={styles.nameField}>
             {!valid && (
-              <RiTooltip content="This API key is invalid. Remove it from Redis Cloud and create a new one instead.">
+              <RiTooltip
+                content="This API key is invalid. Remove it from Redis Cloud and create a new one instead."
+                anchorClassName={styles.invalidIconAnchor}
+              >
                 <EuiIcon
                   className={styles.invalidIcon}
                   type="alert"
@@ -151,7 +154,10 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
         },
       }) => (
         <div>
-          <RiTooltip content="Copy API Key Name">
+          <RiTooltip
+            content="Copy API Key Name"
+            anchorClassName={styles.copyBtnAnchor}
+          >
             <IconButton
               icon={CopyIcon}
               aria-label="Copy API key"

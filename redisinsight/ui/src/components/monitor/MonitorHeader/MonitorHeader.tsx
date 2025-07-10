@@ -100,6 +100,7 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
                     ? 'Pause'
                     : 'Resume'
               }
+              anchorClassName="inline-flex"
             >
               <IconButton
                 icon={
@@ -119,6 +120,9 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
               content={
                 !isStarted || !items.length ? '' : 'Clear Profiler Window'
               }
+              anchorClassName={cx('inline-flex', {
+                transparent: !isStarted || !items.length,
+              })}
             >
               <IconButton
                 icon={DeleteIcon}

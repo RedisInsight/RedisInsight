@@ -302,6 +302,7 @@ const MultiSearch = (props: Props) => {
           {disableSubmit && (
             <RiTooltip
               position="top"
+              anchorClassName={styles.anchorSubmitBtn}
               content="Please choose index in order to preform the search"
             >
               {SubmitBtn()}

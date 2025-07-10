@@ -48,6 +48,7 @@ const DbInfo = (props: Props) => {
     <RiTooltip
       title="Host:port"
       position="left"
+      anchorClassName={styles.anchorEndpoints}
       content={
         <ul className={styles.endpointsList}>
           {nodes?.map(({ host: eHost, port: ePort }) => (

@@ -132,11 +132,15 @@ const AddKey = (props: Props) => {
           <FlexItem grow style={{ marginBottom: '36px' }}>
             <Title size="M">New Key</Title>
             {!arePanelsCollapsed && (
-              <RiTooltip content="Close" position="left">
+              <RiTooltip
+                content="Close"
+                position="left"
+                anchorClassName={styles.closeKeyTooltip}
+              >
                 <IconButton
                   icon={CancelSlimIcon}
                   aria-label="Close key"
-                  className={cx(styles.closeBtn, styles.closeKeyTooltip)}
+                  className={styles.closeBtn}
                   onClick={() => closeKey()}
                 />
               </RiTooltip>

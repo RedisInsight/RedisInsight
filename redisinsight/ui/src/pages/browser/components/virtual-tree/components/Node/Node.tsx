@@ -111,7 +111,11 @@ const Node = ({
   }
 
   const Folder = () => (
-    <RiTooltip content={tooltipContent} position="bottom" anchorClassName={styles.anchorTooltipNode}>
+    <RiTooltip
+      content={tooltipContent}
+      position="bottom"
+      anchorClassName={styles.anchorTooltipNode}
+    >
       <>
         <div className={styles.nodeName}>
           <EuiIcon

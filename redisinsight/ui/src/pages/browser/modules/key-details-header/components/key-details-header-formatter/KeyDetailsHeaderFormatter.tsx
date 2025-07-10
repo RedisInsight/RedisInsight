@@ -72,6 +72,7 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
                 : typeSelected
             }
             position="top"
+            anchorClassName="flex-row"
           >
             <>
               {width >= MIDDLE_SCREEN_RESOLUTION ? (

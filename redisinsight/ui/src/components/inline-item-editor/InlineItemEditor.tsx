@@ -165,6 +165,7 @@ const InlineItemEditor = (props: Props) => {
 
   const ApplyBtn = (
     <RiTooltip
+      anchorClassName={styles.tooltip}
       position="bottom"
       title={
         (isDisabled && disabledTooltipText?.title) ||

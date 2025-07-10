@@ -96,6 +96,7 @@ const DatabaseListOptions = ({ options }: Props) => {
               : contentProp
           }
           position="top"
+          anchorClassName={styles.tooltip}
         >
           {icon ? (
             <IconButton

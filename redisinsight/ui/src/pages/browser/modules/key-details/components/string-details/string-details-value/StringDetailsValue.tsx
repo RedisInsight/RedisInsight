@@ -247,6 +247,7 @@ const StringDetailsValue = (props: Props) => {
     return (
       <RiTooltip
         title={!isValid ? noEditableText : undefined}
+        anchorClassName={styles.tooltipAnchor}
         className={styles.tooltip}
         position="left"
         data-testid="string-value-tooltip"

@@ -157,7 +157,11 @@ const SentinelDatabasesPage = () => {
         return (
           <div className="host_port">
             <Text className="copyHostPortText">{text}</Text>
-            <RiTooltip position="right" content="Copy">
+            <RiTooltip
+              position="right"
+              content="Copy"
+              anchorClassName="copyPublicEndpointTooltip"
+            >
               <IconButton
                 icon={CopyIcon}
                 aria-label="Copy public endpoint"
@@ -243,6 +247,7 @@ const SentinelDatabasesPage = () => {
               onChangedInput={handleChangedInput}
               append={
                 <RiTooltip
+                  anchorClassName="inputAppendIcon"
                   position="left"
                   content="Select the Redis logical database to work with in Browser and Workbench."
                 >

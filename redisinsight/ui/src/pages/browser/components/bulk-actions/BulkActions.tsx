@@ -115,7 +115,11 @@ const BulkActions = (props: Props) => {
             />
           )}
           {(!arePanelsCollapsed || isFullScreen) && (
-            <RiTooltip content="Close" position="left">
+            <RiTooltip
+              content="Close"
+              position="left"
+              anchorClassName={styles.anchorTooltip}
+            >
               <IconButton
                 icon={CancelSlimIcon}
                 aria-label="Close panel"

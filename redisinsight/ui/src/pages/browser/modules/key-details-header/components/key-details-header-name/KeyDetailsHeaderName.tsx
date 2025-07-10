@@ -165,8 +165,9 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
               title="Key Name"
               position="left"
               content={tooltipContent}
+              anchorClassName={styles.toolTipAnchorKey}
             >
-              <span className={styles.toolTipAnchorKey}>
+              <>
                 <InlineItemEditor
                   onApply={() => applyEditKey()}
                   isDisabled={!keyIsEditable}
@@ -199,10 +200,14 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
                   />
                 </InlineItemEditor>
                 <p className={styles.keyHiddenText}>{key}</p>
-              </span>
+              </>
             </RiTooltip>
             {keyIsHovering && (
-              <RiTooltip position="right" content="Copy">
+              <RiTooltip
+                position="right"
+                content="Copy"
+                anchorClassName={styles.copyKey}
+              >
                 <IconButton
                   icon={CopyIcon}
                   id={COPY_KEY_NAME_ICON}

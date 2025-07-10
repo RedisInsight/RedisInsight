@@ -227,6 +227,7 @@ const GroupsViewWrapper = (props: Props) => {
             >
               <RiTooltip
                 className={styles.tooltipName}
+                anchorClassName="truncateText"
                 position="bottom"
                 content={tooltipContent}
               >
@@ -285,6 +286,7 @@ const GroupsViewWrapper = (props: Props) => {
                 <RiTooltip
                   title={`${pending} Pending Messages`}
                   className={styles.tooltip}
+                  anchorClassName="truncateText"
                   position="bottom"
                   content={tooltipContent}
                 >
@@ -373,6 +375,7 @@ const GroupsViewWrapper = (props: Props) => {
                 onFocus={() => setIsIdFocused(true)}
                 append={
                   <RiTooltip
+                    anchorClassName="inputAppendIcon"
                     position="left"
                     title="Enter Valid ID, 0 or $"
                     content={lastDeliveredIDTooltipText}

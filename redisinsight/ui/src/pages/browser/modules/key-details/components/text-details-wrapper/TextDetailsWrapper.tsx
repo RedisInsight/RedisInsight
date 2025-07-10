@@ -20,7 +20,11 @@ const TextDetailsWrapper = ({
 
   return (
     <div className={styles.container} data-testid={getDataTestid('details')}>
-      <RiTooltip content="Close" position="left">
+      <RiTooltip
+        content="Close"
+        position="left"
+        anchorClassName={styles.closeRightPanel}
+      >
         <IconButton
           icon={CancelSlimIcon}
           aria-label="Close key"

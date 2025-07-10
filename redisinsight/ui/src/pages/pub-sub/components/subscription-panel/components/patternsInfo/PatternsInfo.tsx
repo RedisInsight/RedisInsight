@@ -22,14 +22,15 @@ const PatternsInfo = ({ channels }: PatternsInfoProps) => {
         Patterns:&nbsp;{getChannelsCount()}{' '}
       </Text>
       <RiTooltip
+        anchorClassName={styles.appendIcon}
         position="right"
         title={
-          <span className={styles.appendIcon}>
+          <>
             {channels
               ?.trim()
               .split(' ')
               .map((ch) => <p key={`${ch}`}>{ch}</p>)}
-          </span>
+          </>
         }
       >
         <EuiIcon

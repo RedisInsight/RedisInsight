@@ -135,6 +135,7 @@ const ConsumersViewWrapper = (props: Props) => {
             >
               <RiTooltip
                 className={styles.tooltipName}
+                anchorClassName="truncateText"
                 position="bottom"
                 content={tooltipContent}
               >

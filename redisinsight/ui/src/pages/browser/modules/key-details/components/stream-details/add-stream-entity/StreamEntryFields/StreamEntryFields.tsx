@@ -122,6 +122,7 @@ const StreamEntryFields = (props: Props) => {
             onFocus={() => setIsEntryIdFocused(true)}
             append={
               <RiTooltip
+                anchorClassName="inputAppendIcon"
                 className={styles.entryIdTooltip}
                 position="left"
                 title="Enter Valid ID or *"

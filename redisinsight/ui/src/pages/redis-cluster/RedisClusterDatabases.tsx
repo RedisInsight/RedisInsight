@@ -212,6 +212,7 @@ const RedisClusterDatabases = ({
             <CancelButton isPopoverOpen={isPopoverOpen} />
             <RiTooltip
               position="top"
+              anchorClassName="euiToolTip__btn-disabled"
               title={
                 isSubmitDisabled()
                   ? validationErrors.SELECT_AT_LEAST_ONE('database')

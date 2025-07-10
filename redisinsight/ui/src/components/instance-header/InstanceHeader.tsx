@@ -266,6 +266,7 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
                   <FlexItem style={{ paddingLeft: 6 }}>
                     <RiTooltip
                       position="right"
+                      anchorClassName={styles.tooltipAnchor}
                       className={styles.tooltip}
                       content={
                         <ShortInstanceInfo

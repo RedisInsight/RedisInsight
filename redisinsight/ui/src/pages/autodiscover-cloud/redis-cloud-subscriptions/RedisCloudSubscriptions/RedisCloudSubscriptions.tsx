@@ -178,6 +178,7 @@ const RedisCloudSubscriptions = ({
   const SubmitButton = ({ isDisabled }: { isDisabled: boolean }) => (
     <RiTooltip
       position="top"
+      anchorClassName="euiToolTip__btn-disabled"
       title={
         isDisabled ? validationErrors.SELECT_AT_LEAST_ONE('subscription') : null
       }

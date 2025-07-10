@@ -175,6 +175,7 @@ const SentinelDatabases = ({
     return (
       <RiTooltip
         position="top"
+        anchorClassName="euiToolTip__btn-disabled"
         title={title}
         content={
           isSubmitDisabled() ? (

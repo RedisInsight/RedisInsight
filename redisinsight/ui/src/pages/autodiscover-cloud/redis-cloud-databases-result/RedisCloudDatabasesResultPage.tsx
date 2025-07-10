@@ -82,6 +82,7 @@ const RedisCloudDatabasesResultPage = () => {
               position="bottom"
               title="Database"
               className={styles.tooltipColumnName}
+              anchorClassName="truncateText"
               content={formatLongName(name)}
             >
               <Text>{cellContent}</Text>
@@ -113,6 +114,7 @@ const RedisCloudDatabasesResultPage = () => {
               position="bottom"
               title="Subscription"
               className={styles.tooltipColumnName}
+              anchorClassName="truncateText"
               content={formatLongName(name)}
             >
               <Text>{cellContent}</Text>
@@ -152,7 +154,7 @@ const RedisCloudDatabasesResultPage = () => {
         return (
           <div className="public_endpoint">
             <Text className="copyPublicEndpointText">{text}</Text>
-            <RiTooltip position="right" content="Copy">
+            <RiTooltip position="right" content="Copy" anchorClassName="copyPublicEndpointTooltip">
               <IconButton
                 icon={CopyIcon}
                 aria-label="Copy public endpoint"
@@ -205,7 +207,7 @@ const RedisCloudDatabasesResultPage = () => {
             {statusAdded === AddRedisDatabaseStatus.Success ? (
               <Text>{messageAdded}</Text>
             ) : (
-              <RiTooltip position="left" title="Error" content={messageAdded}>
+              <RiTooltip position="left" title="Error" content={messageAdded} anchorClassName="truncateText">
                 <Row align="center" gap="s">
                   <FlexItem>
                     <EuiIcon type="alert" color="danger" />

@@ -29,6 +29,7 @@ const FormattedValue = ({
     <RiTooltip
       title={title}
       content={tooltipContent}
+      anchorClassName="truncateText"
       position={position}
       {...rest}
     >

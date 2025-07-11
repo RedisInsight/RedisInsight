@@ -44,6 +44,7 @@ import {
   SlowLogIcon,
   WorkbenchActiveIcon,
   WorkbenchIcon,
+  SearchIcon,
   GithubIcon,
 } from 'uiSrc/components/base/icons'
 import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
@@ -161,6 +162,23 @@ const NavigationMenu = () => {
         return this.isActivePage ? WorkbenchIcon : WorkbenchActiveIcon
       },
       onboard: ONBOARDING_FEATURES.WORKBENCH_PAGE,
+    },
+    {
+      tooltipText: 'Vector Search',
+      pageName: PageNames.vectorSearch,
+      ariaLabel: 'Vector Search',
+      onClick: () => handleGoPage(Pages.vectorSearch(connectedInstanceId)),
+      dataTestId: 'vector-search-page-btn',
+      connectedInstanceId,
+      isActivePage: activePage === `/${PageNames.vectorSearch}`,
+      getClassName() {
+        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
+      },
+      getIconType() {
+        // TODO: Icon or move to another menu
+        // eslint-disable-next-line sonarjs/no-all-duplicated-branches
+        return this.isActivePage ? SearchIcon : SearchIcon
+      },
     },
     {
       tooltipText: 'Analysis Tools',

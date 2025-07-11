@@ -1,7 +1,7 @@
 import React from 'react'
 import { TabsProps } from '@redis-ui/components'
 import Tabs, { TabInfo } from 'uiSrc/components/base/layout/tabs'
-import { BuildNewIndexTabTrigger } from './BuildNewIndex/BuildNewIndexTabTrigger'
+import { BuildNewIndexTabTrigger } from './build-new-index-tab/BuildNewIndexTabTrigger'
 
 export enum VectorIndexTab {
   BuildNewIndex = 'build-new-index',

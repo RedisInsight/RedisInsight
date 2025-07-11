@@ -1,4 +1,5 @@
 import log from 'electron-log'
+import { LocalConstantsProvider } from 'apiSrc/modules/constants/providers/local.constants.provider'
 import { AuthStrategy } from './auth.interface'
 import { CloudAuthService } from '../../../../api/dist/src/modules/cloud/auth/cloud-auth.service'
 import { CloudAuthModule } from '../../../../api/dist/src/modules/cloud/auth/cloud-auth.module'
@@ -18,11 +19,13 @@ export class ServiceAuthStrategy implements AuthStrategy {
 
   private beApp: any
 
-  private constructor() { }
+  private constructor(
+    private readonly constantsProvider: LocalConstantsProvider,
+  ) { }
 
   public static getInstance(beApp?: any): ServiceAuthStrategy {
     if (!ServiceAuthStrategy.instance) {
-      ServiceAuthStrategy.instance = new ServiceAuthStrategy()
+      ServiceAuthStrategy.instance = new ServiceAuthStrategy(new LocalConstantsProvider())
     }
     if (beApp) {
       ServiceAuthStrategy.instance.beApp = beApp
@@ -61,20 +64,30 @@ export class ServiceAuthStrategy implements AuthStrategy {
   async getAuthUrl(options: any): Promise<{ url: string }> {
     this.lastAuthType = options.authOptions?.strategy
     log.info('[Service Auth] Getting auth URL', options.authOptions?.strategy === AuthProviderType.Microsoft, options)
-    const url = await this.getAuthService().getAuthorizationUrl(options.sessionMetadata, options.authOptions)
+
+    const sessionMetadata = options.sessionMetadata || this.constantsProvider.getSystemSessionMetadata()
+
+    const url = await this.getAuthService().getAuthorizationUrl(sessionMetadata, options.authOptions)
     log.info('[Service Auth] Auth URL obtained')
     return { url }
   }
 
   async handleCallback(query: any): Promise<any> {
-    log.info('[Service Auth] Handling callback')
     if (this.getAuthService().isRequestInProgress(query)) {
-      log.info('[Service Auth] Request already in progress, skipping')
-      return { status: 'succeed' }
+      return {
+        status: 'succeed',
+        action: query.action,
+        databaseId: query.databaseId,
+        options: query
+      }
     }
     const result = await this.getAuthService().handleCallback(query)
-    log.info('[Service Auth] Callback handled', result)
-    return result
+    return {
+      ...result,
+      action: query.action,
+      databaseId: query.databaseId,
+      options: query
+    }
   }
 
   async shutdown(): Promise<void> {

@@ -100,7 +100,8 @@ export enum OAuthSocialSource {
 export enum OAuthSocialAction {
   Create = 'create',
   Import = 'import',
-  SignIn = 'signIn'
+  SignIn = 'signIn',
+  EditDatabase = 'editDatabase'
 }
 
 export enum OAuthStrategy {

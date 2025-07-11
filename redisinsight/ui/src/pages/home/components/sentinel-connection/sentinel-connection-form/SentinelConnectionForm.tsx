@@ -1,8 +1,6 @@
 import {
   EuiButton,
   EuiForm,
-  EuiFlexGroup,
-  EuiFlexItem,
   EuiToolTip,
   keys,
   EuiSpacer,
@@ -159,6 +157,7 @@ const SentinelConnectionForm = (props: Props) => {
             formik={formik}
             showFields={{ host: true, port: true, alias: false, timeout: false }}
             onHostNamePaste={onHostNamePaste}
+            provider={formik.values.provider}
           />
           <EuiSpacer />
           <TlsDetails

@@ -25,6 +25,8 @@ enum ApiEndpoints {
 
   MICROSOFT_AZURE_CLOUD_SUBSCRIPTIONS = 'azure/autodiscovery/subscriptions',
   MICROSOFT_AZURE_CLOUD_DATABASES = 'azure/autodiscovery/databases',
+  MICROSOFT_AUTH_SESSION = 'auth/microsoft/session',
+  MICROSOFT_AUTH_LOGOUT = 'auth/microsoft/logout',
 
   SENTINEL_GET_DATABASES = 'redis-sentinel/get-databases',
   SENTINEL_DATABASES = 'redis-sentinel/databases',

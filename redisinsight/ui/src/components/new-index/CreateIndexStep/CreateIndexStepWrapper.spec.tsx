@@ -2,11 +2,11 @@ import React from 'react'
 import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { CreateIndexStepWrapper } from './CreateIndexStepWrapper'
 
-const initSUT = () => render(<CreateIndexStepWrapper />)
+const renderComponent = () => render(<CreateIndexStepWrapper />)
 
 describe('CreateIndexStepWrapper', () => {
   it('should render', () => {
-    const { container } = initSUT()
+    const { container } = renderComponent()
 
     expect(container).toBeTruthy()
 
@@ -18,27 +18,27 @@ describe('CreateIndexStepWrapper', () => {
     expect(usePresetIndexTabTrigger).toBeInTheDocument()
 
     // Check if the "Use preset index" tab content is selected by default
-    const usePresetIIndexTabContent = screen.queryByText(
-      'TODO: Add content later',
+    const usePresetIIndexTabContent = screen.queryByTestId(
+      'vector-inde-tabs--use-preset-index-content',
     )
     expect(usePresetIIndexTabContent).toBeInTheDocument()
   })
 
   it('should switch to "Use preset index" tab when clicked', () => {
-    initSUT()
+    renderComponent()
 
     const buildNewIndexTabTrigger = screen.getByText('Use preset index')
     fireEvent.click(buildNewIndexTabTrigger)
 
     // Check if the "Use preset index" tab is rendered
-    const buildNewIndexTabContent = screen.queryByText(
-      'TODO: Add content later',
+    const buildNewIndexTabContent = screen.queryByTestId(
+      'vector-inde-tabs--use-preset-index-content',
     )
     expect(buildNewIndexTabContent).toBeInTheDocument()
   })
 
   it('shouldn\'t switch to "Build new index" tab when clicked, since it is disabled', () => {
-    initSUT()
+    renderComponent()
 
     const buildNewIndexTabTriggerLabel = screen.getByText('Build new index')
     const buildNewIndexTabTriggerButton =
@@ -51,8 +51,8 @@ describe('CreateIndexStepWrapper', () => {
     fireEvent.click(buildNewIndexTabTriggerLabel)
 
     // Check if the "Use preset index" tab is still active
-    const usePresetIndexTabContent = screen.queryByText(
-      'TODO: Add content later',
+    const usePresetIndexTabContent = screen.queryByTestId(
+      'vector-inde-tabs--use-preset-index-content',
     )
     expect(usePresetIndexTabContent).toBeInTheDocument()
   })

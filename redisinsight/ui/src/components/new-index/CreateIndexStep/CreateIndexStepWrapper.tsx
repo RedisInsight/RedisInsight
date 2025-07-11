@@ -18,19 +18,23 @@ const VECTOR_INDEX_TABS: TabInfo<string>[] = [
   {
     value: VectorIndexTab.UsePresetIndex,
     label: 'Use preset index',
-    content: <div>TODO: Add content later</div>,
+    content: (
+      <div data-testid="vector-inde-tabs--use-preset-index-content">
+        TODO: Add content later
+      </div>
+    ),
   },
 ]
 
 export const CreateIndexStepWrapper = (props: Partial<TabsProps>) => {
-  const { tabs, defaultValue, ...restProps } = props
+  const { tabs, defaultValue, ...rest } = props
 
   return (
     <Tabs
       tabs={tabs ?? VECTOR_INDEX_TABS}
       defaultValue={defaultValue ?? VectorIndexTab.UsePresetIndex}
       variant="sub"
-      {...restProps}
+      {...rest}
     />
   )
 }

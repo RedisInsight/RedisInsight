@@ -602,7 +602,7 @@ const VirtualTable = (props: IProps) => {
             <ProgressBarLoader
               color="primary"
               className={styles.progress}
-              data-testid="progress-key-list"
+              data-testid="progress-key-table"
             />
           )}
           <InfiniteLoader

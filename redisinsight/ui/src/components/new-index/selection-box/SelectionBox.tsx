@@ -12,7 +12,6 @@ export interface BoxSelectionOption<T extends string = string>
   text?: string
 }
 
-// TODO: Remove me
 type SelectionBoxProps<T extends string = string> = {
   box: BoxSelectionOption<T>
 } & HTMLAttributes<HTMLButtonElement>

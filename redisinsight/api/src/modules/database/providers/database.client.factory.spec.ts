@@ -256,6 +256,7 @@ describe('DatabaseClientFactory', () => {
         },
       );
     });
+
     it('should throw original error and emit connection failed event for RedisConnection* errors', async () => {
       jest
         .spyOn(redisClientFactory, 'createClient')

@@ -1,11 +1,8 @@
 import React from 'react'
-import cx from 'classnames'
-import { EuiIcon } from '@elastic/eui'
 
 import {
   FeatureFlagComponent,
   OAuthSsoHandlerDialog,
-  RiTooltip,
 } from 'uiSrc/components'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -15,8 +12,9 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { sendEventTelemetry } from 'uiSrc/telemetry'
 import { HELP_LINKS } from 'uiSrc/pages/home/constants'
 import { FeatureFlags } from 'uiSrc/constants'
+import { SideBarItem } from 'uiSrc/components/base/layout/sidebar'
+import { SideBarItemIcon } from 'uiSrc/components/base/layout/sidebar/SideBarItemIcon'
 import { Link } from 'uiSrc/components/base/link/Link'
-import styles from '../../styles.module.scss'
 
 const CreateCloud = () => {
   const onCLickLink = (isSSOEnabled: boolean) => {
@@ -32,38 +30,41 @@ const CreateCloud = () => {
 
   return (
     <FeatureFlagComponent name={FeatureFlags.cloudAds}>
-      <RiTooltip
-        content="Create FREE trial Redis Cloud database"
-        position="right"
-      >
-        <span className={cx(styles.iconNavItem)}>
-          <OAuthSsoHandlerDialog>
-            {(ssoCloudHandlerClick, isSSOEnabled) => (
-              <Link
-                onClick={(e) => {
-                  onCLickLink(isSSOEnabled)
-                  ssoCloudHandlerClick(e, {
-                    source: OAuthSocialSource.NavigationMenu,
-                    action: OAuthSocialAction.Create,
-                  })
-                }}
-                className={styles.cloudLink}
-                href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
-                  campaign: 'navigation_menu',
-                })}
-                target="_blank"
-                data-test-subj="create-cloud-nav-link"
-              >
-                <EuiIcon
-                  className={styles.cloudIcon}
-                  type={CloudIcon}
-                  data-testid="cloud-db-icon"
-                />
-              </Link>
-            )}
-          </OAuthSsoHandlerDialog>
-        </span>
-      </RiTooltip>
+      <OAuthSsoHandlerDialog>
+        {(ssoCloudHandlerClick, isSSOEnabled) => (
+          <Link
+            href={getUtmExternalLink(EXTERNAL_LINKS.tryFree, {
+              campaign: 'navigation_menu',
+            })}
+            style={{ marginInline: 'auto', backgroundColor: 'transparent' }}
+            data-testid="create-cloud-db-link"
+          >
+            <SideBarItem
+              tooltipProps={{
+                text: 'Create FREE trial Redis Cloud database',
+                placement: 'right',
+              }}
+              onClick={(e) => {
+                onCLickLink(isSSOEnabled)
+                ssoCloudHandlerClick(e, {
+                  source: OAuthSocialSource.NavigationMenu,
+                  action: OAuthSocialAction.Create,
+                })
+              }}
+              style={{ marginInline: 'auto' }}
+              data-testid="create-cloud-sidebar-item"
+            >
+              <SideBarItemIcon
+                width="20px"
+                height="20px"
+                icon={CloudIcon}
+                aria-label="cloud-db-icon"
+                data-testid="cloud-db-icon"
+              />
+            </SideBarItem>
+          </Link>
+        )}
+      </OAuthSsoHandlerDialog>
     </FeatureFlagComponent>
   )
 }

@@ -1,3 +1,1 @@
-import SelectionBox from './SelectionBox'
-
-export default SelectionBox
+export { default as SelectionBox }  './SelectionBox'

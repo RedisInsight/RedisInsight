@@ -49,7 +49,6 @@ import {
 } from 'uiSrc/components/virtual-table/interfaces'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import { FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
-import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
 import styles from './styles.module.scss'
 
@@ -324,13 +323,6 @@ const SetDetailsTable = (props: Props) => {
         styles.container,
       )}
     >
-      {loading && (
-        <ProgressBarLoader
-          color="primary"
-          data-testid="progress-key-set"
-        />
-      )}
-
       <VirtualTable
         autoHeight
         hideProgress

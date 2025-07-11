@@ -72,7 +72,6 @@ import {
   FormattedValue,
 } from 'uiSrc/pages/browser/modules/key-details/shared'
 import { Text } from 'uiSrc/components/base/text'
-import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import {
   SetListElementDto,
   SetListElementResponse,
@@ -384,9 +383,6 @@ const ListDetailsTable = () => {
         styles.container,
       )}
     >
-      {loading && (
-        <ProgressBarLoader color="primary" data-testid="progress-key-list" />
-      )}
       <VirtualTable
         autoHeight
         hideProgress

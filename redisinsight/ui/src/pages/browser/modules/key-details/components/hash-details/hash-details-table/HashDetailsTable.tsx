@@ -62,7 +62,6 @@ import {
   createDeleteFieldHeader,
   createDeleteFieldMessage,
   createTooltipContent,
-  formatLongName,
   formattingBuffer,
   isTruncatedString,
   isEqualBuffers,
@@ -82,7 +81,6 @@ import {
   FormattedValue,
 } from 'uiSrc/pages/browser/modules/key-details/shared'
 import { RiTooltip } from 'uiSrc/components'
-import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import {
   AddFieldsToHashDto,
   GetHashFieldsResponse,
@@ -609,9 +607,6 @@ const HashDetailsTable = (props: Props) => {
           styles.container,
         )}
       >
-        {loading && (
-          <ProgressBarLoader color="primary" data-testid="progress-key-hash" />
-        )}
         <VirtualTable
           hideProgress
           expandable

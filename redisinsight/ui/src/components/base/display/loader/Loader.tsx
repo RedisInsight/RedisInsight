@@ -22,9 +22,11 @@ const convertSizeToPx = (tShirtSize: string, space: Space) => {
   }
 }
 
-export default function Loader({ size, ...rest }: RedisLoaderProps) {
+const Loader = ({ size, ...rest }: RedisLoaderProps) => {
   const theme = useTheme()
   const { space } = theme.core
   const sizeInPx = size ? convertSizeToPx(size, space) : space.space100
   return <RedisLoader size={sizeInPx} {...rest} />
 }
+
+export default Loader

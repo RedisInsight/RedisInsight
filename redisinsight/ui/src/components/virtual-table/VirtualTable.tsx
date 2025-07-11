@@ -601,7 +601,6 @@ const VirtualTable = (props: IProps) => {
           {loading && !hideProgress && (
             <ProgressBarLoader
               color="primary"
-              className={styles.progress}
               data-testid="progress-key-table"
             />
           )}

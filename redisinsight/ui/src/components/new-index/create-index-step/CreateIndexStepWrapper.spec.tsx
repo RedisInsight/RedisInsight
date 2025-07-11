@@ -1,10 +1,14 @@
 import React from 'react'
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { cleanup, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { CreateIndexStepWrapper } from './CreateIndexStepWrapper'
 
 const renderComponent = () => render(<CreateIndexStepWrapper />)
 
 describe('CreateIndexStepWrapper', () => {
+  beforeEach(() => {
+    cleanup()
+  })
+
   it('should render', () => {
     const { container } = renderComponent()
 

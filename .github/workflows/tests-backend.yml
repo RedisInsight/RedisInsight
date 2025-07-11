@@ -20,10 +20,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install all libs and dependencies for BE
-        uses: ./.github/actions/install-all-build-libs
+      - name: Setup Node
+        uses: actions/setup-node@v4.0.4
         with:
-          skip-electron-deps: '1'
+          node-version: ${{ vars.NODE_VERSION }}
+
+      - name: Install dependencies
+        working-directory: 'redisinsight/api'
+        run: |
+          yarn install --frozen-lockfile --network-timeout 1000000
 
       - name: API PROD dependencies scan
         run: |

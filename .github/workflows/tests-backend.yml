@@ -24,6 +24,8 @@ jobs:
         uses: actions/setup-node@v4.0.4
         with:
           node-version: ${{ vars.NODE_VERSION }}
+          cache: 'yarn'
+          cache-dependency-path: 'redisinsight/api/yarn.lock'
 
       - name: Install dependencies
         working-directory: 'redisinsight/api'

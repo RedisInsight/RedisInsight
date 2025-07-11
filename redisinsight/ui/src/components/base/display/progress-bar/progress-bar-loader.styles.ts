@@ -1,4 +1,4 @@
-import { theme, useTheme } from '@redis-ui/styles'
+import { Theme, theme } from '@redis-ui/styles'
 import { ReactNode } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 
@@ -39,10 +39,10 @@ export const getBarBackgroundColor = (
 
 export interface MapProps extends LoaderBarProps {
   $color?: ColorType
+  theme: Theme
 }
 
-export const useColorBackgroundStyles = ({ $color }: MapProps = {}) => {
-  const theme = useTheme()
+export const getColorBackgroundStyles = ({ $color, theme }: MapProps) => {
   const colors = theme.semantic.color
 
   const getColorValue = (color?: ColorType) =>
@@ -76,7 +76,7 @@ export const LoaderContainer = styled.div<LoaderContainerProps>`
 `
 
 export const LoaderBar = styled.div<MapProps>`
-  ${useColorBackgroundStyles}
+  ${({ $color, theme }) => getColorBackgroundStyles({ $color, theme })};
 
   position: absolute;
   height: 100%;

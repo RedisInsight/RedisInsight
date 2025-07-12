@@ -31,6 +31,7 @@ jobs:
         working-directory: 'redisinsight/api'
         run: |
           yarn install --frozen-lockfile --network-timeout 1000000
+# test cache hit 1
 #
 #      - name: Unit tests API
 #        timeout-minutes: 20

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import cx from 'classnames'
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import { isObject, xor } from 'lodash'
-import { EuiProgress, EuiIcon } from '@elastic/eui'
+import { EuiIcon } from '@elastic/eui'
 import InfiniteLoader from 'react-window-infinite-loader'
 import { VariableSizeGrid as Grid, GridChildComponentProps } from 'react-window'
 
@@ -10,6 +10,7 @@ import { Maybe, Nullable } from 'uiSrc/utils'
 import { SortOrder } from 'uiSrc/constants'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { Text } from 'uiSrc/components/base/text'
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import { IProps } from './interfaces'
 import { getColumnWidth, useInnerElementType } from './utils'
 
@@ -308,10 +309,8 @@ const VirtualGrid = (props: IProps) => {
       data-testid="virtual-grid-container"
     >
       {loading && !hideProgress && (
-        <EuiProgress
+        <ProgressBarLoader
           color="primary"
-          size="xs"
-          position="absolute"
           className={styles.progress}
           data-testid="progress-entry-list"
         />

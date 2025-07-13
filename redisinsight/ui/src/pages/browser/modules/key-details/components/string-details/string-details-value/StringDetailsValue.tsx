@@ -7,7 +7,6 @@ import React, {
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiProgress } from '@elastic/eui'
 
 import {
   bufferToSerializedFormat,
@@ -60,6 +59,7 @@ import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
 import { TextArea } from 'uiSrc/components/base/inputs'
 import { RiTooltip } from 'uiSrc/components'
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 const MIN_ROWS = 8
@@ -265,10 +265,8 @@ const StringDetailsValue = (props: Props) => {
         data-testid="string-details"
       >
         {isLoading && (
-          <EuiProgress
+          <ProgressBarLoader
             color="primary"
-            size="xs"
-            position="absolute"
             data-testid="progress-key-string"
           />
         )}

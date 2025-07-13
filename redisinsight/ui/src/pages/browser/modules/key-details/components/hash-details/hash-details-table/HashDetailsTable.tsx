@@ -1,4 +1,3 @@
-import { EuiProgress } from '@elastic/eui'
 import cx from 'classnames'
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -63,7 +62,6 @@ import {
   createDeleteFieldHeader,
   createDeleteFieldMessage,
   createTooltipContent,
-  formatLongName,
   formattingBuffer,
   isTruncatedString,
   isEqualBuffers,
@@ -609,14 +607,6 @@ const HashDetailsTable = (props: Props) => {
           styles.container,
         )}
       >
-        {loading && (
-          <EuiProgress
-            color="primary"
-            size="xs"
-            position="absolute"
-            data-testid="progress-key-hash"
-          />
-        )}
         <VirtualTable
           hideProgress
           expandable

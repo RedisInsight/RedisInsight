@@ -1,4 +1,3 @@
-import { EuiProgress } from '@elastic/eui'
 import React, { useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { isNull, last, toString } from 'lodash'
@@ -23,6 +22,7 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RangeFilter from 'uiSrc/components/range-filter'
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import { GetStreamEntriesResponse } from 'apiSrc/modules/browser/stream/dto'
 
 import ConsumersViewWrapper from '../consumers-view'
@@ -199,10 +199,8 @@ const StreamDetailsBody = (props: Props) => {
   return (
     <div data-testid="stream-details" className={styles.container}>
       {(loading || loadingGroups) && (
-        <EuiProgress
+        <ProgressBarLoader
           color="primary"
-          size="xs"
-          position="absolute"
           data-testid="progress-key-stream"
         />
       )}

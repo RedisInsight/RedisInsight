@@ -27,7 +27,7 @@ import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { fetchKeysMetadataTree } from 'uiSrc/slices/browser/keys'
 import { Loader, ProgressBarLoader } from 'uiSrc/components/base/display'
-import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
+import { GetKeyInfoResponse } from 'uiSrc/api-client'
 
 import { Node } from './components/Node'
 import { NodeMeta, TreeData, TreeNode } from './interfaces'

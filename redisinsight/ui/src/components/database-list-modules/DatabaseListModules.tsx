@@ -13,7 +13,7 @@ import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { UnknownDarkIcon, UnknownLightIcon } from 'uiSrc/components/base/icons'
 import { ColorText } from 'uiSrc/components/base/text'
 import { RiTooltip } from 'uiSrc/components'
-import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
+import { AdditionalRedisModule } from 'uiSrc/api-client'
 
 import styles from './styles.module.scss'
 
@@ -47,14 +47,16 @@ const DatabaseListModules = React.memo((props: Props) => {
 
   const newModules: IDatabaseModule[] = sortModules(
     modules?.map(({ name: propName, semanticVersion = '', version = '' }) => {
-      const moduleName = DEFAULT_MODULES_INFO[propName]?.text || propName
+      const moduleName =
+        DEFAULT_MODULES_INFO[propName as keyof typeof DEFAULT_MODULES_INFO]
+          ?.text || propName
 
       const { abbreviation = '', name = moduleName } = getModule(moduleName)
 
       const moduleAlias = truncateText(name, 50)
       // eslint-disable-next-line sonarjs/no-nested-template-literals
       let icon =
-        DEFAULT_MODULES_INFO[propName]?.[
+        DEFAULT_MODULES_INFO[propName as keyof typeof DEFAULT_MODULES_INFO]?.[
           theme === Theme.Dark ? 'iconDark' : 'iconLight'
         ]
       const content = `${moduleAlias}${semanticVersion || version ? ` v. ${semanticVersion || version}` : ''}`

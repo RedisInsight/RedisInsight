@@ -15,7 +15,7 @@ import {
 } from 'uiSrc/slices/interfaces/aiAssistant'
 import { Nullable, scrollIntoView } from 'uiSrc/utils'
 import { Loader } from 'uiSrc/components/base/display'
-import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
+import { AdditionalRedisModule } from 'uiSrc/api-client'
 
 import LoadingMessage from '../loading-message'
 import MarkdownMessage from '../markdown-message'

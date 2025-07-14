@@ -43,17 +43,17 @@ import {
   setBrowserSelectedKey,
 } from 'uiSrc/slices/app/context'
 
-import { CreateListWithExpireDto } from 'apiSrc/modules/browser/list/dto'
-import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
-import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/z-set/dto'
-import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/hash/dto'
-import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/rejson-rl/dto'
-import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
 import {
+  CreateListWithExpireDto,
+  SetStringWithExpireDto,
+  CreateZSetWithExpireDto,
+  CreateHashWithExpireDto,
+  CreateRejsonRlWithExpireDto,
+  CreateSetWithExpireDto,
   GetKeyInfoResponse,
   GetKeysWithDetailsResponse,
-} from 'apiSrc/modules/browser/keys/dto'
-import { CreateStreamDto } from 'apiSrc/modules/browser/stream/dto'
+  CreateStreamDto,
+} from 'uiSrc/api-client'
 
 import { fetchString } from './string'
 import {
@@ -117,6 +117,7 @@ export const initialState: KeysStore = {
   isSearched: false,
   isFiltered: false,
   isBrowserFullScreen: false,
+  shownColumns: [],
   searchMode:
     localStorageService?.get(BrowserStorageItem.browserSearchMode) ??
     SearchMode.Pattern,

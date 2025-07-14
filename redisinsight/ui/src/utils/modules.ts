@@ -5,7 +5,7 @@ import {
   RedisDefaultModules,
   REDISEARCH_MODULES,
 } from 'uiSrc/slices/interfaces'
-import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
+import { AdditionalRedisModule } from 'uiSrc/api-client'
 
 export interface IDatabaseModule {
   abbreviation: string

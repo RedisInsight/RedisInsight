@@ -14,7 +14,7 @@ import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 import {
   DeleteListElementsDto,
   PushElementToListDto,
-} from 'apiSrc/modules/browser/list/dto'
+} from 'uiSrc/api-client'
 import {
   defaultSelectedKeyAction,
   deleteSelectedKeySuccess,

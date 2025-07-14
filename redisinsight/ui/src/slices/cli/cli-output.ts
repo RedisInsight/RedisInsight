@@ -12,7 +12,7 @@ import {
   SelectCommand,
   CliOutputFormatterType,
 } from 'uiSrc/constants/cliOutput'
-import { SendCommandResponse } from 'apiSrc/modules/cli/dto/cli.dto'
+import { SendCommandResponse } from 'uiSrc/api-client'
 
 import { AppDispatch, RootState } from '../store'
 import { CommandExecutionStatus, StateCliOutput } from '../interfaces/cli'

@@ -20,9 +20,11 @@ import {
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { getCloudSsoUtmParams } from 'uiSrc/utils/oauth/cloudSsoUtm'
 import { setSSOFlow } from 'uiSrc/slices/instances/cloud'
-import { CloudUser } from 'apiSrc/modules/cloud/user/models'
-import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
-import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
+import {
+  CloudJobInfo,
+  CloudSubscriptionPlanResponse,
+  CloudUser,
+} from 'uiSrc/api-client'
 
 import { AppDispatch, RootState } from '../store'
 import {

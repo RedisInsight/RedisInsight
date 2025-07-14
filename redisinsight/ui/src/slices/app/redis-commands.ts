@@ -8,7 +8,7 @@ import {
   checkDeprecatedCommandGroup,
 } from 'uiSrc/utils'
 import { getConfig } from 'uiSrc/config'
-import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
+import { GetServerInfoResponse } from 'uiSrc/api-client'
 
 import { AppDispatch, RootState } from '../store'
 import { StateAppRedisCommands } from '../interfaces'

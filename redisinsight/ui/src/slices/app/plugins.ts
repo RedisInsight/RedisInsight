@@ -15,8 +15,7 @@ import {
   PluginsResponse,
   StateAppPlugins,
 } from 'uiSrc/slices/interfaces'
-import { SendCommandResponse } from 'apiSrc/modules/cli/dto/cli.dto'
-import { PluginState } from 'apiSrc/modules/workbench/models/plugin-state'
+import { SendCommandResponse, PluginState } from 'uiSrc/api-client'
 
 import { AppDispatch, RootState } from '../store'
 

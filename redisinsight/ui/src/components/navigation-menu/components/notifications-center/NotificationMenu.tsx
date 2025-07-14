@@ -1,25 +1,22 @@
-import cx from 'classnames'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
 import {
   notificationCenterSelector,
   setIsCenterOpen,
 } from 'uiSrc/slices/app/notifications'
-
-import { RiTooltip } from 'uiSrc/components'
-import { NavigationItemWrapper } from 'uiSrc/components/navigation-menu/NavigationItemWrapper'
 import { NotificationsIcon } from 'uiSrc/components/base/icons'
-import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import {
+  SideBarItem,
+  SideBarItemIcon,
+} from 'uiSrc/components/base/layout/sidebar'
 import NotificationCenter from './NotificationCenter'
 import PopoverNotification from './PopoverNotification'
 
-import navStyles from '../../styles.module.scss'
 import styles from './styles.module.scss'
 
 const NavButton = () => {
-  const { isCenterOpen, isNotificationOpen, totalUnread } = useSelector(
-    notificationCenterSelector,
-  )
+  const { isCenterOpen, totalUnread } = useSelector(notificationCenterSelector)
 
   const dispatch = useDispatch()
 
@@ -28,30 +25,22 @@ const NavButton = () => {
   }
 
   const Btn = (
-    <NavigationItemWrapper
-      className={cx(navStyles.navigationButton, styles.notificationIcon, {
-        [styles.active]: isCenterOpen,
-      })}
+    <SideBarItem
+      tooltipProps={{ text: 'Notification Center', placement: 'right' }}
+      onMouseDownCapture={onClickIcon}
+      isActive={isCenterOpen}
     >
-      <IconButton
+      <SideBarItemIcon
         icon={NotificationsIcon}
-        size="L"
         aria-label="Notification Menu"
-        onMouseDownCapture={onClickIcon}
         data-testid="notification-menu-button"
       />
-    </NavigationItemWrapper>
+    </SideBarItem>
   )
 
   return (
-    <div className={styles.navBtnWrapper}>
-      {!isCenterOpen && !isNotificationOpen ? (
-        <RiTooltip content="Notification Center" position="right">
-          {Btn}
-        </RiTooltip>
-      ) : (
-        Btn
-      )}
+    <>
+      {Btn}
       {totalUnread > 0 && !isCenterOpen && (
         <div
           className={styles.badgeUnreadCount}
@@ -60,7 +49,7 @@ const NavButton = () => {
           {totalUnread > 9 ? '9+' : totalUnread}
         </div>
       )}
-    </div>
+    </>
   )
 }
 

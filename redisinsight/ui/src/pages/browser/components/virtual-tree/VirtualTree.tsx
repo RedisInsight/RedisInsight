@@ -1,6 +1,5 @@
 import React, {
   useCallback,
-  useContext,
   useEffect,
   useRef,
   useState,
@@ -14,16 +13,12 @@ import { useDispatch } from 'react-redux'
 import { bufferToString, Maybe, Nullable } from 'uiSrc/utils'
 import { useDisposableWebworker } from 'uiSrc/services'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
-import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
   DEFAULT_TREE_SORTING,
   KeyTypes,
   ModulesKeyTypes,
   SortOrder,
-  Theme,
 } from 'uiSrc/constants'
-import KeyLightSVG from 'uiSrc/assets/img/sidebar/browser.svg'
-import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { fetchKeysMetadataTree } from 'uiSrc/slices/browser/keys'
 import { Loader, ProgressBarLoader } from 'uiSrc/components/base/display'
@@ -79,7 +74,6 @@ const VirtualTree = (props: Props) => {
     onDeleteLeaf,
   } = props
 
-  const { theme } = useContext(ThemeContext)
   const [rerenderState, rerender] = useState({})
   const controller = useRef<Nullable<AbortController>>(null)
   const elements = useRef<any>({})
@@ -228,7 +222,6 @@ const VirtualTree = (props: Props) => {
       updateStatusSelected: handleUpdateSelected,
       updateStatusOpen: handleUpdateOpen,
       onDelete: onDeleteLeaf,
-      leafIcon: theme === Theme.Dark ? KeyDarkSVG : KeyLightSVG,
       keyApproximate: node.keyApproximate,
       isSelected: !!node.isLeaf && statusSelected === node?.nameString,
       isOpenByDefault: statusOpen[node.fullName],

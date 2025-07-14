@@ -9,7 +9,7 @@ All URIs are relative to *http://localhost*
 |[**customTutorialControllerGetGlobalManifest**](#customtutorialcontrollergetglobalmanifest) | **GET** /api/custom-tutorials/manifest | |
 
 # **customTutorialControllerCreate**
-> object customTutorialControllerCreate()
+> RootCustomTutorialManifest customTutorialControllerCreate()
 
 Create new tutorial
 
@@ -43,7 +43,7 @@ const { status, data } = await apiInstance.customTutorialControllerCreate(
 
 ### Return type
 
-**object**
+**RootCustomTutorialManifest**
 
 ### Authorization
 
@@ -58,7 +58,7 @@ No authorization required
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**0** |  |  -  |
+|**201** |  |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -114,7 +114,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **customTutorialControllerGetGlobalManifest**
-> object customTutorialControllerGetGlobalManifest()
+> RootCustomTutorialManifest customTutorialControllerGetGlobalManifest()
 
 Get global manifest for custom tutorials
 
@@ -138,7 +138,7 @@ This endpoint does not have any parameters.
 
 ### Return type
 
-**object**
+**RootCustomTutorialManifest**
 
 ### Authorization
 
@@ -153,7 +153,7 @@ No authorization required
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**0** |  |  -  |
+|**200** |  |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

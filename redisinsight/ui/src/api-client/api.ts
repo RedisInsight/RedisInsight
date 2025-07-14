@@ -2648,6 +2648,83 @@ export interface CreateZSetWithExpireDto {
 /**
  * 
  * @export
+ * @interface CustomTutorialManifest
+ */
+export interface CustomTutorialManifest {
+    /**
+     * 
+     * @type {string}
+     * @memberof CustomTutorialManifest
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CustomTutorialManifest
+     */
+    'type': CustomTutorialManifestTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof CustomTutorialManifest
+     */
+    'label': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CustomTutorialManifest
+     */
+    'summary': string;
+    /**
+     * 
+     * @type {CustomTutorialManifestArgs}
+     * @memberof CustomTutorialManifest
+     */
+    'args'?: CustomTutorialManifestArgs;
+    /**
+     * 
+     * @type {CustomTutorialManifest}
+     * @memberof CustomTutorialManifest
+     */
+    'children'?: CustomTutorialManifest;
+}
+
+export const CustomTutorialManifestTypeEnum = {
+    CodeButton: 'code-button',
+    Group: 'group',
+    InternalLink: 'internal-link'
+} as const;
+
+export type CustomTutorialManifestTypeEnum = typeof CustomTutorialManifestTypeEnum[keyof typeof CustomTutorialManifestTypeEnum];
+
+/**
+ * 
+ * @export
+ * @interface CustomTutorialManifestArgs
+ */
+export interface CustomTutorialManifestArgs {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof CustomTutorialManifestArgs
+     */
+    'path'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof CustomTutorialManifestArgs
+     */
+    'initialIsOpen'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof CustomTutorialManifestArgs
+     */
+    'withBorder'?: boolean;
+}
+/**
+ * 
+ * @export
  * @interface Database
  */
 export interface Database {
@@ -3578,6 +3655,19 @@ export interface DeleteFieldsFromHashDto {
 /**
  * 
  * @export
+ * @interface DeleteFieldsFromHashResponse
+ */
+export interface DeleteFieldsFromHashResponse {
+    /**
+     * Number of affected fields
+     * @type {number}
+     * @memberof DeleteFieldsFromHashResponse
+     */
+    'affected': number;
+}
+/**
+ * 
+ * @export
  * @interface DeleteKeysDto
  */
 export interface DeleteKeysDto {
@@ -3652,6 +3742,19 @@ export interface DeleteMembersFromSetDto {
      * @memberof DeleteMembersFromSetDto
      */
     'members': Array<string>;
+}
+/**
+ * 
+ * @export
+ * @interface DeleteMembersFromSetResponse
+ */
+export interface DeleteMembersFromSetResponse {
+    /**
+     * Number of affected members
+     * @type {number}
+     * @memberof DeleteMembersFromSetResponse
+     */
+    'affected': number;
 }
 /**
  * 
@@ -6695,6 +6798,107 @@ export interface ResultsSummary {
 /**
  * 
  * @export
+ * @interface RootCustomTutorialManifest
+ */
+export interface RootCustomTutorialManifest {
+    /**
+     * 
+     * @type {string}
+     * @memberof RootCustomTutorialManifest
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RootCustomTutorialManifest
+     */
+    'type': RootCustomTutorialManifestTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof RootCustomTutorialManifest
+     */
+    'label': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RootCustomTutorialManifest
+     */
+    'summary': string;
+    /**
+     * 
+     * @type {CustomTutorialManifestArgs}
+     * @memberof RootCustomTutorialManifest
+     */
+    'args'?: CustomTutorialManifestArgs;
+    /**
+     * 
+     * @type {CustomTutorialManifest}
+     * @memberof RootCustomTutorialManifest
+     */
+    'children'?: CustomTutorialManifest;
+    /**
+     * 
+     * @type {string}
+     * @memberof RootCustomTutorialManifest
+     */
+    '_actions'?: RootCustomTutorialManifestActionsEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof RootCustomTutorialManifest
+     */
+    '_path'?: string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof RootCustomTutorialManifest
+     */
+    'keywords'?: Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof RootCustomTutorialManifest
+     */
+    'author'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RootCustomTutorialManifest
+     */
+    'url'?: string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof RootCustomTutorialManifest
+     */
+    'industry'?: Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof RootCustomTutorialManifest
+     */
+    'description'?: string;
+}
+
+export const RootCustomTutorialManifestTypeEnum = {
+    CodeButton: 'code-button',
+    Group: 'group',
+    InternalLink: 'internal-link'
+} as const;
+
+export type RootCustomTutorialManifestTypeEnum = typeof RootCustomTutorialManifestTypeEnum[keyof typeof RootCustomTutorialManifestTypeEnum];
+export const RootCustomTutorialManifestActionsEnum = {
+    Create: 'create',
+    Delete: 'delete',
+    Sync: 'sync'
+} as const;
+
+export type RootCustomTutorialManifestActionsEnum = typeof RootCustomTutorialManifestActionsEnum[keyof typeof RootCustomTutorialManifestActionsEnum];
+
+/**
+ * 
+ * @export
  * @interface SafeRejsonRlDataDto
  */
 export interface SafeRejsonRlDataDto {
@@ -9375,7 +9579,7 @@ export const BrowserHashApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async hashControllerDeleteFields(dbInstance: string, encoding: HashControllerDeleteFieldsEncodingEnum, deleteFieldsFromHashDto: DeleteFieldsFromHashDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async hashControllerDeleteFields(dbInstance: string, encoding: HashControllerDeleteFieldsEncodingEnum, deleteFieldsFromHashDto: DeleteFieldsFromHashDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DeleteFieldsFromHashResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.hashControllerDeleteFields(dbInstance, encoding, deleteFieldsFromHashDto, riDbIndex, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BrowserHashApi.hashControllerDeleteFields']?.[localVarOperationServerIndex]?.url;
@@ -9459,7 +9663,7 @@ export const BrowserHashApiFactory = function (configuration?: Configuration, ba
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        hashControllerDeleteFields(dbInstance: string, encoding: HashControllerDeleteFieldsEncodingEnum, deleteFieldsFromHashDto: DeleteFieldsFromHashDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        hashControllerDeleteFields(dbInstance: string, encoding: HashControllerDeleteFieldsEncodingEnum, deleteFieldsFromHashDto: DeleteFieldsFromHashDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<DeleteFieldsFromHashResponse> {
             return localVarFp.hashControllerDeleteFields(dbInstance, encoding, deleteFieldsFromHashDto, riDbIndex, options).then((request) => request(axios, basePath));
         },
         /**
@@ -9997,7 +10201,7 @@ export const BrowserKeysApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async keysControllerGetKeys(dbInstance: string, encoding: KeysControllerGetKeysEncodingEnum, getKeysDto: GetKeysDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetKeysWithDetailsResponse>> {
+        async keysControllerGetKeys(dbInstance: string, encoding: KeysControllerGetKeysEncodingEnum, getKeysDto: GetKeysDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GetKeysWithDetailsResponse>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.keysControllerGetKeys(dbInstance, encoding, getKeysDto, riDbIndex, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BrowserKeysApi.keysControllerGetKeys']?.[localVarOperationServerIndex]?.url;
@@ -10013,7 +10217,7 @@ export const BrowserKeysApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async keysControllerGetKeysInfo(dbInstance: string, encoding: KeysControllerGetKeysInfoEncodingEnum, getKeysInfoDto: GetKeysInfoDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetKeysWithDetailsResponse>> {
+        async keysControllerGetKeysInfo(dbInstance: string, encoding: KeysControllerGetKeysInfoEncodingEnum, getKeysInfoDto: GetKeysInfoDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GetKeyInfoResponse>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.keysControllerGetKeysInfo(dbInstance, encoding, getKeysInfoDto, riDbIndex, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BrowserKeysApi.keysControllerGetKeysInfo']?.[localVarOperationServerIndex]?.url;
@@ -10097,7 +10301,7 @@ export const BrowserKeysApiFactory = function (configuration?: Configuration, ba
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        keysControllerGetKeys(dbInstance: string, encoding: KeysControllerGetKeysEncodingEnum, getKeysDto: GetKeysDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<GetKeysWithDetailsResponse> {
+        keysControllerGetKeys(dbInstance: string, encoding: KeysControllerGetKeysEncodingEnum, getKeysDto: GetKeysDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<Array<GetKeysWithDetailsResponse>> {
             return localVarFp.keysControllerGetKeys(dbInstance, encoding, getKeysDto, riDbIndex, options).then((request) => request(axios, basePath));
         },
         /**
@@ -10110,7 +10314,7 @@ export const BrowserKeysApiFactory = function (configuration?: Configuration, ba
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        keysControllerGetKeysInfo(dbInstance: string, encoding: KeysControllerGetKeysInfoEncodingEnum, getKeysInfoDto: GetKeysInfoDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<GetKeysWithDetailsResponse> {
+        keysControllerGetKeysInfo(dbInstance: string, encoding: KeysControllerGetKeysInfoEncodingEnum, getKeysInfoDto: GetKeysInfoDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<Array<GetKeyInfoResponse>> {
             return localVarFp.keysControllerGetKeysInfo(dbInstance, encoding, getKeysInfoDto, riDbIndex, options).then((request) => request(axios, basePath));
         },
         /**
@@ -12138,7 +12342,7 @@ export const BrowserSetApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async setControllerDeleteMembers(dbInstance: string, encoding: SetControllerDeleteMembersEncodingEnum, deleteMembersFromSetDto: DeleteMembersFromSetDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async setControllerDeleteMembers(dbInstance: string, encoding: SetControllerDeleteMembersEncodingEnum, deleteMembersFromSetDto: DeleteMembersFromSetDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DeleteMembersFromSetResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.setControllerDeleteMembers(dbInstance, encoding, deleteMembersFromSetDto, riDbIndex, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BrowserSetApi.setControllerDeleteMembers']?.[localVarOperationServerIndex]?.url;
@@ -12206,7 +12410,7 @@ export const BrowserSetApiFactory = function (configuration?: Configuration, bas
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        setControllerDeleteMembers(dbInstance: string, encoding: SetControllerDeleteMembersEncodingEnum, deleteMembersFromSetDto: DeleteMembersFromSetDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        setControllerDeleteMembers(dbInstance: string, encoding: SetControllerDeleteMembersEncodingEnum, deleteMembersFromSetDto: DeleteMembersFromSetDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<DeleteMembersFromSetResponse> {
             return localVarFp.setControllerDeleteMembers(dbInstance, encoding, deleteMembersFromSetDto, riDbIndex, options).then((request) => request(axios, basePath));
         },
         /**
@@ -24131,7 +24335,7 @@ export const TutorialsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async customTutorialControllerCreate(file?: File, link?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+        async customTutorialControllerCreate(file?: File, link?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RootCustomTutorialManifest>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.customTutorialControllerCreate(file, link, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TutorialsApi.customTutorialControllerCreate']?.[localVarOperationServerIndex]?.url;
@@ -24156,7 +24360,7 @@ export const TutorialsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async customTutorialControllerGetGlobalManifest(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+        async customTutorialControllerGetGlobalManifest(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RootCustomTutorialManifest>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.customTutorialControllerGetGlobalManifest(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TutorialsApi.customTutorialControllerGetGlobalManifest']?.[localVarOperationServerIndex]?.url;
@@ -24180,7 +24384,7 @@ export const TutorialsApiFactory = function (configuration?: Configuration, base
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        customTutorialControllerCreate(file?: File, link?: string, options?: RawAxiosRequestConfig): AxiosPromise<object> {
+        customTutorialControllerCreate(file?: File, link?: string, options?: RawAxiosRequestConfig): AxiosPromise<RootCustomTutorialManifest> {
             return localVarFp.customTutorialControllerCreate(file, link, options).then((request) => request(axios, basePath));
         },
         /**
@@ -24199,7 +24403,7 @@ export const TutorialsApiFactory = function (configuration?: Configuration, base
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        customTutorialControllerGetGlobalManifest(options?: RawAxiosRequestConfig): AxiosPromise<object> {
+        customTutorialControllerGetGlobalManifest(options?: RawAxiosRequestConfig): AxiosPromise<RootCustomTutorialManifest> {
             return localVarFp.customTutorialControllerGetGlobalManifest(options).then((request) => request(axios, basePath));
         },
     };

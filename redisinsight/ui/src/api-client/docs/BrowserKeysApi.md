@@ -134,7 +134,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **keysControllerGetKeys**
-> GetKeysWithDetailsResponse keysControllerGetKeys(getKeysDto)
+> Array<GetKeysWithDetailsResponse> keysControllerGetKeys(getKeysDto)
 
 Get keys by cursor position
 
@@ -175,7 +175,7 @@ const { status, data } = await apiInstance.keysControllerGetKeys(
 
 ### Return type
 
-**GetKeysWithDetailsResponse**
+**Array<GetKeysWithDetailsResponse>**
 
 ### Authorization
 
@@ -195,7 +195,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **keysControllerGetKeysInfo**
-> GetKeysWithDetailsResponse keysControllerGetKeysInfo(getKeysInfoDto)
+> Array<GetKeyInfoResponse> keysControllerGetKeysInfo(getKeysInfoDto)
 
 Get info for multiple keys
 
@@ -236,7 +236,7 @@ const { status, data } = await apiInstance.keysControllerGetKeysInfo(
 
 ### Return type
 
-**GetKeysWithDetailsResponse**
+**Array<GetKeyInfoResponse>**
 
 ### Authorization
 

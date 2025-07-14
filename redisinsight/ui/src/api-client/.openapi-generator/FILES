@@ -93,6 +93,8 @@ docs/CreateStreamDto.md
 docs/CreateSubscriptionAndDatabaseCloudJobDataDto.md
 docs/CreateTagDto.md
 docs/CreateZSetWithExpireDto.md
+docs/CustomTutorialManifest.md
+docs/CustomTutorialManifestArgs.md
 docs/Database.md
 docs/DatabaseAnalysis.md
 docs/DatabaseAnalysisApi.md
@@ -116,10 +118,12 @@ docs/DeleteConsumersDto.md
 docs/DeleteDatabaseRecommendationDto.md
 docs/DeleteDatabasesDto.md
 docs/DeleteFieldsFromHashDto.md
+docs/DeleteFieldsFromHashResponse.md
 docs/DeleteKeysDto.md
 docs/DeleteKeysResponse.md
 docs/DeleteListElementsDto.md
 docs/DeleteMembersFromSetDto.md
+docs/DeleteMembersFromSetResponse.md
 docs/DeleteMembersFromZSetDto.md
 docs/DeleteMembersFromZSetResponse.md
 docs/DeleteStreamEntriesDto.md
@@ -214,6 +218,7 @@ docs/RemoveRejsonRlDto.md
 docs/RenameKeyDto.md
 docs/RenameKeyResponse.md
 docs/ResultsSummary.md
+docs/RootCustomTutorialManifest.md
 docs/SafeRejsonRlDataDto.md
 docs/ScanFilter.md
 docs/SearchRedisearchDto.md

@@ -7,7 +7,7 @@ All URIs are relative to *http://localhost*
 |[**pubSubControllerPublish**](#pubsubcontrollerpublish) | **POST** /api/databases/{dbInstance}/pub-sub/messages | |
 
 # **pubSubControllerPublish**
-> object pubSubControllerPublish(publishDto)
+> PublishResponse pubSubControllerPublish(publishDto)
 
 Publish message to a channel
 
@@ -42,7 +42,7 @@ const { status, data } = await apiInstance.pubSubControllerPublish(
 
 ### Return type
 
-**object**
+**PublishResponse**
 
 ### Authorization
 

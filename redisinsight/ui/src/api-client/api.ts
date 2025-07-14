@@ -978,6 +978,49 @@ export type CloudSubscriptionPlanResponseTypeEnum = typeof CloudSubscriptionPlan
 /**
  * 
  * @export
+ * @interface CloudUser
+ */
+export interface CloudUser {
+    /**
+     * User id
+     * @type {number}
+     * @memberof CloudUser
+     */
+    'id'?: number;
+    /**
+     * User name
+     * @type {string}
+     * @memberof CloudUser
+     */
+    'name'?: string;
+    /**
+     * Current account id
+     * @type {number}
+     * @memberof CloudUser
+     */
+    'currentAccountId'?: number;
+    /**
+     * Cloud API key
+     * @type {CloudCapiKey}
+     * @memberof CloudUser
+     */
+    'capiKey'?: CloudCapiKey;
+    /**
+     * User accounts
+     * @type {Array<object>}
+     * @memberof CloudUser
+     */
+    'accounts'?: Array<object>;
+    /**
+     * Additional user data
+     * @type {object}
+     * @memberof CloudUser
+     */
+    'data'?: object;
+}
+/**
+ * 
+ * @export
  * @interface ClusterConnectionDetailsDto
  */
 export interface ClusterConnectionDetailsDto {
@@ -1423,6 +1466,31 @@ export const CommandExecutionResultStatusEnum = {
 
 export type CommandExecutionResultStatusEnum = typeof CommandExecutionResultStatusEnum[keyof typeof CommandExecutionResultStatusEnum];
 
+/**
+ * 
+ * @export
+ * @interface ConsumerDto
+ */
+export interface ConsumerDto {
+    /**
+     * The consumer\'s name
+     * @type {string}
+     * @memberof ConsumerDto
+     */
+    'name': string;
+    /**
+     * The number of pending messages for the client, which are messages that were delivered but are yet to be acknowledged
+     * @type {number}
+     * @memberof ConsumerDto
+     */
+    'pending': number;
+    /**
+     * The number of milliseconds that have passed since the consumer last interacted with the server
+     * @type {number}
+     * @memberof ConsumerDto
+     */
+    'idle': number;
+}
 /**
  * 
  * @export
@@ -4481,10 +4549,29 @@ export interface GetListElementsResponse {
     'total': number;
     /**
      * Array of elements.
-     * @type {Array<string>}
+     * @type {Array<GetListElementsResponseElementsInner>}
      * @memberof GetListElementsResponse
      */
-    'elements': Array<string>;
+    'elements': Array<GetListElementsResponseElementsInner>;
+}
+/**
+ * 
+ * @export
+ * @interface GetListElementsResponseElementsInner
+ */
+export interface GetListElementsResponseElementsInner {
+    /**
+     * 
+     * @type {string}
+     * @memberof GetListElementsResponseElementsInner
+     */
+    'type': string;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof GetListElementsResponseElementsInner
+     */
+    'data': Array<number>;
 }
 /**
  * 
@@ -4580,11 +4667,18 @@ export interface GetRejsonRlResponseDto {
     'path'?: string;
     /**
      * 
-     * @type {Array<SafeRejsonRlDataDto>}
+     * @type {GetRejsonRlResponseDtoData}
      * @memberof GetRejsonRlResponseDto
      */
-    'data': Array<SafeRejsonRlDataDto>;
+    'data': GetRejsonRlResponseDtoData | null;
 }
+/**
+ * @type GetRejsonRlResponseDtoData
+ * JSON data that can be of various types
+ * @export
+ */
+export type GetRejsonRlResponseDtoData = Array<SafeRejsonRlDataDto> | boolean | number | string;
+
 /**
  * 
  * @export
@@ -5980,6 +6074,19 @@ export interface PublishDto {
 /**
  * 
  * @export
+ * @interface PublishResponse
+ */
+export interface PublishResponse {
+    /**
+     * Number of clients message ws delivered
+     * @type {number}
+     * @memberof PublishResponse
+     */
+    'affected': number;
+}
+/**
+ * 
+ * @export
  * @interface PushElementToListDto
  */
 export interface PushElementToListDto {
@@ -7008,6 +7115,25 @@ export interface SetListElementDto {
      * @memberof SetListElementDto
      */
     'index': number;
+}
+/**
+ * 
+ * @export
+ * @interface SetListElementResponse
+ */
+export interface SetListElementResponse {
+    /**
+     * Element index
+     * @type {number}
+     * @memberof SetListElementResponse
+     */
+    'index': number;
+    /**
+     * List element
+     * @type {string}
+     * @memberof SetListElementResponse
+     */
+    'element': string;
 }
 /**
  * 
@@ -10599,7 +10725,7 @@ export const BrowserListApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listControllerUpdateElement(dbInstance: string, encoding: ListControllerUpdateElementEncodingEnum, setListElementDto: SetListElementDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async listControllerUpdateElement(dbInstance: string, encoding: ListControllerUpdateElementEncodingEnum, setListElementDto: SetListElementDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SetListElementResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.listControllerUpdateElement(dbInstance, encoding, setListElementDto, riDbIndex, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BrowserListApi.listControllerUpdateElement']?.[localVarOperationServerIndex]?.url;
@@ -10691,7 +10817,7 @@ export const BrowserListApiFactory = function (configuration?: Configuration, ba
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listControllerUpdateElement(dbInstance: string, encoding: ListControllerUpdateElementEncodingEnum, setListElementDto: SetListElementDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        listControllerUpdateElement(dbInstance: string, encoding: ListControllerUpdateElementEncodingEnum, setListElementDto: SetListElementDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<SetListElementResponse> {
             return localVarFp.listControllerUpdateElement(dbInstance, encoding, setListElementDto, riDbIndex, options).then((request) => request(axios, basePath));
         },
     };
@@ -12909,7 +13035,7 @@ export const BrowserStreamsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async consumerControllerGetConsumers(dbInstance: string, encoding: ConsumerControllerGetConsumersEncodingEnum, getConsumersDto: GetConsumersDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ConsumerGroupDto>>> {
+        async consumerControllerGetConsumers(dbInstance: string, encoding: ConsumerControllerGetConsumersEncodingEnum, getConsumersDto: GetConsumersDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<ConsumerDto>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.consumerControllerGetConsumers(dbInstance, encoding, getConsumersDto, riDbIndex, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BrowserStreamsApi.consumerControllerGetConsumers']?.[localVarOperationServerIndex]?.url;
@@ -13110,7 +13236,7 @@ export const BrowserStreamsApiFactory = function (configuration?: Configuration,
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        consumerControllerGetConsumers(dbInstance: string, encoding: ConsumerControllerGetConsumersEncodingEnum, getConsumersDto: GetConsumersDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<Array<ConsumerGroupDto>> {
+        consumerControllerGetConsumers(dbInstance: string, encoding: ConsumerControllerGetConsumersEncodingEnum, getConsumersDto: GetConsumersDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<Array<ConsumerDto>> {
             return localVarFp.consumerControllerGetConsumers(dbInstance, encoding, getConsumersDto, riDbIndex, options).then((request) => request(axios, basePath));
         },
         /**
@@ -17020,7 +17146,7 @@ export const CloudUserApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async cloudUserControllerMe(source?: string, medium?: string, campaign?: string, amp?: string, _package?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+        async cloudUserControllerMe(source?: string, medium?: string, campaign?: string, amp?: string, _package?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CloudUser>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.cloudUserControllerMe(source, medium, campaign, amp, _package, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['CloudUserApi.cloudUserControllerMe']?.[localVarOperationServerIndex]?.url;
@@ -17033,7 +17159,7 @@ export const CloudUserApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async cloudUserControllerSetCurrentAccount(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+        async cloudUserControllerSetCurrentAccount(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CloudUser>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.cloudUserControllerSetCurrentAccount(id, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['CloudUserApi.cloudUserControllerSetCurrentAccount']?.[localVarOperationServerIndex]?.url;
@@ -17069,7 +17195,7 @@ export const CloudUserApiFactory = function (configuration?: Configuration, base
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        cloudUserControllerMe(source?: string, medium?: string, campaign?: string, amp?: string, _package?: string, options?: RawAxiosRequestConfig): AxiosPromise<object> {
+        cloudUserControllerMe(source?: string, medium?: string, campaign?: string, amp?: string, _package?: string, options?: RawAxiosRequestConfig): AxiosPromise<CloudUser> {
             return localVarFp.cloudUserControllerMe(source, medium, campaign, amp, _package, options).then((request) => request(axios, basePath));
         },
         /**
@@ -17079,7 +17205,7 @@ export const CloudUserApiFactory = function (configuration?: Configuration, base
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        cloudUserControllerSetCurrentAccount(id: string, options?: RawAxiosRequestConfig): AxiosPromise<object> {
+        cloudUserControllerSetCurrentAccount(id: string, options?: RawAxiosRequestConfig): AxiosPromise<CloudUser> {
             return localVarFp.cloudUserControllerSetCurrentAccount(id, options).then((request) => request(axios, basePath));
         },
     };
@@ -20740,7 +20866,7 @@ export const PubSubApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async pubSubControllerPublish(dbInstance: string, publishDto: PublishDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<object>> {
+        async pubSubControllerPublish(dbInstance: string, publishDto: PublishDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PublishResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.pubSubControllerPublish(dbInstance, publishDto, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['PubSubApi.pubSubControllerPublish']?.[localVarOperationServerIndex]?.url;
@@ -20764,7 +20890,7 @@ export const PubSubApiFactory = function (configuration?: Configuration, basePat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        pubSubControllerPublish(dbInstance: string, publishDto: PublishDto, options?: RawAxiosRequestConfig): AxiosPromise<object> {
+        pubSubControllerPublish(dbInstance: string, publishDto: PublishDto, options?: RawAxiosRequestConfig): AxiosPromise<PublishResponse> {
             return localVarFp.pubSubControllerPublish(dbInstance, publishDto, options).then((request) => request(axios, basePath));
         },
     };

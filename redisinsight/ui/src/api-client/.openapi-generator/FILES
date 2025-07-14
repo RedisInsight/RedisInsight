@@ -48,6 +48,7 @@ docs/CloudJobsApi.md
 docs/CloudSubscription.md
 docs/CloudSubscriptionApi.md
 docs/CloudSubscriptionPlanResponse.md
+docs/CloudUser.md
 docs/CloudUserApi.md
 docs/ClusterConnectionDetailsDto.md
 docs/ClusterDetails.md
@@ -57,6 +58,7 @@ docs/CommandExecution.md
 docs/CommandExecutionFilter.md
 docs/CommandExecutionResult.md
 docs/CommandsApi.md
+docs/ConsumerDto.md
 docs/ConsumerGroupDto.md
 docs/CreateBasicSshOptionsDto.md
 docs/CreateCaCertificateDto.md
@@ -141,9 +143,11 @@ docs/GetKeysInfoDto.md
 docs/GetKeysWithDetailsResponse.md
 docs/GetListElementsDto.md
 docs/GetListElementsResponse.md
+docs/GetListElementsResponseElementsInner.md
 docs/GetPendingEntriesDto.md
 docs/GetRejsonRlDto.md
 docs/GetRejsonRlResponseDto.md
+docs/GetRejsonRlResponseDtoData.md
 docs/GetServerInfoResponse.md
 docs/GetSetMembersDto.md
 docs/GetSetMembersResponse.md
@@ -188,6 +192,7 @@ docs/PluginsResponse.md
 docs/ProfilerApi.md
 docs/PubSubApi.md
 docs/PublishDto.md
+docs/PublishResponse.md
 docs/PushElementToListDto.md
 docs/PushListElementsResponse.md
 docs/RDIApi.md
@@ -222,6 +227,7 @@ docs/SendEventDto.md
 docs/SentinelMaster.md
 docs/SentinelMasterResponse.md
 docs/SetListElementDto.md
+docs/SetListElementResponse.md
 docs/SetStringDto.md
 docs/SetStringWithExpireDto.md
 docs/SettingsApi.md

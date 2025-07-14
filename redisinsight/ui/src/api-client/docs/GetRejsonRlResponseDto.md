@@ -8,7 +8,7 @@ Name | Type | Description | Notes
 **downloaded** | **boolean** | Determines if json value was downloaded | [default to undefined]
 **type** | **string** | Type of data in the requested path | [optional] [default to undefined]
 **path** | **string** | Requested path | [optional] [default to undefined]
-**data** | [**Array&lt;SafeRejsonRlDataDto&gt;**](SafeRejsonRlDataDto.md) |  | [default to undefined]
+**data** | [**GetRejsonRlResponseDtoData**](GetRejsonRlResponseDtoData.md) |  | [default to undefined]
 
 ## Example
 

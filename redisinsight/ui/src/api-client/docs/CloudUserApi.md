@@ -53,7 +53,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **cloudUserControllerMe**
-> object cloudUserControllerMe()
+> CloudUser cloudUserControllerMe()
 
 Return user general info with accounts list
 
@@ -96,7 +96,7 @@ const { status, data } = await apiInstance.cloudUserControllerMe(
 
 ### Return type
 
-**object**
+**CloudUser**
 
 ### Authorization
 
@@ -116,7 +116,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **cloudUserControllerSetCurrentAccount**
-> object cloudUserControllerSetCurrentAccount()
+> CloudUser cloudUserControllerSetCurrentAccount()
 
 Activate user account
 
@@ -147,7 +147,7 @@ const { status, data } = await apiInstance.cloudUserControllerSetCurrentAccount(
 
 ### Return type
 
-**object**
+**CloudUser**
 
 ### Authorization
 

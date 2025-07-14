@@ -193,7 +193,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **consumerControllerGetConsumers**
-> Array<ConsumerGroupDto> consumerControllerGetConsumers(getConsumersDto)
+> Array<ConsumerDto> consumerControllerGetConsumers(getConsumersDto)
 
 Get consumers list in the group
 
@@ -234,7 +234,7 @@ const { status, data } = await apiInstance.consumerControllerGetConsumers(
 
 ### Return type
 
-**Array<ConsumerGroupDto>**
+**Array<ConsumerDto>**
 
 ### Authorization
 

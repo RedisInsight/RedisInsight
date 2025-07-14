@@ -11,9 +11,20 @@ export class GetListElementsResponse extends KeyResponse {
   total: number;
 
   @ApiProperty({
-    type: () => String,
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: {
+        type: { type: 'string', example: 'Buffer' },
+        data: {
+          type: 'array',
+          items: { type: 'number' },
+          example: [61, 101, 49],
+        },
+      },
+      required: ['type', 'data'],
+    },
     description: 'Array of elements.',
-    isArray: true,
   })
   @RedisStringType({ each: true })
   elements: RedisString[];

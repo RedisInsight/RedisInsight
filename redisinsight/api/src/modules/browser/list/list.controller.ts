@@ -105,6 +105,10 @@ export class ListController extends BrowserBaseController {
     description: 'Update list element by index.',
   })
   @ApiRedisParams()
+  @ApiOkResponse({
+    description: 'Updated list element.',
+    type: SetListElementResponse,
+  })
   @ApiBody({ type: SetListElementDto })
   @ApiQueryRedisStringEncoding()
   async updateElement(

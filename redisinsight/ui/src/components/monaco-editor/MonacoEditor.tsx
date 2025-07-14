@@ -87,8 +87,8 @@ const MonacoEditor = (props: Props) => {
     enableDiff = false,
     onDiffModeChange,
     diffOptions = {
-      renderSideBySide: true,
-      enableSplitViewResizing: true,
+      renderSideBySide: false,
+      enableSplitViewResizing: false,
       ignoreTrimWhitespace: true,
     },
     'data-testid': dataTestId = 'monaco-editor',

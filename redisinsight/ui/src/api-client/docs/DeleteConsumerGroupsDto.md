@@ -1,0 +1,22 @@
+# DeleteConsumerGroupsDto
+
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**keyName** | **string** | Key Name | [default to undefined]
+**consumerGroups** | **Array&lt;string&gt;** | Consumer group names | [default to undefined]
+
+## Example
+
+```typescript
+import { DeleteConsumerGroupsDto } from './api';
+
+const instance: DeleteConsumerGroupsDto = {
+    keyName,
+    consumerGroups,
+};
+```
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

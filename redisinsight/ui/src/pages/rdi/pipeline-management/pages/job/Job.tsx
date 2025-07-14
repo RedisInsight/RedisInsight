@@ -18,7 +18,6 @@ import {
   fetchPipelineStrategies,
   rdiPipelineSelector,
   setChangedFile,
-  setPipeline,
   setPipelineJobs,
 } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
@@ -53,6 +52,7 @@ const Job = (props: Props) => {
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
   const [shouldOpenDedicatedEditor, setShouldOpenDedicatedEditor] =
     useState<boolean>(false)
+  const [manualBaseline, setManualBaseline] = useState<string | null>(null)
 
   const dispatch = useDispatch()
 
@@ -82,6 +82,16 @@ const Job = (props: Props) => {
   useEffect(() => {
     jobNameRef.current = name
   }, [name])
+
+  const handleCaptureBaseline = () => {
+    setManualBaseline(value)
+  }
+
+  const handleClearBaseline = () => {
+    setManualBaseline(null)
+  }
+
+  const getOriginalValue = () => manualBaseline || deployedJobValue || undefined
 
   const handleDryRunJob = () => {
     const JSONValue = yamlToJson(value, (msg) => {
@@ -180,7 +190,14 @@ const Job = (props: Props) => {
     <>
       <div className={cx('content', { isSidePanelOpen: isPanelOpen })}>
         <div className="rdi__content-header">
-          <EuiText className={cx('rdi__title', 'line-clamp-2')}>{name}</EuiText>
+          <div>
+            <EuiText className={cx('rdi__title', 'line-clamp-2')}>{name}</EuiText>
+            {manualBaseline && (
+              <EuiText size="s" color="subdued" style={{ marginTop: '4px' }}>
+                📸 Baseline captured • Use diff toggle to compare changes
+              </EuiText>
+            )}
+          </div>
           <div className={styles.actionContainer}>
             <EuiToolTip
               position="top"
@@ -208,6 +225,40 @@ const Job = (props: Props) => {
                 SQL and JMESPath Editor
               </EuiButton>
             </EuiToolTip>
+            
+            {/* Manual Baseline Capture Buttons */}
+            {manualBaseline ? (
+              <EuiToolTip
+                content="Clear the captured baseline to return to comparing against deployed version"
+                position="top"
+              >
+                <EuiButton
+                  color="warning"
+                  size="s"
+                  style={{ marginRight: '16px' }}
+                  onClick={handleClearBaseline}
+                  data-testid="clear-baseline-btn"
+                >
+                  Clear Baseline
+                </EuiButton>
+              </EuiToolTip>
+            ) : (
+              <EuiToolTip
+                content="Capture current state as baseline for diff comparison"
+                position="top"
+              >
+                <EuiButton
+                  color="primary"
+                  size="s"
+                  style={{ marginRight: '16px' }}
+                  onClick={handleCaptureBaseline}
+                  data-testid="capture-baseline-btn"
+                >
+                  Capture Baseline
+                </EuiButton>
+              </EuiToolTip>
+            )}
+            
             <TemplateButton
               value={value}
               setFieldValue={(template) => {
@@ -251,6 +302,8 @@ const Job = (props: Props) => {
           <MonacoYaml
             schema={get(schema, 'jobs', null)}
             value={value}
+            originalValue={getOriginalValue()}
+            enableDiff={false}
             onChange={handleChange}
             disabled={loading}
             dedicatedEditorLanguages={[DSL.sqliteFunctions, DSL.jmespath]}

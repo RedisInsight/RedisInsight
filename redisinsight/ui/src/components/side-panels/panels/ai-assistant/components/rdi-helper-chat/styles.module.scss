@@ -1,0 +1,36 @@
+.wrapper {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 12px 12px;
+  border-bottom: 1px solid var(--separatorColor);
+  min-height: 48px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--euiColorPrimary);
+}
+
+.headerBtn {
+  min-width: auto !important;
+  height: 24px !important;
+}
+
+.chatHistory {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.chatForm {
+  border-top: 1px solid var(--separatorColor);
+} 

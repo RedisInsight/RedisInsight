@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { EuiTab, EuiTabs } from '@elastic/eui'
 
@@ -32,6 +32,8 @@ const ChatsWrapper = () => {
     [FeatureFlags.databaseChat]: databaseChatFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
   const location = useLocation()
+
+  const [initialRDIRedirect, setInitialRDIRedirect] = useState(false)
   
   // Check if we're on the RDI pipeline config page
   const isOnRdiPipelineConfig = isRdiPipelineConfigPage(location.pathname)
@@ -66,8 +68,8 @@ const ChatsWrapper = () => {
       dispatch(setSelectedTab(chats[0].tab))
     }
 
-    // If we're on RDI page and no RDI tab is active, switch to RDI Helper
-    if (isOnRdiPipelineConfig && activeTab !== AiChatType.RdiHelper) {
+    if (isOnRdiPipelineConfig && activeTab !== AiChatType.RdiHelper && !initialRDIRedirect) {
+      setInitialRDIRedirect(true)
       dispatch(setSelectedTab(AiChatType.RdiHelper))
     }
 
@@ -78,7 +80,7 @@ const ChatsWrapper = () => {
         chat: activeTab,
       },
     })
-  }, [databaseChatFeature, databaseChatFeature, activeTab])
+  }, [databaseChatFeature, databaseChatFeature, activeTab, initialRDIRedirect])
 
   const selectTab = (tab: AiChatType) => {
     dispatch(setSelectedTab(tab))

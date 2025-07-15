@@ -1,3 +1,4 @@
+# change this if needed to test with exising database
 @databaseId = dbe4b0a8-d587-43d0-b742-d9adcc9e4d31
 
 ### GET list db messages

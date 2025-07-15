@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | **string** | Entry ID | [default to undefined]
-**consumerName** | **string** | Consumer name | [default to undefined]
+**consumerName** | [**GetPendingEntriesDtoConsumerName**](GetPendingEntriesDtoConsumerName.md) |  | [default to undefined]
 **idle** | **number** | The number of milliseconds that elapsed since the last time this message was delivered to this consumer | [default to undefined]
 **delivered** | **number** | The number of times this message was delivered | [default to undefined]
 

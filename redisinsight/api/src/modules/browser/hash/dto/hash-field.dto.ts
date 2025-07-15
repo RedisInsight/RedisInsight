@@ -1,9 +1,12 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDefined, IsInt, IsOptional, Max, Min } from 'class-validator';
-import { IsRedisString, RedisStringType } from 'src/common/decorators';
+import {
+  ApiRedisString,
+  IsRedisString,
+  RedisStringType,
+} from 'src/common/decorators';
 import { RedisString } from 'src/common/constants';
 import { MAX_TTL_NUMBER } from 'src/constants';
-import { ApiRedisString } from 'src/common/decorators/redis-string-schema.decorator';
 
 export class HashFieldDto {
   @ApiRedisString('Field')

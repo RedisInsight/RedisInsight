@@ -16,6 +16,9 @@
 // May contain unused imports in some cases
 // @ts-ignore
 import type { CreateListWithExpireDtoKeyName } from './create-list-with-expire-dto-key-name';
+// May contain unused imports in some cases
+// @ts-ignore
+import type { SetListElementDtoElement } from './set-list-element-dto-element';
 
 /**
  * 
@@ -30,11 +33,11 @@ export interface SetListElementDto {
      */
     'keyName': CreateListWithExpireDtoKeyName;
     /**
-     * List element
-     * @type {string}
+     * 
+     * @type {SetListElementDtoElement}
      * @memberof SetListElementDto
      */
-    'element': string;
+    'element': SetListElementDtoElement;
     /**
      * Element index
      * @type {number}

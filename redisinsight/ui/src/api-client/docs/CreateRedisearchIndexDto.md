@@ -5,9 +5,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**index** | **string** | Index Name | [default to undefined]
+**index** | [**CreateRedisearchIndexDtoIndex**](CreateRedisearchIndexDtoIndex.md) |  | [default to undefined]
 **type** | **string** | Type of keys to index | [default to undefined]
-**prefixes** | **Array&lt;string&gt;** | Keys prefixes to find keys for index | [optional] [default to undefined]
+**prefixes** | [**Array&lt;CreateListWithExpireDtoElementsInner&gt;**](CreateListWithExpireDtoElementsInner.md) | Keys prefixes to find keys for index | [optional] [default to undefined]
 **fields** | [**Array&lt;CreateRedisearchIndexFieldDto&gt;**](CreateRedisearchIndexFieldDto.md) | Fields to index | [default to undefined]
 
 ## Example

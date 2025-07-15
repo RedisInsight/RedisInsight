@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**index** | **string** | Index Name | [default to undefined]
+**index** | [**CreateRedisearchIndexDtoIndex**](CreateRedisearchIndexDtoIndex.md) |  | [default to undefined]
 **query** | **string** | Query to search inside data fields | [default to undefined]
 **limit** | **number** | Limit number of results to be returned | [default to undefined]
 **offset** | **number** | Offset position to start searching | [default to undefined]

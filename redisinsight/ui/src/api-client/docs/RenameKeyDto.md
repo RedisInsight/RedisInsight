@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
-**newKeyName** | **string** | New key name | [default to undefined]
+**newKeyName** | [**RenameKeyDtoNewKeyName**](RenameKeyDtoNewKeyName.md) |  | [default to undefined]
 
 ## Example
 

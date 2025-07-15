@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **string** | Consumer group name | [default to undefined]
+**name** | [**GetConsumersDtoGroupName**](GetConsumersDtoGroupName.md) |  | [default to undefined]
 **lastDeliveredId** | **string** | Id of last delivered message | [default to undefined]
 
 ## Example

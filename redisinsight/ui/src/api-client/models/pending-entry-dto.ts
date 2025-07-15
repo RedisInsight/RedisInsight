@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { GetPendingEntriesDtoConsumerName } from './get-pending-entries-dto-consumer-name';
 
 /**
  * 
@@ -27,11 +30,11 @@ export interface PendingEntryDto {
      */
     'id': string;
     /**
-     * Consumer name
-     * @type {string}
+     * 
+     * @type {GetPendingEntriesDtoConsumerName}
      * @memberof PendingEntryDto
      */
-    'consumerName': string;
+    'consumerName': GetPendingEntriesDtoConsumerName;
     /**
      * The number of milliseconds that elapsed since the last time this message was delivered to this consumer
      * @type {number}

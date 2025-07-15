@@ -16,6 +16,9 @@
 // May contain unused imports in some cases
 // @ts-ignore
 import type { PushListElementsResponseKeyName } from './push-list-elements-response-key-name';
+// May contain unused imports in some cases
+// @ts-ignore
+import type { SetStringWithExpireDtoValue } from './set-string-with-expire-dto-value';
 
 /**
  * 
@@ -30,10 +33,10 @@ export interface GetStringValueResponse {
      */
     'keyName': PushListElementsResponseKeyName;
     /**
-     * Key value
-     * @type {string}
+     * 
+     * @type {SetStringWithExpireDtoValue}
      * @memberof GetStringValueResponse
      */
-    'value': string;
+    'value': SetStringWithExpireDtoValue;
 }
 

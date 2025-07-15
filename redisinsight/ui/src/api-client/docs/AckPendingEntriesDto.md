@@ -6,8 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
-**groupName** | **string** | Consumer group name | [default to undefined]
-**entries** | **Array&lt;string&gt;** | Entries IDs | [default to undefined]
+**groupName** | [**GetConsumersDtoGroupName**](GetConsumersDtoGroupName.md) |  | [default to undefined]
+**entries** | [**Array&lt;CreateListWithExpireDtoElementsInner&gt;**](CreateListWithExpireDtoElementsInner.md) | Entries IDs | [default to undefined]
 
 ## Example
 

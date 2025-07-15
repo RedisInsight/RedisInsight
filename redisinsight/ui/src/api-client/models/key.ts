@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { CreateListWithExpireDtoKeyName } from './create-list-with-expire-dto-key-name';
 
 /**
  * 
@@ -21,11 +24,11 @@
  */
 export interface Key {
     /**
-     * Key name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof Key
      */
-    'name': string;
+    'name': CreateListWithExpireDtoKeyName;
     /**
      * Key type
      * @type {string}

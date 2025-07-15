@@ -15,7 +15,7 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { GetListElementsResponseElements } from './get-list-elements-response-elements';
+import type { CreateListWithExpireDtoElementsInner } from './create-list-with-expire-dto-elements-inner';
 // May contain unused imports in some cases
 // @ts-ignore
 import type { PushListElementsResponseKeyName } from './push-list-elements-response-key-name';
@@ -39,10 +39,10 @@ export interface GetListElementsResponse {
      */
     'total': number;
     /**
-     * 
-     * @type {GetListElementsResponseElements}
+     * Elements
+     * @type {Array<CreateListWithExpireDtoElementsInner>}
      * @memberof GetListElementsResponse
      */
-    'elements': GetListElementsResponseElements;
+    'elements': Array<CreateListWithExpireDtoElementsInner>;
 }
 

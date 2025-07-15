@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **string** | Key name | [default to undefined]
+**name** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
 **type** | **string** | Key type | [default to undefined]
 **memory** | **number** | Memory used by key in bytes | [default to undefined]
 **length** | **number** | Number of characters, elements, etc. based on type | [default to undefined]

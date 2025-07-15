@@ -19,9 +19,14 @@ export const REDIS_STRING_SCHEMA = {
   ],
 };
 
-export const ApiRedisString = (description: string, isArray = false) =>
+export const ApiRedisString = (
+  description: string = undefined,
+  isArray = false,
+  required = true,
+) =>
   ApiProperty({
     description,
     isArray,
+    required,
     ...REDIS_STRING_SCHEMA,
   });

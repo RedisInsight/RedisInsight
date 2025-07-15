@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
-**element** | **string** | List element | [default to undefined]
+**element** | [**SetListElementDtoElement**](SetListElementDtoElement.md) |  | [default to undefined]
 **index** | **number** | Element index | [default to undefined]
 
 ## Example

@@ -15,6 +15,9 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import type { CreateListWithExpireDtoElementsInner } from './create-list-with-expire-dto-elements-inner';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { CreateListWithExpireDtoKeyName } from './create-list-with-expire-dto-key-name';
 
 /**
@@ -31,10 +34,10 @@ export interface PushElementToListDto {
     'keyName': CreateListWithExpireDtoKeyName;
     /**
      * List element(s)
-     * @type {Array<string>}
+     * @type {Array<CreateListWithExpireDtoElementsInner>}
      * @memberof PushElementToListDto
      */
-    'elements': Array<string>;
+    'elements': Array<CreateListWithExpireDtoElementsInner>;
     /**
      * In order to append elements to the end of the list, use the TAIL value, to prepend use HEAD value. Default: TAIL (when not specified)
      * @type {string}

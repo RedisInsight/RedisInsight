@@ -15,10 +15,10 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { CreateListWithExpireDtoKeyName } from './create-list-with-expire-dto-key-name';
+import type { CreateListWithExpireDtoElementsInner } from './create-list-with-expire-dto-elements-inner';
 // May contain unused imports in some cases
 // @ts-ignore
-import type { CreateSetWithExpireDtoMembersInner } from './create-set-with-expire-dto-members-inner';
+import type { CreateListWithExpireDtoKeyName } from './create-list-with-expire-dto-key-name';
 
 /**
  * 
@@ -34,9 +34,9 @@ export interface AddMembersToSetDto {
     'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Set members
-     * @type {Array<CreateSetWithExpireDtoMembersInner>}
+     * @type {Array<CreateListWithExpireDtoElementsInner>}
      * @memberof AddMembersToSetDto
      */
-    'members': Array<CreateSetWithExpireDtoMembersInner>;
+    'members': Array<CreateListWithExpireDtoElementsInner>;
 }
 

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**nsp** | **string** | Namespace | [default to undefined]
+**nsp** | [**NspSummaryNsp**](NspSummaryNsp.md) |  | [default to undefined]
 **memory** | **number** | Total memory used by namespace in bytes | [default to undefined]
 **keys** | **number** | Total keys inside namespace | [default to undefined]
 **types** | [**Array&lt;NspTypeSummary&gt;**](NspTypeSummary.md) | Top namespaces by keys number | [default to undefined]

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **string** |  | [default to undefined]
+**name** | [**CreateListWithExpireDtoElementsInner**](CreateListWithExpireDtoElementsInner.md) |  | [default to undefined]
 **type** | **string** |  | [default to undefined]
 **ttl** | **number** | The remaining time to live of a key. If the property has value of -1, then the key has no expiration time (no limit). | [default to undefined]
 **size** | **number** | The number of bytes that a key and its value require to be stored in RAM. | [default to undefined]

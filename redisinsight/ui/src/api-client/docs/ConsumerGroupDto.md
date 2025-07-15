@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **string** | Consumer Group name | [default to undefined]
+**name** | [**ConsumerGroupDtoName**](ConsumerGroupDtoName.md) |  | [default to undefined]
 **consumers** | **number** | Number of consumers | [default to undefined]
 **pending** | **number** | Number of pending messages | [default to undefined]
 **smallestPendingId** | **string** | Smallest Id of the message that is pending in the group | [default to undefined]

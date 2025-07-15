@@ -15,6 +15,12 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import type { CreateListWithExpireDtoElementsInner } from './create-list-with-expire-dto-elements-inner';
+// May contain unused imports in some cases
+// @ts-ignore
+import type { CreateRedisearchIndexDtoIndex } from './create-redisearch-index-dto-index';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { CreateRedisearchIndexFieldDto } from './create-redisearch-index-field-dto';
 
 /**
@@ -24,11 +30,11 @@ import type { CreateRedisearchIndexFieldDto } from './create-redisearch-index-fi
  */
 export interface CreateRedisearchIndexDto {
     /**
-     * Index Name
-     * @type {string}
+     * 
+     * @type {CreateRedisearchIndexDtoIndex}
      * @memberof CreateRedisearchIndexDto
      */
-    'index': string;
+    'index': CreateRedisearchIndexDtoIndex;
     /**
      * Type of keys to index
      * @type {string}
@@ -37,10 +43,10 @@ export interface CreateRedisearchIndexDto {
     'type': CreateRedisearchIndexDtoTypeEnum;
     /**
      * Keys prefixes to find keys for index
-     * @type {Array<string>}
+     * @type {Array<CreateListWithExpireDtoElementsInner>}
      * @memberof CreateRedisearchIndexDto
      */
-    'prefixes'?: Array<string>;
+    'prefixes'?: Array<CreateListWithExpireDtoElementsInner>;
     /**
      * Fields to index
      * @type {Array<CreateRedisearchIndexFieldDto>}

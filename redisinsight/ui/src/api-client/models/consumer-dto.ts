@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { ConsumerDtoName } from './consumer-dto-name';
 
 /**
  * 
@@ -21,11 +24,11 @@
  */
 export interface ConsumerDto {
     /**
-     * The consumer\'s name
-     * @type {string}
+     * 
+     * @type {ConsumerDtoName}
      * @memberof ConsumerDto
      */
-    'name': string;
+    'name': ConsumerDtoName;
     /**
      * The number of pending messages for the client, which are messages that were delivered but are yet to be acknowledged
      * @type {number}

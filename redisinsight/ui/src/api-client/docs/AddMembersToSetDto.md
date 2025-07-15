@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
-**members** | [**Array&lt;CreateSetWithExpireDtoMembersInner&gt;**](CreateSetWithExpireDtoMembersInner.md) | Set members | [default to undefined]
+**members** | [**Array&lt;CreateListWithExpireDtoElementsInner&gt;**](CreateListWithExpireDtoElementsInner.md) | Set members | [default to undefined]
 
 ## Example
 

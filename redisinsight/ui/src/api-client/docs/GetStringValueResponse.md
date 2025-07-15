@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **keyName** | [**PushListElementsResponseKeyName**](PushListElementsResponseKeyName.md) |  | [default to undefined]
-**value** | **string** | Key value | [default to undefined]
+**value** | [**SetStringWithExpireDtoValue**](SetStringWithExpireDtoValue.md) |  | [default to undefined]
 
 ## Example
 

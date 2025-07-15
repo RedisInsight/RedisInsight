@@ -15,7 +15,13 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import type { CreateListWithExpireDtoElementsInner } from './create-list-with-expire-dto-elements-inner';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { CreateListWithExpireDtoKeyName } from './create-list-with-expire-dto-key-name';
+// May contain unused imports in some cases
+// @ts-ignore
+import type { GetConsumersDtoGroupName } from './get-consumers-dto-group-name';
 
 /**
  * 
@@ -30,16 +36,16 @@ export interface AckPendingEntriesDto {
      */
     'keyName': CreateListWithExpireDtoKeyName;
     /**
-     * Consumer group name
-     * @type {string}
+     * 
+     * @type {GetConsumersDtoGroupName}
      * @memberof AckPendingEntriesDto
      */
-    'groupName': string;
+    'groupName': GetConsumersDtoGroupName;
     /**
      * Entries IDs
-     * @type {Array<string>}
+     * @type {Array<CreateListWithExpireDtoElementsInner>}
      * @memberof AckPendingEntriesDto
      */
-    'entries': Array<string>;
+    'entries': Array<CreateListWithExpireDtoElementsInner>;
 }
 

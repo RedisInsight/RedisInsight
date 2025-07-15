@@ -15,6 +15,9 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import type { NspSummaryNsp } from './nsp-summary-nsp';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { NspTypeSummary } from './nsp-type-summary';
 
 /**
@@ -24,11 +27,11 @@ import type { NspTypeSummary } from './nsp-type-summary';
  */
 export interface NspSummary {
     /**
-     * Namespace
-     * @type {string}
+     * 
+     * @type {NspSummaryNsp}
      * @memberof NspSummary
      */
-    'nsp': string;
+    'nsp': NspSummaryNsp;
     /**
      * Total memory used by namespace in bytes
      * @type {number}

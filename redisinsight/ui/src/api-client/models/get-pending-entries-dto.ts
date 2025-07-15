@@ -16,6 +16,12 @@
 // May contain unused imports in some cases
 // @ts-ignore
 import type { CreateListWithExpireDtoKeyName } from './create-list-with-expire-dto-key-name';
+// May contain unused imports in some cases
+// @ts-ignore
+import type { GetConsumersDtoGroupName } from './get-consumers-dto-group-name';
+// May contain unused imports in some cases
+// @ts-ignore
+import type { GetPendingEntriesDtoConsumerName } from './get-pending-entries-dto-consumer-name';
 
 /**
  * 
@@ -30,17 +36,17 @@ export interface GetPendingEntriesDto {
      */
     'keyName': CreateListWithExpireDtoKeyName;
     /**
-     * Consumer group name
-     * @type {string}
+     * 
+     * @type {GetConsumersDtoGroupName}
      * @memberof GetPendingEntriesDto
      */
-    'groupName': string;
+    'groupName': GetConsumersDtoGroupName;
     /**
-     * Consumer name
-     * @type {string}
+     * 
+     * @type {GetPendingEntriesDtoConsumerName}
      * @memberof GetPendingEntriesDto
      */
-    'consumerName': string;
+    'consumerName': GetPendingEntriesDtoConsumerName;
     /**
      * Specifying the start id
      * @type {string}

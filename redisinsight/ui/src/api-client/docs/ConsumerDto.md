@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **string** | The consumer\&#39;s name | [default to undefined]
+**name** | [**ConsumerDtoName**](ConsumerDtoName.md) |  | [default to undefined]
 **pending** | **number** | The number of pending messages for the client, which are messages that were delivered but are yet to be acknowledged | [default to undefined]
 **idle** | **number** | The number of milliseconds that have passed since the consumer last interacted with the server | [default to undefined]
 

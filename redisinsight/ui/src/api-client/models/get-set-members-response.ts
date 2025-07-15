@@ -15,6 +15,9 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import type { CreateListWithExpireDtoElementsInner } from './create-list-with-expire-dto-elements-inner';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { PushListElementsResponseKeyName } from './push-list-elements-response-key-name';
 
 /**
@@ -36,11 +39,11 @@ export interface GetSetMembersResponse {
      */
     'nextCursor': number;
     /**
-     * Array of members.
-     * @type {Array<string>}
+     * Array of members
+     * @type {Array<CreateListWithExpireDtoElementsInner>}
      * @memberof GetSetMembersResponse
      */
-    'members': Array<string>;
+    'members': Array<CreateListWithExpireDtoElementsInner>;
     /**
      * The number of members in the currently-selected set.
      * @type {number}

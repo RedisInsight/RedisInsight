@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**indexes** | **string** | Indexes names | [default to undefined]
+**indexes** | [**Array&lt;CreateListWithExpireDtoElementsInner&gt;**](CreateListWithExpireDtoElementsInner.md) | Indexes names | [default to undefined]
 
 ## Example
 

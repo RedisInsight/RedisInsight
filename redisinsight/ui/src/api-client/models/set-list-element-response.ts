@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { SetListElementDtoElement } from './set-list-element-dto-element';
 
 /**
  * 
@@ -27,10 +30,10 @@ export interface SetListElementResponse {
      */
     'index': number;
     /**
-     * List element
-     * @type {string}
+     * 
+     * @type {SetListElementDtoElement}
      * @memberof SetListElementResponse
      */
-    'element': string;
+    'element': SetListElementDtoElement;
 }
 

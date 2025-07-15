@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { CreateRedisearchIndexFieldDtoName } from './create-redisearch-index-field-dto-name';
 
 /**
  * 
@@ -21,11 +24,11 @@
  */
 export interface CreateRedisearchIndexFieldDto {
     /**
-     * Name of field to be indexed
-     * @type {string}
+     * 
+     * @type {CreateRedisearchIndexFieldDtoName}
      * @memberof CreateRedisearchIndexFieldDto
      */
-    'name': string;
+    'name': CreateRedisearchIndexFieldDtoName;
     /**
      * Type of how data must be indexed
      * @type {string}

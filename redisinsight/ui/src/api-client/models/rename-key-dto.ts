@@ -16,6 +16,9 @@
 // May contain unused imports in some cases
 // @ts-ignore
 import type { CreateListWithExpireDtoKeyName } from './create-list-with-expire-dto-key-name';
+// May contain unused imports in some cases
+// @ts-ignore
+import type { RenameKeyDtoNewKeyName } from './rename-key-dto-new-key-name';
 
 /**
  * 
@@ -30,10 +33,10 @@ export interface RenameKeyDto {
      */
     'keyName': CreateListWithExpireDtoKeyName;
     /**
-     * New key name
-     * @type {string}
+     * 
+     * @type {RenameKeyDtoNewKeyName}
      * @memberof RenameKeyDto
      */
-    'newKeyName': string;
+    'newKeyName': RenameKeyDtoNewKeyName;
 }
 

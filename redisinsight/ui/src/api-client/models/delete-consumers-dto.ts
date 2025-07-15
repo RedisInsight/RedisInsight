@@ -15,7 +15,13 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
+import type { CreateListWithExpireDtoElementsInner } from './create-list-with-expire-dto-elements-inner';
+// May contain unused imports in some cases
+// @ts-ignore
 import type { CreateListWithExpireDtoKeyName } from './create-list-with-expire-dto-key-name';
+// May contain unused imports in some cases
+// @ts-ignore
+import type { GetConsumersDtoGroupName } from './get-consumers-dto-group-name';
 
 /**
  * 
@@ -30,16 +36,16 @@ export interface DeleteConsumersDto {
      */
     'keyName': CreateListWithExpireDtoKeyName;
     /**
-     * Consumer group name
-     * @type {string}
+     * 
+     * @type {GetConsumersDtoGroupName}
      * @memberof DeleteConsumersDto
      */
-    'groupName': string;
+    'groupName': GetConsumersDtoGroupName;
     /**
      * Names of consumers to delete
-     * @type {Array<string>}
+     * @type {Array<CreateListWithExpireDtoElementsInner>}
      * @memberof DeleteConsumersDto
      */
-    'consumerNames': Array<string>;
+    'consumerNames': Array<CreateListWithExpireDtoElementsInner>;
 }
 

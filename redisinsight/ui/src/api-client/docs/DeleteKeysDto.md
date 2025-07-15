@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyNames** | **Array&lt;string&gt;** | Key name | [default to undefined]
+**keyNames** | [**Array&lt;CreateListWithExpireDtoElementsInner&gt;**](CreateListWithExpireDtoElementsInner.md) | Key name | [default to undefined]
 
 ## Example
 

@@ -6,8 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
-**groupName** | **string** | Consumer group name | [default to undefined]
-**consumerName** | **string** | Consumer name | [default to undefined]
+**groupName** | [**GetConsumersDtoGroupName**](GetConsumersDtoGroupName.md) |  | [default to undefined]
+**consumerName** | [**GetPendingEntriesDtoConsumerName**](GetPendingEntriesDtoConsumerName.md) |  | [default to undefined]
 **minIdleTime** | **number** | Claim only if its idle time is greater the minimum idle time  | [default to 0]
 **entries** | **Array&lt;string&gt;** | Entries IDs | [default to undefined]
 **idle** | **number** | Set the idle time (last time it was delivered) of the message | [optional] [default to undefined]

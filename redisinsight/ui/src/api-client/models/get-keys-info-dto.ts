@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { CreateListWithExpireDtoElementsInner } from './create-list-with-expire-dto-elements-inner';
 
 /**
  * 
@@ -22,10 +25,10 @@
 export interface GetKeysInfoDto {
     /**
      * List of keys
-     * @type {Array<string>}
+     * @type {Array<CreateListWithExpireDtoElementsInner>}
      * @memberof GetKeysInfoDto
      */
-    'keys': Array<string>;
+    'keys': Array<CreateListWithExpireDtoElementsInner>;
     /**
      * Iterate through the database looking for keys of a specific type.
      * @type {string}

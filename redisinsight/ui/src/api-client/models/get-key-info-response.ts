@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { CreateListWithExpireDtoElementsInner } from './create-list-with-expire-dto-elements-inner';
 
 /**
  * 
@@ -22,10 +25,10 @@
 export interface GetKeyInfoResponse {
     /**
      * 
-     * @type {string}
+     * @type {CreateListWithExpireDtoElementsInner}
      * @memberof GetKeyInfoResponse
      */
-    'name': string;
+    'name': CreateListWithExpireDtoElementsInner;
     /**
      * 
      * @type {string}

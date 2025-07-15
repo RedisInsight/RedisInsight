@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { CreateRedisearchIndexDtoIndex } from './create-redisearch-index-dto-index';
 
 /**
  * 
@@ -21,11 +24,11 @@
  */
 export interface SearchRedisearchDto {
     /**
-     * Index Name
-     * @type {string}
+     * 
+     * @type {CreateRedisearchIndexDtoIndex}
      * @memberof SearchRedisearchDto
      */
-    'index': string;
+    'index': CreateRedisearchIndexDtoIndex;
     /**
      * Query to search inside data fields
      * @type {string}

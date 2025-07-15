@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **string** | Name of field to be indexed | [default to undefined]
+**name** | [**CreateRedisearchIndexFieldDtoName**](CreateRedisearchIndexFieldDtoName.md) |  | [default to undefined]
 **type** | **string** | Type of how data must be indexed | [default to undefined]
 
 ## Example

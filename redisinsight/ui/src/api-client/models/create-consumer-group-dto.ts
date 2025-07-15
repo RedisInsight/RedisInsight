@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { GetConsumersDtoGroupName } from './get-consumers-dto-group-name';
 
 /**
  * 
@@ -21,11 +24,11 @@
  */
 export interface CreateConsumerGroupDto {
     /**
-     * Consumer group name
-     * @type {string}
+     * 
+     * @type {GetConsumersDtoGroupName}
      * @memberof CreateConsumerGroupDto
      */
-    'name': string;
+    'name': GetConsumersDtoGroupName;
     /**
      * Id of last delivered message
      * @type {string}

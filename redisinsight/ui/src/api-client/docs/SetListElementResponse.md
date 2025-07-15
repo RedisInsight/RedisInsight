@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **index** | **number** | Element index | [default to undefined]
-**element** | **string** | List element | [default to undefined]
+**element** | [**SetListElementDtoElement**](SetListElementDtoElement.md) |  | [default to undefined]
 
 ## Example
 

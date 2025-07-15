@@ -6,8 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
-**groupName** | **string** | Consumer group name | [default to undefined]
-**consumerNames** | **Array&lt;string&gt;** | Names of consumers to delete | [default to undefined]
+**groupName** | [**GetConsumersDtoGroupName**](GetConsumersDtoGroupName.md) |  | [default to undefined]
+**consumerNames** | [**Array&lt;CreateListWithExpireDtoElementsInner&gt;**](CreateListWithExpireDtoElementsInner.md) | Names of consumers to delete | [default to undefined]
 
 ## Example
 

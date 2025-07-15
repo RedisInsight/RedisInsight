@@ -6,8 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
-**groupName** | **string** | Consumer group name | [default to undefined]
-**consumerName** | **string** | Consumer name | [default to undefined]
+**groupName** | [**GetConsumersDtoGroupName**](GetConsumersDtoGroupName.md) |  | [default to undefined]
+**consumerName** | [**GetPendingEntriesDtoConsumerName**](GetPendingEntriesDtoConsumerName.md) |  | [default to undefined]
 **start** | **string** | Specifying the start id | [optional] [default to '-']
 **end** | **string** | Specifying the end id | [optional] [default to '+']
 **count** | **number** | Specifying the number of pending messages to return. | [optional] [default to 500]

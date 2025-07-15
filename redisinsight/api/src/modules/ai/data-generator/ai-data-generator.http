@@ -1,0 +1,4 @@
+### GET request to example server
+GET http://localhost:5540/api/ai/data-generator/dbe4b0a8-d587-43d0-b742-d9adcc9e4d31/messages
+
+### 

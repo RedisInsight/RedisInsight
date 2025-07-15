@@ -36,7 +36,6 @@ import {
   SettingsIcon,
 } from 'uiSrc/components/base/icons'
 import { RiBadge } from 'uiSrc/components/base/display/badge/RiBadge'
-import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import {
   SideBar,
   SideBarContainer,
@@ -230,6 +229,7 @@ const NavigationMenu = () => {
           </HighlightedFeature>,
           { options: nav.onboard },
           nav.isActivePage,
+          `ob-${nav.tooltipText}`,
         )}
       </React.Fragment>
     )

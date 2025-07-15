@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react'
-import { EuiFieldText, htmlIdGenerator } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { FormikProps } from 'formik'
 
 import { MAX_PORT_NUMBER, selectOnFocus, validateField } from 'uiSrc/utils'
@@ -17,6 +17,7 @@ import {
 } from 'uiSrc/components/base/inputs'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { RiRadioGroup } from 'uiSrc/components/base/forms/radio-group/RadioGroup'
+import { useGenerateId } from 'uiSrc/components/base/utils/hooks/generate-id'
 
 export interface Props {
   flexGroupClassName?: string
@@ -41,6 +42,7 @@ const sshPassTypeOptions = [
 
 const SSHDetails = (props: Props) => {
   const { flexGroupClassName = '', flexItemClassName = '', formik } = props
+  const id = useGenerateId('', ' ssh')
 
   return (
     <Col gap="m">
@@ -50,7 +52,7 @@ const SSHDetails = (props: Props) => {
       >
         <FlexItem style={{ width: '230px' }} className={flexItemClassName}>
           <Checkbox
-            id={`${htmlIdGenerator()()} ssh`}
+            id={id}
             name="ssh"
             label="Use SSH Tunnel"
             checked={!!formik.values.ssh}

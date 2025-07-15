@@ -1,5 +1,4 @@
 import React, { ChangeEvent } from 'react'
-import { htmlIdGenerator } from '@elastic/eui'
 import { FormikProps } from 'formik'
 
 import { DbConnectionInfo } from 'uiSrc/pages/home/interfaces'
@@ -8,6 +7,7 @@ import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { NumericInput } from 'uiSrc/components/base/inputs'
+import { useGenerateId } from 'uiSrc/components/base/utils/hooks/generate-id'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -28,6 +28,7 @@ const DbIndex = (props: Props) => {
     }
     formik.handleChange(e)
   }
+  const id = useGenerateId('', ' over db')
 
   return (
     <>
@@ -35,7 +36,7 @@ const DbIndex = (props: Props) => {
         <FlexItem>
           <FormField>
             <Checkbox
-              id={`${htmlIdGenerator()()} over db`}
+              id={id}
               name="showDb"
               label="Select Logical Database"
               checked={!!formik.values.showDb}

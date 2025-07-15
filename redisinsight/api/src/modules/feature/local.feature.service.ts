@@ -110,6 +110,7 @@ export class LocalFeatureService extends FeatureService {
       }
     });
 
+    features['databaseChat'].flag = true;
     return {
       features,
       ...(await this.featuresConfigService.getControlInfo(sessionMetadata)),

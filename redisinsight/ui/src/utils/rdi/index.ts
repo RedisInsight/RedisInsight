@@ -1,4 +1,5 @@
 import getRdiUrl from './getUrlRdiInstance'
 import isEqualPipelineFile from './pipeline'
+import isRdiPipelineConfigPage from './isRdiPipelineConfigPage'
 
-export { getRdiUrl, isEqualPipelineFile }
+export { getRdiUrl, isEqualPipelineFile, isRdiPipelineConfigPage }

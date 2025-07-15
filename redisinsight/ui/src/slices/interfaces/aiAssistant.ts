@@ -1,6 +1,7 @@
 export enum AiChatType {
   Assistance = 'document',
   Query = 'database',
+  RdiHelper = 'rdi',
 }
 
 export enum AiChatMessageType {

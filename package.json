@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "dev:ui": "cross-env yarn --cwd redisinsight/ui dev",
+    "dev:ui:coverage": "cross-env COLLECT_COVERAGE=true yarn --cwd redisinsight/ui dev",
     "dev:api": "cross-env yarn --cwd redisinsight/api start:dev",
     "dev:electron:ui": "cross-env RI_APP_PORT=8080 RI_APP_TYPE=ELECTRON NODE_ENV=development yarn --cwd redisinsight/ui dev",
     "dev:electron:api": "cross-env RI_APP_PORT=5540 RI_APP_TYPE=ELECTRON NODE_ENV=development USE_TCP_CLOUD_AUTH=true yarn --cwd redisinsight/api start:dev",
@@ -222,6 +223,7 @@
     "vite-plugin-ejs": "^1.7.0",
     "vite-plugin-electron": "^0.28.6",
     "vite-plugin-electron-renderer": "^0.14.5",
+    "vite-plugin-istanbul": "^7.1.0",
     "vite-plugin-react-click-to-component": "^3.0.0",
     "vite-plugin-svgr": "^4.2.0",
     "webpack": "^5.95.0",

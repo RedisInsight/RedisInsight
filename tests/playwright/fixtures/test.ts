@@ -7,13 +7,28 @@ import {
     _electron as electron,
 } from 'playwright'
 import log from 'node-color-log'
-
 import { AxiosInstance } from 'axios'
+import * as crypto from 'crypto'
+import fs from 'fs'
+import path from 'path'
+
 import { apiUrl, isElectron, electronExecutablePath } from '../helpers/conf'
 import { generateApiClient } from '../helpers/api/http-client'
 import { APIKeyRequests } from '../helpers/api/api-keys'
 import { DatabaseAPIRequests } from '../helpers/api/api-databases'
 import { UserAgreementDialog } from '../pageObjects'
+
+// Coverage type declaration
+declare global {
+    interface Window {
+        // eslint-disable-next-line no-underscore-dangle
+        __coverage__: any
+    }
+}
+
+export function generateUUID(): string {
+    return crypto.randomBytes(16).toString('hex')
+}
 
 type CommonFixtures = {
     forEachTest: void
@@ -25,6 +40,32 @@ type CommonFixtures = {
 }
 
 const commonTest = base.extend<CommonFixtures>({
+    // Simple context setup for coverage
+    context: async ({ context }, use) => {
+        if (process.env.COLLECT_COVERAGE === 'true') {
+            const outputDir = path.join(process.cwd(), '.nyc_output')
+            await fs.promises.mkdir(outputDir, { recursive: true })
+
+            // Expose coverage collection function
+            await context.exposeFunction(
+                'collectIstanbulCoverage',
+                (coverageJSON: string) => {
+                    if (coverageJSON) {
+                        fs.writeFileSync(
+                            path.join(
+                                outputDir,
+                                `playwright_coverage_${generateUUID()}.json`,
+                            ),
+                            coverageJSON,
+                        )
+                    }
+                },
+            )
+        }
+
+        await use(context)
+    },
+
     api: async ({ page }, use) => {
         const windowId = await page.evaluate(() => window.windowId)
 
@@ -55,7 +96,25 @@ const commonTest = base.extend<CommonFixtures>({
 
             await use()
 
-            // after each test:
+            // Collect coverage after each test
+            if (process.env.COLLECT_COVERAGE === 'true') {
+                await page
+                    .evaluate(() => {
+                        if (
+                            typeof window !== 'undefined' &&
+                            // eslint-disable-next-line no-underscore-dangle
+                            window.__coverage__
+                        ) {
+                            ;(window as any).collectIstanbulCoverage(
+                                // eslint-disable-next-line no-underscore-dangle
+                                JSON.stringify(window.__coverage__),
+                            )
+                        }
+                    })
+                    .catch(() => {
+                        // Ignore errors - page might be closed
+                    })
+            }
         },
         { auto: true },
     ],

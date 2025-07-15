@@ -12,6 +12,7 @@ Name | Type | Description | Notes
 **provider** | **string** |  | [default to undefined]
 **region** | **string** |  | [optional] [default to undefined]
 **price** | **number** |  | [optional] [default to undefined]
+**details** | [**CloudSubscriptionRegion**](CloudSubscriptionRegion.md) |  | [default to undefined]
 
 ## Example
 
@@ -26,6 +27,7 @@ const instance: CloudSubscriptionPlanResponse = {
     provider,
     region,
     price,
+    details,
 };
 ```
 

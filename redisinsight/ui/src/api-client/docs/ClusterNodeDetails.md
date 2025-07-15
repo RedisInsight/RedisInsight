@@ -11,9 +11,9 @@ Name | Type | Description | Notes
 **host** | **string** | Node IP address | [default to undefined]
 **port** | **number** | Node IP address | [default to undefined]
 **role** | **string** | Node role in cluster | [default to undefined]
-**primary** | **string** | ID of primary node (for replica only) | [default to undefined]
+**primary** | **string** | ID of primary node (for replica only) | [optional] [default to undefined]
 **health** | **string** | Node\&#39;s current health status | [default to undefined]
-**slots** | **Array&lt;string&gt;** | Array of assigned slots or slots ranges. Shown for primary nodes only | [default to undefined]
+**slots** | **Array&lt;string&gt;** | Array of assigned slots or slots ranges. Shown for primary nodes only | [optional] [default to undefined]
 **totalKeys** | **number** | Total keys stored inside this node | [default to undefined]
 **usedMemory** | **number** | Memory used by node. \&quot;memory.used_memory\&quot; from INFO command | [default to undefined]
 **opsPerSecond** | **number** | Current operations per second. \&quot;stats.instantaneous_ops_per_sec\&quot; from INFO command | [default to undefined]
@@ -22,11 +22,11 @@ Name | Type | Description | Notes
 **commandsProcessed** | **number** | Total commands processed by node. \&quot;stats.total_commands_processed\&quot; from INFO command | [default to undefined]
 **networkInKbps** | **number** | Current input network usage in KB/s. \&quot;stats.instantaneous_input_kbps\&quot; from INFO command | [default to undefined]
 **networkOutKbps** | **number** | Current output network usage in KB/s. \&quot;stats.instantaneous_output_kbps\&quot; from INFO command | [default to undefined]
-**cacheHitRatio** | **number** | Ratio for cache hits and misses [0 - 1]. Ideally should be close to 1 | [default to undefined]
+**cacheHitRatio** | **number** | Ratio for cache hits and misses [0 - 1]. Ideally should be close to 1 | [optional] [default to undefined]
 **replicationOffset** | **number** | The replication offset of this node. This information can be used to send commands to the most up to date replicas. | [default to undefined]
-**replicationLag** | **number** | For replicas only. Determines on how much replica is behind of primary. | [default to undefined]
+**replicationLag** | **number** | For replicas only. Determines on how much replica is behind of primary. | [optional] [default to undefined]
 **uptimeSec** | **number** | Current node uptime_in_seconds | [default to undefined]
-**replicas** | [**Array&lt;ClusterNodeDetails&gt;**](ClusterNodeDetails.md) | For primary nodes only. Replica node(s) details | [default to undefined]
+**replicas** | [**Array&lt;ClusterNodeDetails&gt;**](ClusterNodeDetails.md) | For primary nodes only. Replica node(s) details | [optional] [default to undefined]
 
 ## Example
 

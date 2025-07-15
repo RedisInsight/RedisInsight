@@ -87,8 +87,6 @@ const MonacoEditor = (props: Props) => {
     enableDiff = false,
     onDiffModeChange,
     diffOptions = {
-      renderSideBySide: false,
-      enableSplitViewResizing: false,
       ignoreTrimWhitespace: true,
     },
     'data-testid': dataTestId = 'monaco-editor',
@@ -98,6 +96,7 @@ const MonacoEditor = (props: Props) => {
   const [isEditing, setIsEditing] = useState(!readOnly && !disabled)
   const [isDedicatedEditorOpen, setIsDedicatedEditorOpen] = useState(false)
   const [isDiffMode, setIsDiffMode] = useState(enableDiff)
+  const [isInlineDiff, setIsInlineDiff] = useState(true)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
   const input = useRef<HTMLDivElement>(null)
 
@@ -265,6 +264,16 @@ const MonacoEditor = (props: Props) => {
     onDiffModeChange?.(newDiffMode)
   }
 
+  const toggleDiffViewMode = () => {
+    setIsInlineDiff(!isInlineDiff)
+  }
+
+  const getDiffOptions = () => ({
+    ...diffOptions,
+    renderSideBySide: !isInlineDiff,
+    enableSplitViewResizing: !isInlineDiff,
+  })
+
   const handleApply = (_value: string, event: React.MouseEvent) => {
     onApply?.(event, () => setIsEditing(false))
   }
@@ -302,9 +311,23 @@ const MonacoEditor = (props: Props) => {
                 iconType={isDiffMode ? 'eye' : 'diff'}
                 className={styles.diffToggleBtn}
                 data-testid="diff-mode-toggle"
+                title={isDiffMode ? 'Switch to normal editor view' : 'Switch to diff view'}
               >
                 {isDiffMode ? 'Normal' : 'Diff'} Mode
               </EuiButton>
+              {isDiffMode && (
+                <EuiButton
+                  size="s"
+                  onClick={toggleDiffViewMode}
+                  iconType={isInlineDiff ? 'menuLeft' : 'menuRight'}
+                  className={styles.diffViewToggleBtn}
+                  data-testid="diff-view-toggle"
+                  style={{ marginLeft: '8px' }}
+                  title={isInlineDiff ? 'Switch to side-by-side view' : 'Switch to inline view'}
+                >
+                  {isInlineDiff ? 'Inline' : 'Side-by-Side'}
+                </EuiButton>
+              )}
             </div>
           )}
           
@@ -317,7 +340,7 @@ const MonacoEditor = (props: Props) => {
               value={value ?? ''}
               options={{
                 ...monacoOptions,
-                ...diffOptions,
+                ...getDiffOptions(),
                 readOnly: !isEditing || disabled || readOnly,
               }}
               className={cx(styles.editor, className, {

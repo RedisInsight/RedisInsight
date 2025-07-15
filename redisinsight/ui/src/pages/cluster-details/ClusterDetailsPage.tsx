@@ -2,7 +2,7 @@ import { orderBy } from 'lodash'
 import React, { useContext, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { ClusterNodeDetails } from 'src/modules/cluster-monitor/models'
+import { ClusterNodeDetails } from 'uiSrc/api-client'
 
 import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'

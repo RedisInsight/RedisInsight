@@ -29,7 +29,6 @@
     "paths": {
       "uiSrc/*": ["redisinsight/ui/src/*"],
       "apiSrc/*": ["redisinsight/api/src/*"],
-      "src/*": ["redisinsight/api/src/*"],
       "desktopSrc/*": ["redisinsight/desktop/src/*"],
       "tests/*": ["redisinsight/ui/__tests__/*"]
     }

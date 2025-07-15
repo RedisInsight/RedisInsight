@@ -52,6 +52,7 @@ docs/CloudSubscription.md
 docs/CloudSubscriptionApi.md
 docs/CloudSubscriptionPlanResponse.md
 docs/CloudUser.md
+docs/CloudUserAccount.md
 docs/CloudUserApi.md
 docs/ClusterConnectionDetailsDto.md
 docs/ClusterDetails.md

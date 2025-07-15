@@ -1,5 +1,5 @@
 import React from 'react'
-import { CloudUser } from 'src/modules/cloud/user/models'
+import { CloudUser } from 'uiSrc/api-client'
 import {
   act,
   fireEvent,
@@ -19,10 +19,14 @@ const mockUser: CloudUser = {
     {
       id: 45,
       name: 'Account 1',
+      capiKey: 'key',
+      capiSecret: 'secret',
     },
     {
       id: 46,
       name: 'Account 2',
+      capiKey: 'key',
+      capiSecret: 'secret',
     },
   ],
   data: {},

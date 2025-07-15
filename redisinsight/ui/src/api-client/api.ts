@@ -1087,16 +1087,47 @@ export interface CloudUser {
     'capiKey'?: CloudCapiKey;
     /**
      * User accounts
-     * @type {Array<object>}
+     * @type {Array<CloudUserAccount>}
      * @memberof CloudUser
      */
-    'accounts'?: Array<object>;
+    'accounts'?: Array<CloudUserAccount>;
     /**
      * Additional user data
      * @type {object}
      * @memberof CloudUser
      */
     'data'?: object;
+}
+/**
+ * 
+ * @export
+ * @interface CloudUserAccount
+ */
+export interface CloudUserAccount {
+    /**
+     * Account id
+     * @type {number}
+     * @memberof CloudUserAccount
+     */
+    'id': number;
+    /**
+     * Account name
+     * @type {string}
+     * @memberof CloudUserAccount
+     */
+    'name': string;
+    /**
+     * Cloud API key
+     * @type {string}
+     * @memberof CloudUserAccount
+     */
+    'capiKey': string;
+    /**
+     * Cloud API secret
+     * @type {string}
+     * @memberof CloudUserAccount
+     */
+    'capiSecret': string;
 }
 /**
  * 

@@ -192,11 +192,6 @@ const Job = (props: Props) => {
         <div className="rdi__content-header">
           <div>
             <EuiText className={cx('rdi__title', 'line-clamp-2')}>{name}</EuiText>
-            {manualBaseline && (
-              <EuiText size="s" color="subdued" style={{ marginTop: '4px' }}>
-                📸 Baseline captured • Use diff toggle to compare changes
-              </EuiText>
-            )}
           </div>
           <div className={styles.actionContainer}>
             <EuiToolTip

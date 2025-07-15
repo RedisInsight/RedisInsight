@@ -6,12 +6,10 @@ import {
   RedisStringType,
 } from 'src/common/decorators';
 import { RedisString } from 'src/common/constants';
+import { ApiRedisString } from 'src/common/decorators/redis-string-schema.decorator';
 
 export class ZSetMemberDto {
-  @ApiProperty({
-    type: String,
-    description: 'Member name value.',
-  })
+  @ApiRedisString('Member name value')
   @IsDefined()
   @IsRedisString()
   @RedisStringType()

@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**field** | **string** | Field | [default to undefined]
-**value** | **string** | Field | [default to undefined]
+**field** | [**HashFieldDtoField**](HashFieldDtoField.md) |  | [default to undefined]
+**value** | [**HashFieldDtoField**](HashFieldDtoField.md) |  | [default to undefined]
 **expire** | **number** | Set timeout on field in seconds | [optional] [default to undefined]
 
 ## Example

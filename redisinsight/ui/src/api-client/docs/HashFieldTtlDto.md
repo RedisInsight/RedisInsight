@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**field** | **string** | Field | [default to undefined]
+**field** | [**HashFieldDtoField**](HashFieldDtoField.md) |  | [default to undefined]
 **expire** | **number** | Set a timeout on key in seconds. After the timeout has expired, the field will automatically be deleted. If the property has value of -1, then the field timeout will be removed. | [default to undefined]
 
 ## Example

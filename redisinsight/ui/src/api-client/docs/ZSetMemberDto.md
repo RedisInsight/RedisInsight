@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **string** | Member name value. | [default to undefined]
+**name** | [**ZSetMemberDtoName**](ZSetMemberDtoName.md) |  | [default to undefined]
 **score** | **number** | Member score value. | [default to 1]
 
 ## Example

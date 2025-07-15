@@ -1,21 +1,22 @@
-# RenameKeyDto
+# CreateListWithExpireDtoKeyName
 
+Key Name
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
-**newKeyName** | **string** | New key name | [default to undefined]
+**type** | **string** |  | [default to undefined]
+**data** | **Array&lt;number&gt;** |  | [default to undefined]
 
 ## Example
 
 ```typescript
-import { RenameKeyDto } from './api';
+import { CreateListWithExpireDtoKeyName } from './api';
 
-const instance: RenameKeyDto = {
-    keyName,
-    newKeyName,
+const instance: CreateListWithExpireDtoKeyName = {
+    type,
+    data,
 };
 ```
 

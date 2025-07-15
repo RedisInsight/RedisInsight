@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
+**keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
 **includeSize** | **boolean** | Flag to determine if size should be requested and shown in the response | [optional] [default to false]
 
 ## Example

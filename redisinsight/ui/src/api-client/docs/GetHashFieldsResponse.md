@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
+**keyName** | [**PushListElementsResponseKeyName**](PushListElementsResponseKeyName.md) |  | [default to undefined]
 **nextCursor** | **number** | The new cursor to use in the next call. If the property has value of 0, then the iteration is completed. | [default to undefined]
 **fields** | [**Array&lt;HashFieldDto&gt;**](HashFieldDto.md) | Array of members. | [default to undefined]
 **total** | **number** | The number of fields in the currently-selected hash. | [default to undefined]

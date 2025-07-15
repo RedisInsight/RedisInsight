@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
+**keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
 **consumerGroups** | [**Array&lt;CreateConsumerGroupDto&gt;**](CreateConsumerGroupDto.md) | List of consumer groups to create | [default to undefined]
 
 ## Example

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
+**keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
 **ttl** | **number** | Set a timeout on key in seconds. After the timeout has expired, the key will automatically be deleted. If the property has value of -1, then the key timeout will be removed. | [default to undefined]
 
 ## Example

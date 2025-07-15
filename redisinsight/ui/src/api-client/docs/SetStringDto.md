@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
-**value** | **string** | Key value | [default to undefined]
+**keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
+**value** | [**SetStringWithExpireDtoValue**](SetStringWithExpireDtoValue.md) |  | [default to undefined]
 
 ## Example
 

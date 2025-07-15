@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
+**keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
 **destination** | **string** | In order to remove last elements of the list, use the TAIL value, else HEAD value | [default to DestinationEnum_Tail]
 **count** | **number** | Specifying the number of elements to remove from list. | [default to 1]
 

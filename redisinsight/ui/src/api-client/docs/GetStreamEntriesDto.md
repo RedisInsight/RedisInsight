@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
+**keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
 **start** | **string** | Specifying the start id | [optional] [default to '-']
 **end** | **string** | Specifying the end id | [optional] [default to '+']
 **count** | **number** | Specifying the number of entries to return. | [optional] [default to 500]

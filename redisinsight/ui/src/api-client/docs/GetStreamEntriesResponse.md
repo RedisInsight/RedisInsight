@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
+**keyName** | [**PushListElementsResponseKeyName**](PushListElementsResponseKeyName.md) |  | [default to undefined]
 **total** | **number** | Total number of entries | [default to undefined]
 **lastGeneratedId** | **string** | Last generated id in the stream | [default to undefined]
 **firstEntry** | [**StreamEntryDto**](StreamEntryDto.md) | First stream entry | [default to undefined]

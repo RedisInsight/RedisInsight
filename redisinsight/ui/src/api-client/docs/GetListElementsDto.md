@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
+**keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
 **offset** | **number** | Specifying the number of elements to skip. | [default to undefined]
 **count** | **number** | Specifying the number of elements to return from starting at offset. | [default to 15]
 

@@ -30,11 +30,11 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerM
  */
 export interface AckPendingEntriesDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof AckPendingEntriesDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Consumer group name
      * @type {string}
@@ -68,11 +68,11 @@ export interface AckPendingEntriesResponse {
  */
 export interface AddFieldsToHashDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof AddFieldsToHashDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Hash fields
      * @type {Array<HashFieldDto>}
@@ -87,17 +87,17 @@ export interface AddFieldsToHashDto {
  */
 export interface AddMembersToSetDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof AddMembersToSetDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Set members
-     * @type {Array<string>}
+     * @type {Array<CreateSetWithExpireDtoMembersInner>}
      * @memberof AddMembersToSetDto
      */
-    'members': Array<string>;
+    'members': Array<CreateSetWithExpireDtoMembersInner>;
 }
 /**
  * 
@@ -106,11 +106,11 @@ export interface AddMembersToSetDto {
  */
 export interface AddMembersToZSetDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof AddMembersToZSetDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * ZSet members
      * @type {Array<ZSetMemberDto>}
@@ -207,11 +207,11 @@ export interface AddRedisEnterpriseDatabasesDto {
  */
 export interface AddStreamEntriesDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof AddStreamEntriesDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Entries to push
      * @type {Array<StreamEntryDto>}
@@ -226,11 +226,11 @@ export interface AddStreamEntriesDto {
  */
 export interface AddStreamEntriesResponse {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {PushListElementsResponseKeyName}
      * @memberof AddStreamEntriesResponse
      */
-    'keyName': string;
+    'keyName': PushListElementsResponseKeyName;
     /**
      * Entries IDs
      * @type {Array<string>}
@@ -436,11 +436,11 @@ export interface ClaimPendingEntriesResponse {
  */
 export interface ClaimPendingEntryDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof ClaimPendingEntryDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Consumer group name
      * @type {string}
@@ -1964,11 +1964,11 @@ export interface CreateConsumerGroupDto {
  */
 export interface CreateConsumerGroupsDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof CreateConsumerGroupsDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * List of consumer groups to create
      * @type {Array<CreateConsumerGroupDto>}
@@ -2194,11 +2194,11 @@ export type CreateDatabaseDtoSshOptions = CreateBasicSshOptionsDto | CreateCertS
  */
 export interface CreateHashWithExpireDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof CreateHashWithExpireDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Hash fields
      * @type {Array<HashFieldDto>}
@@ -2219,11 +2219,11 @@ export interface CreateHashWithExpireDto {
  */
 export interface CreateListWithExpireDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof CreateListWithExpireDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * List element(s)
      * @type {Array<string>}
@@ -2251,6 +2251,32 @@ export const CreateListWithExpireDtoDestinationEnum = {
 
 export type CreateListWithExpireDtoDestinationEnum = typeof CreateListWithExpireDtoDestinationEnum[keyof typeof CreateListWithExpireDtoDestinationEnum];
 
+/**
+ * @type CreateListWithExpireDtoKeyName
+ * Key Name
+ * @export
+ */
+export type CreateListWithExpireDtoKeyName = CreateListWithExpireDtoKeyNameOneOf | string;
+
+/**
+ * 
+ * @export
+ * @interface CreateListWithExpireDtoKeyNameOneOf
+ */
+export interface CreateListWithExpireDtoKeyNameOneOf {
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateListWithExpireDtoKeyNameOneOf
+     */
+    'type': string;
+    /**
+     * 
+     * @type {Array<number>}
+     * @memberof CreateListWithExpireDtoKeyNameOneOf
+     */
+    'data': Array<number>;
+}
 /**
  * 
  * @export
@@ -2385,11 +2411,11 @@ export type CreateRedisearchIndexFieldDtoTypeEnum = typeof CreateRedisearchIndex
  */
 export interface CreateRejsonRlWithExpireDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof CreateRejsonRlWithExpireDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Valid json string
      * @type {string}
@@ -2650,17 +2676,17 @@ export type CreateSentinelDatabasesDtoKeyNameFormatEnum = typeof CreateSentinelD
  */
 export interface CreateSetWithExpireDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof CreateSetWithExpireDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Set members
-     * @type {Array<string>}
+     * @type {Array<CreateSetWithExpireDtoMembersInner>}
      * @memberof CreateSetWithExpireDto
      */
-    'members': Array<string>;
+    'members': Array<CreateSetWithExpireDtoMembersInner>;
     /**
      * Set a timeout on key in seconds. After the timeout has expired, the key will automatically be deleted.
      * @type {number}
@@ -2669,17 +2695,23 @@ export interface CreateSetWithExpireDto {
     'expire'?: number;
 }
 /**
+ * @type CreateSetWithExpireDtoMembersInner
+ * @export
+ */
+export type CreateSetWithExpireDtoMembersInner = CreateListWithExpireDtoKeyNameOneOf | string;
+
+/**
  * 
  * @export
  * @interface CreateStreamDto
  */
 export interface CreateStreamDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof CreateStreamDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Entries to push
      * @type {Array<StreamEntryDto>}
@@ -2738,11 +2770,11 @@ export interface CreateTagDto {
  */
 export interface CreateZSetWithExpireDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof CreateZSetWithExpireDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * ZSet members
      * @type {Array<ZSetMemberDto>}
@@ -3668,11 +3700,11 @@ export interface DeleteClientResponse {
  */
 export interface DeleteConsumerGroupsDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof DeleteConsumerGroupsDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Consumer group names
      * @type {Array<string>}
@@ -3700,11 +3732,11 @@ export interface DeleteConsumerGroupsResponse {
  */
 export interface DeleteConsumersDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof DeleteConsumersDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Consumer group name
      * @type {string}
@@ -3751,11 +3783,11 @@ export interface DeleteDatabasesDto {
  */
 export interface DeleteFieldsFromHashDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof DeleteFieldsFromHashDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Hash fields
      * @type {Array<string>}
@@ -3809,11 +3841,11 @@ export interface DeleteKeysResponse {
  */
 export interface DeleteListElementsDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof DeleteListElementsDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * In order to remove last elements of the list, use the TAIL value, else HEAD value
      * @type {string}
@@ -3842,11 +3874,11 @@ export type DeleteListElementsDtoDestinationEnum = typeof DeleteListElementsDtoD
  */
 export interface DeleteMembersFromSetDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof DeleteMembersFromSetDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Key members
      * @type {Array<string>}
@@ -3874,11 +3906,11 @@ export interface DeleteMembersFromSetResponse {
  */
 export interface DeleteMembersFromZSetDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof DeleteMembersFromZSetDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Key members
      * @type {Array<string>}
@@ -3906,11 +3938,11 @@ export interface DeleteMembersFromZSetResponse {
  */
 export interface DeleteStreamEntriesDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof DeleteStreamEntriesDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Entries IDs
      * @type {Array<string>}
@@ -4435,11 +4467,11 @@ export type GetCloudSubscriptionDatabasesDtoSubscriptionTypeEnum = typeof GetClo
  */
 export interface GetConsumersDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof GetConsumersDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Consumer group name
      * @type {string}
@@ -4454,11 +4486,11 @@ export interface GetConsumersDto {
  */
 export interface GetHashFieldsDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof GetHashFieldsDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Iteration cursor. An iteration starts when the cursor is set to 0, and terminates when the cursor returned by the server is 0.
      * @type {number}
@@ -4485,11 +4517,11 @@ export interface GetHashFieldsDto {
  */
 export interface GetHashFieldsResponse {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {PushListElementsResponseKeyName}
      * @memberof GetHashFieldsResponse
      */
-    'keyName': string;
+    'keyName': PushListElementsResponseKeyName;
     /**
      * The new cursor to use in the next call. If the property has value of 0, then the iteration is completed.
      * @type {number}
@@ -4516,11 +4548,11 @@ export interface GetHashFieldsResponse {
  */
 export interface GetKeyInfoDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof GetKeyInfoDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Flag to determine if size should be requested and shown in the response
      * @type {boolean}
@@ -4725,11 +4757,11 @@ export interface GetKeysWithDetailsResponse {
  */
 export interface GetListElementsDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof GetListElementsDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Specifying the number of elements to skip.
      * @type {number}
@@ -4750,11 +4782,11 @@ export interface GetListElementsDto {
  */
 export interface GetListElementsResponse {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {PushListElementsResponseKeyName}
      * @memberof GetListElementsResponse
      */
-    'keyName': string;
+    'keyName': PushListElementsResponseKeyName;
     /**
      * The number of elements in the currently-selected list.
      * @type {number}
@@ -4762,31 +4794,19 @@ export interface GetListElementsResponse {
      */
     'total': number;
     /**
-     * Array of elements.
-     * @type {Array<GetListElementsResponseElementsInner>}
+     * 
+     * @type {GetListElementsResponseElements}
      * @memberof GetListElementsResponse
      */
-    'elements': Array<GetListElementsResponseElementsInner>;
+    'elements': GetListElementsResponseElements;
 }
 /**
- * 
+ * @type GetListElementsResponseElements
+ * Elements
  * @export
- * @interface GetListElementsResponseElementsInner
  */
-export interface GetListElementsResponseElementsInner {
-    /**
-     * 
-     * @type {string}
-     * @memberof GetListElementsResponseElementsInner
-     */
-    'type': string;
-    /**
-     * 
-     * @type {Array<number>}
-     * @memberof GetListElementsResponseElementsInner
-     */
-    'data': Array<number>;
-}
+export type GetListElementsResponseElements = CreateListWithExpireDtoKeyNameOneOf | string;
+
 /**
  * 
  * @export
@@ -4794,11 +4814,11 @@ export interface GetListElementsResponseElementsInner {
  */
 export interface GetPendingEntriesDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof GetPendingEntriesDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Consumer group name
      * @type {string}
@@ -4837,11 +4857,11 @@ export interface GetPendingEntriesDto {
  */
 export interface GetRejsonRlDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof GetRejsonRlDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Path to look for data
      * @type {string}
@@ -4994,11 +5014,11 @@ export type GetServerInfoResponseAppTypeEnum = typeof GetServerInfoResponseAppTy
  */
 export interface GetSetMembersDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof GetSetMembersDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Iteration cursor. An iteration starts when the cursor is set to 0, and terminates when the cursor returned by the server is 0.
      * @type {number}
@@ -5025,11 +5045,11 @@ export interface GetSetMembersDto {
  */
 export interface GetSetMembersResponse {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {PushListElementsResponseKeyName}
      * @memberof GetSetMembersResponse
      */
-    'keyName': string;
+    'keyName': PushListElementsResponseKeyName;
     /**
      * The new cursor to use in the next call. If the property has value of 0, then the iteration is completed.
      * @type {number}
@@ -5056,11 +5076,11 @@ export interface GetSetMembersResponse {
  */
 export interface GetStreamEntriesDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof GetStreamEntriesDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Specifying the start id
      * @type {string}
@@ -5101,11 +5121,11 @@ export type GetStreamEntriesDtoSortOrderEnum = typeof GetStreamEntriesDtoSortOrd
  */
 export interface GetStreamEntriesResponse {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {PushListElementsResponseKeyName}
      * @memberof GetStreamEntriesResponse
      */
-    'keyName': string;
+    'keyName': PushListElementsResponseKeyName;
     /**
      * Total number of entries
      * @type {number}
@@ -5144,11 +5164,11 @@ export interface GetStreamEntriesResponse {
  */
 export interface GetStringInfoDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof GetStringInfoDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Start of string
      * @type {number}
@@ -5169,11 +5189,11 @@ export interface GetStringInfoDto {
  */
 export interface GetStringValueResponse {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {PushListElementsResponseKeyName}
      * @memberof GetStringValueResponse
      */
-    'keyName': string;
+    'keyName': PushListElementsResponseKeyName;
     /**
      * Key value
      * @type {string}
@@ -5201,11 +5221,11 @@ export interface GetUserAgreementsResponse {
  */
 export interface GetZSetMembersDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof GetZSetMembersDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Specifying the number of elements to skip.
      * @type {number}
@@ -5240,11 +5260,11 @@ export type GetZSetMembersDtoSortOrderEnum = typeof GetZSetMembersDtoSortOrderEn
  */
 export interface GetZSetResponse {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {PushListElementsResponseKeyName}
      * @memberof GetZSetResponse
      */
-    'keyName': string;
+    'keyName': PushListElementsResponseKeyName;
     /**
      * The number of members in the currently-selected z-set.
      * @type {number}
@@ -5265,17 +5285,17 @@ export interface GetZSetResponse {
  */
 export interface HashFieldDto {
     /**
-     * Field
-     * @type {string}
+     * 
+     * @type {HashFieldDtoField}
      * @memberof HashFieldDto
      */
-    'field': string;
+    'field': HashFieldDtoField;
     /**
-     * Field
-     * @type {string}
+     * 
+     * @type {HashFieldDtoField}
      * @memberof HashFieldDto
      */
-    'value': string;
+    'value': HashFieldDtoField;
     /**
      * Set timeout on field in seconds
      * @type {number}
@@ -5284,17 +5304,24 @@ export interface HashFieldDto {
     'expire'?: number;
 }
 /**
+ * @type HashFieldDtoField
+ * Field
+ * @export
+ */
+export type HashFieldDtoField = CreateListWithExpireDtoKeyNameOneOf | string;
+
+/**
  * 
  * @export
  * @interface HashFieldTtlDto
  */
 export interface HashFieldTtlDto {
     /**
-     * Field
-     * @type {string}
+     * 
+     * @type {HashFieldDtoField}
      * @memberof HashFieldTtlDto
      */
-    'field': string;
+    'field': HashFieldDtoField;
     /**
      * Set a timeout on key in seconds. After the timeout has expired, the field will automatically be deleted. If the property has value of -1, then the field timeout will be removed.
      * @type {number}
@@ -5801,11 +5828,11 @@ export interface Key {
  */
 export interface KeyDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof KeyDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
 }
 /**
  * 
@@ -5868,11 +5895,11 @@ export type ModifyDatabaseRecommendationDtoVoteEnum = typeof ModifyDatabaseRecom
  */
 export interface ModifyRejsonRlArrAppendDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof ModifyRejsonRlArrAppendDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Path of the json field
      * @type {string}
@@ -5893,11 +5920,11 @@ export interface ModifyRejsonRlArrAppendDto {
  */
 export interface ModifyRejsonRlSetDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof ModifyRejsonRlSetDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Path of the json field
      * @type {string}
@@ -6305,11 +6332,11 @@ export interface PublishResponse {
  */
 export interface PushElementToListDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof PushElementToListDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * List element(s)
      * @type {Array<string>}
@@ -6338,11 +6365,11 @@ export type PushElementToListDtoDestinationEnum = typeof PushElementToListDtoDes
  */
 export interface PushListElementsResponse {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {PushListElementsResponseKeyName}
      * @memberof PushListElementsResponse
      */
-    'keyName': string;
+    'keyName': PushListElementsResponseKeyName;
     /**
      * The number of elements in the list after current operation.
      * @type {number}
@@ -6350,6 +6377,13 @@ export interface PushListElementsResponse {
      */
     'total': number;
 }
+/**
+ * @type PushListElementsResponseKeyName
+ * keyName
+ * @export
+ */
+export type PushListElementsResponseKeyName = CreateListWithExpireDtoKeyNameOneOf | string;
+
 /**
  * 
  * @export
@@ -6837,11 +6871,11 @@ export type RedisNodeInfoResponseRoleEnum = typeof RedisNodeInfoResponseRoleEnum
  */
 export interface RemoveRejsonRlDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof RemoveRejsonRlDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Path of the json field
      * @type {string}
@@ -6856,11 +6890,11 @@ export interface RemoveRejsonRlDto {
  */
 export interface RenameKeyDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof RenameKeyDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * New key name
      * @type {string}
@@ -6875,11 +6909,11 @@ export interface RenameKeyDto {
  */
 export interface RenameKeyResponse {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {PushListElementsResponseKeyName}
      * @memberof RenameKeyResponse
      */
-    'keyName': string;
+    'keyName': PushListElementsResponseKeyName;
 }
 /**
  * 
@@ -7114,11 +7148,11 @@ export interface SearchRedisearchDto {
  */
 export interface SearchZSetMembersDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof SearchZSetMembersDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Iteration cursor. An iteration starts when the cursor is set to 0, and terminates when the cursor returned by the server is 0.
      * @type {number}
@@ -7145,11 +7179,11 @@ export interface SearchZSetMembersDto {
  */
 export interface SearchZSetMembersResponse {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {PushListElementsResponseKeyName}
      * @memberof SearchZSetMembersResponse
      */
-    'keyName': string;
+    'keyName': PushListElementsResponseKeyName;
     /**
      * The new cursor to use in the next call. If the property has value of 0, then the iteration is completed.
      * @type {number}
@@ -7413,11 +7447,11 @@ export type SentinelMasterResponseStatusEnum = typeof SentinelMasterResponseStat
  */
 export interface SetListElementDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof SetListElementDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * List element
      * @type {string}
@@ -7457,17 +7491,17 @@ export interface SetListElementResponse {
  */
 export interface SetStringDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof SetStringDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
-     * Key value
-     * @type {string}
+     * 
+     * @type {SetStringWithExpireDtoValue}
      * @memberof SetStringDto
      */
-    'value': string;
+    'value': SetStringWithExpireDtoValue;
 }
 /**
  * 
@@ -7476,17 +7510,17 @@ export interface SetStringDto {
  */
 export interface SetStringWithExpireDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof SetStringWithExpireDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
-     * Key value
-     * @type {string}
+     * 
+     * @type {SetStringWithExpireDtoValue}
      * @memberof SetStringWithExpireDto
      */
-    'value': string;
+    'value': SetStringWithExpireDtoValue;
     /**
      * Set a timeout on key in seconds. After the timeout has expired, the key will automatically be deleted.
      * @type {number}
@@ -7494,6 +7528,13 @@ export interface SetStringWithExpireDto {
      */
     'expire'?: number;
 }
+/**
+ * @type SetStringWithExpireDtoValue
+ * Key value
+ * @export
+ */
+export type SetStringWithExpireDtoValue = CreateListWithExpireDtoKeyNameOneOf | string;
+
 /**
  * 
  * @export
@@ -7887,11 +7928,11 @@ export interface Tag {
  */
 export interface UpdateConsumerGroupDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof UpdateConsumerGroupDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Consumer group name
      * @type {string}
@@ -8070,11 +8111,11 @@ export type UpdateDatabaseDtoKeyNameFormatEnum = typeof UpdateDatabaseDtoKeyName
  */
 export interface UpdateHashFieldsTtlDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof UpdateHashFieldsTtlDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Hash fields
      * @type {Array<HashFieldTtlDto>}
@@ -8089,11 +8130,11 @@ export interface UpdateHashFieldsTtlDto {
  */
 export interface UpdateKeyTtlDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof UpdateKeyTtlDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * Set a timeout on key in seconds. After the timeout has expired, the key will automatically be deleted. If the property has value of -1, then the key timeout will be removed.
      * @type {number}
@@ -8108,11 +8149,11 @@ export interface UpdateKeyTtlDto {
  */
 export interface UpdateMemberInZSetDto {
     /**
-     * Key Name
-     * @type {string}
+     * 
+     * @type {CreateListWithExpireDtoKeyName}
      * @memberof UpdateMemberInZSetDto
      */
-    'keyName': string;
+    'keyName': CreateListWithExpireDtoKeyName;
     /**
      * ZSet member
      * @type {ZSetMemberDto}
@@ -8340,11 +8381,11 @@ export interface UseClientCertificateDto {
  */
 export interface ZSetMemberDto {
     /**
-     * Member name value.
-     * @type {string}
+     * 
+     * @type {ZSetMemberDtoName}
      * @memberof ZSetMemberDto
      */
-    'name': string;
+    'name': ZSetMemberDtoName;
     /**
      * Member score value.
      * @type {number}
@@ -8352,6 +8393,13 @@ export interface ZSetMemberDto {
      */
     'score': number;
 }
+/**
+ * @type ZSetMemberDtoName
+ * Member name value
+ * @export
+ */
+export type ZSetMemberDtoName = CreateListWithExpireDtoKeyNameOneOf | string;
+
 
 /**
  * AIApi - axios parameter creator

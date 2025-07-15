@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
+**keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
 **groupName** | **string** | Consumer group name | [default to undefined]
 **consumerName** | **string** | Consumer name | [default to undefined]
 **minIdleTime** | **number** | Claim only if its idle time is greater the minimum idle time  | [default to 0]

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
+**keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
 **members** | [**Array&lt;ZSetMemberDto&gt;**](ZSetMemberDto.md) | ZSet members | [default to undefined]
 
 ## Example

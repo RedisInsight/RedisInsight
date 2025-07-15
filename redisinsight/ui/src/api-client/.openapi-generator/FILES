@@ -83,6 +83,8 @@ docs/CreateDatabaseDtoClientCert.md
 docs/CreateDatabaseDtoSshOptions.md
 docs/CreateHashWithExpireDto.md
 docs/CreateListWithExpireDto.md
+docs/CreateListWithExpireDtoKeyName.md
+docs/CreateListWithExpireDtoKeyNameOneOf.md
 docs/CreateOrUpdateDatabaseSettingDto.md
 docs/CreatePluginStateDto.md
 docs/CreateRdiDto.md
@@ -93,6 +95,7 @@ docs/CreateSentinelDatabaseDto.md
 docs/CreateSentinelDatabaseResponse.md
 docs/CreateSentinelDatabasesDto.md
 docs/CreateSetWithExpireDto.md
+docs/CreateSetWithExpireDtoMembersInner.md
 docs/CreateStreamDto.md
 docs/CreateSubscriptionAndDatabaseCloudJobDataDto.md
 docs/CreateTagDto.md
@@ -151,7 +154,7 @@ docs/GetKeysInfoDto.md
 docs/GetKeysWithDetailsResponse.md
 docs/GetListElementsDto.md
 docs/GetListElementsResponse.md
-docs/GetListElementsResponseElementsInner.md
+docs/GetListElementsResponseElements.md
 docs/GetPendingEntriesDto.md
 docs/GetRejsonRlDto.md
 docs/GetRejsonRlResponseDto.md
@@ -167,6 +170,7 @@ docs/GetUserAgreementsResponse.md
 docs/GetZSetMembersDto.md
 docs/GetZSetResponse.md
 docs/HashFieldDto.md
+docs/HashFieldDtoField.md
 docs/HashFieldTtlDto.md
 docs/ImportCloudDatabaseDto.md
 docs/ImportCloudDatabaseResponse.md
@@ -203,6 +207,7 @@ docs/PublishDto.md
 docs/PublishResponse.md
 docs/PushElementToListDto.md
 docs/PushListElementsResponse.md
+docs/PushListElementsResponseKeyName.md
 docs/RDIApi.md
 docs/Rdi.md
 docs/RdiDryRunJobDto.md
@@ -239,6 +244,7 @@ docs/SetListElementDto.md
 docs/SetListElementResponse.md
 docs/SetStringDto.md
 docs/SetStringWithExpireDto.md
+docs/SetStringWithExpireDtoValue.md
 docs/SettingsApi.md
 docs/ShortCommandExecution.md
 docs/ShortDatabaseAnalysis.md
@@ -271,5 +277,6 @@ docs/UseCaCertificateDto.md
 docs/UseClientCertificateDto.md
 docs/WorkbenchApi.md
 docs/ZSetMemberDto.md
+docs/ZSetMemberDtoName.md
 git_push.sh
 index.ts

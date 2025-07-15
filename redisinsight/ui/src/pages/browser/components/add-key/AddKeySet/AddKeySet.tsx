@@ -17,7 +17,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
-import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
+import { CreateSetWithExpireDto } from 'uiSrc/api-client'
 
 import { INITIAL_SET_MEMBER_STATE, ISetMemberState } from './interfaces'
 import { AddSetFormConfig as config } from '../constants/fields-config'

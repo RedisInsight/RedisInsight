@@ -2,6 +2,7 @@ import { KeyResponse } from 'src/modules/browser/keys/dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { RedisStringType } from 'src/common/decorators';
 import { RedisString } from 'src/common/constants';
+import { ApiRedisString } from 'src/common/decorators/redis-string-schema.decorator';
 
 export class GetListElementsResponse extends KeyResponse {
   @ApiProperty({
@@ -10,22 +11,7 @@ export class GetListElementsResponse extends KeyResponse {
   })
   total: number;
 
-  @ApiProperty({
-    type: 'array',
-    items: {
-      type: 'object',
-      properties: {
-        type: { type: 'string', example: 'Buffer' },
-        data: {
-          type: 'array',
-          items: { type: 'number' },
-          example: [61, 101, 49],
-        },
-      },
-      required: ['type', 'data'],
-    },
-    description: 'Array of elements.',
-  })
+  @ApiRedisString('Elements')
   @RedisStringType({ each: true })
   elements: RedisString[];
 }

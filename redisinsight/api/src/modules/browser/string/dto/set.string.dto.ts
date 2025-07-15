@@ -1,14 +1,11 @@
 import { KeyDto } from 'src/modules/browser/keys/dto';
-import { ApiProperty } from '@nestjs/swagger';
 import { IsDefined } from 'class-validator';
 import { IsRedisString, RedisStringType } from 'src/common/decorators';
 import { RedisString } from 'src/common/constants';
+import { ApiRedisString } from 'src/common/decorators/redis-string-schema.decorator';
 
 export class SetStringDto extends KeyDto {
-  @ApiProperty({
-    description: 'Key value',
-    type: String,
-  })
+  @ApiRedisString('Key value')
   @IsDefined()
   @IsRedisString()
   @RedisStringType()

@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
+**keyName** | [**PushListElementsResponseKeyName**](PushListElementsResponseKeyName.md) |  | [default to undefined]
 **total** | **number** | The number of members in the currently-selected z-set. | [default to undefined]
 **members** | [**Array&lt;ZSetMemberDto&gt;**](ZSetMemberDto.md) | Array of Members. | [default to undefined]
 

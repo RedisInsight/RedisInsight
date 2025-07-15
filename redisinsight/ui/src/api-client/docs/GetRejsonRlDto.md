@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
+**keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
 **path** | **string** | Path to look for data | [optional] [default to undefined]
 **forceRetrieve** | **boolean** | Don\&#39;t check for json size and return whole json in path when enabled | [optional] [default to undefined]
 

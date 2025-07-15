@@ -5,7 +5,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
+**keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
 **fields** | [**Array&lt;HashFieldTtlDto&gt;**](HashFieldTtlDto.md) | Hash fields | [default to undefined]
 
 ## Example

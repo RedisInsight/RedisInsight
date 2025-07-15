@@ -287,4 +287,4 @@ export type RedisResponseBuffer = {
 
 export type RedisString = string | RedisResponseBuffer
 
-export type UintArray = number[] | Uint8Array
+export type UintArray = number[] // | Uint8Array

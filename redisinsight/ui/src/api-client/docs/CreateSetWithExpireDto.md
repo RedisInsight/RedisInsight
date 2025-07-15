@@ -5,8 +5,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**keyName** | **string** | Key Name | [default to undefined]
-**members** | **Array&lt;string&gt;** | Set members | [default to undefined]
+**keyName** | [**CreateListWithExpireDtoKeyName**](CreateListWithExpireDtoKeyName.md) |  | [default to undefined]
+**members** | [**Array&lt;CreateSetWithExpireDtoMembersInner&gt;**](CreateSetWithExpireDtoMembersInner.md) | Set members | [default to undefined]
 **expire** | **number** | Set a timeout on key in seconds. After the timeout has expired, the key will automatically be deleted. | [optional] [default to undefined]
 
 ## Example

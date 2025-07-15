@@ -90,7 +90,12 @@ export default defineConfig({
         // https://github.com/vitejs/vite/issues/3924
         additionalData: (source, filename) => {
           if (path.extname(filename) === '.scss') {
-            const skipFiles = ['/main.scss', '/App.scss'];
+            const skipFiles = [
+              '/main.scss',
+              '/App.scss',
+              '/packages/clients-list/src/styles/styles.scss',
+              '/packages/redisearch/src/styles/styles.scss'
+            ];
             if (skipFiles.every((file) => !filename.endsWith(file))) {
               return `
                 @use "uiSrc/styles/mixins/_eui.scss";

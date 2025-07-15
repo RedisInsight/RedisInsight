@@ -12,6 +12,7 @@ import {
 import { getRouterLinkProps } from 'uiSrc/services'
 import { Pages } from 'uiSrc/constants'
 import { Link } from 'uiSrc/components/base/link/Link'
+import LogoSVG from 'uiSrc/assets/img/logo_small.svg?react'
 import styles from '../../styles.module.scss'
 
 type Props = {

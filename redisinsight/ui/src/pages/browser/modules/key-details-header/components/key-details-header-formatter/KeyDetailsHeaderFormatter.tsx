@@ -78,7 +78,11 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
                 <OptionText color="subdued">{text}</OptionText>
               ) : (
                 <ControlsIcon
-                  type={theme === Theme.Dark ? FormattersDark : FormattersLight}
+                  type={
+                    theme === Theme.Dark
+                      ? 'FormattersDarkIcon'
+                      : 'FormattersLightIcon'
+                  }
                   data-testid={`key-value-formatter-option-selected-${value}`}
                 />
               )}

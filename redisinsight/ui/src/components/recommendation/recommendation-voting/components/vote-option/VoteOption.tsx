@@ -20,7 +20,6 @@ import { Link } from 'uiSrc/components/base/link/Link'
 import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 
-import { getVotedText, voteTooltip, iconType } from './utils'
 import { getVotedText, iconType, voteTooltip } from './utils'
 import styles from './styles.module.scss'
 

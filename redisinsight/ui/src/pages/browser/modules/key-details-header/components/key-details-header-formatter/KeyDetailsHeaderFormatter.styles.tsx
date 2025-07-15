@@ -1,9 +1,8 @@
-import { EuiIcon } from '@elastic/eui'
-
 import styled from 'styled-components'
 import { ComponentProps } from 'react'
 import { ColorText } from 'uiSrc/components/base/text'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 
 type KeyDetailsSelectProps = ComponentProps<typeof RiSelect> & {
   $fullWidth?: boolean
@@ -38,7 +37,7 @@ const OptionText = styled(ColorText)`
   text-overflow: ellipsis;
 `
 
-const ControlsIcon = styled(EuiIcon)`
+const ControlsIcon = styled(RiIcon)`
   position: relative;
   margin-left: 3px;
   margin-top: 2px;

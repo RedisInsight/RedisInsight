@@ -91,9 +91,11 @@ const RecommendationTitle = ({
               position="top"
               anchorClassName="flex-row"
             >
-              <EuiIcon
+              <RiIcon
                 type={
-                  theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
+                  theme === Theme.Dark
+                    ? 'RediStackDarkMinIcon'
+                    : 'RediStackLightMinIcon'
                 }
                 className={styles.redisStackIcon}
                 data-testid={`${id}-redis-stack-icon`}

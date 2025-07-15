@@ -6,3 +6,5 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /allure-results/
+/.nyc_output/
+/coverage/

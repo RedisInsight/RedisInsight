@@ -53,6 +53,7 @@ import { PreSetupDatabases1741786803681 } from './1741786803681-pre-setup-databa
 import { KeyNameFormatAdded1742303245547 } from './1742303245547-key-name-format';
 import { CascadeTags1743432519891 } from './1743432519891-cascade-tags';
 import { EncryptTags1743606395647 } from './1743606395647-encrypt-tags';
+import { AiExtended1752489082051 } from './1752489082051-ai-extended';
 
 export default [
   initialMigration1614164490968,
@@ -110,4 +111,5 @@ export default [
   KeyNameFormatAdded1742303245547,
   CascadeTags1743432519891,
   EncryptTags1743606395647,
+  AiExtended1752489082051,
 ];

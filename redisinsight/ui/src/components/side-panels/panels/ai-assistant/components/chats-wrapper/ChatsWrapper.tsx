@@ -10,6 +10,8 @@ import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { isRdiPipelineConfigPage } from 'uiSrc/utils/rdi'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { FeatureFlags } from 'uiSrc/constants'
 import AssistanceChat from '../assistance-chat'
 import ExpertChat from '../expert-chat'
 import RdiHelperChat from '../rdi-helper-chat'
@@ -18,6 +20,10 @@ import styles from './styles.module.scss'
 
 const ChatsWrapper = () => {
   const { activeTab } = useSelector(aiChatSelector)
+  const {
+    [FeatureFlags.documentationChat]: documentationChatFeature,
+    [FeatureFlags.databaseChat]: databaseChatFeature,
+  } = useSelector(appFeatureFlagsFeaturesSelector)
   const location = useLocation()
   const [initialRDIRedirect, setInitialRDIRedirect] = useState(false)
   
@@ -26,9 +32,11 @@ const ChatsWrapper = () => {
 
   const chats = [
     {
+      feature: documentationChatFeature,
       tab: AiChatType.Assistance,
     },
     {
+      feature: databaseChatFeature,
       tab: AiChatType.Query,
     },
     ...(isOnRdiPipelineConfig ? [{
@@ -46,7 +54,6 @@ const ChatsWrapper = () => {
       dispatch(setSelectedTab(chats[0].tab))
     }
 
-    // If we're on RDI page and no RDI tab is active, switch to RDI Helper
     if (isOnRdiPipelineConfig && activeTab !== AiChatType.RdiHelper && !initialRDIRedirect) {
       setInitialRDIRedirect(true)
       dispatch(setSelectedTab(AiChatType.RdiHelper))
@@ -58,7 +65,7 @@ const ChatsWrapper = () => {
         chat: activeTab || chats[0].tab,
       },
     })
-  }, [activeTab, isOnRdiPipelineConfig, initialRDIRedirect])
+  }, [databaseChatFeature, activeTab, initialRDIRedirect])
 
   const selectTab = (tab: AiChatType) => {
     dispatch(setSelectedTab(tab))

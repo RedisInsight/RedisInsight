@@ -7,7 +7,7 @@ import { CloudApiUnauthorizedException } from 'src/modules/cloud/common/exceptio
 import { AiQueryUnauthorizedException } from 'src/modules/ai/query/exceptions';
 
 @Injectable()
-export class LocalAiQueryAuthProvider extends AiQueryAuthProvider {
+export class LocalAiExtendedAuthProvider extends AiQueryAuthProvider {
   constructor(private readonly cloudUserApiService: CloudUserApiService) {
     super();
   }

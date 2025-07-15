@@ -22,9 +22,10 @@ import { RdiEntity } from 'src/modules/rdi/entities/rdi.entity';
 import { AiQueryMessageEntity } from 'src/modules/ai/query/entities/ai-query.message.entity';
 import { CloudSessionEntity } from 'src/modules/cloud/session/entities/cloud.session.entity';
 import { DatabaseSettingsEntity } from 'src/modules/database-settings/entities/database-setting.entity';
+import { TagEntity } from 'src/modules/tag/entities/tag.entity';
+import { AiExtendedMessageEntity } from 'src/modules/ai/extended/entities/ai-extended.message.entity';
 import migrations from '../migration';
 import * as config from '../src/utils/config';
-import { TagEntity } from 'src/modules/tag/entities/tag.entity';
 
 const dbConfig = config.get('db');
 
@@ -57,6 +58,7 @@ const ormConfig = {
     CloudSessionEntity,
     DatabaseSettingsEntity,
     TagEntity,
+    AiExtendedMessageEntity,
   ],
   migrations,
 };

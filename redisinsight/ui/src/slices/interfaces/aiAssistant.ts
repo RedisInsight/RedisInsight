@@ -38,4 +38,10 @@ export interface StateAiAssistant {
     agreements: string[]
     messages: Array<AiChatMessage>
   }
+  rdiHelper: {
+    loading: boolean
+    agreements: boolean
+    id: string
+    messages: Array<AiChatMessage>
+  }
 }

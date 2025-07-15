@@ -55,6 +55,14 @@ export const initialState: StateAiAssistant = {
     agreements: [],
     messages: [],
   },
+  rdiHelper: {
+    loading: false,
+    agreements:
+      localStorageService.get(BrowserStorageItem.rdiHelperChatAgreements) ??
+      false,
+    id: sessionStorageService.get(BrowserStorageItem.rdiHelperChatSession) ?? '',
+    messages: [],
+  },
 }
 
 // A slice for recipes
@@ -76,10 +84,22 @@ const aiAssistantSlice = createSlice({
     updateExpertChatAgreements: (state, { payload }: PayloadAction<string>) => {
       state.expert.agreements.push(payload)
     },
+    updateRdiHelperChatAgreements: (
+      state,
+      { payload }: PayloadAction<boolean>,
+    ) => {
+      state.rdiHelper.agreements = payload
+      localStorageService.set(BrowserStorageItem.rdiHelperChatAgreements, payload)
+    },
     createAssistantChat: (state) => {
       state.assistant.loading = true
       state.assistant.id = ''
       sessionStorageService.remove(BrowserStorageItem.aiChatSession)
+    },
+    createRdiHelperChat: (state) => {
+      state.rdiHelper.loading = true
+      state.rdiHelper.id = ''
+      sessionStorageService.remove(BrowserStorageItem.rdiHelperChatSession)
     },
     createAssistantSuccess: (state, { payload }: PayloadAction<string>) => {
       state.assistant.id = payload
@@ -87,15 +107,31 @@ const aiAssistantSlice = createSlice({
 
       sessionStorageService.set(BrowserStorageItem.aiChatSession, payload)
     },
+    createRdiHelperSuccess: (state, { payload }: PayloadAction<string>) => {
+      state.rdiHelper.id = payload
+      state.rdiHelper.loading = false
+
+      sessionStorageService.set(BrowserStorageItem.rdiHelperChatSession, payload)
+    },
     clearAssistantChatId: (state) => {
       state.assistant.id = ''
       sessionStorageService.remove(BrowserStorageItem.aiChatSession)
     },
+    clearRdiHelperChatId: (state) => {
+      state.rdiHelper.id = ''
+      sessionStorageService.remove(BrowserStorageItem.rdiHelperChatSession)
+    },
     createAssistantFailed: (state) => {
       state.assistant.loading = false
     },
+    createRdiHelperFailed: (state) => {
+      state.rdiHelper.loading = false
+    },
     getAssistantChatHistory: (state) => {
       state.assistant.loading = true
+    },
+    getRdiHelperChatHistory: (state) => {
+      state.rdiHelper.loading = true
     },
     getAssistantChatHistorySuccess: (
       state,
@@ -105,11 +141,25 @@ const aiAssistantSlice = createSlice({
       state.assistant.messages =
         payload?.map((m) => ({ ...m, id: `ai_${uuidv4()}` })) || []
     },
+    getRdiHelperChatHistorySuccess: (
+      state,
+      { payload }: PayloadAction<Array<AiChatMessage>>,
+    ) => {
+      state.rdiHelper.loading = false
+      state.rdiHelper.messages =
+        payload?.map((m) => ({ ...m, id: `ai_${uuidv4()}` })) || []
+    },
     getAssistantChatHistoryFailed: (state) => {
       state.assistant.loading = false
     },
+    getRdiHelperChatHistoryFailed: (state) => {
+      state.rdiHelper.loading = false
+    },
     removeAssistantChatHistory: (state) => {
       state.assistant.loading = true
+    },
+    removeRdiHelperChatHistory: (state) => {
+      state.rdiHelper.loading = true
     },
     removeAssistantChatHistorySuccess: (state) => {
       state.assistant.loading = false
@@ -117,11 +167,23 @@ const aiAssistantSlice = createSlice({
       state.assistant.id = ''
       sessionStorageService.remove(BrowserStorageItem.aiChatSession)
     },
+    removeRdiHelperChatHistorySuccess: (state) => {
+      state.rdiHelper.loading = false
+      state.rdiHelper.messages = []
+      state.rdiHelper.id = ''
+      sessionStorageService.remove(BrowserStorageItem.rdiHelperChatSession)
+    },
     removeAssistantChatHistoryFailed: (state) => {
       state.assistant.loading = false
     },
+    removeRdiHelperChatHistoryFailed: (state) => {
+      state.rdiHelper.loading = false
+    },
     sendQuestion: (state, { payload }: PayloadAction<AiChatMessage>) => {
       state.assistant.messages.push(payload)
+    },
+    sendRdiHelperQuestion: (state, { payload }: PayloadAction<AiChatMessage>) => {
+      state.rdiHelper.messages.push(payload)
     },
     setQuestionError: (
       state,
@@ -144,8 +206,32 @@ const aiAssistantSlice = createSlice({
           : item,
       )
     },
+    setRdiHelperQuestionError: (
+      state,
+      {
+        payload,
+      }: PayloadAction<{
+        id: string
+        error: Maybe<{
+          statusCode: number
+          errorCode?: number
+        }>
+      }>,
+    ) => {
+      state.rdiHelper.messages = state.rdiHelper.messages.map((item) =>
+        item.id === payload.id
+          ? {
+              ...item,
+              error: payload.error,
+            }
+          : item,
+      )
+    },
     sendAnswer: (state, { payload }: PayloadAction<AiChatMessage>) => {
       state.assistant.messages.push(payload)
+    },
+    sendRdiHelperAnswer: (state, { payload }: PayloadAction<AiChatMessage>) => {
+      state.rdiHelper.messages.push(payload)
     },
     getExpertChatHistory: (state) => {
       state.expert.loading = true
@@ -201,25 +287,41 @@ export const aiAssistantChatSelector = (state: RootState) =>
   state.panels.aiAssistant.assistant
 export const aiExpertChatSelector = (state: RootState) =>
   state.panels.aiAssistant.expert
+export const aiRdiHelperChatSelector = (state: RootState) =>
+  state.panels.aiAssistant.rdiHelper
 
 // Actions generated from the slice
 export const {
   createAssistantChat,
+  createRdiHelperChat,
   updateAssistantChatAgreements,
   updateExpertChatAgreements,
+  updateRdiHelperChatAgreements,
   clearAssistantChatId,
+  clearRdiHelperChatId,
   setSelectedTab,
   createAssistantSuccess,
   createAssistantFailed,
+  createRdiHelperSuccess,
+  createRdiHelperFailed,
   getAssistantChatHistory,
   getAssistantChatHistorySuccess,
   getAssistantChatHistoryFailed,
+  getRdiHelperChatHistory,
+  getRdiHelperChatHistorySuccess,
+  getRdiHelperChatHistoryFailed,
   removeAssistantChatHistory,
   removeAssistantChatHistorySuccess,
   removeAssistantChatHistoryFailed,
+  removeRdiHelperChatHistory,
+  removeRdiHelperChatHistorySuccess,
+  removeRdiHelperChatHistoryFailed,
   sendQuestion,
+  sendRdiHelperQuestion,
   setQuestionError,
+  setRdiHelperQuestionError,
   sendAnswer,
+  sendRdiHelperAnswer,
   getExpertChatHistory,
   getExpertChatHistorySuccess,
   getExpertChatHistoryFailed,
@@ -345,6 +447,123 @@ export function removeAssistantChatAction(id: string) {
       }
     } catch (e) {
       dispatch(removeAssistantChatHistoryFailed())
+    }
+  }
+}
+
+export function createRdiHelperChatAction(
+  onSuccess?: (chatId: string) => void,
+  onFail?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(createRdiHelperChat())
+
+    try {
+      const { status, data } = await apiService.post<any>(
+        ApiEndpoints.AI_ASSISTANT_CHATS,
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(createRdiHelperSuccess(data.id))
+        onSuccess?.(data.id)
+      }
+    } catch (e) {
+      dispatch(createRdiHelperFailed())
+      onFail?.()
+    }
+  }
+}
+
+export function askRdiHelperChatbot(
+  id: string,
+  message: string,
+  {
+    onMessage,
+    onFinish,
+    onError,
+  }: {
+    onMessage?: (message: AiChatMessage) => void
+    onError?: (errorCode: number) => void
+    onFinish?: () => void
+  },
+) {
+  return async (dispatch: AppDispatch) => {
+    const humanMessage = generateHumanMessage(message)
+    const aiMessageProgressed = generateAiMessage()
+
+    dispatch(sendRdiHelperQuestion(humanMessage))
+
+    onMessage?.(aiMessageProgressed)
+
+    const baseUrl = getBaseUrl()
+    const url = `${baseUrl}${ApiEndpoints.AI_ASSISTANT_CHATS}/${id}/messages`
+
+    await getStreamedAnswer(url, message, {
+      onMessage: (value: string) => {
+        aiMessageProgressed.content += value
+        onMessage?.(aiMessageProgressed)
+      },
+      onFinish: () => {
+        dispatch(sendRdiHelperAnswer(aiMessageProgressed))
+        onFinish?.()
+      },
+      onError: (error: any) => {
+        dispatch(
+          setRdiHelperQuestionError({
+            id: humanMessage.id,
+            error: {
+              statusCode: error?.status ?? 500,
+              errorCode: error?.errorCode,
+            },
+          }),
+        )
+        onError?.(error?.status ?? 500)
+        onFinish?.()
+      },
+    })
+  }
+}
+
+export function getRdiHelperChatHistoryAction(
+  id: string,
+  onSuccess?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getRdiHelperChatHistory())
+
+    try {
+      const { status, data } = await apiService.get<any>(
+        `${ApiEndpoints.AI_ASSISTANT_CHATS}/${id}`,
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getRdiHelperChatHistorySuccess(data.messages))
+        onSuccess?.()
+      }
+    } catch (e) {
+      dispatch(getRdiHelperChatHistoryFailed())
+      const error = e as AxiosError
+      if (error?.response?.status === ApiStatusCode.Unauthorized) {
+        dispatch(clearRdiHelperChatId())
+      }
+    }
+  }
+}
+
+export function removeRdiHelperChatAction(id: string) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(removeRdiHelperChatHistory())
+
+    try {
+      const { status } = await apiService.delete<any>(
+        `${ApiEndpoints.AI_ASSISTANT_CHATS}/${id}`,
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(removeRdiHelperChatHistorySuccess())
+      }
+    } catch (e) {
+      dispatch(removeRdiHelperChatHistoryFailed())
     }
   }
 }

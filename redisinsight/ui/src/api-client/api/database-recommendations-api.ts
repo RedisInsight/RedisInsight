@@ -28,6 +28,8 @@ import type { DatabaseRecommendationsResponse } from '../models';
 // @ts-ignore
 import type { DeleteDatabaseRecommendationDto } from '../models';
 // @ts-ignore
+import type { DeleteDatabaseRecommendationResponse } from '../models';
+// @ts-ignore
 import type { ModifyDatabaseRecommendationDto } from '../models';
 /**
  * DatabaseRecommendationsApi - axios parameter creator
@@ -230,7 +232,7 @@ export const DatabaseRecommendationsApiFp = function(configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async databaseRecommendationControllerBulkDeleteDatabaseRecommendation(dbInstance: string, deleteDatabaseRecommendationDto: DeleteDatabaseRecommendationDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DeleteDatabaseRecommendationDto>> {
+        async databaseRecommendationControllerBulkDeleteDatabaseRecommendation(dbInstance: string, deleteDatabaseRecommendationDto: DeleteDatabaseRecommendationDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DeleteDatabaseRecommendationResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.databaseRecommendationControllerBulkDeleteDatabaseRecommendation(dbInstance, deleteDatabaseRecommendationDto, riDbIndex, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DatabaseRecommendationsApi.databaseRecommendationControllerBulkDeleteDatabaseRecommendation']?.[localVarOperationServerIndex]?.url;
@@ -299,7 +301,7 @@ export const DatabaseRecommendationsApiFactory = function (configuration?: Confi
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        databaseRecommendationControllerBulkDeleteDatabaseRecommendation(dbInstance: string, deleteDatabaseRecommendationDto: DeleteDatabaseRecommendationDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<DeleteDatabaseRecommendationDto> {
+        databaseRecommendationControllerBulkDeleteDatabaseRecommendation(dbInstance: string, deleteDatabaseRecommendationDto: DeleteDatabaseRecommendationDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<DeleteDatabaseRecommendationResponse> {
             return localVarFp.databaseRecommendationControllerBulkDeleteDatabaseRecommendation(dbInstance, deleteDatabaseRecommendationDto, riDbIndex, options).then((request) => request(axios, basePath));
         },
         /**

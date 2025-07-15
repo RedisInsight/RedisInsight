@@ -20,7 +20,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { RiTooltip } from 'uiSrc/components'
-import { CreateConsumerGroupsDto } from 'apiSrc/modules/browser/stream/dto'
+import { CreateConsumerGroupsDto } from 'uiSrc/api-client'
 
 import styles from './styles.module.scss'
 

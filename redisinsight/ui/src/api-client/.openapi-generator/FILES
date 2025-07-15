@@ -169,6 +169,7 @@ docs/DeleteConsumerGroupsDto.md
 docs/DeleteConsumerGroupsResponse.md
 docs/DeleteConsumersDto.md
 docs/DeleteDatabaseRecommendationDto.md
+docs/DeleteDatabaseRecommendationResponse.md
 docs/DeleteDatabasesDto.md
 docs/DeleteFieldsFromHashDto.md
 docs/DeleteFieldsFromHashResponse.md
@@ -427,6 +428,7 @@ models/delete-consumer-groups-dto.ts
 models/delete-consumer-groups-response.ts
 models/delete-consumers-dto.ts
 models/delete-database-recommendation-dto.ts
+models/delete-database-recommendation-response.ts
 models/delete-databases-dto.ts
 models/delete-fields-from-hash-dto.ts
 models/delete-fields-from-hash-response.ts

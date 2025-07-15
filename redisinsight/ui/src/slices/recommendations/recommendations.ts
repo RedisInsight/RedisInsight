@@ -4,12 +4,12 @@ import { AxiosError } from 'axios'
 import { remove, some } from 'lodash'
 import { apiService, resourcesService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
-import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { addErrorNotification, IAddInstanceErrorPayload } from 'uiSrc/slices/app/notifications'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import {
   DeleteDatabaseRecommendationResponse,
   ModifyDatabaseRecommendationDto,
-} from 'apiSrc/modules/database-recommendation/dto'
+} from 'uiSrc/api-client'
 
 import { AppDispatch, RootState } from '../store'
 import {
@@ -178,7 +178,7 @@ export function fetchRecommendationsAction(
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(getRecommendationsFailure(errorMessage))
       onFailAction?.()
     }
@@ -227,7 +227,7 @@ export function updateLiveRecommendation(
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(updateRecommendationError(errorMessage))
       onFailAction?.()
     }
@@ -259,7 +259,7 @@ export function deleteLiveRecommendations(
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(updateRecommendationError(errorMessage))
       onFailAction?.()
     }

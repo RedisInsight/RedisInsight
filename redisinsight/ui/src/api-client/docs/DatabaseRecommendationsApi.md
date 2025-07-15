@@ -10,7 +10,7 @@ All URIs are relative to *http://localhost*
 |[**databaseRecommendationControllerRead**](#databaserecommendationcontrollerread) | **PATCH** /api/databases/{dbInstance}/recommendations/read | |
 
 # **databaseRecommendationControllerBulkDeleteDatabaseRecommendation**
-> DeleteDatabaseRecommendationDto databaseRecommendationControllerBulkDeleteDatabaseRecommendation(deleteDatabaseRecommendationDto)
+> DeleteDatabaseRecommendationResponse databaseRecommendationControllerBulkDeleteDatabaseRecommendation(deleteDatabaseRecommendationDto)
 
 Delete many recommendations by ids
 
@@ -48,7 +48,7 @@ const { status, data } = await apiInstance.databaseRecommendationControllerBulkD
 
 ### Return type
 
-**DeleteDatabaseRecommendationDto**
+**DeleteDatabaseRecommendationResponse**
 
 ### Authorization
 

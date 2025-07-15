@@ -95,6 +95,7 @@ export * from './delete-consumer-groups-dto';
 export * from './delete-consumer-groups-response';
 export * from './delete-consumers-dto';
 export * from './delete-database-recommendation-dto';
+export * from './delete-database-recommendation-response';
 export * from './delete-databases-dto';
 export * from './delete-fields-from-hash-dto';
 export * from './delete-fields-from-hash-response';

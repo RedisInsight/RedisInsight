@@ -22,6 +22,7 @@ import {
   AiExtendedMessageRole,
   AiExtendedMessageType,
   AiExtendedWsEvents,
+  DataSocketEvents,
 } from 'src/modules/ai/extended/models';
 import { SendAiExtendedMessageDto } from 'src/modules/ai/extended/dto/send.ai-extended.message.dto';
 import { wrapAiExtendedError } from 'src/modules/ai/extended/exceptions';
@@ -87,16 +88,16 @@ export class AiExtendedService {
     const history = [];
     messages.forEach((message) => {
       switch (message.type) {
-        case AiExtendedMessageType.AiMessage:
-          history.push([AiExtendedMessageRole.AI, message.content]);
+        case DataSocketEvents.RdiReply:
+          history.push([AiExtendedMessageRole.RDI, message.content]);
           if (message.steps.length) {
             history.push(
               ...AiExtendedService.prepareHistoryIntermediateSteps(message),
             );
           }
           break;
-        case AiExtendedMessageType.HumanMessage:
-          history.push([AiExtendedMessageRole.HUMAN, message.content]);
+        case DataSocketEvents.DataStream:
+          history.push([AiExtendedMessageRole.DATA, message.content]);
           break;
         default:
         // ignore
@@ -142,7 +143,7 @@ export class AiExtendedService {
       }
 
       const question = classToClass(AiExtendedMessage, {
-        type: AiExtendedMessageType.HumanMessage,
+        type: dto.type,
         content: dto.content,
         databaseId,
         conversationId,
@@ -158,10 +159,9 @@ export class AiExtendedService {
 
       socket = await this.aiExtendedProvider.getSocket();
 
-      socket.on(AiExtendedWsEvents.REPLY_CHUNK, (chunk) => {
-        answer.content += chunk;
-        res.write(chunk);
-      });
+      socket.on(DataSocketEvents.DataReply, this.defaultListener(answer, res));
+
+      socket.on(DataSocketEvents.RdiReply, this.defaultListener(answer, res));
 
       socket.on(AiExtendedWsEvents.GET_INDEX, async (index, cb) => {
         try {
@@ -232,7 +232,7 @@ export class AiExtendedService {
 
         socket
           .emitWithAck(
-            AiExtendedWsEvents.STREAM,
+            dto.type,
             dto.content,
             context,
             AiExtendedService.prepareHistory(history),
@@ -249,6 +249,7 @@ export class AiExtendedService {
           })
           .catch(reject);
       });
+      this.logger.debug('Answer', answer.content);
       socket.close();
       await this.aiExtendedMessageRepository.createMany([question, answer]);
 
@@ -257,6 +258,15 @@ export class AiExtendedService {
       socket?.close?.();
       throw wrapAiExtendedError(e, 'Unable to send the question');
     }
+  }
+
+  private defaultListener(answer: AiExtendedMessage, res: Response) {
+    return (chunk: string) => {
+      this.logger.debug(chunk);
+      // eslint-disable-next-line no-param-reassign
+      answer.content += chunk;
+      res.write(chunk);
+    };
   }
 
   async getHistory(

@@ -3,6 +3,7 @@ import { Expose, Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Default } from 'src/common/decorators';
 import { AiExtendedIntermediateStep } from 'src/modules/ai/extended/models/ai-extended.intermediate-step';
+import { DataSocketEvents } from 'src/modules/ai/extended/models/ai-extended.common';
 
 export enum AiExtendedMessageType {
   HumanMessage = 'HumanMessage',
@@ -17,12 +18,12 @@ export class AiExtendedMessage {
   id: string;
 
   @ApiProperty({
-    enum: AiExtendedMessageType,
+    enum: DataSocketEvents,
   })
   @Expose()
-  @IsEnum(AiExtendedMessageType)
+  @IsEnum(DataSocketEvents)
   @IsNotEmpty()
-  type: AiExtendedMessageType;
+  type: DataSocketEvents;
 
   @ApiProperty({
     type: String,

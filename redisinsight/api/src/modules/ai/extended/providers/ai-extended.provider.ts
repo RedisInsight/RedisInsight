@@ -4,17 +4,22 @@ import { Injectable, Logger } from '@nestjs/common';
 import { AiQueryWsEvents } from 'src/modules/ai/query/models';
 import { wrapAiQueryError } from 'src/modules/ai/query/exceptions';
 
-const aiConfig = config.get('ai') as Config['ai'];
+const { querySocketPath, querySocketUrl } = config.get('ai') as Config['ai'];
 
 @Injectable()
 export class AiExtendedProvider {
-  private readonly logger = new Logger('AiQueryProvider');
+  private readonly logger = new Logger('AiExtendedProvider');
 
   async getSocket(): Promise<Socket> {
     try {
+      this.logger.debug('Connecting to AI socket', {
+        querySocketUrl,
+        querySocketPath,
+      });
+
       return await new Promise((resolve, reject) => {
-        const socket = io(aiConfig.querySocketUrl, {
-          path: aiConfig.querySocketPath,
+        const socket = io(querySocketUrl, {
+          path: querySocketPath,
           reconnection: false,
           transports: ['websocket'],
         });

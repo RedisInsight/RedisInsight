@@ -16,10 +16,19 @@ export enum AiExtendedMessageRole {
   AI = 'ai',
   TOOL = 'tool',
   TOOL_CALL = 'tool_call',
+  RDI = 'rdi',
+  DATA = 'data',
 }
 
 export enum AiExtendedServerErrors {
   RateLimitRequest = 'RateLimitRequest',
   RateLimitToken = 'RateLimitToken',
   MaxTokens = 'MaxTokens',
+}
+
+export enum DataSocketEvents {
+  DataStream = 'data_stream',
+  DataReply = 'data_reply',
+  RdiStream = 'rdi_stream',
+  RdiReply = 'rdi_reply',
 }

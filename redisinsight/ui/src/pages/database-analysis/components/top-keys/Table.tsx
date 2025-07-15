@@ -39,7 +39,7 @@ import {
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { TableTextBtn } from 'uiSrc/pages/database-analysis/components/base/TableTextBtn'
 import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
-import { Key } from 'apiSrc/modules/database-analysis/models/key'
+import { Key } from 'uiSrc/api-client'
 
 export interface Props {
   data: Key[]

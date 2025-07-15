@@ -8,7 +8,8 @@ import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { SortOrder } from 'uiSrc/constants'
-import { ConsumerDto } from 'apiSrc/modules/browser/stream/dto'
+import { ConsumerDto } from 'uiSrc/api-client'
+import { getLodashOrder } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -33,7 +34,7 @@ const ConsumersView = (props: Props) => {
   } = props
 
   const { loading } = useSelector(streamGroupsSelector)
-  const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? {}
+  const key = useSelector(selectedKeyDataSelector)?.name
 
   const [consumers, setConsumers] = useState(data)
   const [sortedColumnName, setSortedColumnName] = useState<string>('name')
@@ -43,7 +44,7 @@ const ConsumersView = (props: Props) => {
 
   useEffect(() => {
     setConsumers(
-      orderBy(data, sortedColumnName, sortedColumnOrder?.toLowerCase()),
+      orderBy(data, sortedColumnName, getLodashOrder(sortedColumnOrder)),
     )
   }, [data])
 
@@ -51,7 +52,7 @@ const ConsumersView = (props: Props) => {
     setSortedColumnName(column)
     setSortedColumnOrder(order)
 
-    setConsumers(orderBy(consumers, column, order?.toLowerCase()))
+    setConsumers(orderBy(consumers, column, getLodashOrder(order)))
   }
 
   return (

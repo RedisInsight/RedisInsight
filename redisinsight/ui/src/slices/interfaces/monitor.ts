@@ -1,6 +1,13 @@
 import { Socket } from 'socket.io-client'
 import { Nullable } from 'uiSrc/utils'
-import { IMonitorData } from 'apiSrc/modules/profiler/interfaces/monitor-data.interface'
+
+export interface IMonitorData {
+  time: string
+  args: string[]
+  source: string
+  database: number
+  shardOptions: any
+}
 
 export interface IMonitorDataPayload extends Partial<IMonitorData> {
   isError?: boolean

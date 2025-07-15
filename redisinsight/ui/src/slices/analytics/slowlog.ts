@@ -3,10 +3,10 @@ import { AxiosError } from 'axios'
 import { ApiEndpoints, DurationUnits } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { setSlowLogUnits } from 'uiSrc/slices/app/context'
-import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { addErrorNotification, IAddInstanceErrorPayload } from 'uiSrc/slices/app/notifications'
 import { StateSlowLog } from 'uiSrc/slices/interfaces/analytics'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
-import { SlowLog, SlowLogConfig } from 'apiSrc/modules/slow-log/models'
+import { SlowLog, SlowLogConfig } from 'uiSrc/api-client'
 
 import { AppDispatch, RootState } from '../store'
 
@@ -112,7 +112,7 @@ export function fetchSlowLogsAction(
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(getSlowLogsError(errorMessage))
       onFailAction?.()
     }
@@ -141,7 +141,7 @@ export function clearSlowLogAction(
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(deleteSlowLogsError(errorMessage))
       onFailAction?.()
     }
@@ -170,7 +170,7 @@ export function getSlowLogConfigAction(
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(getSlowLogConfigError(errorMessage))
       onFailAction?.()
     }
@@ -203,7 +203,7 @@ export function patchSlowLogConfigAction(
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(getSlowLogConfigError(errorMessage))
       onFailAction?.()
     }

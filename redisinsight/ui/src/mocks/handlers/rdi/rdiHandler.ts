@@ -2,7 +2,7 @@ import { rest, RestHandler } from 'msw'
 import { getMswURL } from 'uiSrc/utils/test-utils'
 import { getUrl } from 'uiSrc/utils'
 import { ApiEndpoints } from 'uiSrc/constants'
-import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
+import { Rdi as RdiInstanceResponse } from 'uiSrc/api-client'
 
 const handlers: RestHandler[] = [
   // fetch rdi instances

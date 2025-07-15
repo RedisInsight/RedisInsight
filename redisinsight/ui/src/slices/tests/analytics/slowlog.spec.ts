@@ -1,5 +1,4 @@
 import { cloneDeep } from 'lodash'
-import { AxiosError } from 'axios'
 import { DEFAULT_SLOWLOG_DURATION_UNIT } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import { setSlowLogUnits } from 'uiSrc/slices/app/context'
@@ -8,10 +7,13 @@ import {
   mockedStore,
   initialStateDefault,
 } from 'uiSrc/utils/test-utils'
-import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import {
+  addErrorNotification,
+  IAddInstanceErrorPayload,
+} from 'uiSrc/slices/app/notifications'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
 
-import { SlowLog, SlowLogConfig } from 'apiSrc/modules/slow-log/models'
+import { SlowLog, SlowLogConfig } from 'uiSrc/api-client'
 
 import reducer, {
   initialState,
@@ -56,7 +58,7 @@ describe('slowLog slice', () => {
       const nextState = initialState
 
       // Act
-      const result = reducer(undefined, {})
+      const result = reducer(undefined, {} as any)
 
       // Assert
       expect(result).toEqual(nextState)
@@ -320,7 +322,7 @@ describe('slowLog slice', () => {
         // Assert
         const expectedActions = [
           getSlowLogs(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           getSlowLogsError(errorMessage),
         ]
 
@@ -360,7 +362,7 @@ describe('slowLog slice', () => {
         // Assert
         const expectedActions = [
           deleteSlowLogs(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           deleteSlowLogsError(errorMessage),
         ]
 
@@ -407,7 +409,7 @@ describe('slowLog slice', () => {
         // Assert
         const expectedActions = [
           getSlowLogConfig(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           getSlowLogConfigError(errorMessage),
         ]
 
@@ -473,7 +475,7 @@ describe('slowLog slice', () => {
         // Assert
         const expectedActions = [
           getSlowLogConfig(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           getSlowLogConfigError(errorMessage),
         ]
 

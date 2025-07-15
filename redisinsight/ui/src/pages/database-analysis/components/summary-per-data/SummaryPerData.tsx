@@ -23,10 +23,7 @@ import { getPercentage, numberWithSpaces } from 'uiSrc/utils/numbers'
 
 import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
-import {
-  DatabaseAnalysis,
-  SimpleTypeSummary,
-} from 'apiSrc/modules/database-analysis/models'
+import { DatabaseAnalysis, SimpleTypeSummary } from 'uiSrc/api-client'
 
 import styles from './styles.module.scss'
 

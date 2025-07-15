@@ -11,8 +11,7 @@ import {
   SortOrder,
 } from 'uiSrc/constants'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
-import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
-import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
+import { GetServerInfoResponse } from 'uiSrc/api-client'
 
 export interface CustomError {
   details?: any[]
@@ -278,6 +277,8 @@ export enum RedisResponseEncoding {
 export enum RedisResponseBufferType {
   Buffer = 'Buffer',
 }
+
+type RedisStringAPI = string | Buffer
 
 export type RedisResponseBuffer = {
   type: RedisResponseBufferType

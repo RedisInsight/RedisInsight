@@ -3109,16 +3109,16 @@ export interface DatabaseAnalysis {
     'totalMemory': SimpleSummary;
     /**
      * Top namespaces by keys number
-     * @type {NspSummary}
+     * @type {Array<NspSummary>}
      * @memberof DatabaseAnalysis
      */
-    'topKeysNsp': NspSummary;
+    'topKeysNsp': Array<NspSummary>;
     /**
      * Top namespaces by memory
-     * @type {NspSummary}
+     * @type {Array<NspSummary>}
      * @memberof DatabaseAnalysis
      */
-    'topMemoryNsp': NspSummary;
+    'topMemoryNsp': Array<NspSummary>;
     /**
      * Top keys by key length (string length, list elements count, etc.)
      * @type {Array<Key>}

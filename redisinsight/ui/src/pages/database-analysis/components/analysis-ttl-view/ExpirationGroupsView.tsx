@@ -27,7 +27,7 @@ import {
 } from 'uiSrc/slices/analytics/dbAnalysis'
 import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
-import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
+import { DatabaseAnalysis } from 'uiSrc/api-client'
 
 import styles from './styles.module.scss'
 
@@ -142,7 +142,7 @@ const ExpirationGroupsView = (props: Props) => {
       <div className={cx('section-content', styles.content)}>
         <div className={styles.chart}>
           <AutoSizer>
-            {({ width, height }) => (
+            {({ width = DEFAULT_BAR_WIDTH, height }) => (
               <BarChart
                 name="expiration-groups"
                 width={width}

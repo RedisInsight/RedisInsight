@@ -1,13 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { AxiosError } from 'axios'
 
 import { apiService, sessionStorageService } from 'uiSrc/services'
 import { ApiEndpoints, BrowserStorageItem } from 'uiSrc/constants'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { setCliDbIndex } from 'uiSrc/slices/cli/cli-output'
-import {
-  CreateCliClientResponse,
-  DeleteClientResponse,
-} from 'apiSrc/modules/cli/dto/cli.dto'
+import { CreateCliClientResponse, DeleteClientResponse } from 'uiSrc/api-client'
 
 import { AppDispatch, RootState } from '../store'
 import { StateCliSettings } from '../interfaces/cli'
@@ -222,7 +220,7 @@ export function createCliClientAction(
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as AxiosError)
       dispatch(processCliClientFailure(errorMessage))
       onFailAction?.(errorMessage)
     }
@@ -258,7 +256,7 @@ export function updateCliClientAction(
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as AxiosError)
       dispatch(processCliClientFailure(errorMessage))
       onFailAction?.(errorMessage)
     }
@@ -285,7 +283,7 @@ export function deleteCliClientAction(
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as AxiosError)
       dispatch(processCliClientFailure(errorMessage))
       onFailAction?.()
     }
@@ -330,7 +328,7 @@ export function fetchBlockingCliCommandsAction(
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as AxiosError)
       dispatch(processCliClientFailure(errorMessage))
       onFailAction?.()
     }
@@ -355,7 +353,7 @@ export function fetchUnsupportedCliCommandsAction(
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as AxiosError)
       dispatch(processCliClientFailure(errorMessage))
       onFailAction?.()
     }

@@ -8,7 +8,8 @@ import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { SortOrder } from 'uiSrc/constants'
-import { ConsumerGroupDto } from 'apiSrc/modules/browser/stream/dto'
+import { ConsumerGroupDto } from 'uiSrc/api-client'
+import { getLodashOrder } from 'uiSrc/utils'
 
 import styles from './styles.module.scss'
 
@@ -31,7 +32,7 @@ const ConsumerGroups = (props: Props) => {
   const { data = [], columns = [], onClosePopover, onSelectGroup } = props
 
   const { loading } = useSelector(streamGroupsSelector)
-  const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? {}
+  const key = useSelector(selectedKeyDataSelector)?.name
 
   const [groups, setGroups] = useState<IConsumerGroup[]>([])
   const [sortedColumnName, setSortedColumnName] = useState<string>('name')
@@ -40,7 +41,9 @@ const ConsumerGroups = (props: Props) => {
   )
 
   useEffect(() => {
-    setGroups(orderBy(data, sortedColumnName, sortedColumnOrder?.toLowerCase()))
+    setGroups(
+      orderBy(data, sortedColumnName, getLodashOrder(sortedColumnOrder)),
+    )
   }, [data])
 
   const onChangeSorting = useCallback(
@@ -51,8 +54,8 @@ const ConsumerGroups = (props: Props) => {
       setGroups(
         orderBy(
           data,
-          [column === 'name' ? `${column}.viewValue` : column],
-          order?.toLowerCase(),
+          column === 'name' ? `${column}.viewValue` : column,
+          getLodashOrder(order),
         ),
       )
     },

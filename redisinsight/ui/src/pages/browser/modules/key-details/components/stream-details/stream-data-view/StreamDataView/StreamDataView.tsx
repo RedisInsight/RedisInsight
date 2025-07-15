@@ -22,7 +22,7 @@ import {
   sendEventTelemetry,
   TelemetryEvent,
 } from 'uiSrc/telemetry'
-import { StreamEntryDto } from 'apiSrc/modules/browser/stream/dto'
+import { StreamEntryDto } from 'uiSrc/api-client'
 
 import styles from './styles.module.scss'
 
@@ -52,7 +52,7 @@ const StreamDataView = (props: Props) => {
   const { viewType } = useSelector(keysSelector)
   const { loading } = useSelector(streamSelector)
   const { total, firstEntry, lastEntry } = useSelector(streamDataSelector)
-  const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
+  const key = useSelector(selectedKeyDataSelector)?.name!
 
   const [sortedColumnName, setSortedColumnName] = useState<string>('id')
   const [sortedColumnOrder, setSortedColumnOrder] = useState<SortOrder>(

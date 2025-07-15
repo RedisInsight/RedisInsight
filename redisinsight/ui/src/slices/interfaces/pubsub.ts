@@ -1,5 +1,13 @@
-import { IMessage } from 'apiSrc/modules/pub-sub/interfaces/message.interface'
-import { SubscriptionDto } from 'apiSrc/modules/pub-sub/dto/subscription.dto'
+export interface IPubsubMessage {
+  message: string
+  channel: string
+  time: number
+}
+
+export interface SubscriptionDto {
+  channel: string
+  type: string
+}
 
 export interface PubSubSubscription {
   channel: string
@@ -20,6 +28,6 @@ export interface StatePubSub {
   isSubscribeTriggered: boolean
   isConnected: boolean
   isSubscribed: boolean
-  messages: IMessage[]
+  messages: IPubsubMessage[]
   count: number
 }

@@ -3,7 +3,8 @@ import { Maybe } from 'uiSrc/utils'
 import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
 import { DownloadIcon } from 'uiSrc/components/base/icons'
 import { Link } from 'uiSrc/components/base/link/Link'
-import { RedisString } from 'apiSrc/common/constants'
+
+type RedisString = string | Buffer
 
 export interface BulkDeleteSummaryButtonProps {
   pattern: string

@@ -1,5 +1,4 @@
 import { cloneDeep } from 'lodash'
-import { AxiosError } from 'axios'
 import {
   cleanup,
   initialStateDefault,
@@ -10,7 +9,6 @@ import reducer, {
   setConnectedInstance,
   setConnectedInstanceSuccess,
   setConnectedInstanceFailure,
-  resetConnectedInstance,
   setDefaultInstance,
   setDefaultInstanceSuccess,
   setDefaultInstanceFailure,
@@ -32,7 +30,6 @@ import {
 } from 'uiSrc/slices/app/notifications'
 import { RdiInstance } from 'uiSrc/slices/interfaces'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { Rdi } from 'apiSrc/modules/rdi/models'
 
 let store: typeof mockedStore
 
@@ -200,7 +197,7 @@ describe('rdi instances slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        updateConnectedInstance(mockRdiInstance as Rdi),
+        updateConnectedInstance(mockRdiInstance as RdiInstance),
       )
 
       // Assert
@@ -253,7 +250,7 @@ describe('rdi instances slice', () => {
         const expectedActions = [
           setConnectedInstance(),
           setConnectedInstanceFailure(errorMessage),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -310,7 +307,7 @@ describe('rdi instances slice', () => {
         const expectedActions = [
           defaultInstanceChanging(),
           defaultInstanceChangingFailure(errorMessage),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -360,7 +357,7 @@ describe('rdi instances slice', () => {
         const expectedActions = [
           defaultInstanceChanging(),
           defaultInstanceChangingFailure(errorMessage),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

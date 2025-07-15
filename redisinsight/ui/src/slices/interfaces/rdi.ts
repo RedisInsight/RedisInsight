@@ -1,7 +1,7 @@
 import { monaco as monacoEditor } from 'react-monaco-editor'
 import { Nullable } from 'uiSrc/utils'
 import { ICommand } from 'uiSrc/constants'
-import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
+import { Rdi as RdiInstanceResponse } from 'uiSrc/api-client'
 
 // tabs for dry run job panel
 export enum PipelineJobsTabs {

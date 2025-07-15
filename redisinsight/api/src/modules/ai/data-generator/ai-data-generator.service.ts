@@ -4,17 +4,12 @@ import { Socket } from 'socket.io-client';
 import { Injectable, Logger } from '@nestjs/common';
 import { ClientContext, SessionMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import {
-  getFullDbContext,
-  getIndexContext,
-} from 'src/modules/ai/query/utils/context.util';
 import { Response } from 'express';
 import { classToClass, Config } from 'src/utils';
 import { plainToInstance } from 'class-transformer';
 import config from 'src/utils/config';
 import { AiDataGeneratorProvider } from 'src/modules/ai/data-generator/providers/ai-data-generator.provider';
 import { AiDataGeneratorMessageRepository } from 'src/modules/ai/data-generator/repositories/ai-data-generator.message.repository';
-import { AiDataGeneratorContextRepository } from 'src/modules/ai/data-generator/repositories/ai-data-generator.context.repository';
 import {
   AiDataGeneratorIntermediateStep,
   AiDataGeneratorIntermediateStepType,
@@ -25,13 +20,10 @@ import {
 } from 'src/modules/ai/data-generator/models';
 import { SendAiDataGeneratorMessageDto } from 'src/modules/ai/data-generator/dto/send.ai-data-generator.message.dto';
 import { wrapAiDataGeneratorError } from 'src/modules/ai/data-generator/exceptions';
+import * as ivm from 'isolated-vm';
+import { RedisClient } from 'src/modules/redis/client';
 
 const aiConfig = config.get('ai') as Config['ai'];
-
-const COMMANDS_WHITELIST = {
-  'ft.search': true,
-  'ft.aggregate': true,
-};
 
 @Injectable()
 export class AiDataGeneratorService {
@@ -41,8 +33,74 @@ export class AiDataGeneratorService {
     private readonly aiDataGeneratorProvider: AiDataGeneratorProvider,
     private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly aiDataGeneratorMessageRepository: AiDataGeneratorMessageRepository,
-    private readonly aiDataGeneratorContextRepository: AiDataGeneratorContextRepository,
   ) {}
+
+  private async runUserCode(
+    client: RedisClient,
+    code: string,
+  ) {
+    // Create a callback function in the main process
+    const streamChunk = new ivm.Reference(async (data) => {
+      // console.log('parsing chunk')
+      const chunk = JSON.parse(data);
+      // console.log(`chank has ${chunk?.length} commands`)
+
+      // console.log('✅ Received chunk:', chunk);
+
+      const result = await client.sendPipeline(chunk);
+      // console.log('insert chunk result: ', result)
+    });
+
+    const isolate = new ivm.Isolate({ memoryLimit: 512 }); // 8 MB
+    const context = await isolate.createContext();
+
+    const jail = context.global;
+    await jail.set('global', jail.derefInto());
+
+    // Set the function in the sandbox
+    await jail.set('sendChunk', streamChunk);
+
+    try {
+      const codeSnippet = `
+      (async function untrusted() {
+        class Commands {
+          batchSize = 3000;
+
+          toSend = [];
+
+          async send() {
+            if (this.toSend.length) {
+              await sendChunk.applySyncPromise(undefined, [JSON.stringify(this.toSend)]);
+              this.toSend = [];
+            }
+          }
+
+          async push(commands) {
+            this.toSend.push(commands);
+            if (this.toSend.length >= this.batchSize) {
+              await this.send();
+            }
+          }
+        }
+
+        const commands = new Commands();
+
+        ${code}
+
+        await commands.send();
+      })();
+      `;
+
+      console.log('Executing codeSnippet: \n', codeSnippet)
+      const script = await isolate.compileScript(codeSnippet);
+      // console.log('___ script generated')
+      const result = await script.run(context, { timeout: 120_000, promise: true }); // 2 mins
+      // console.log('Result:', result);
+      return result;
+    } catch (err) {
+      console.error('Error executing user code:', err.message);
+    }
+  }
 
   static prepareHistoryIntermediateSteps(
     message: AiDataGeneratorMessage,
@@ -91,7 +149,9 @@ export class AiDataGeneratorService {
           history.push([AiDataGeneratorMessageRole.AI, message.content]);
           if (message.steps.length) {
             history.push(
-              ...AiDataGeneratorService.prepareHistoryIntermediateSteps(message),
+              ...AiDataGeneratorService.prepareHistoryIntermediateSteps(
+                message,
+              ),
             );
           }
           break;
@@ -116,10 +176,12 @@ export class AiDataGeneratorService {
     dto: SendAiDataGeneratorMessageDto,
     res: Response,
   ) {
+    console.log('____ dto', dto);
     let socket: Socket;
 
     try {
-      const history = await this.aiDataGeneratorMessageRepository.list(databaseId);
+      const history =
+        await this.aiDataGeneratorMessageRepository.list(databaseId);
       const conversationId = AiDataGeneratorService.getConversationId(history);
 
       const client = await this.databaseClientFactory.getOrCreateClient({
@@ -128,18 +190,7 @@ export class AiDataGeneratorService {
         context: ClientContext.AI,
       });
 
-      let context = await this.aiDataGeneratorContextRepository.getFullDbContext(
-        sessionMetadata,
-        databaseId,
-      );
-
-      if (!context) {
-        context = await this.aiDataGeneratorContextRepository.setFullDbContext(
-          sessionMetadata,
-          databaseId,
-          await getFullDbContext(client),
-        );
-      }
+      const context = { redis_version: '7.4' };
 
       const question = classToClass(AiDataGeneratorMessage, {
         type: AiDataGeneratorMessageType.HumanMessage,
@@ -163,50 +214,6 @@ export class AiDataGeneratorService {
         res.write(chunk);
       });
 
-      socket.on(AiDataGeneratorWsEvents.GET_INDEX, async (index, cb) => {
-        try {
-          const indexContext =
-            await this.aiDataGeneratorContextRepository.getIndexContext(
-              sessionMetadata,
-              databaseId,
-              index,
-            );
-
-          if (!indexContext) {
-            return cb(
-              await this.aiDataGeneratorContextRepository.setIndexContext(
-                sessionMetadata,
-                databaseId,
-                index,
-                await getIndexContext(client, index),
-              ),
-            );
-          }
-
-          return cb(indexContext);
-        } catch (e) {
-          this.logger.warn(
-            'Unable to create index context',
-            e,
-            sessionMetadata,
-          );
-          return cb(e.message);
-        }
-      });
-
-      socket.on(AiDataGeneratorWsEvents.RUN_QUERY, async (data, cb) => {
-        try {
-          if (!COMMANDS_WHITELIST[(data?.[0] || '').toLowerCase()]) {
-            return cb('-ERR: This command is not allowed');
-          }
-
-          return cb(await client.sendCommand(data, { replyEncoding: 'utf8' }));
-        } catch (e) {
-          this.logger.warn('Extended execution error', e, sessionMetadata);
-          return cb(e.message);
-        }
-      });
-
       socket.on(AiDataGeneratorWsEvents.TOOL_CALL, async (data) => {
         answer.steps.push(
           plainToInstance(AiDataGeneratorIntermediateStep, {
@@ -225,21 +232,31 @@ export class AiDataGeneratorService {
         );
       });
 
+      socket.on(AiDataGeneratorWsEvents.EXECUTE_SNIPPET, async (codeSnippet, cb) => {
+        try {
+          console.log('Going to execute code snippet', codeSnippet)
+          const result = await this.runUserCode(client, codeSnippet);
+          console.log('___ result', result)
+          cb({
+            created: 100,
+          })
+        } catch (e) {
+          console.log('____ error running code snippet', e)
+          cb({ error: 'some error happened '})
+        }
+      });
+
       await new Promise((resolve, reject) => {
         socket.on(AiDataGeneratorWsEvents.ERROR, async (error) => {
           reject(error);
         });
 
         socket
-          .emitWithAck(
-            AiDataGeneratorWsEvents.STREAM,
-            dto.content,
+          .emitWithAck(AiDataGeneratorWsEvents.STREAM, {
+            message: dto.content,
             context,
-            AiDataGeneratorService.prepareHistory(history),
-            {
-              conversationId,
-            },
-          )
+            history: AiDataGeneratorService.prepareHistory(history),
+          })
           .then((ack) => {
             if (ack?.error) {
               return reject(ack.error);
@@ -250,7 +267,10 @@ export class AiDataGeneratorService {
           .catch(reject);
       });
       socket.close();
-      await this.aiDataGeneratorMessageRepository.createMany([question, answer]);
+      await this.aiDataGeneratorMessageRepository.createMany([
+        question,
+        answer,
+      ]);
 
       return res.end();
     } catch (e) {
@@ -272,15 +292,13 @@ export class AiDataGeneratorService {
   }
 
   async clearHistory(
-    sessionMetadata: SessionMetadata,
+    _: SessionMetadata,
     databaseId: string,
   ): Promise<void> {
     try {
-      await this.aiDataGeneratorContextRepository.reset(sessionMetadata, databaseId);
-
       return this.aiDataGeneratorMessageRepository.clearHistory(databaseId);
     } catch (e) {
       throw wrapAiDataGeneratorError(e, 'Unable to clear history');
     }
   }
-} 
+}

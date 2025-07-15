@@ -55,6 +55,11 @@ export const initialState: StateAiAssistant = {
     agreements: [],
     messages: [],
   },
+  dataGenerator: {
+    loading: false,
+    agreements: [],
+    messages: [],
+  },
 }
 
 // A slice for recipes
@@ -192,6 +197,53 @@ const aiAssistantSlice = createSlice({
     clearExpertChatHistory: (state) => {
       state.expert.messages = []
     },
+
+    // ========= DATA GENERATOR
+    getDataGeneratorChatHistory: (state) => {
+      state.dataGenerator.loading = true
+    },
+    getDataGeneratorChatHistorySuccess: (
+      state,
+      { payload }: PayloadAction<Array<AiChatMessage>>,
+    ) => {
+      state.dataGenerator.loading = false
+      state.dataGenerator.messages =
+        payload?.map((m) => ({ ...m, id: `ai_${uuidv4()}` })) || []
+    },
+    getDataGeneratorChatHistoryFailed: (state) => {
+      state.dataGenerator.loading = false
+    },
+    sendDataGeneratorQuestion: (state, { payload }: PayloadAction<AiChatMessage>) => {
+      state.dataGenerator.messages.push(payload)
+    },
+    setDataGeneratorQuestionError: (
+      state,
+      {
+        payload,
+      }: PayloadAction<{
+        id: string
+        error: Maybe<{
+          statusCode: number
+          errorCode?: number
+          details?: Record<string, any>
+        }>
+      }>,
+    ) => {
+      state.dataGenerator.messages = state.dataGenerator.messages.map((item) =>
+        item.id === payload.id
+          ? {
+            ...item,
+            error: payload.error,
+          }
+          : item,
+      )
+    },
+    sendDataGeneratorAnswer: (state, { payload }: PayloadAction<AiChatMessage>) => {
+      state.dataGenerator.messages.push(payload)
+    },
+    clearDataGeneratorChatHistory: (state) => {
+      state.dataGenerator.messages = []
+    },
   },
 })
 
@@ -201,6 +253,8 @@ export const aiAssistantChatSelector = (state: RootState) =>
   state.panels.aiAssistant.assistant
 export const aiExpertChatSelector = (state: RootState) =>
   state.panels.aiAssistant.expert
+export const aiDataGeneratorChatSelector = (state: RootState) =>
+  state.panels.aiAssistant.dataGenerator
 
 // Actions generated from the slice
 export const {
@@ -227,6 +281,14 @@ export const {
   setExpertQuestionError,
   sendExpertAnswer,
   clearExpertChatHistory,
+  // ======== DATA GENERATOR
+  getDataGeneratorChatHistory,
+  getDataGeneratorChatHistorySuccess,
+  getDataGeneratorChatHistoryFailed,
+  sendDataGeneratorQuestion,
+  setDataGeneratorQuestionError,
+  sendDataGeneratorAnswer,
+  clearDataGeneratorChatHistory,
 } = aiAssistantSlice.actions
 
 // The reducer
@@ -461,6 +523,118 @@ export function removeExpertChatHistoryAction(
         dispatch<any>(logoutUserAction())
       }
 
+      dispatch(addErrorNotification(err))
+    }
+  }
+}
+
+// ============== DATA GENERATOR
+export function getDataGeneratorChatHistoryAction(
+  instanceId: string,
+  onSuccess?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getDataGeneratorChatHistory())
+
+    try {
+      const { status, data } = await apiService.get<any>(
+        `${ApiEndpoints.AI_DATA_GENERATOR}/${instanceId}/messages`,
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getDataGeneratorChatHistorySuccess(data))
+        onSuccess?.()
+      }
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+      const errorCode = getApiErrorCode(error as AxiosError)
+
+      if (errorCode === ApiStatusCode.Unauthorized) {
+        dispatch<any>(logoutUserAction())
+      }
+
+      dispatch(addErrorNotification(err))
+      dispatch(getDataGeneratorChatHistoryFailed())
+    }
+  }
+}
+
+
+export function askDataGeneratorChatbotAction(
+  databaseId: string,
+  message: string,
+  {
+    onMessage,
+    onError,
+    onFinish,
+  }: {
+    onMessage?: (message: AiChatMessage) => void
+    onError?: (errorCode: number) => void
+    onFinish?: () => void
+  },
+) {
+  return async (dispatch: AppDispatch) => {
+    const humanMessage = generateHumanMessage(message)
+    const aiMessageProgressed: AiChatMessage = generateAiMessage()
+
+    dispatch(sendDataGeneratorQuestion(humanMessage))
+
+    onMessage?.(aiMessageProgressed)
+
+    const baseUrl = getBaseUrl()
+    const url = `${baseUrl}${ApiEndpoints.AI_DATA_GENERATOR}/${databaseId}/messages`
+
+    await getStreamedAnswer(url, message, {
+      onMessage: (value: string) => {
+        aiMessageProgressed.content += value
+        onMessage?.(aiMessageProgressed)
+      },
+      onFinish: () => {
+        dispatch(sendDataGeneratorAnswer(aiMessageProgressed))
+        onFinish?.()
+      },
+      onError: (error: any) => {
+        if (error?.status === ApiStatusCode.Unauthorized) {
+          const err = parseCustomError(error)
+          dispatch(addErrorNotification(err))
+        } else {
+          dispatch(
+            setDataGeneratorQuestionError({
+              id: humanMessage.id,
+              error: {
+                statusCode: error?.status ?? 500,
+                errorCode: error?.errorCode,
+                details: error?.details,
+              },
+            }),
+          )
+        }
+
+        onError?.(error?.status ?? 500)
+        onFinish?.()
+      },
+    })
+  }
+}
+
+export function removeDataGeneratorChatHistoryAction(
+  instanceId: string,
+  onSuccess?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    // dispatch(getExpertChatHistory())
+
+    try {
+      const { status } = await apiService.delete<any>(
+        `${ApiEndpoints.AI_DATA_GENERATOR}/${instanceId}/messages`,
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(clearDataGeneratorChatHistory())
+        onSuccess?.()
+      }
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
       dispatch(addErrorNotification(err))
     }
   }

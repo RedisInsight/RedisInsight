@@ -32,17 +32,15 @@ export class LocalAiDataGeneratorMessageRepository extends AiDataGeneratorMessag
   /**
    * Clean history for particular database to fit N items limitation
    * @param databaseId
-   * @param accountId
    */
   private async cleanupDatabaseHistory(
     databaseId: string,
-    accountId: string,
   ): Promise<void> {
     // todo: investigate why delete with sub-query doesn't works
     const idsToDelete = (
       await this.repository
         .createQueryBuilder()
-        .where({ databaseId, accountId })
+        .where({ databaseId })
         .select('id')
         .orderBy('createdAt', 'DESC')
         .offset(aiConfig.queryHistoryLimit)
@@ -56,14 +54,11 @@ export class LocalAiDataGeneratorMessageRepository extends AiDataGeneratorMessag
       .execute();
   }
 
-  async list(
-    databaseId: string,
-    accountId?: string,
-  ): Promise<AiDataGeneratorMessage[]> {
-    this.logger.debug(`list ${databaseId} ${accountId}`);
+  async list(databaseId: string): Promise<AiDataGeneratorMessage[]> {
+    this.logger.debug(`list ${databaseId}`);
     const entities = await this.repository
       .createQueryBuilder()
-      .where({ databaseId, accountId })
+      .where({ databaseId })
       .orderBy('createdAt', 'ASC')
       .limit(aiConfig.queryHistoryLimit)
       .getMany();
@@ -96,20 +91,17 @@ export class LocalAiDataGeneratorMessageRepository extends AiDataGeneratorMessag
 
     // cleanup history and ignore error if any
     try {
-      await this.cleanupDatabaseHistory(
-        entities[0].databaseId,
-        entities[0].accountId,
-      );
+      await this.cleanupDatabaseHistory(entities[0].databaseId);
     } catch (e) {
       this.logger.error('Error when trying to cleanup history after insert', e);
     }
   }
 
-  async clearHistory(databaseId: string, accountId?: string): Promise<void> {
+  async clearHistory(databaseId: string): Promise<void> {
     await this.repository
       .createQueryBuilder()
       .delete()
-      .where({ databaseId, accountId })
+      .where({ databaseId })
       .execute();
   }
-} 
+}

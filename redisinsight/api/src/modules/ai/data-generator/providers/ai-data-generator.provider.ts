@@ -12,6 +12,11 @@ export class AiDataGeneratorProvider {
 
   async getSocket(): Promise<Socket> {
     try {
+      console.log({
+        path: aiConfig.querySocketPath,
+        reconnection: false,
+        transports: ['websocket'],
+      }, aiConfig.querySocketUrl)
       return await new Promise((resolve, reject) => {
         const socket = io(aiConfig.querySocketUrl, {
           path: aiConfig.querySocketPath,
@@ -20,6 +25,7 @@ export class AiDataGeneratorProvider {
         });
 
         socket.on(AiQueryWsEvents.CONNECT_ERROR, (e) => {
+          console.log('Unable to connect', e)
           this.logger.error('Unable to establish AI socket connection', e);
           reject(e);
         });
@@ -33,4 +39,4 @@ export class AiDataGeneratorProvider {
       throw wrapAiQueryError(e, 'Unable to establish connection');
     }
   }
-} 
+}

@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios'
 import { cloneDeep } from 'lodash'
 import {
   cleanup,
@@ -8,8 +7,10 @@ import {
 import { apiService } from 'uiSrc/services'
 import { parseAddedMastersSentinel, parseMastersSentinel } from 'uiSrc/utils'
 
-import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel-master'
-import { CreateSentinelDatabaseResponse } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.response'
+import {
+  SentinelMaster,
+  CreateSentinelDatabaseResponse,
+} from 'uiSrc/api-client'
 
 import reducer, {
   initialState,
@@ -25,8 +26,15 @@ import reducer, {
   createMastersSentinelFailure,
   updateMastersSentinel,
 } from '../../instances/sentinel'
-import { addErrorNotification } from '../../app/notifications'
-import { LoadedSentinel, ModifiedSentinelMaster } from '../../interfaces'
+import {
+  addErrorNotification,
+  IAddInstanceErrorPayload,
+} from '../../app/notifications'
+import {
+  Instance,
+  LoadedSentinel,
+  ModifiedSentinelMaster,
+} from '../../interfaces'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -97,7 +105,7 @@ describe('sentinel slice', () => {
       const nextState = initialState
 
       // Act
-      const result = reducer(undefined, {})
+      const result = reducer(undefined, {} as any)
 
       // Assert
       expect(result).toEqual(nextState)
@@ -130,7 +138,7 @@ describe('sentinel slice', () => {
       // Arrange
 
       const data: ModifiedSentinelMaster[] = [
-        { name: 'mymaster', host: 'localhost', port: 0, numberOfSlaves: 10 },
+        { name: 'mymaster', host: 'localhost', port: '0', alias: 'alias' },
       ]
 
       const state = {
@@ -345,7 +353,7 @@ describe('sentinel slice', () => {
       const requestData = {
         host: 'localhost',
         port: 5005,
-      }
+      } as Instance
 
       const responsePayload = { data: masters, status: 200 }
 
@@ -368,7 +376,7 @@ describe('sentinel slice', () => {
       const requestData = {
         host: 'localhost',
         port: 5005,
-      }
+      } as Instance
 
       const errorMessage =
         'Could not connect to aoeu:123, please check the connection details.'
@@ -388,7 +396,7 @@ describe('sentinel slice', () => {
       const expectedActions = [
         loadMastersSentinel(),
         loadMastersSentinelFailure(responsePayload.response.data.message),
-        addErrorNotification(responsePayload as AxiosError),
+        addErrorNotification(responsePayload as IAddInstanceErrorPayload),
       ]
       expect(store.getActions()).toEqual(expectedActions)
     })
@@ -457,7 +465,7 @@ describe('sentinel slice', () => {
     const expectedActions = [
       createMastersSentinel(),
       createMastersSentinelFailure(responsePayload.response.data.message),
-      addErrorNotification(responsePayload as AxiosError),
+      addErrorNotification(responsePayload as IAddInstanceErrorPayload),
     ]
     expect(store.getActions()).toEqual(expectedActions)
   })

@@ -5,22 +5,36 @@ import { UrlWithParsedQuery } from 'url'
 import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 
 import { IpcOnEvent, IpcInvokeEvent } from 'uiSrc/electron/constants'
-
-import { CloudOauthUnexpectedErrorException } from 'apiSrc/modules/cloud/auth/exceptions'
 import {
   CloudAuthRequestOptions,
   CloudAuthResponse,
-  CloudAuthStatus,
-} from 'apiSrc/modules/cloud/auth/models'
-import { DEFAULT_SESSION_ID, DEFAULT_USER_ID } from 'apiSrc/common/constants'
+  CloudAuthResponseStatusEnum as CloudAuthStatus,
+} from 'uiSrc/api-client'
+
 import { createAuthStrategy } from '../auth/auth.factory'
 import { getWindows } from '../window/browserWindow'
 
 const authStrategy = createAuthStrategy()
+// ref: /api/src/common/constants/user.ts
+const DEFAULT_USER_ID = '1'
+const DEFAULT_SESSION_ID = '1'
+// ref: /api/src/modules/cloud/auth/exceptions/cloud-oauth.unexpected-error.exception.ts
+class CloudOauthUnexpectedErrorException {
+  constructor(private message = 'Cloud OAuth unexpected error') {}
+
+  getResponse() {
+    return {
+      message: this.message,
+      statusCode: 500,
+      error: 'CloudOauthUnexpectedError',
+      errorCode: 11008, // CustomErrorCodes.CloudOauthUnexpectedError
+    }
+  }
+}
 
 export const getOauthIpcErrorResponse = (
   error: any,
-): { status: CloudAuthStatus.Failed; error: {} } => {
+): { status: CloudAuthStatus; error: {} } => {
   let errorResponse = new CloudOauthUnexpectedErrorException().getResponse()
 
   if (error?.getResponse) {

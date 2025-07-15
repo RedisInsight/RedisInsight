@@ -561,6 +561,86 @@ export interface CloudAccountInfo {
 /**
  * 
  * @export
+ * @interface CloudAuthRequestOptions
+ */
+export interface CloudAuthRequestOptions {
+    /**
+     * OAuth identity provider strategy
+     * @type {string}
+     * @memberof CloudAuthRequestOptions
+     */
+    'strategy': CloudAuthRequestOptionsStrategyEnum;
+    /**
+     * Action to perform after authentication
+     * @type {string}
+     * @memberof CloudAuthRequestOptions
+     */
+    'action'?: string;
+    /**
+     * Additional data for the authentication request
+     * @type {object}
+     * @memberof CloudAuthRequestOptions
+     */
+    'data'?: object;
+    /**
+     * Callback function to execute after authentication
+     * @type {object}
+     * @memberof CloudAuthRequestOptions
+     */
+    'callback'?: object;
+}
+
+export const CloudAuthRequestOptionsStrategyEnum = {
+    Google: 'google',
+    Github: 'github',
+    Sso: 'sso'
+} as const;
+
+export type CloudAuthRequestOptionsStrategyEnum = typeof CloudAuthRequestOptionsStrategyEnum[keyof typeof CloudAuthRequestOptionsStrategyEnum];
+
+/**
+ * 
+ * @export
+ * @interface CloudAuthResponse
+ */
+export interface CloudAuthResponse {
+    /**
+     * Authentication status
+     * @type {string}
+     * @memberof CloudAuthResponse
+     */
+    'status': CloudAuthResponseStatusEnum;
+    /**
+     * Success or informational message
+     * @type {string}
+     * @memberof CloudAuthResponse
+     */
+    'message'?: string;
+    /**
+     * 
+     * @type {CloudAuthResponseError}
+     * @memberof CloudAuthResponse
+     */
+    'error'?: CloudAuthResponseError;
+}
+
+export const CloudAuthResponseStatusEnum = {
+    Succeed: 'succeed',
+    Failed: 'failed'
+} as const;
+
+export type CloudAuthResponseStatusEnum = typeof CloudAuthResponseStatusEnum[keyof typeof CloudAuthResponseStatusEnum];
+
+/**
+ * @type CloudAuthResponseError
+ * Error details if authentication failed
+ * @export
+ */
+export type CloudAuthResponseError = object | string;
+
+/**
+ * 
+ * @export
  * @interface CloudCapiKey
  */
 export interface CloudCapiKey {
@@ -15657,13 +15737,17 @@ export class CLIApi extends BaseAPI {
 export const CloudAuthApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * OAuth callback
+         * OAuth callback endpoint for handling OAuth authorization code flow
          * @summary 
+         * @param {string} [code] Authorization code from OAuth provider
+         * @param {string} [state] State parameter to prevent CSRF attacks
+         * @param {string} [error] Error code if OAuth flow failed
+         * @param {string} [errorDescription] Human-readable error description
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        cloudAuthControllerCallback: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/cloud/oauth/callback`;
+        cloudAuthControllerCallback: async (code?: string, state?: string, error?: string, errorDescription?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/cloud/auth/oauth/callback`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -15674,6 +15758,22 @@ export const CloudAuthApiAxiosParamCreator = function (configuration?: Configura
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (code !== undefined) {
+                localVarQueryParameter['code'] = code;
+            }
+
+            if (state !== undefined) {
+                localVarQueryParameter['state'] = state;
+            }
+
+            if (error !== undefined) {
+                localVarQueryParameter['error'] = error;
+            }
+
+            if (errorDescription !== undefined) {
+                localVarQueryParameter['error_description'] = errorDescription;
+            }
 
 
     
@@ -15697,13 +15797,17 @@ export const CloudAuthApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = CloudAuthApiAxiosParamCreator(configuration)
     return {
         /**
-         * OAuth callback
+         * OAuth callback endpoint for handling OAuth authorization code flow
          * @summary 
+         * @param {string} [code] Authorization code from OAuth provider
+         * @param {string} [state] State parameter to prevent CSRF attacks
+         * @param {string} [error] Error code if OAuth flow failed
+         * @param {string} [errorDescription] Human-readable error description
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async cloudAuthControllerCallback(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.cloudAuthControllerCallback(options);
+        async cloudAuthControllerCallback(code?: string, state?: string, error?: string, errorDescription?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CloudAuthResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.cloudAuthControllerCallback(code, state, error, errorDescription, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['CloudAuthApi.cloudAuthControllerCallback']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -15719,13 +15823,17 @@ export const CloudAuthApiFactory = function (configuration?: Configuration, base
     const localVarFp = CloudAuthApiFp(configuration)
     return {
         /**
-         * OAuth callback
+         * OAuth callback endpoint for handling OAuth authorization code flow
          * @summary 
+         * @param {string} [code] Authorization code from OAuth provider
+         * @param {string} [state] State parameter to prevent CSRF attacks
+         * @param {string} [error] Error code if OAuth flow failed
+         * @param {string} [errorDescription] Human-readable error description
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        cloudAuthControllerCallback(options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.cloudAuthControllerCallback(options).then((request) => request(axios, basePath));
+        cloudAuthControllerCallback(code?: string, state?: string, error?: string, errorDescription?: string, options?: RawAxiosRequestConfig): AxiosPromise<CloudAuthResponse> {
+            return localVarFp.cloudAuthControllerCallback(code, state, error, errorDescription, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -15738,14 +15846,18 @@ export const CloudAuthApiFactory = function (configuration?: Configuration, base
  */
 export class CloudAuthApi extends BaseAPI {
     /**
-     * OAuth callback
+     * OAuth callback endpoint for handling OAuth authorization code flow
      * @summary 
+     * @param {string} [code] Authorization code from OAuth provider
+     * @param {string} [state] State parameter to prevent CSRF attacks
+     * @param {string} [error] Error code if OAuth flow failed
+     * @param {string} [errorDescription] Human-readable error description
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof CloudAuthApi
      */
-    public cloudAuthControllerCallback(options?: RawAxiosRequestConfig) {
-        return CloudAuthApiFp(this.configuration).cloudAuthControllerCallback(options).then((request) => request(this.axios, this.basePath));
+    public cloudAuthControllerCallback(code?: string, state?: string, error?: string, errorDescription?: string, options?: RawAxiosRequestConfig) {
+        return CloudAuthApiFp(this.configuration).cloudAuthControllerCallback(code, state, error, errorDescription, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

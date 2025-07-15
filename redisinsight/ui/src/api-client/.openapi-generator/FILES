@@ -38,6 +38,9 @@ docs/ClaimPendingEntryDto.md
 docs/ClientCertificate.md
 docs/CloudAccountInfo.md
 docs/CloudAuthApi.md
+docs/CloudAuthRequestOptions.md
+docs/CloudAuthResponse.md
+docs/CloudAuthResponseError.md
 docs/CloudAutodiscoveryApi.md
 docs/CloudCAPIKeysApi.md
 docs/CloudCapiKey.md

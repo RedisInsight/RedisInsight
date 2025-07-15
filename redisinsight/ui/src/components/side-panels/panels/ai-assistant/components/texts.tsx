@@ -91,3 +91,15 @@ export const EXPERT_CHAT_INITIAL_MESSAGE = (
     </EuiText>
   </>
 )
+
+export const DATA_GENERATOR_CHAT_INITIAL_MESSAGE = (
+  <>
+    <EuiText size="xs">Hi!</EuiText>
+    <EuiText size="xs">
+      I am here to help you mess-up with production database.
+    </EuiText>
+    <EuiText size="xs">
+      Just ask me to generate the data...
+    </EuiText>
+  </>
+)

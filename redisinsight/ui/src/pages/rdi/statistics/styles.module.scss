@@ -1,5 +1,5 @@
 .pageContainer {
-  @include eui.scrollBar;
+  @include scrollBar;
 
   overflow: auto;
   position: relative;

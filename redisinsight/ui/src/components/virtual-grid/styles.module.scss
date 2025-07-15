@@ -1,11 +1,11 @@
 $paddingCell: 12px;
 
 .customScroll {
-  @include eui.scrollBar;
+  @include scrollBar;
 }
 
 .grid {
-  @include eui.scrollBar;
+  @include scrollBar;
   position: relative;
 }
 

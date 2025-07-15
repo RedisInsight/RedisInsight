@@ -16,7 +16,7 @@
 
 .title {
   font-size: 24px;
-  @include eui.euiBreakpoint("m", "l", "xl") {
+  @include euiBreakpoint("m", "l", "xl") {
     padding-left: 12px;
   }
 }

@@ -1,5 +1,5 @@
 .container {
-  @include eui.scrollBar;
+  @include scrollBar;
   display: flex;
   justify-content: center;
   overflow: auto;

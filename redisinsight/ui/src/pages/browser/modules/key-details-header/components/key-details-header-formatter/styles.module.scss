@@ -41,7 +41,7 @@
   }
 }
 
-@include global.insights-open {
+@include insights-open {
   .container {
     margin-right: 8px;
   }
@@ -94,7 +94,7 @@
   height: 20px !important;
 }
 
-@include global.insights-open {
+@include insights-open {
   .controlsIcon {
     width: 18px !important;
     height: 18px !important;

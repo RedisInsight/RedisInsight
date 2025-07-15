@@ -6,7 +6,7 @@
 }
 
 .content {
-  @include eui.scrollBar;
+  @include scrollBar;
   overflow: auto;
   max-height: 400px;
 }

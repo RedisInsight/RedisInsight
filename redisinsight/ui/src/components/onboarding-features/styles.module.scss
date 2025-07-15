@@ -4,5 +4,5 @@
 
   max-height: 240px;
   overflow-y: auto;
-  @include eui.scrollBar;
+  @include scrollBar;
 }

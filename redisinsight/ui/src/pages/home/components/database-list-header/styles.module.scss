@@ -19,7 +19,7 @@
 }
 
 .contentDL {
-  @include eui.euiBreakpoint("xs", "s") {
+  @include euiBreakpoint("xs", "s") {
     & > div:first-of-type {
       margin-left: 0 !important;
     }
@@ -30,10 +30,10 @@
 }
 
 .spacerDl {
-  @include eui.euiBreakpoint("xs", "s") {
+  @include euiBreakpoint("xs", "s") {
     height: 6px !important;
   }
-  @include eui.euiBreakpoint("m", "l", "xl") {
+  @include euiBreakpoint("m", "l", "xl") {
     height: 12px !important;
   }
 }
@@ -57,7 +57,7 @@
   margin-right: 8px;
 }
 
-@include global.insights-open(1350px) {
+@include insights-open(1350px) {
   .promo {
     display: none !important;
   }

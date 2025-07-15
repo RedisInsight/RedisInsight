@@ -1,5 +1,5 @@
 .bodyWrapper {
-  @include eui.scrollBar;
+  @include scrollBar;
   flex-grow: 1;
   overflow-y: auto;
   padding: 16px 24px;

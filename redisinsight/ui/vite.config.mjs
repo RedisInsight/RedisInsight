@@ -127,8 +127,8 @@ export default defineConfig({
             const skipFiles = ['/main.scss', '/App.scss'];
             if (skipFiles.every((file) => !filename.endsWith(file))) {
               return `
-                @use "uiSrc/styles/mixins/_eui.scss";
-                @use "uiSrc/styles/mixins/_global.scss";
+                @use "uiSrc/styles/mixins/_eui.scss" as *;
+                @use "uiSrc/styles/mixins/_global.scss" as *;
                 @layer app { ${source} }
               `;
             }

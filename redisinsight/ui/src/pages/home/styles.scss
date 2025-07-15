@@ -44,7 +44,7 @@
   }
 
   .container {
-    @include eui.scrollBar;
+    @include scrollBar;
 
     background-color: var(--euiColorEmptyShade);
     overflow-y: auto;

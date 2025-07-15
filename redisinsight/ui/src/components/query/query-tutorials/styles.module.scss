@@ -33,13 +33,13 @@
   }
 }
 
-@include global.insights-open(1280px) {
+@include insights-open(1280px) {
   .title {
     display: none
   }
 }
 
-@include global.insights-open(1024px) {
+@include insights-open(1024px) {
   .tutorialLink:last-of-type {
     display: none;
   }

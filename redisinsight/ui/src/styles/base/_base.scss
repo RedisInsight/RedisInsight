@@ -1,4 +1,4 @@
-@use "../mixins/_eui";
+@use "../mixins/_eui" as *;
 $sideBarSize: 60px;
 
 :root {
@@ -47,7 +47,7 @@ html {
 }
 
 body {
-  @include eui.scrollBar;
+  @include scrollBar;
   -webkit-font-smoothing: antialiased;
 }
 

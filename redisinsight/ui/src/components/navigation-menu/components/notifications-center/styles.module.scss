@@ -46,7 +46,7 @@
 .notificationsList {
   margin-top: 18px;
   max-height: 70vh;
-  @include eui.scrollBar;
+  @include scrollBar;
   overflow: auto;
   padding: 0 15px 0;
   margin-bottom: 12px;

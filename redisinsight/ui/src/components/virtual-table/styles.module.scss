@@ -2,7 +2,7 @@ $headerHeight: 44px;
 $footerHeight: 38px;
 
 .customScroll {
-  @include eui.scrollBar;
+  @include scrollBar;
 }
 
 .grid {
@@ -29,7 +29,7 @@ $footerHeight: 38px;
 }
 
 .table {
-  @include eui.scrollBar;
+  @include scrollBar;
   overflow-x: auto;
   overflow-y: hidden;
 

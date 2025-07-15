@@ -1,7 +1,7 @@
 $breakpoint-table: 1680px;
 
 .content {
-  @include eui.scrollBar;
+  @include scrollBar;
   overflow-y: auto;
   overflow-x: hidden;
   max-height: 100%;

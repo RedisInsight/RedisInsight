@@ -54,7 +54,7 @@
   }
 }
 
-@include global.insights-open {
+@include insights-open {
   .wrapper {
     .chartsWrapper {
       flex-direction: column;

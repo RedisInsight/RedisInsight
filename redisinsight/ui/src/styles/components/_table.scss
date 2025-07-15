@@ -1,4 +1,4 @@
-@use "../mixins/_eui";
+@use "../mixins/_eui" as *;
 body {
   table .euiTableHeaderCellCheckbox {
     width: 44px;
@@ -69,7 +69,7 @@ body {
   .inMemoryTableDefault {
     &:not(.stickyHeader) {
       > div:first-child {
-        @include eui.scrollBar;
+        @include scrollBar;
         overflow-x: auto;
       }
     }

@@ -27,7 +27,7 @@ $delay: .13s;
   flex-direction: column;
 
   overflow-y: auto;
-  @include eui.scrollBar;
+  @include scrollBar;
   padding: 8px 12px;
 
   font-size: 12px;

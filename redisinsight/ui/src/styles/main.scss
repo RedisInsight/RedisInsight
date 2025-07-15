@@ -1,3 +1,6 @@
+@use 'mixins/_eui' as *;
+@use 'mixins/_global' as *;
+
 @import 'base/react_virtualized';
 @import 'base/base';
 @import 'base/helpers';

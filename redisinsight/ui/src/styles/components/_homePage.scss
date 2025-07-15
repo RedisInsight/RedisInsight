@@ -1,4 +1,4 @@
-@use "../mixins/eui";
+@use "../mixins/_eui" as *;
 
 .homePage {
   .addInstanceBtn :global {
@@ -26,7 +26,7 @@
   }
 
   .contentDL {
-    @include eui.euiBreakpoint("xs", "s") {
+    @include euiBreakpoint("xs", "s") {
       & > div:first-of-type {
         margin-left: 0 !important;
       }
@@ -37,10 +37,10 @@
   }
 
   .spacerDl {
-    @include eui.euiBreakpoint("xs", "s") {
+    @include euiBreakpoint("xs", "s") {
       height: 6px !important;
     }
-    @include eui.euiBreakpoint("m", "l", "xl") {
+    @include euiBreakpoint("m", "l", "xl") {
       height: 18px !important;
     }
   }

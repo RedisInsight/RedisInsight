@@ -1,7 +1,7 @@
-@use "../mixins/eui";
+@use "../mixins/_eui" as *;
 
 .cli-container {
-  @include eui.scrollBar;
+  @include scrollBar;
 
   flex: auto;
   border-top: inherit;

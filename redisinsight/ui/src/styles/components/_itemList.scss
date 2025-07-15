@@ -1,7 +1,7 @@
-@use "../mixins/eui";
+@use "../mixins/_eui" as *;
 
 .itemList {
-  @include eui.scrollBar;
+  @include scrollBar;
 
   height: 100%;
   overflow: auto;

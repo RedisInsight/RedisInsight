@@ -1,5 +1,5 @@
 .container {
-  @include eui.scrollBar;
+  @include scrollBar;
   position: relative;
   background-color: var(--tableLightBorderColor);
   border-radius: 4px;

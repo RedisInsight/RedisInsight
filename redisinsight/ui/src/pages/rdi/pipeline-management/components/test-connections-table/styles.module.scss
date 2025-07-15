@@ -1,5 +1,5 @@
 .tableWrapper {
   max-height: calc(100vh - 282px);
-  @include eui.scrollBar;
+  @include scrollBar;
   overflow: auto;
 }

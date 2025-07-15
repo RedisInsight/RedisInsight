@@ -34,7 +34,7 @@
   height: 100%;
 }
 
-@include global.insights-open {
+@include insights-open {
   :global {
     .home {
       &__resizePanelLeft {

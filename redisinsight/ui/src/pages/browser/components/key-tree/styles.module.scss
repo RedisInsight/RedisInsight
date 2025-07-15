@@ -8,7 +8,7 @@
 }
 
 .noKeys {
-  @include eui.scrollBar;
+  @include scrollBar;
   overflow: auto;
 
   text-align: center;

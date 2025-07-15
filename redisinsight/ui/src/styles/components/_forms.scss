@@ -1,4 +1,4 @@
-@use "../mixins/eui";
+@use "../mixins/_eui" as *;
 
 .euiButton,
 .euiCollapsibleNav,
@@ -23,7 +23,7 @@
   z-index: 2;
 
   max-height: 100%;
-  @include eui.scrollBar;
+  @include scrollBar;
   overflow-y: auto;
 
   &.contentActive {

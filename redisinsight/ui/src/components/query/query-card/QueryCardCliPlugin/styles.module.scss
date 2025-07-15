@@ -1,5 +1,5 @@
 .container {
-  @include eui.scrollBar;
+  @include scrollBar;
   flex: auto;
   padding: 9px 20px;
   overflow: auto;
@@ -37,7 +37,7 @@
 .pluginWrapperResult {
   max-height: 600px;
   overflow: auto;
-  @include eui.scrollBar;
+  @include scrollBar;
 }
 
 .alertIconWrapper {

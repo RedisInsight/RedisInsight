@@ -9,7 +9,7 @@
 }
 
 .innerContainer {
-  @include eui.scrollBar;
+  @include scrollBar;
   overflow: auto;
   height: 100%;
   text-align: left;

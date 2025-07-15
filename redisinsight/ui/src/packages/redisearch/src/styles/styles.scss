@@ -1,4 +1,4 @@
-@use "../../../../styles/mixins/eui";
+@use "../../../../styles/mixins/_eui" as *;
 
 * div,
 * span {
@@ -10,7 +10,7 @@ html {
 }
 
 .container {
-  @include eui.scrollBar;
+  @include scrollBar;
   flex: auto;
   overflow: auto;
   max-height: 810px;
@@ -85,10 +85,10 @@ html {
   display: inline-block !important;
 }
 
-// The style applies to the last div element in the tooltip, 
+// The style applies to the last div element in the tooltip,
 // which is the one containing the text
 .euiToolTipPopover.text-multiline-ellipsis > div:last-child {
-  @include eui.multiline-ellipsis($line-count: 7, $line-height: 1.5rem);
+  @include multiline-ellipsis($line-count: 7, $line-height: 1.5rem);
 }
 
 .cell {

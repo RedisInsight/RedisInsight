@@ -15,7 +15,7 @@
 }
 
 .table {
-  @include eui.scrollBar;
+  @include scrollBar;
   overflow: auto;
   max-height: calc(100vh - 320px) !important;
 

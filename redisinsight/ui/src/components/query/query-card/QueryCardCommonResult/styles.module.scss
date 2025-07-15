@@ -1,5 +1,5 @@
 .container {
-  @include eui.scrollBar;
+  @include scrollBar;
   flex: auto;
   padding: 9px 20px;
   overflow: auto;

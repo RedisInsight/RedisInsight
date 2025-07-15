@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@use "../../../../styles/mixins/eui";
+@use "../../../../styles/mixins/_eui" as *;
 
 * div,
 * span {
@@ -11,7 +11,7 @@ html {
 }
 
 .container {
-  @include eui.scrollBar;
+  @include scrollBar;
   flex: auto;
   overflow: auto;
   max-height: 810px;

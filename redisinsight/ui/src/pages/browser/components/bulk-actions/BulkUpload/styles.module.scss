@@ -11,7 +11,7 @@
     display: flex;
     flex-direction: column;
 
-    @include eui.scrollBar;
+    @include scrollBar;
     position: relative;
     margin: 18px;
     padding: 12px;

@@ -1,7 +1,7 @@
 $breakpoint-table: 1232px;
 
 .tableWrapper {
-  @include eui.scrollBar;
+  @include scrollBar;
 
   overflow: auto;
   position: relative;

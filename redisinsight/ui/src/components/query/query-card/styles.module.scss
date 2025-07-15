@@ -56,7 +56,7 @@ $breakpoint-m: 1050px;
 }
 
 :global(.query-card-output-response-success) {
-  @include eui.scrollBar;
+  @include scrollBar;
   display: block;
   max-height: 210px;
   overflow: auto;

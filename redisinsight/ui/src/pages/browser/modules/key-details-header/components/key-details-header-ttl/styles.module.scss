@@ -40,7 +40,7 @@
   padding-left: 11px;
 }
 
-@include global.insights-open {
+@include insights-open {
   .flexItemTTL {
     width: 134px;
     min-width: 134px;

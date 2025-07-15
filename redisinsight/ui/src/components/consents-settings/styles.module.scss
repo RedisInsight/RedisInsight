@@ -40,7 +40,7 @@
 }
 
 .consentsWrapper {
-  @include eui.scrollBar;
+  @include scrollBar;
   overflow-x: hidden;
   overflow-y: auto;
   max-height: calc(100vh - 290px);

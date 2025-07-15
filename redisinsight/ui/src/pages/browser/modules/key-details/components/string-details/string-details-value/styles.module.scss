@@ -21,7 +21,7 @@ $outer-height-mobile: 340px;
 }
 
 .stringValue {
-  @include eui.scrollBar;
+  @include scrollBar;
   overflow-y: auto;
   overflow-x: hidden;
   word-break: break-word;

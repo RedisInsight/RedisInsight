@@ -3,7 +3,7 @@
 }
 
 .wrapper {
-  @include eui.scrollBar;
+  @include scrollBar;
   overflow-y: auto;
   overflow-x: hidden;
   max-height: calc(100% - 134px);

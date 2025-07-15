@@ -44,7 +44,7 @@
 }
 
 .container {
-  @include eui.scrollBar;
+  @include scrollBar;
   position: relative;
   height: 100%;
   overflow: auto;

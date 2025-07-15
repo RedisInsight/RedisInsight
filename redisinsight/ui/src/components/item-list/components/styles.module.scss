@@ -14,7 +14,7 @@
 }
 
 .boxSection {
-  @include eui.scrollBar;
+  @include scrollBar;
 
   width: 400px;
   max-height: 189px;

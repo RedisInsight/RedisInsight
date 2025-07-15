@@ -61,7 +61,7 @@
   }
 }
 
-@include global.insights-open(1260px) {
+@include insights-open(1260px) {
   .wrapper {
     flex-direction: column;
   }

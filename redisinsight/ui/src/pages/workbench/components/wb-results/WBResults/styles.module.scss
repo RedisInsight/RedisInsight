@@ -12,7 +12,7 @@
 }
 
 .container {
-  @include eui.scrollBar;
+  @include scrollBar;
   color: var(--euiTextSubduedColor) !important;
 
   flex: 1;

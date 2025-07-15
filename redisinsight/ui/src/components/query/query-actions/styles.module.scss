@@ -71,7 +71,7 @@
   }
 }
 
-@include global.insights-open(1220px) {
+@include insights-open(1220px) {
   .actions {
     .btn {
       :global(.euiButton__text) {

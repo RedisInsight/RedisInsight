@@ -46,7 +46,7 @@
 }
 
 .listContainer {
-  @include eui.scrollBar;
+  @include scrollBar;
   max-height: 160px;
   overflow-y: auto;
   .item {

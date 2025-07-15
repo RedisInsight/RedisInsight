@@ -6,7 +6,7 @@
   max-width: 100%;
   max-height: 320px;
   overflow: auto;
-  @include eui.scrollBar;
+  @include scrollBar;
 
   border: 1px solid var(--tableDarkestBorderColor);
   border-radius: 4px;

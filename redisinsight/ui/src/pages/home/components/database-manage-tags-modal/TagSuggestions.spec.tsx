@@ -9,6 +9,7 @@ import { presetTagSuggestions } from './constants'
 
 jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
+  connect: () => (Component: any) => Component,
 }))
 
 const mockSelector = useSelector as jest.MockedFunction<typeof useSelector>

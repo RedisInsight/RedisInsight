@@ -126,7 +126,7 @@ const TlsDetails = (props: Props) => {
             text="will be removed from RedisInsight."
             item={cert.id}
             suffix={suffix}
-            deleting={activeCertId}
+            deleting={activeCertId ?? ''}
             closePopover={closePopover}
             updateLoading={false}
             showPopover={showPopover}

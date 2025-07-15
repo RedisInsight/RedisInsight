@@ -13,6 +13,7 @@ import { TagsCellHeader } from './TagsCellHeader'
 jest.mock('react-redux', () => ({
   useDispatch: jest.fn(),
   useSelector: jest.fn(),
+  connect: () => (Component: any) => Component,
 }))
 
 const mockDispatch = useDispatch as jest.MockedFunction<typeof useDispatch>

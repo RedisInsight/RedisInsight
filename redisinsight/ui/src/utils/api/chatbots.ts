@@ -12,11 +12,16 @@ export const getStreamedAnswer = async (
     onFinish,
     onError,
     isRdiStream = false,
+    pipelineContext,
   }: {
     onMessage?: (message: string) => void
     onFinish?: () => void
     onError?: (error: unknown) => void
     isRdiStream?: boolean
+    pipelineContext?: {
+      config?: string
+      jobs?: string
+    }
   },
 ) => {
   try {
@@ -25,9 +30,23 @@ export const getStreamedAnswer = async (
       controller.abort()
     }, TIMEOUT_FOR_MESSAGE_REQUEST)
 
-    const body: { content: string; type?: string } = { content: message }
+    const body: {
+      content: string;
+      type?: string;
+      pipelineConfig?: string;
+      pipelineJobs?: string;
+    } = { content: message }
+
     if (isRdiStream) {
       body.type = 'rdi_stream'
+    }
+
+    // Add pipeline context if provided
+    if (pipelineContext?.config) {
+      body.pipelineConfig = pipelineContext.config
+    }
+    if (pipelineContext?.jobs) {
+      body.pipelineJobs = pipelineContext.jobs
     }
 
     const response = await fetch(url, {

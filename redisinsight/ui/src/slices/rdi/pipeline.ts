@@ -62,6 +62,14 @@ export const initialState: IStateRdiPipeline = {
     action: null,
     error: '',
   },
+  diff: {
+    config: {
+      enabled: false,
+      originalValue: null,
+      newValue: null,
+    },
+    jobs: {},
+  },
 }
 
 const rdiPipelineSlice = createSlice({
@@ -204,6 +212,54 @@ const rdiPipelineSlice = createSlice({
     ) => {
       state.jobsValidationErrors = payload
     },
+    enableConfigDiff: (
+      state,
+      { payload }: PayloadAction<{ originalValue: string; newValue: string }>,
+    ) => {
+      state.diff.config.enabled = true
+      state.diff.config.originalValue = payload.originalValue
+      state.diff.config.newValue = payload.newValue
+    },
+    disableConfigDiff: (state) => {
+      state.diff.config.enabled = false
+      state.diff.config.originalValue = null
+      state.diff.config.newValue = null
+    },
+    updateConfigDiffNewValue: (
+      state,
+      { payload }: PayloadAction<string>,
+    ) => {
+      if (state.diff.config.enabled) {
+        state.diff.config.newValue = payload
+      }
+    },
+    enableJobDiff: (
+      state,
+      { payload }: PayloadAction<{ jobName: string; originalValue: string; newValue: string }>,
+    ) => {
+      state.diff.jobs[payload.jobName] = {
+        enabled: true,
+        originalValue: payload.originalValue,
+        newValue: payload.newValue,
+      }
+    },
+    disableJobDiff: (state, { payload }: PayloadAction<{ jobName: string }>) => {
+      delete state.diff.jobs[payload.jobName]
+    },
+    updateJobDiffNewValue: (
+      state,
+      { payload }: PayloadAction<{ jobName: string; newValue: string }>,
+    ) => {
+      if (state.diff.jobs[payload.jobName]?.enabled) {
+        state.diff.jobs[payload.jobName].newValue = payload.newValue
+      }
+    },
+    clearAllDiffs: (state) => {
+      state.diff.config.enabled = false
+      state.diff.config.originalValue = null
+      state.diff.config.newValue = null
+      state.diff.jobs = {}
+    },
   },
 })
 
@@ -244,6 +300,13 @@ export const {
   setIsPipelineValid,
   setConfigValidationErrors,
   setJobsValidationErrors,
+  enableConfigDiff,
+  disableConfigDiff,
+  updateConfigDiffNewValue,
+  enableJobDiff,
+  disableJobDiff,
+  updateJobDiffNewValue,
+  clearAllDiffs,
 } = rdiPipelineSlice.actions
 
 // The reducer

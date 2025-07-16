@@ -481,10 +481,15 @@ export function askRdiHelperChatbotAction(
     onMessage,
     onError,
     onFinish,
+    pipelineContext,
   }: {
     onMessage?: (message: AiChatMessage) => void
     onError?: (errorCode: number) => void
     onFinish?: () => void
+    pipelineContext?: {
+      config?: string
+      jobs?: string
+    }
   },
 ) {
   return async (dispatch: AppDispatch) => {
@@ -500,6 +505,7 @@ export function askRdiHelperChatbotAction(
 
     await getStreamedAnswer(url, message, {
       isRdiStream: true,
+      pipelineContext,
       onMessage: (value: string) => {
         aiMessageProgressed.content += value
         onMessage?.(aiMessageProgressed)

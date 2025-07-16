@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import { EuiButtonEmpty } from '@elastic/eui'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -13,6 +13,8 @@ import {
   removeRdiHelperChatHistoryAction,
   updateRdiHelperChatAgreements,
 } from 'uiSrc/slices/panels/aiAssistant'
+import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
+import { PageNames } from 'uiSrc/constants'
 
 import { ChatForm, ChatHistory, RestartChat } from '../shared'
 
@@ -42,15 +44,21 @@ const RdiHelperChat = () => {
   const { messages, agreements, loading } = useSelector(
     aiRdiHelperChatSelector,
   )
+  const { config, jobs } = useSelector(rdiPipelineSelector)
 
   const [inProgressMessage, setinProgressMessage] =
     useState<Nullable<AiChatMessage>>(null)
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
+  const { pathname } = useLocation()
 
   const isAgreementsAccepted =
     agreements.includes(rdiInstanceId) || messages.length > 0
 
   const dispatch = useDispatch()
+
+  // Determine which page we're currently on to send relevant context only
+  const isOnConfigPage = pathname?.includes(`/${PageNames.rdiPipelineConfig}`)
+  const isOnJobsPage = pathname?.includes(`/${PageNames.rdiPipelineJobs}/`)
 
   useEffect(() => {
     if (!rdiInstanceId) {
@@ -73,8 +81,15 @@ const RdiHelperChat = () => {
         })
       }
 
+      // Prepare pipeline context for AI assistant based on current page
+      const pipelineContext = {
+        config: isOnConfigPage ? (config || undefined) : undefined,
+        jobs: isOnJobsPage && jobs && jobs.length > 0 ? JSON.stringify(jobs) : undefined,
+      }
+
       dispatch(
         askRdiHelperChatbotAction(rdiInstanceId, message, {
+          pipelineContext,
           onMessage: (message: AiChatMessage) =>
             setinProgressMessage({ ...message }),
           onError: (errorCode: number) => {
@@ -97,12 +112,12 @@ const RdiHelperChat = () => {
         },
       })
     },
-    [rdiInstanceId, isAgreementsAccepted],
+    [rdiInstanceId, isAgreementsAccepted, config, jobs, isOnConfigPage, isOnJobsPage],
   )
 
   const onClearSession = useCallback(() => {
     dispatch(removeRdiHelperChatHistoryAction(rdiInstanceId))
-    
+
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
       eventData: {
@@ -168,4 +183,4 @@ const RdiHelperChat = () => {
   )
 }
 
-export default RdiHelperChat 
+export default RdiHelperChat

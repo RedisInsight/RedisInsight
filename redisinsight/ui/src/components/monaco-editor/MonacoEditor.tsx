@@ -124,6 +124,11 @@ const MonacoEditor = (props: Props) => {
     }
   }, [shouldOpenDedicatedEditor])
 
+  // Sync diff mode state with enableDiff prop
+  useEffect(() => {
+    setIsDiffMode(enableDiff)
+  }, [enableDiff])
+
   const editorDidMount = (
     editor: monacoEditor.editor.IStandaloneCodeEditor,
     monaco: typeof monacoEditor,
@@ -330,14 +335,14 @@ const MonacoEditor = (props: Props) => {
               )}
             </div>
           )}
-          
-          {/* Conditional rendering: Diff Editor or Regular Editor */}
-          {isDiffMode && originalValue ? (
+
+                     {isDiffMode && originalValue ? (
             <MonacoDiffEditor
               language={language}
               theme={theme === Theme.Dark ? 'dark' : 'light'}
               original={originalValue}
               value={value ?? ''}
+              onChange={onChange}
               options={{
                 ...monacoOptions,
                 ...getDiffOptions(),

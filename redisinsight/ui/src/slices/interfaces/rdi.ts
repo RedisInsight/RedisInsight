@@ -198,6 +198,18 @@ export interface IStateRdiPipeline {
     error: string
     action: Nullable<PipelineAction>
   }
+  diff: {
+    config: {
+      enabled: boolean
+      originalValue: Nullable<string>
+      newValue: Nullable<string>
+    }
+    jobs: Record<string, {
+      enabled: boolean
+      originalValue: Nullable<string>
+      newValue: Nullable<string>
+    }>
+  }
 }
 
 export interface IStateRdiDryRunJob {

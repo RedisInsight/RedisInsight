@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner, EuiToolTip } from '@elastic/eui'
+import { EuiText, EuiLink, EuiButton, EuiLoadingSpinner } from '@elastic/eui'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
 import { get, throttle } from 'lodash'
@@ -18,6 +18,8 @@ import {
   setChangedFile,
   deleteChangedFile,
   setPipelineConfig,
+  updateConfigDiffNewValue,
+  disableConfigDiff,
 } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
@@ -30,7 +32,7 @@ import {
   testConnectionsController,
 } from 'uiSrc/slices/rdi/testConnections'
 import { appContextPipelineManagement } from 'uiSrc/slices/app/context'
-import { createAxiosError, isEqualPipelineFile, yamlToJson, Maybe } from 'uiSrc/utils'
+import { createAxiosError, isEqualPipelineFile, yamlToJson } from 'uiSrc/utils'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import styles from './styles.module.scss'
@@ -38,13 +40,13 @@ import styles from './styles.module.scss'
 const Config = () => {
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
-  const [manualBaseline, setManualBaseline] = useState<Maybe<string>>(null)  
 
   const {
     loading: pipelineLoading,
     schema,
     data,
     config,
+    diff,
   } = useSelector(rdiPipelineSelector)
   const { loading: testingConnections } = useSelector(
     rdiTestConnectionsSelector,
@@ -79,36 +81,8 @@ const Config = () => {
     }
   }, [isOpenDialog, config, pipelineLoading])
 
-  const getOriginalValue = useCallback(() => 
-    // Prioritize manual baseline, fallback to deployed config
-     manualBaseline || data?.config || ''
-  , [manualBaseline, data?.config])
-
-  const captureBaseline = () => {
-    setManualBaseline(config || '')
-    sendEventTelemetry({
-      event: TelemetryEvent.RDI_CONFIG_BASELINE_CAPTURED,
-      eventData: {
-        rdiInstanceId,
-      },
-    })
-  }
-
-  const clearBaseline = () => {
-    setManualBaseline(null)
-    sendEventTelemetry({
-      event: TelemetryEvent.RDI_CONFIG_BASELINE_CLEARED,
-      eventData: {
-        rdiInstanceId,
-      },
-    })
-  }
-
-  const getDiffOptions = () => ({
-    ignoreTrimWhitespace: true,
-    renderSideBySide: true,
-    enableSplitViewResizing: true,
-  })
+  // Use diff state from Redux (updated by comparison utility)
+  const configDiff = diff.config
 
   const testConnections = () => {
     const JSONValue = yamlToJson(config, (msg) => {
@@ -158,10 +132,22 @@ const Config = () => {
     (value: string) => {
       dispatch(setPipelineConfig(value))
 
+      // Update diff newValue if in diff mode
+      if (configDiff.enabled) {
+        dispatch(updateConfigDiffNewValue(value))
+      }
+
       checkIsFileUpdated(value)
     },
-    [data],
+    [data, configDiff.enabled],
   )
+
+  const handleDiffModeChange = useCallback((isDiffMode: boolean) => {
+    if (!isDiffMode) {
+      // User manually disabled diff mode, update Redux state
+      dispatch(disableConfigDiff())
+    }
+  }, [])
 
   const handleClosePanel = () => {
     testConnectionsController?.abort()
@@ -206,36 +192,6 @@ const Config = () => {
           }
         </EuiText>
 
-        {/* Manual Baseline Controls */}
-        {config && (
-          <div style={{ marginBottom: 12, display: 'flex', gap: 8, alignItems: 'center' }}>
-            {!manualBaseline ? (
-              <EuiToolTip content="Capture current config as baseline for diff comparison">
-                <EuiButton
-                  size="s"
-                  onClick={captureBaseline}
-                  data-testid="capture-config-baseline-btn"
-                >
-                  📸 Capture Baseline
-                </EuiButton>
-              </EuiToolTip>
-            ) : (
-              <>
-                <EuiToolTip content="Clear captured baseline">
-                  <EuiButton
-                    size="s"
-                    color="text"
-                    onClick={clearBaseline}
-                    data-testid="clear-config-baseline-btn"
-                  >
-                    Clear Baseline
-                  </EuiButton>
-                </EuiToolTip>
-              </>
-            )}            
-          </div>
-        )}
-
         {pipelineLoading ? (
           <div
             className={cx('rdi__editorWrapper', 'rdi__loading')}
@@ -249,9 +205,10 @@ const Config = () => {
         ) : (
           <MonacoYaml
             schema={get(schema, 'config', null)}
-            value={config}
-            originalValue={getOriginalValue()}
-            enableDiff={!!getOriginalValue()}
+            value={configDiff.enabled && configDiff.newValue ? configDiff.newValue : config}
+            originalValue={configDiff.originalValue || undefined}
+            enableDiff={configDiff.enabled}
+            onDiffModeChange={handleDiffModeChange}
             onChange={handleChange}
             disabled={pipelineLoading}
             wrapperClassName="rdi__editorWrapper"

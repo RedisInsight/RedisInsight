@@ -117,7 +117,7 @@ const RdiHelperChat = () => {
 
   const onClearSession = useCallback(() => {
     dispatch(removeRdiHelperChatHistoryAction(rdiInstanceId))
-    
+
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
       eventData: {
@@ -183,4 +183,4 @@ const RdiHelperChat = () => {
   )
 }
 
-export default RdiHelperChat 
+export default RdiHelperChat

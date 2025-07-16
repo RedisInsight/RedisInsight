@@ -30,13 +30,13 @@ export const getStreamedAnswer = async (
       controller.abort()
     }, TIMEOUT_FOR_MESSAGE_REQUEST)
 
-    const body: { 
-      content: string; 
+    const body: {
+      content: string;
       type?: string;
       pipelineConfig?: string;
       pipelineJobs?: string;
     } = { content: message }
-    
+
     if (isRdiStream) {
       body.type = 'rdi_stream'
     }

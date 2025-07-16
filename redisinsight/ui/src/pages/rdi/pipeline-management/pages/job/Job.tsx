@@ -52,7 +52,6 @@ const Job = (props: Props) => {
   const [isPanelOpen, setIsPanelOpen] = useState<boolean>(false)
   const [shouldOpenDedicatedEditor, setShouldOpenDedicatedEditor] =
     useState<boolean>(false)
-  const [manualBaseline, setManualBaseline] = useState<string | null>(null)
 
   const dispatch = useDispatch()
 
@@ -60,7 +59,7 @@ const Job = (props: Props) => {
   const deployedJobValueRef = useRef<Maybe<string>>(deployedJobValue)
   const jobNameRef = useRef<string>(name)
 
-  const { loading, schema, jobFunctions, jobs } =
+  const { loading, schema, jobFunctions, jobs, diff } =
     useSelector(rdiPipelineSelector)
 
   useEffect(() => {
@@ -83,15 +82,8 @@ const Job = (props: Props) => {
     jobNameRef.current = name
   }, [name])
 
-  const handleCaptureBaseline = () => {
-    setManualBaseline(value)
-  }
-
-  const handleClearBaseline = () => {
-    setManualBaseline(null)
-  }
-
-  const getOriginalValue = () => manualBaseline || deployedJobValue || undefined
+  // Use diff state from Redux (updated by comparison utility)
+  const jobDiff = diff.jobs[name] || { enabled: false, originalValue: null }
 
   const handleDryRunJob = () => {
     const JSONValue = yamlToJson(value, (msg) => {
@@ -220,40 +212,7 @@ const Job = (props: Props) => {
                 SQL and JMESPath Editor
               </EuiButton>
             </EuiToolTip>
-            
-            {/* Manual Baseline Capture Buttons */}
-            {manualBaseline ? (
-              <EuiToolTip
-                content="Clear the captured baseline to return to comparing against deployed version"
-                position="top"
-              >
-                <EuiButton
-                  color="warning"
-                  size="s"
-                  style={{ marginRight: '16px' }}
-                  onClick={handleClearBaseline}
-                  data-testid="clear-baseline-btn"
-                >
-                  Clear Baseline
-                </EuiButton>
-              </EuiToolTip>
-            ) : (
-              <EuiToolTip
-                content="Capture current state as baseline for diff comparison"
-                position="top"
-              >
-                <EuiButton
-                  color="primary"
-                  size="s"
-                  style={{ marginRight: '16px' }}
-                  onClick={handleCaptureBaseline}
-                  data-testid="capture-baseline-btn"
-                >
-                  Capture Baseline
-                </EuiButton>
-              </EuiToolTip>
-            )}
-            
+
             <TemplateButton
               value={value}
               setFieldValue={(template) => {
@@ -296,9 +255,9 @@ const Job = (props: Props) => {
         ) : (
           <MonacoYaml
             schema={get(schema, 'jobs', null)}
-            value={value}
-            originalValue={getOriginalValue()}
-            enableDiff={false}
+            value={jobDiff.enabled && jobDiff.newValue ? jobDiff.newValue : value}
+            originalValue={jobDiff.originalValue || undefined}
+            enableDiff={jobDiff.enabled}
             onChange={handleChange}
             disabled={loading}
             dedicatedEditorLanguages={[DSL.sqliteFunctions, DSL.jmespath]}
@@ -317,29 +276,25 @@ const Job = (props: Props) => {
             data-testid="rdi-monaco-job"
           />
         )}
-
         <div className="rdi__actions">
           <EuiButton
             fill
             color="secondary"
             size="s"
             onClick={handleDryRunJob}
-            isDisabled={isPanelOpen}
-            data-testid="rdi-job-dry-run"
+            isLoading={loading}
+            aria-labelledby="dry run"
+            data-testid="rdi-test-job-btn"
           >
             Dry Run
           </EuiButton>
         </div>
       </div>
       {isPanelOpen && (
-        <DryRunJobPanel
-          onClose={() => setIsPanelOpen(false)}
-          job={value}
-          name={name}
-        />
+        <DryRunJobPanel job={value} name={name} onClose={() => setIsPanelOpen(false)} />
       )}
     </>
   )
 }
 
-export default Job
+export default React.memo(Job)

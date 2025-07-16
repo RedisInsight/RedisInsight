@@ -53,7 +53,7 @@ import { PreSetupDatabases1741786803681 } from './1741786803681-pre-setup-databa
 import { KeyNameFormatAdded1742303245547 } from './1742303245547-key-name-format';
 import { CascadeTags1743432519891 } from './1743432519891-cascade-tags';
 import { EncryptTags1743606395647 } from './1743606395647-encrypt-tags';
-import { AiExtended1752489082051 } from './1752489082051-ai-extended';
+import { AiRdi1752489082051 } from './1752489082051-ai-rdi';
 import { AiDataGenerator1752573370000 } from './1752573370000-ai-data-generator';
 
 export default [
@@ -112,6 +112,6 @@ export default [
   KeyNameFormatAdded1742303245547,
   CascadeTags1743432519891,
   EncryptTags1743606395647,
-  AiExtended1752489082051,
+  AiRdi1752489082051,
   AiDataGenerator1752573370000,
 ];

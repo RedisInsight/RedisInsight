@@ -27,7 +27,7 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
 import { Text } from 'uiSrc/components/base/text'
 import { RiTooltip } from 'uiSrc/components'
-import { ConsumerDto } from 'apiSrc/modules/browser/stream/dto'
+import { ConsumerDto } from 'uiSrc/api-client'
 import ConsumersView from './ConsumersView'
 
 import styles from './ConsumersView/styles.module.scss'
@@ -123,6 +123,7 @@ const ConsumersViewWrapper = (props: Props) => {
       headerCellClassName: 'truncateText',
       render: function Name(_name: string, { name }: ConsumerDto) {
         // Better to cut the long string, because it could affect virtual scroll performance
+        // @ts-ignore
         const viewName = name?.viewValue ?? ''
         const cellContent = viewName.substring(0, 200)
         const tooltipContent = formatLongName(viewName)
@@ -179,6 +180,7 @@ const ConsumersViewWrapper = (props: Props) => {
       maxWidth: actionsWidth,
       minWidth: actionsWidth,
       render: function Actions(_act: any, { name }: ConsumerDto) {
+        // @ts-ignore
         const viewName = name?.viewValue ?? ''
         return (
           <div>
@@ -197,7 +199,7 @@ const ConsumersViewWrapper = (props: Props) => {
               updateLoading={false}
               showPopover={showPopover}
               testid={`remove-consumer-button-${viewName}`}
-              handleDeleteItem={() => handleDeleteConsumer(name)}
+              handleDeleteItem={() => handleDeleteConsumer(name as string)}
               handleButtonClick={handleRemoveIconClick}
             />
           </div>

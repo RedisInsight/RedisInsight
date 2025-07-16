@@ -153,35 +153,21 @@ test.describe('Browser - Edit Key Operations', () => {
                 ossStandaloneConfig,
             )
 
-            // Open key details
+            // Open key details and verify original value
             await browserPage.searchByKeyName(keyName)
             await browserPage.openKeyDetailsByKeyName(keyName)
 
-            // Verify original value is displayed
             const displayedOriginalValue = await browserPage.getStringKeyValue()
             expect(displayedOriginalValue).toContain(originalValue)
 
             // Edit the key value
-            await browserPage.editKeyValueButton.click()
-            await browserPage.stringKeyValueInput.clear()
-            await browserPage.stringKeyValueInput.fill(newValue)
-            await browserPage.applyButton.click()
+            await browserPage.editStringKeyValue(newValue)
 
-            // Wait for key value to update
-            await expect
-                .poll(async () => {
-                    const currentValue = await browserPage.getStringKeyValue()
-                    return currentValue
-                })
-                .toContain(newValue)
-
-            // Wait for key length to update
-            await expect
-                .poll(async () => {
-                    const keyLength = await browserPage.getKeyLength()
-                    return keyLength
-                })
-                .toBe(newValue.length.toString())
+            // Wait for value and length to update
+            await browserPage.waitForStringValueToUpdate(newValue)
+            await browserPage.waitForKeyLengthToUpdate(
+                newValue.length.toString(),
+            )
         })
 
         test('should cancel string key value edit operation', async ({
@@ -196,27 +182,169 @@ test.describe('Browser - Edit Key Operations', () => {
                 ossStandaloneConfig,
             )
 
-            // Open key details
+            // Open key details and verify original value
             await browserPage.searchByKeyName(keyName)
             await browserPage.openKeyDetailsByKeyName(keyName)
 
-            // Verify original value is displayed
             const displayedOriginalValue = await browserPage.getStringKeyValue()
             expect(displayedOriginalValue).toContain(originalValue)
 
             // Start editing but cancel
-            await browserPage.editKeyValueButton.click()
-            await browserPage.stringKeyValueInput.clear()
-            await browserPage.stringKeyValueInput.fill(attemptedNewValue)
+            await browserPage.cancelStringKeyValueEdit(attemptedNewValue)
 
-            // Cancel the edit by clicking outside or using cancel action
-            await browserPage.keyDetailsHeader.click()
-
-            // Verify the original value is still displayed (edit was cancelled)
+            // Verify the original value is still displayed
             const displayedValueAfterCancel =
                 await browserPage.getStringKeyValue()
             expect(displayedValueAfterCancel).toContain(originalValue)
             expect(displayedValueAfterCancel).not.toContain(attemptedNewValue)
+        })
+    })
+
+    test.describe('Hash Key Editing', () => {
+        test('should edit hash field value successfully', async ({
+            api: { keyService },
+        }) => {
+            // Arrange: Create a hash key with a field
+            const fieldName = faker.string.alphanumeric(8)
+            const originalValue = faker.lorem.words(3)
+            const newValue = faker.lorem.words(4)
+
+            await keyService.addHashKeyApi(
+                {
+                    keyName,
+                    fields: [{ field: fieldName, value: originalValue }],
+                },
+                ossStandaloneConfig,
+            )
+
+            // Open key details and wait for hash to load
+            await browserPage.searchByKeyName(keyName)
+            await browserPage.openKeyDetailsByKeyName(keyName)
+
+            // Wait for field to be visible and verify original value
+            await browserPage.waitForHashFieldToBeVisible(fieldName)
+            await browserPage.verifyHashFieldValue(fieldName, originalValue)
+
+            // Edit the hash field value
+            await browserPage.editHashFieldValue(fieldName, newValue)
+
+            // Verify the value was updated
+            await browserPage.verifyHashFieldValue(fieldName, newValue)
+        })
+
+        test('should cancel hash field value edit operation', async ({
+            api: { keyService },
+        }) => {
+            // Arrange: Create a hash key with a field
+            const fieldName = faker.string.alphanumeric(8)
+            const originalValue = faker.lorem.words(3)
+            const attemptedNewValue = faker.lorem.words(4)
+
+            await keyService.addHashKeyApi(
+                {
+                    keyName,
+                    fields: [{ field: fieldName, value: originalValue }],
+                },
+                ossStandaloneConfig,
+            )
+
+            // Open key details and wait for hash to load
+            await browserPage.searchByKeyName(keyName)
+            await browserPage.openKeyDetailsByKeyName(keyName)
+            await browserPage.waitForHashDetailsToBeVisible()
+            await browserPage.verifyHashFieldValue(fieldName, originalValue)
+
+            // Start editing but cancel
+            await browserPage.cancelHashFieldEdit(fieldName, attemptedNewValue)
+
+            // Verify the original value is still present and attempted value is not
+            await browserPage.verifyHashFieldValueContains(
+                fieldName,
+                originalValue,
+            )
+            await browserPage.verifyHashFieldValueNotContains(
+                fieldName,
+                attemptedNewValue,
+            )
+        })
+
+        test('should add new field to hash key successfully', async ({
+            api: { keyService },
+        }) => {
+            // Arrange: Create a hash key with one field
+            const existingFieldName = faker.string.alphanumeric(8)
+            const existingFieldValue = faker.lorem.words(2)
+            const newFieldName = faker.string.alphanumeric(8)
+            const newFieldValue = faker.lorem.words(3)
+
+            await keyService.addHashKeyApi(
+                {
+                    keyName,
+                    fields: [
+                        { field: existingFieldName, value: existingFieldValue },
+                    ],
+                },
+                ossStandaloneConfig,
+            )
+
+            // Open key details and verify initial state
+            await browserPage.searchByKeyName(keyName)
+            await browserPage.openKeyDetailsByKeyName(keyName)
+            await browserPage.waitForHashDetailsToBeVisible()
+            await browserPage.waitForKeyLengthToUpdate('1')
+
+            // Add a new field
+            await browserPage.addFieldToHash(newFieldName, newFieldValue)
+
+            // Verify new field appears and length updates
+            await browserPage.waitForHashFieldToBeVisible(newFieldName)
+            await browserPage.verifyHashFieldValue(newFieldName, newFieldValue)
+            await browserPage.waitForKeyLengthToUpdate('2')
+
+            // Verify existing field still exists
+            await browserPage.verifyHashFieldValue(
+                existingFieldName,
+                existingFieldValue,
+            )
+        })
+
+        test('should remove hash field successfully', async ({
+            api: { keyService },
+        }) => {
+            // Arrange: Create a hash key with multiple fields
+            const field1Name = faker.string.alphanumeric(8)
+            const field1Value = faker.lorem.words(2)
+            const field2Name = faker.string.alphanumeric(8)
+            const field2Value = faker.lorem.words(2)
+
+            await keyService.addHashKeyApi(
+                {
+                    keyName,
+                    fields: [
+                        { field: field1Name, value: field1Value },
+                        { field: field2Name, value: field2Value },
+                    ],
+                },
+                ossStandaloneConfig,
+            )
+
+            // Open key details and verify initial state
+            await browserPage.searchByKeyName(keyName)
+            await browserPage.openKeyDetailsByKeyName(keyName)
+            await browserPage.waitForHashDetailsToBeVisible()
+            await browserPage.waitForKeyLengthToUpdate('2')
+
+            // Remove the first field
+            await browserPage.removeHashField(field1Name)
+
+            // Verify field was removed and length updated
+            await browserPage.waitForKeyLengthToUpdate('1')
+            await browserPage.verifyHashFieldNotVisible(field1Name)
+
+            // Verify other field still exists and key is still open
+            await browserPage.verifyHashFieldValue(field2Name, field2Value)
+            const keyStillExists = await browserPage.isKeyDetailsOpen(keyName)
+            expect(keyStillExists).toBe(true)
         })
     })
 })

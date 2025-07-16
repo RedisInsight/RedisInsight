@@ -90,7 +90,7 @@ const ChatsWrapper = () => {
       {chats.length > 1 && (
         <div className={styles.tabsWrapper}>
           <EuiTabs className={cx('tabs-active-borders', styles.tabs)}>           
-            {isOnRdiPipelineConfig && (
+            {isOnRdiPipelineConfig ? (
               <EuiTab
                 isSelected={activeTab === AiChatType.RdiHelper}
                 onClick={() => selectTab(AiChatType.RdiHelper)}
@@ -98,14 +98,15 @@ const ChatsWrapper = () => {
               >
                 RDI Helper
               </EuiTab>
-            )}
-            <EuiTab
-                isSelected={activeTab === AiChatType.DataGenerator}
-                onClick={() => selectTab(AiChatType.DataGenerator)}
-                data-testid="ai-data-generator-chat_tab"
-              >
-                Data Generator
+            ) : (
+              <EuiTab
+                  isSelected={activeTab === AiChatType.DataGenerator}
+                  onClick={() => selectTab(AiChatType.DataGenerator)}
+                  data-testid="ai-data-generator-chat_tab"
+                >
+                  Data Generator
               </EuiTab>
+            )}
             {/* {documentationChatFeature?.flag && ( */}
             {/*  <EuiTab */}
             {/*    isSelected={activeTab === AiChatType.Assistance} */}

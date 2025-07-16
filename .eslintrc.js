@@ -233,8 +233,7 @@ module.exports = {
     'dist',
     'node_modules',
     'release',
-    'redisinsight/ui/src/packages/redisearch/src/icons/*.js',
-    'redisinsight/ui/src/packages/common/src/icons/*.js',
+    'redisinsight/ui/src/packages/**/icons/*.js',
     'redisinsight/api/report/**',
   ],
 };

@@ -20,6 +20,7 @@ import {
   setChangedFile,
   setPipelineJobs,
   updateJobDiffNewValue,
+  disableJobDiff,
 } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
@@ -185,6 +186,13 @@ const Job = (props: Props) => {
     })
   }
 
+  const handleDiffModeChange = useCallback((isDiffMode: boolean) => {
+    if (!isDiffMode) {
+      // User manually disabled diff mode, update Redux state
+      dispatch(disableJobDiff({ jobName: name }))
+    }
+  }, [name])
+
   return (
     <>
       <div className={cx('content', { isSidePanelOpen: isPanelOpen })}>
@@ -265,6 +273,7 @@ const Job = (props: Props) => {
             value={jobDiff.enabled && jobDiff.newValue ? jobDiff.newValue : value}
             originalValue={jobDiff.originalValue || undefined}
             enableDiff={jobDiff.enabled}
+            onDiffModeChange={handleDiffModeChange}
             onChange={handleChange}
             disabled={loading}
             dedicatedEditorLanguages={[DSL.sqliteFunctions, DSL.jmespath]}

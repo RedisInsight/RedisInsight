@@ -19,6 +19,7 @@ import {
   deleteChangedFile,
   setPipelineConfig,
   updateConfigDiffNewValue,
+  disableConfigDiff,
 } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
@@ -141,6 +142,13 @@ const Config = () => {
     [data, configDiff.enabled],
   )
 
+  const handleDiffModeChange = useCallback((isDiffMode: boolean) => {
+    if (!isDiffMode) {
+      // User manually disabled diff mode, update Redux state
+      dispatch(disableConfigDiff())
+    }
+  }, [])
+
   const handleClosePanel = () => {
     testConnectionsController?.abort()
     setIsPanelOpen(false)
@@ -200,6 +208,7 @@ const Config = () => {
             value={configDiff.enabled && configDiff.newValue ? configDiff.newValue : config}
             originalValue={configDiff.originalValue || undefined}
             enableDiff={configDiff.enabled}
+            onDiffModeChange={handleDiffModeChange}
             onChange={handleChange}
             disabled={pipelineLoading}
             wrapperClassName="rdi__editorWrapper"

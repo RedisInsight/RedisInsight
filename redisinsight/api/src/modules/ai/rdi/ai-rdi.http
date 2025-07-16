@@ -9,6 +9,7 @@ POST http://localhost:5540/api/ai/rdi/{{databaseId}}/messages
 Content-Type: application/json
 
 {
-    "type": "rdi_stream",
-    "content": "Hello world!"
+  "type": "rdi_stream",
+  "content": "Hello world!",
+  "rdiContext": "[{\"name\":\"asd\",\"value\":\"# source must refer to a specific table in the source database. If need you should specify the server_name and the schema\\n\\nsource:\\n  #server_name: chinook \\n  #schema: public  \\n  # table: \\n# transform - optional set of filters and transformations\\ntransform:\\n  \\noutput:\\n  - uses: redis.write\\n    with:\\n      # target - must refer to a connection specified in config.yaml\\n      connection: target\\n      key:\\n\\n\"}]"
 }

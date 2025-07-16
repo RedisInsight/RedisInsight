@@ -1784,4 +1784,56 @@ export class BrowserPage extends BasePage {
         await this.verifyKeyTTL(expectedTTL)
         await this.closeKeyDetailsAndVerify()
     }
+
+    // Helper methods for TTL operations
+    async editKeyTTLValue(newTTL: number): Promise<void> {
+        await this.editKeyTTLButton.click()
+        await this.editKeyTTLInput.clear()
+        await this.editKeyTTLInput.fill(newTTL.toString())
+        await this.applyButton.click()
+    }
+
+    async removeKeyTTL(): Promise<void> {
+        await this.editKeyTTLButton.click()
+        await this.editKeyTTLInput.clear()
+        // Don't fill anything - empty field means persistent (-1)
+        await this.applyButton.click()
+    }
+
+    async waitForTTLToUpdate(expectedMinValue: number): Promise<void> {
+        await expect
+            .poll(
+                async () => {
+                    const currentTTL = await this.getKeyTTL()
+                    const ttlMatch = currentTTL?.match(/TTL:\s*(\d+)/)
+                    return ttlMatch ? parseInt(ttlMatch[1], 10) : 0
+                },
+                { timeout: 10000 },
+            )
+            .toBeGreaterThan(expectedMinValue)
+    }
+
+    async verifyTTLIsWithinRange(
+        expectedTTL: number,
+        marginSeconds = 60,
+    ): Promise<void> {
+        const displayedTTL = await this.getKeyTTL()
+        const ttlMatch = displayedTTL?.match(/TTL:\s*(\d+)/)
+        expect(ttlMatch).toBeTruthy()
+
+        const actualTTL = parseInt(ttlMatch![1], 10)
+        expect(actualTTL).toBeGreaterThan(expectedTTL - marginSeconds)
+        expect(actualTTL).toBeLessThanOrEqual(expectedTTL)
+    }
+
+    async verifyTTLIsPersistent(): Promise<void> {
+        const displayedTTL = await this.getKeyTTL()
+        expect(displayedTTL).toContain('No limit')
+    }
+
+    async verifyTTLIsNotPersistent(): Promise<void> {
+        const displayedTTL = await this.getKeyTTL()
+        expect(displayedTTL).toContain('TTL:')
+        expect(displayedTTL).not.toContain('No limit')
+    }
 }

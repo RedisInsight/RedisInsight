@@ -347,4 +347,50 @@ test.describe('Browser - Edit Key Operations', () => {
             expect(keyStillExists).toBe(true)
         })
     })
+
+    test.describe('TTL Editing', () => {
+        test('should edit string key TTL successfully', async ({
+            api: { keyService },
+        }) => {
+            // Arrange: Create a string key with TTL
+            const keyValue = faker.lorem.words(3)
+            const initialTTL = 3600 // 1 hour
+            const newTTL = 7200 // 2 hours
+
+            await keyService.addStringKeyApi(
+                { keyName, value: keyValue, expire: initialTTL },
+                ossStandaloneConfig,
+            )
+
+            // Open key details and verify initial TTL
+            await browserPage.openKeyDetailsAndVerify(keyName)
+            await browserPage.verifyTTLIsNotPersistent()
+
+            // Edit the TTL and verify update
+            await browserPage.editKeyTTLValue(newTTL)
+            await browserPage.waitForTTLToUpdate(initialTTL)
+            await browserPage.verifyTTLIsWithinRange(newTTL)
+        })
+
+        test('should remove TTL from string key (set to persistent)', async ({
+            api: { keyService },
+        }) => {
+            // Arrange: Create a string key with TTL
+            const keyValue = faker.lorem.words(3)
+            const initialTTL = 3600 // 1 hour
+
+            await keyService.addStringKeyApi(
+                { keyName, value: keyValue, expire: initialTTL },
+                ossStandaloneConfig,
+            )
+
+            // Open key details and verify initial TTL
+            await browserPage.openKeyDetailsAndVerify(keyName)
+            await browserPage.verifyTTLIsNotPersistent()
+
+            // Remove TTL and verify it becomes persistent
+            await browserPage.removeKeyTTL()
+            await browserPage.verifyTTLIsPersistent()
+        })
+    })
 })

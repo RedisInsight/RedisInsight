@@ -49,22 +49,10 @@ test.describe('Browser - Delete Key', () => {
                 ossStandaloneConfig,
             )
 
-            // Verify key exists
-            await browserPage.searchByKeyName(keyName)
-            const keyExists =
-                await browserPage.isKeyIsDisplayedInTheList(keyName)
-            expect(keyExists).toBe(true)
-
-            // Open key details and delete
-            await browserPage.openKeyDetailsByKeyName(keyName)
-            await browserPage.deleteKeyButton.click()
-            await browserPage.confirmDeleteKeyButton.click()
-
-            // Verify key is deleted
-            await browserPage.searchByKeyName(keyName)
-            const keyStillExists =
-                await browserPage.isKeyIsDisplayedInTheList(keyName)
-            expect(keyStillExists).toBe(false)
+            // Verify key exists, delete it, and verify deletion
+            await browserPage.verifyKeyExists(keyName)
+            await browserPage.deleteKeyFromDetailsView(keyName)
+            await browserPage.verifyKeyDoesNotExist(keyName)
         })
 
         test('should delete hash key successfully', async ({
@@ -81,22 +69,10 @@ test.describe('Browser - Delete Key', () => {
                 ossStandaloneConfig,
             )
 
-            // Verify key exists
-            await browserPage.searchByKeyName(keyName)
-            const keyExists =
-                await browserPage.isKeyIsDisplayedInTheList(keyName)
-            expect(keyExists).toBe(true)
-
-            // Open key details and delete
-            await browserPage.openKeyDetailsByKeyName(keyName)
-            await browserPage.deleteKeyButton.click()
-            await browserPage.confirmDeleteKeyButton.click()
-
-            // Verify key is deleted
-            await browserPage.searchByKeyName(keyName)
-            const keyStillExists =
-                await browserPage.isKeyIsDisplayedInTheList(keyName)
-            expect(keyStillExists).toBe(false)
+            // Verify key exists, delete it, and verify deletion
+            await browserPage.verifyKeyExists(keyName)
+            await browserPage.deleteKeyFromDetailsView(keyName)
+            await browserPage.verifyKeyDoesNotExist(keyName)
         })
 
         test('should delete list key successfully', async ({
@@ -113,22 +89,10 @@ test.describe('Browser - Delete Key', () => {
                 ossStandaloneConfig,
             )
 
-            // Verify key exists
-            await browserPage.searchByKeyName(keyName)
-            const keyExists =
-                await browserPage.isKeyIsDisplayedInTheList(keyName)
-            expect(keyExists).toBe(true)
-
-            // Open key details and delete
-            await browserPage.openKeyDetailsByKeyName(keyName)
-            await browserPage.deleteKeyButton.click()
-            await browserPage.confirmDeleteKeyButton.click()
-
-            // Verify key is deleted
-            await browserPage.searchByKeyName(keyName)
-            const keyStillExists =
-                await browserPage.isKeyIsDisplayedInTheList(keyName)
-            expect(keyStillExists).toBe(false)
+            // Verify key exists, delete it, and verify deletion
+            await browserPage.verifyKeyExists(keyName)
+            await browserPage.deleteKeyFromDetailsView(keyName)
+            await browserPage.verifyKeyDoesNotExist(keyName)
         })
 
         test('should delete set key successfully', async ({
@@ -145,22 +109,10 @@ test.describe('Browser - Delete Key', () => {
                 ossStandaloneConfig,
             )
 
-            // Verify key exists
-            await browserPage.searchByKeyName(keyName)
-            const keyExists =
-                await browserPage.isKeyIsDisplayedInTheList(keyName)
-            expect(keyExists).toBe(true)
-
-            // Open key details and delete
-            await browserPage.openKeyDetailsByKeyName(keyName)
-            await browserPage.deleteKeyButton.click()
-            await browserPage.confirmDeleteKeyButton.click()
-
-            // Verify key is deleted
-            await browserPage.searchByKeyName(keyName)
-            const keyStillExists =
-                await browserPage.isKeyIsDisplayedInTheList(keyName)
-            expect(keyStillExists).toBe(false)
+            // Verify key exists, delete it, and verify deletion
+            await browserPage.verifyKeyExists(keyName)
+            await browserPage.deleteKeyFromDetailsView(keyName)
+            await browserPage.verifyKeyDoesNotExist(keyName)
         })
 
         test('should delete sorted set key successfully', async ({
@@ -177,22 +129,10 @@ test.describe('Browser - Delete Key', () => {
                 ossStandaloneConfig,
             )
 
-            // Verify key exists
-            await browserPage.searchByKeyName(keyName)
-            const keyExists =
-                await browserPage.isKeyIsDisplayedInTheList(keyName)
-            expect(keyExists).toBe(true)
-
-            // Open key details and delete
-            await browserPage.openKeyDetailsByKeyName(keyName)
-            await browserPage.deleteKeyButton.click()
-            await browserPage.confirmDeleteKeyButton.click()
-
-            // Verify key is deleted
-            await browserPage.searchByKeyName(keyName)
-            const keyStillExists =
-                await browserPage.isKeyIsDisplayedInTheList(keyName)
-            expect(keyStillExists).toBe(false)
+            // Verify key exists, delete it, and verify deletion
+            await browserPage.verifyKeyExists(keyName)
+            await browserPage.deleteKeyFromDetailsView(keyName)
+            await browserPage.verifyKeyDoesNotExist(keyName)
         })
 
         test('should delete json key successfully', async ({
@@ -209,22 +149,10 @@ test.describe('Browser - Delete Key', () => {
                 ossStandaloneConfig,
             )
 
-            // Verify key exists
-            await browserPage.searchByKeyName(keyName)
-            const keyExists =
-                await browserPage.isKeyIsDisplayedInTheList(keyName)
-            expect(keyExists).toBe(true)
-
-            // Open key details and delete
-            await browserPage.openKeyDetailsByKeyName(keyName)
-            await browserPage.deleteKeyButton.click()
-            await browserPage.confirmDeleteKeyButton.click()
-
-            // Verify key is deleted
-            await browserPage.searchByKeyName(keyName)
-            const keyStillExists =
-                await browserPage.isKeyIsDisplayedInTheList(keyName)
-            expect(keyStillExists).toBe(false)
+            // Verify key exists, delete it, and verify deletion
+            await browserPage.verifyKeyExists(keyName)
+            await browserPage.deleteKeyFromDetailsView(keyName)
+            await browserPage.verifyKeyDoesNotExist(keyName)
         })
 
         test('should delete stream key successfully', async ({
@@ -245,22 +173,10 @@ test.describe('Browser - Delete Key', () => {
                 ossStandaloneConfig,
             )
 
-            // Verify key exists
-            await browserPage.searchByKeyName(keyName)
-            const keyExists =
-                await browserPage.isKeyIsDisplayedInTheList(keyName)
-            expect(keyExists).toBe(true)
-
-            // Open key details and delete
-            await browserPage.openKeyDetailsByKeyName(keyName)
-            await browserPage.deleteKeyButton.click()
-            await browserPage.confirmDeleteKeyButton.click()
-
-            // Verify key is deleted
-            await browserPage.searchByKeyName(keyName)
-            const keyStillExists =
-                await browserPage.isKeyIsDisplayedInTheList(keyName)
-            expect(keyStillExists).toBe(false)
+            // Verify key exists, delete it, and verify deletion
+            await browserPage.verifyKeyExists(keyName)
+            await browserPage.deleteKeyFromDetailsView(keyName)
+            await browserPage.verifyKeyDoesNotExist(keyName)
         })
     })
 
@@ -274,19 +190,10 @@ test.describe('Browser - Delete Key', () => {
             ossStandaloneConfig,
         )
 
-        // Verify key exists
-        await browserPage.searchByKeyName(keyName)
-        const keyExists = await browserPage.isKeyIsDisplayedInTheList(keyName)
-        expect(keyExists).toBe(true)
-
-        // Delete from list view (hover and click delete button)
-        await browserPage.deleteKeyByNameFromList(keyName)
-
-        // Verify key is deleted
-        await browserPage.searchByKeyName(keyName)
-        const keyStillExists =
-            await browserPage.isKeyIsDisplayedInTheList(keyName)
-        expect(keyStillExists).toBe(false)
+        // Verify key exists, delete from list view, and verify deletion
+        await browserPage.verifyKeyExists(keyName)
+        await browserPage.deleteKeyFromListView(keyName)
+        await browserPage.verifyKeyDoesNotExist(keyName)
     })
 
     test('should cancel key deletion when outside of the deletion confirmation popover', async ({
@@ -299,22 +206,10 @@ test.describe('Browser - Delete Key', () => {
             ossStandaloneConfig,
         )
 
-        // Verify key exists
-        await browserPage.searchByKeyName(keyName)
-        const keyExists = await browserPage.isKeyIsDisplayedInTheList(keyName)
-        expect(keyExists).toBe(true)
-
-        // Open key details and start delete process but cancel
-        await browserPage.openKeyDetailsByKeyName(keyName)
-        await browserPage.deleteKeyButton.click()
-
-        // Click outside the confirmation popover to cancel deletion (but close to it)
-        await browserPage.keyDetailsHeader.click()
-
-        // Verify key still exists
-        await browserPage.searchByKeyName(keyName)
-        const keyStillExists =
-            await browserPage.isKeyIsDisplayedInTheList(keyName)
-        expect(keyStillExists).toBe(true)
+        // Verify key exists, start deletion but cancel, and verify key still exists
+        await browserPage.verifyKeyExists(keyName)
+        await browserPage.startKeyDeletion(keyName)
+        await browserPage.cancelKeyDeletion()
+        await browserPage.verifyKeyExists(keyName)
     })
 })

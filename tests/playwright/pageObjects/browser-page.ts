@@ -1442,4 +1442,22 @@ export class BrowserPage extends BasePage {
 
         return members
     }
+
+    async getAllStreamEntries(): Promise<string[]> {
+        // Get all stream field elements that contain the actual data
+        const fieldElements = await this.page
+            .locator('[data-testid^="stream-entry-field-"]')
+            .all()
+
+        const fieldValues: string[] = []
+
+        for (let i = 0; i < fieldElements.length; i += 1) {
+            const text = await fieldElements[i].textContent()
+            if (text && text.trim()) {
+                fieldValues.push(text.trim())
+            }
+        }
+
+        return fieldValues
+    }
 }

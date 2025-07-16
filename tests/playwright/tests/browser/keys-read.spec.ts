@@ -434,4 +434,89 @@ test.describe('Browser - Read Key Details', () => {
         const isDetailsClosed = await browserPage.isKeyDetailsClosed()
         expect(isDetailsClosed).toBe(true)
     })
+
+    test('should open key details when clicking on stream key', async ({
+        api: { keyService },
+    }) => {
+        const streamEntries = [
+            {
+                id: '*',
+                fields: [
+                    { name: 'temperature', value: '25.5' },
+                    { name: 'humidity', value: '60' },
+                    { name: 'location', value: 'sensor-001' },
+                ],
+            },
+            {
+                id: '*',
+                fields: [
+                    { name: 'temperature', value: '26.2' },
+                    { name: 'humidity', value: '58' },
+                    { name: 'location', value: 'sensor-002' },
+                ],
+            },
+        ]
+        const keyTTL = 7200 // 2 hours
+
+        // Create a stream key with multiple entries and TTL using API
+        await keyService.addStreamKeyApi(
+            { keyName, entries: streamEntries, expire: keyTTL },
+            ossStandaloneConfig,
+        )
+
+        // Search for the key to ensure it's visible
+        await browserPage.searchByKeyName(keyName)
+
+        // Click on the key to open details
+        await browserPage.openKeyDetailsByKeyName(keyName)
+
+        // Verify key details panel is open
+        const isDetailsOpen = await browserPage.isKeyDetailsOpen(keyName)
+        expect(isDetailsOpen).toBe(true)
+
+        // Verify stream entries are displayed
+        const displayedFieldValues = await browserPage.getAllStreamEntries()
+        expect(displayedFieldValues.length).toBeGreaterThan(0)
+
+        // Combine all field values to check for expected content
+        const allFieldsText = displayedFieldValues.join(' ')
+
+        // Check that all expected field values are present
+        expect(allFieldsText).toContain('25.5')
+        expect(allFieldsText).toContain('60')
+        expect(allFieldsText).toContain('sensor-001')
+        expect(allFieldsText).toContain('26.2')
+        expect(allFieldsText).toContain('58')
+        expect(allFieldsText).toContain('sensor-002')
+
+        // Verify the key length shows correct number of entries
+        const keyLength = await browserPage.getKeyLength()
+        expect(keyLength).toBe(streamEntries.length.toString())
+
+        // Verify the key size (bytes) is displayed correctly
+        const keySizeText = await browserPage.keySizeDetails.textContent()
+        expect(keySizeText).toBeTruthy()
+
+        // Verify the TTL value is displayed correctly
+        const displayedTTL = await browserPage.getKeyTTL()
+        expect(displayedTTL).toContain('TTL:')
+
+        // Extract the TTL value from the text and verify it's within expected range
+        const ttlMatch = displayedTTL?.match(/TTL:\s*(\d+|No limit)/)
+        expect(ttlMatch).toBeTruthy()
+
+        if (ttlMatch && ttlMatch[1] !== 'No limit') {
+            const actualTTL = parseInt(ttlMatch[1], 10)
+            // TTL should be close to what we set (allowing for some time passage during test execution)
+            expect(actualTTL).toBeGreaterThan(keyTTL - 60)
+            expect(actualTTL).toBeLessThanOrEqual(keyTTL)
+        }
+
+        // Close the details
+        await browserPage.closeKeyDetails()
+
+        // Verify details are closed
+        const isDetailsClosed = await browserPage.isKeyDetailsClosed()
+        expect(isDetailsClosed).toBe(true)
+    })
 })

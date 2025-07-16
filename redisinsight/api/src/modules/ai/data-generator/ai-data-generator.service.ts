@@ -22,6 +22,9 @@ import { SendAiDataGeneratorMessageDto } from 'src/modules/ai/data-generator/dto
 import { wrapAiDataGeneratorError } from 'src/modules/ai/data-generator/exceptions';
 import * as ivm from 'isolated-vm';
 import { RedisClient } from 'src/modules/redis/client';
+import { NotificationServerEvents } from 'src/modules/notification/constants';
+import { NotificationsDto } from 'src/modules/notification/dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 const aiConfig = config.get('ai') as Config['ai'];
 
@@ -33,22 +36,52 @@ export class AiDataGeneratorService {
     private readonly aiDataGeneratorProvider: AiDataGeneratorProvider,
     private readonly databaseClientFactory: DatabaseClientFactory,
     private readonly aiDataGeneratorMessageRepository: AiDataGeneratorMessageRepository,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
+
+  private sendImportProgress(id: string, total: number, processed: number) {
+    if (total > 30_000) {
+      this.eventEmitter.emit(
+        NotificationServerEvents.AITool,
+        plainToInstance(NotificationsDto, {
+          tool: AiDataGeneratorWsEvents.EXECUTE_SNIPPET,
+          data: {
+            id,
+            processed,
+            total,
+          },
+        }),
+      );
+    }
+  }
 
   private async runUserCode(
     client: RedisClient,
     code: string,
+    total = 0,
   ) {
+    const id = uuidv4();
+    let processed = 0;
+    this.sendImportProgress(id, total, processed);
+
     // Create a callback function in the main process
     const streamChunk = new ivm.Reference(async (data) => {
-      // console.log('parsing chunk')
-      const chunk = JSON.parse(data);
-      // console.log(`chank has ${chunk?.length} commands`)
+      try {
+        // console.log('parsing chunk')
+        const chunk = JSON.parse(data);
+        processed += chunk.length || 0;
+        console.log(`✅ chunk has ${chunk?.length} commands`)
 
-      // console.log('✅ Received chunk:', chunk);
+        // console.log('✅ Received chunk:', chunk);
 
-      const result = await client.sendPipeline(chunk);
-      // console.log('insert chunk result: ', result)
+        const result = await client.sendPipeline(chunk);
+        // console.log('insert chunk result: ', result)
+      } catch (e) {
+        console.log('unable to execute pipeline', e)
+        // ignore error for now
+      }
+
+      this.sendImportProgress(id, total, processed);
     });
 
     const isolate = new ivm.Isolate({ memoryLimit: 512 }); // 8 MB
@@ -96,8 +129,13 @@ export class AiDataGeneratorService {
       // console.log('___ script generated')
       const result = await script.run(context, { timeout: 120_000, promise: true }); // 2 mins
       // console.log('Result:', result);
+
+      this.sendImportProgress(id, total, total); // processed = total
+
       return result;
     } catch (err) {
+      this.sendImportProgress(id, total, total); // processed = total
+
       console.error('Error executing user code:', err.message);
     }
   }
@@ -176,7 +214,6 @@ export class AiDataGeneratorService {
     dto: SendAiDataGeneratorMessageDto,
     res: Response,
   ) {
-    console.log('____ dto', dto);
     let socket: Socket;
 
     try {
@@ -232,10 +269,10 @@ export class AiDataGeneratorService {
         );
       });
 
-      socket.on(AiDataGeneratorWsEvents.EXECUTE_SNIPPET, async (codeSnippet, cb) => {
+      socket.on(AiDataGeneratorWsEvents.EXECUTE_SNIPPET, async ({ codeSnippet, totalCommands }, cb) => {
         try {
           console.log('Going to execute code snippet', codeSnippet)
-          const result = await this.runUserCode(client, codeSnippet);
+          const result = await this.runUserCode(client, codeSnippet, totalCommands);
           console.log('___ result', result)
           cb({
             created: 100,

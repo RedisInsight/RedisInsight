@@ -212,7 +212,7 @@ export function setReJSONDataAction(
   key: RedisResponseBuffer,
   path: string,
   data: string,
-  isEditMode: boolean,
+  isEditMode?: boolean,
   length?: number,
   onSuccessAction?: () => void,
   onFailAction?: () => void,

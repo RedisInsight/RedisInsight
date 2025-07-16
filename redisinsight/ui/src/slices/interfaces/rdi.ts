@@ -214,8 +214,8 @@ export interface IStateRdiStatistics {
 
 export interface RdiInstance extends RdiInstanceResponse {
   visible?: boolean
-  loading: boolean
-  error: string
+  loading?: boolean
+  error?: string
   // not really present, but used in InstancesList.tsx:142
   db?: number
 }

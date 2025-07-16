@@ -223,4 +223,70 @@ test.describe('Browser - Read Key Details', () => {
         const isDetailsClosed = await browserPage.isKeyDetailsClosed()
         expect(isDetailsClosed).toBe(true)
     })
+
+    test('should open key details when clicking on set key', async ({
+        api: { keyService },
+    }) => {
+        const setMembers = [
+            faker.lorem.word(),
+            faker.lorem.word(),
+            faker.lorem.word(),
+        ]
+        const keyTTL = 3600 // 1 hour
+
+        // Create a set key with multiple members and TTL using API
+        await keyService.addSetKeyApi(
+            { keyName, members: setMembers, expire: keyTTL },
+            ossStandaloneConfig,
+        )
+
+        // Search for the key to ensure it's visible
+        await browserPage.searchByKeyName(keyName)
+
+        // Click on the key to open details
+        await browserPage.openKeyDetailsByKeyName(keyName)
+
+        // Verify key details panel is open
+        const isDetailsOpen = await browserPage.isKeyDetailsOpen(keyName)
+        expect(isDetailsOpen).toBe(true)
+
+        // Verify set members are displayed
+        const displayedMembers = await browserPage.getAllSetMembers()
+        expect(displayedMembers).toHaveLength(setMembers.length)
+
+        // Verify all expected members are present (sets are unordered)
+        setMembers.forEach((expectedMember) => {
+            expect(displayedMembers).toContain(expectedMember)
+        })
+
+        // Verify the key length shows correct number of members
+        const keyLength = await browserPage.getKeyLength()
+        expect(keyLength).toBe(setMembers.length.toString())
+
+        // Verify the key size (bytes) is displayed correctly
+        const keySizeText = await browserPage.keySizeDetails.textContent()
+        expect(keySizeText).toBeTruthy()
+
+        // Verify the TTL value is displayed correctly
+        const displayedTTL = await browserPage.getKeyTTL()
+        expect(displayedTTL).toContain('TTL:')
+
+        // Extract the TTL value from the text and verify it's within expected range
+        const ttlMatch = displayedTTL?.match(/TTL:\s*(\d+|No limit)/)
+        expect(ttlMatch).toBeTruthy()
+
+        if (ttlMatch && ttlMatch[1] !== 'No limit') {
+            const actualTTL = parseInt(ttlMatch[1], 10)
+            // TTL should be close to what we set (allowing for some time passage during test execution)
+            expect(actualTTL).toBeGreaterThan(keyTTL - 60)
+            expect(actualTTL).toBeLessThanOrEqual(keyTTL)
+        }
+
+        // Close the details
+        await browserPage.closeKeyDetails()
+
+        // Verify details are closed
+        const isDetailsClosed = await browserPage.isKeyDetailsClosed()
+        expect(isDetailsClosed).toBe(true)
+    })
 })

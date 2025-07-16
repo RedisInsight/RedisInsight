@@ -113,7 +113,7 @@ export class APIKeyRequests {
     }
 
     async addSetKeyApi(
-        keyParameters: SetKeyParameters,
+        keyParameters: SetKeyParameters & { expire?: number },
         databaseParameters: AddNewDatabaseParameters,
     ): Promise<void> {
         const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(
@@ -124,6 +124,7 @@ export class APIKeyRequests {
             members: keyParameters.members.map((member) =>
                 Buffer.from(member, 'utf-8'),
             ),
+            expire: keyParameters?.expire,
         }
         const response = await this.apiClient.post(
             `/databases/${databaseId}/set?encoding=buffer`,

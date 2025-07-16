@@ -8,7 +8,11 @@ import {
   SocketFeaturesEvent,
 } from 'uiSrc/constants'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
-import { setNewNotificationAction } from 'uiSrc/slices/app/notifications'
+import {
+  addInfiniteNotification,
+  removeInfiniteNotification,
+  setNewNotificationAction,
+} from 'uiSrc/slices/app/notifications'
 import { setIsConnected } from 'uiSrc/slices/app/socket-connection'
 import { getSocketApiUrl, Nullable } from 'uiSrc/utils'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
@@ -20,6 +24,12 @@ import { CloudJobName } from 'uiSrc/electron/constants'
 import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
 import { useIoConnection } from 'uiSrc/services/hooks/useIoConnection'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
+import { EuiProgress, EuiText } from '@elastic/eui'
+import { Spacer } from 'uiSrc/components/base/layout/spacer'
+
+const enum AITools {
+  EXECUTE_SNIPPET = 'data_execute_snippet',
+}
 
 const CommonAppSubscription = () => {
   const { id: jobId = '' } = useSelector(oauthCloudJobSelector) ?? {}
@@ -47,6 +57,46 @@ const CommonAppSubscription = () => {
 
     socketRef.current.on(NotificationEvent.Notification, (data) => {
       dispatch(setNewNotificationAction(data))
+    })
+
+    socketRef.current.on(NotificationEvent.AITool, ({ tool, data }) => {
+      try {
+        switch (tool) {
+          case AITools.EXECUTE_SNIPPET:
+            const { total, processed, id } = data
+
+            // finished import close notification
+            if (processed >= total) {
+              dispatch(removeInfiniteNotification(id))
+              return
+            }
+
+            // show progress
+            dispatch(
+              addInfiniteNotification({
+                id,
+                Inner: (
+                  <>
+                    <EuiText>Processing data...</EuiText>
+                    <Spacer />
+                    <EuiProgress
+                      size={'m'}
+                      value={processed}
+                      valueText={false}
+                      label={'Executing commands'}
+                      max={total}
+                    />
+                  </>
+                ),
+              }),
+            )
+            break
+          default:
+          // ignore
+        }
+      } catch (e) {
+        console.log('___ some error on tool ws call', e)
+      }
     })
 
     socketRef.current.on(SocketFeaturesEvent.Features, (data) => {

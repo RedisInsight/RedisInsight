@@ -38,6 +38,7 @@ export class NotificationGateway
   ) {}
 
   async handleConnection(client: Socket): Promise<void> {
+    console.log(`Client connected: ${client.id}`)
     this.logger.debug(`Client connected: ${client.id}`);
     // TODO: [USER_CONTEXT] how to get middleware into socket connection?
     this.globalNotificationsProvider.init(
@@ -52,5 +53,10 @@ export class NotificationGateway
   @OnEvent(NotificationServerEvents.Notification)
   notification(data: NotificationsDto) {
     this.wss.of('/').emit(NotificationServerEvents.Notification, data);
+  }
+
+  @OnEvent(NotificationServerEvents.AITool)
+  aiTool(data: NotificationsDto) {
+    this.wss.of('/').emit(NotificationServerEvents.AITool, data);
   }
 }

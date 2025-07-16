@@ -88,7 +88,7 @@ export class APIKeyRequests {
     }
 
     async addStreamKeyApi(
-        keyParameters: StreamKeyParameters,
+        keyParameters: StreamKeyParameters & { expire?: number },
         databaseParameters: AddNewDatabaseParameters,
     ): Promise<void> {
         const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(
@@ -103,6 +103,7 @@ export class APIKeyRequests {
                     value: Buffer.from(value, 'utf-8'),
                 })),
             })),
+            expire: keyParameters?.expire,
         }
         const response = await this.apiClient.post(
             `/databases/${databaseId}/streams?encoding=buffer`,

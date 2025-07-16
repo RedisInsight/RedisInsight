@@ -39,7 +39,7 @@ export class APIKeyRequests {
     }
 
     async addHashKeyApi(
-        keyParameters: HashKeyParameters,
+        keyParameters: HashKeyParameters & { expire?: number },
         databaseParameters: AddNewDatabaseParameters,
     ): Promise<void> {
         const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(
@@ -52,6 +52,7 @@ export class APIKeyRequests {
                 field: Buffer.from(fields.field, 'utf-8'),
                 value: Buffer.from(fields.value, 'utf-8'),
             })),
+            expire: keyParameters?.expire,
         }
         const response = await this.apiClient.post(
             `/databases/${databaseId}/hash?encoding=buffer`,

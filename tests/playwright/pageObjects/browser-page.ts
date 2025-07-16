@@ -1460,4 +1460,146 @@ export class BrowserPage extends BasePage {
 
         return fieldValues
     }
+
+    // Helper methods for key reading operations
+    async openKeyDetailsAndVerify(keyName: string): Promise<void> {
+        await this.searchByKeyName(keyName)
+        await this.openKeyDetailsByKeyName(keyName)
+
+        // Wait for key details to be properly loaded
+        await expect.poll(async () => this.isKeyDetailsOpen(keyName)).toBe(true)
+    }
+
+    async closeKeyDetailsAndVerify(): Promise<void> {
+        await this.closeKeyDetails()
+        const isDetailsClosed = await this.isKeyDetailsClosed()
+        expect(isDetailsClosed).toBe(true)
+    }
+
+    async verifyKeySize(): Promise<void> {
+        const keySizeText = await this.keySizeDetails.textContent()
+        expect(keySizeText).toBeTruthy()
+    }
+
+    async verifyKeyLength(expectedLength: string): Promise<void> {
+        const displayedLength = await this.getKeyLength()
+        expect(displayedLength).toBe(expectedLength)
+    }
+
+    async verifyKeyTTL(expectedTTL?: number): Promise<void> {
+        const displayedTTL = await this.getKeyTTL()
+        expect(displayedTTL).toContain('TTL:')
+
+        if (expectedTTL !== undefined) {
+            const ttlMatch = displayedTTL?.match(/TTL:\s*(\d+|No limit)/)
+            expect(ttlMatch).toBeTruthy()
+
+            if (ttlMatch && ttlMatch[1] !== 'No limit') {
+                const actualTTL = parseInt(ttlMatch[1], 10)
+                // TTL should be close to what we set (allowing for some time passage during test execution)
+                expect(actualTTL).toBeGreaterThan(expectedTTL - 60)
+                expect(actualTTL).toBeLessThanOrEqual(expectedTTL)
+            }
+        }
+    }
+
+    // Helper methods for verifying key content
+    async verifyStringKeyContent(expectedValue: string): Promise<void> {
+        const displayedValue = await this.getStringKeyValue()
+        expect(displayedValue).toContain(expectedValue)
+    }
+
+    async verifyHashKeyContent(
+        fieldName: string,
+        fieldValue: string,
+    ): Promise<void> {
+        const hashField = await this.hashFieldExists(fieldName, fieldValue)
+        expect(hashField).toBe(true)
+    }
+
+    async verifyListKeyContent(expectedElements: string[]): Promise<void> {
+        const displayedElements = await this.getAllListElements()
+        expect(displayedElements).toHaveLength(expectedElements.length)
+
+        expectedElements.forEach((expectedElement) => {
+            expect(displayedElements).toContain(expectedElement)
+        })
+    }
+
+    async verifySetKeyContent(expectedMembers: string[]): Promise<void> {
+        const displayedMembers = await this.getAllSetMembers()
+        expect(displayedMembers).toHaveLength(expectedMembers.length)
+
+        expectedMembers.forEach((expectedMember) => {
+            expect(displayedMembers).toContain(expectedMember)
+        })
+    }
+
+    async verifyZsetKeyContent(
+        expectedMembers: Array<{ name: string; score: number }>,
+    ): Promise<void> {
+        const displayedMembers = await this.getAllZsetMembers()
+        expect(displayedMembers).toHaveLength(expectedMembers.length)
+
+        expectedMembers.forEach((expectedMember) => {
+            const foundMember = displayedMembers.find(
+                (member) => member.name === expectedMember.name,
+            )
+            expect(foundMember).toBeDefined()
+            expect(foundMember?.score).toBe(expectedMember.score.toString())
+        })
+    }
+
+    async verifyJsonKeyContent(expectedValue: any): Promise<void> {
+        const displayedValue = await this.getJsonKeyValue()
+
+        // Check for scalar properties that should be visible
+        if (typeof expectedValue === 'object' && expectedValue !== null) {
+            if (expectedValue.name)
+                expect(displayedValue).toContain(expectedValue.name)
+            if (expectedValue.age)
+                expect(displayedValue).toContain(expectedValue.age.toString())
+            if (typeof expectedValue.active === 'boolean')
+                expect(displayedValue).toContain(
+                    expectedValue.active.toString(),
+                )
+
+            // Verify JSON structure keys are present
+            Object.keys(expectedValue).forEach((key) => {
+                expect(displayedValue).toContain(key)
+            })
+        }
+    }
+
+    async verifyStreamKeyContent(
+        expectedEntries: Array<{
+            fields: Array<{ name: string; value: string }>
+        }>,
+    ): Promise<void> {
+        const displayedFieldValues = await this.getAllStreamEntries()
+        expect(displayedFieldValues.length).toBeGreaterThan(0)
+
+        // Combine all field values to check for expected content
+        const allFieldsText = displayedFieldValues.join(' ')
+
+        // Check that all expected field values are present
+        expectedEntries.forEach((entry) => {
+            entry.fields.forEach((field) => {
+                expect(allFieldsText).toContain(field.value)
+            })
+        })
+    }
+
+    // Comprehensive helper method for complete key verification
+    async verifyKeyDetails(
+        keyName: string,
+        expectedLength: string,
+        expectedTTL?: number,
+    ): Promise<void> {
+        await this.openKeyDetailsAndVerify(keyName)
+        await this.verifyKeyLength(expectedLength)
+        await this.verifyKeySize()
+        await this.verifyKeyTTL(expectedTTL)
+        await this.closeKeyDetailsAndVerify()
+    }
 }

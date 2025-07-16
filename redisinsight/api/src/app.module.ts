@@ -27,7 +27,7 @@ import { AiChatModule } from 'src/modules/ai/chat/ai-chat.module';
 import { AiQueryModule } from 'src/modules/ai/query/ai-query.module';
 import { InitModule } from 'src/modules/init/init.module';
 import { AnalyticsModule } from 'src/modules/analytics/analytics.module';
-import { AiExtendedModule } from 'src/modules/ai/extended/ai-extended.module';
+import { AiRdiModule } from 'src/modules/ai/rdi/ai-rdi.module';
 import { AiDataGeneratorModule } from 'src/modules/ai/data-generator/ai-data-generator.module';
 import { BrowserModule } from './modules/browser/browser.module';
 import { RedisEnterpriseModule } from './modules/redis-enterprise/redis-enterprise.module';
@@ -74,7 +74,7 @@ const STATICS_CONFIG = config.get('statics') as Config['statics'];
     CloudModule.register(),
     AiChatModule,
     AiQueryModule.register(),
-    AiExtendedModule.register(),
+    AiRdiModule.register(),
     AiDataGeneratorModule.register(),
     RdiModule.register(),
     StaticsManagementModule.register({

@@ -1,0 +1,15 @@
+# change this if needed to test with exising database
+@targetId = dbe4b0a8-d587-43d0-b742-d9adcc9e4d31
+
+### GET list db messages
+GET http://localhost:5540/api/ai/rdi/{{targetId}}/messages
+
+### POST send message
+POST http://localhost:5540/api/ai/rdi/{{targetId}}/messages
+Content-Type: application/json
+
+{
+  "type": "rdi_stream",
+  "content": "Hello world!",
+  "rdiContext": "[{\"name\":\"asd\",\"value\":\"# source must refer to a specific table in the source database. If need you should specify the server_name and the schema\\n\\nsource:\\n  #server_name: chinook \\n  #schema: public  \\n  # table: \\n# transform - optional set of filters and transformations\\ntransform:\\n  \\noutput:\\n  - uses: redis.write\\n    with:\\n      # target - must refer to a connection specified in config.yaml\\n      connection: target\\n      key:\\n\\n\"}]"
+}

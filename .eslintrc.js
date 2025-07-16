@@ -77,10 +77,6 @@ module.exports = {
         'max-len': ['warn', 120],
         '@typescript-eslint/return-await': 'off',
         '@typescript-eslint/dot-notation': 'off',
-        'import/prefer-default-export': 'off',
-        'max-classes-per-file': 'off',
-        'class-methods-use-this': 'off',
-        'no-await-in-loop': 'off',
         'import/no-extraneous-dependencies': 'off',
         '@typescript-eslint/no-unused-vars': [
           'error',
@@ -95,6 +91,7 @@ module.exports = {
         'sonarjs/no-identical-functions': 'error',
         'sonarjs/prefer-immediate-return': 'error',
         'sonarjs/no-small-switch': 'error',
+        'no-console': 'error',
       },
       parserOptions: {
         project: path.join(__dirname, 'redisinsight/api/tsconfig.json'),

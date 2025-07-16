@@ -283,7 +283,7 @@ export const RedisResponseBufferType =
 
 type RedisStringAPI = CreateListWithExpireDtoKeyName
 
-export type RedisResponseBuffer = Exclude<RedisStringAPI, string>
+export type RedisResponseBuffer = RedisStringAPI // Exclude<RedisStringAPI, string>
 
 export type RedisString = RedisStringAPI
 

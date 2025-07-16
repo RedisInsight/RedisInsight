@@ -36,7 +36,7 @@ const defaultValues = [
     isCompressed: false,
   },
   {
-    input: COMPRESSOR_MAGIC_SYMBOLS[KeyValueCompressor.GZIP]
+    input: COMPRESSOR_MAGIC_SYMBOLS[KeyValueCompressor.Gzip]
       .split(',')
       .map((symbol) => toNumber(symbol)),
     compressor: null,
@@ -45,7 +45,7 @@ const defaultValues = [
     isCompressed: false,
   },
   {
-    input: COMPRESSOR_MAGIC_SYMBOLS[KeyValueCompressor.ZSTD]
+    input: COMPRESSOR_MAGIC_SYMBOLS[KeyValueCompressor.Zstd]
       .split(',')
       .map((symbol) => toNumber(symbol)),
     compressor: null,
@@ -55,58 +55,58 @@ const defaultValues = [
   },
   {
     input: GZIP_COMPRESSED_VALUE_1,
-    compressor: KeyValueCompressor.GZIP,
+    compressor: KeyValueCompressor.Gzip,
     output: DECOMPRESSED_VALUE_1,
     outputStr: DECOMPRESSED_VALUE_STR_1,
     isCompressed: true,
   },
   {
     input: GZIP_COMPRESSED_VALUE_2,
-    compressor: KeyValueCompressor.GZIP,
+    compressor: KeyValueCompressor.Gzip,
     output: DECOMPRESSED_VALUE_2,
     outputStr: DECOMPRESSED_VALUE_STR_2,
     isCompressed: true,
   },
   {
     input: ZSTD_COMPRESSED_VALUE_1,
-    compressor: KeyValueCompressor.ZSTD,
+    compressor: KeyValueCompressor.Zstd,
     output: DECOMPRESSED_VALUE_1,
     outputStr: DECOMPRESSED_VALUE_STR_1,
     isCompressed: true,
   },
   {
     input: ZSTD_COMPRESSED_VALUE_2,
-    compressor: KeyValueCompressor.ZSTD,
+    compressor: KeyValueCompressor.Zstd,
     output: DECOMPRESSED_VALUE_2,
     outputStr: DECOMPRESSED_VALUE_STR_2,
     isCompressed: true,
   },
   {
     input: LZ4_COMPRESSED_VALUE_1,
-    compressor: KeyValueCompressor.LZ4,
+    compressor: KeyValueCompressor.Lz4,
     output: DECOMPRESSED_VALUE_1,
     outputStr: DECOMPRESSED_VALUE_STR_1,
     isCompressed: true,
   },
   {
     input: LZ4_COMPRESSED_VALUE_2,
-    compressor: KeyValueCompressor.LZ4,
+    compressor: KeyValueCompressor.Lz4,
     output: DECOMPRESSED_VALUE_2,
     outputStr: DECOMPRESSED_VALUE_STR_2,
     isCompressed: true,
   },
   {
     input: SNAPPY_COMPRESSED_VALUE_1,
-    compressor: KeyValueCompressor.SNAPPY,
-    compressorInit: KeyValueCompressor.SNAPPY,
+    compressor: KeyValueCompressor.Snappy,
+    compressorInit: KeyValueCompressor.Snappy,
     output: DECOMPRESSED_VALUE_1,
     outputStr: DECOMPRESSED_VALUE_STR_1,
     isCompressed: true,
   },
   {
     input: SNAPPY_COMPRESSED_VALUE_2,
-    compressor: KeyValueCompressor.SNAPPY,
-    compressorInit: KeyValueCompressor.SNAPPY,
+    compressor: KeyValueCompressor.Snappy,
+    compressorInit: KeyValueCompressor.Snappy,
     output: DECOMPRESSED_VALUE_2,
     outputStr: DECOMPRESSED_VALUE_STR_2,
     isCompressed: true,
@@ -116,15 +116,15 @@ const defaultValues = [
     compressor: null,
     output: GZIP_COMPRESSED_VALUE_1,
     outputStr: DECOMPRESSED_VALUE_STR_1,
-    compressorInit: KeyValueCompressor.LZ4,
-    compressorByValue: KeyValueCompressor.GZIP,
+    compressorInit: KeyValueCompressor.Lz4,
+    compressorByValue: KeyValueCompressor.Gzip,
     isCompressed: false,
   },
   {
     input: ZSTD_COMPRESSED_VALUE_1,
     compressor: null,
-    compressorInit: KeyValueCompressor.LZ4,
-    compressorByValue: KeyValueCompressor.ZSTD,
+    compressorInit: KeyValueCompressor.Lz4,
+    compressorByValue: KeyValueCompressor.Zstd,
     output: ZSTD_COMPRESSED_VALUE_1,
     outputStr: DECOMPRESSED_VALUE_STR_1,
     isCompressed: false,
@@ -148,16 +148,16 @@ const defaultValues = [
   // },
   {
     input: PHPGZCOMPRESS_COMPRESSED_VALUE_1,
-    compressor: KeyValueCompressor.PHPGZCompress,
-    compressorInit: KeyValueCompressor.PHPGZCompress,
+    compressor: KeyValueCompressor.PhpgzCompress,
+    compressorInit: KeyValueCompressor.PhpgzCompress,
     output: DECOMPRESSED_VALUE_1,
     outputStr: DECOMPRESSED_VALUE_STR_1,
     isCompressed: true,
   },
   {
     input: PHPGZCOMPRESS_COMPRESSED_VALUE_2,
-    compressor: KeyValueCompressor.PHPGZCompress,
-    compressorInit: KeyValueCompressor.PHPGZCompress,
+    compressor: KeyValueCompressor.PhpgzCompress,
+    compressorInit: KeyValueCompressor.PhpgzCompress,
     output: DECOMPRESSED_VALUE_2,
     outputStr: DECOMPRESSED_VALUE_STR_2,
     isCompressed: true,
@@ -175,9 +175,9 @@ describe('getCompressor', () => {
 
       // SNAPPY doesn't have magic symbols
       if (
-        compressor === KeyValueCompressor.SNAPPY ||
-        compressor === KeyValueCompressor.Brotli ||
-        compressor === KeyValueCompressor.PHPGZCompress
+        compressor === KeyValueCompressor.Snappy ||
+        // compressor === KeyValueCompressor.Brotli ||
+        compressor === KeyValueCompressor.PhpgzCompress
       ) {
         expected = null
       }

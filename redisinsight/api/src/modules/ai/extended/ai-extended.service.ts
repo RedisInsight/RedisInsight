@@ -4,10 +4,7 @@ import { Socket } from 'socket.io-client';
 import { Injectable, Logger } from '@nestjs/common';
 import { ClientContext, SessionMetadata } from 'src/common/models';
 import { DatabaseClientFactory } from 'src/modules/database/providers/database.client.factory';
-import {
-  getFullDbContext,
-  getIndexContext,
-} from 'src/modules/ai/query/utils/context.util';
+import { getFullDbContext } from 'src/modules/ai/query/utils/context.util';
 import { Response } from 'express';
 import { classToClass, Config } from 'src/utils';
 import { plainToInstance } from 'class-transformer';
@@ -26,6 +23,7 @@ import {
 } from 'src/modules/ai/extended/models';
 import { SendAiExtendedMessageDto } from 'src/modules/ai/extended/dto/send.ai-extended.message.dto';
 import { wrapAiExtendedError } from 'src/modules/ai/extended/exceptions';
+import { RedisClient } from 'src/modules/redis/client';
 
 const aiConfig = config.get('ai') as Config['ai'];
 
@@ -113,31 +111,41 @@ export class AiExtendedService {
 
   async stream(
     sessionMetadata: SessionMetadata,
-    databaseId: string,
+    targetId: string,
     dto: SendAiExtendedMessageDto,
     res: Response,
   ) {
     let socket: Socket;
 
     try {
-      const history = await this.aiExtendedMessageRepository.list(databaseId);
+      const history = await this.aiExtendedMessageRepository.list(targetId);
       const conversationId = AiExtendedService.getConversationId(history);
 
-      const client = await this.databaseClientFactory.getOrCreateClient({
-        sessionMetadata,
-        databaseId,
-        context: ClientContext.AI,
-      });
+      let client: RedisClient;
+
+      if (dto.type !== DataSocketEvents.RdiStream) {
+        client = await this.databaseClientFactory.getOrCreateClient({
+          sessionMetadata,
+          databaseId: targetId,
+          context: ClientContext.AI,
+        });
+      } else {
+        // TODO - 16.07.25 - What would provide context for RDI?
+        // client = await this.databaseClientFactory.getOrCreateClient({
+        //   sessionMetadata,
+        //   databaseId: targetId,
+        // });
+      }
 
       let context = await this.aiExtendedContextRepository.getFullDbContext(
         sessionMetadata,
-        databaseId,
+        targetId,
       );
 
-      if (!context) {
+      if (!context && dto.type !== DataSocketEvents.RdiStream) {
         context = await this.aiExtendedContextRepository.setFullDbContext(
           sessionMetadata,
-          databaseId,
+          targetId,
           await getFullDbContext(client),
         );
       }
@@ -145,7 +153,7 @@ export class AiExtendedService {
       const question = classToClass(AiExtendedMessage, {
         type: dto.type,
         content: dto.content,
-        databaseId,
+        databaseId: targetId,
         conversationId,
         createdAt: new Date(),
       });
@@ -153,7 +161,7 @@ export class AiExtendedService {
       const answer = classToClass(AiExtendedMessage, {
         type: AiExtendedMessageType.AiMessage,
         content: '',
-        databaseId,
+        databaseId: targetId,
         conversationId,
       });
 
@@ -163,40 +171,9 @@ export class AiExtendedService {
 
       socket.on(DataSocketEvents.RdiReply, this.defaultListener(answer, res));
 
-      socket.on(AiExtendedWsEvents.GET_INDEX, async (index, cb) => {
-        try {
-          const indexContext =
-            await this.aiExtendedContextRepository.getIndexContext(
-              sessionMetadata,
-              databaseId,
-              index,
-            );
-
-          if (!indexContext) {
-            return cb(
-              await this.aiExtendedContextRepository.setIndexContext(
-                sessionMetadata,
-                databaseId,
-                index,
-                await getIndexContext(client, index),
-              ),
-            );
-          }
-
-          return cb(indexContext);
-        } catch (e) {
-          this.logger.warn(
-            'Unable to create index context',
-            e,
-            sessionMetadata,
-          );
-          return cb(e.message);
-        }
-      });
-
       socket.on(AiExtendedWsEvents.RUN_QUERY, async (data, cb) => {
         try {
-          if (!COMMANDS_WHITELIST[(data?.[0] || '').toLowerCase()]) {
+          if (!COMMANDS_WHITELIST[(data?.[0] || '').toLowerCase()] || !client) {
             return cb('-ERR: This command is not allowed');
           }
 

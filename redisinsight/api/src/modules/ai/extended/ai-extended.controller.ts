@@ -40,11 +40,11 @@ export class AiExtendedController {
   })
   async streamQuestion(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-    @Param('id') databaseId: string,
+    @Param('id') targetId: string,
     @Body() dto: SendAiExtendedMessageDto,
     @Res() res: Response,
   ) {
-    await this.service.stream(sessionMetadata, databaseId, dto, res);
+    await this.service.stream(sessionMetadata, targetId, dto, res);
   }
 
   @Get()
@@ -55,10 +55,10 @@ export class AiExtendedController {
   })
   async getHistory(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-    @Param('id') databaseId: string,
+    @Param('id') targetId: string,
   ) {
     this.logger.debug('getHistory');
-    return this.service.getHistory(sessionMetadata, databaseId);
+    return this.service.getHistory(sessionMetadata, targetId);
   }
 
   @Delete()
@@ -69,8 +69,8 @@ export class AiExtendedController {
   })
   async clearHistory(
     @RequestSessionMetadata() sessionMetadata: SessionMetadata,
-    @Param('id') databaseId: string,
+    @Param('id') targetId: string,
   ) {
-    return this.service.clearHistory(sessionMetadata, databaseId);
+    return this.service.clearHistory(sessionMetadata, targetId);
   }
 }

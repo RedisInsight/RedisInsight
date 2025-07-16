@@ -164,6 +164,32 @@ export class APIKeyRequests {
         }
     }
 
+    async addJsonKeyApi(
+        keyParameters: { keyName: string; value: any; expire?: number },
+        databaseParameters: AddNewDatabaseParameters,
+    ): Promise<void> {
+        const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(
+            databaseParameters.databaseName,
+        )
+        const requestBody: any = {
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            data: JSON.stringify(keyParameters.value),
+        }
+
+        if (keyParameters.expire) {
+            requestBody.expire = keyParameters.expire
+        }
+
+        const response = await this.apiClient.post(
+            `/databases/${databaseId}/rejson-rl?encoding=buffer`,
+            requestBody,
+        )
+
+        if (response.status !== 201) {
+            throw new Error('The creation of new JSON key request failed')
+        }
+    }
+
     async searchKeyByNameApi(
         keyName: string,
         databaseName: string,

@@ -290,7 +290,7 @@ test.describe('Browser - Read Key Details', () => {
         expect(isDetailsClosed).toBe(true)
     })
 
-    test.only('should open key details when clicking on zset key', async ({
+    test('should open key details when clicking on zset key', async ({
         api: { keyService },
     }) => {
         const zsetMembers = [
@@ -349,6 +349,81 @@ test.describe('Browser - Read Key Details', () => {
             const actualTTL = parseInt(ttlMatch[1], 10)
             // TTL should be close to what we set (allowing for some time passage during test execution)
             expect(actualTTL).toBeGreaterThan(keyTTL - 60)
+            expect(actualTTL).toBeLessThanOrEqual(keyTTL)
+        }
+
+        // Close the details
+        await browserPage.closeKeyDetails()
+
+        // Verify details are closed
+        const isDetailsClosed = await browserPage.isKeyDetailsClosed()
+        expect(isDetailsClosed).toBe(true)
+    })
+
+    test('should open key details when clicking on json key', async ({
+        api: { keyService },
+    }) => {
+        const jsonValue = {
+            name: faker.person.fullName(),
+            age: faker.number.int({ min: 18, max: 80 }),
+            active: true,
+            hobbies: [faker.lorem.word(), faker.lorem.word()],
+            address: {
+                street: faker.location.streetAddress(),
+                city: faker.location.city(),
+            },
+        }
+        const keyTTL = 1800 // 30 minutes
+
+        // Create a JSON key with TTL using API
+        await keyService.addJsonKeyApi(
+            { keyName, value: jsonValue, expire: keyTTL },
+            ossStandaloneConfig,
+        )
+
+        // Search for the key to ensure it's visible
+        await browserPage.searchByKeyName(keyName)
+
+        // Click on the key to open details
+        await browserPage.openKeyDetailsByKeyName(keyName)
+
+        // Verify key details panel is open
+        const isDetailsOpen = await browserPage.isKeyDetailsOpen(keyName)
+        expect(isDetailsOpen).toBe(true)
+
+        // Verify the JSON content is displayed
+        const displayedValue = await browserPage.getJsonKeyValue()
+
+        // Check for properties that should be visible in the top-level JSON view
+        expect(displayedValue).toContain(jsonValue.name)
+        expect(displayedValue).toContain(jsonValue.age.toString())
+        expect(displayedValue).toContain(jsonValue.active.toString())
+
+        // For nested objects and arrays, they might be collapsed and show as {...} or [...]
+        // So we just verify the JSON structure is present
+        expect(displayedValue).toContain('name')
+        expect(displayedValue).toContain('age')
+        expect(displayedValue).toContain('active')
+        expect(displayedValue).toContain('hobbies')
+        expect(displayedValue).toContain('address')
+
+        // Verify the key length shows correct number of elements
+        const keyLength = await browserPage.getKeyLength()
+        expect(keyLength).toBe(Object.keys(jsonValue).length.toString())
+
+        // Verify the key size (bytes) is displayed correctly
+        const keySizeText = await browserPage.keySizeDetails.textContent()
+        expect(keySizeText).toBeTruthy()
+
+        // Verify the TTL is displayed
+        const displayedTTL = await browserPage.getKeyTTL()
+        expect(displayedTTL).toContain('TTL:')
+
+        // Extract the numeric part of TTL and verify it's close to expected value
+        const ttlMatch = displayedTTL?.match(/TTL:\s*(\d+)/)
+        if (ttlMatch) {
+            const actualTTL = parseInt(ttlMatch[1], 10)
+            expect(actualTTL).toBeGreaterThan(keyTTL - 60) // Allow 60 seconds margin
             expect(actualTTL).toBeLessThanOrEqual(keyTTL)
         }
 

@@ -243,7 +243,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **rejsonRlControllerRemove**
-> rejsonRlControllerRemove(removeRejsonRlDto)
+> RemoveRejsonRlResponse rejsonRlControllerRemove(removeRejsonRlDto)
 
 Removes path in the REJSON-RL
 
@@ -281,7 +281,7 @@ const { status, data } = await apiInstance.rejsonRlControllerRemove(
 
 ### Return type
 
-void (empty response body)
+**RemoveRejsonRlResponse**
 
 ### Authorization
 
@@ -290,13 +290,13 @@ No authorization required
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: Not defined
+ - **Accept**: application/json
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**200** |  |  -  |
+|**200** | Ok |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

@@ -33,6 +33,8 @@ import type { ModifyRejsonRlArrAppendDto } from '../models';
 import type { ModifyRejsonRlSetDto } from '../models';
 // @ts-ignore
 import type { RemoveRejsonRlDto } from '../models';
+// @ts-ignore
+import type { RemoveRejsonRlResponse } from '../models';
 /**
  * BrowserREJSONRLApi - axios parameter creator
  * @export
@@ -348,7 +350,7 @@ export const BrowserREJSONRLApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async rejsonRlControllerRemove(dbInstance: string, removeRejsonRlDto: RemoveRejsonRlDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async rejsonRlControllerRemove(dbInstance: string, removeRejsonRlDto: RemoveRejsonRlDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RemoveRejsonRlResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.rejsonRlControllerRemove(dbInstance, removeRejsonRlDto, riDbIndex, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BrowserREJSONRLApi.rejsonRlControllerRemove']?.[localVarOperationServerIndex]?.url;
@@ -421,7 +423,7 @@ export const BrowserREJSONRLApiFactory = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        rejsonRlControllerRemove(dbInstance: string, removeRejsonRlDto: RemoveRejsonRlDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        rejsonRlControllerRemove(dbInstance: string, removeRejsonRlDto: RemoveRejsonRlDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<RemoveRejsonRlResponse> {
             return localVarFp.rejsonRlControllerRemove(dbInstance, removeRejsonRlDto, riDbIndex, options).then((request) => request(axios, basePath));
         },
     };

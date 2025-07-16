@@ -191,6 +191,7 @@ export * from './redis-database-stats-dto';
 export * from './redis-enterprise-database';
 export * from './redis-node-info-response';
 export * from './remove-rejson-rl-dto';
+export * from './remove-rejson-rl-response';
 export * from './rename-key-dto';
 export * from './rename-key-dto-new-key-name';
 export * from './rename-key-response';

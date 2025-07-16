@@ -273,6 +273,7 @@ docs/RedisEnterpriseDatabase.md
 docs/RedisNodeInfoResponse.md
 docs/RedisOSSSentinelApi.md
 docs/RemoveRejsonRlDto.md
+docs/RemoveRejsonRlResponse.md
 docs/RenameKeyDto.md
 docs/RenameKeyDtoNewKeyName.md
 docs/RenameKeyResponse.md
@@ -528,6 +529,7 @@ models/redis-database-stats-dto.ts
 models/redis-enterprise-database.ts
 models/redis-node-info-response.ts
 models/remove-rejson-rl-dto.ts
+models/remove-rejson-rl-response.ts
 models/rename-key-dto-new-key-name.ts
 models/rename-key-dto.ts
 models/rename-key-response.ts

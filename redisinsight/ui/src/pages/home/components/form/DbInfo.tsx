@@ -14,8 +14,7 @@ import {
   Group as ListGroup,
   Item as ListGroupItem,
 } from 'uiSrc/components/base/layout/list'
-import { AdditionalRedisModule } from 'uiSrc/api-client'
-import { Endpoint } from 'apiSrc/common/models'
+import { Endpoint, AdditionalRedisModule } from 'uiSrc/api-client'
 
 import styles from '../styles.module.scss'
 

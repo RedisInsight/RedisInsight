@@ -484,7 +484,9 @@ export class BrowserPage extends BasePage {
         this.hashFieldNameInput = page.getByTestId('field-name')
         this.hashFieldValueEditor = page.getByTestId('hash_value-editor')
         this.hashTtlFieldInput = page.getByTestId('hash-ttl')
-        this.listKeyElementEditorInput = page.getByTestId('list_value-editor-')
+        this.listKeyElementEditorInput = page.locator(
+            '[data-testid^="list_value-editor-"]',
+        )
         this.stringKeyValueInput = page.getByTestId('string-value')
         this.jsonKeyValueInput = page.locator('div[data-mode-id=json] textarea')
         this.jsonUploadInput = page.getByTestId('upload-input-file')
@@ -1025,8 +1027,8 @@ export class BrowserPage extends BasePage {
     }
 
     async editListKeyValue(value: string): Promise<void> {
-        await this.listElementsList.hover()
-        await this.editListButton.click()
+        await this.listElementsList.first().hover()
+        await this.editListButton.first().click()
         await this.listKeyElementEditorInput.fill(value, {
             timeout: 0,
             noWaitAfter: false,
@@ -1396,6 +1398,9 @@ export class BrowserPage extends BasePage {
     }
 
     async getAllListElements(): Promise<string[]> {
+        // Wait for list details to be visible first
+        await expect(this.page.getByTestId('list-details')).toBeVisible()
+
         // Get all list elements' text content
         const elements = await this.listElementsList.all()
         const values: string[] = []
@@ -1796,8 +1801,21 @@ export class BrowserPage extends BasePage {
     async removeKeyTTL(): Promise<void> {
         await this.editKeyTTLButton.click()
         await this.editKeyTTLInput.clear()
+        await this.editKeyTTLInput.fill('') // Explicitly set to empty string
         // Don't fill anything - empty field means persistent (-1)
         await this.applyButton.click()
+
+        // Wait for the TTL to become persistent using the existing helper
+        await expect
+            .poll(async () => {
+                try {
+                    await this.verifyTTLIsPersistent()
+                    return true
+                } catch {
+                    return false
+                }
+            })
+            .toBe(true)
     }
 
     async waitForTTLToUpdate(expectedMinValue: number): Promise<void> {
@@ -1835,5 +1853,111 @@ export class BrowserPage extends BasePage {
         const displayedTTL = await this.getKeyTTL()
         expect(displayedTTL).toContain('TTL:')
         expect(displayedTTL).not.toContain('No limit')
+    }
+
+    // Helper methods for list operations
+    async editListElementValue(newValue: string): Promise<void> {
+        await this.listElementsList.first().hover()
+        await this.editListButton.first().click()
+
+        // Wait for the editor to appear and be ready
+        await expect(this.listKeyElementEditorInput).toBeVisible()
+        await this.listKeyElementEditorInput.fill(newValue, {
+            timeout: 0,
+            noWaitAfter: false,
+        })
+        await this.applyButton.click()
+
+        // Wait for the editor to close and changes to be applied
+        await expect(this.listKeyElementEditorInput).not.toBeVisible()
+
+        // Wait for the new value to appear in the first list element
+        await expect(this.listElementsList.first()).toContainText(newValue)
+    }
+
+    async cancelListElementEdit(newValue: string): Promise<void> {
+        await this.listElementsList.first().hover()
+        await this.editListButton.first().click()
+
+        // Wait for the editor to appear and be ready
+        await expect(this.listKeyElementEditorInput).toBeVisible()
+        await this.listKeyElementEditorInput.fill(newValue, {
+            timeout: 0,
+            noWaitAfter: false,
+        })
+
+        // Cancel using Escape key
+        await this.page.keyboard.press('Escape')
+
+        // Wait for the editor to close
+        await expect(this.listKeyElementEditorInput).not.toBeVisible()
+    }
+
+    async addElementsToList(
+        elements: string[],
+        position: AddElementInList = AddElementInList.Tail,
+    ): Promise<void> {
+        if (await this.toast.isCloseButtonVisible()) {
+            await this.toast.closeToast()
+        }
+        await this.addKeyValueItemsButton.click()
+
+        if (position === AddElementInList.Head) {
+            await this.removeElementFromListSelect.click()
+            await this.removeFromHeadSelection.click()
+            await expect(this.removeFromHeadSelection).not.toBeVisible()
+        }
+
+        for (let i = 0; i < elements.length; i += 1) {
+            await this.getListElementInput(i).click()
+            await this.getListElementInput(i).fill(elements[i])
+            if (elements.length > 1 && i < elements.length - 1) {
+                await this.addAdditionalElement.click()
+            }
+        }
+        await this.saveElementButton.click()
+    }
+
+    async removeListElementsFromTail(count: number): Promise<void> {
+        await this.removeElementFromListIconButton.click()
+        await this.countInput.fill(count.toString())
+        await this.removeElementFromListButton.click()
+        await this.confirmRemoveListElementButton.click()
+    }
+
+    async removeListElementsFromHead(count: number): Promise<void> {
+        await this.removeElementFromListIconButton.click()
+        await this.countInput.fill(count.toString())
+        await this.removeElementFromListSelect.click()
+        await this.removeFromHeadSelection.click()
+        await this.removeElementFromListButton.click()
+        await this.confirmRemoveListElementButton.click()
+    }
+
+    async verifyListContainsElements(
+        expectedElements: string[],
+    ): Promise<void> {
+        const displayedElements = await this.getAllListElements()
+        expectedElements.forEach((expectedElement) => {
+            expect(displayedElements).toContain(expectedElement)
+        })
+    }
+
+    async verifyListDoesNotContainElements(
+        unwantedElements: string[],
+    ): Promise<void> {
+        const displayedElements = await this.getAllListElements()
+        unwantedElements.forEach((unwantedElement) => {
+            expect(displayedElements).not.toContain(unwantedElement)
+        })
+    }
+
+    async waitForListLengthToUpdate(expectedLength: number): Promise<void> {
+        await expect
+            .poll(async () => {
+                const keyLength = await this.getKeyLength()
+                return parseInt(keyLength, 10)
+            })
+            .toBe(expectedLength)
     }
 }

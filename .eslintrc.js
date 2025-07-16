@@ -10,7 +10,6 @@ module.exports = {
   plugins: ['@typescript-eslint'],
   parser: '@typescript-eslint/parser',
   rules: {
-    semi: ['error', 'always'],
     quotes: [2, 'single', { avoidEscape: true }],
     'max-len': [
       'error',
@@ -23,7 +22,6 @@ module.exports = {
     ],
     'class-methods-use-this': 'off',
     'import/no-extraneous-dependencies': 'off', // temporary disabled
-    '@typescript-eslint/semi': ['error', 'never'],
     'object-curly-newline': 'off',
     'import/prefer-default-export': 'off',
     '@typescript-eslint/comma-dangle': 'off',
@@ -69,7 +67,11 @@ module.exports = {
         node: true,
         browser: false,
       },
-      extends: ['airbnb-typescript/base', 'plugin:sonarjs/recommended', 'prettier'],
+      extends: [
+        'airbnb-typescript/base',
+        'plugin:sonarjs/recommended',
+        'prettier',
+      ],
       plugins: ['@typescript-eslint', 'sonarjs'],
       rules: {
         'max-len': ['warn', 120],
@@ -94,7 +96,10 @@ module.exports = {
     },
     // Backend test files
     {
-      files: ['redisinsight/api/**/*.spec.ts', 'redisinsight/api/**/__mocks__/**/*'],
+      files: [
+        'redisinsight/api/**/*.spec.ts',
+        'redisinsight/api/**/__mocks__/**/*',
+      ],
       rules: {
         'sonarjs/no-duplicate-string': 0,
         'sonarjs/no-identical-functions': 0,
@@ -103,7 +108,12 @@ module.exports = {
     },
     // Frontend/UI specific rules
     {
-      files: ['redisinsight/ui/**/*.ts', 'redisinsight/ui/**/*.tsx', 'redisinsight/ui/**/*.js', 'redisinsight/ui/**/*.jsx'],
+      files: [
+        'redisinsight/ui/**/*.ts',
+        'redisinsight/ui/**/*.tsx',
+        'redisinsight/ui/**/*.js',
+        'redisinsight/ui/**/*.jsx',
+      ],
       env: {
         browser: true,
         node: false,
@@ -123,7 +133,6 @@ module.exports = {
       },
       rules: {
         radix: 'off',
-        semi: ['error', 'always'],
         'no-bitwise': ['error', { allow: ['|'] }],
         'max-len': [
           'error',
@@ -156,7 +165,6 @@ module.exports = {
         '@typescript-eslint/comma-dangle': 'off',
         '@typescript-eslint/no-shadow': 'off',
         '@typescript-eslint/no-unused-expressions': 'off',
-        '@typescript-eslint/semi': ['error', 'never'],
         '@typescript-eslint/no-use-before-define': 'off',
         'implicit-arrow-linebreak': 'off',
         'object-curly-newline': 'off',
@@ -222,6 +230,14 @@ module.exports = {
         '@typescript-eslint/semi': 'off',
       },
     },
+    // Temporary disable some rules for API
+    {
+      files: ['redisinsight/api/**/*.ts'],
+      rules: {
+        semi: 'off',
+        '@typescript-eslint/semi': 'off',
+      },
+    },
   ],
   parserOptions: {
     project: './tsconfig.json',
@@ -235,5 +251,6 @@ module.exports = {
     'release',
     'redisinsight/ui/src/packages/**/icons/*.js',
     'redisinsight/api/report/**',
+    'redisinsight/api/migration/**',
   ],
 };

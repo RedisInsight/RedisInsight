@@ -8,20 +8,20 @@ export class InMemoryAiRdiContextRepository extends AiRdiContextRepository {
   private chats: Record<string, { index: Record<string, object>; db: object }> =
     {};
 
-  static getChatId(databaseId: string, accountId?: string) {
-    return `${databaseId}_${accountId}`;
+  static getChatId(targetId: string, accountId?: string) {
+    return `${targetId}_${accountId}`;
   }
 
   /**
    * @inheritdoc
    */
-  async getFullDbContext(
+  async getFullContext(
     _sessionMetadata: SessionMetadata,
-    databaseId: string,
+    targetId: string,
     accountId?: string,
   ): Promise<object> {
     const chatId = InMemoryAiRdiContextRepository.getChatId(
-      databaseId,
+      targetId,
       accountId,
     );
 
@@ -31,14 +31,14 @@ export class InMemoryAiRdiContextRepository extends AiRdiContextRepository {
   /**
    * @inheritdoc
    */
-  async setFullDbContext(
+  async setFullContext(
     _sessionMetadata: SessionMetadata,
-    databaseId: string,
+    targetId: string,
     context: object,
     accountId?: string,
   ): Promise<object> {
     const chatId = InMemoryAiRdiContextRepository.getChatId(
-      databaseId,
+      targetId,
       accountId,
     );
 
@@ -50,50 +50,13 @@ export class InMemoryAiRdiContextRepository extends AiRdiContextRepository {
   /**
    * @inheritdoc
    */
-  async getIndexContext(
-    _sessionMetadata: SessionMetadata,
-    databaseId: string,
-    index: string,
-    accountId?: string,
-  ): Promise<object> {
-    const chatId = InMemoryAiRdiContextRepository.getChatId(
-      databaseId,
-      accountId,
-    );
-
-    return get(this.chats, [chatId, 'index', index], null);
-  }
-
-  /**
-   * @inheritdoc
-   */
-  async setIndexContext(
-    _sessionMetadata: SessionMetadata,
-    databaseId: string,
-    index: string,
-    context: object,
-    accountId?: string,
-  ): Promise<object> {
-    const chatId = InMemoryAiRdiContextRepository.getChatId(
-      databaseId,
-      accountId,
-    );
-
-    set(this.chats, [chatId, 'index', index], context);
-
-    return context;
-  }
-
-  /**
-   * @inheritdoc
-   */
   async reset(
     _sessionMetadata: SessionMetadata,
-    databaseId: string,
+    targetId: string,
     accountId?: string,
   ): Promise<void> {
     const chatId = InMemoryAiRdiContextRepository.getChatId(
-      databaseId,
+      targetId,
       accountId,
     );
 

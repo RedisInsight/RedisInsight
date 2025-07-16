@@ -54,6 +54,7 @@ module.exports = {
     '/node_modules/',
     '<rootDir>/redisinsight/api',
     '<rootDir>/redisinsight/ui/src/packages',
+    '<rootDir>/redisinsight/ui/src/api-client',
   ],
   resolver: '<rootDir>/jest-resolver.js',
   reporters: [

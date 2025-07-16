@@ -526,7 +526,7 @@ export class BrowserPage extends BasePage {
             .locator('span')
         this.hashField = page.getByTestId('hash-field-').first()
         this.hashFieldValue = page.getByTestId('hash_content-value-')
-        this.setMembersList = page.getByTestId('set-member-value-')
+        this.setMembersList = page.locator('[data-testid^="set-member-value-"]')
         this.zsetMembersList = page.getByTestId('zset-member-value-')
         this.zsetScoresList = page.getByTestId('zset_content-value-')
         this.listElementsList = page.locator(
@@ -1386,6 +1386,21 @@ export class BrowserPage extends BasePage {
     async getAllListElements(): Promise<string[]> {
         // Get all list elements' text content
         const elements = await this.listElementsList.all()
+        const values: string[] = []
+
+        for (let i = 0; i < elements.length; i += 1) {
+            const text = await elements[i].textContent()
+            if (text && text.trim()) {
+                values.push(text.trim())
+            }
+        }
+
+        return values
+    }
+
+    async getAllSetMembers(): Promise<string[]> {
+        // Get all set members' text content
+        const elements = await this.setMembersList.all()
         const values: string[] = []
 
         for (let i = 0; i < elements.length; i += 1) {

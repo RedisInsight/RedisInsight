@@ -36,7 +36,6 @@ import ShortInstanceInfo from 'uiSrc/components/instance-header/components/Short
 import { resetKeyInfo } from 'uiSrc/slices/browser/keys'
 
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import { getConfig } from 'uiSrc/config'
 import { appReturnUrlSelector } from 'uiSrc/slices/app/url-handling'
 import UserProfile from 'uiSrc/components/instance-header/components/user-profile/UserProfile'
@@ -69,14 +68,8 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
   const { databases = 0 } = useSelector(connectedInstanceInfoSelector)
   const returnUrl = useSelector(appReturnUrlSelector)
   const {
-    [FeatureFlags.databaseChat]: databaseChatFeature,
-    [FeatureFlags.documentationChat]: documentationChatFeature,
     [FeatureFlags.envDependent]: envDependentFeature,
   } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([
-    databaseChatFeature,
-    documentationChatFeature,
-  ])
 
   const history = useHistory()
   const [dbIndex, setDbIndex] = useState<string>(String(db || 0))
@@ -306,11 +299,9 @@ const InstanceHeader = ({ onChangeDbIndex }: Props) => {
 
         <FlexItem>
           <Row align="center" justify="end">
-            {isAnyChatAvailable && (
-              <FlexItem style={{ marginLeft: 12 }}>
-                <CopilotTrigger />
-              </FlexItem>
-            )}
+            <FlexItem style={{ marginLeft: 12 }}>
+              <CopilotTrigger />
+            </FlexItem>
 
             <FlexItem style={{ marginLeft: 12 }}>
               <InsightsTrigger />

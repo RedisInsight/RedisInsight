@@ -11,10 +11,12 @@ export const getStreamedAnswer = async (
     onMessage,
     onFinish,
     onError,
+    isRdiStream = false,
   }: {
     onMessage?: (message: string) => void
     onFinish?: () => void
     onError?: (error: unknown) => void
+    isRdiStream?: boolean
   },
 ) => {
   try {
@@ -23,6 +25,11 @@ export const getStreamedAnswer = async (
       controller.abort()
     }, TIMEOUT_FOR_MESSAGE_REQUEST)
 
+    const body: { content: string; type?: string } = { content: message }
+    if (isRdiStream) {
+      body.type = 'rdi_stream'
+    }
+
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -30,7 +37,7 @@ export const getStreamedAnswer = async (
         Accept: 'text/event-stream',
         [CustomHeaders.WindowId]: window.windowId || '',
       },
-      body: JSON.stringify({ content: message }),
+      body: JSON.stringify(body),
       signal: controller.signal,
     })
 

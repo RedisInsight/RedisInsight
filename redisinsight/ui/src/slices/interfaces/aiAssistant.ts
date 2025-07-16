@@ -1,6 +1,8 @@
 export enum AiChatType {
   Assistance = 'document',
   Query = 'database',
+  RdiHelper = 'rdi',
+  DataGenerator = 'data-generator',
 }
 
 export enum AiChatMessageType {
@@ -33,6 +35,16 @@ export interface StateAiAssistant {
     messages: Array<AiChatMessage>
   }
   expert: {
+    loading: boolean
+    agreements: string[]
+    messages: Array<AiChatMessage>
+  }
+  rdiHelper: {
+    loading: boolean
+    agreements: string[]
+    messages: Array<AiChatMessage>
+  }
+  dataGenerator: {
     loading: boolean
     agreements: string[]
     messages: Array<AiChatMessage>

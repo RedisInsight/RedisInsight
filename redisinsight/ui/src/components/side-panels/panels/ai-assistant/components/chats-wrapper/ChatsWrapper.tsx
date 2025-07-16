@@ -1,48 +1,63 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { EuiTab, EuiTabs } from '@elastic/eui'
 
 import { useDispatch, useSelector } from 'react-redux'
+import { useLocation } from 'react-router-dom'
 import cx from 'classnames'
-import { filter } from 'lodash'
 import { aiChatSelector, setSelectedTab } from 'uiSrc/slices/panels/aiAssistant'
 import { AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
-
-import { FeatureFlags } from 'uiSrc/constants'
-import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { Maybe } from 'uiSrc/utils'
+import { isRdiPipelineConfigPage, Maybe } from 'uiSrc/utils'
 import { FeatureFlagComponent } from 'uiSrc/slices/interfaces'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
+import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import { FeatureFlags } from 'uiSrc/constants'
 import AssistanceChat from '../assistance-chat'
 import ExpertChat from '../expert-chat'
-
+import RdiHelperChat from '../rdi-helper-chat'
+import DataGeneratorChat from '../data-generator-chat'
 import styles from './styles.module.scss'
 
-interface ChatWithTabs {
-  feature: Maybe<FeatureFlagComponent>
-  tab: AiChatType
-}
 
 const ChatsWrapper = () => {
   const { activeTab } = useSelector(aiChatSelector)
-  const {
-    [FeatureFlags.documentationChat]: documentationChatFeature,
-    [FeatureFlags.databaseChat]: databaseChatFeature,
-  } = useSelector(appFeatureFlagsFeaturesSelector)
 
-  const chats = filter<ChatWithTabs>(
-    [
-      {
-        feature: documentationChatFeature,
-        tab: AiChatType.Assistance,
-      },
-      {
-        feature: databaseChatFeature,
-        tab: AiChatType.Query,
-      },
-    ],
-    ({ feature }) => !!feature?.flag,
-  )
+  const documentationChatFeature = {
+    name: 'documentationChatFeature',
+    flag: true,
+  }
+
+  const databaseChatFeature = {
+    name: 'databaseChatFeature',
+    flag: true,
+  }
+
+  const location = useLocation()
+  const [initialRDIRedirect, setInitialRDIRedirect] = useState(false)
+
+  // Check if we're on the RDI pipeline config page
+  const isOnRdiPipelineConfig = isRdiPipelineConfigPage(location.pathname)
+
+  const chats = [
+    ...(isOnRdiPipelineConfig
+      ? [
+          {
+            tab: AiChatType.RdiHelper,
+          },
+        ]
+      : []),
+    {
+      tab: AiChatType.DataGenerator,
+    },
+    {
+      feature: documentationChatFeature,
+      tab: AiChatType.Assistance,
+    },
+    {
+      feature: databaseChatFeature,
+      tab: AiChatType.Query,
+    },
+  ]
 
   const dispatch = useDispatch()
 
@@ -50,20 +65,21 @@ const ChatsWrapper = () => {
     if (!chats.length) return
 
     if (
-      (activeTab === AiChatType.Assistance &&
-        !documentationChatFeature?.flag) ||
-      (activeTab === AiChatType.Query && !databaseChatFeature?.flag)
+      isOnRdiPipelineConfig &&
+      activeTab !== AiChatType.RdiHelper &&
+      !initialRDIRedirect
     ) {
-      dispatch(setSelectedTab(chats[0].tab))
+      setInitialRDIRedirect(true)
+      dispatch(setSelectedTab(AiChatType.RdiHelper))
     }
 
-    sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_OPENED,
-      eventData: {
-        chat: activeTab,
-      },
-    })
-  }, [databaseChatFeature, databaseChatFeature, activeTab])
+    if (
+      !isOnRdiPipelineConfig &&
+      activeTab !== AiChatType.DataGenerator
+    ) {
+      dispatch(setSelectedTab(AiChatType.DataGenerator))
+    }
+  }, [databaseChatFeature, databaseChatFeature, activeTab, initialRDIRedirect])
 
   const selectTab = (tab: AiChatType) => {
     dispatch(setSelectedTab(tab))
@@ -73,35 +89,51 @@ const ChatsWrapper = () => {
     <div className={styles.wrapper} data-testid="chat-wrapper">
       {chats.length > 1 && (
         <div className={styles.tabsWrapper}>
-          <EuiTabs className={cx('tabs-active-borders', styles.tabs)}>
-            {documentationChatFeature?.flag && (
+          <EuiTabs className={cx('tabs-active-borders', styles.tabs)}>           
+            {isOnRdiPipelineConfig ? (
               <EuiTab
-                isSelected={activeTab === AiChatType.Assistance}
-                onClick={() => selectTab(AiChatType.Assistance)}
-                data-testid="ai-general-chat_tab"
+                isSelected={activeTab === AiChatType.RdiHelper}
+                onClick={() => selectTab(AiChatType.RdiHelper)}
+                data-testid="ai-rdi-helper-chat_tab"
               >
-                General
+                RDI Helper
+              </EuiTab>
+            ) : (
+              <EuiTab
+                  isSelected={activeTab === AiChatType.DataGenerator}
+                  onClick={() => selectTab(AiChatType.DataGenerator)}
+                  data-testid="ai-data-generator-chat_tab"
+                >
+                  Data Generator
               </EuiTab>
             )}
-            {databaseChatFeature?.flag && (
-              <EuiTab
-                isSelected={activeTab === AiChatType.Query}
-                onClick={() => selectTab(AiChatType.Query)}
-                data-testid="ai-database-chat_tab"
-              >
-                My Data
-              </EuiTab>
-            )}
+            {/* {documentationChatFeature?.flag && ( */}
+            {/*  <EuiTab */}
+            {/*    isSelected={activeTab === AiChatType.Assistance} */}
+            {/*    onClick={() => selectTab(AiChatType.Assistance)} */}
+            {/*    data-testid="ai-general-chat_tab" */}
+            {/*  > */}
+            {/*    General */}
+            {/*  </EuiTab> */}
+            {/* )} */}
+            {/* {databaseChatFeature?.flag && ( */}
+            {/*  <EuiTab */}
+            {/*    isSelected={activeTab === AiChatType.Query} */}
+            {/*    onClick={() => selectTab(AiChatType.Query)} */}
+            {/*    data-testid="ai-database-chat_tab" */}
+            {/*  > */}
+            {/*    My Data */}
+            {/*  </EuiTab> */}
+            {/* )} */}
           </EuiTabs>
         </div>
       )}
       {chats.length > 0 && (
         <div className={styles.chat}>
-          {activeTab === AiChatType.Assistance &&
-            documentationChatFeature?.flag && <AssistanceChat />}
-          {activeTab === AiChatType.Query && databaseChatFeature?.flag && (
-            <ExpertChat />
-          )}
+          {activeTab === AiChatType.Assistance && <AssistanceChat />}
+          {activeTab === AiChatType.Query && <ExpertChat />}
+          {activeTab === AiChatType.RdiHelper && <RdiHelperChat />}
+          {activeTab === AiChatType.DataGenerator && <DataGeneratorChat />}
         </div>
       )}
     </div>

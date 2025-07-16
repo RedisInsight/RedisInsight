@@ -24,6 +24,7 @@ import { CloudSessionEntity } from 'src/modules/cloud/session/entities/cloud.ses
 import { DatabaseSettingsEntity } from 'src/modules/database-settings/entities/database-setting.entity';
 import { TagEntity } from 'src/modules/tag/entities/tag.entity';
 import { AiExtendedMessageEntity } from 'src/modules/ai/extended/entities/ai-extended.message.entity';
+import { AiDataGeneratorMessageEntity } from 'src/modules/ai/data-generator/entities/ai-data-generator.message.entity';
 import migrations from '../migration';
 import * as config from '../src/utils/config';
 
@@ -59,6 +60,7 @@ const ormConfig = {
     DatabaseSettingsEntity,
     TagEntity,
     AiExtendedMessageEntity,
+    AiDataGeneratorMessageEntity,
   ],
   migrations,
 };

@@ -54,6 +54,7 @@ import { KeyNameFormatAdded1742303245547 } from './1742303245547-key-name-format
 import { CascadeTags1743432519891 } from './1743432519891-cascade-tags';
 import { EncryptTags1743606395647 } from './1743606395647-encrypt-tags';
 import { AiExtended1752489082051 } from './1752489082051-ai-extended';
+import { AiDataGenerator1752573370000 } from './1752573370000-ai-data-generator';
 
 export default [
   initialMigration1614164490968,
@@ -112,4 +113,5 @@ export default [
   CascadeTags1743432519891,
   EncryptTags1743606395647,
   AiExtended1752489082051,
+  AiDataGenerator1752573370000,
 ];

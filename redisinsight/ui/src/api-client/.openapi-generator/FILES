@@ -307,6 +307,9 @@ docs/SlowLogsApi.md
 docs/SshOptions.md
 docs/SshOptionsResponse.md
 docs/StreamEntryDto.md
+docs/StreamEntryFieldDto.md
+docs/StreamEntryFieldDtoName.md
+docs/StreamEntryFieldDtoValue.md
 docs/SumGroup.md
 docs/TAGSApi.md
 docs/TLSCertificatesApi.md
@@ -557,6 +560,9 @@ models/slow-log.ts
 models/ssh-options-response.ts
 models/ssh-options.ts
 models/stream-entry-dto.ts
+models/stream-entry-field-dto-name.ts
+models/stream-entry-field-dto-value.ts
+models/stream-entry-field-dto.ts
 models/sum-group.ts
 models/tag.ts
 models/update-consumer-group-dto.ts

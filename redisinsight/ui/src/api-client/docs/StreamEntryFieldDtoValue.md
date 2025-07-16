@@ -1,21 +1,22 @@
-# StreamEntryDto
+# StreamEntryFieldDtoValue
 
+Entry value
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**id** | **string** | Entry ID | [default to undefined]
-**fields** | [**Array&lt;StreamEntryFieldDto&gt;**](StreamEntryFieldDto.md) | Entry fields | [default to undefined]
+**type** | **string** |  | [default to undefined]
+**data** | **Array&lt;number&gt;** |  | [default to undefined]
 
 ## Example
 
 ```typescript
-import { StreamEntryDto } from './api';
+import { StreamEntryFieldDtoValue } from './api';
 
-const instance: StreamEntryDto = {
-    id,
-    fields,
+const instance: StreamEntryFieldDtoValue = {
+    type,
+    data,
 };
 ```
 

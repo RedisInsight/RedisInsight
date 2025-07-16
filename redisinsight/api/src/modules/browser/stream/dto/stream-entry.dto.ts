@@ -43,7 +43,8 @@ export class StreamEntryDto {
   id: string;
 
   @ApiProperty({
-    type: Object,
+    type: StreamEntryFieldDto,
+    isArray: true,
     description: 'Entry fields',
     example: [
       { name: 'field1', value: 'value1' },

@@ -15,6 +15,29 @@ export class APIKeyRequests {
         private databaseAPIRequests: DatabaseAPIRequests,
     ) {}
 
+    async addStringKeyApi(
+        keyParameters: { keyName: string; value: string; expire?: number },
+        databaseParameters: AddNewDatabaseParameters,
+    ): Promise<void> {
+        const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(
+            databaseParameters.databaseName,
+        )
+        const requestBody = {
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            value: Buffer.from(keyParameters.value, 'utf-8'),
+            expire: keyParameters?.expire,
+        }
+
+        const response = await this.apiClient.post(
+            `/databases/${databaseId}/string?encoding=buffer`,
+            requestBody,
+        )
+
+        if (response.status !== 201) {
+            throw new Error('The creation of new String key request failed')
+        }
+    }
+
     async addHashKeyApi(
         keyParameters: HashKeyParameters,
         databaseParameters: AddNewDatabaseParameters,
@@ -92,9 +115,8 @@ export class APIKeyRequests {
             cursor: '0',
             match: keyName,
         }
-        const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(
-            databaseName,
-        )
+        const databaseId =
+            await this.databaseAPIRequests.getDatabaseIdByName(databaseName)
         const response = await this.apiClient.post(
             bufferPathMask.replace('databaseId', databaseId),
             requestBody,
@@ -108,9 +130,8 @@ export class APIKeyRequests {
         keyName: string,
         databaseName: string,
     ): Promise<void> {
-        const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(
-            databaseName,
-        )
+        const databaseId =
+            await this.databaseAPIRequests.getDatabaseIdByName(databaseName)
         const doesKeyExist = await this.searchKeyByNameApi(
             keyName,
             databaseName,

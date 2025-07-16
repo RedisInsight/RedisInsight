@@ -1,0 +1,14 @@
+# change this if needed to test with exising database
+@databaseId = dbe4b0a8-d587-43d0-b742-d9adcc9e4d31
+
+### GET list db messages
+GET http://localhost:5540/api/ai/rdi/{{databaseId}}/messages
+
+### POST send message
+POST http://localhost:5540/api/ai/rdi/{{databaseId}}/messages
+Content-Type: application/json
+
+{
+    "type": "rdi_stream",
+    "content": "Hello world!"
+}

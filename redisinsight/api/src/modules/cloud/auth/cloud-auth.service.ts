@@ -73,7 +73,7 @@ export class CloudAuthService {
     }
 
     if (
-      query?.error_description?.indexOf('property') > -1 &&
+      query?.error_description?.indexOf('propert') > -1 &&
       query?.error_description?.indexOf('required') > -1 &&
       query?.error_description?.indexOf('miss') > -1
     ) {
@@ -330,11 +330,10 @@ export class CloudAuthService {
     try {
       if (!callback) {
         this.logger.log('Callback is undefined');
-      } else {
-        callback(result)?.catch((e: Error) =>
-          this.logger.error('Async callback failed', e),
-        );
       }
+      callback(result)?.catch((e: Error) =>
+        this.logger.error('Async callback failed', e),
+      );
     } catch (e) {
       this.logger.error('Callback failed', e);
     }

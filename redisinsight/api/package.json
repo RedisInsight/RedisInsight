@@ -21,7 +21,7 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "minify:prod": "node ./esbuild.js --production",
     "minify:dev": "node ./esbuild.js --watch",
-    "generate-client": "openapi-generator-cli generate -i http://localhost:5540/api/docs-json -g typescript-axios -o ../ui/src/api-client --additional-properties=withSeparateModelsAndApi=true,modelPackage=models,apiPackage=api",
+    "generate-client": "openapi-generator-cli generate -i http://localhost:5540/api/docs-json -g typescript-axios -o ../ui/src/api-client",
     "lint": "eslint --ext .ts .",
     "start": "nest start",
     "start:dev": "cross-env NODE_ENV=development nest start --watch",

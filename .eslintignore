@@ -1,5 +1,4 @@
-# Ignores folders covered with custom linters configs
-redisinsight/api
+# Note: redisinsight/api and redisinsight/ui are now handled by the unified config
 tests/e2e
 
 # Logs

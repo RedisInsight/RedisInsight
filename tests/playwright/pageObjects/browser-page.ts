@@ -529,7 +529,9 @@ export class BrowserPage extends BasePage {
         this.setMembersList = page.getByTestId('set-member-value-')
         this.zsetMembersList = page.getByTestId('zset-member-value-')
         this.zsetScoresList = page.getByTestId('zset_content-value-')
-        this.listElementsList = page.getByTestId('list_content-value-')
+        this.listElementsList = page.locator(
+            '[data-testid^="list_content-value-"]',
+        )
         this.jsonKeyValue = page.getByTestId('json-data')
         this.jsonError = page.getByTestId('edit-json-error')
         this.tooltip = page.locator('[role="tooltip"]')
@@ -1379,5 +1381,20 @@ export class BrowserPage extends BasePage {
 
     async getKeyTTL(): Promise<string | null> {
         return this.keyDetailsTTL.textContent()
+    }
+
+    async getAllListElements(): Promise<string[]> {
+        // Get all list elements' text content
+        const elements = await this.listElementsList.all()
+        const values: string[] = []
+
+        for (let i = 0; i < elements.length; i += 1) {
+            const text = await elements[i].textContent()
+            if (text && text.trim()) {
+                values.push(text.trim())
+            }
+        }
+
+        return values
     }
 }

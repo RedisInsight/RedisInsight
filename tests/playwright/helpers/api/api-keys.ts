@@ -62,6 +62,31 @@ export class APIKeyRequests {
             throw new Error('The creation of new Hash key request failed')
     }
 
+    async addListKeyApi(
+        keyParameters: { keyName: string; elements: string[]; expire?: number },
+        databaseParameters: AddNewDatabaseParameters,
+    ): Promise<void> {
+        const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(
+            databaseParameters.databaseName,
+        )
+        const requestBody = {
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            elements: keyParameters.elements.map((element) =>
+                Buffer.from(element, 'utf-8'),
+            ),
+            expire: keyParameters?.expire,
+        }
+
+        const response = await this.apiClient.post(
+            `/databases/${databaseId}/list?encoding=buffer`,
+            requestBody,
+        )
+
+        if (response.status !== 201) {
+            throw new Error('The creation of new List key request failed')
+        }
+    }
+
     async addStreamKeyApi(
         keyParameters: StreamKeyParameters,
         databaseParameters: AddNewDatabaseParameters,

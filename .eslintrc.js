@@ -106,6 +106,18 @@ module.exports = {
         'import/first': 0,
       },
     },
+    // NestJS module files - more lenient with unused vars due to decorator usage
+    // TODO: Probably fixable after update of deps
+    // https://github.com/nestjs/nest-cli/issues/1750
+    {
+      files: [
+        'redisinsight/api/**/*.module.ts',
+        'redisinsight/api/**/app.module.ts',
+      ],
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+      },
+    },
     // Frontend/UI specific rules
     {
       files: [
@@ -214,7 +226,7 @@ module.exports = {
         jest: true,
       },
     },
-    // TypeScript files (general)
+    // TypeScript files (general) - MUST BE LAST to override other rules
     {
       files: ['*.ts', '*.tsx'],
       rules: {
@@ -222,7 +234,7 @@ module.exports = {
         semi: 'off',
       },
     },
-    // JavaScript files (general)
+    // JavaScript files (general) - MUST BE LAST to override other rules
     {
       files: ['*.js', '*.jsx', '*.cjs'],
       rules: {

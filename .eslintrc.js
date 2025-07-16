@@ -6,8 +6,8 @@ module.exports = {
     node: true,
     browser: true,
   },
-  extends: ['airbnb-typescript', 'prettier'],
-  plugins: ['@typescript-eslint', 'import'],
+  extends: ['airbnb-typescript', 'prettier', 'plugin:prettier/recommended'],
+  plugins: ['@typescript-eslint', 'import', 'prettier'],
   parser: '@typescript-eslint/parser',
   rules: {
     quotes: [2, 'single', { avoidEscape: true }],
@@ -67,8 +67,12 @@ module.exports = {
         node: true,
         browser: false,
       },
-      extends: ['airbnb-typescript/base', 'prettier'],
-      plugins: ['@typescript-eslint', 'sonarjs', 'import'],
+      extends: [
+        'airbnb-typescript/base',
+        'prettier',
+        'plugin:prettier/recommended',
+      ],
+      plugins: ['@typescript-eslint', 'sonarjs', 'import', 'prettier'],
       rules: {
         'max-len': ['warn', 120],
         '@typescript-eslint/return-await': 'off',
@@ -120,7 +124,12 @@ module.exports = {
         browser: true,
         node: false,
       },
-      extends: ['airbnb-typescript', 'airbnb/hooks', 'prettier'],
+      extends: [
+        'airbnb-typescript',
+        'airbnb/hooks',
+        'prettier',
+        'plugin:prettier/recommended',
+      ],
       plugins: [
         '@typescript-eslint',
         'sonarjs',
@@ -128,6 +137,7 @@ module.exports = {
         'react',
         'react-hooks',
         'jsx-a11y',
+        'prettier',
       ],
       parserOptions: {
         ecmaVersion: 2020,

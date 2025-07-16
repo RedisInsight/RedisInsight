@@ -39,8 +39,6 @@ enum BrowserStorageItem {
   aiChatSession = 'aiChatSession',
   selectedAiChat = 'selectedAiChat',
   generalChatAgreements = 'generalChatAgreements',
-  rdiHelperChatSession = 'rdiHelperChatSession',
-  rdiHelperChatAgreements = 'rdiHelperChatAgreements',
 }
 
 export default BrowserStorageItem

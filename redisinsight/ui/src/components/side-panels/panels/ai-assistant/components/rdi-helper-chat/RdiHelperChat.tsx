@@ -6,18 +6,13 @@ import { EuiButtonEmpty } from '@elastic/eui'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { AiChatMessage, AiChatType } from 'uiSrc/slices/interfaces/aiAssistant'
 import { Nullable } from 'uiSrc/utils'
-import { generateHumanMessage } from 'uiSrc/utils/transformers/chatbot'
 import {
   aiRdiHelperChatSelector,
-  askRdiHelperChatbot,
-  createRdiHelperChatAction,
+  askRdiHelperChatbotAction,
   getRdiHelperChatHistoryAction,
-  removeRdiHelperChatAction,
-  removeRdiHelperChatHistorySuccess,
-  sendRdiHelperQuestion,
+  removeRdiHelperChatHistoryAction,
   updateRdiHelperChatAgreements,
 } from 'uiSrc/slices/panels/aiAssistant'
-import { CustomErrorCodes } from 'uiSrc/constants'
 
 import { ChatForm, ChatHistory, RestartChat } from '../shared'
 
@@ -44,103 +39,69 @@ const RDI_HELPER_AGREEMENTS = [
 ]
 
 const RdiHelperChat = () => {
-  const { id, messages, agreements, loading } = useSelector(
+  const { messages, agreements, loading } = useSelector(
     aiRdiHelperChatSelector,
   )
 
   const [inProgressMessage, setinProgressMessage] =
     useState<Nullable<AiChatMessage>>(null)
-  const { instanceId } = useParams<{ instanceId: string }>()
+  const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
+
+  const isAgreementsAccepted =
+    agreements.includes(rdiInstanceId) || messages.length > 0
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (!id || messages.length) return
+    if (!rdiInstanceId) {
+      return
+    }
 
-    dispatch(getRdiHelperChatHistoryAction(id))
-  }, [id])
+    dispatch(getRdiHelperChatHistoryAction(rdiInstanceId))
+  }, [rdiInstanceId])
 
   const handleSubmit = useCallback(
     (message: string) => {
-      if (!agreements) {
-        dispatch(updateRdiHelperChatAgreements(true))
+      if (!isAgreementsAccepted) {
+        dispatch(updateRdiHelperChatAgreements(rdiInstanceId))
         sendEventTelemetry({
           event: TelemetryEvent.AI_CHAT_BOT_TERMS_ACCEPTED,
           eventData: {
-            databaseId: instanceId,
+            databaseId: rdiInstanceId,
             chat: AiChatType.RdiHelper,
           },
         })
       }
 
-      if (!id) {
-        dispatch(
-          createRdiHelperChatAction(
-            (chatId) => sendChatMessage(chatId, message),
-            // if cannot create a chat - just put message with error
-            () => {
-              dispatch(
-                sendRdiHelperQuestion({
-                  ...generateHumanMessage(message),
-                  error: {
-                    statusCode: 500,
-                    errorCode: CustomErrorCodes.QueryAiInternalServerError,
-                  },
-                }),
-              )
+      dispatch(
+        askRdiHelperChatbotAction(rdiInstanceId, message, {
+          onMessage: (message: AiChatMessage) =>
+            setinProgressMessage({ ...message }),
+          onError: (errorCode: number) => {
+            sendEventTelemetry({
+              event: TelemetryEvent.AI_CHAT_BOT_ERROR_MESSAGE_RECEIVED,
+              eventData: {
+                chat: AiChatType.RdiHelper,
+                errorCode,
+              },
+            })
+          },
+          onFinish: () => setinProgressMessage(null),
+        }),
+      )
 
-              sendEventTelemetry({
-                event: TelemetryEvent.AI_CHAT_BOT_ERROR_MESSAGE_RECEIVED,
-                eventData: {
-                  chat: AiChatType.RdiHelper,
-                  errorCode: 500,
-                },
-              })
-            },
-          ),
-        )
-        return
-      }
-
-      sendChatMessage(id, message)
+      sendEventTelemetry({
+        event: TelemetryEvent.AI_CHAT_MESSAGE_SENT,
+        eventData: {
+          chat: AiChatType.RdiHelper,
+        },
+      })
     },
-    [id, agreements, instanceId],
+    [rdiInstanceId, isAgreementsAccepted],
   )
 
-  const sendChatMessage = (chatId: string, message: string) => {
-    dispatch(
-      askRdiHelperChatbot(chatId, message, {
-        onMessage: (message: AiChatMessage) => {
-          setinProgressMessage({ ...message })
-        },
-        onError: (errorCode: number) => {
-          sendEventTelemetry({
-            event: TelemetryEvent.AI_CHAT_BOT_ERROR_MESSAGE_RECEIVED,
-            eventData: {
-              chat: AiChatType.RdiHelper,
-              errorCode,
-            },
-          })
-        },
-        onFinish: () => setinProgressMessage(null),
-      }),
-    )
-
-    sendEventTelemetry({
-      event: TelemetryEvent.AI_CHAT_MESSAGE_SENT,
-      eventData: {
-        chat: AiChatType.RdiHelper,
-      },
-    })
-  }
-
   const onClearSession = useCallback(() => {
-    if (!id) {
-      dispatch(removeRdiHelperChatHistorySuccess())
-      return
-    }
-
-    dispatch(removeRdiHelperChatAction(id))
+    dispatch(removeRdiHelperChatHistoryAction(rdiInstanceId))
     
     sendEventTelemetry({
       event: TelemetryEvent.AI_CHAT_SESSION_RESTARTED,
@@ -148,7 +109,7 @@ const RdiHelperChat = () => {
         chat: AiChatType.RdiHelper,
       },
     })
-  }, [id])
+  }, [rdiInstanceId])
 
   const onRunCommand = useCallback(() => {
     // RDI-specific command handling would go here
@@ -195,9 +156,11 @@ const RdiHelperChat = () => {
       <div className={styles.chatForm}>
         <ChatForm
           onAgreementsDisplayed={handleAgreementsDisplay}
-          agreements={!agreements ? RDI_HELPER_AGREEMENTS : undefined}
+          agreements={
+            !isAgreementsAccepted ? RDI_HELPER_AGREEMENTS : undefined
+          }
+          isDisabled={!rdiInstanceId || inProgressMessage?.content === ''}
           placeholder="Ask me about RDI pipeline configuration..."
-          isDisabled={inProgressMessage?.content === ''}
           onSubmit={handleSubmit}
         />
       </div>

@@ -1350,4 +1350,34 @@ export class BrowserPage extends BasePage {
     async closeKeyDetails(): Promise<void> {
         await this.closeKeyButton.click()
     }
+
+    async hashFieldExists(
+        fieldName: string,
+        fieldValue: string,
+    ): Promise<boolean> {
+        try {
+            const fieldLocator = this.page.locator(
+                `[data-testid="hash-field-${fieldName}"]`,
+            )
+            const valueLocator = this.page.locator(
+                `[data-testid="hash_content-value-${fieldName}"]`,
+            )
+
+            const fieldExists = await fieldLocator.isVisible()
+            const valueExists = await valueLocator.isVisible()
+
+            if (!fieldExists || !valueExists) {
+                return false
+            }
+
+            const actualValue = await valueLocator.textContent()
+            return actualValue?.includes(fieldValue) || false
+        } catch {
+            return false
+        }
+    }
+
+    async getKeyTTL(): Promise<string | null> {
+        return this.keyDetailsTTL.textContent()
+    }
 }

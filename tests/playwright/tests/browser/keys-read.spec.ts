@@ -74,7 +74,7 @@ test.describe('Browser - Read Key Details', () => {
         expect(keySizeText).toBeTruthy()
 
         // Verify the TTL value is displayed correctly
-        const displayedTTL = await browserPage.keyDetailsTTL.textContent()
+        const displayedTTL = await browserPage.getKeyTTL()
         expect(displayedTTL).toContain('TTL:')
 
         // Extract the TTL value from the text and verify it's within expected range
@@ -87,6 +87,66 @@ test.describe('Browser - Read Key Details', () => {
             // TTL should be close to what we set (allowing for some time passage during test execution)
             // Should be between our set value minus 60 seconds (1 minute buffer) and our set value
             expect(actualTTL).toBeGreaterThan(keyTTL - 60)
+            expect(actualTTL).toBeLessThanOrEqual(keyTTL)
+        }
+
+        // Close the details
+        await browserPage.closeKeyDetails()
+
+        // Verify details are closed
+        const isDetailsClosed = await browserPage.isKeyDetailsClosed()
+        expect(isDetailsClosed).toBe(true)
+    })
+
+    test('should open key details when clicking on hash key', async ({
+        api: { keyService },
+    }) => {
+        const fieldName = faker.string.alphanumeric(8)
+        const fieldValue = faker.lorem.words(2)
+        const keyTTL = 7200 // 2 hours
+
+        // Create a hash key with TTL using API
+        await keyService.addHashKeyApi(
+            {
+                keyName,
+                fields: [{ field: fieldName, value: fieldValue }],
+                expire: keyTTL,
+            },
+            ossStandaloneConfig,
+        )
+
+        // Search and open details
+        await browserPage.searchByKeyName(keyName)
+        await browserPage.openKeyDetailsByKeyName(keyName)
+
+        // Verify details are open and show hash structure
+        const isDetailsOpen = await browserPage.isKeyDetailsOpen(keyName)
+        expect(isDetailsOpen).toBe(true)
+
+        // Verify the hash field is displayed
+        const hashField = await browserPage.hashFieldExists(
+            fieldName,
+            fieldValue,
+        )
+        expect(hashField).toBe(true)
+
+        // Verify the key length (number of hash fields) is displayed correctly
+        const displayedLength = await browserPage.getKeyLength()
+        expect(displayedLength).toBe('1') // We created 1 field
+
+        // Verify the key size (bytes) is displayed correctly
+        const keySizeText = await browserPage.keySizeDetails.textContent()
+        expect(keySizeText).toBeTruthy()
+
+        // Verify the TTL is displayed
+        const displayedTTL = await browserPage.getKeyTTL()
+        expect(displayedTTL).toContain('TTL:')
+
+        // Extract the numeric part of TTL and verify it's close to expected value
+        const ttlMatch = displayedTTL?.match(/TTL:\s*(\d+)/)
+        if (ttlMatch) {
+            const actualTTL = parseInt(ttlMatch[1], 10)
+            expect(actualTTL).toBeGreaterThan(keyTTL - 60) // Allow 60 seconds margin
             expect(actualTTL).toBeLessThanOrEqual(keyTTL)
         }
 

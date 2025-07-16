@@ -27,7 +27,6 @@ export interface NodeMetaData {
   fullName: string
   updateStatusSelected: (fullName: string, keys: any) => void
   updateStatusOpen: (name: string, value: boolean) => void
-  leafIcon: string
   keyApproximate: number
   isSelected: boolean
   isOpenByDefault: boolean
@@ -43,7 +42,6 @@ export interface TreeData extends FixedSizeNodeData {
   keyApproximate: number
   fullName: string
   shortName?: string
-  leafIcon: string
   type: KeyTypes | ModulesKeyTypes
   ttl: number
   size: number

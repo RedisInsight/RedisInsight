@@ -4,8 +4,8 @@ import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 import { ViteEjsPlugin } from 'vite-plugin-ejs';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
-import { resolve } from 'path';
-import { fileURLToPath } from 'url';
+import path, { resolve } from 'path'
+import { fileURLToPath } from 'url'
 
 const riPlugins = [
   { name: 'redisearch', entry: 'src/main.tsx' },
@@ -80,6 +80,32 @@ export default defineConfig({
 
     define: {
       this: 'window',
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // add @layer app for css ordering. Styles without layer have the highest priority
+        // https://github.com/vitejs/vite/issues/3924
+        additionalData: (source, filename) => {
+          if (path.extname(filename) === '.scss') {
+            const skipFiles = [
+              '/main.scss',
+              '/App.scss',
+              '/packages/clients-list/src/styles/styles.scss',
+              '/packages/redisearch/src/styles/styles.scss'
+            ];
+            if (skipFiles.every((file) => !filename.endsWith(file))) {
+              return `
+                @use "uiSrc/styles/mixins/_eui.scss";
+                @use "uiSrc/styles/mixins/_global.scss";
+                @layer app { ${source} }
+              `;
+            }
+          }
+          return source;
+        },
+      },
     },
   },
   define: {

@@ -9,6 +9,7 @@ import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
 import { sendEventTelemetry } from 'uiSrc/telemetry'
 import { HELP_LINKS } from 'uiSrc/pages/home/constants'
 import * as appFeaturesSlice from 'uiSrc/slices/app/features'
+import { SideBar } from 'uiSrc/components/base/layout/sidebar'
 import CreateCloud from './CreateCloud'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -37,18 +38,20 @@ beforeEach(() => {
   store.clearActions()
 })
 
+const sideBarWithCreateCloud = <SideBar isExpanded={false}><CreateCloud /></SideBar>
+
 describe('CreateCloud', () => {
   it('should render', () => {
-    expect(render(<CreateCloud />)).toBeTruthy()
+    expect(render(sideBarWithCreateCloud)).toBeTruthy()
   })
 
   it('should call proper actions on click cloud button', () => {
-    const { container } = render(<CreateCloud />)
-    const createCloudLink = container.querySelector(
-      '[data-test-subj="create-cloud-nav-link"]',
+    const { container } = render(sideBarWithCreateCloud)
+    const createCloudItem = container.querySelector(
+      '[data-testid="create-cloud-sidebar-item"]',
     )
 
-    fireEvent.click(createCloudLink as Element)
+    fireEvent.click(createCloudItem as Element)
 
     expect(store.getActions()).toEqual([
       setSSOFlow(OAuthSocialAction.Create),
@@ -69,12 +72,12 @@ describe('CreateCloud', () => {
         flag: true,
       },
     })
-    const { container } = render(<CreateCloud />)
-    const createCloudLink = container.querySelector(
-      '[data-test-subj="create-cloud-nav-link"]',
+    const { container } = render(sideBarWithCreateCloud)
+    const createCloudItem = container.querySelector(
+      '[data-testid="create-cloud-sidebar-item"]',
     )
 
-    fireEvent.click(createCloudLink as Element)
+    fireEvent.click(createCloudItem as Element)
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: HELP_LINKS.cloud.event,
@@ -86,7 +89,10 @@ describe('CreateCloud', () => {
 
   it('should not render if cloud ads feature flag is disabled', () => {
     mockFeatureFlags(false)
-    const { container } = render(<CreateCloud />)
-    expect(container).toBeEmptyDOMElement()
+    const { container } = render(sideBarWithCreateCloud)
+    const createCloudItem = container.querySelector(
+      '[data-testid="create-cloud-db-link"]',
+    )
+    expect(createCloudItem).not.toBeInTheDocument()
   })
 })

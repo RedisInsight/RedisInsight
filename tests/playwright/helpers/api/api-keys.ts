@@ -134,6 +134,36 @@ export class APIKeyRequests {
             throw new Error('The creation of new Set key request failed')
     }
 
+    async addZSetKeyApi(
+        keyParameters: {
+            keyName: string
+            members: Array<{ name: string; score: number }>
+            expire?: number
+        },
+        databaseParameters: AddNewDatabaseParameters,
+    ): Promise<void> {
+        const databaseId = await this.databaseAPIRequests.getDatabaseIdByName(
+            databaseParameters.databaseName,
+        )
+        const requestBody = {
+            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            members: keyParameters.members.map((member) => ({
+                name: Buffer.from(member.name, 'utf-8'),
+                score: member.score,
+            })),
+            expire: keyParameters?.expire,
+        }
+
+        const response = await this.apiClient.post(
+            `/databases/${databaseId}/zSet?encoding=buffer`,
+            requestBody,
+        )
+
+        if (response.status !== 201) {
+            throw new Error('The creation of new ZSet key request failed')
+        }
+    }
+
     async searchKeyByNameApi(
         keyName: string,
         databaseName: string,

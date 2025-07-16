@@ -527,8 +527,12 @@ export class BrowserPage extends BasePage {
         this.hashField = page.getByTestId('hash-field-').first()
         this.hashFieldValue = page.getByTestId('hash_content-value-')
         this.setMembersList = page.locator('[data-testid^="set-member-value-"]')
-        this.zsetMembersList = page.getByTestId('zset-member-value-')
-        this.zsetScoresList = page.getByTestId('zset_content-value-')
+        this.zsetMembersList = page.locator(
+            '[data-testid^="zset-member-value-"]',
+        )
+        this.zsetScoresList = page.locator(
+            '[data-testid^="zset_content-value-"]',
+        )
         this.listElementsList = page.locator(
             '[data-testid^="list_content-value-"]',
         )
@@ -1411,5 +1415,31 @@ export class BrowserPage extends BasePage {
         }
 
         return values
+    }
+
+    async getAllZsetMembers(): Promise<Array<{ name: string; score: string }>> {
+        // Get all zset members' names and scores
+        const memberElements = await this.zsetMembersList.all()
+        const scoreElements = await this.zsetScoresList.all()
+        const members: Array<{ name: string; score: string }> = []
+
+        for (let i = 0; i < memberElements.length; i += 1) {
+            const memberText = await memberElements[i].textContent()
+            const scoreText = await scoreElements[i].textContent()
+
+            if (
+                memberText &&
+                memberText.trim() &&
+                scoreText &&
+                scoreText.trim()
+            ) {
+                members.push({
+                    name: memberText.trim(),
+                    score: scoreText.trim(),
+                })
+            }
+        }
+
+        return members
     }
 }

@@ -114,7 +114,7 @@ export class AiRdiService {
 
       if (!context) {
         // TODO - 16.07.25 - What would provide context for RDI?
-        context = {};
+        context = JSON.parse(dto.rdiContext);
       }
 
       const question = classToClass(AiRdiMessage, {

@@ -6,7 +6,7 @@ const isRdiPipelineConfigPage = (pathname?: string): boolean => {
   const currentPath = pathname || window.location.pathname
   
   // Match pattern: /integrate/{instanceId}/pipeline-management/config
-  const rdiPipelineConfigPattern = /^\/integrate\/[^/]+\/pipeline-management\/config$/
+  const rdiPipelineConfigPattern = /^\/integrate\/[^/]+\/pipeline-management\/(config|jobs\/[^/]+)$/
   
   return rdiPipelineConfigPattern.test(currentPath)
 }

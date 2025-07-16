@@ -770,6 +770,7 @@ export function askDataGeneratorChatbotAction(
     const url = `${baseUrl}${ApiEndpoints.AI_DATA_GENERATOR}/${databaseId}/messages`
 
     await getStreamedAnswer(url, message, {
+      timeout: 60_000_000, // 10 mins
       onMessage: (value: string) => {
         aiMessageProgressed.content += value
         onMessage?.(aiMessageProgressed)

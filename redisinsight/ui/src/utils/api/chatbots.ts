@@ -13,6 +13,7 @@ export const getStreamedAnswer = async (
     onError,
     isRdiStream = false,
     pipelineContext,
+    timeout,
   }: {
     onMessage?: (message: string) => void
     onFinish?: () => void
@@ -21,14 +22,15 @@ export const getStreamedAnswer = async (
     pipelineContext?: {
       config?: string
       jobs?: string
-    }
+    },
+    timeout?: number,
   },
 ) => {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => {
       controller.abort()
-    }, TIMEOUT_FOR_MESSAGE_REQUEST)
+    }, timeout || TIMEOUT_FOR_MESSAGE_REQUEST)
 
     const body: {
       content: string;

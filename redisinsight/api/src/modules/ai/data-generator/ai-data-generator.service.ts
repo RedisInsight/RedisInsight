@@ -97,7 +97,7 @@ export class AiDataGeneratorService {
       const codeSnippet = `
       (async function untrusted() {
         class Commands {
-          batchSize = 3000;
+          batchSize = 10000;
 
           toSend = [];
 

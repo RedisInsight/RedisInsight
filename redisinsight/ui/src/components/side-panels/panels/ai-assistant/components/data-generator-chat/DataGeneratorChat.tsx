@@ -134,7 +134,7 @@ const DataGeneratorChat = () => {
           onAgreementsDisplayed={handleAgreementsDisplay}
           isDisabled={!instanceId || inProgressMessage?.content === ''}
           validation={getValidationMessage()}
-          placeholder="Ask me to query your data (e.g. How many road bikes?)"
+          placeholder="Ask me to generate data"
           onSubmit={handleSubmit}
         />
       </div>

@@ -26,6 +26,10 @@ import type { CreateListWithExpireDto } from '../models';
 // @ts-ignore
 import type { DeleteListElementsDto } from '../models';
 // @ts-ignore
+import type { DeleteListElementsResponse } from '../models';
+// @ts-ignore
+import type { GetListElementResponse } from '../models';
+// @ts-ignore
 import type { GetListElementsDto } from '../models';
 // @ts-ignore
 import type { GetListElementsResponse } from '../models';
@@ -403,7 +407,7 @@ export const BrowserListApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listControllerDeleteElement(dbInstance: string, encoding: ListControllerDeleteElementEncodingEnum, deleteListElementsDto: DeleteListElementsDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetListElementsResponse>> {
+        async listControllerDeleteElement(dbInstance: string, encoding: ListControllerDeleteElementEncodingEnum, deleteListElementsDto: DeleteListElementsDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DeleteListElementsResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.listControllerDeleteElement(dbInstance, encoding, deleteListElementsDto, riDbIndex, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BrowserListApi.listControllerDeleteElement']?.[localVarOperationServerIndex]?.url;
@@ -420,7 +424,7 @@ export const BrowserListApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listControllerGetElement(index: number, dbInstance: string, encoding: ListControllerGetElementEncodingEnum, keyDto: KeyDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetListElementsResponse>> {
+        async listControllerGetElement(index: number, dbInstance: string, encoding: ListControllerGetElementEncodingEnum, keyDto: KeyDto, riDbIndex?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetListElementResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.listControllerGetElement(index, dbInstance, encoding, keyDto, riDbIndex, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['BrowserListApi.listControllerGetElement']?.[localVarOperationServerIndex]?.url;
@@ -507,7 +511,7 @@ export const BrowserListApiFactory = function (configuration?: Configuration, ba
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listControllerDeleteElement(dbInstance: string, encoding: ListControllerDeleteElementEncodingEnum, deleteListElementsDto: DeleteListElementsDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<GetListElementsResponse> {
+        listControllerDeleteElement(dbInstance: string, encoding: ListControllerDeleteElementEncodingEnum, deleteListElementsDto: DeleteListElementsDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<DeleteListElementsResponse> {
             return localVarFp.listControllerDeleteElement(dbInstance, encoding, deleteListElementsDto, riDbIndex, options).then((request) => request(axios, basePath));
         },
         /**
@@ -521,7 +525,7 @@ export const BrowserListApiFactory = function (configuration?: Configuration, ba
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listControllerGetElement(index: number, dbInstance: string, encoding: ListControllerGetElementEncodingEnum, keyDto: KeyDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<GetListElementsResponse> {
+        listControllerGetElement(index: number, dbInstance: string, encoding: ListControllerGetElementEncodingEnum, keyDto: KeyDto, riDbIndex?: number, options?: RawAxiosRequestConfig): AxiosPromise<GetListElementResponse> {
             return localVarFp.listControllerGetElement(index, dbInstance, encoding, keyDto, riDbIndex, options).then((request) => request(axios, basePath));
         },
         /**

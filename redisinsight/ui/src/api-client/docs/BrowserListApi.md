@@ -73,7 +73,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **listControllerDeleteElement**
-> GetListElementsResponse listControllerDeleteElement(deleteListElementsDto)
+> DeleteListElementsResponse listControllerDeleteElement(deleteListElementsDto)
 
 Remove and return the elements from the tail/head of list stored at key.
 
@@ -114,7 +114,7 @@ const { status, data } = await apiInstance.listControllerDeleteElement(
 
 ### Return type
 
-**GetListElementsResponse**
+**DeleteListElementsResponse**
 
 ### Authorization
 
@@ -134,7 +134,7 @@ No authorization required
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **listControllerGetElement**
-> GetListElementsResponse listControllerGetElement(keyDto)
+> GetListElementResponse listControllerGetElement(keyDto)
 
 Get specified List element by index
 
@@ -178,7 +178,7 @@ const { status, data } = await apiInstance.listControllerGetElement(
 
 ### Return type
 
-**GetListElementsResponse**
+**GetListElementResponse**
 
 ### Authorization
 

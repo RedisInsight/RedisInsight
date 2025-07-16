@@ -176,6 +176,7 @@ docs/DeleteFieldsFromHashResponse.md
 docs/DeleteKeysDto.md
 docs/DeleteKeysResponse.md
 docs/DeleteListElementsDto.md
+docs/DeleteListElementsResponse.md
 docs/DeleteMembersFromSetDto.md
 docs/DeleteMembersFromSetResponse.md
 docs/DeleteMembersFromZSetDto.md
@@ -200,6 +201,8 @@ docs/GetKeyInfoResponse.md
 docs/GetKeysDto.md
 docs/GetKeysInfoDto.md
 docs/GetKeysWithDetailsResponse.md
+docs/GetListElementResponse.md
+docs/GetListElementResponseValue.md
 docs/GetListElementsDto.md
 docs/GetListElementsResponse.md
 docs/GetPendingEntriesDto.md
@@ -439,6 +442,7 @@ models/delete-fields-from-hash-response.ts
 models/delete-keys-dto.ts
 models/delete-keys-response.ts
 models/delete-list-elements-dto.ts
+models/delete-list-elements-response.ts
 models/delete-members-from-set-dto.ts
 models/delete-members-from-set-response.ts
 models/delete-members-from-zset-dto.ts
@@ -463,6 +467,8 @@ models/get-key-info-response.ts
 models/get-keys-dto.ts
 models/get-keys-info-dto.ts
 models/get-keys-with-details-response.ts
+models/get-list-element-response-value.ts
+models/get-list-element-response.ts
 models/get-list-elements-dto.ts
 models/get-list-elements-response.ts
 models/get-pending-entries-dto-consumer-name.ts

@@ -48,10 +48,6 @@ module.exports = {
             group: 'internal',
             position: 'after',
           },
-          {
-            group: 'internal',
-            position: 'after',
-          },
         ],
         warnOnUnassignedImports: true,
         pathGroupsExcludedImportTypes: ['builtin'],

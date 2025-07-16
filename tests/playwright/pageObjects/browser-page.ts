@@ -486,9 +486,7 @@ export class BrowserPage extends BasePage {
         this.hashTtlFieldInput = page.getByTestId('hash-ttl')
         this.listKeyElementEditorInput = page.getByTestId('list_value-editor-')
         this.stringKeyValueInput = page.getByTestId('string-value')
-        this.jsonKeyValueInput = page.locator(
-            'div[data-mode-id=json] textarea',
-        )
+        this.jsonKeyValueInput = page.locator('div[data-mode-id=json] textarea')
         this.jsonUploadInput = page.getByTestId('upload-input-file')
         this.setMemberInput = page.getByTestId('member-name')
         this.zsetMemberScoreInput = page.getByTestId('member-score')
@@ -1281,5 +1279,75 @@ export class BrowserPage extends BasePage {
     async clickGuideLinksByName(guide: string): Promise<void> {
         const linkGuide = this.page.locator(guide)
         await linkGuide.click()
+    }
+
+    async isKeyDetailsOpen(keyName: string): Promise<boolean> {
+        try {
+            // Check if the key details header is visible (only present when key is selected)
+            const headerIsVisible = await this.page
+                .getByTestId('key-details-header')
+                .isVisible()
+
+            if (!headerIsVisible) {
+                return false
+            }
+
+            // Check if the key name in the header matches the expected key
+            const keyNameIsVisible = await this.keyNameFormDetails
+                .filter({ hasText: keyName })
+                .isVisible()
+
+            if (!keyNameIsVisible) {
+                return false
+            }
+
+            // Check if any key details content is visible
+            const detailsContainers = [
+                'string-details',
+                'hash-details',
+                'set-details',
+                'list-details',
+                'zset-details',
+                'json-details',
+                'stream-details',
+            ]
+
+            for (const containerId of detailsContainers) {
+                const container = this.page.getByTestId(containerId)
+                if (await container.isVisible()) {
+                    return true
+                }
+            }
+
+            return false
+        } catch (error) {
+            return false
+        }
+    }
+
+    async isKeyDetailsClosed(): Promise<boolean> {
+        try {
+            // Give a small moment for UI transitions to complete
+            await this.page.waitForTimeout(100)
+
+            // Check if the key details header is gone
+            const headerIsVisible = await this.page
+                .getByTestId('key-details-header')
+                .isVisible()
+
+            // Check if the close right panel button is not visible
+            const closeRightPanelBtn = await this.page
+                .getByTestId('close-right-panel-btn')
+                .isVisible()
+
+            // Details are closed if header is gone OR close panel button is not visible
+            return !headerIsVisible || !closeRightPanelBtn
+        } catch (error) {
+            return false
+        }
+    }
+
+    async closeKeyDetails(): Promise<void> {
+        await this.closeKeyButton.click()
     }
 }

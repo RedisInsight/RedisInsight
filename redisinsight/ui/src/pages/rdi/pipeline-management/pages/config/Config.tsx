@@ -18,6 +18,7 @@ import {
   setChangedFile,
   deleteChangedFile,
   setPipelineConfig,
+  updateConfigDiffNewValue,
 } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
@@ -130,9 +131,14 @@ const Config = () => {
     (value: string) => {
       dispatch(setPipelineConfig(value))
 
+      // Update diff newValue if in diff mode
+      if (configDiff.enabled) {
+        dispatch(updateConfigDiffNewValue(value))
+      }
+
       checkIsFileUpdated(value)
     },
-    [data],
+    [data, configDiff.enabled],
   )
 
   const handleClosePanel = () => {

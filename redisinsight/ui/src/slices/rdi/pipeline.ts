@@ -225,6 +225,14 @@ const rdiPipelineSlice = createSlice({
       state.diff.config.originalValue = null
       state.diff.config.newValue = null
     },
+    updateConfigDiffNewValue: (
+      state,
+      { payload }: PayloadAction<string>,
+    ) => {
+      if (state.diff.config.enabled) {
+        state.diff.config.newValue = payload
+      }
+    },
     enableJobDiff: (
       state,
       { payload }: PayloadAction<{ jobName: string; originalValue: string; newValue: string }>,
@@ -237,6 +245,14 @@ const rdiPipelineSlice = createSlice({
     },
     disableJobDiff: (state, { payload }: PayloadAction<{ jobName: string }>) => {
       delete state.diff.jobs[payload.jobName]
+    },
+    updateJobDiffNewValue: (
+      state,
+      { payload }: PayloadAction<{ jobName: string; newValue: string }>,
+    ) => {
+      if (state.diff.jobs[payload.jobName]?.enabled) {
+        state.diff.jobs[payload.jobName].newValue = payload.newValue
+      }
     },
     clearAllDiffs: (state) => {
       state.diff.config.enabled = false
@@ -286,8 +302,10 @@ export const {
   setJobsValidationErrors,
   enableConfigDiff,
   disableConfigDiff,
+  updateConfigDiffNewValue,
   enableJobDiff,
   disableJobDiff,
+  updateJobDiffNewValue,
   clearAllDiffs,
 } = rdiPipelineSlice.actions
 

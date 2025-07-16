@@ -342,6 +342,7 @@ const MonacoEditor = (props: Props) => {
               theme={theme === Theme.Dark ? 'dark' : 'light'}
               original={originalValue}
               value={value ?? ''}
+              onChange={onChange}
               options={{
                 ...monacoOptions,
                 ...getDiffOptions(),

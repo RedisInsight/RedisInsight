@@ -19,6 +19,7 @@ import {
   rdiPipelineSelector,
   setChangedFile,
   setPipelineJobs,
+  updateJobDiffNewValue,
 } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
@@ -135,6 +136,12 @@ const Job = (props: Props) => {
       return job
     })
     dispatch(setPipelineJobs(newJobs))
+
+    // Update job diff newValue if in diff mode
+    if (jobDiff.enabled) {
+      dispatch(updateJobDiffNewValue({ jobName: name, newValue: value }))
+    }
+
     checkIsFileUpdated(value)
   }
 

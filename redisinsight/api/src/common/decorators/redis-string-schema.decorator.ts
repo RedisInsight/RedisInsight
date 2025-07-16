@@ -7,7 +7,7 @@ export const REDIS_STRING_SCHEMA = {
     {
       type: 'object',
       properties: {
-        type: { type: 'string', example: 'Buffer' },
+        type: { type: 'string', enum: ['Buffer'], example: 'Buffer' },
         data: {
           type: 'array',
           items: { type: 'number' },

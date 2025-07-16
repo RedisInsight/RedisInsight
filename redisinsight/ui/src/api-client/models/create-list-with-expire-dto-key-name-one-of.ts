@@ -25,7 +25,7 @@ export interface CreateListWithExpireDtoKeyNameOneOf {
      * @type {string}
      * @memberof CreateListWithExpireDtoKeyNameOneOf
      */
-    'type': string;
+    'type': CreateListWithExpireDtoKeyNameOneOfTypeEnum;
     /**
      * 
      * @type {Array<number>}
@@ -33,4 +33,11 @@ export interface CreateListWithExpireDtoKeyNameOneOf {
      */
     'data': Array<number>;
 }
+
+export const CreateListWithExpireDtoKeyNameOneOfTypeEnum = {
+    Buffer: 'Buffer'
+} as const;
+
+export type CreateListWithExpireDtoKeyNameOneOfTypeEnum = typeof CreateListWithExpireDtoKeyNameOneOfTypeEnum[keyof typeof CreateListWithExpireDtoKeyNameOneOfTypeEnum];
+
 

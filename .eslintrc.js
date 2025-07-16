@@ -287,6 +287,7 @@ module.exports = {
         'no-underscore-dangle': 'off',
         'import/no-duplicates': 'off',
         'no-console': 'off',
+        'prettier/prettier': 'off',
       },
     },
     // Temporary (maybe) disable some rules for API tests
@@ -370,6 +371,7 @@ module.exports = {
         'react/prop-types': 'off',
         'no-useless-escape': 'off',
         'no-template-curly-in-string': 'off',
+        'prettier/prettier': 'off',
       },
     },
     // Temporary disable some rules for UI packages

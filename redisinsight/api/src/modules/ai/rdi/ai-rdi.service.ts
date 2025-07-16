@@ -107,15 +107,7 @@ export class AiRdiService {
       const history = await this.aiRdiMessageRepository.list(targetId);
       const conversationId = AiRdiService.getConversationId(history);
 
-      let context = await this.aiRdiContextRepository.getFullContext(
-        sessionMetadata,
-        targetId,
-      );
-
-      if (!context) {
-        // TODO - 16.07.25 - What would provide context for RDI?
-        context = JSON.parse(dto.rdiContext);
-      }
+      const context = JSON.parse(dto.rdiContext);
 
       const question = classToClass(AiRdiMessage, {
         type: dto.type,
@@ -134,7 +126,7 @@ export class AiRdiService {
 
       socket = await this.aiRdiProvider.getSocket();
 
-      socket.on(RdiSocketEvents.RdiReply, this.defaultListener(answer, res));
+      socket.on(AiRdiWsEvents.REPLY_CHUNK, this.defaultListener(answer, res));
 
       socket.on(AiRdiWsEvents.RUN_QUERY, async (data, cb) => {
         try {
@@ -170,15 +162,11 @@ export class AiRdiService {
         });
 
         socket
-          .emitWithAck(
-            dto.type,
-            dto.content,
+          .emitWithAck(AiRdiWsEvents.STREAM, {
+            message: dto.content,
             context,
-            AiRdiService.prepareHistory(history),
-            {
-              conversationId,
-            },
-          )
+            history: AiRdiService.prepareHistory(history),
+          })
           .then((ack) => {
             if (ack?.error) {
               return reject(ack.error);

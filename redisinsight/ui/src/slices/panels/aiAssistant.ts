@@ -501,7 +501,7 @@ export function askRdiHelperChatbotAction(
     onMessage?.(aiMessageProgressed)
 
     const baseUrl = getBaseUrl()
-    const url = `${baseUrl}${ApiEndpoints.AI_EXTENDED}/${rdiInstanceId}/messages`
+    const url = `${baseUrl}${ApiEndpoints.AI_RDI}/${rdiInstanceId}/messages`
 
     await getStreamedAnswer(url, message, {
       isRdiStream: true,
@@ -548,7 +548,7 @@ export function getRdiHelperChatHistoryAction(
 
     try {
       const { status, data } = await apiService.get<any>(
-        `${ApiEndpoints.AI_EXTENDED}/${rdiInstanceId}/messages`,
+        `${ApiEndpoints.AI_RDI}/${rdiInstanceId}/messages`,
       )
 
       if (isStatusSuccessful(status)) {
@@ -576,7 +576,7 @@ export function removeRdiHelperChatHistoryAction(
   return async (dispatch: AppDispatch) => {
     try {
       const { status } = await apiService.delete<any>(
-        `${ApiEndpoints.AI_EXTENDED}/${rdiInstanceId}/messages`,
+        `${ApiEndpoints.AI_RDI}/${rdiInstanceId}/messages`,
       )
 
       if (isStatusSuccessful(status)) {

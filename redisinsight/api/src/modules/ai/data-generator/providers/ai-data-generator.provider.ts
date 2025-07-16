@@ -12,11 +12,6 @@ export class AiDataGeneratorProvider {
 
   async getSocket(): Promise<Socket> {
     try {
-      console.log({
-        path: aiConfig.querySocketPath,
-        reconnection: false,
-        transports: ['websocket'],
-      }, aiConfig.querySocketUrl)
       return await new Promise((resolve, reject) => {
         const socket = io(aiConfig.querySocketUrl, {
           path: aiConfig.querySocketPath,

@@ -72,13 +72,6 @@ const RdiHelperChat = () => {
     (message: string) => {
       if (!isAgreementsAccepted) {
         dispatch(updateRdiHelperChatAgreements(rdiInstanceId))
-        sendEventTelemetry({
-          event: TelemetryEvent.AI_CHAT_BOT_TERMS_ACCEPTED,
-          eventData: {
-            databaseId: rdiInstanceId,
-            chat: AiChatType.RdiHelper,
-          },
-        })
       }
 
       // Prepare pipeline context for AI assistant based on current page
@@ -93,13 +86,7 @@ const RdiHelperChat = () => {
           onMessage: (message: AiChatMessage) =>
             setinProgressMessage({ ...message }),
           onError: (errorCode: number) => {
-            sendEventTelemetry({
-              event: TelemetryEvent.AI_CHAT_BOT_ERROR_MESSAGE_RECEIVED,
-              eventData: {
-                chat: AiChatType.RdiHelper,
-                errorCode,
-              },
-            })
+            console.log('rdi ask error', errorCode)
           },
           onFinish: () => setinProgressMessage(null),
         }),

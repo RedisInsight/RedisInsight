@@ -22,8 +22,8 @@ export const getStreamedAnswer = async (
     pipelineContext?: {
       config?: string
       jobs?: string
-    },
-    timeout?: number,
+    }
+    timeout?: number
   },
 ) => {
   try {
@@ -33,10 +33,11 @@ export const getStreamedAnswer = async (
     }, timeout || TIMEOUT_FOR_MESSAGE_REQUEST)
 
     const body: {
-      content: string;
-      type?: string;
-      pipelineConfig?: string;
-      pipelineJobs?: string;
+      content: string
+      type?: string
+      rdiContext?: string
+      pipelineConfig?: string
+      pipelineJobs?: string
     } = { content: message }
 
     if (isRdiStream) {
@@ -44,11 +45,8 @@ export const getStreamedAnswer = async (
     }
 
     // Add pipeline context if provided
-    if (pipelineContext?.config) {
-      body.pipelineConfig = pipelineContext.config
-    }
-    if (pipelineContext?.jobs) {
-      body.pipelineJobs = pipelineContext.jobs
+    if (pipelineContext) {
+      body.rdiContext = JSON.stringify(pipelineContext)
     }
 
     const response = await fetch(url, {

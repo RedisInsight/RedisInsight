@@ -49,7 +49,6 @@ module.exports = {
             position: 'after',
           },
           {
-            pattern: 'apiSrc/**',
             group: 'internal',
             position: 'after',
           },

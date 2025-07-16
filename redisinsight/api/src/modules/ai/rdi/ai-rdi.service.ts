@@ -107,20 +107,20 @@ export class AiRdiService {
       const history = await this.aiRdiMessageRepository.list(targetId);
       const conversationId = AiRdiService.getConversationId(history);
 
-      let context = await this.aiRdiContextRepository.getFullDbContext(
+      let context = await this.aiRdiContextRepository.getFullContext(
         sessionMetadata,
         targetId,
       );
 
       if (!context) {
         // TODO - 16.07.25 - What would provide context for RDI?
-        context = {};
+        context = JSON.parse(dto.rdiContext);
       }
 
       const question = classToClass(AiRdiMessage, {
         type: dto.type,
         content: dto.content,
-        databaseId: targetId,
+        targetId,
         conversationId,
         createdAt: new Date(),
       });
@@ -128,7 +128,7 @@ export class AiRdiService {
       const answer = classToClass(AiRdiMessage, {
         type: AiRdiMessageType.AiMessage,
         content: '',
-        databaseId: targetId,
+        targetId,
         conversationId,
       });
 
@@ -210,10 +210,10 @@ export class AiRdiService {
 
   async getHistory(
     _sessionMetadata: SessionMetadata,
-    databaseId: string,
+    targetId: string,
   ): Promise<AiRdiMessage[]> {
     try {
-      return await this.aiRdiMessageRepository.list(databaseId);
+      return await this.aiRdiMessageRepository.list(targetId);
     } catch (e) {
       this.logger.error('Unable to get history', e);
       throw wrapAiRdiError(e, 'Unable to get history');
@@ -222,12 +222,12 @@ export class AiRdiService {
 
   async clearHistory(
     sessionMetadata: SessionMetadata,
-    databaseId: string,
+    targetId: string,
   ): Promise<void> {
     try {
-      await this.aiRdiContextRepository.reset(sessionMetadata, databaseId);
+      await this.aiRdiContextRepository.reset(sessionMetadata, targetId);
 
-      return this.aiRdiMessageRepository.clearHistory(databaseId);
+      return this.aiRdiMessageRepository.clearHistory(targetId);
     } catch (e) {
       throw wrapAiRdiError(e, 'Unable to clear history');
     }

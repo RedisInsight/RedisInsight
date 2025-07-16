@@ -31,18 +31,18 @@ export class LocalAiRdiMessageRepository extends AiRdiMessageRepository {
 
   /**
    * Clean history for particular database to fit N items limitation
-   * @param databaseId
+   * @param targetId
    * @param accountId
    */
   private async cleanupDatabaseHistory(
-    databaseId: string,
+    targetId: string,
     accountId: string,
   ): Promise<void> {
     // todo: investigate why delete with sub-query doesn't works
     const idsToDelete = (
       await this.repository
         .createQueryBuilder()
-        .where({ databaseId, accountId })
+        .where({ targetId, accountId })
         .select('id')
         .orderBy('createdAt', 'DESC')
         .offset(aiConfig.queryHistoryLimit)
@@ -56,11 +56,11 @@ export class LocalAiRdiMessageRepository extends AiRdiMessageRepository {
       .execute();
   }
 
-  async list(databaseId: string, accountId?: string): Promise<AiRdiMessage[]> {
-    this.logger.debug(`list ${databaseId} ${accountId}`);
+  async list(targetId: string, accountId?: string): Promise<AiRdiMessage[]> {
+    this.logger.debug(`list ${targetId} ${accountId}`);
     const entities = await this.repository
       .createQueryBuilder()
-      .where({ databaseId, accountId })
+      .where({ targetId, accountId })
       .orderBy('createdAt', 'ASC')
       .limit(aiConfig.queryHistoryLimit)
       .getMany();
@@ -102,11 +102,11 @@ export class LocalAiRdiMessageRepository extends AiRdiMessageRepository {
     }
   }
 
-  async clearHistory(databaseId: string, accountId?: string): Promise<void> {
+  async clearHistory(targetId: string, accountId?: string): Promise<void> {
     await this.repository
       .createQueryBuilder()
       .delete()
-      .where({ databaseId, accountId })
+      .where({ targetId, accountId })
       .execute();
   }
 }

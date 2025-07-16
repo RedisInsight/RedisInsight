@@ -31,7 +31,7 @@ export class AiRdiMessage {
   @Expose()
   @IsString()
   @IsNotEmpty()
-  databaseId: string;
+  targetId: string;
 
   @ApiProperty({
     type: String,

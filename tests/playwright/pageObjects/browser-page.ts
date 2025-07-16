@@ -956,7 +956,24 @@ export class BrowserPage extends BasePage {
     }
 
     async getStringKeyValue(): Promise<string | null> {
-        return this.stringKeyValueInput.textContent()
+        // Wait for the string value to be visible and loaded
+        await this.stringKeyValueInput.waitFor({ state: 'visible' })
+
+        // Try to get the text content first
+        const textContent = await this.stringKeyValueInput.textContent()
+        if (textContent && textContent.trim() && textContent !== 'Empty') {
+            return textContent
+        }
+
+        // If text content is empty, try input value
+        const inputValue = await this.stringKeyValueInput.inputValue()
+        if (inputValue && inputValue.trim()) {
+            return inputValue
+        }
+
+        // If both are empty, try inner text as fallback
+        const innerText = await this.stringKeyValueInput.innerText()
+        return innerText
     }
 
     async getZsetKeyScore(): Promise<string | null> {

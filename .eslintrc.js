@@ -7,7 +7,7 @@ module.exports = {
     browser: true,
   },
   extends: ['airbnb-typescript', 'prettier'],
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'import'],
   parser: '@typescript-eslint/parser',
   rules: {
     quotes: [2, 'single', { avoidEscape: true }],
@@ -67,12 +67,8 @@ module.exports = {
         node: true,
         browser: false,
       },
-      extends: [
-        'airbnb-typescript/base',
-        'plugin:sonarjs/recommended',
-        'prettier',
-      ],
-      plugins: ['@typescript-eslint', 'sonarjs'],
+      extends: ['airbnb-typescript/base', 'prettier'],
+      plugins: ['@typescript-eslint', 'sonarjs', 'import'],
       rules: {
         'max-len': ['warn', 120],
         '@typescript-eslint/return-await': 'off',
@@ -89,6 +85,12 @@ module.exports = {
             varsIgnorePattern: '^_',
           },
         ],
+        // SonarJS rules (manually enabled since v2.x doesn't have recommended config)
+        'sonarjs/cognitive-complexity': ['error', 15],
+        'sonarjs/no-duplicate-string': 'error',
+        'sonarjs/no-identical-functions': 'error',
+        'sonarjs/prefer-immediate-return': 'error',
+        'sonarjs/no-small-switch': 'error',
       },
       parserOptions: {
         project: path.join(__dirname, 'redisinsight/api/tsconfig.json'),
@@ -118,13 +120,15 @@ module.exports = {
         browser: true,
         node: false,
       },
-      extends: [
-        'airbnb-typescript',
-        'airbnb/hooks',
-        'plugin:sonarjs/recommended',
-        'prettier',
+      extends: ['airbnb-typescript', 'airbnb/hooks', 'prettier'],
+      plugins: [
+        '@typescript-eslint',
+        'sonarjs',
+        'import',
+        'react',
+        'react-hooks',
+        'jsx-a11y',
       ],
-      plugins: ['@typescript-eslint'],
       parserOptions: {
         ecmaVersion: 2020,
         sourceType: 'module',
@@ -173,6 +177,8 @@ module.exports = {
         'sonarjs/no-duplicate-string': 'off',
         'sonarjs/cognitive-complexity': [1, 20],
         'sonarjs/no-identical-functions': [0, 5],
+        'sonarjs/prefer-immediate-return': 'error',
+        'sonarjs/no-small-switch': 'error',
         'import/order': [
           1,
           {
@@ -220,6 +226,7 @@ module.exports = {
       rules: {
         '@typescript-eslint/semi': ['error', 'never'],
         semi: 'off',
+        '@typescript-eslint/default-param-last': 'off',
       },
     },
     // JavaScript files (general) - MUST BE LAST to override other rules
@@ -385,6 +392,11 @@ module.exports = {
     sourceType: 'module',
     createDefaultProgram: true,
   },
+  settings: {
+    react: {
+      version: 'detect', // Automatically detect React version
+    },
+  },
   ignorePatterns: [
     'dist',
     'node_modules',
@@ -392,5 +404,10 @@ module.exports = {
     'redisinsight/ui/src/packages/**/icons/*.js*',
     'redisinsight/api/report/**',
     'redisinsight/api/migration/**',
+    // Config files that don't need linting
+    '.eslintrc.js',
+    'electron-builder-mas.js',
+    'jest-resolver.js',
+    'resources/resources.d.ts',
   ],
 };

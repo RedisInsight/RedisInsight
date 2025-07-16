@@ -62,4 +62,51 @@
       }
     }
   }
+
+  .diffToggleContainer {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+    background-color: var(--euiColorEmptyShade);
+    border-radius: 4px;
+    padding: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .diffToggleBtn {
+    font-size: 12px !important;
+    height: 28px !important;
+    min-width: auto !important;
+    
+    :global {
+      .euiButton__content {
+        padding: 0 8px !important;
+        gap: 4px;
+      }
+      
+      .euiButton__text {
+        font-size: 12px !important;
+        line-height: 1 !important;
+      }
+    }
+  }
+
+  .diffViewToggleBtn {
+    font-size: 12px !important;
+    height: 28px !important;
+    min-width: auto !important;
+    
+    :global {
+      .euiButton__content {
+        padding: 0 8px !important;
+        gap: 4px;
+      }
+      
+      .euiButton__text {
+        font-size: 12px !important;
+        line-height: 1 !important;
+      }
+    }
+  }
 }

@@ -1,10 +1,7 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
 
 import { ExplorePanelTemplate } from 'uiSrc/templates'
 import HomeTabs from 'uiSrc/components/home-tabs'
-import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
-import { isAnyFeatureEnabled } from 'uiSrc/utils/features'
 import { FeatureFlags } from 'uiSrc/constants'
 import { FeatureFlagComponent, OAuthUserProfile } from 'uiSrc/components'
 import { OAuthSocialSource } from 'uiSrc/slices/interfaces'
@@ -20,25 +17,14 @@ export interface Props {
 const HomePageTemplate = (props: Props) => {
   const { children } = props
 
-  const {
-    [FeatureFlags.databaseChat]: databaseChatFeature,
-    [FeatureFlags.documentationChat]: documentationChatFeature,
-  } = useSelector(appFeatureFlagsFeaturesSelector)
-  const isAnyChatAvailable = isAnyFeatureEnabled([
-    databaseChatFeature,
-    documentationChatFeature,
-  ])
-
   return (
     <>
       <div className={styles.pageDefaultHeader}>
         <HomeTabs />
         <Flex style={{ flexGrow: 0 }} gap="none" align="center">
-          {isAnyChatAvailable && (
-            <FlexItem style={{ marginRight: 12 }}>
-              <CopilotTrigger />
-            </FlexItem>
-          )}
+          <FlexItem style={{ marginRight: 12 }}>
+            <CopilotTrigger />
+          </FlexItem>
           <FlexItem grow>
             <InsightsTrigger source="home page" />
           </FlexItem>

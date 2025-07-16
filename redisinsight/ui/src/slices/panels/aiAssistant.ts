@@ -55,6 +55,11 @@ export const initialState: StateAiAssistant = {
     agreements: [],
     messages: [],
   },
+  rdiHelper: {
+    loading: false,
+    agreements: [],
+    messages: [],
+  },
   dataGenerator: {
     loading: false,
     agreements: [],
@@ -81,6 +86,9 @@ const aiAssistantSlice = createSlice({
     updateExpertChatAgreements: (state, { payload }: PayloadAction<string>) => {
       state.expert.agreements.push(payload)
     },
+    updateRdiHelperChatAgreements: (state, { payload }: PayloadAction<string>) => {
+      state.rdiHelper.agreements.push(payload)
+    },
     createAssistantChat: (state) => {
       state.assistant.loading = true
       state.assistant.id = ''
@@ -102,6 +110,9 @@ const aiAssistantSlice = createSlice({
     getAssistantChatHistory: (state) => {
       state.assistant.loading = true
     },
+    getRdiHelperChatHistory: (state) => {
+      state.rdiHelper.loading = true
+    },
     getAssistantChatHistorySuccess: (
       state,
       { payload }: PayloadAction<Array<AiChatMessage>>,
@@ -110,8 +121,19 @@ const aiAssistantSlice = createSlice({
       state.assistant.messages =
         payload?.map((m) => ({ ...m, id: `ai_${uuidv4()}` })) || []
     },
+    getRdiHelperChatHistorySuccess: (
+      state,
+      { payload }: PayloadAction<Array<AiChatMessage>>,
+    ) => {
+      state.rdiHelper.loading = false
+      state.rdiHelper.messages =
+        payload?.map((m) => ({ ...m, id: `ai_${uuidv4()}` })) || []
+    },
     getAssistantChatHistoryFailed: (state) => {
       state.assistant.loading = false
+    },
+    getRdiHelperChatHistoryFailed: (state) => {
+      state.rdiHelper.loading = false
     },
     removeAssistantChatHistory: (state) => {
       state.assistant.loading = true
@@ -127,6 +149,9 @@ const aiAssistantSlice = createSlice({
     },
     sendQuestion: (state, { payload }: PayloadAction<AiChatMessage>) => {
       state.assistant.messages.push(payload)
+    },
+    sendRdiHelperQuestion: (state, { payload }: PayloadAction<AiChatMessage>) => {
+      state.rdiHelper.messages.push(payload)
     },
     setQuestionError: (
       state,
@@ -149,8 +174,33 @@ const aiAssistantSlice = createSlice({
           : item,
       )
     },
+    setRdiHelperQuestionError: (
+      state,
+      {
+        payload,
+      }: PayloadAction<{
+        id: string
+        error: Maybe<{
+          statusCode: number
+          errorCode?: number
+          details?: Record<string, any>
+        }>
+      }>,
+    ) => {
+      state.rdiHelper.messages = state.rdiHelper.messages.map((item) =>
+        item.id === payload.id
+          ? {
+              ...item,
+              error: payload.error,
+            }
+          : item,
+      )
+    },
     sendAnswer: (state, { payload }: PayloadAction<AiChatMessage>) => {
       state.assistant.messages.push(payload)
+    },
+    sendRdiHelperAnswer: (state, { payload }: PayloadAction<AiChatMessage>) => {
+      state.rdiHelper.messages.push(payload)
     },
     getExpertChatHistory: (state) => {
       state.expert.loading = true
@@ -196,6 +246,9 @@ const aiAssistantSlice = createSlice({
     },
     clearExpertChatHistory: (state) => {
       state.expert.messages = []
+    },
+    clearRdiHelperChatHistory: (state) => {
+      state.rdiHelper.messages = []
     },
 
     // ========= DATA GENERATOR
@@ -253,6 +306,8 @@ export const aiAssistantChatSelector = (state: RootState) =>
   state.panels.aiAssistant.assistant
 export const aiExpertChatSelector = (state: RootState) =>
   state.panels.aiAssistant.expert
+export const aiRdiHelperChatSelector = (state: RootState) =>
+  state.panels.aiAssistant.rdiHelper
 export const aiDataGeneratorChatSelector = (state: RootState) =>
   state.panels.aiAssistant.dataGenerator
 
@@ -261,6 +316,7 @@ export const {
   createAssistantChat,
   updateAssistantChatAgreements,
   updateExpertChatAgreements,
+  updateRdiHelperChatAgreements,
   clearAssistantChatId,
   setSelectedTab,
   createAssistantSuccess,
@@ -268,12 +324,18 @@ export const {
   getAssistantChatHistory,
   getAssistantChatHistorySuccess,
   getAssistantChatHistoryFailed,
+  getRdiHelperChatHistory,
+  getRdiHelperChatHistorySuccess,
+  getRdiHelperChatHistoryFailed,
   removeAssistantChatHistory,
   removeAssistantChatHistorySuccess,
   removeAssistantChatHistoryFailed,
   sendQuestion,
+  sendRdiHelperQuestion,
   setQuestionError,
+  setRdiHelperQuestionError,
   sendAnswer,
+  sendRdiHelperAnswer,
   getExpertChatHistory,
   getExpertChatHistorySuccess,
   getExpertChatHistoryFailed,
@@ -281,6 +343,7 @@ export const {
   setExpertQuestionError,
   sendExpertAnswer,
   clearExpertChatHistory,
+  clearRdiHelperChatHistory,
   // ======== DATA GENERATOR
   getDataGeneratorChatHistory,
   getDataGeneratorChatHistorySuccess,
@@ -407,6 +470,122 @@ export function removeAssistantChatAction(id: string) {
       }
     } catch (e) {
       dispatch(removeAssistantChatHistoryFailed())
+    }
+  }
+}
+
+export function askRdiHelperChatbotAction(
+  rdiInstanceId: string,
+  message: string,
+  {
+    onMessage,
+    onError,
+    onFinish,
+  }: {
+    onMessage?: (message: AiChatMessage) => void
+    onError?: (errorCode: number) => void
+    onFinish?: () => void
+  },
+) {
+  return async (dispatch: AppDispatch) => {
+    const humanMessage = generateHumanMessage(message)
+    const aiMessageProgressed: AiChatMessage = generateAiMessage()
+
+    dispatch(sendRdiHelperQuestion(humanMessage))
+
+    onMessage?.(aiMessageProgressed)
+
+    const baseUrl = getBaseUrl()
+    const url = `${baseUrl}${ApiEndpoints.AI_EXTENDED}/${rdiInstanceId}/messages`
+
+    await getStreamedAnswer(url, message, {
+      isRdiStream: true,
+      onMessage: (value: string) => {
+        aiMessageProgressed.content += value
+        onMessage?.(aiMessageProgressed)
+      },
+      onFinish: () => {
+        dispatch(sendRdiHelperAnswer(aiMessageProgressed))
+        onFinish?.()
+      },
+      onError: (error: any) => {
+        if (error?.status === ApiStatusCode.Unauthorized) {
+          const err = parseCustomError(error)
+          dispatch(addErrorNotification(err))
+          dispatch(logoutUserAction())
+        } else {
+          dispatch(
+            setRdiHelperQuestionError({
+              id: humanMessage.id,
+              error: {
+                statusCode: error?.status ?? 500,
+                errorCode: error?.errorCode,
+                details: error?.details,
+              },
+            }),
+          )
+        }
+
+        onError?.(error?.status ?? 500)
+        onFinish?.()
+      },
+    })
+  }
+}
+
+export function getRdiHelperChatHistoryAction(
+  rdiInstanceId: string,
+  onSuccess?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    dispatch(getRdiHelperChatHistory())
+
+    try {
+      const { status, data } = await apiService.get<any>(
+        `${ApiEndpoints.AI_EXTENDED}/${rdiInstanceId}/messages`,
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(getRdiHelperChatHistorySuccess(data))
+        onSuccess?.()
+      }
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+      const errorCode = getApiErrorCode(error as AxiosError)
+
+      if (errorCode === ApiStatusCode.Unauthorized) {
+        dispatch<any>(logoutUserAction())
+      }
+
+      dispatch(addErrorNotification(err))
+      dispatch(getRdiHelperChatHistoryFailed())
+    }
+  }
+}
+
+export function removeRdiHelperChatHistoryAction(
+  rdiInstanceId: string,
+  onSuccess?: () => void,
+) {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const { status } = await apiService.delete<any>(
+        `${ApiEndpoints.AI_EXTENDED}/${rdiInstanceId}/messages`,
+      )
+
+      if (isStatusSuccessful(status)) {
+        dispatch(clearRdiHelperChatHistory())
+        onSuccess?.()
+      }
+    } catch (error) {
+      const err = getAxiosError(error as EnhancedAxiosError)
+      const errorCode = getApiErrorCode(error as AxiosError)
+
+      if (errorCode === ApiStatusCode.Unauthorized) {
+        dispatch<any>(logoutUserAction())
+      }
+
+      dispatch(addErrorNotification(err))
     }
   }
 }

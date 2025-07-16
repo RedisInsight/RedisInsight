@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import ReactMonacoEditor, { monaco as monacoEditor } from 'react-monaco-editor'
+import ReactMonacoEditor, { MonacoDiffEditor, monaco as monacoEditor } from 'react-monaco-editor'
 import cx from 'classnames'
 import { EuiButton, EuiIcon } from '@elastic/eui'
 import { merge } from 'lodash'
@@ -36,6 +36,15 @@ export interface CommonProps {
   onOpenDedicatedEditor?: () => void
   onSubmitDedicatedEditor?: (langId: DSL) => void
   onCloseDedicatedEditor?: (langId: DSL) => void
+  // Diff mode props
+  originalValue?: string
+  enableDiff?: boolean
+  onDiffModeChange?: (isDiffMode: boolean) => void
+  diffOptions?: {
+    renderSideBySide?: boolean
+    enableSplitViewResizing?: boolean
+    ignoreTrimWhitespace?: boolean
+  }
   'data-testid'?: string
 }
 
@@ -73,12 +82,21 @@ const MonacoEditor = (props: Props) => {
     onOpenDedicatedEditor,
     onSubmitDedicatedEditor,
     onCloseDedicatedEditor,
+    // Diff mode props
+    originalValue,
+    enableDiff = false,
+    onDiffModeChange,
+    diffOptions = {
+      ignoreTrimWhitespace: true,
+    },
     'data-testid': dataTestId = 'monaco-editor',
   } = props
 
   let contribution: Nullable<ISnippetController> = null
   const [isEditing, setIsEditing] = useState(!readOnly && !disabled)
   const [isDedicatedEditorOpen, setIsDedicatedEditorOpen] = useState(false)
+  const [isDiffMode, setIsDiffMode] = useState(enableDiff)
+  const [isInlineDiff, setIsInlineDiff] = useState(true)
   const monacoObjects = useRef<Nullable<IEditorMount>>(null)
   const input = useRef<HTMLDivElement>(null)
 
@@ -240,6 +258,22 @@ const MonacoEditor = (props: Props) => {
       options,
     )
 
+  const toggleDiffMode = () => {
+    const newDiffMode = !isDiffMode
+    setIsDiffMode(newDiffMode)
+    onDiffModeChange?.(newDiffMode)
+  }
+
+  const toggleDiffViewMode = () => {
+    setIsInlineDiff(!isInlineDiff)
+  }
+
+  const getDiffOptions = () => ({
+    ...diffOptions,
+    renderSideBySide: !isInlineDiff,
+    enableSplitViewResizing: !isInlineDiff,
+  })
+
   const handleApply = (_value: string, event: React.MouseEvent) => {
     onApply?.(event, () => setIsEditing(false))
   }
@@ -268,19 +302,67 @@ const MonacoEditor = (props: Props) => {
           data-testid={`wrapper-${dataTestId}`}
           ref={input}
         >
-          <ReactMonacoEditor
-            language={language}
-            theme={theme === Theme.Dark ? 'dark' : 'light'}
-            value={value ?? ''}
-            onChange={onChange}
-            options={monacoOptions}
-            className={cx(styles.editor, className, {
-              readMode: !isEditing && readOnly,
-            })}
-            editorDidMount={editorDidMount}
-            editorWillMount={editorWillMount}
-            data-testid={dataTestId}
-          />
+          {/* Diff toggle button - only show when originalValue is provided */}
+          {originalValue && (
+            <div className={styles.diffToggleContainer}>
+              <EuiButton
+                size="s"
+                onClick={toggleDiffMode}
+                iconType={isDiffMode ? 'eye' : 'diff'}
+                className={styles.diffToggleBtn}
+                data-testid="diff-mode-toggle"
+                title={isDiffMode ? 'Switch to normal editor view' : 'Switch to diff view'}
+              >
+                {isDiffMode ? 'Normal' : 'Diff'} Mode
+              </EuiButton>
+              {isDiffMode && (
+                <EuiButton
+                  size="s"
+                  onClick={toggleDiffViewMode}
+                  iconType={isInlineDiff ? 'menuLeft' : 'menuRight'}
+                  className={styles.diffViewToggleBtn}
+                  data-testid="diff-view-toggle"
+                  style={{ marginLeft: '8px' }}
+                  title={isInlineDiff ? 'Switch to side-by-side view' : 'Switch to inline view'}
+                >
+                  {isInlineDiff ? 'Inline' : 'Side-by-Side'}
+                </EuiButton>
+              )}
+            </div>
+          )}
+          
+          {/* Conditional rendering: Diff Editor or Regular Editor */}
+          {isDiffMode && originalValue ? (
+            <MonacoDiffEditor
+              language={language}
+              theme={theme === Theme.Dark ? 'dark' : 'light'}
+              original={originalValue}
+              value={value ?? ''}
+              options={{
+                ...monacoOptions,
+                ...getDiffOptions(),
+                readOnly: !isEditing || disabled || readOnly,
+              }}
+              className={cx(styles.editor, className, {
+                readMode: !isEditing && readOnly,
+              })}
+              data-testid={`${dataTestId}-diff`}
+            />
+          ) : (
+            <ReactMonacoEditor
+              language={language}
+              theme={theme === Theme.Dark ? 'dark' : 'light'}
+              value={value ?? ''}
+              onChange={onChange}
+              options={monacoOptions}
+              className={cx(styles.editor, className, {
+                readMode: !isEditing && readOnly,
+              })}
+              editorDidMount={editorDidMount}
+              editorWillMount={editorWillMount}
+              data-testid={dataTestId}
+            />
+          )}
         </div>
       </InlineItemEditor>
       {isDedicatedEditorOpen && (

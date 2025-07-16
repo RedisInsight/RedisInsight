@@ -1,4 +1,3 @@
-# Note: redisinsight/api and redisinsight/ui are now handled by the unified config
 tests/e2e
 
 # Logs

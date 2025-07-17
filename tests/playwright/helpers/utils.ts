@@ -32,3 +32,7 @@ export async function navigateToStandaloneInstance(page: Page): Promise<void> {
     await expect(db).toBeVisible({ timeout: 5000 })
     await db.first().click()
 }
+
+export function stringToBuffer(str: string): Buffer {
+    return Buffer.from(str, 'utf-8')
+}

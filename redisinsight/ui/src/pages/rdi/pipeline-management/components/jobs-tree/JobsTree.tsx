@@ -13,6 +13,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { isNumber } from 'lodash'
 
+import { IconType } from '@elastic/eui/src/components/icon/icon'
 import InlineItemEditor from 'uiSrc/components/inline-item-editor'
 import { PageNames } from 'uiSrc/constants'
 import ConfirmationPopover from 'uiSrc/pages/rdi/components/confirmation-popover/ConfirmationPopover'
@@ -158,24 +159,44 @@ const JobsTree = (props: IProps) => {
   const handleToggleAccordion = (isOpen: boolean) =>
     setAccordionState(isOpen ? 'open' : 'closed')
 
-  const jobName = (name: string, isValid: boolean = true) => (
+  const jobName = (
+    name: string,
+    isValid: boolean = true,
+    statusColor:
+      | 'success'
+      | 'warning'
+      | 'danger'
+      | 'accent'
+      | 'ghost'
+      | 'subdued'
+      | 'default'
+      | 'secondary' = 'default',
+  ) => (
     <>
-      <FlexItem
-        grow
+      <Row
+        gap="xs"
+        align="center"
         onClick={() => onSelectedTab(name)}
         className={cx(styles.navItem, 'truncateText', { invalid: !isValid })}
         data-testid={`rdi-nav-job-${name}`}
       >
-        {name}
+        <EuiTextColor color={statusColor}>{name}</EuiTextColor>
 
         {!isValid && (
-          <EuiIcon
-            type={statusErrorIcon}
-            className="rdi-pipeline-nav__error"
-            data-testid="rdi-pipeline-nav__error"
-          />
+          <EuiToolTip
+            content="Job is not valid"
+            position="top"
+            display="inlineBlock"
+            anchorClassName="flex-row"
+          >
+            <EuiIcon
+              type={statusErrorIcon}
+              className="rdi-pipeline-nav__error"
+              data-testid="rdi-pipeline-nav__error"
+            />
+          </EuiToolTip>
         )}
-      </FlexItem>
+      </Row>
       <FlexItem
         className={styles.actions}
         data-testid={`rdi-nav-job-actions-${name}`}
@@ -265,46 +286,123 @@ const JobsTree = (props: IProps) => {
       ? jobsValidationErrors[jobName].length === 0
       : true
 
-  const renderJobsList = (jobs: IRdiPipelineJob[]) =>
-    jobs.map(({ name }, idx) => (
-      <Row
-        key={name}
-        className={cx(styles.fullWidth, styles.job, {
-          [styles.active]: path === name,
-        })}
-        align="center"
-        justify="between"
-        data-testid={`job-file-${name}`}
-      >
-        <div className={styles.dotWrapper}>
-          {!!changes[name] && (
-            <EuiToolTip
-              content="This file contains undeployed changes."
-              position="top"
-              display="inlineBlock"
-              anchorClassName={styles.dotWrapper}
-            >
-              <span
-                className={styles.dot}
-                data-testid={`updated-file-${name}-highlight`}
+  const renderJobsList = (jobs: IRdiPipelineJob[]) => {
+    // Create a map of desired jobs for quick lookup
+    const desiredJobsMap =
+      desiredPipeline?.jobs?.reduce(
+        (acc, job) => {
+          acc[job.name] = job.value
+          return acc
+        },
+        {} as Record<string, string>,
+      ) || {}
+
+    // Create a set of all job names from both current and desired jobs
+    const allJobNames = new Set<string>([
+      ...jobs.map((job) => job.name),
+      ...Object.keys(desiredJobsMap),
+    ])
+
+    // Convert to array and sort for consistent rendering
+    const allJobsArray = Array.from(allJobNames).sort()
+
+    return allJobsArray.map((name) => {
+      const currentJob = jobs.find((job) => job.name === name)
+      const desiredJobValue = desiredJobsMap[name]
+
+      // Determine job status:
+      // 1. If job exists in both places with same content - unchanged
+      // 2. If job exists in both places with different content - changed
+      // 3. If job exists only in desiredPipeline - added
+      // 4. If job exists only in current jobs - deleted
+      const jobExists = !!currentJob
+      const desiredJobExists = desiredJobValue !== undefined
+
+      let statusIcon: IconType | null = null
+      let statusColor:
+        | 'success'
+        | 'warning'
+        | 'danger'
+        | 'accent'
+        | 'ghost'
+        | 'subdued'
+        | 'default'
+        | 'secondary' = 'default'
+      let statusText: string | null = null
+
+      if (jobExists && desiredJobExists) {
+        if (!isEqualPipelineFile(currentJob.value, desiredJobValue)) {
+          statusColor = 'warning'
+          statusText = 'Job will be modified'
+          statusIcon = 'tokenElement'
+        }
+      } else if (!jobExists && desiredJobExists) {
+        statusColor = 'success'
+        statusText = 'Job will be added'
+        // Added job
+        statusIcon = 'plus'
+      } else if (jobExists && !desiredJobExists) {
+        statusColor = 'danger'
+        statusText = 'Job will be deleted'
+        // Deleted job
+        statusIcon = 'minus'
+      }
+
+      return (
+        <Row
+          key={name}
+          className={cx(styles.fullWidth, styles.job, {
+            [styles.active]: path === name,
+          })}
+          align="center"
+          justify="between"
+          data-testid={`job-file-${name}`}
+        >
+          <div className={styles.dotWrapper}>
+            {!!changes[name] && (
+              <EuiToolTip
+                content="This file contains undeployed changes."
+                position="top"
+                display="inlineBlock"
+                anchorClassName={styles.dotWrapper}
+              >
+                <span
+                  className={styles.dot}
+                  data-testid={`updated-file-${name}-highlight`}
+                />
+              </EuiToolTip>
+            )}
+          </div>
+          <Row className={styles.fullWidth} align="center" gap="xs">
+            <FlexItem>
+              <EuiIcon
+                type="document"
+                className={styles.fileIcon}
+                data-test-subj="jobs-folder-icon-close"
               />
-            </EuiToolTip>
-          )}
-        </div>
-        <Row className={styles.fullWidth} align="center">
-          <FlexItem>
-            <EuiIcon
-              type="document"
-              className={styles.fileIcon}
-              data-test-subj="jobs-folder-icon-close"
-            />
-          </FlexItem>
-          {currentJobName === name
-            ? jobNameEditor(name, idx)
-            : jobName(name, isJobValid(name))}
+            </FlexItem>
+            {statusIcon && statusText && (
+              <FlexItem>
+                <EuiToolTip content={statusText} position="left">
+                  <EuiIcon
+                    type={statusIcon}
+                    color={statusColor}
+                    className={styles.fileIcon}
+                  />
+                </EuiToolTip>
+              </FlexItem>
+            )}
+            {currentJobName === name
+              ? jobNameEditor(
+                  name,
+                  jobs.findIndex((job) => job.name === name),
+                )
+              : jobName(name, isJobValid(name), statusColor)}
+          </Row>
         </Row>
-      </Row>
-    ))
+      )
+    })
+  }
 
   const folder = () => (
     <Row className={styles.fullWidth} align="center" justify="between">

@@ -7,6 +7,7 @@ import {
     SetKeyParameters,
     StreamKeyParameters,
 } from '../../types'
+import { stringToBuffer } from '../utils'
 
 const bufferPathMask = '/databases/databaseId/keys?encoding=buffer'
 export class APIKeyRequests {
@@ -23,8 +24,8 @@ export class APIKeyRequests {
             databaseParameters.databaseName,
         )
         const requestBody = {
-            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
-            value: Buffer.from(keyParameters.value, 'utf-8'),
+            keyName: stringToBuffer(keyParameters.keyName),
+            value: stringToBuffer(keyParameters.value),
             expire: keyParameters?.expire,
         }
 
@@ -46,11 +47,11 @@ export class APIKeyRequests {
             databaseParameters.databaseName,
         )
         const requestBody = {
-            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            keyName: stringToBuffer(keyParameters.keyName),
             fields: keyParameters.fields.map((fields) => ({
                 ...fields,
-                field: Buffer.from(fields.field, 'utf-8'),
-                value: Buffer.from(fields.value, 'utf-8'),
+                field: stringToBuffer(fields.field),
+                value: stringToBuffer(fields.value),
             })),
             expire: keyParameters?.expire,
         }
@@ -70,9 +71,9 @@ export class APIKeyRequests {
             databaseParameters.databaseName,
         )
         const requestBody = {
-            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            keyName: stringToBuffer(keyParameters.keyName),
             elements: keyParameters.elements.map((element) =>
-                Buffer.from(element, 'utf-8'),
+                stringToBuffer(element),
             ),
             expire: keyParameters?.expire,
         }
@@ -95,12 +96,12 @@ export class APIKeyRequests {
             databaseParameters.databaseName,
         )
         const requestBody = {
-            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            keyName: stringToBuffer(keyParameters.keyName),
             entries: keyParameters.entries.map((member) => ({
                 ...member,
                 fields: member.fields.map(({ name, value }) => ({
-                    name: Buffer.from(name, 'utf-8'),
-                    value: Buffer.from(value, 'utf-8'),
+                    name: stringToBuffer(name),
+                    value: stringToBuffer(value),
                 })),
             })),
             expire: keyParameters?.expire,
@@ -121,9 +122,9 @@ export class APIKeyRequests {
             databaseParameters.databaseName,
         )
         const requestBody = {
-            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            keyName: stringToBuffer(keyParameters.keyName),
             members: keyParameters.members.map((member) =>
-                Buffer.from(member, 'utf-8'),
+                stringToBuffer(member),
             ),
             expire: keyParameters?.expire,
         }
@@ -147,9 +148,9 @@ export class APIKeyRequests {
             databaseParameters.databaseName,
         )
         const requestBody = {
-            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            keyName: stringToBuffer(keyParameters.keyName),
             members: keyParameters.members.map((member) => ({
-                name: Buffer.from(member.name, 'utf-8'),
+                name: stringToBuffer(member.name),
                 score: member.score,
             })),
             expire: keyParameters?.expire,
@@ -173,7 +174,7 @@ export class APIKeyRequests {
             databaseParameters.databaseName,
         )
         const requestBody: any = {
-            keyName: Buffer.from(keyParameters.keyName, 'utf-8'),
+            keyName: stringToBuffer(keyParameters.keyName),
             data: JSON.stringify(keyParameters.value),
         }
 
@@ -221,7 +222,7 @@ export class APIKeyRequests {
             databaseName,
         )
         if (doesKeyExist.length > 0) {
-            const requestBody = { keyNames: [Buffer.from(keyName, 'utf-8')] }
+            const requestBody = { keyNames: [stringToBuffer(keyName)] }
             const response = await this.apiClient.delete(
                 bufferPathMask.replace('databaseId', databaseId),
                 {

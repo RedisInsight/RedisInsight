@@ -1333,21 +1333,23 @@ export class BrowserPage extends BasePage {
 
     async isKeyDetailsClosed(): Promise<boolean> {
         try {
-            // Give a small moment for UI transitions to complete
-            await this.page.waitForTimeout(100)
+            // Wait for either the header to disappear OR the close button to disappear
+            // This ensures we wait for the UI transition to complete
+            await expect
+                .poll(async () => {
+                    const headerIsVisible = await this.page
+                        .getByTestId('key-details-header')
+                        .isVisible()
+                    const closeRightPanelBtn = await this.page
+                        .getByTestId('close-right-panel-btn')
+                        .isVisible()
 
-            // Check if the key details header is gone
-            const headerIsVisible = await this.page
-                .getByTestId('key-details-header')
-                .isVisible()
+                    // Return true if details are closed (header gone OR close button gone)
+                    return !headerIsVisible || !closeRightPanelBtn
+                })
+                .toBe(true)
 
-            // Check if the close right panel button is not visible
-            const closeRightPanelBtn = await this.page
-                .getByTestId('close-right-panel-btn')
-                .isVisible()
-
-            // Details are closed if header is gone OR close panel button is not visible
-            return !headerIsVisible || !closeRightPanelBtn
+            return true
         } catch (error) {
             return false
         }
@@ -1381,10 +1383,6 @@ export class BrowserPage extends BasePage {
         } catch {
             return false
         }
-    }
-
-    async getKeyTTL(): Promise<string | null> {
-        return this.keyDetailsTTL.textContent()
     }
 
     async getAllListElements(): Promise<string[]> {
@@ -1487,7 +1485,7 @@ export class BrowserPage extends BasePage {
     }
 
     async verifyKeyTTL(expectedTTL?: number): Promise<void> {
-        const displayedTTL = await this.getKeyTTL()
+        const displayedTTL = await this.keyDetailsTTL.textContent()
         expect(displayedTTL).toContain('TTL:')
 
         if (expectedTTL !== undefined) {

@@ -488,7 +488,7 @@ export function askRdiHelperChatbotAction(
     onFinish?: () => void
     pipelineContext?: {
       config?: string
-      jobs?: string
+      jobs?: { name: string, value: string }[]
     }
   },
 ) {

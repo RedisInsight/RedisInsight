@@ -21,7 +21,7 @@ export const getStreamedAnswer = async (
     isRdiStream?: boolean
     pipelineContext?: {
       config?: string
-      jobs?: string
+      jobs?: { name: string, value: string }[]
     }
     timeout?: number
   },

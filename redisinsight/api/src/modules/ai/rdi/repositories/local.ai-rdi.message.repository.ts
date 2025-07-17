@@ -56,11 +56,10 @@ export class LocalAiRdiMessageRepository extends AiRdiMessageRepository {
       .execute();
   }
 
-  async list(targetId: string, accountId?: string): Promise<AiRdiMessage[]> {
-    this.logger.debug(`list ${targetId} ${accountId}`);
+  async list(targetId: string): Promise<AiRdiMessage[]> {
     const entities = await this.repository
       .createQueryBuilder()
-      .where({ targetId, accountId })
+      .where({ targetId })
       .orderBy('createdAt', 'ASC')
       .limit(aiConfig.queryHistoryLimit)
       .getMany();
@@ -102,11 +101,11 @@ export class LocalAiRdiMessageRepository extends AiRdiMessageRepository {
     }
   }
 
-  async clearHistory(targetId: string, accountId?: string): Promise<void> {
+  async clearHistory(targetId: string): Promise<void> {
     await this.repository
       .createQueryBuilder()
       .delete()
-      .where({ targetId, accountId })
+      .where({ targetId })
       .execute();
   }
 }

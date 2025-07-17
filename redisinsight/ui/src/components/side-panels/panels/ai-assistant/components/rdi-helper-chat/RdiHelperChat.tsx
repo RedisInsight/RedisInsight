@@ -76,8 +76,8 @@ const RdiHelperChat = () => {
 
       // Prepare pipeline context for AI assistant based on current page
       const pipelineContext = {
-        config: isOnConfigPage ? (config || undefined) : undefined,
-        jobs: isOnJobsPage && jobs && jobs.length > 0 ? JSON.stringify(jobs) : undefined,
+        config,
+        jobs,
       }
 
       dispatch(

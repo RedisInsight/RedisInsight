@@ -107,56 +107,10 @@ export class AiRdiService {
       const history = await this.aiRdiMessageRepository.list(targetId);
       const conversationId = AiRdiService.getConversationId(history);
 
-      // const context = JSON.parse(dto.rdiContext);
-      const context = {
-        config: `
-sources:
-  mysql:
-    type: cdc
-    logging:
-      level: info
-    connection:
-      type: mysql
-      host: localhost # e.g. localhost
-      port: 3306
-      database: new_schema # e.g. inventory
-      user: root
-      password: asdasdasd12e12d
-targets:
-  target:
-    connection:
-      type: redis
-      host: redis-10434.crce163.us-east-1-mz.ec2.qa-cloud.redislabs.com # e.g. localhost
-      port: 10434 # e.g. 12000
-      password: asdasd
-processors:
-        `,
-        jobs: [
-          {
-            name: 'basket-transformation',
-            value: `
-# source must refer to a specific table in the source database. If need you should specify the server_name and the schema
-
-source:
-  #server_name: chinook
-  #schema: public
-  # table:
-# transform - optional set of filters and transformations
-transform:
-
-output:
-  - uses: redis.write
-    with:
-      # target - must refer to a connection specified in config.yaml
-      connection: target
-      key:
-            `,
-          },
-        ],
-      };
+      const context = JSON.parse(dto.rdiContext);
 
       const question = classToClass(AiRdiMessage, {
-        type: dto.type,
+        type: AiRdiMessageType.HumanMessage,
         content: dto.content,
         targetId,
         conversationId,
@@ -202,8 +156,9 @@ output:
         );
       });
 
-      socket.on(AiRdiWsEvents.SET_DESIRED_STATE, async (data) => {
+      socket.on(AiRdiWsEvents.SET_DESIRED_STATE, async (data, cb) => {
         console.log('set state received', data)
+        cb({ status: 'applied' });
       });
 
       await new Promise((resolve, reject) => {
@@ -251,6 +206,7 @@ output:
     targetId: string,
   ): Promise<AiRdiMessage[]> {
     try {
+      console.log("___ list", await this.aiRdiMessageRepository.list(targetId))
       return await this.aiRdiMessageRepository.list(targetId);
     } catch (e) {
       this.logger.error('Unable to get history', e);

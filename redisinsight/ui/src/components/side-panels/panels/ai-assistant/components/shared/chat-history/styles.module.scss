@@ -12,6 +12,23 @@ $delay: .13s;
     pre > code {
       background-color:  var(--browserTableRowEven) !important;
     }
+
+    // Add diff highlighting styles
+    .token.prefix.inserted {
+      padding-left: 4px;
+      margin-left: -4px;
+      box-shadow: -4px 0 #3b7d6a;
+      color: #3b7d6a;
+      background-color: rgba(0, 255, 0, 0.2);
+    }
+
+    .token.prefix.deleted {
+      padding-left: 4px;
+      margin-left: -4px;
+      box-shadow: -4px 0 #bd271e;
+      background-color: rgba(255, 0, 0, 0.2);
+      color: #bd271e;
+    }
   }
 }
 

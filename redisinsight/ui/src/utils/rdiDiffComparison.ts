@@ -1,6 +1,15 @@
-import { store } from 'uiSrc/slices/store'
-import { rdiPipelineSelector, enableConfigDiff, disableConfigDiff, enableJobDiff, disableJobDiff } from 'uiSrc/slices/rdi/pipeline'
+import { AppDispatch, store } from 'uiSrc/slices/store';
+import {
+  rdiPipelineSelector,
+  enableConfigDiff,
+  disableConfigDiff,
+  enableJobDiff,
+  disableJobDiff,
+  setDesiredPipeline
+} from 'uiSrc/slices/rdi/pipeline';
 import { Maybe } from 'uiSrc/utils'
+import { value } from 'jsonpath';
+import { useDispatch } from 'react-redux';
 
 export interface RdiDiffOptions {
   enableAutoComparison?: boolean
@@ -114,6 +123,41 @@ export const compareRdiJob = (
   options?: RdiDiffOptions
 ): RdiDiffResult => compareRdiText(currentJobValue, 'job', jobName, options)
 
+export const isNotDiffEmpty = (value: any) => {
+  return value !== '' && value !== '\u200B'
+}
+
+export const isConfigDiff = () => {
+  const state = store.getState()
+  const { config, desiredPipeline } = rdiPipelineSelector(state)
+
+  return desiredPipeline.active && config !== desiredPipeline.config && (isNotDiffEmpty(config) && isNotDiffEmpty(desiredPipeline.config))
+}
+
+export const isJobDiff = () => {
+  const state = store.getState()
+  const { config, desiredPipeline } = rdiPipelineSelector(state)
+
+  return desiredPipeline.active && config !== desiredPipeline.config && (isNotDiffEmpty(config) && isNotDiffEmpty(desiredPipeline.config))
+}
+//
+// export const isDiff = () => {
+//   const state = store.getState()
+//   const { config, jobs, desiredPipeline } = rdiPipelineSelector(state)
+//
+//   if (JSON.stringify(config) === JSON.stringify(desiredPipeline.config)) {
+//     return true
+//   }
+//
+//   return
+// }
+
+export const setPipeline = (pipeline) => {
+  return (dispatch: AppDispatch) => {
+    dispatch(setDesiredPipeline(pipeline))
+  }
+}
+
 // Expose to window object for testing
 declare global {
   interface Window {
@@ -121,6 +165,7 @@ declare global {
       compareRdiText: typeof compareRdiText
       compareRdiConfig: typeof compareRdiConfig
       compareRdiJob: typeof compareRdiJob
+      setPipeline: typeof setPipeline
     }
   }
 }

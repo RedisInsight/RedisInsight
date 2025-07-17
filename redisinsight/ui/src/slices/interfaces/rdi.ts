@@ -210,6 +210,11 @@ export interface IStateRdiPipeline {
       newValue: Nullable<string>
     }>
   }
+  desiredPipeline: {
+    active: boolean
+    config: string
+    jobs: IRdiPipelineJob[]
+  }
 }
 
 export interface IStateRdiDryRunJob {

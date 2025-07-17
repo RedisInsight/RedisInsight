@@ -1837,7 +1837,7 @@ export class BrowserPage extends BasePage {
     async waitForTTLToUpdate(expectedMinValue: number): Promise<void> {
         await expect
             .poll(async () => {
-                const currentTTL = await this.getKeyTTL()
+                const currentTTL = await this.keyDetailsTTL.textContent()
                 const ttlMatch = currentTTL?.match(/TTL:\s*(\d+)/)
                 return ttlMatch ? parseInt(ttlMatch[1], 10) : 0
             })
@@ -1848,7 +1848,7 @@ export class BrowserPage extends BasePage {
         expectedTTL: number,
         marginSeconds = 60,
     ): Promise<void> {
-        const displayedTTL = await this.getKeyTTL()
+        const displayedTTL = await this.keyDetailsTTL.textContent()
         const ttlMatch = displayedTTL?.match(/TTL:\s*(\d+)/)
         expect(ttlMatch).toBeTruthy()
 
@@ -1858,12 +1858,12 @@ export class BrowserPage extends BasePage {
     }
 
     async verifyTTLIsPersistent(): Promise<void> {
-        const displayedTTL = await this.getKeyTTL()
+        const displayedTTL = await this.keyDetailsTTL.textContent()
         expect(displayedTTL).toContain('No limit')
     }
 
     async verifyTTLIsNotPersistent(): Promise<void> {
-        const displayedTTL = await this.getKeyTTL()
+        const displayedTTL = await this.keyDetailsTTL.textContent()
         expect(displayedTTL).toContain('TTL:')
         expect(displayedTTL).not.toContain('No limit')
     }

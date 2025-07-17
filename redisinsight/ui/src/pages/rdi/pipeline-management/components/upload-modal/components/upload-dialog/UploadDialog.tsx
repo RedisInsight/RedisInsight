@@ -1,9 +1,9 @@
-import { EuiIcon } from '@elastic/eui'
 import React, { useState } from 'react'
 
 import { Text } from 'uiSrc/components/base/text'
 import ImportFileModal from 'uiSrc/components/import-file-modal'
 
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -66,7 +66,7 @@ const UploadDialog = ({
         showWarning ? (
           <div className={styles.warning} data-testid="input-file-warning">
             <Text size="xs" color="subdued">
-              <EuiIcon type="alert" className={styles.alertIcon} />
+              <RiIcon type="ToastDangerIcon" className={styles.alertIcon} />
               {warningMessage}
             </Text>
           </div>

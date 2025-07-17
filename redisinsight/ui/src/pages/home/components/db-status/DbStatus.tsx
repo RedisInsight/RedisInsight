@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import { differenceInDays } from 'date-fns'
 
@@ -7,8 +6,6 @@ import { useSelector } from 'react-redux'
 import { getTutorialCapability, Maybe } from 'uiSrc/utils'
 
 import { appContextCapability } from 'uiSrc/slices/app/context'
-
-import AlarmIcon from 'uiSrc/assets/img/alarm.svg'
 import { isShowCapabilityTutorialPopover } from 'uiSrc/services'
 import {
   sendEventTelemetry,
@@ -16,6 +13,7 @@ import {
   TelemetryEvent,
 } from 'uiSrc/telemetry'
 import { RiTooltip } from 'uiSrc/components'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import {
   CHECK_CLOUD_DATABASE,
   WARNING_WITH_CAPABILITY,
@@ -137,7 +135,7 @@ const WarningTooltipContent = (props: WarningTooltipProps) => {
 
   return (
     <div className={styles.warningTooltipContent}>
-      <EuiIcon type={AlarmIcon} size="original" />
+      <RiIcon type="AlarmIcon" customSize="50px" />
       <div>{content}</div>
     </div>
   )

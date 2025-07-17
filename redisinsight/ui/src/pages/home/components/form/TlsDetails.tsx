@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState } from 'react'
-import { EuiFieldText, htmlIdGenerator } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import cx from 'classnames'
 import { FormikProps } from 'formik'
 
@@ -31,6 +31,7 @@ import {
   SelectValueRender,
   RiSelectOption,
 } from 'uiSrc/components/base/forms/select/RiSelect'
+import { useGenerateId } from 'uiSrc/components/base/utils/hooks/generate-id'
 import styles from '../styles.module.scss'
 
 const suffix = '_tls_details'
@@ -125,7 +126,7 @@ const TlsDetails = (props: Props) => {
             text="will be removed from RedisInsight."
             item={cert.id}
             suffix={suffix}
-            deleting={activeCertId}
+            deleting={activeCertId ?? ''}
             closePopover={closePopover}
             updateLoading={false}
             showPopover={showPopover}
@@ -179,12 +180,16 @@ const TlsDetails = (props: Props) => {
     })
   })
 
+  const sslId = useGenerateId('', ' over ssl')
+  const sni = useGenerateId('', ' sni')
+  const verifyTlsId = useGenerateId('', ' verifyServerTlsCert')
+  const isTlsAuthId = useGenerateId('', ' is_tls_client_auth_required')
   return (
     <>
       <Row gap="m">
         <FlexItem grow={1}>
           <Checkbox
-            id={`${htmlIdGenerator()()} over ssl`}
+            id={sslId}
             name="tls"
             label="Use TLS"
             checked={!!formik.values.tls}
@@ -200,7 +205,7 @@ const TlsDetails = (props: Props) => {
           <Row gap="m">
             <FlexItem grow={1}>
               <Checkbox
-                id={`${htmlIdGenerator()()} sni`}
+                id={sni}
                 name="sni"
                 label="Use SNI"
                 checked={!!formik.values.sni}
@@ -248,7 +253,7 @@ const TlsDetails = (props: Props) => {
               className={cx({ [styles.fullWidth]: formik.values.sni })}
             >
               <Checkbox
-                id={`${htmlIdGenerator()()} verifyServerTlsCert`}
+                id={verifyTlsId}
                 name="verifyServerTlsCert"
                 label="Verify TLS Certificate"
                 checked={!!formik.values.verifyServerTlsCert}
@@ -333,7 +338,7 @@ const TlsDetails = (props: Props) => {
         <Row responsive style={{ margin: '20px 0 20px' }}>
           <FlexItem grow>
             <Checkbox
-              id={`${htmlIdGenerator()()} is_tls_client_auth_required`}
+              id={isTlsAuthId}
               name="tlsClientAuthRequired"
               label="Requires TLS Client Authentication"
               checked={!!formik.values.tlsClientAuthRequired}

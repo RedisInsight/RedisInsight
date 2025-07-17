@@ -1,9 +1,6 @@
 import React from 'react'
 
-import {
-  FeatureFlagComponent,
-  OAuthSsoHandlerDialog,
-} from 'uiSrc/components'
+import { FeatureFlagComponent, OAuthSsoHandlerDialog } from 'uiSrc/components'
 import { OAuthSocialAction, OAuthSocialSource } from 'uiSrc/slices/interfaces'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import CloudIcon from 'uiSrc/assets/img/oauth/cloud_centered.svg?react'

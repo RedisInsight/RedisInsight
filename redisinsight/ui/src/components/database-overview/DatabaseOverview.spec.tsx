@@ -1,11 +1,4 @@
 import React from 'react'
-import {
-  KeyLightIcon,
-  MeasureLightIcon,
-  MemoryLightIcon,
-  TimeLightIcon,
-  UserLightIcon,
-} from 'uiSrc/components/database-overview/components/icons'
 import { truncateNumberToRange } from 'uiSrc/utils'
 import { render, screen, fireEvent } from 'uiSrc/utils/test-utils'
 import DatabaseOverview from './DatabaseOverview'
@@ -218,12 +211,12 @@ const mockMetrics: IMetric[] = [
     value: 5,
     loading: 5 === null,
     unavailableText: 'CPU is not available',
-    icon: TimeLightIcon,
+    icon: 'TimeLightIcon',
     className: styles.cpuWrapper,
     content: '5 %',
     tooltip: {
       title: 'CPU',
-      icon: TimeLightIcon,
+      icon: 'TimeLightIcon',
       content: (
         <>
           <b>5</b>
@@ -239,10 +232,10 @@ const mockMetrics: IMetric[] = [
     title: 'Total Memory',
     tooltip: {
       title: 'Total Memory',
-      icon: MemoryLightIcon,
+      icon: 'MemoryLightIcon',
       content: '13 / 30 (43%)',
     },
-    icon: MemoryLightIcon,
+    icon: 'MemoryLightIcon',
     content: (
       <span>
         13 / <strong>30</strong> (43%)
@@ -254,10 +247,10 @@ const mockMetrics: IMetric[] = [
     value: 5000,
     unavailableText: 'Total Keys are not available',
     title: 'Total Keys',
-    icon: KeyLightIcon,
+    icon: 'KeyLightIcon',
     content: truncateNumberToRange(5000),
     tooltip: {
-      icon: KeyLightIcon,
+      icon: 'KeyLightIcon',
       content: <b>5 000</b>,
       title: 'Total Keys',
     },
@@ -301,20 +294,20 @@ const mockMetrics: IMetric[] = [
     tooltip: {
       title: 'Connected Clients',
       content: <b>3</b>,
-      icon: UserLightIcon,
+      icon: 'UserLightIcon',
     },
-    icon: UserLightIcon,
+    icon: 'UserLightIcon',
     content: 3,
   },
   {
     id: 'overview-commands-sec',
-    icon: MeasureLightIcon,
+    icon: 'MeasureLightIcon',
     content: 5,
     value: 5,
     unavailableText: 'Commands/s are not available',
     title: 'Commands/s',
     tooltip: {
-      icon: MeasureLightIcon,
+      icon: 'MeasureLightIcon',
       content: 5,
     },
     className: styles.opsPerSecItem,
@@ -322,7 +315,7 @@ const mockMetrics: IMetric[] = [
       {
         id: 'commands-per-sec-tip',
         title: 'Commands/s',
-        icon: MeasureLightIcon,
+        icon: 'MeasureLightIcon',
         value: 5,
         content: 5,
         unavailableText: 'Commands/s are not available',

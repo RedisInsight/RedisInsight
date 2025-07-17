@@ -1,9 +1,5 @@
 import React, { ChangeEvent, useState } from 'react'
-import {
-  EuiForm,
-  keys,
-} from '@elastic/eui'
-
+import { EuiForm, keys } from '@elastic/eui'
 import cx from 'classnames'
 import jsonValidator from 'json-dup-key-validator'
 
@@ -78,7 +74,7 @@ const EditEntireItemAction = (props: Props) => {
                 data-testid="json-entire-form"
                 noValidate
               >
-                <FlexItem grow inline>
+                <FlexItem grow>
                   <TextArea
                     valid={!error}
                     className={styles.fullWidthTextArea}
@@ -121,7 +117,7 @@ const EditEntireItemAction = (props: Props) => {
                 >
                   <FieldMessage
                     scrollViewOnAppear
-                    icon="alert"
+                    icon="ToastDangerIcon"
                     testID="edit-json-error"
                   >
                     {error}

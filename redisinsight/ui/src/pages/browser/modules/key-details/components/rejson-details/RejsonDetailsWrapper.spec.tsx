@@ -11,6 +11,7 @@ import { RejsonDetailsWrapper, Props } from './RejsonDetailsWrapper'
 jest.mock('react-redux', () => ({
   useDispatch: jest.fn(),
   useSelector: jest.fn(),
+  connect: () => (Component: any) => Component,
 }))
 
 jest.mock('uiSrc/slices/browser/rejson', () => ({

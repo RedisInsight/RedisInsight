@@ -1,10 +1,19 @@
 import React from 'react'
 import { useTheme } from '@redis-ui/styles'
+import cx from 'classnames'
+import { IconSizeType } from '@redis-ui/icons'
 import { MonochromeIconProps } from 'uiSrc/components/base/icons'
 
-type BaseIconProps = MonochromeIconProps & {
+type BaseIconProps = Omit<MonochromeIconProps, 'color' | 'size'> & {
   icon: React.ComponentType<any>
+  color?:
+    | keyof ReturnType<typeof useTheme>['semantic']['color']['icon']
+    | 'currentColor'
+    | (string & {})
+  size?: IconSizeType | null
+  isSvg?: boolean
 }
+
 const sizesMap = {
   XS: 8,
   S: 12,
@@ -28,27 +37,43 @@ function isValidIconColor(
 
 export const Icon = ({
   icon: IconComponent,
+  isSvg = false,
   customSize,
   customColor,
-  title: titleProp,
   color = 'primary600',
-  size = 'L',
+  size,
+  className,
   ...rest
 }: BaseIconProps) => {
-  const sizeValue = customSize || sizesMap[size]
+  let sizeValue: number | string | undefined
+  if (size && sizesMap[size]) {
+    sizeValue = sizesMap[size]
+  } else if (typeof size === 'undefined') {
+    sizeValue = 'L'
+  }
+  if (customSize) {
+    sizeValue = customSize
+  }
   const theme = useTheme()
   let colorValue = customColor
   if (!colorValue && isValidIconColor(theme, color)) {
     colorValue = theme.semantic.color.icon[color]
+  } else if (color === 'currentColor') {
+    colorValue = 'currentColor'
   }
-  const props = {
+
+  const svgProps = {
     color: colorValue,
     width: sizeValue,
     height: sizeValue,
     ...rest,
   }
 
-  return <IconComponent {...props} />
+  const props = isSvg
+    ? svgProps
+    : { color, customColor, size, customSize, ...rest }
+
+  return <IconComponent {...props} className={cx(className, 'RI-Icon')} />
 }
 
 export type IconProps = Omit<BaseIconProps, 'icon'>

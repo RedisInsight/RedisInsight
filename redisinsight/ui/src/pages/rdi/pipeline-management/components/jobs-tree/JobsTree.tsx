@@ -78,7 +78,7 @@ const JobsTree = (props: IProps) => {
   const [isNewJob, setIsNewJob] = useState(false)
   const [hideTooltip, setHideTooltip] = useState(false)
 
-  const { loading, data, jobs, jobsValidationErrors } =
+  const { loading, data, jobs, jobsValidationErrors, desiredPipeline } =
     useSelector(rdiPipelineSelector)
 
   const dispatch = useDispatch()

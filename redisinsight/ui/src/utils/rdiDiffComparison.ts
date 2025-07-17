@@ -1,15 +1,14 @@
-import { AppDispatch, store } from 'uiSrc/slices/store';
+import { AppDispatch, store } from 'uiSrc/slices/store'
 import {
-  rdiPipelineSelector,
-  enableConfigDiff,
   disableConfigDiff,
-  enableJobDiff,
   disableJobDiff,
-  setDesiredPipeline
-} from 'uiSrc/slices/rdi/pipeline';
+  enableConfigDiff,
+  enableJobDiff,
+  rdiPipelineSelector,
+  setDesiredPipeline,
+} from 'uiSrc/slices/rdi/pipeline'
 import { Maybe } from 'uiSrc/utils'
-import { value } from 'jsonpath';
-import { useDispatch } from 'react-redux';
+import { IRdiPipelineJob } from 'uiSrc/slices/interfaces'
 
 export interface RdiDiffOptions {
   enableAutoComparison?: boolean
@@ -37,15 +36,19 @@ export const compareRdiText = (
   currentValue: string,
   type: 'config' | 'job',
   jobName?: string,
-  options: RdiDiffOptions = {}
+  options: RdiDiffOptions = {},
 ): RdiDiffResult => {
-  const { enableAutoComparison = true, fallbackValue = '', triggerVisualDiff = true } = options
+  const {
+    enableAutoComparison = true,
+    fallbackValue = '',
+    triggerVisualDiff = true,
+  } = options
 
   if (!enableAutoComparison) {
     return {
       shouldShowDiff: false,
       originalValue: undefined,
-      hasChanges: false
+      hasChanges: false,
     }
   }
 
@@ -72,8 +75,7 @@ export const compareRdiText = (
 
   // Determine if we should show diff (only if we have both values and they're different)
   const shouldShowDiff = Boolean(
-    originalValue &&
-    currentValue !== originalValue
+    originalValue && currentValue !== originalValue,
   )
 
   const hasChanges = currentValue !== (sliceValue || '')
@@ -83,9 +85,20 @@ export const compareRdiText = (
     if (shouldShowDiff) {
       // Enable diff mode with the comparison
       if (type === 'config') {
-        store.dispatch(enableConfigDiff({ originalValue, newValue: currentValue }))
+        store.dispatch(
+          enableConfigDiff({
+            originalValue,
+            newValue: currentValue,
+          }),
+        )
       } else if (type === 'job' && jobName) {
-        store.dispatch(enableJobDiff({ jobName, originalValue, newValue: currentValue }))
+        store.dispatch(
+          enableJobDiff({
+            jobName,
+            originalValue,
+            newValue: currentValue,
+          }),
+        )
       }
     } else if (type === 'config') {
       // Disable diff mode if values are the same
@@ -98,7 +111,7 @@ export const compareRdiText = (
   return {
     shouldShowDiff,
     originalValue,
-    hasChanges
+    hasChanges,
   }
 }
 
@@ -109,7 +122,7 @@ export const compareRdiText = (
  */
 export const compareRdiConfig = (
   currentConfig: string,
-  options?: RdiDiffOptions
+  options?: RdiDiffOptions,
 ): RdiDiffResult => compareRdiText(currentConfig, 'config', undefined, options)
 
 /**
@@ -120,25 +133,33 @@ export const compareRdiConfig = (
 export const compareRdiJob = (
   currentJobValue: string,
   jobName: string,
-  options?: RdiDiffOptions
+  options?: RdiDiffOptions,
 ): RdiDiffResult => compareRdiText(currentJobValue, 'job', jobName, options)
 
-export const isNotDiffEmpty = (value: any) => {
-  return value !== '' && value !== '\u200B'
-}
+export const isNotDiffEmpty = (value: any) => value !== '' && value !== '\u200B'
 
 export const isConfigDiff = () => {
   const state = store.getState()
   const { config, desiredPipeline } = rdiPipelineSelector(state)
 
-  return desiredPipeline.active && config !== desiredPipeline.config && (isNotDiffEmpty(config) && isNotDiffEmpty(desiredPipeline.config))
+  return (
+    desiredPipeline.active &&
+    config !== desiredPipeline.config &&
+    isNotDiffEmpty(config) &&
+    isNotDiffEmpty(desiredPipeline.config)
+  )
 }
 
 export const isJobDiff = () => {
   const state = store.getState()
   const { config, desiredPipeline } = rdiPipelineSelector(state)
 
-  return desiredPipeline.active && config !== desiredPipeline.config && (isNotDiffEmpty(config) && isNotDiffEmpty(desiredPipeline.config))
+  return (
+    desiredPipeline.active &&
+    config !== desiredPipeline.config &&
+    isNotDiffEmpty(config) &&
+    isNotDiffEmpty(desiredPipeline.config)
+  )
 }
 //
 // export const isDiff = () => {
@@ -152,10 +173,14 @@ export const isJobDiff = () => {
 //   return
 // }
 
-export const setPipeline = (pipeline) => {
-  return (dispatch: AppDispatch) => {
-    dispatch(setDesiredPipeline(pipeline))
-  }
+export const setPipeline = (pipeline: {
+  config: string
+  jobs: IRdiPipelineJob[]
+}) => {
+  store.dispatch(setDesiredPipeline(pipeline))
+  // return (dispatch: AppDispatch) => {
+  //   dispatch(setDesiredPipeline(pipeline))
+  // }
 }
 
 // Expose to window object for testing
@@ -172,9 +197,10 @@ declare global {
 
 // Initialize window object exposure
 if (typeof window !== 'undefined') {
-  (window as any).RdiDiffComparison = {
+  ;(window as any).RdiDiffComparison = {
     compareRdiText,
     compareRdiConfig,
-    compareRdiJob
+    compareRdiJob,
+    setPipeline,
   }
 }

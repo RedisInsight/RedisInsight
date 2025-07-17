@@ -9,6 +9,7 @@ export enum AiRdiWsEvents {
   GET_INDEX = 'get_index', // ackable, signals a request to the client for an index context
   RUN_QUERY = 'run_query', // ackable, signals a request to the client to run a query
   STREAM = 'rdi_stream',
+  SET_DESIRED_STATE = 'set_desired_state',
 }
 
 export enum AiRdiMessageRole {

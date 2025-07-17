@@ -20,6 +20,7 @@ import {
   setPipelineConfig,
   updateConfigDiffNewValue,
   disableConfigDiff,
+  updateDesiredPipelineConfig,
 } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
@@ -32,7 +33,12 @@ import {
   testConnectionsController,
 } from 'uiSrc/slices/rdi/testConnections'
 import { appContextPipelineManagement } from 'uiSrc/slices/app/context'
-import { createAxiosError, isEqualPipelineFile, yamlToJson } from 'uiSrc/utils'
+import {
+  createAxiosError,
+  isConfigDiff,
+  isEqualPipelineFile,
+  yamlToJson,
+} from 'uiSrc/utils'
 
 import { addErrorNotification } from 'uiSrc/slices/app/notifications'
 import styles from './styles.module.scss'
@@ -47,6 +53,7 @@ const Config = () => {
     data,
     config,
     diff,
+    desiredPipeline,
   } = useSelector(rdiPipelineSelector)
   const { loading: testingConnections } = useSelector(
     rdiTestConnectionsSelector,
@@ -130,12 +137,13 @@ const Config = () => {
 
   const handleChange = useCallback(
     (value: string) => {
-      dispatch(setPipelineConfig(value))
-
-      // Update diff newValue if in diff mode
-      if (configDiff.enabled) {
-        dispatch(updateConfigDiffNewValue(value))
+      // Update desired config when diff mode enabled
+      if (isConfigDiff()) {
+        dispatch(updateDesiredPipelineConfig(value))
+        return
       }
+
+      dispatch(setPipelineConfig(value))
 
       checkIsFileUpdated(value)
     },
@@ -205,9 +213,9 @@ const Config = () => {
         ) : (
           <MonacoYaml
             schema={get(schema, 'config', null)}
-            value={configDiff.enabled && configDiff.newValue ? configDiff.newValue : config}
-            originalValue={configDiff.originalValue || undefined}
-            enableDiff={configDiff.enabled}
+            value={isConfigDiff() ? desiredPipeline.config : config}
+            originalValue={config === '' ? '\u200B' : config}
+            enableDiff={isConfigDiff()}
             onDiffModeChange={handleDiffModeChange}
             onChange={handleChange}
             disabled={pipelineLoading}

@@ -14,6 +14,7 @@ export interface IProps {
   testID?: string
   isLoading?: boolean
   isValid?: boolean
+  requireReview?: boolean
 }
 
 const Tab = (props: IProps) => {
@@ -26,6 +27,7 @@ const Tab = (props: IProps) => {
     className,
     isLoading = false,
     isValid = true,
+    requireReview = false,
   } = props
 
   return (
@@ -44,6 +46,20 @@ const Tab = (props: IProps) => {
           >
             {fileName}
           </EuiText>
+          {requireReview && (
+            <>
+              <EuiIcon
+                type="check"
+                className="rdi-pipeline-nav__review"
+                data-testid="rdi-nav-config-review"
+              />
+              <EuiIcon
+                type="editorUndo"
+                className="rdi-pipeline-nav__review"
+                data-testid="rdi-nav-config-review"
+              />
+            </>
+          )}
 
           {!isValid && (
             <EuiIcon

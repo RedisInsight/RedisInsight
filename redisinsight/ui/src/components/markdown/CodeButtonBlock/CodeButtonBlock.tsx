@@ -84,7 +84,7 @@ const CodeButtonBlock = (props: Props) => {
         : find(monaco.languages?.getLanguages(), ({ id }) => id === lang)?.id
 
     if (languageId) {
-      monaco.editor.colorize(content.trim(), languageId, {}).then((data) => {
+      monaco.editor.colorize(content?.trim(), languageId, {}).then((data) => {
         setHighlightedContent(data)
       })
     }

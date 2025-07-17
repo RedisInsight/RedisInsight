@@ -33,37 +33,6 @@ import { ApiEndpoints } from 'uiSrc/constants'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { AppDispatch, RootState } from '../store'
 
-const desiredConf = `
-sources:
-  mysql:
-    type: cdc
-    logging:
-      level: debug
-    connection:
-      type: mysql
-      host: localhost # e.g. localhost
-      port: 4423
-      database: new_schema # e.g. inventory
-      user: root
-      password: asdasdasd12e12d
-targets:
-  target:
-    connection:
-      type: redis
-      host: redis-10434.crce163.us-east-1-mz.ec2.qa-cloud.redislabs.com # e.g. localhost
-      port: 31221
-      password: asdasd
-processors:
-`
-
-const desiredJobs = [
-  {
-    name: 'job1',
-    value: `
-
-    `
-  }
-]
 export const initialState: IStateRdiPipeline = {
   loading: false,
   error: '',
@@ -103,11 +72,8 @@ export const initialState: IStateRdiPipeline = {
   },
   desiredPipeline: {
     active: true,
-    config: desiredConf,
-    jobs: [{
-      name: 'asd',
-      value: 'another yaml'
-    }],
+    config: '',
+    jobs: [],
   }
 }
 

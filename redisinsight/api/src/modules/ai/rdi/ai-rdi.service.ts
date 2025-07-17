@@ -21,6 +21,9 @@ import {
 } from 'src/modules/ai/rdi/models';
 import { SendAiRdiMessageDto } from 'src/modules/ai/rdi/dto/send.ai-rdi.message.dto';
 import { wrapAiRdiError } from 'src/modules/ai/rdi/exceptions';
+import { NotificationServerEvents } from 'src/modules/notification/constants';
+import { NotificationsDto } from 'src/modules/notification/dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 const aiConfig = config.get('ai') as Config['ai'];
 
@@ -32,7 +35,20 @@ export class AiRdiService {
     private readonly aiRdiProvider: AiRdiProvider,
     private readonly aiRdiMessageRepository: AiRdiMessageRepository,
     private readonly aiRdiContextRepository: AiRdiContextRepository,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
+
+  private sendDesiredState(desiredPipeline: any) {
+    this.eventEmitter.emit(
+      NotificationServerEvents.AITool,
+      plainToInstance(NotificationsDto, {
+        tool: AiRdiWsEvents.SET_DESIRED_STATE,
+        data: {
+          desiredPipeline,
+        },
+      }),
+    );
+  }
 
   static prepareHistoryIntermediateSteps(
     message: AiRdiMessage,
@@ -157,8 +173,14 @@ export class AiRdiService {
       });
 
       socket.on(AiRdiWsEvents.SET_DESIRED_STATE, async (data, cb) => {
-        console.log('set state received', data)
-        cb({ status: 'applied' });
+        try {
+          console.log('set state received', data)
+          this.sendDesiredState(data.pipeline);
+          cb({ status: 'applied' });
+        } catch (e) {
+          console.error('Unable to process SET_DESIRED_STATE tool call', e);
+          cb({ status: 'Tool returned an error' });
+        }
       });
 
       await new Promise((resolve, reject) => {

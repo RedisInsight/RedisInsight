@@ -26,9 +26,11 @@ import { useIoConnection } from 'uiSrc/services/hooks/useIoConnection'
 import { CloudJobInfo } from 'apiSrc/modules/cloud/job/models'
 import { EuiProgress, EuiText } from '@elastic/eui'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { setDesiredPipeline } from 'uiSrc/slices/rdi/pipeline';
 
 const enum AITools {
   EXECUTE_SNIPPET = 'data_execute_snippet',
+  SET_DESIRED_STATE = 'set_desired_state',
 }
 
 const CommonAppSubscription = () => {
@@ -91,6 +93,10 @@ const CommonAppSubscription = () => {
               }),
             )
             break
+          case AITools.SET_DESIRED_STATE:
+            console.log('received desired state', data)
+            dispatch(setDesiredPipeline(data.desiredPipeline))
+            break;
           default:
           // ignore
         }

@@ -158,9 +158,6 @@ const RdiHelperChat = () => {
       <div className={styles.chatForm}>
         <ChatForm
           onAgreementsDisplayed={handleAgreementsDisplay}
-          agreements={
-            !isAgreementsAccepted ? RDI_HELPER_AGREEMENTS : undefined
-          }
           isDisabled={!rdiInstanceId || inProgressMessage?.content === ''}
           placeholder="Ask me about RDI pipeline configuration..."
           onSubmit={handleSubmit}

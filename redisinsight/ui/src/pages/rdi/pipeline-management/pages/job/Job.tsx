@@ -21,6 +21,7 @@ import {
   setPipelineJobs,
   updateJobDiffNewValue,
   disableJobDiff,
+  enableJobDiff,
 } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
@@ -61,7 +62,7 @@ const Job = (props: Props) => {
   const deployedJobValueRef = useRef<Maybe<string>>(deployedJobValue)
   const jobNameRef = useRef<string>(name)
 
-  const { loading, schema, jobFunctions, jobs, diff } =
+  const { loading, schema, jobFunctions, jobs, diff, desiredPipeline } =
     useSelector(rdiPipelineSelector)
 
   useEffect(() => {
@@ -86,6 +87,22 @@ const Job = (props: Props) => {
 
   // Use diff state from Redux (updated by comparison utility)
   const jobDiff = diff.jobs[name] || { enabled: false, originalValue: null }
+
+  // Check if this job has a desired state
+  const desiredJob = desiredPipeline.active && desiredPipeline.jobs.find(job => job.name === name)
+  const isDesiredDiff = Boolean(desiredJob && value !== desiredJob.value)
+  const desiredValue = ((desiredJob as any)?.value || jobDiff.enabled && jobDiff.newValue ? jobDiff.newValue : value) ?? ''
+
+  // Enable diff mode when desired state changes
+  useEffect(() => {
+    if (isDesiredDiff && desiredJob) {
+      dispatch(enableJobDiff({
+        jobName: name,
+        originalValue: value,
+        newValue: desiredJob.value
+      }))
+    }
+  }, [isDesiredDiff, desiredJob, name, value])
 
   const handleDryRunJob = () => {
     const JSONValue = yamlToJson(value, (msg) => {
@@ -270,9 +287,9 @@ const Job = (props: Props) => {
         ) : (
           <MonacoYaml
             schema={get(schema, 'jobs', null)}
-            value={jobDiff.enabled && jobDiff.newValue ? jobDiff.newValue : value}
+            value={desiredValue}
             originalValue={jobDiff.originalValue || undefined}
-            enableDiff={jobDiff.enabled}
+            enableDiff={jobDiff.enabled || isDesiredDiff}
             onDiffModeChange={handleDiffModeChange}
             onChange={handleChange}
             disabled={loading}

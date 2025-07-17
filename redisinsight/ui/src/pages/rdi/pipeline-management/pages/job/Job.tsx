@@ -22,6 +22,8 @@ import {
   updateJobDiffNewValue,
   disableJobDiff,
   enableJobDiff,
+  acceptDesiredPipeline,
+  rejectDesiredPipeline,
 } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
@@ -210,6 +212,14 @@ const Job = (props: Props) => {
     }
   }, [name])
 
+  const handleAcceptChanges = useCallback(() => {
+    dispatch(acceptDesiredPipeline())
+  }, [dispatch])
+
+  const handleRejectChanges = useCallback(() => {
+    dispatch(rejectDesiredPipeline())
+  }, [dispatch])
+
   return (
     <>
       <div className={cx('content', { isSidePanelOpen: isPanelOpen })}>
@@ -306,6 +316,9 @@ const Job = (props: Props) => {
             onOpenDedicatedEditor={handleOpenDedicatedEditor}
             onCloseDedicatedEditor={handleCloseDedicatedEditor}
             onSubmitDedicatedEditor={handleSubmitDedicatedEditor}
+            showAcceptReject={isDesiredDiff}
+            onAcceptChanges={handleAcceptChanges}
+            onRejectChanges={handleRejectChanges}
             data-testid="rdi-monaco-job"
           />
         )}

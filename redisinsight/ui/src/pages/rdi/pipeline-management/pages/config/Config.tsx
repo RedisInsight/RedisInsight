@@ -18,9 +18,11 @@ import {
   setChangedFile,
   deleteChangedFile,
   setPipelineConfig,
-  updateConfigDiffNewValue,
   disableConfigDiff,
+  enableConfigDiff,
   updateDesiredPipelineConfig,
+  acceptDesiredPipeline,
+  rejectDesiredPipeline,
 } from 'uiSrc/slices/rdi/pipeline'
 import { FileChangeType, RdiPipelineTabs } from 'uiSrc/slices/interfaces'
 import MonacoYaml from 'uiSrc/components/monaco-editor/components/monaco-yaml'
@@ -91,6 +93,16 @@ const Config = () => {
   // Use diff state from Redux (updated by comparison utility)
   const configDiff = diff.config
 
+  // Auto-enable diff mode when desired pipeline is active
+  useEffect(() => {
+    if (isConfigDiff() && !configDiff.enabled) {
+      dispatch(enableConfigDiff({
+        originalValue: config,
+        newValue: desiredPipeline.config
+      }))
+    }
+  }, [desiredPipeline.active, desiredPipeline.config, config, configDiff.enabled, dispatch])
+
   const testConnections = () => {
     const JSONValue = yamlToJson(config, (msg) => {
       dispatch(
@@ -157,6 +169,14 @@ const Config = () => {
     }
   }, [])
 
+  const handleAcceptChanges = useCallback(() => {
+    dispatch(acceptDesiredPipeline())
+  }, [dispatch])
+
+  const handleRejectChanges = useCallback(() => {
+    dispatch(rejectDesiredPipeline())
+  }, [dispatch])
+
   const handleClosePanel = () => {
     testConnectionsController?.abort()
     setIsPanelOpen(false)
@@ -220,6 +240,9 @@ const Config = () => {
             onChange={handleChange}
             disabled={pipelineLoading}
             wrapperClassName="rdi__editorWrapper"
+            showAcceptReject={isConfigDiff()}
+            onAcceptChanges={handleAcceptChanges}
+            onRejectChanges={handleRejectChanges}
             data-testid="rdi-monaco-config"
           />
         )}

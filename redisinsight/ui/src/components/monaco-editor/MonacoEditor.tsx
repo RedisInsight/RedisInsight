@@ -45,6 +45,10 @@ export interface CommonProps {
     enableSplitViewResizing?: boolean
     ignoreTrimWhitespace?: boolean
   }
+  // Accept/Reject actions for AI-suggested changes
+  onAcceptChanges?: () => void
+  onRejectChanges?: () => void
+  showAcceptReject?: boolean
   'data-testid'?: string
 }
 
@@ -89,6 +93,10 @@ const MonacoEditor = (props: Props) => {
     diffOptions = {
       ignoreTrimWhitespace: true,
     },
+    // Accept/Reject actions for AI-suggested changes
+    onAcceptChanges,
+    onRejectChanges,
+    showAcceptReject = false,
     'data-testid': dataTestId = 'monaco-editor',
   } = props
 
@@ -307,8 +315,48 @@ const MonacoEditor = (props: Props) => {
           data-testid={`wrapper-${dataTestId}`}
           ref={input}
         >
-          {/* Diff toggle button - only show when originalValue is provided */}
-          {originalValue && (
+          {/* Accept/Reject buttons for AI-suggested changes */}
+          {showAcceptReject && isDiffMode && (
+            <div className={styles.diffToggleContainer}>
+              <EuiButton
+                size="s"
+                color="success"
+                fill
+                onClick={onAcceptChanges}
+                iconType="check"
+                className={styles.diffToggleBtn}
+                data-testid="accept-changes-btn"
+                title="Accept AI-suggested changes"
+              >
+                Accept
+              </EuiButton>
+              <EuiButton
+                size="s"
+                color="danger"
+                onClick={onRejectChanges}
+                iconType="cross"
+                className={styles.diffToggleBtn}
+                data-testid="reject-changes-btn"
+                style={{ marginLeft: '8px' }}
+                title="Reject AI-suggested changes"
+              >
+                Reject
+              </EuiButton>
+              <EuiButton
+                size="s"
+                onClick={toggleDiffViewMode}
+                iconType={isInlineDiff ? 'menuLeft' : 'menuRight'}
+                className={styles.diffViewToggleBtn}
+                data-testid="diff-view-toggle"
+                style={{ marginLeft: '8px' }}
+                title={isInlineDiff ? 'Switch to side-by-side view' : 'Switch to inline view'}
+              >
+                {isInlineDiff ? 'Inline' : 'Side-by-Side'}
+              </EuiButton>
+            </div>
+          )}
+          {/* Legacy diff toggle for non-AI diffs */}
+          {originalValue && !showAcceptReject && (
             <div className={styles.diffToggleContainer}>
               <EuiButton
                 size="s"

@@ -283,6 +283,34 @@ const rdiPipelineSlice = createSlice({
       { payload }: PayloadAction<string>,
     ) => {
       state.desiredPipeline.config = payload
+    },
+    acceptDesiredPipeline: (state) => {
+      // Apply desired pipeline to current pipeline
+      state.config = state.desiredPipeline.config
+      state.jobs = state.desiredPipeline.jobs
+
+      // Clear desired pipeline
+      state.desiredPipeline.active = false
+      state.desiredPipeline.config = ''
+      state.desiredPipeline.jobs = []
+
+      // Clear all diffs
+      state.diff.config.enabled = false
+      state.diff.config.originalValue = null
+      state.diff.config.newValue = null
+      state.diff.jobs = {}
+    },
+    rejectDesiredPipeline: (state) => {
+      // Clear desired pipeline without applying
+      state.desiredPipeline.active = false
+      state.desiredPipeline.config = ''
+      state.desiredPipeline.jobs = []
+
+      // Clear all diffs
+      state.diff.config.enabled = false
+      state.diff.config.originalValue = null
+      state.diff.config.newValue = null
+      state.diff.jobs = {}
     }
   },
 })
@@ -334,6 +362,8 @@ export const {
   setDesiredPipeline,
   destroyDesiredPipeline,
   updateDesiredPipelineConfig,
+  acceptDesiredPipeline,
+  rejectDesiredPipeline,
 } = rdiPipelineSlice.actions
 
 // The reducer

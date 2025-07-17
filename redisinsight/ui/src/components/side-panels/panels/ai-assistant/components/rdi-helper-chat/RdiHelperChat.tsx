@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { EuiButtonEmpty } from '@elastic/eui'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -14,7 +14,6 @@ import {
   updateRdiHelperChatAgreements,
 } from 'uiSrc/slices/panels/aiAssistant'
 import { rdiPipelineSelector } from 'uiSrc/slices/rdi/pipeline'
-import { PageNames } from 'uiSrc/constants'
 
 import { ChatForm, ChatHistory, RestartChat } from '../shared'
 
@@ -34,31 +33,26 @@ const RDI_HELPER_INITIAL_MESSAGE = (
   </div>
 )
 
-const RDI_HELPER_AGREEMENTS = [
-  'I understand that this RDI Helper feature is in preview',
-  'AI-generated content may be inaccurate or incomplete',
-  'I will verify important information independently'
-]
+
 
 const RdiHelperChat = () => {
   const { messages, agreements, loading } = useSelector(
     aiRdiHelperChatSelector,
   )
-  const { config, jobs } = useSelector(rdiPipelineSelector)
+  const { config, jobs, desiredPipeline } = useSelector(rdiPipelineSelector)
 
   const [inProgressMessage, setinProgressMessage] =
     useState<Nullable<AiChatMessage>>(null)
   const { rdiInstanceId } = useParams<{ rdiInstanceId: string }>()
-  const { pathname } = useLocation()
 
   const isAgreementsAccepted =
     agreements.includes(rdiInstanceId) || messages.length > 0
 
   const dispatch = useDispatch()
 
-  // Determine which page we're currently on to send relevant context only
-  const isOnConfigPage = pathname?.includes(`/${PageNames.rdiPipelineConfig}`)
-  const isOnJobsPage = pathname?.includes(`/${PageNames.rdiPipelineJobs}/`)
+  // Use desired pipeline if active, otherwise use current pipeline
+  const currentConfig = desiredPipeline.active ? desiredPipeline.config : config
+  const currentJobs = desiredPipeline.active ? desiredPipeline.jobs : jobs
 
   useEffect(() => {
     if (!rdiInstanceId) {
@@ -74,10 +68,10 @@ const RdiHelperChat = () => {
         dispatch(updateRdiHelperChatAgreements(rdiInstanceId))
       }
 
-      // Prepare pipeline context for AI assistant based on current page
+      // Prepare pipeline context for AI assistant with most up-to-date values
       const pipelineContext = {
-        config,
-        jobs,
+        config: currentConfig,
+        jobs: currentJobs,
       }
 
       dispatch(
@@ -99,7 +93,7 @@ const RdiHelperChat = () => {
         },
       })
     },
-    [rdiInstanceId, isAgreementsAccepted, config, jobs, isOnConfigPage, isOnJobsPage],
+    [rdiInstanceId, isAgreementsAccepted, currentConfig, currentJobs],
   )
 
   const onClearSession = useCallback(() => {

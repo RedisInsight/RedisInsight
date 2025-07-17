@@ -95,7 +95,7 @@ const SourcePipelineDialog = () => {
     )
   }
 
-  return null // disable annoying dialog
+  // return null // disable annoying dialog
   if (!isOpenDialog) {
     return null
   }

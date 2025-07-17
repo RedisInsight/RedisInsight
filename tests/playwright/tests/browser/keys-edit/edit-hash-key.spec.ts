@@ -8,7 +8,7 @@ import {
     navigateToStandaloneInstance,
 } from '../../../helpers/utils'
 
-test.describe('Browser - Edit Key Operations - Hash Key Editing - Hash Key Editing', () => {
+test.describe('Browser - Edit Key Operations - Hash Key Editing', () => {
     let browserPage: BrowserPage
     let keyName: string
     let cleanupInstance: () => Promise<void>

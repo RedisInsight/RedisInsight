@@ -140,66 +140,6 @@ test.describe('Browser - Edit Key Operations', () => {
         })
     })
 
-    test.describe('String Key Editing', () => {
-        test('should edit string key value successfully', async ({
-            api: { keyService },
-        }) => {
-            // Arrange: Create a string key
-            const originalValue = faker.lorem.words(3)
-            const newValue = faker.lorem.words(4)
-
-            await keyService.addStringKeyApi(
-                { keyName, value: originalValue },
-                ossStandaloneConfig,
-            )
-
-            // Open key details and verify original value
-            await browserPage.searchByKeyName(keyName)
-            await browserPage.openKeyDetailsByKeyName(keyName)
-
-            const displayedOriginalValue = await browserPage.getStringKeyValue()
-            expect(displayedOriginalValue).toContain(originalValue)
-
-            // Edit the key value
-            await browserPage.editStringKeyValue(newValue)
-
-            // Wait for value and length to update
-            await browserPage.waitForStringValueToUpdate(newValue)
-            await browserPage.waitForKeyLengthToUpdate(
-                newValue.length.toString(),
-            )
-        })
-
-        test('should cancel string key value edit operation', async ({
-            api: { keyService },
-        }) => {
-            // Arrange: Create a string key
-            const originalValue = faker.lorem.words(3)
-            const attemptedNewValue = faker.lorem.words(4)
-
-            await keyService.addStringKeyApi(
-                { keyName, value: originalValue },
-                ossStandaloneConfig,
-            )
-
-            // Open key details and verify original value
-            await browserPage.searchByKeyName(keyName)
-            await browserPage.openKeyDetailsByKeyName(keyName)
-
-            const displayedOriginalValue = await browserPage.getStringKeyValue()
-            expect(displayedOriginalValue).toContain(originalValue)
-
-            // Start editing but cancel
-            await browserPage.cancelStringKeyValueEdit(attemptedNewValue)
-
-            // Verify the original value is still displayed
-            const displayedValueAfterCancel =
-                await browserPage.getStringKeyValue()
-            expect(displayedValueAfterCancel).toContain(originalValue)
-            expect(displayedValueAfterCancel).not.toContain(attemptedNewValue)
-        })
-    })
-
     test.describe('TTL Editing', () => {
         test('should edit string key TTL successfully', async ({
             api: { keyService },

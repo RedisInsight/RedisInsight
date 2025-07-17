@@ -97,6 +97,8 @@ import RedisAIDark from 'uiSrc/assets/img/modules/RedisAIDark.svg?react'
 import RedisAILight from 'uiSrc/assets/img/modules/RedisAILight.svg?react'
 import RedisBloomDark from 'uiSrc/assets/img/modules/RedisBloomDark.svg?react'
 import RedisBloomLight from 'uiSrc/assets/img/modules/RedisBloomLight.svg?react'
+import RedisGears2Dark from 'uiSrc/assets/img/modules/RedisGears2Dark.svg?react'
+import RedisGears2Light from 'uiSrc/assets/img/modules/RedisGears2Light.svg?react'
 import RedisGearsDark from 'uiSrc/assets/img/modules/RedisGearsDark.svg?react'
 import RedisGearsLight from 'uiSrc/assets/img/modules/RedisGearsLight.svg?react'
 import RedisGraphDark from 'uiSrc/assets/img/modules/RedisGraphDark.svg?react'
@@ -260,6 +262,8 @@ export const RedisAIDarkIcon = createIconComponent(RedisAIDark)
 export const RedisAILightIcon = createIconComponent(RedisAILight)
 export const RedisBloomDarkIcon = createIconComponent(RedisBloomDark)
 export const RedisBloomLightIcon = createIconComponent(RedisBloomLight)
+export const RedisGears2DarkIcon = createIconComponent(RedisGears2Dark)
+export const RedisGears2LightIcon = createIconComponent(RedisGears2Light)
 export const RedisGearsDarkIcon = createIconComponent(RedisGearsDark)
 export const RedisGearsLightIcon = createIconComponent(RedisGearsLight)
 export const RedisGraphDarkIcon = createIconComponent(RedisGraphDark)

@@ -486,9 +486,7 @@ export class BrowserPage extends BasePage {
         this.hashTtlFieldInput = page.getByTestId('hash-ttl')
         this.listKeyElementEditorInput = page.getByTestId('list_value-editor-')
         this.stringKeyValueInput = page.getByTestId('string-value')
-        this.jsonKeyValueInput = page.locator(
-            'div[data-mode-id=json] textarea',
-        )
+        this.jsonKeyValueInput = page.locator('div[data-mode-id=json] textarea')
         this.jsonUploadInput = page.getByTestId('upload-input-file')
         this.setMemberInput = page.getByTestId('member-name')
         this.zsetMemberScoreInput = page.getByTestId('member-score')
@@ -528,10 +526,16 @@ export class BrowserPage extends BasePage {
             .locator('span')
         this.hashField = page.getByTestId('hash-field-').first()
         this.hashFieldValue = page.getByTestId('hash_content-value-')
-        this.setMembersList = page.getByTestId('set-member-value-')
-        this.zsetMembersList = page.getByTestId('zset-member-value-')
-        this.zsetScoresList = page.getByTestId('zset_content-value-')
-        this.listElementsList = page.getByTestId('list_content-value-')
+        this.setMembersList = page.locator('[data-testid^="set-member-value-"]')
+        this.zsetMembersList = page.locator(
+            '[data-testid^="zset-member-value-"]',
+        )
+        this.zsetScoresList = page.locator(
+            '[data-testid^="zset_content-value-"]',
+        )
+        this.listElementsList = page.locator(
+            '[data-testid^="list_content-value-"]',
+        )
         this.jsonKeyValue = page.getByTestId('json-data')
         this.jsonError = page.getByTestId('edit-json-error')
         this.tooltip = page.locator('[role="tooltip"]')
@@ -1281,5 +1285,319 @@ export class BrowserPage extends BasePage {
     async clickGuideLinksByName(guide: string): Promise<void> {
         const linkGuide = this.page.locator(guide)
         await linkGuide.click()
+    }
+
+    async isKeyDetailsOpen(keyName: string): Promise<boolean> {
+        try {
+            // Check if the key details header is visible (only present when key is selected)
+            const headerIsVisible = await this.page
+                .getByTestId('key-details-header')
+                .isVisible()
+
+            if (!headerIsVisible) {
+                return false
+            }
+
+            // Check if the key name in the header matches the expected key
+            const keyNameIsVisible = await this.keyNameFormDetails
+                .filter({ hasText: keyName })
+                .isVisible()
+
+            if (!keyNameIsVisible) {
+                return false
+            }
+
+            // Check if any key details content is visible
+            const detailsContainers = [
+                'string-details',
+                'hash-details',
+                'set-details',
+                'list-details',
+                'zset-details',
+                'json-details',
+                'stream-details',
+            ]
+
+            for (const containerId of detailsContainers) {
+                const container = this.page.getByTestId(containerId)
+                if (await container.isVisible()) {
+                    return true
+                }
+            }
+
+            return false
+        } catch (error) {
+            return false
+        }
+    }
+
+    async isKeyDetailsClosed(): Promise<boolean> {
+        try {
+            // Wait for either the header to disappear OR the close button to disappear
+            // This ensures we wait for the UI transition to complete
+            await expect
+                .poll(async () => {
+                    const headerIsVisible = await this.page
+                        .getByTestId('key-details-header')
+                        .isVisible()
+                    const closeRightPanelBtn = await this.page
+                        .getByTestId('close-right-panel-btn')
+                        .isVisible()
+
+                    // Return true if details are closed (header gone OR close button gone)
+                    return !headerIsVisible || !closeRightPanelBtn
+                })
+                .toBe(true)
+
+            return true
+        } catch (error) {
+            return false
+        }
+    }
+
+    async closeKeyDetails(): Promise<void> {
+        await this.closeKeyButton.click()
+    }
+
+    async hashFieldExists(
+        fieldName: string,
+        fieldValue: string,
+    ): Promise<boolean> {
+        try {
+            const fieldLocator = this.page.locator(
+                `[data-testid="hash-field-${fieldName}"]`,
+            )
+            const valueLocator = this.page.locator(
+                `[data-testid="hash_content-value-${fieldName}"]`,
+            )
+
+            const fieldExists = await fieldLocator.isVisible()
+            const valueExists = await valueLocator.isVisible()
+
+            if (!fieldExists || !valueExists) {
+                return false
+            }
+
+            const actualValue = await valueLocator.textContent()
+            return actualValue?.includes(fieldValue) || false
+        } catch {
+            return false
+        }
+    }
+
+    async getAllListElements(): Promise<string[]> {
+        // Get all list elements' text content
+        const elements = await this.listElementsList.all()
+        const values: string[] = []
+
+        for (let i = 0; i < elements.length; i += 1) {
+            const text = await elements[i].textContent()
+            if (text && text.trim()) {
+                values.push(text.trim())
+            }
+        }
+
+        return values
+    }
+
+    async getAllSetMembers(): Promise<string[]> {
+        // Get all set members' text content
+        const elements = await this.setMembersList.all()
+        const values: string[] = []
+
+        for (let i = 0; i < elements.length; i += 1) {
+            const text = await elements[i].textContent()
+            if (text && text.trim()) {
+                values.push(text.trim())
+            }
+        }
+
+        return values
+    }
+
+    async getAllZsetMembers(): Promise<Array<{ name: string; score: string }>> {
+        // Get all zset members' names and scores
+        const memberElements = await this.zsetMembersList.all()
+        const scoreElements = await this.zsetScoresList.all()
+        const members: Array<{ name: string; score: string }> = []
+
+        for (let i = 0; i < memberElements.length; i += 1) {
+            const memberText = await memberElements[i].textContent()
+            const scoreText = await scoreElements[i].textContent()
+
+            if (
+                memberText &&
+                memberText.trim() &&
+                scoreText &&
+                scoreText.trim()
+            ) {
+                members.push({
+                    name: memberText.trim(),
+                    score: scoreText.trim(),
+                })
+            }
+        }
+
+        return members
+    }
+
+    async getAllStreamEntries(): Promise<string[]> {
+        // Get all stream field elements that contain the actual data
+        const fieldElements = await this.page
+            .locator('[data-testid^="stream-entry-field-"]')
+            .all()
+
+        const fieldValues: string[] = []
+
+        for (let i = 0; i < fieldElements.length; i += 1) {
+            const text = await fieldElements[i].textContent()
+            if (text && text.trim()) {
+                fieldValues.push(text.trim())
+            }
+        }
+
+        return fieldValues
+    }
+
+    // Helper methods for key reading operations
+    async openKeyDetailsAndVerify(keyName: string): Promise<void> {
+        await this.searchByKeyName(keyName)
+        await this.openKeyDetailsByKeyName(keyName)
+
+        // Wait for key details to be properly loaded
+        await expect.poll(async () => this.isKeyDetailsOpen(keyName)).toBe(true)
+    }
+
+    async closeKeyDetailsAndVerify(): Promise<void> {
+        await this.closeKeyDetails()
+        const isDetailsClosed = await this.isKeyDetailsClosed()
+        expect(isDetailsClosed).toBe(true)
+    }
+
+    async verifyKeySize(): Promise<void> {
+        const keySizeText = await this.keySizeDetails.textContent()
+        expect(keySizeText).toBeTruthy()
+    }
+
+    async verifyKeyLength(expectedLength: string): Promise<void> {
+        const displayedLength = await this.getKeyLength()
+        expect(displayedLength).toBe(expectedLength)
+    }
+
+    async verifyKeyTTL(expectedTTL?: number): Promise<void> {
+        const displayedTTL = await this.keyDetailsTTL.textContent()
+        expect(displayedTTL).toContain('TTL:')
+
+        if (expectedTTL !== undefined) {
+            const ttlMatch = displayedTTL?.match(/TTL:\s*(\d+|No limit)/)
+            expect(ttlMatch).toBeTruthy()
+
+            if (ttlMatch && ttlMatch[1] !== 'No limit') {
+                const actualTTL = parseInt(ttlMatch[1], 10)
+                // TTL should be close to what we set (allowing for some time passage during test execution)
+                expect(actualTTL).toBeGreaterThan(expectedTTL - 60)
+                expect(actualTTL).toBeLessThanOrEqual(expectedTTL)
+            }
+        }
+    }
+
+    // Helper methods for verifying key content
+    async verifyStringKeyContent(expectedValue: string): Promise<void> {
+        const displayedValue = await this.getStringKeyValue()
+        expect(displayedValue).toContain(expectedValue)
+    }
+
+    async verifyHashKeyContent(
+        fieldName: string,
+        fieldValue: string,
+    ): Promise<void> {
+        const hashField = await this.hashFieldExists(fieldName, fieldValue)
+        expect(hashField).toBe(true)
+    }
+
+    async verifyListKeyContent(expectedElements: string[]): Promise<void> {
+        const displayedElements = await this.getAllListElements()
+        expect(displayedElements).toHaveLength(expectedElements.length)
+
+        expectedElements.forEach((expectedElement) => {
+            expect(displayedElements).toContain(expectedElement)
+        })
+    }
+
+    async verifySetKeyContent(expectedMembers: string[]): Promise<void> {
+        const displayedMembers = await this.getAllSetMembers()
+        expect(displayedMembers).toHaveLength(expectedMembers.length)
+
+        expectedMembers.forEach((expectedMember) => {
+            expect(displayedMembers).toContain(expectedMember)
+        })
+    }
+
+    async verifyZsetKeyContent(
+        expectedMembers: Array<{ name: string; score: number }>,
+    ): Promise<void> {
+        const displayedMembers = await this.getAllZsetMembers()
+        expect(displayedMembers).toHaveLength(expectedMembers.length)
+
+        expectedMembers.forEach((expectedMember) => {
+            const foundMember = displayedMembers.find(
+                (member) => member.name === expectedMember.name,
+            )
+            expect(foundMember).toBeDefined()
+            expect(foundMember?.score).toBe(expectedMember.score.toString())
+        })
+    }
+
+    async verifyJsonKeyContent(expectedValue: any): Promise<void> {
+        const displayedValue = await this.getJsonKeyValue()
+
+        // Check for scalar properties that should be visible
+        if (typeof expectedValue === 'object' && expectedValue !== null) {
+            if (expectedValue.name)
+                expect(displayedValue).toContain(expectedValue.name)
+            if (expectedValue.age)
+                expect(displayedValue).toContain(expectedValue.age.toString())
+            if (typeof expectedValue.active === 'boolean')
+                expect(displayedValue).toContain(
+                    expectedValue.active.toString(),
+                )
+
+            // Verify JSON structure keys are present
+            Object.keys(expectedValue).forEach((key) => {
+                expect(displayedValue).toContain(key)
+            })
+        }
+    }
+
+    async verifyStreamKeyContent(
+        expectedEntries: Array<{
+            fields: Array<{ name: string; value: string }>
+        }>,
+    ): Promise<void> {
+        const displayedFieldValues = await this.getAllStreamEntries()
+        expect(displayedFieldValues.length).toBeGreaterThan(0)
+
+        // Combine all field values to check for expected content
+        const allFieldsText = displayedFieldValues.join(' ')
+
+        // Check that all expected field values are present
+        expectedEntries.forEach((entry) => {
+            entry.fields.forEach((field) => {
+                expect(allFieldsText).toContain(field.value)
+            })
+        })
+    }
+
+    // Comprehensive helper method for complete key verification
+    async verifyKeyDetails(
+        keyName: string,
+        expectedLength: string,
+        expectedTTL?: number,
+    ): Promise<void> {
+        await this.openKeyDetailsAndVerify(keyName)
+        await this.verifyKeyLength(expectedLength)
+        await this.verifyKeySize()
+        await this.verifyKeyTTL(expectedTTL)
+        await this.closeKeyDetailsAndVerify()
     }
 }

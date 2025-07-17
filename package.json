@@ -28,7 +28,7 @@
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir redisinsight",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:ui": "eslint ./redisinsight/ui --ext .js,.jsx,.ts,.tsx",
-    "lint:api": "eslint ./redisinsight/api --ext .js,.jsx,.ts,.tsx",
+    "lint:api": "eslint ./redisinsight/api --ext .js,.ts",
     "lint:desktop": "eslint ./redisinsight/desktop",
     "lint:e2e": "yarn --cwd tests/e2e lint",
     "prettier": "prettier --check .",

@@ -1,7 +1,0 @@
-export { GithubIcon } from './GithubIcon'
-export { BrowserIcon } from './BrowserIcon'
-export { WorkbenchIcon } from './WorkbenchIcon'
-export { SlowLogIcon } from './SlowLogIcon'
-export { PubSubIcon } from './PubSubIcon'
-export { PipelineManagementIcon } from './PipelineManagementIcon'
-export { PipelineStatisticsIcon } from './PipelineStatisticsIcon'

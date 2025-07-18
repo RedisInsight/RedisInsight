@@ -1600,4 +1600,29 @@ export class BrowserPage extends BasePage {
         await this.verifyKeyTTL(expectedTTL)
         await this.closeKeyDetailsAndVerify()
     }
+
+    async cancelStringKeyValueEdit(newValue: string): Promise<void> {
+        await this.editKeyValueButton.click()
+        await this.stringKeyValueInput.clear()
+        await this.stringKeyValueInput.fill(newValue)
+        await this.keyDetailsHeader.click()
+    }
+
+    async waitForKeyLengthToUpdate(expectedLength: string): Promise<void> {
+        await expect
+            .poll(async () => {
+                const keyLength = await this.getKeyLength()
+                return keyLength
+            })
+            .toBe(expectedLength)
+    }
+
+    async waitForStringValueToUpdate(expectedValue: string): Promise<void> {
+        await expect
+            .poll(async () => {
+                const currentValue = await this.getStringKeyValue()
+                return currentValue
+            })
+            .toContain(expectedValue)
+    }
 }

@@ -2,59 +2,53 @@ import React, { useContext } from 'react'
 import styled from 'styled-components'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
-import { EuiIcon } from '@elastic/eui'
 import { useParams } from 'react-router-dom'
 import { findIndex, isNumber } from 'lodash'
 import { ColorText } from 'uiSrc/components/base/text'
 
 import {
-  CopyIcon,
-  PlayIcon,
   ChevronDownIcon,
   ChevronUpIcon,
+  CopyIcon,
   DeleteIcon,
+  PlayIcon,
 } from 'uiSrc/components/base/icons'
 import { Theme } from 'uiSrc/constants'
 import {
   getCommandNameFromQuery,
   getVisualizationsByCommand,
   isGroupMode,
-  truncateText,
-  urlForAsset,
-  truncateMilliseconds,
+  isGroupResults,
   isRawMode,
   isSilentMode,
   isSilentModeWithoutError,
-  isGroupResults,
+  truncateMilliseconds,
+  truncateText,
+  urlForAsset,
 } from 'uiSrc/utils'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { appPluginsSelector } from 'uiSrc/slices/app/plugins'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import {
-  getViewTypeOptions,
-  WBQueryType,
   getProfileViewTypeOptions,
-  ProfileQueryType,
+  getViewTypeOptions,
   isCommandAllowedForProfile,
+  ProfileQueryType,
+  WBQueryType,
 } from 'uiSrc/pages/workbench/constants'
 import { IPluginVisualization } from 'uiSrc/slices/interfaces'
 import {
-  RunQueryMode,
   ResultsMode,
   ResultsSummary,
+  RunQueryMode,
 } from 'uiSrc/slices/interfaces/workbench'
 import { appRedisCommandsSelector } from 'uiSrc/slices/app/redis-commands'
 import { FormatedDate, FullScreen, RiTooltip } from 'uiSrc/components'
 
-import DefaultPluginIconDark from 'uiSrc/assets/img/workbench/default_view_dark.svg'
-import DefaultPluginIconLight from 'uiSrc/assets/img/workbench/default_view_light.svg'
-import ExecutionTimeIcon from 'uiSrc/assets/img/workbench/execution_time.svg?react'
-import GroupModeIcon from 'uiSrc/assets/img/icons/group_mode.svg?react'
-import SilentModeIcon from 'uiSrc/assets/img/icons/silent_mode.svg?react'
-
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import QueryCardTooltip from '../QueryCardTooltip'
 
@@ -232,11 +226,11 @@ const QueryCardHeader = (props: Props) => {
       iconDark:
         visualization.plugin.internal && visualization.iconDark
           ? urlForAsset(visualization.plugin.baseUrl, visualization.iconDark)
-          : DefaultPluginIconDark,
+          : 'DefaultPluginDarkIcon',
       iconLight:
         visualization.plugin.internal && visualization.iconLight
           ? urlForAsset(visualization.plugin.baseUrl, visualization.iconLight)
-          : DefaultPluginIconLight,
+          : 'DefaultPluginLightIcon',
       internal: visualization.plugin.internal,
     }),
   )
@@ -256,7 +250,7 @@ const QueryCardHeader = (props: Props) => {
             position="left"
             anchorClassName={styles.changeViewWrapper}
           >
-            <EuiIcon
+            <RiIcon
               className={styles.iconDropdownOption}
               type={theme === Theme.Dark ? iconDark : iconLight}
               data-testid={`view-type-selected-${value}-${id}`}
@@ -266,7 +260,7 @@ const QueryCardHeader = (props: Props) => {
       ),
       dropdownDisplay: (
         <div className={cx(styles.dropdownOption)}>
-          <EuiIcon
+          <RiIcon
             className={styles.iconDropdownOption}
             type={theme === Theme.Dark ? iconDark : iconLight}
           />
@@ -287,9 +281,9 @@ const QueryCardHeader = (props: Props) => {
           data-test-subj={`profile-type-option-${value}-${id}`}
           className={cx(styles.dropdownOption, styles.dropdownProfileOption)}
         >
-          <EuiIcon
+          <RiIcon
             className={styles.iconDropdownOption}
-            type="visTagCloud"
+            type="VisTagCloudIcon"
             data-testid={`view-type-selected-${value}-${id}`}
           />
         </div>
@@ -398,8 +392,8 @@ const QueryCardHeader = (props: Props) => {
                   data-testid="execution-time-tooltip"
                 >
                   <>
-                    <EuiIcon
-                      type={ExecutionTimeIcon}
+                    <RiIcon
+                      type="ExecutionTimeIcon"
                       data-testid="command-execution-time-icon"
                       className={styles.iconExecutingTime}
                     />
@@ -523,7 +517,7 @@ const QueryCardHeader = (props: Props) => {
                           className={cx(styles.mode)}
                           data-testid="group-mode-tooltip"
                         >
-                          <EuiIcon type={GroupModeIcon} />
+                          <RiIcon type="GroupModeIcon" />
                         </ColorText>
                       )}
                       {isSilentMode(resultsMode) && (
@@ -531,7 +525,7 @@ const QueryCardHeader = (props: Props) => {
                           className={cx(styles.mode)}
                           data-testid="silent-mode-tooltip"
                         >
-                          <EuiIcon type={SilentModeIcon} />
+                          <RiIcon type="SilentModeIcon" />
                         </ColorText>
                       )}
                       {isRawMode(mode) && (
@@ -547,9 +541,9 @@ const QueryCardHeader = (props: Props) => {
                   position="bottom"
                   data-testid="parameters-tooltip"
                 >
-                  <EuiIcon
+                  <RiIcon
                     color="subdued"
-                    type="boxesVertical"
+                    type="MoreactionsIcon"
                     data-testid="parameters-anchor"
                   />
                 </RiTooltip>

@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiIcon } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useContext, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,11 +12,6 @@ import {
 } from 'uiSrc/slices/pubsub/pubsub'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 
-import SubscribedIconDark from 'uiSrc/assets/img/pub-sub/subscribed.svg'
-import SubscribedIconLight from 'uiSrc/assets/img/pub-sub/subscribed-lt.svg'
-import NotSubscribedIconDark from 'uiSrc/assets/img/pub-sub/not-subscribed.svg'
-import NotSubscribedIconLight from 'uiSrc/assets/img/pub-sub/not-subscribed-lt.svg'
-
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import {
@@ -27,6 +22,7 @@ import {
 import { Button, IconButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
 import { RiTooltip } from 'uiSrc/components'
+import { AllIconsType, RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import PatternsInfo from './components/patternsInfo'
 import ClickableAppendInfo from './components/clickable-append-info'
 import styles from './styles.module.scss'
@@ -67,10 +63,10 @@ const SubscriptionPanel = () => {
     }
   }
 
-  const subscribedIcon =
-    theme === Theme.Dark ? SubscribedIconDark : SubscribedIconLight
+  const subscribedIcon: AllIconsType =
+    theme === Theme.Dark ? 'SubscribedDarkIcon' : 'SubscribedLightIcon'
   const notSubscribedIcon =
-    theme === Theme.Dark ? NotSubscribedIconDark : NotSubscribedIconLight
+    theme === Theme.Dark ? 'NotSubscribedDarkIcon' : 'NotSubscribedLightIcon'
 
   const displayMessages = count !== 0 || isSubscribed
 
@@ -79,7 +75,7 @@ const SubscriptionPanel = () => {
       <FlexItem>
         <Row align="center">
           <FlexItem className={styles.iconSubscribe}>
-            <EuiIcon
+            <RiIcon
               className={styles.iconUser}
               type={isSubscribed ? subscribedIcon : notSubscribedIcon}
             />

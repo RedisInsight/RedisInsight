@@ -1,5 +1,4 @@
 import React, { ChangeEvent } from 'react'
-import { htmlIdGenerator } from '@elastic/eui'
 import { FormikProps } from 'formik'
 
 import { KeyValueCompressor } from 'uiSrc/constants'
@@ -10,6 +9,7 @@ import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
+import { useGenerateId } from 'uiSrc/components/base/utils/hooks/generate-id'
 
 export interface Props {
   formik: FormikProps<DbConnectionInfo>
@@ -59,6 +59,7 @@ const DbCompressor = (props: Props) => {
     }
     formik.setFieldValue('showCompressor', isChecked)
   }
+  const id = useGenerateId('', ' over db compressor')
 
   return (
     <>
@@ -66,7 +67,7 @@ const DbCompressor = (props: Props) => {
         <FlexItem>
           <FormField>
             <Checkbox
-              id={`${htmlIdGenerator()()} over db compressor`}
+              id={id}
               name="showCompressor"
               label="Enable Automatic Data Decompression"
               checked={!!formik.values.showCompressor}

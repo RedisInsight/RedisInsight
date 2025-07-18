@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiIcon } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import MobileIcon from 'uiSrc/assets/img/icons/mobile_module_not_loaded.svg?react'
@@ -132,11 +131,7 @@ const ModuleNotLoaded = ({
               <MobileIcon className={styles.icon} />
             ))}
           {type === 'browser' && (
-            <EuiIcon
-              className={styles.iconTelescope}
-              type={TelescopeImg}
-              size="original"
-            />
+            <TelescopeImg className={styles.iconTelescope} />
           )}
         </div>
         <div

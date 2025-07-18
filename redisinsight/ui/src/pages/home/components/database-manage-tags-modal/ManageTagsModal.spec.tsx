@@ -8,6 +8,7 @@ import { ManageTagsModal, ManageTagsModalProps } from './ManageTagsModal'
 
 jest.mock('react-redux', () => ({
   useDispatch: jest.fn(),
+  connect: () => (Component: any) => Component,
 }))
 
 jest.mock('uiSrc/slices/instances/instances', () => ({

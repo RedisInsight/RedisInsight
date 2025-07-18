@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiFilePicker, EuiIcon } from '@elastic/eui'
+import { EuiFilePicker } from '@elastic/eui'
 
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
@@ -29,6 +29,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { RefreshIcon } from 'uiSrc/components/base/icons'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -118,8 +119,8 @@ const BulkUpload = (props: Props) => {
               }
               data-testid="bulk-upload-tooltip-example"
             >
-              <EuiIcon
-                type="iInCircle"
+              <RiIcon
+                type="InfoIcon"
                 style={{ marginLeft: 4, marginBottom: 2 }}
               />
             </RiTooltip>
@@ -201,7 +202,7 @@ const BulkUpload = (props: Props) => {
               className={styles.containerPopover}
               data-testid="bulk-action-tooltip"
             >
-              <EuiIcon type="alert" className={styles.popoverIcon} />
+              <RiIcon type="ToastDangerIcon" className={styles.popoverIcon} />
               <div className={cx(styles.popoverItem, styles.popoverItemTitle)}>
                 Are you sure you want to perform this action?
               </div>

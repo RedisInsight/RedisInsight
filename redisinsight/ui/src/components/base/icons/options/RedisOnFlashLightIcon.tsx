@@ -3,5 +3,5 @@ import RedisOnFlashLight from 'uiSrc/assets/img/options/RedisOnFlashLight.svg?re
 import { Icon, IconProps } from 'uiSrc/components/base/icons'
 
 export const RedisOnFlashLightIcon = (props: IconProps) => (
-  <Icon icon={RedisOnFlashLight} {...props} />
+  <Icon icon={RedisOnFlashLight} {...props} isSvg />
 )

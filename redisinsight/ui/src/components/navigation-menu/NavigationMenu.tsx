@@ -226,11 +226,12 @@ const NavigationMenu = () => {
                 <RiBadge className={styles.betaLabel} label="BETA" />
               )}
             </div>
-          </HighlightedFeature >,
+          </HighlightedFeature>,
           { options: nav.onboard },
           nav.isActivePage,
+          `ob-${nav.tooltipText}`,
         )}
-      </React.Fragment >
+      </React.Fragment>
     )
 
     return nav.featureFlag ? (
@@ -266,7 +267,7 @@ const NavigationMenu = () => {
             data-testid={nav.dataTestId}
           />
         </SideBarItem>
-      </HighlightedFeature >
+      </HighlightedFeature>
     )
 
     return nav.featureFlag ? (
@@ -318,7 +319,10 @@ const NavigationMenu = () => {
           >
             <SideBarItem
               className={styles.githubNavItem}
-              tooltipProps={{ text: 'Star us on GitHub', placement: 'right' }}
+              tooltipProps={{
+                text: 'Star us on GitHub',
+                placement: 'right',
+              }}
             >
               <SideBarItemIcon
                 icon={GithubIcon}

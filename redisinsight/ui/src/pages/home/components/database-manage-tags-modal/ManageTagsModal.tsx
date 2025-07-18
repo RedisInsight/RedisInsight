@@ -1,23 +1,22 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useCallback, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { EuiIcon } from '@elastic/eui'
 import { PlusIcon } from 'uiSrc/components/base/icons'
 import { ConnectionProvider, Instance } from 'uiSrc/slices/interfaces'
 import { FormDialog } from 'uiSrc/components'
-import WarningIcon from 'uiSrc/assets/img/warning.svg?react'
 
 import { updateInstanceAction } from 'uiSrc/slices/instances/instances'
 import { addMessageNotification } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import {
+  EmptyButton,
   PrimaryButton,
   SecondaryButton,
-  EmptyButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { VALID_TAG_KEY_REGEX, VALID_TAG_VALUE_REGEX } from './constants'
 import { TagInputField } from './TagInputField'
 import { getInvalidTagErrors } from './utils'
@@ -118,7 +117,11 @@ export const ManageTagsModal = ({
         <>
           {(isCloudDb || isClusterDb) && (
             <div className={styles.warning}>
-              <EuiIcon type={WarningIcon} color="warning" size="m" />
+              <RiIcon
+                type="ToastNotificationIcon"
+                color="attention600"
+                size="m"
+              />
               <Text size="m">
                 Tag changes in Redis Insight apply locally and are not synced
                 with Redis {isCloudDb ? 'Cloud' : 'Software'}.
@@ -171,8 +174,8 @@ export const ManageTagsModal = ({
                     handleTagChange(index, 'value', value)
                   }}
                   rightContent={
-                    <EuiIcon
-                      type="trash"
+                    <RiIcon
+                      type="DeleteIcon"
                       onClick={() => handleRemoveTag(index)}
                       className={styles.deleteIcon}
                       data-testid="remove-tag-button"

@@ -2,9 +2,7 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { toNumber } from 'lodash'
-import { EuiFieldText, EuiIcon } from '@elastic/eui'
-
-
+import { EuiFieldText } from '@elastic/eui'
 
 import { Text } from 'uiSrc/components/base/text'
 import { KeyTypes } from 'uiSrc/constants'
@@ -42,6 +40,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { DeleteIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import { RiPopover } from 'uiSrc/components/base'
 import { DeleteListElementsDto } from 'uiSrc/api-client'
@@ -195,8 +194,8 @@ const RemoveListElements = (props: Props) => {
           </Text>
           {(!length || length <= +count) && (
             <div className={styles.appendInfo}>
-              <EuiIcon
-                type="alert"
+              <RiIcon
+                type="ToastDangerIcon"
                 style={{ marginRight: '1rem', marginTop: '4px' }}
               />
               <Text size="s">
@@ -226,9 +225,9 @@ const RemoveListElements = (props: Props) => {
       isOpen={isInfoPopoverOpen}
       closePopover={() => setIsInfoPopoverOpen(false)}
       button={
-        <EuiIcon
+        <RiIcon
           className={styles.infoIcon}
-          type="iInCircle"
+          type="InfoIcon"
           onClick={() =>
             setIsInfoPopoverOpen((isPopoverOpen) => !isPopoverOpen)
           }

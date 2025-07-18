@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+
 import {
   KeyTypes,
   KeyValueFormat,
@@ -20,8 +21,6 @@ import {
   sendEventTelemetry,
   TelemetryEvent,
 } from 'uiSrc/telemetry'
-import FormattersLight from 'uiSrc/assets/img/icons/formatter_light.svg'
-import FormattersDark from 'uiSrc/assets/img/icons/formatter_dark.svg'
 import { stringDataSelector } from 'uiSrc/slices/browser/string'
 import { isFullStringLoaded } from 'uiSrc/utils'
 import { RiTooltip } from 'uiSrc/components'
@@ -79,7 +78,11 @@ const KeyDetailsHeaderFormatter = (props: Props) => {
                 <OptionText color="subdued">{text}</OptionText>
               ) : (
                 <ControlsIcon
-                  type={theme === Theme.Dark ? FormattersDark : FormattersLight}
+                  type={
+                    theme === Theme.Dark
+                      ? 'FormattersDarkIcon'
+                      : 'FormattersLightIcon'
+                  }
                   data-testid={`key-value-formatter-option-selected-${value}`}
                 />
               )}

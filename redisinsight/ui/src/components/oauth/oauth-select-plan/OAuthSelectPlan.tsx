@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { EuiIcon, EuiModal, EuiModalBody } from '@elastic/eui'
+import { EuiModal, EuiModalBody } from '@elastic/eui'
 import { toNumber, filter, get, find, first } from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -25,6 +25,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import { CloudSubscriptionPlanResponse } from 'uiSrc/api-client'
 import { OAuthProvider, OAuthProviders } from './constants'
@@ -186,24 +187,29 @@ const OAuthSelectPlan = () => {
             your free trial Redis database. No credit card is required.
           </Text>
           <section className={styles.providers}>
-            {OAuthProviders.map(({ icon, id, label }) => (
-              <div className={styles.provider} key={id}>
-                {id === providerSelected && (
-                  <div className={cx(styles.providerActiveIcon)}>
-                    <EuiIcon type="check" />
-                  </div>
-                )}
-                <EmptyButton
-                  size="large"
-                  icon={icon}
-                  onClick={() => setProviderSelected(id)}
-                  className={cx(styles.providerBtn, {
-                    [styles.activeProvider]: id === providerSelected,
-                  })}
-                />
-                <Text className={styles.providerLabel}>{label}</Text>
-              </div>
-            ))}
+            {OAuthProviders.map(({ icon, id, label }) => {
+              const Icon = () => (
+                <RiIcon type={icon} size="original" style={{ width: 44 }} />
+              )
+              return (
+                <div className={styles.provider} key={id}>
+                  {id === providerSelected && (
+                    <div className={cx(styles.providerActiveIcon)}>
+                      <RiIcon type="CheckThinIcon" />
+                    </div>
+                  )}
+                  <EmptyButton
+                    size="large"
+                    icon={Icon}
+                    onClick={() => setProviderSelected(id)}
+                    className={cx(styles.providerBtn, {
+                      [styles.activeProvider]: id === providerSelected,
+                    })}
+                  />
+                  <Text className={styles.providerLabel}>{label}</Text>
+                </div>
+              )
+            })}
           </section>
           <section className={styles.region}>
             <Text className={styles.regionLabel}>Region</Text>

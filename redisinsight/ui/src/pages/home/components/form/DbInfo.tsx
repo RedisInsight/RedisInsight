@@ -1,6 +1,5 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { EuiIcon } from '@elastic/eui'
 import { capitalize } from 'lodash'
 import cx from 'classnames'
 
@@ -15,6 +14,7 @@ import {
   Item as ListGroupItem,
 } from 'uiSrc/components/base/layout/list'
 import { Endpoint, AdditionalRedisModule } from 'uiSrc/api-client'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 
 import styles from '../styles.module.scss'
 
@@ -60,9 +60,9 @@ const DbInfo = (props: Props) => {
         </ul>
       }
     >
-      <EuiIcon
-        type="iInCircle"
-        color="subdued"
+      <RiIcon
+        type="InfoIcon"
+        color="informative400"
         title=""
         style={{ cursor: 'pointer' }}
       />

@@ -34,6 +34,6 @@ describe('SlowLogTable', () => {
     expect(
       render(<SlowLogTable {...mockedProps} items={mockedData} />),
     ).toBeTruthy()
-    expect(screen.getAllByLabelText(/row/)).toHaveLength(mockedData.length)
+    expect(screen.getAllByLabelText(/^row$/)).toHaveLength(mockedData.length)
   })
 })

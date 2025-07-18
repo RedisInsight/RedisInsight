@@ -1,4 +1,3 @@
-import { EuiIcon } from '@elastic/eui'
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
@@ -30,6 +29,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import RedisClusterDatabases from './RedisClusterDatabases'
 import RedisClusterDatabasesResult from './RedisClusterDatabasesResult'
@@ -185,7 +185,7 @@ const RedisClusterDatabasesPage = () => {
             <RiTooltip position="left" title="Error" content={messageAdded}>
               <Row align="center" gap="s">
                 <FlexItem>
-                  <EuiIcon type="alert" color="danger" />
+                  <RiIcon type="ToastDangerIcon" color="danger600" />
                 </FlexItem>
 
                 <FlexItem>

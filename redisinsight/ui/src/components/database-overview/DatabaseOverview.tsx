@@ -1,6 +1,5 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiIcon } from '@elastic/eui'
 import { getConfig } from 'uiSrc/config'
 
 import {
@@ -8,7 +7,6 @@ import {
   DATABASE_OVERVIEW_REFRESH_INTERVAL,
 } from 'uiSrc/constants/browser'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import WarningIcon from 'uiSrc/assets/img/warning.svg?react'
 import MetricItem, {
   OverviewItem,
 } from 'uiSrc/components/database-overview/components/OverviewMetrics/MetricItem'
@@ -16,6 +14,7 @@ import { useDatabaseOverview } from 'uiSrc/components/database-overview/hooks/us
 
 import { IMetric } from 'uiSrc/components/database-overview/components/OverviewMetrics'
 import { SecondaryButton } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import AutoRefresh from '../auto-refresh'
 import styles from './styles.module.scss'
 
@@ -46,7 +45,9 @@ const DatabaseOverview = () => {
             <MetricItem
               id="connectivityError"
               tooltipContent={connectivityError}
-              content={<EuiIcon size="m" type={WarningIcon} />}
+              content={
+                <RiIcon size="m" type="ToastInfoIcon" color="danger500" />
+              }
             />
           )}
           {metrics?.length! > 0 && (
@@ -134,14 +135,14 @@ const getTooltipContent = (metric: IMetric) => {
       >
         {tooltipItem.icon && (
           <FlexItem>
-            <EuiIcon
+            <RiIcon
               className={styles.moreInfoOverviewIcon}
               size="m"
               type={tooltipItem.icon}
             />
           </FlexItem>
         )}
-        <FlexItem className={styles.moreInfoOverviewContent}>
+        <FlexItem className={styles.moreInfoOverviewContent} direction="row">
           {tooltipItem.content}
         </FlexItem>
         <FlexItem className={styles.moreInfoOverviewTitle}>

@@ -1,6 +1,5 @@
 import {
   Criteria,
-  EuiIcon,
   EuiTableFieldDataColumnType,
   PropertySort,
 } from '@elastic/eui'
@@ -23,14 +22,9 @@ import { Text, ColorText } from 'uiSrc/components/base/text'
 import {
   MoreactionsIcon,
   EditIcon,
-  CopyIcon,
   TagIcon,
+  CopyIcon,
 } from 'uiSrc/components/base/icons'
-import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
-import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
-import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
-import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
-import CloudLinkIcon from 'uiSrc/assets/img/oauth/cloud_link.svg?react'
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
 import ItemList from 'uiSrc/components/item-list'
 import {
@@ -86,6 +80,7 @@ import { Tag } from 'uiSrc/slices/interfaces/tag'
 import { FeatureFlagComponent } from 'uiSrc/components'
 import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Link } from 'uiSrc/components/base/link/Link'
 import { RIResizeObserver } from 'uiSrc/components/base/utils'
 
@@ -501,11 +496,11 @@ const DatabasesListWrapper = (props: Props) => {
                   <DatabaseListModules
                     content={
                       isRediStack ? (
-                        <EuiIcon
+                        <RiIcon
                           type={
                             theme === Theme.Dark
-                              ? RediStackDarkMin
-                              : RediStackLightMin
+                              ? 'RediStackDarkMinIcon'
+                              : 'RediStackLightMinIcon'
                           }
                           data-testid="redis-stack-icon"
                         />
@@ -514,11 +509,11 @@ const DatabasesListWrapper = (props: Props) => {
                     tooltipTitle={
                       isRediStack ? (
                         <>
-                          <EuiIcon
+                          <RiIcon
                             type={
                               theme === Theme.Dark
-                                ? RediStackDarkLogo
-                                : RediStackLightLogo
+                                ? 'RediStackDarkLogoIcon'
+                                : 'RediStackLightLogoIcon'
                             }
                             className={styles.tooltipLogo}
                             data-testid="tooltip-redis-stack-icon"
@@ -607,10 +602,7 @@ const DatabasesListWrapper = (props: Props) => {
                     onClick={handleClickGoToCloud}
                     data-testid={`cloud-link-${instance.id}`}
                   >
-                    <EuiIcon
-                      type={CloudLinkIcon}
-                      className={styles.cloudIcon}
-                    />
+                    <RiIcon type="CloudLinkIcon" className={styles.cloudIcon} />
                   </Link>
                 </RiTooltip>
               )}

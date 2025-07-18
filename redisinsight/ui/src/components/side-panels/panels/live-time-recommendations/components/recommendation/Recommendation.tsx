@@ -1,8 +1,6 @@
 import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-
-import { EuiIcon } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
 import { findTutorialPath, Maybe, Nullable } from 'uiSrc/utils'
@@ -27,8 +25,6 @@ import {
   IRecommendationsStatic,
 } from 'uiSrc/slices/interfaces/recommendations'
 
-import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
-import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import {
   HideIcon,
   ShowIcon,
@@ -44,6 +40,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiAccordion } from 'uiSrc/components/base/display/accordion/RiAccordion'
 import { Link } from 'uiSrc/components/base/link/Link'
 
@@ -94,9 +91,11 @@ const RecommendationTitle = ({
               position="top"
               anchorClassName="flex-row"
             >
-              <EuiIcon
+              <RiIcon
                 type={
-                  theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
+                  theme === Theme.Dark
+                    ? 'RediStackDarkMinIcon'
+                    : 'RediStackLightMinIcon'
                 }
                 className={styles.redisStackIcon}
                 data-testid={`${id}-redis-stack-icon`}

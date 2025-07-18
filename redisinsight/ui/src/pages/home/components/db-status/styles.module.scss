@@ -40,7 +40,7 @@
   display: flex;
   align-items: flex-start;
 
-  :global(.euiIcon) {
+  :global(svg) {
     margin-top: 4px;
     margin-right: 12px;
   }

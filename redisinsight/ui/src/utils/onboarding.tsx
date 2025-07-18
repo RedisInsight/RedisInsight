@@ -1,5 +1,4 @@
 import React from 'react'
-import { htmlIdGenerator } from '@elastic/eui'
 import { OnboardingTour } from 'uiSrc/components'
 import { OnboardingTourOptions } from 'uiSrc/components/onboarding-tour'
 import { Props as OnboardingTourProps } from 'uiSrc/components/onboarding-tour/OnboardingTourWrapper'
@@ -13,7 +12,7 @@ const renderOnboardingTourWithChild = (
   children: React.ReactElement,
   props: Props,
   isActive = true,
-  key: string = htmlIdGenerator()(),
+  key: string,
 ) =>
   props.options && isActive ? (
     <OnboardingTour

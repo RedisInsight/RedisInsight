@@ -32,6 +32,7 @@ import {
   PubSubIcon,
   SlowLogIcon,
   WorkbenchIcon,
+  SearchIcon,
   GithubIcon,
   SettingsIcon,
 } from 'uiSrc/components/base/icons'
@@ -137,6 +138,23 @@ const NavigationMenu = () => {
       isActivePage: activePage === `/${PageNames.workbench}`,
       iconType: WorkbenchIcon,
       onboard: ONBOARDING_FEATURES.WORKBENCH_PAGE,
+    },
+    {
+      tooltipText: 'Vector Search',
+      pageName: PageNames.vectorSearch,
+      ariaLabel: 'Vector Search',
+      onClick: () => handleGoPage(Pages.vectorSearch(connectedInstanceId)),
+      dataTestId: 'vector-search-page-btn',
+      connectedInstanceId,
+      isActivePage: activePage === `/${PageNames.vectorSearch}`,
+      getClassName() {
+        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
+      },
+      getIconType() {
+        // TODO: Icon or move to another menu
+        // eslint-disable-next-line sonarjs/no-all-duplicated-branches
+        return this.isActivePage ? SearchIcon : SearchIcon
+      },
     },
     {
       tooltipText: 'Analysis Tools',

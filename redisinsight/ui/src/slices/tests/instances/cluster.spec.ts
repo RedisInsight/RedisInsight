@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios'
 import { cloneDeep } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import {
@@ -9,8 +8,8 @@ import {
 import {
   ClusterConnectionDetailsDto,
   RedisEnterpriseDatabase,
-} from 'apiSrc/modules/redis-enterprise/dto/cluster.dto'
-import { AddRedisEnterpriseDatabaseResponse } from 'apiSrc/modules/redis-enterprise/dto/redis-enterprise-cluster.dto'
+  AddRedisEnterpriseDatabaseResponse,
+} from 'uiSrc/api-client'
 import reducer, {
   initialState,
   loadInstancesRedisCluster,
@@ -24,7 +23,7 @@ import reducer, {
   addInstancesRedisCluster,
 } from '../../instances/cluster'
 
-import { addErrorNotification } from '../../app/notifications'
+import { addErrorNotification, IAddInstanceErrorPayload } from '../../app/notifications'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -159,7 +158,7 @@ describe('cluster slice', () => {
       const nextState = initialState
 
       // Act
-      const result = reducer(undefined, {})
+      const result = reducer(undefined, {} as any)
 
       // Assert
       expect(result).toEqual(nextState)
@@ -430,7 +429,7 @@ describe('cluster slice', () => {
           loadInstancesRedisClusterFailure(
             responsePayload.response.data.message,
           ),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -484,7 +483,7 @@ describe('cluster slice', () => {
           createInstancesRedisClusterFailure(
             responsePayload.response.data.message,
           ),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

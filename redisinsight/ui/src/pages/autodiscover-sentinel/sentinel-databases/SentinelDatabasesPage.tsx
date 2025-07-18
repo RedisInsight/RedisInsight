@@ -21,7 +21,7 @@ import { CopyIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
-import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
+import { CreateSentinelDatabaseDto } from 'uiSrc/api-client'
 
 import SentinelDatabases from './components'
 
@@ -82,6 +82,7 @@ const SentinelDatabasesPage = () => {
 
     dispatch(updateMastersSentinel(databases))
     dispatch(
+      // @ts-expect-error TODO: check this - expected type is CreateSentinelDatabasesDto
       createMastersSentinelAction(pikedDatabases, () =>
         history.push(Pages.sentinelDatabasesResult),
       ),

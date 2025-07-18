@@ -69,7 +69,7 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
 
   const renderRejsonDataBeDownloaded = (item: any, i: number) => {
     if (isScalar(item))
-      return renderScalar({ key: i || null, value: item, parentPath })
+      return renderScalar({ key: i || '', value: item, parentPath })
 
     const data = { ...item, parentPath }
     if (['array', 'object'].includes(item.type))
@@ -97,7 +97,7 @@ const RejsonDynamicTypes = (props: DynamicTypesProps) => {
 
   const renderResult = (data: any) => {
     if (isScalar(data)) {
-      return renderScalar({ key: null, value: data, parentPath })
+      return renderScalar({ key: '', value: data, parentPath })
     }
 
     if (!isDownloaded) {

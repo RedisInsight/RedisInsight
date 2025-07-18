@@ -8,8 +8,7 @@ import { AppDispatch, RootState } from 'uiSrc/slices/store'
 import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { SubscriptionType } from 'uiSrc/constants/pubSub'
-import { MessagesResponse } from 'apiSrc/modules/pub-sub/dto/messages.response'
-import { PublishResponse } from 'apiSrc/modules/pub-sub/dto/publish.response'
+import { PublishResponse } from 'uiSrc/api-client'
 
 export const initialState: StatePubSub = {
   loading: false,
@@ -54,7 +53,7 @@ const pubSubSlice = createSlice({
     },
     concatPubSubMessages: (
       state,
-      { payload }: PayloadAction<MessagesResponse>,
+      { payload }: PayloadAction<any>,
     ) => {
       state.count += payload.count
       if (payload.messages.length >= PUB_SUB_ITEMS_MAX_COUNT) {

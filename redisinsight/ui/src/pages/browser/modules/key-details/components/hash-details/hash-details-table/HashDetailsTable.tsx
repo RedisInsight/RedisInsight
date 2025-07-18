@@ -86,7 +86,7 @@ import {
   GetHashFieldsResponse,
   HashFieldDto,
   UpdateHashFieldsTtlDto,
-} from 'apiSrc/modules/browser/hash/dto'
+} from 'uiSrc/api-client'
 
 import styles from './styles.module.scss'
 
@@ -187,7 +187,7 @@ const HashDetailsTable = (props: Props) => {
     setDeleting(`${field + suffix}`)
   }, [])
 
-  const onSuccessRemoved = (newTotalValue: number) => {
+  const onSuccessRemoved = (newTotalValue?: number) => {
     newTotalValue === 0 && onRemoveKey()
     sendEventTelemetry({
       event: getBasedOnViewTypeEvent(
@@ -469,7 +469,7 @@ const HashDetailsTable = (props: Props) => {
             disabledTooltipText={TEXT_UNPRINTABLE_CHARACTERS}
             onDecline={() => handleEditField(rowIndex, false, 'value')}
             onApply={(value) =>
-              handleApplyEditValue(fieldItem, value, rowIndex)
+              handleApplyEditValue(fieldItem as string, value, rowIndex)
             }
             approveText={TEXT_INVALID_VALUE}
             approveByValidation={(value) =>
@@ -509,11 +509,7 @@ const HashDetailsTable = (props: Props) => {
       absoluteWidth: 40,
       minWidth: 40,
       maxWidth: 40,
-      render: function Actions(
-        _act: any,
-        { field: fieldItem, value: valueItem }: HashFieldDto,
-        _,
-      ) {
+      render: function Actions(_act: any, { field: fieldItem }: HashFieldDto) {
         const field = bufferToString(fieldItem, viewFormat)
         return (
           <StopPropagation>
@@ -570,7 +566,7 @@ const HashDetailsTable = (props: Props) => {
             isEditing={isEditing}
             onEdit={(value: boolean) => handleEditField(rowIndex, value, 'ttl')}
             onDecline={() => handleEditField(rowIndex, false, 'ttl')}
-            onApply={(value) => handleApplyEditExpire(fieldItem, value, 'ttl')}
+            onApply={(value) => handleApplyEditExpire(fieldItem as string, value, rowIndex)}
             testIdPrefix="hash-ttl"
             validation={validateTTLNumber}
             isEditDisabled={isTruncatedFieldName}

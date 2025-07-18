@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios'
 import { cloneDeep, omit } from 'lodash'
 import {
   cleanup,
@@ -76,11 +75,14 @@ import {
   ClaimPendingEntryDto,
   PendingEntryDto,
   UpdateConsumerGroupDto,
-} from 'apiSrc/modules/browser/stream/dto'
+  GetStreamEntriesResponse,
+} from 'uiSrc/api-client'
 import {
   addErrorNotification,
   addMessageNotification,
+  IAddInstanceErrorPayload,
 } from '../../app/notifications'
+import { RootState } from 'uiSrc/slices/store'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -107,11 +109,12 @@ const mockedEntryData = {
       fields: { field: stringToBuffer('1'), name: stringToBuffer('2') },
     },
   ],
-}
+} as unknown as GetStreamEntriesResponse
 
 const mockGroups: ConsumerGroupDto[] = [
   {
     name: {
+      // @ts-ignore
       ...stringToBuffer('test'),
       viewValue: 'test',
     },
@@ -123,6 +126,7 @@ const mockGroups: ConsumerGroupDto[] = [
   },
   {
     name: {
+      // @ts-ignore
       ...stringToBuffer('test2'),
       viewValue: 'test2',
     },
@@ -137,12 +141,14 @@ const mockGroups: ConsumerGroupDto[] = [
 const mockConsumers: ConsumerDto[] = [
   {
     name: stringToBuffer('test'),
+    // @ts-ignore
     nameString: 'test',
     idle: 123,
     pending: 321,
   },
   {
     name: stringToBuffer('test2'),
+    // @ts-ignore
     nameString: 'test2',
     idle: 13,
     pending: 31,
@@ -179,7 +185,7 @@ describe('stream slice', () => {
       const nextState = initialState
 
       // Act
-      const result = reducer(undefined, {})
+      const result = reducer(undefined, {} as any)
 
       // Assert
       expect(result).toEqual(nextState)
@@ -192,7 +198,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(initialState)
     })
   })
@@ -212,7 +218,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -242,7 +248,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -264,7 +270,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -284,7 +290,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -313,7 +319,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -335,7 +341,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -355,7 +361,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -376,7 +382,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -398,7 +404,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -418,7 +424,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -439,7 +445,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -461,7 +467,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -484,7 +490,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -507,7 +513,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -534,7 +540,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamRangeSelector(rootState)).toEqual(stateRange)
     })
   })
@@ -557,7 +563,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -581,7 +587,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -617,7 +623,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -628,6 +634,7 @@ describe('stream slice', () => {
       const data: ConsumerDto[] = [
         {
           name: {
+            // @ts-ignore
             ...stringToBuffer('123'),
             viewValue: '123',
           },
@@ -653,7 +660,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -689,7 +696,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -718,7 +725,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -744,7 +751,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -769,7 +776,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -780,7 +787,7 @@ describe('stream slice', () => {
       const group = {
         name: stringToBuffer('group name'),
         nameString: 'group name',
-      }
+      } as unknown as ConsumerGroupDto
 
       const state = {
         ...initialState,
@@ -797,7 +804,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -826,7 +833,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -869,7 +876,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -892,7 +899,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -916,7 +923,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -941,7 +948,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -964,7 +971,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -988,7 +995,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -1017,7 +1024,7 @@ describe('stream slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { stream: nextState },
-      }
+      } as RootState
       expect(streamSelector(rootState)).toEqual(state)
     })
   })
@@ -1073,7 +1080,7 @@ describe('stream slice', () => {
         // Assert
         const expectedActions = [
           loadEntries(true),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           loadEntriesFailure(errorMessage),
         ]
 
@@ -1121,7 +1128,7 @@ describe('stream slice', () => {
         // Assert
         const expectedActions = [
           loadEntries(true),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           loadEntriesFailure(errorMessage),
         ]
 
@@ -1165,7 +1172,7 @@ describe('stream slice', () => {
         // Assert
         const expectedActions = [
           loadConsumerGroups(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           loadConsumerGroupsFailure(errorMessage),
         ]
 
@@ -1209,7 +1216,7 @@ describe('stream slice', () => {
         // Assert
         const expectedActions = [
           loadConsumerGroups(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           loadConsumersFailure(errorMessage),
         ]
 
@@ -1253,7 +1260,7 @@ describe('stream slice', () => {
         // Assert
         const expectedActions = [
           loadConsumerGroups(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           loadConsumerMessagesFailure(errorMessage),
         ]
 
@@ -1315,7 +1322,7 @@ describe('stream slice', () => {
         // Assert
         const expectedActions = [
           modifyLastDeliveredId(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           modifyLastDeliveredIdFailure(errorMessage),
         ]
 
@@ -1378,7 +1385,7 @@ describe('stream slice', () => {
         // Assert
         const expectedActions = [
           deleteConsumerGroups(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           deleteConsumerGroupsFailure(errorMessage),
         ]
 
@@ -1447,7 +1454,7 @@ describe('stream slice', () => {
         // Assert
         const expectedActions = [
           deleteConsumers(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           deleteConsumersFailure(errorMessage),
         ]
 
@@ -1503,7 +1510,7 @@ describe('stream slice', () => {
         // Assert
         const expectedActions = [
           loadConsumerGroups(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           loadConsumerMessagesFailure(errorMessage),
         ]
 
@@ -1566,7 +1573,7 @@ describe('stream slice', () => {
         // Assert
         const expectedActions = [
           ackPendingEntries(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           ackPendingEntriesFailure(errorMessage),
         ]
 
@@ -1672,7 +1679,7 @@ describe('stream slice', () => {
         // Assert
         const expectedActions = [
           claimConsumerMessages(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           claimConsumerMessagesFailure(errorMessage),
         ]
 

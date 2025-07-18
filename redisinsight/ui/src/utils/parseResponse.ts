@@ -2,14 +2,17 @@ import { find, map, sortBy, omit, forEach, isNull } from 'lodash'
 import { ModifiedSentinelMaster } from 'uiSrc/slices/interfaces'
 import { initialStateSentinelStatus } from 'uiSrc/slices/instances/sentinel'
 
-import { AddSentinelMasterResponse } from 'apiSrc/modules/instances/dto/redis-sentinel.dto'
-import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel'
+import {
+  CreateSentinelDatabaseResponse as AddSentinelMasterResponse,
+  SentinelMaster,
+} from 'uiSrc/api-client'
 
 const DEFAULT_NODE_ID = 'standalone'
 
 export const parseMastersSentinel = (
   masters: SentinelMaster[],
 ): ModifiedSentinelMaster[] =>
+  // @ts-expect-error TODO: check this type mismatch
   map(sortBy(masters, 'name'), (master, i) => ({
     ...initialStateSentinelStatus,
     ...master,
@@ -23,13 +26,14 @@ export const parseAddedMastersSentinel = (
   masters: ModifiedSentinelMaster[],
   statuses: AddSentinelMasterResponse[],
 ): ModifiedSentinelMaster[] =>
+  // @ts-expect-error TODO: check this type mismatch
   sortBy(masters, 'message').map((master) => ({
     ...master,
     ...find(statuses, (status) => master.name === status.name),
     loading: false,
   }))
 
-export const parseKeysListResponse = (prevShards = {}, data = []) => {
+export const parseKeysListResponse = (prevShards: any = {}, data: any = []) => {
   const shards = { ...prevShards }
 
   const result = {
@@ -40,7 +44,7 @@ export const parseKeysListResponse = (prevShards = {}, data = []) => {
     shardsMeta: {},
   }
 
-  data.forEach((node) => {
+  data.forEach((node: any) => {
     const id = node.host ? `${node.host}:${node.port}` : DEFAULT_NODE_ID
     const shard = (() => {
       if (!shards[id]) {
@@ -67,7 +71,7 @@ export const parseKeysListResponse = (prevShards = {}, data = []) => {
   })
 
   // summarize result numbers
-  const nextCursor = []
+  const nextCursor: any[] = []
   forEach(shards, (shard, id) => {
     if (shard.total === null) {
       result.total = shard.total

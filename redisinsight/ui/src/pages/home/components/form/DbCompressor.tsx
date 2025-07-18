@@ -24,19 +24,19 @@ const DbCompressor = (props: Props) => {
       label: 'No decompression',
     },
     {
-      value: KeyValueCompressor.GZIP,
+      value: KeyValueCompressor.Gzip,
       label: 'GZIP',
     },
     {
-      value: KeyValueCompressor.LZ4,
+      value: KeyValueCompressor.Lz4,
       label: 'LZ4',
     },
     {
-      value: KeyValueCompressor.SNAPPY,
+      value: KeyValueCompressor.Snappy,
       label: 'SNAPPY',
     },
     {
-      value: KeyValueCompressor.ZSTD,
+      value: KeyValueCompressor.Zstd,
       label: 'ZSTD',
     },
     {
@@ -44,7 +44,7 @@ const DbCompressor = (props: Props) => {
       label: 'Brotli',
     },
     {
-      value: KeyValueCompressor.PHPGZCompress,
+      value: KeyValueCompressor.PhpgzCompress,
       label: 'PHP GZCompress',
     },
   ]

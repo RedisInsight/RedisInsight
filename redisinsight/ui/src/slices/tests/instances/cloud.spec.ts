@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios'
 import { cloneDeep } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import {
@@ -7,9 +6,11 @@ import {
   mockedStore,
 } from 'uiSrc/utils/test-utils'
 import {
+  // @ts-expect-error
   GetCloudAccountShortInfoResponse,
+  // @ts-expect-error
   RedisCloudDatabase,
-} from 'apiSrc/modules/redis-enterprise/dto/cloud.dto'
+} from 'uiSrc/api-client'
 import reducer, {
   loadSubscriptionsRedisCloud,
   initialState,
@@ -32,8 +33,15 @@ import reducer, {
   createInstancesRedisCloud,
   createInstancesRedisCloudSuccess,
 } from '../../instances/cloud'
-import { LoadedCloud, RedisCloudSubscriptionType } from '../../interfaces'
-import { addErrorNotification } from '../../app/notifications'
+import {
+  LoadedCloud,
+  OAuthSocialAction,
+  RedisCloudSubscriptionType,
+} from '../../interfaces'
+import {
+  addErrorNotification,
+  IAddInstanceErrorPayload,
+} from '../../app/notifications'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -85,7 +93,7 @@ describe('cloud slice', () => {
       const nextState = initialState
 
       // Act
-      const result = reducer(undefined, {})
+      const result = reducer(undefined, {} as any)
 
       // Assert
       expect(result).toEqual(nextState)
@@ -563,7 +571,7 @@ describe('cloud slice', () => {
   describe('setSSOFlow', () => {
     it('should properly set setSSOFlow', () => {
       // Arrange
-      const data = 'import'
+      const data = OAuthSocialAction.Import
       const state = {
         ...initialState,
         ssoFlow: 'import',
@@ -669,7 +677,7 @@ describe('cloud slice', () => {
           loadSubscriptionsRedisCloudFailure(
             responsePayload.response.data.message,
           ),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -726,7 +734,7 @@ describe('cloud slice', () => {
         const expectedActions = [
           loadAccountRedisCloud(),
           loadAccountRedisCloudFailure(responsePayload.response.data.message),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -799,6 +807,7 @@ describe('cloud slice', () => {
 
         // Act
         await store.dispatch<any>(
+          // @ts-expect-error type mismatch
           fetchInstancesRedisCloud({ ids, credentials }),
         )
 
@@ -806,7 +815,7 @@ describe('cloud slice', () => {
         const expectedActions = [
           loadInstancesRedisCloud(),
           loadInstancesRedisCloudFailure(responsePayload.response.data.message),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)
@@ -817,7 +826,7 @@ describe('cloud slice', () => {
       it('call addInstancesRedisCloud and createInstancesRedisCloudSuccess when fetch is successed', async () => {
         // Arrange
         const databasesPicked = [
-          { subscriptionId: '1231', databaseId: '123', free: false },
+          { subscriptionId: 1231, databaseId: 123, free: false },
         ]
         const credentials = {
           accessKey: '123',
@@ -844,7 +853,7 @@ describe('cloud slice', () => {
       it('call addInstancesRedisCloud and createInstancesRedisCloudFailure when fetch is failure', async () => {
         // Arrange
         const databasesPicked = [
-          { subscriptionId: '1231', databaseId: '123', free: false },
+          { subscriptionId: 1231, databaseId: 123, free: false },
         ]
         const credentials = {
           accessKey: '123',
@@ -873,7 +882,7 @@ describe('cloud slice', () => {
           createInstancesRedisCloudFailure(
             responsePayload.response.data.message,
           ),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]
 
         expect(store.getActions()).toEqual(expectedActions)

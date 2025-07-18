@@ -30,7 +30,7 @@ import { FormField } from 'uiSrc/components/base/forms/FormField'
 import {
   CreateHashWithExpireDto,
   HashFieldDto,
-} from 'apiSrc/modules/browser/hash/dto'
+} from 'uiSrc/api-client'
 
 import { IHashFieldState, INITIAL_HASH_FIELD_STATE } from './interfaces'
 import { AddHashFormConfig as config } from '../constants/fields-config'

@@ -1,5 +1,4 @@
 import { cloneDeep } from 'lodash'
-import { AxiosError } from 'axios'
 import { SortOrder } from 'uiSrc/constants'
 import { apiService } from 'uiSrc/services'
 import {
@@ -11,15 +10,14 @@ import {
 import {
   addErrorNotification,
   addMessageNotification,
+  IAddInstanceErrorPayload,
 } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { stringToBuffer } from 'uiSrc/utils'
 import { deleteRedisearchKeyFromList } from 'uiSrc/slices/browser/redisearch'
 import { MOCK_TIMESTAMP } from 'uiSrc/mocks/data/dateNow'
-import {
-  AddMembersToZSetDto,
-  ZSetMemberDto,
-} from 'apiSrc/modules/browser/z-set/dto'
+import { AddMembersToZSetDto, ZSetMemberDto } from 'uiSrc/api-client'
+import { RootState } from 'uiSrc/slices/store'
 import {
   defaultSelectedKeyAction,
   deleteSelectedKeySuccess,
@@ -90,7 +88,7 @@ describe('zset slice', () => {
       const nextState = initialState
 
       // Act
-      const result = reducer(undefined, {})
+      const result = reducer(undefined, {} as any)
 
       // Assert
       expect(result).toEqual(nextState)
@@ -103,7 +101,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(initialState)
     })
   })
@@ -119,14 +117,14 @@ describe('zset slice', () => {
       // Act
       const nextState = reducer(
         initialState,
-        loadZSetMembers([initialState.data.sortOrder, undefined]),
+        loadZSetMembers([initialState.data.sortOrder as SortOrder, undefined]),
       )
 
       // Assert
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -161,7 +159,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
 
@@ -189,7 +187,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -218,7 +216,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -241,7 +239,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -274,7 +272,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
 
@@ -305,7 +303,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -328,7 +326,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -353,7 +351,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -384,7 +382,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
 
@@ -406,7 +404,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(initialState)
     })
   })
@@ -429,7 +427,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -449,7 +447,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -487,7 +485,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
 
@@ -508,7 +506,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(initialState)
     })
   })
@@ -532,7 +530,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -552,7 +550,7 @@ describe('zset slice', () => {
       const rootSate = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootSate)).toEqual(state)
     })
   })
@@ -574,7 +572,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(initialStateRemove)
     })
   })
@@ -597,7 +595,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -638,7 +636,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -662,7 +660,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -685,7 +683,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -709,7 +707,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -733,7 +731,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -789,7 +787,7 @@ describe('zset slice', () => {
       const rootState = {
         ...initialStateDefault,
         browser: { zset: nextState },
-      }
+      } as RootState
       expect(zsetSelector(rootState)).toEqual(state)
     })
   })
@@ -841,7 +839,7 @@ describe('zset slice', () => {
         // Assert
         const expectedActions = [
           loadZSetMembers([SortOrder.ASC, undefined]),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           loadZSetMembersFailure(errorMessage),
         ]
 
@@ -896,7 +894,7 @@ describe('zset slice', () => {
         // Assert
         const expectedActions = [
           loadMoreZSetMembers(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           loadMoreZSetMembersFailure(errorMessage),
         ]
 
@@ -952,7 +950,7 @@ describe('zset slice', () => {
         // Assert
         const expectedActions = [
           updateScore(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           updateScoreFailure(errorMessage),
         ]
 
@@ -1021,7 +1019,7 @@ describe('zset slice', () => {
               },
             },
           },
-        }
+        } as RootState
 
         const mockedStore = mockStore(nextState)
 
@@ -1057,7 +1055,7 @@ describe('zset slice', () => {
         // Assert
         const expectedActions = [
           removeZsetMembers(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           removeZsetMembersFailure(errorMessage),
         ]
 
@@ -1110,7 +1108,7 @@ describe('zset slice', () => {
         // Assert
         const expectedActions = [
           updateScore(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           updateScoreFailure(errorMessage),
         ]
 
@@ -1155,7 +1153,7 @@ describe('zset slice', () => {
         // Assert
         const expectedActions = [
           searchZSetMembers('zz'),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           searchZSetMembersFailure(errorMessage),
         ]
 
@@ -1203,7 +1201,7 @@ describe('zset slice', () => {
         // Assert
         const expectedActions = [
           searchMoreZSetMembers('zz'),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           searchMoreZSetMembersFailure(errorMessage),
         ]
 
@@ -1249,12 +1247,13 @@ describe('zset slice', () => {
         apiService.post = jest.fn().mockRejectedValue(responsePayload)
 
         // Act
+        // @ts-ignore
         await store.dispatch<any>(refreshZsetMembersAction())
 
         // Assert
         const expectedActions = [
           loadZSetMembers([SortOrder.ASC, undefined]),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           loadZSetMembersFailure(errorMessage),
         ]
 
@@ -1274,11 +1273,12 @@ describe('zset slice', () => {
               searching: true,
             },
           },
-        }
+        } as RootState
         const mockedStore = mockStore(nextState)
 
         apiService.post = jest.fn().mockResolvedValue(responsePayload)
 
+        // @ts-ignore
         await mockedStore.dispatch<any>(refreshZsetMembersAction())
 
         // Assert

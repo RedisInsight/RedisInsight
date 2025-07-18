@@ -12,7 +12,7 @@ import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { ColorText } from 'uiSrc/components/base/text'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiTooltip } from 'uiSrc/components'
-import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
+import { AdditionalRedisModule } from 'uiSrc/api-client'
 
 import styles from './styles.module.scss'
 
@@ -46,7 +46,8 @@ const DatabaseListModules = React.memo((props: Props) => {
 
   const newModules: IDatabaseModule[] = sortModules(
     modules?.map(({ name: propName, semanticVersion = '', version = '' }) => {
-      const module: ModuleInfo = DEFAULT_MODULES_INFO[propName]
+      const module: ModuleInfo =
+        DEFAULT_MODULES_INFO[propName as keyof typeof DEFAULT_MODULES_INFO]
       const moduleName = module?.text || propName
 
       const { abbreviation = '', name = moduleName } = getModule(moduleName)

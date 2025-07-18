@@ -24,11 +24,10 @@ import {
   SocketErrors,
   SocketEvent,
 } from 'uiSrc/constants'
-import { IMonitorDataPayload } from 'uiSrc/slices/interfaces'
+import { IMonitorDataPayload, IMonitorData } from 'uiSrc/slices/interfaces'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { appCsrfSelector } from 'uiSrc/slices/app/csrf'
 import { useIoConnection } from 'uiSrc/services/hooks/useIoConnection'
-import { IMonitorData } from 'apiSrc/modules/profiler/interfaces/monitor-data.interface'
 
 import ApiStatusCode from '../../constants/apiStatusCode'
 
@@ -71,7 +70,7 @@ const MonitorConfig = ({ retryDelay = 15000 }: IProps) => {
   )
 
   const getErrorMessage = (error: {
-    type: string
+    type?: string
     name: any
     message: any
   }): string => {

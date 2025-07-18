@@ -22,7 +22,7 @@ import { parseJsonData } from 'uiSrc/pages/browser/modules/key-details/component
 import {
   GetRejsonRlResponseDto,
   RemoveRejsonRlResponse,
-} from 'apiSrc/modules/browser/rejson-rl/dto'
+} from 'uiSrc/api-client'
 
 import { refreshKeyInfoAction } from './keys'
 import {
@@ -33,6 +33,7 @@ import {
 import {
   addErrorNotification,
   addMessageNotification,
+  IAddInstanceErrorPayload,
 } from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
 
@@ -44,7 +45,7 @@ export const initialState: InitialStateRejson = {
   error: null,
   data: {
     downloaded: false,
-    data: undefined,
+    data: null,
     type: '',
   },
   editorType: EditorType.Default,
@@ -200,7 +201,7 @@ export function fetchReJSON(
       if (!axios.isCancel(error)) {
         const errorMessage = getApiErrorMessage(error as AxiosError)
         dispatch(loadRejsonBranchFailure(errorMessage))
-        dispatch(addErrorNotification(error))
+        dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       }
     }
   }
@@ -211,7 +212,7 @@ export function setReJSONDataAction(
   key: RedisResponseBuffer,
   path: string,
   data: string,
-  isEditMode: boolean,
+  isEditMode?: boolean,
   length?: number,
   onSuccessAction?: () => void,
   onFailAction?: () => void,
@@ -266,9 +267,9 @@ export function setReJSONDataAction(
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
       dispatch(setReJSONDataFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       onFailAction?.()
     }
   }
@@ -316,9 +317,9 @@ export function appendReJSONArrayItemAction(
         dispatch<any>(refreshKeyInfoAction(key))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
       dispatch(appendReJSONArrayItemFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
     }
   }
 }
@@ -372,7 +373,7 @@ export function removeReJSONKeyAction(
     } catch (error) {
       const errorMessage = getApiErrorMessage(error as AxiosError)
       dispatch(removeRejsonKeyFailure(errorMessage))
-      dispatch(addErrorNotification(error as AxiosError))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
     }
   }
 }

@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios'
 import { cloneDeep } from 'lodash'
 import { apiService } from 'uiSrc/services'
 import {
@@ -8,7 +7,10 @@ import {
   mockStore,
 } from 'uiSrc/utils/test-utils'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { GetRejsonRlResponseDto } from 'apiSrc/modules/browser/rejson-rl/dto'
+import { GetRejsonRlResponseDto } from 'uiSrc/api-client'
+import { stringToBuffer } from 'uiSrc/utils'
+import { EditorType } from 'uiSrc/slices/interfaces'
+import { RootState } from 'uiSrc/slices/store'
 import reducer, {
   initialState,
   loadRejsonBranch,
@@ -34,10 +36,9 @@ import reducer, {
 import {
   addErrorNotification,
   addMessageNotification,
+  IAddInstanceErrorPayload,
 } from '../../app/notifications'
 import { refreshKeyInfo } from '../../browser/keys'
-import { EditorType } from 'uiSrc/slices/interfaces'
-import { stringToBuffer } from 'uiSrc/utils'
 
 jest.mock('uiSrc/services', () => ({
   ...jest.requireActual('uiSrc/services'),
@@ -70,7 +71,7 @@ beforeEach(() => {
           },
         },
       },
-    },
+    } as RootState['browser'],
   }
 
   storeWithSelectedKey = mockStore(rootStateWithSelectedKey)
@@ -83,7 +84,7 @@ describe('rejson slice', () => {
       const nextState = initialState
 
       // Act
-      const result = reducer(undefined, {})
+      const result = reducer(undefined, {} as any)
 
       // Assert
       expect(result).toEqual(nextState)
@@ -107,7 +108,7 @@ describe('rejson slice', () => {
         browser: {
           rejson: nextState,
         },
-      }
+      } as RootState
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -134,7 +135,7 @@ describe('rejson slice', () => {
         browser: {
           rejson: nextState,
         },
-      }
+      } as RootState
       expect(rejsonSelector(rootState)).toEqual(state)
     })
 
@@ -157,7 +158,7 @@ describe('rejson slice', () => {
         browser: {
           rejson: nextState,
         },
-      }
+      } as RootState
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -181,7 +182,7 @@ describe('rejson slice', () => {
         browser: {
           rejson: nextState,
         },
-      }
+      } as RootState
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -203,7 +204,7 @@ describe('rejson slice', () => {
         browser: {
           rejson: nextState,
         },
-      }
+      } as RootState
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -224,7 +225,7 @@ describe('rejson slice', () => {
         browser: {
           rejson: nextState,
         },
-      }
+      } as RootState
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -251,7 +252,7 @@ describe('rejson slice', () => {
         browser: {
           rejson: nextState,
         },
-      }
+      } as RootState
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -273,7 +274,7 @@ describe('rejson slice', () => {
         browser: {
           rejson: nextState,
         },
-      }
+      } as RootState
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -294,7 +295,7 @@ describe('rejson slice', () => {
         browser: {
           rejson: nextState,
         },
-      }
+      } as RootState
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -318,7 +319,7 @@ describe('rejson slice', () => {
         browser: {
           rejson: nextState,
         },
-      }
+      } as RootState
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -340,7 +341,7 @@ describe('rejson slice', () => {
         browser: {
           rejson: nextState,
         },
-      }
+      } as RootState
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -361,7 +362,7 @@ describe('rejson slice', () => {
         browser: {
           rejson: nextState,
         },
-      }
+      } as RootState
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -385,7 +386,7 @@ describe('rejson slice', () => {
         browser: {
           rejson: nextState,
         },
-      }
+      } as RootState
       expect(rejsonSelector(rootState)).toEqual(state)
     })
   })
@@ -434,7 +435,7 @@ describe('rejson slice', () => {
         const expectedActions = [
           loadRejsonBranch(),
           loadRejsonBranchFailure(responsePayload.response.data.message),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -611,7 +612,7 @@ describe('rejson slice', () => {
         const expectedActions = [
           setReJSONData(),
           setReJSONDataFailure(responsePayload.response.data.message),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -668,7 +669,7 @@ describe('rejson slice', () => {
         const expectedActions = [
           appendReJSONArrayItem(),
           appendReJSONArrayItemFailure(responsePayload.response.data.message),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -728,7 +729,7 @@ describe('rejson slice', () => {
         const expectedActions = [
           removeRejsonKey(),
           removeRejsonKeyFailure(responsePayload.response.data.message),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

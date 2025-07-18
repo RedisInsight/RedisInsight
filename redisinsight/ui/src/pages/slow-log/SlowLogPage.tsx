@@ -38,7 +38,7 @@ import {
   defaultValueRender,
   RiSelect,
 } from 'uiSrc/components/base/forms/select/RiSelect'
-import { SlowLog } from 'apiSrc/modules/slow-log/models'
+import { SlowLog } from 'uiSrc/api-client'
 
 import { Actions, EmptySlowLog, SlowLogTable } from './components'
 

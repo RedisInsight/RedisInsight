@@ -11,8 +11,11 @@ import {
   SortOrder,
 } from 'uiSrc/constants'
 import { ConfigDBStorageItem } from 'uiSrc/constants/storage'
-import { GetServerInfoResponse } from 'apiSrc/modules/server/dto/server.dto'
-import { RedisString as RedisStringAPI } from 'apiSrc/common/constants/redis-string'
+import {
+  GetServerInfoResponse,
+  CreateListWithExpireDtoKeyName,
+  CreateListWithExpireDtoKeyNameOneOfTypeEnum,
+} from 'uiSrc/api-client'
 
 export interface CustomError {
   details?: any[]
@@ -275,15 +278,13 @@ export enum RedisResponseEncoding {
   Buffer = 'buffer',
 }
 
-export enum RedisResponseBufferType {
-  Buffer = 'Buffer',
-}
+export const RedisResponseBufferType =
+  CreateListWithExpireDtoKeyNameOneOfTypeEnum
 
-export type RedisResponseBuffer = {
-  type: RedisResponseBufferType
-  data: UintArray
-} & Exclude<RedisStringAPI, string>
+type RedisStringAPI = CreateListWithExpireDtoKeyName
 
-export type RedisString = string | RedisResponseBuffer
+export type RedisResponseBuffer = RedisStringAPI // Exclude<RedisStringAPI, string>
+
+export type RedisString = RedisStringAPI
 
 export type UintArray = number[] | Uint8Array

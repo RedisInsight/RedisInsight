@@ -75,7 +75,7 @@ import { RiTooltip } from 'uiSrc/components'
 import {
   AddMembersToZSetDto,
   SearchZSetMembersResponse,
-} from 'apiSrc/modules/browser/z-set/dto'
+} from 'uiSrc/api-client'
 
 import styles from './styles.module.scss'
 
@@ -284,6 +284,7 @@ const ZSetDetailsTable = (props: Props) => {
       eventData: {
         keyType: KeyTypes.ZSet,
         databaseId: instanceId,
+        // @ts-expect-error TODO: check this type mismatch
         largestCellLength: members[rowIndex]?.name?.length || 0,
       },
     })

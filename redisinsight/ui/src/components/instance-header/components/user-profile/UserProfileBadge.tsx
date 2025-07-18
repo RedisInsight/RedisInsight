@@ -23,7 +23,7 @@ import { Text } from 'uiSrc/components/base/text'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { UserProfileLink } from 'uiSrc/components/base/link/UserProfileLink'
 import { Loader } from 'uiSrc/components/base/display'
-import { CloudUser } from 'apiSrc/modules/cloud/user/models'
+import { CloudUser } from 'uiSrc/api-client'
 import styles from './styles.module.scss'
 
 export interface UserProfileBadgeProps {

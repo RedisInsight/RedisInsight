@@ -11,7 +11,7 @@ import {
   ConsumerDto,
   ConsumerGroupDto,
   PendingEntryDto,
-} from 'apiSrc/modules/browser/stream/dto'
+} from 'uiSrc/api-client'
 import { isEqualBuffers } from './formatters'
 
 export enum ClaimTimeOptions {

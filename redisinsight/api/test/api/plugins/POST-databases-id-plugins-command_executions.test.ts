@@ -227,8 +227,8 @@ describe('POST /databases/:instanceId/plugins/command-executions', () => {
             checkFn: async ({ body }) => {
               expect(body.result.length).to.eql(1);
 
-              // @ts-expect-error
               const count = await repo.count({
+                // @ts-expect-error
                 databaseId: constants.TEST_INSTANCE_ID,
               });
               expect(count).to.lte(30);

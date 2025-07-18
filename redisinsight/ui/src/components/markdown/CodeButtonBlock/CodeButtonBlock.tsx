@@ -30,7 +30,7 @@ import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { PlayIcon, CheckBoldIcon, CopyIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
-import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
+import { AdditionalRedisModule } from 'uiSrc/api-client'
 
 import { RunConfirmationPopover } from './components'
 import styles from './styles.module.scss'

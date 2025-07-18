@@ -21,12 +21,12 @@ import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import {
   SetListElementDto,
   GetListElementsResponse,
-  GetListElementResponse,
   SetListElementResponse,
   PushElementToListDto,
   DeleteListElementsDto,
+  GetListElementResponse,
   DeleteListElementsResponse,
-} from 'apiSrc/modules/browser/list/dto'
+} from 'uiSrc/api-client'
 import {
   refreshKeyInfoAction,
   fetchKeyInfo,
@@ -39,6 +39,7 @@ import { AppDispatch, RootState } from '../store'
 import {
   addErrorNotification,
   addMessageNotification,
+  IAddInstanceErrorPayload,
 } from '../app/notifications'
 import { RedisResponseBuffer } from '../interfaces'
 
@@ -86,6 +87,7 @@ const listSlice = createSlice({
       state.data = {
         ...state.data,
         ...payload,
+        // @ts-expect-error type mismatch
         elements: payload.elements.map((element, i) => ({ index: i, element })),
         key: payload.keyName,
       }
@@ -110,6 +112,7 @@ const listSlice = createSlice({
       const listIndex = state.data?.elements?.length
 
       state.data.elements = state.data?.elements?.concat(
+        // @ts-expect-error type mismatch
         elements.map((element, i) => ({ index: listIndex + i, element })),
       )
     },
@@ -138,7 +141,7 @@ const listSlice = createSlice({
       }: PayloadAction<[number, GetListElementResponse]>,
     ) => {
       state.loading = false
-
+      // @ts-expect-error type mismatch
       state.data.elements = [{ index, element: data?.value }]
     },
     loadSearchingListElementFailure: (state, { payload }) => {
@@ -174,6 +177,7 @@ const listSlice = createSlice({
       state,
       { payload }: { payload: SetListElementDto },
     ) => {
+      // @ts-expect-error type mismatch
       state.data.elements[
         state.data.elements.length === 1 ? 0 : payload.index
       ] = payload
@@ -272,8 +276,8 @@ export function fetchListElements(
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(loadListElementsFailure(errorMessage))
     }
   }
@@ -308,8 +312,8 @@ export function fetchMoreListElements(
         dispatch(loadMoreListElementsSuccess(data))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(loadMoreListElementsFailure(errorMessage))
     }
   }
@@ -341,13 +345,13 @@ export function fetchSearchingListElementAction(
       )
 
       if (isStatusSuccessful(status)) {
-        dispatch(loadSearchingListElementSuccess([index, data]))
+        dispatch(loadSearchingListElementSuccess([index as number, data]))
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
         onSuccess?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(loadSearchingListElementFailure(errorMessage))
     }
   }
@@ -407,8 +411,8 @@ export function updateListElementAction(
         dispatch<any>(refreshKeyInfoAction(data.keyName))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(updateValueFailure(errorMessage))
 
       onFailAction?.()
@@ -441,8 +445,8 @@ export function insertListElementsAction(
         dispatch<any>(fetchKeyInfo(data.keyName))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(insertListElementsFailure(errorMessage))
 
       onFailAction?.()
@@ -494,8 +498,8 @@ export function deleteListElementsAction(
         }
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(deleteListElementsFailure(errorMessage))
 
       onFailAction?.()

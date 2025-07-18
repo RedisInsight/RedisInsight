@@ -2,81 +2,32 @@ import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces/app'
 import { Maybe, Nullable } from 'uiSrc/utils'
 import { OAuthSocialAction } from 'uiSrc/slices/interfaces/cloud'
 import { DatabaseListColumn } from 'uiSrc/constants'
-import { GetHashFieldsResponse } from 'apiSrc/modules/browser/hash/dto'
-import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
 import {
+  CreateSentinelDatabaseDto,
+  CreateSentinelDatabaseResponse,
+  GetHashFieldsResponse,
+  GetSetMembersResponse,
+  RedisNodeInfoResponse,
   GetRejsonRlResponseDto,
-  SafeRejsonRlDataDto,
-} from 'apiSrc/modules/browser/rejson-rl/dto'
-import {
   GetListElementsDto,
   GetListElementsResponse,
-} from 'apiSrc/modules/browser/list/dto'
-import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
-import { SearchZSetMembersResponse } from 'apiSrc/modules/browser/z-set/dto'
-import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel-master'
-import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
-import { CreateSentinelDatabaseResponse } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.response'
-import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
-import { Tag } from './tag'
+  Database as DatabaseInstanceResponse,
+  SearchZSetMembersResponse,
+} from 'uiSrc/api-client'
 
 export interface Instance extends Partial<DatabaseInstanceResponse> {
   host: string
   port: number
-  nameFromProvider?: Nullable<string>
-  provider?: string
   id: string
   endpoints?: Nullable<Endpoints[]>
-  connectionType?: ConnectionType
-  lastConnection?: Date
-  password?: Nullable<string>
-  username?: Nullable<string>
-  name?: string
-  db?: number
-  tls?: boolean
-  ssh?: boolean
-  sshOptions?: {
-    host: string
-    port: number
-    username?: string
-    password?: string | true
-    privateKey?: string
-    passphrase?: string | true
-  }
   tlsClientAuthRequired?: boolean
-  verifyServerCert?: boolean
-  caCert?: CaCertificate
-  clientCert?: ClientCertificate
   authUsername?: Nullable<string>
   authPass?: Nullable<string>
   isDeleting?: boolean
-  sentinelMaster?: SentinelMaster
-  modules: AdditionalRedisModule[]
-  version: Nullable<string>
   isRediStack?: boolean
   visible?: boolean
   loading?: boolean
   isFreeDb?: boolean
-  tags?: Tag[]
-}
-
-export interface AdditionalRedisModule {
-  name: string
-  version: number
-  semanticVersion: string
-}
-
-interface CaCertificate {
-  id?: string
-  name?: string
-  certificate?: string
-}
-
-interface ClientCertificate {
-  id?: string
-  name?: string
-  key?: string
-  certificate?: string
 }
 
 export enum ConnectionType {
@@ -471,7 +422,7 @@ export interface ModifiedSentinelMaster extends CreateSentinelDatabaseDto {
 export interface ModifiedGetListElementsResponse
   extends GetListElementsDto,
     GetListElementsResponse {
-  elements: { index: number; element: RedisResponseBuffer }[]
+  // elements: { index: number; element: RedisResponseBuffer }[]
   key?: RedisString
   searchedIndex: Nullable<number>
 }
@@ -482,9 +433,7 @@ export interface InitialStateSet {
   data: ModifiedGetSetMembersResponse
 }
 
-export interface GetRejsonRlResponse extends GetRejsonRlResponseDto {
-  data: Maybe<SafeRejsonRlDataDto[] | string | number | boolean | null>
-}
+export interface GetRejsonRlResponse extends GetRejsonRlResponseDto {}
 
 export enum EditorType {
   Default = 'default',

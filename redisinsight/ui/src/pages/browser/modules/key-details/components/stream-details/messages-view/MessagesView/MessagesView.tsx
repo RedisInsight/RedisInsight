@@ -6,7 +6,7 @@ import { streamGroupsSelector } from 'uiSrc/slices/browser/stream'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { ITableColumn } from 'uiSrc/components/virtual-table/interfaces'
 import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
-import { PendingEntryDto } from 'apiSrc/modules/browser/stream/dto'
+import { PendingEntryDto } from 'uiSrc/api-client'
 
 import styles from './styles.module.scss'
 
@@ -33,7 +33,7 @@ const MessagesView = (props: Props) => {
   } = props
 
   const { loading } = useSelector(streamGroupsSelector)
-  const { name: key = '' } = useSelector(selectedKeyDataSelector) ?? {}
+  const key = useSelector(selectedKeyDataSelector)?.name
 
   return (
     <>

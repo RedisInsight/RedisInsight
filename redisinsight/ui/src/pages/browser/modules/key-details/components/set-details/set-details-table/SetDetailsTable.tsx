@@ -49,7 +49,7 @@ import {
 } from 'uiSrc/components/virtual-table/interfaces'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import { FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
-import { GetSetMembersResponse } from 'apiSrc/modules/browser/set/dto'
+import { GetSetMembersResponse } from 'uiSrc/api-client'
 import styles from './styles.module.scss'
 
 const suffix = '_set'
@@ -76,7 +76,7 @@ const SetDetailsTable = (props: Props) => {
     total,
     nextCursor,
   } = useSelector(setDataSelector)
-  const { length = 0, name: key } = useSelector(selectedKeyDataSelector) ?? {}
+  const { length = 0, name: key } = useSelector(selectedKeyDataSelector)! ?? {}
   const { id: instanceId, compressor = null } = useSelector(
     connectedInstanceSelector,
   )
@@ -136,8 +136,10 @@ const SetDetailsTable = (props: Props) => {
     })
   }
 
-  const handleDeleteMember = (member: string | RedisString = '') => {
-    dispatch(deleteSetMembers(key, [member], onSuccessRemoved))
+  const handleDeleteMember = (member: RedisString = '') => {
+    dispatch(
+      deleteSetMembers(key, [member as RedisResponseBuffer], onSuccessRemoved),
+    )
     closePopover()
   }
 
@@ -229,15 +231,16 @@ const SetDetailsTable = (props: Props) => {
           compressor,
         )
         const { value, isValid } = formattingBuffer(
-          decompressedMemberItem,
+          decompressedMemberItem as RedisResponseBuffer,
           viewFormatProp,
           { expanded },
         )
         const tooltipContent = createTooltipContent(
           value,
-          decompressedMemberItem,
+          decompressedMemberItem as RedisResponseBuffer,
           viewFormatProp,
         )
+        // @ts-expect-error
         const cellContent = value?.substring?.(0, 200) ?? value
 
         return (

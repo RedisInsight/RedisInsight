@@ -28,7 +28,7 @@ import {
   selectedKeyDataSelector,
 } from 'uiSrc/slices/browser/keys'
 import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
-import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
+import { GetKeyInfoResponse } from 'uiSrc/api-client'
 
 import NoKeysMessage from '../no-keys-message'
 import styles from './styles.module.scss'
@@ -53,6 +53,7 @@ export const secondPanelId = 'keys'
 const parseKeyNames = (keys: GetKeyInfoResponse[]) =>
   keys.map((item) => ({
     ...item,
+    // @ts-expect-error TODO: check this type mismatch (use item.name ?? check instead?)
     nameString: item.nameString ?? bufferToString(item.name),
   }))
 
@@ -80,8 +81,8 @@ const KeyTree = forwardRef((props: Props, ref) => {
   const [firstDataLoaded, setFirstDataLoaded] = useState<boolean>(
     !!keysState.keys.length,
   )
-  const [items, setItems] = useState<IKeyPropTypes[]>(
-    parseKeyNames(keysState.keys ?? []),
+  const [items, setItems] = useState(
+    parseKeyNames((keysState.keys ?? []) as IKeyPropTypes[]),
   )
 
   // escape regexp symbols and join and transform to regexp
@@ -144,7 +145,7 @@ const KeyTree = forwardRef((props: Props, ref) => {
     startIndex: number
     stopIndex: number
   }) => {
-    const formattedAllKeys = parseKeyNames(keysState.keys)
+    const formattedAllKeys = parseKeyNames(keysState.keys) as IKeyPropTypes[]
     loadMoreItems?.(formattedAllKeys, props)
   }
 
@@ -215,7 +216,7 @@ const KeyTree = forwardRef((props: Props, ref) => {
     <div className={styles.container}>
       <div className={styles.content}>
         <VirtualTree
-          items={items}
+          items={items as IKeyPropTypes[]}
           loadingIcon={TreeViewSVG}
           delimiters={delimiters}
           delimiterPattern={delimiterPattern}

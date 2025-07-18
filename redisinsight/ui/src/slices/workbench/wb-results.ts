@@ -40,7 +40,7 @@ import {
   getLocalWbHistory,
   removeCommand,
 } from 'uiSrc/services/workbenchStorage'
-import { CreateCommandExecutionsDto } from 'apiSrc/modules/workbench/dto/create-command-executions.dto'
+import { CreateCommandExecutionsDto } from 'uiSrc/api-client'
 
 import { AppDispatch, RootState } from '../store'
 import {

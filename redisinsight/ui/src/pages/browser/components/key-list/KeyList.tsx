@@ -51,8 +51,7 @@ import KeyRowTTL from 'uiSrc/pages/browser/components/key-row-ttl'
 import KeyRowSize from 'uiSrc/pages/browser/components/key-row-size'
 import KeyRowName from 'uiSrc/pages/browser/components/key-row-name'
 import KeyRowType from 'uiSrc/pages/browser/components/key-row-type'
-
-import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
+import { GetKeyInfoResponse } from 'uiSrc/api-client'
 
 import NoKeysMessage from '../no-keys-message'
 import { DeleteKeyPopover } from '../delete-key-popover/DeleteKeyPopover'
@@ -363,27 +362,22 @@ const KeyList = forwardRef((props: Props, ref) => {
   const isTtlTheLastColumn = !shownColumns.includes(BrowserColumns.Size)
   const ttlColumnSize = isTtlTheLastColumn ? 146 : 86
 
-  const columns: ITableColumn[] = [
+  const columns: ITableColumn<IKeyPropTypes>[] = [
     {
       id: 'type',
       label: 'Type',
       absoluteWidth: 'auto',
       minWidth: 126,
-      render: (cellData: any, { nameString }: any) => (
+      render: (cellData, { nameString }) => (
         <KeyRowType type={cellData} nameString={nameString} />
       ),
-    },
+    } as ITableColumn<IKeyPropTypes>,
     {
       id: 'nameString',
       label: 'Key',
       minWidth: 94,
       truncateText: true,
-      render: (
-        _cellData: string,
-        { name, type }: IKeyPropTypes,
-        _expanded,
-        rowIndex,
-      ) => {
+      render: (_cellData, { name, type }, _expanded, rowIndex) => {
         const nameString = keyFormatConvertor(name)
         return (
           <>
@@ -402,9 +396,9 @@ const KeyList = forwardRef((props: Props, ref) => {
           </>
         )
       },
-    },
+    } as ITableColumn<IKeyPropTypes>,
     shownColumns.includes(BrowserColumns.TTL)
-      ? {
+      ? ({
           id: 'ttl',
           label: 'TTL',
           absoluteWidth: ttlColumnSize,
@@ -413,7 +407,7 @@ const KeyList = forwardRef((props: Props, ref) => {
           alignment: TableCellAlignment.Right,
           render: (
             cellData: number,
-            { nameString, name, type }: IKeyPropTypes,
+            { nameString, name, type },
             _expanded,
             rowIndex,
           ) => (
@@ -437,10 +431,10 @@ const KeyList = forwardRef((props: Props, ref) => {
               )}
             </>
           ),
-        }
+        } as ITableColumn<IKeyPropTypes>)
       : null,
     shownColumns.includes(BrowserColumns.Size)
-      ? {
+      ? ({
           id: 'size',
           label: 'Size',
           absoluteWidth: 90,
@@ -449,7 +443,7 @@ const KeyList = forwardRef((props: Props, ref) => {
           textAlignment: TableCellTextAlignment.Right,
           render: (
             cellData: number,
-            { nameString, name, type }: IKeyPropTypes,
+            { nameString, name, type },
             _expanded,
             rowIndex,
           ) => (
@@ -473,7 +467,7 @@ const KeyList = forwardRef((props: Props, ref) => {
               )}
             </>
           ),
-        }
+        } as ITableColumn<IKeyPropTypes>)
       : null,
   ].filter((el) => !!el)
 

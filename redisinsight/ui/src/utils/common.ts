@@ -1,6 +1,7 @@
 import { trim } from 'lodash'
 import { IpcInvokeEvent } from 'uiSrc/electron/constants'
 import { getConfig } from 'uiSrc/config'
+import { SortOrder } from 'uiSrc/constants'
 
 const riConfig = getConfig()
 const isDevelopment = riConfig.app.env === 'development'
@@ -65,3 +66,6 @@ export const openNewWindowDatabase = (location: string) => {
 
   window.app?.ipc?.invoke(IpcInvokeEvent.windowOpen, { location })
 }
+
+export const getLodashOrder = (order: SortOrder) =>
+  order?.toLowerCase() as 'asc' | 'desc'

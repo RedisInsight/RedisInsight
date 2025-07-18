@@ -33,7 +33,7 @@ import {
 import { TableTextBtn } from 'uiSrc/pages/database-analysis/components/base/TableTextBtn'
 import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import { ColorText } from 'uiSrc/components/base/text'
-import { NspSummary } from 'apiSrc/modules/database-analysis/models'
+import { NspSummary } from 'uiSrc/api-client'
 
 import styles from './styles.module.scss'
 

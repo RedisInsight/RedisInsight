@@ -26,13 +26,14 @@ init(brotliWasmUrl).then(() => brotli)
 
 const decompressingBuffer = (
   reply: RedisResponseBuffer,
-  compressorInit: Nullable<KeyValueCompressor> = null,
+  compressorInit: Nullable<keyof ICompressorMagicSymbols> = null,
 ): {
   value: RedisString
-  compressor: Nullable<KeyValueCompressor>
+  compressor: Nullable<keyof ICompressorMagicSymbols>
   isCompressed: boolean
 } => {
-  const compressorByValue: Nullable<KeyValueCompressor> = getCompressor(reply)
+  const compressorByValue: Nullable<keyof ICompressorMagicSymbols> =
+    getCompressor(reply)
   const compressor =
     compressorInit === compressorByValue ||
     (!compressorByValue && compressorInit)
@@ -41,7 +42,8 @@ const decompressingBuffer = (
 
   try {
     switch (compressor) {
-      case KeyValueCompressor.GZIP: {
+      case KeyValueCompressor.Gzip: {
+        // @ts-expect-error
         const value = ungzip(Buffer.from(reply))
 
         return {
@@ -50,7 +52,8 @@ const decompressingBuffer = (
           value: anyToBuffer(value),
         }
       }
-      case KeyValueCompressor.ZSTD: {
+      case KeyValueCompressor.Zstd: {
+        // @ts-expect-error
         const value = decompressFzstd(Buffer.from(reply))
 
         return {
@@ -59,7 +62,7 @@ const decompressingBuffer = (
           value: anyToBuffer(value),
         }
       }
-      case KeyValueCompressor.LZ4: {
+      case KeyValueCompressor.Lz4: {
         const value = decompressLz4(Buffer.from(reply))
         return {
           compressor,
@@ -67,7 +70,8 @@ const decompressingBuffer = (
           value: anyToBuffer(value),
         }
       }
-      case KeyValueCompressor.SNAPPY: {
+      case KeyValueCompressor.Snappy: {
+        // @ts-expect-error
         const value = anyToBuffer(decompressSnappy(Buffer.from(reply)))
 
         return {
@@ -86,7 +90,7 @@ const decompressingBuffer = (
           isCompressed: !isEqualBuffers(value, reply),
         }
       }
-      case KeyValueCompressor.PHPGZCompress: {
+      case KeyValueCompressor.PhpgzCompress: {
         const decompressedValue = inflate(bufferToUint8Array(reply))
         if (!decompressedValue)
           return { value: reply, compressor: null, isCompressed: false }
@@ -109,9 +113,9 @@ const decompressingBuffer = (
 
 const getCompressor = (
   reply: RedisResponseBuffer,
-): Nullable<KeyValueCompressor> => {
+): Nullable<keyof ICompressorMagicSymbols> => {
   const replyStart = reply?.data?.slice?.(0, 10)?.join?.(',') ?? ''
-  let compressor: Nullable<KeyValueCompressor> = null
+  let compressor: Nullable<keyof ICompressorMagicSymbols> = null
 
   forIn<ICompressorMagicSymbols>(
     COMPRESSOR_MAGIC_SYMBOLS,
@@ -121,7 +125,7 @@ const getCompressor = (
         replyStart.startsWith(magicSymbols) &&
         replyStart.length > magicSymbols.length
       ) {
-        compressor = compressorName as KeyValueCompressor
+        compressor = compressorName as unknown as keyof ICompressorMagicSymbols
         return false // break loop
       }
 

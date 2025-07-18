@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import cx from 'classnames'
 import { EuiFieldText } from '@elastic/eui'
 
 import {
@@ -25,7 +24,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
-import { PushElementToListDto } from 'apiSrc/modules/browser/list/dto'
+import { PushElementToListDto } from 'uiSrc/api-client'
 
 import styles from '../styles.module.scss'
 

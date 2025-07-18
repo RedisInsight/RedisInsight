@@ -14,10 +14,7 @@ import {
 import successMessages from 'uiSrc/components/notifications/success-messages'
 import { SCAN_COUNT_DEFAULT } from 'uiSrc/constants/api'
 
-import {
-  AddMembersToSetDto,
-  GetSetMembersResponse,
-} from 'apiSrc/modules/browser/set/dto'
+import { AddMembersToSetDto, GetSetMembersResponse } from 'uiSrc/api-client'
 import {
   deleteKeyFromList,
   deleteSelectedKeySuccess,
@@ -30,6 +27,7 @@ import { InitialStateSet, RedisResponseBuffer } from '../interfaces'
 import {
   addErrorNotification,
   addMessageNotification,
+  IAddInstanceErrorPayload,
 } from '../app/notifications'
 
 export const initialState: InitialStateSet = {
@@ -139,9 +137,12 @@ const setSlice = createSlice({
       { payload }: { payload: RedisResponseBuffer[] },
     ) => {
       remove(
+        // @ts-ignore
         state.data?.members,
         (member: { data: any[] }) =>
-          payload.findIndex((item) => isEqualBuffers(item, member)) > -1,
+          payload.findIndex((item) =>
+            isEqualBuffers(item, member as RedisResponseBuffer),
+          ) > -1,
       )
 
       state.data = {
@@ -212,8 +213,8 @@ export function fetchSetMembers(
         onSuccess?.(data)
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(loadSetMembersFailure(errorMessage))
     }
   }
@@ -250,8 +251,8 @@ export function fetchMoreSetMembers(
         dispatch(loadMoreSetMembersSuccess(data))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(loadMoreSetMembersFailure(errorMessage))
     }
   }
@@ -288,8 +289,8 @@ export function refreshSetMembersAction(
         dispatch(loadSetMembersSuccess(data))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(loadSetMembersFailure(errorMessage))
     }
   }
@@ -322,8 +323,8 @@ export function addSetMembersAction(
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(addSetMembersFailure(errorMessage))
       onFailAction?.()
     }
@@ -380,8 +381,8 @@ export function deleteSetMembers(
         }
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(removeSetMembersFailure(errorMessage))
     }
   }

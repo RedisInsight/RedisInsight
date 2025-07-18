@@ -13,9 +13,11 @@ import { apiService } from 'uiSrc/services'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { ApiEncryptionErrors } from 'uiSrc/constants/apiErrors'
 
-import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel-master'
-import { CreateSentinelDatabasesDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.databases.dto'
-import { CreateSentinelDatabaseResponse } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.response'
+import {
+  SentinelMaster,
+  CreateSentinelDatabaseResponse,
+  CreateSentinelDatabaseDto,
+} from 'uiSrc/api-client'
 import {
   AddRedisDatabaseStatus,
   InitialStateSentinel,
@@ -24,7 +26,10 @@ import {
   ModifiedSentinelMaster,
 } from '../interfaces'
 import { AppDispatch, RootState } from '../store'
-import { addErrorNotification } from '../app/notifications'
+import {
+  addErrorNotification,
+  IAddInstanceErrorPayload,
+} from '../app/notifications'
 
 export const initialState: InitialStateSentinel = {
   loading: false,
@@ -83,7 +88,7 @@ const sentinelSlice = createSlice({
     },
     createMastersSentinelSuccess: (
       state,
-      { payload }: { payload: CreateSentinelDatabasesDto[] },
+      { payload }: { payload: CreateSentinelDatabaseResponse[] },
     ) => {
       state.loading = false
 
@@ -155,7 +160,7 @@ export function fetchMastersSentinelAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(loadMastersSentinelFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
 
       onFailAction?.()
     }
@@ -164,7 +169,7 @@ export function fetchMastersSentinelAction(
 
 // Asynchronous thunk action
 export function createMastersSentinelAction(
-  payload: CreateSentinelDatabasesDto,
+  payload: CreateSentinelDatabaseDto[],
   onSuccessAction?: () => void,
   onFailAction?: () => void,
 ) {
@@ -183,11 +188,16 @@ export function createMastersSentinelAction(
 
       if (isStatusSuccessful(status)) {
         const encryptionErrors = getApiErrorsFromBulkOperation(
+          // @ts-ignore
           data,
           ...ApiEncryptionErrors,
         )
         if (encryptionErrors.length) {
-          dispatch(addErrorNotification(encryptionErrors[0]))
+          dispatch(
+            addErrorNotification(
+              encryptionErrors[0] as IAddInstanceErrorPayload,
+            ),
+          )
         }
         dispatch(createMastersSentinelSuccess(data))
 
@@ -197,7 +207,7 @@ export function createMastersSentinelAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(createMastersSentinelFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
 
       onFailAction?.()
     }

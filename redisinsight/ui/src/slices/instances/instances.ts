@@ -22,9 +22,11 @@ import {
   INFINITE_MESSAGES,
   InfiniteMessagesIds,
 } from 'uiSrc/components/notifications/components'
-import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
-import { RedisNodeInfoResponse } from 'apiSrc/modules/database/dto/redis-info.dto'
-import { ExportDatabase } from 'apiSrc/modules/database/models/export-database'
+import {
+  Database as DatabaseInstanceResponse,
+  RedisNodeInfoResponse,
+  ExportDatabase,
+} from 'uiSrc/api-client'
 
 import { fetchMastersSentinelAction } from './sentinel'
 import { fetchTags } from './tags'
@@ -33,6 +35,7 @@ import {
   addErrorNotification,
   addInfiniteNotification,
   addMessageNotification,
+  IAddInstanceErrorPayload,
   removeInfiniteNotification,
 } from '../app/notifications'
 import { ConnectionType, InitialStateInstances, Instance } from '../interfaces'
@@ -55,7 +58,7 @@ export const initialState: InitialStateInstances = {
     port: 0,
     version: '',
     nameFromProvider: '',
-    lastConnection: new Date(),
+    lastConnection: new Date().toString(),
     connectionType: ConnectionType.Standalone,
     isRediStack: false,
     modules: [],
@@ -397,7 +400,7 @@ export function fetchInstancesAction(onSuccess?: (data: Instance[]) => void) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(loadInstancesFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
 
       localStorageService.set(BrowserStorageItem.instancesCount, '0')
     }
@@ -461,12 +464,13 @@ export function createInstanceStandaloneAction(
 
       dispatch(defaultInstanceChangingFailure(errorMessage))
 
+      // @ts-ignore
       if (error?.response?.data?.error === ApiErrors.SentinelParamsRequired) {
         checkoutToSentinelFlow(payload, dispatch, onRedirectToSentinel)
         return
       }
 
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
     }
   }
 }
@@ -512,7 +516,7 @@ export function autoCreateAndConnectToInstanceAction(
         )
         return
       }
-      dispatch(addErrorNotification(error as AxiosError))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(removeInfiniteNotification(InfiniteMessagesIds.autoCreateDb))
     }
   }
@@ -590,7 +594,7 @@ export function updateInstanceAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(defaultInstanceChangingFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
     }
   }
 }
@@ -621,7 +625,7 @@ export function cloneInstanceAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(defaultInstanceChangingFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
     }
   }
 }
@@ -669,7 +673,7 @@ export function deleteInstancesAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
     }
   }
 }
@@ -696,7 +700,7 @@ export function exportInstancesAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       onFail?.()
     }
   }
@@ -724,7 +728,7 @@ export function fetchConnectedInstanceAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       onFail?.()
     }
   }
@@ -777,7 +781,7 @@ export function fetchEditedInstanceAction(
       dispatch(setEditedInstance(null))
       dispatch(setConnectedInstanceFailure())
       dispatch(setDefaultInstanceFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
     }
   }
 }
@@ -803,7 +807,12 @@ export function checkConnectToInstanceAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
-      dispatch(addErrorNotification({ ...error, instanceId: id }))
+      dispatch(
+        addErrorNotification({
+          ...error,
+          instanceId: id,
+        } as IAddInstanceErrorPayload),
+      )
       onFailAction?.()
     }
   }
@@ -894,7 +903,7 @@ export function checkDatabaseIndexAction(
     } catch (_err) {
       const error = _err as AxiosError
       dispatch(checkDatabaseIndexFailure())
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       onFailAction?.()
     }
   }
@@ -953,8 +962,10 @@ export function testInstanceStandaloneAction(
 
       dispatch(testConnectionFailure(errorMessage))
 
+      // @ts-ignore
       if (error?.response?.data?.error === ApiErrors.SentinelParamsRequired) {
         checkoutToSentinelFlow(
+          // @ts-expect-error
           { id, ...payload },
           dispatch,
           onRedirectToSentinel,
@@ -962,7 +973,7 @@ export function testInstanceStandaloneAction(
         return
       }
 
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
     }
   }
 }

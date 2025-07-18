@@ -43,7 +43,7 @@ import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import { RiPopover } from 'uiSrc/components/base'
-import { DeleteListElementsDto } from 'apiSrc/modules/browser/list/dto'
+import { DeleteListElementsDto } from 'uiSrc/api-client'
 
 import {
   HEAD_DESTINATION,

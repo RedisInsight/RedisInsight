@@ -2,8 +2,8 @@ import React from 'react'
 import { instance, mock } from 'ts-mockito'
 import { KeyValueCompressor, KeyValueFormat } from 'uiSrc/constants'
 import {
-  fetchDownloadStringValue,
-  stringDataSelector,
+  fetchDownloadStringValue as fetchDownloadStringValueOriginal,
+  stringDataSelector as stringDataSelectorOriginal,
 } from 'uiSrc/slices/browser/string'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { anyToBuffer, bufferToString } from 'uiSrc/utils'
@@ -17,6 +17,7 @@ import {
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { downloadFile } from 'uiSrc/utils/dom/downloadFile'
 import { selectedKeySelector } from 'uiSrc/slices/browser/keys'
+import { RedisString } from 'uiSrc/slices/interfaces'
 import { MOCK_TRUNCATED_BUFFER_VALUE } from 'uiSrc/mocks/data/bigString'
 import { StringDetailsValue, Props } from './StringDetailsValue'
 
@@ -28,10 +29,12 @@ const DOWNLOAD_BTN = 'download-all-value-btn'
 const STRING_MAX_LENGTH = 2
 const STRING_LENGTH = 4
 
-const fullValue = { type: 'Buffer', data: [49, 50, 51, 52] }
-const partValue = { type: 'Buffer', data: [49, 50] }
+const fullValue = { type: 'Buffer', data: [49, 50, 51, 52] } as RedisString
+const partValue = { type: 'Buffer', data: [49, 50] } as RedisString
 
 const mockedProps = mock<Props>()
+const fetchDownloadStringValue = jest.mocked(fetchDownloadStringValueOriginal)
+const stringDataSelector = jest.mocked(stringDataSelectorOriginal)
 
 jest.mock('uiSrc/slices/browser/string', () => ({
   ...jest.requireActual('uiSrc/slices/browser/string'),
@@ -256,8 +259,9 @@ describe('StringDetailsValue', () => {
       })
       stringDataSelector.mockImplementation(stringDataSelectorMock)
 
+      // @ts-expect-error
       connectedInstanceSelector.mockImplementation(() => ({
-        compressor: KeyValueCompressor.GZIP,
+        compressor: KeyValueCompressor.Gzip,
       }))
 
       render(
@@ -278,8 +282,9 @@ describe('StringDetailsValue', () => {
       })
       stringDataSelector.mockImplementation(stringDataSelectorMock)
 
+      // @ts-expect-error
       connectedInstanceSelector.mockImplementation(() => ({
-        compressor: KeyValueCompressor.GZIP,
+        compressor: KeyValueCompressor.Gzip,
       }))
 
       render(

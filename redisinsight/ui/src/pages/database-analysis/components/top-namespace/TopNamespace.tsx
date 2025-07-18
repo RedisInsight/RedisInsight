@@ -17,7 +17,7 @@ import { TextBtn } from 'uiSrc/pages/database-analysis/components/base/TextBtn'
 import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
-import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
+import { DatabaseAnalysis } from 'uiSrc/api-client'
 import Table from './Table'
 import styles from './styles.module.scss'
 

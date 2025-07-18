@@ -1,7 +1,4 @@
-export enum CommandExecutionStatus {
-  Success = 'success',
-  Fail = 'fail',
-}
+export { SendCommandResponseStatusEnum as CommandExecutionStatus } from 'uiSrc/api-client'
 
 export enum ClusterNodeRole {
   All = 'ALL',

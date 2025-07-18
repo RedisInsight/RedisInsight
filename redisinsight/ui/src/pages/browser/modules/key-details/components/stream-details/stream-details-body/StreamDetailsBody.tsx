@@ -23,7 +23,7 @@ import { selectedKeyDataSelector } from 'uiSrc/slices/browser/keys'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import RangeFilter from 'uiSrc/components/range-filter'
 import { ProgressBarLoader } from 'uiSrc/components/base/display'
-import { GetStreamEntriesResponse } from 'apiSrc/modules/browser/stream/dto'
+import { GetStreamEntriesResponse } from 'uiSrc/api-client'
 
 import ConsumersViewWrapper from '../consumers-view'
 import GroupsViewWrapper from '../groups-view'
@@ -122,6 +122,7 @@ const StreamDetailsBody = (props: Props) => {
     if (shouldLoadMore()) {
       dispatch(
         fetchMoreStreamEntries(
+          // @ts-expect-error TODO: check type mismatch
           key,
           entryColumnSortOrder === SortOrder.DESC ? start : nextId,
           entryColumnSortOrder === SortOrder.DESC ? nextId : end,
@@ -157,6 +158,7 @@ const StreamDetailsBody = (props: Props) => {
   ) => {
     dispatch(
       fetchStreamEntries(
+        // @ts-expect-error TODO: check type mismatch
         key,
         SCAN_COUNT_DEFAULT,
         entryColumnSortOrder,

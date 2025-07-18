@@ -37,6 +37,7 @@ global['jest'] = {
   fn: dummyJest,
 };
 
+// @ts-ignore
 global['expect'] = {
   any: () => {},
 };

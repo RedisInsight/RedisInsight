@@ -22,8 +22,8 @@ import {
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { fetchKeysMetadataTree } from 'uiSrc/slices/browser/keys'
 import { Loader, ProgressBarLoader } from 'uiSrc/components/base/display'
+import { GetKeyInfoResponse } from 'uiSrc/api-client'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
-import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
 
 import { Node } from './components/Node'
 import { NodeMeta, TreeData, TreeNode } from './interfaces'

@@ -2,7 +2,7 @@
 import { cloneDeep, set } from 'lodash'
 import React from 'react'
 import MockedSocket from 'socket.io-mock'
-import socketIO from 'socket.io-client'
+import socketIOClient from 'socket.io-client'
 import { NotificationEvent } from 'uiSrc/constants/notifications'
 import {
   setLastReceivedNotification,
@@ -23,15 +23,16 @@ import { RecommendationsSocketEvents } from 'uiSrc/constants/recommendations'
 import { addUnreadRecommendations } from 'uiSrc/slices/recommendations/recommendations'
 
 import { GlobalSubscriptions } from 'uiSrc/components'
-import { NotificationsDto } from 'apiSrc/modules/notification/dto'
+import { NotificationsDto } from 'uiSrc/api-client'
 import CommonAppSubscription from './CommonAppSubscription'
 
+const socketIO = jest.mocked(socketIOClient)
 let store: typeof mockedStore
-let socket: typeof MockedSocket
+let socket: MockedSocket
 beforeEach(() => {
   cleanup()
   socket = new MockedSocket()
-  socketIO.mockReturnValue(socket)
+  socketIO.mockReturnValue(socket as any)
   store = cloneDeep(mockedStore)
   store.clearActions()
 })

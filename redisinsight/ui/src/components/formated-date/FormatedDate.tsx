@@ -7,7 +7,7 @@ import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
 export interface Props {
-  date: Date | string | number
+  date?: Date | string | number
 }
 
 const FormatedDate = ({ date }: Props) => {
@@ -17,6 +17,7 @@ const FormatedDate = ({ date }: Props) => {
 
   if (!date) return null
 
+  // @ts-ignore
   const formatedDate = formatTimestamp(date, dateFormat, timezone)
 
   return (

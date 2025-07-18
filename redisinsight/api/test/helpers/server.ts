@@ -49,6 +49,7 @@ export const getServer = async () => {
 
     const app = moduleFixture.createNestApplication();
     // set qs as parser to support nested objects in the query string
+    // @ts-expect-error TODO: check if method is deprecated
     app.set('query parser', qs.parse);
     app.use(bodyParser.json({ limit: '512mb' }));
     app.use(bodyParser.urlencoded({ limit: '512mb', extended: true }));

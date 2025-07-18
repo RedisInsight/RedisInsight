@@ -1,40 +1,43 @@
 import { rest, RestHandler } from 'msw'
-import { RedisNodeInfoResponse } from 'src/modules/database/dto/redis-info.dto'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { ConnectionType, Instance } from 'uiSrc/slices/interfaces'
 import { getMswURL } from 'uiSrc/utils/test-utils'
 import { getUrl } from 'uiSrc/utils'
 import { MOCK_INFO_API_RESPONSE } from 'uiSrc/mocks/data/instances'
-import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
-import { ExportDatabase } from 'apiSrc/modules/database/models/export-database'
+import {
+  RedisNodeInfoResponse,
+  Database as DatabaseInstanceResponse,
+  ExportDatabase,
+} from 'uiSrc/api-client'
 
 export const INSTANCE_ID_MOCK = 'instanceId'
 export const INSTANCES_MOCK: Instance[] = [
   {
     id: INSTANCE_ID_MOCK,
-    version: '6.2.6',
+    // version: '6.2.6',
     host: 'localhost',
     port: 6379,
     name: 'localhost',
-    username: null,
-    password: null,
+    username: undefined,
+    password: undefined,
     connectionType: ConnectionType.Standalone,
-    nameFromProvider: null,
+    nameFromProvider: undefined,
     modules: [],
     db: 123,
-    lastConnection: new Date('2021-04-22T09:03:56.917Z'),
-    version: null,
+    lastConnection: new Date('2021-04-22T09:03:56.917Z').toString(),
+    version: undefined,
   },
   {
     id: 'a0db1bc8-a353-4c43-a856-b72f4811d2d4',
     host: 'localhost',
     port: 12000,
     name: 'oea123123',
-    username: null,
-    password: null,
+    username: undefined,
+    password: undefined,
     connectionType: ConnectionType.Standalone,
-    nameFromProvider: null,
+    nameFromProvider: undefined,
     modules: [],
+    // @ts-expect-error TODO: check this type inconsistency
     tls: {
       verifyServerCert: true,
       caCertId: '70b95d32-c19d-4311-bb24-e684af12cf15',
@@ -43,17 +46,17 @@ export const INSTANCES_MOCK: Instance[] = [
   },
   {
     id: 'b83a3932-e95f-4f09-9d8a-55079f400186',
-    version: '6.2.6',
+    // version: '6.2.6',
     host: 'localhost',
     port: 5005,
     name: 'sentinel',
-    username: null,
-    password: null,
+    username: undefined,
+    password: undefined,
     connectionType: ConnectionType.Sentinel,
-    nameFromProvider: null,
-    lastConnection: new Date('2021-04-22T18:40:44.031Z'),
+    nameFromProvider: undefined,
+    lastConnection: new Date('2021-04-22T18:40:44.031Z').toString(),
     modules: [],
-    version: null,
+    version: undefined,
     endpoints: [
       {
         host: 'localhost',

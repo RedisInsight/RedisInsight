@@ -4,7 +4,6 @@ import { wrapErrorMessageSensitiveData } from 'desktopSrc/utils'
 import { configMain as config } from 'desktopSrc/config'
 import { createAuthStrategy } from 'desktopSrc/lib/auth/auth.factory'
 import { AuthStrategy } from 'desktopSrc/lib/auth/auth.interface'
-import { AbstractWindowAuthStrategy } from 'apiSrc/modules/auth/window-auth/strategies/abstract.window.auth.strategy'
 import { WindowAuthModule } from '../../../../api/dist/src/modules/auth/window-auth/window-auth.module'
 import { WindowAuthService } from '../../../../api/dist/src/modules/auth/window-auth/window-auth.service'
 import server from '../../../../api/dist/src/main'
@@ -14,7 +13,7 @@ const port = config?.defaultPort
 let gracefulShutdown: Function
 let beApp: any
 
-export class ElectronWindowAuthStrategy extends AbstractWindowAuthStrategy {
+export class ElectronWindowAuthStrategy {
   async isAuthorized(id: string): Promise<boolean> {
     return getWindows()?.has(id)
   }

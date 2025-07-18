@@ -273,7 +273,7 @@ describe('HashDetailsTable', () => {
         hashDataSelectorMock,
       )
       ;(connectedInstanceSelector as jest.Mock).mockImplementationOnce(() => ({
-        compressor: KeyValueCompressor.GZIP,
+        compressor: KeyValueCompressor.Gzip,
       }))
 
       const { queryByTestId } = render(

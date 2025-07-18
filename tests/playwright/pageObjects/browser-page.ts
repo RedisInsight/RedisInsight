@@ -2176,8 +2176,95 @@ export class BrowserPage extends BasePage {
         await this.page
             .locator(`[data-testid="set-remove-btn-${member}-icon"]`)
             .click()
+        await this.page.locator(`[data-testid^="set-remove-btn-${member}"]`)
+    }
+
+    async waitForHashDetailsToBeVisible(): Promise<void> {
+        await expect(this.page.getByTestId('hash-details')).toBeVisible()
+    }
+
+    async verifyHashFieldValueContains(
+        fieldName: string,
+        expectedValue: string,
+    ): Promise<void> {
+        const fieldValueElement = this.page.locator(
+            `[data-testid="hash_content-value-${fieldName}"]`,
+        )
+        await expect(fieldValueElement).toContainText(expectedValue)
+    }
+
+    async verifyHashFieldValueNotContains(
+        fieldName: string,
+        unwantedValue: string,
+    ): Promise<void> {
+        const fieldValueElement = this.page.locator(
+            `[data-testid="hash_content-value-${fieldName}"]`,
+        )
+        await expect(fieldValueElement).not.toContainText(unwantedValue)
+    }
+
+    async waitForHashFieldToBeVisible(fieldName: string): Promise<void> {
+        await expect(
+            this.page.locator(`[data-testid="hash-field-${fieldName}"]`),
+        ).toBeVisible()
+        await expect(
+            this.page.locator(
+                `[data-testid="hash_content-value-${fieldName}"]`,
+            ),
+        ).toBeVisible()
+    }
+
+    async getHashFieldValueElement(fieldName: string) {
+        return this.page.locator(
+            `[data-testid="hash_content-value-${fieldName}"]`,
+        )
+    }
+
+    async editHashFieldValue(
+        fieldName: string,
+        newValue: string,
+    ): Promise<void> {
+        const fieldValueElement = await this.getHashFieldValueElement(fieldName)
+        await fieldValueElement.hover()
         await this.page
-            .locator(`[data-testid^="set-remove-btn-${member}"]`)
+            .locator(`[data-testid^="hash_edit-btn-${fieldName}"]`)
+            .click()
+
+        const editorLocator = this.page.locator('textarea').first()
+        await expect(editorLocator).toBeVisible()
+        await editorLocator.clear()
+        await editorLocator.fill(newValue)
+        await this.applyButton.click()
+    }
+
+    async cancelHashFieldEdit(
+        fieldName: string,
+        newValue: string,
+    ): Promise<void> {
+        const fieldValueElement = await this.getHashFieldValueElement(fieldName)
+        await fieldValueElement.hover()
+        await this.page
+            .locator(`[data-testid^="hash_edit-btn-${fieldName}"]`)
+            .click()
+
+        const editorLocator = this.page.locator('textarea').first()
+        await expect(editorLocator).toBeVisible()
+        await editorLocator.clear()
+        await editorLocator.fill(newValue)
+
+        // Cancel using Escape key
+        await this.page.keyboard.press('Escape')
+        await expect(editorLocator).not.toBeVisible()
+    }
+
+    async removeHashField(fieldName: string): Promise<void> {
+        const fieldValueElement = await this.getHashFieldValueElement(fieldName)
+        await fieldValueElement.hover()
+        await this.page
+            .locator(`[data-testid="remove-hash-button-${fieldName}-icon"]`)
+            .click()
+        await this.page
+            .locator(`[data-testid^="remove-hash-button-${fieldName}"]`)
             .getByText('Remove')
             .click()
     }
@@ -2340,5 +2427,19 @@ export class BrowserPage extends BasePage {
                 // No elements expected or found - this is fine
             }
         }
+    }
+
+    async verifyHashFieldValue(
+        fieldName: string,
+        expectedValue: string,
+    ): Promise<void> {
+        const fieldValueElement = await this.getHashFieldValueElement(fieldName)
+        await expect(fieldValueElement).toContainText(expectedValue)
+    }
+
+    async verifyHashFieldNotVisible(fieldName: string): Promise<void> {
+        await expect(
+            this.page.locator(`[data-testid="hash-field-${fieldName}"]`),
+        ).not.toBeVisible()
     }
 }

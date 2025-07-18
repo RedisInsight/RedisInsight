@@ -1,6 +1,5 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiProgress } from '@elastic/eui'
 
 import { CodeButtonParams } from 'uiSrc/constants'
 import { ProfileQueryType } from 'uiSrc/pages/workbench/constants'
@@ -12,6 +11,7 @@ import { RunQueryMode, ResultsMode } from 'uiSrc/slices/interfaces/workbench'
 
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { DeleteIcon } from 'uiSrc/components/base/icons'
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import WbNoResultsMessage from '../../wb-no-results-message'
 
 import styles from './styles.module.scss'
@@ -76,10 +76,8 @@ const WBResults = (props: Props) => {
   return (
     <div className={styles.wrapper}>
       {!isResultsLoaded && (
-        <EuiProgress
+        <ProgressBarLoader
           color="primary"
-          size="xs"
-          position="absolute"
           data-testid="progress-wb-history"
         />
       )}

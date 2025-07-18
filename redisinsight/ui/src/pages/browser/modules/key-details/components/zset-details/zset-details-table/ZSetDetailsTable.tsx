@@ -2,7 +2,6 @@ import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toNumber, isNumber } from 'lodash'
 import cx from 'classnames'
-import { EuiProgress } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
 import {
   appContextBrowserKeyDetails,
@@ -404,6 +403,7 @@ const ZSetDetailsTable = (props: Props) => {
                 <RiTooltip
                   title="Score"
                   className={styles.tooltip}
+                  anchorClassName="truncateText"
                   position="bottom"
                   content={tooltipContent}
                 >
@@ -494,14 +494,6 @@ const ZSetDetailsTable = (props: Props) => {
           styles.container,
         )}
       >
-        {loading && (
-          <EuiProgress
-            color="primary"
-            size="xs"
-            position="absolute"
-            data-testid="progress-key-zset"
-          />
-        )}
         <VirtualTable
           autoHeight
           tableRef={tableRef}

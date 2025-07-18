@@ -1,4 +1,3 @@
-import { EuiProgress } from '@elastic/eui'
 import React, { Ref, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -272,6 +271,7 @@ const ListDetailsTable = () => {
               <RiTooltip
                 title="Index"
                 className={styles.tooltip}
+                anchorClassName="truncateText"
                 position="bottom"
                 content={tooltipContent}
               >
@@ -383,14 +383,6 @@ const ListDetailsTable = () => {
         styles.container,
       )}
     >
-      {loading && (
-        <EuiProgress
-          color="primary"
-          size="xs"
-          position="absolute"
-          data-testid="progress-key-list"
-        />
-      )}
       <VirtualTable
         autoHeight
         hideProgress

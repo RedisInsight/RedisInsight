@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiIcon } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
@@ -36,6 +36,7 @@ import EditablePopover from 'uiSrc/pages/browser/modules/key-details/shared/edit
 
 import { FormatedDate, RiTooltip } from 'uiSrc/components'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import {
   ConsumerDto,
   ConsumerGroupDto,
@@ -227,6 +228,7 @@ const GroupsViewWrapper = (props: Props) => {
             >
               <RiTooltip
                 className={styles.tooltipName}
+                anchorClassName="truncateText"
                 position="bottom"
                 content={tooltipContent}
               >
@@ -285,6 +287,7 @@ const GroupsViewWrapper = (props: Props) => {
                 <RiTooltip
                   title={`${pending} Pending Messages`}
                   className={styles.tooltip}
+                  anchorClassName="truncateText"
                   position="bottom"
                   content={tooltipContent}
                 >
@@ -373,11 +376,12 @@ const GroupsViewWrapper = (props: Props) => {
                 onFocus={() => setIsIdFocused(true)}
                 append={
                   <RiTooltip
+                    anchorClassName="inputAppendIcon"
                     position="left"
                     title="Enter Valid ID, 0 or $"
                     content={lastDeliveredIDTooltipText}
                   >
-                    <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+                    <RiIcon type="InfoIcon" style={{ cursor: 'pointer' }} />
                   </RiTooltip>
                 }
                 style={{ width: 240 }}

@@ -1,9 +1,9 @@
-import { EuiPopover } from '@elastic/eui'
 import React from 'react'
 
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiPopover } from 'uiSrc/components/base'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -24,13 +24,12 @@ const PopoverRunAnalyze = (props: Props) => {
   } = props
 
   return (
-    <EuiPopover
+    <RiPopover
       ownFocus
       anchorPosition="upCenter"
       isOpen={isShowPopover}
       closePopover={() => setIsShowPopover(false)}
       panelPaddingSize="m"
-      display="inlineBlock"
       panelClassName={styles.panelPopover}
       button={children}
       onClick={(e) => e.stopPropagation()}
@@ -55,7 +54,7 @@ const PopoverRunAnalyze = (props: Props) => {
           Analyze
         </PrimaryButton>
       </div>
-    </EuiPopover>
+    </RiPopover>
   )
 }
 

@@ -82,6 +82,7 @@ export class KeysService {
     } catch (error) {
       this.logger.error(
         `Failed to get keys with details info. ${error.message}.`,
+        error,
         clientMetadata,
       );
       if (
@@ -129,6 +130,7 @@ export class KeysService {
     } catch (error) {
       this.logger.error(
         `Failed to get keys info: ${error.message}.`,
+        error,
         clientMetadata,
       );
       throw catchAclError(error);

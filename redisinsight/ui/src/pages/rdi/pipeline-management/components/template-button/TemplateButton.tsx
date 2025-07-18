@@ -49,6 +49,7 @@ const TemplateButton = ({ setFieldValue, value }: TemplateButtonProps) => {
     <RiTooltip
       content={getTooltipContent(value, !templateOption)}
       position="bottom"
+      anchorClassName="flex-row"
     >
       <SecondaryButton
         inverted

@@ -1,7 +1,7 @@
 import React, { ButtonHTMLAttributes, ReactElement } from 'react'
-// todo replace with redis-ui icon
-import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
+
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import {
   ListClassNames,
   ListGroupItemProps,
@@ -34,17 +34,11 @@ const Item = ({
   if (iconType) {
     // todo replace with redis-ui icon
     iconNode = (
-      <EuiIcon
-        color="inherit" // forces the icon to inherit its parent color
+      <RiIcon
+        color="currentColor" // forces the icon to inherit its parent color
         {...iconProps}
         type={iconType}
         className={cx('euiListGroupItem__icon', iconProps?.className)}
-        style={{
-          ...iconProps?.style,
-          marginRight: 'var(--size-m)',
-          flexGrow: 0,
-          flexShrink: 0,
-        }}
       />
     )
 
@@ -118,7 +112,6 @@ const Item = ({
       $isActive={isActive}
       $isDisabled={isDisabled}
       $color={color}
-      onClick={onClick}
       className={cx(ListClassNames.listItem, className, {
         [ListClassNames.listItemActive]: isActive,
         [ListClassNames.listItemDisabled]: isDisabled,

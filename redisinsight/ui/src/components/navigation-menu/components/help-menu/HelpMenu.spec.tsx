@@ -19,6 +19,7 @@ import {
 } from 'uiSrc/slices/app/info'
 
 import { FeatureFlags } from 'uiSrc/constants'
+import { SideBar } from 'uiSrc/components/base/layout/sidebar'
 import HelpMenu from './HelpMenu'
 
 jest.mock('uiSrc/telemetry', () => ({
@@ -40,13 +41,15 @@ beforeEach(() => {
   store.clearActions()
 })
 
+const sideBarWithHelpMenu = <SideBar isExpanded={false}><HelpMenu /></SideBar>
+
 describe('HelpMenu', () => {
   it('should render', () => {
-    expect(render(<HelpMenu />)).toBeTruthy()
+    expect(render(sideBarWithHelpMenu)).toBeTruthy()
   })
 
   it('should call proper action after click on keyboard shortcuts', () => {
-    render(<HelpMenu />)
+    render(sideBarWithHelpMenu)
 
     fireEvent.click(screen.getByTestId('help-menu-button'))
     fireEvent.click(screen.getByTestId('shortcuts-btn'))
@@ -56,7 +59,7 @@ describe('HelpMenu', () => {
   })
 
   it('should call proper action after click on release notes', () => {
-    render(<HelpMenu />)
+    render(sideBarWithHelpMenu)
 
     fireEvent.click(screen.getByTestId('help-menu-button'))
     fireEvent.click(screen.getByTestId('release-notes-btn'))
@@ -66,7 +69,7 @@ describe('HelpMenu', () => {
   })
 
   it('should call proper action after click on reset onboarding', () => {
-    render(<HelpMenu />)
+    render(sideBarWithHelpMenu)
 
     fireEvent.click(screen.getByTestId('help-menu-button'))
     fireEvent.click(screen.getByTestId('reset-onboarding-btn'))
@@ -85,7 +88,7 @@ describe('HelpMenu', () => {
     ;(sendEventTelemetry as jest.Mock).mockImplementation(
       () => sendEventTelemetryMock,
     )
-    render(<HelpMenu />)
+    render(sideBarWithHelpMenu)
 
     fireEvent.click(screen.getByTestId('help-menu-button'))
     fireEvent.click(screen.getByTestId('reset-onboarding-btn'))
@@ -106,7 +109,7 @@ describe('HelpMenu', () => {
       { flag: true },
     )
 
-    render(<HelpMenu />, {
+    render(sideBarWithHelpMenu, {
       store: mockStore(initialStoreState),
     })
     fireEvent.click(screen.getByTestId('help-menu-button'))
@@ -122,7 +125,7 @@ describe('HelpMenu', () => {
       { flag: false },
     )
 
-    render(<HelpMenu />, {
+    render(sideBarWithHelpMenu, {
       store: mockStore(initialStoreState),
     })
     fireEvent.click(screen.getByTestId('help-menu-button'))

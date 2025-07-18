@@ -95,6 +95,7 @@ beforeEach(() => {
   instances = [
     {
       id: 'e37cc441-a4f2-402c-8bdb-fc2413cbbaff',
+      version: '6.2.6',
       host: 'localhost',
       port: 6379,
       name: 'localhost',
@@ -123,6 +124,7 @@ beforeEach(() => {
     },
     {
       id: 'b83a3932-e95f-4f09-9d8a-55079f400186',
+      version: '6.2.6',
       host: 'localhost',
       port: 5005,
       name: 'sentinel',

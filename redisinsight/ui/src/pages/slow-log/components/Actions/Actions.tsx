@@ -1,4 +1,3 @@
-import { EuiIcon, EuiPopover } from '@elastic/eui'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import cx from 'classnames'
@@ -6,7 +5,8 @@ import { useParams } from 'react-router-dom'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
 import { DurationUnits } from 'uiSrc/constants'
 import { slowLogSelector } from 'uiSrc/slices/analytics/slowlog'
-import { AutoRefresh, RiTooltip } from 'uiSrc/components'
+import { AutoRefresh } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { Nullable } from 'uiSrc/utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
@@ -18,6 +18,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 
 import SlowLogConfig from '../SlowLogConfig'
 import styles from './styles.module.scss'
@@ -99,7 +100,11 @@ const Actions = (props: Props) => {
 
   const ToolTipContent = (
     <div className={styles.popoverContainer}>
-      <EuiIcon type="alert" color="danger" className={styles.warningIcon} />
+      <RiIcon
+        type="ToastDangerIcon"
+        color="attention600"
+        className={styles.warningIcon}
+      />
       <div>
         <Text size="m" component="div">
           <h4 className={styles.popoverTitle}>
@@ -143,7 +148,7 @@ const Actions = (props: Props) => {
         />
       </FlexItem>
       <FlexItem grow>
-        <EuiPopover
+        <RiPopover
           ownFocus
           anchorPosition="downRight"
           isOpen={isPopoverConfigOpen}
@@ -166,18 +171,22 @@ const Actions = (props: Props) => {
             closePopover={closePopoverConfig}
             onRefresh={onRefresh}
           />
-        </EuiPopover>
+        </RiPopover>
       </FlexItem>
       {!isEmptySlowLog && (
         <FlexItem grow>
-          <EuiPopover
+          <RiPopover
             anchorPosition="leftCenter"
             ownFocus
             isOpen={isPopoverClearOpen}
             closePopover={closePopoverClear}
             panelPaddingSize="m"
             button={
-              <RiTooltip position="left" content="Clear Slow Log">
+              <RiTooltip
+                position="left"
+                content="Clear Slow Log"
+                anchorClassName={styles.icon}
+              >
                 <IconButton
                   icon={EraserIcon}
                   aria-label="Clear Slow Log"
@@ -188,13 +197,14 @@ const Actions = (props: Props) => {
             }
           >
             {ToolTipContent}
-          </EuiPopover>
+          </RiPopover>
         </FlexItem>
       )}
       <FlexItem grow>
         <RiTooltip
           title="Slow Log"
           position="bottom"
+          anchorClassName={styles.icon}
           content={
             <span data-testid="slowlog-tooltip-text">
               Slow Log is a list of slow operations for your Redis instance.
@@ -208,9 +218,9 @@ const Actions = (props: Props) => {
             </span>
           }
         >
-          <EuiIcon
+          <RiIcon
             className={styles.infoIcon}
-            type="iInCircle"
+            type="InfoIcon"
             style={{ cursor: 'pointer' }}
             data-testid="slow-log-tooltip-icon"
           />

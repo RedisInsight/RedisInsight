@@ -2,7 +2,7 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { isEmpty } from 'lodash'
 import { FormikErrors, useFormik } from 'formik'
-import { EuiFieldText, EuiForm, EuiIcon, keys } from '@elastic/eui'
+import { EuiFieldText, EuiForm, keys } from '@elastic/eui'
 
 import { MAX_PORT_NUMBER, validateField } from 'uiSrc/utils/validations'
 import { handlePasteHostName } from 'uiSrc/utils'
@@ -19,6 +19,7 @@ import {
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { NumericInput, PasswordInput } from 'uiSrc/components/base/inputs'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiTooltip } from 'uiSrc/components'
 
 export interface Props {
@@ -132,6 +133,7 @@ const ClusterConnectionForm = (props: Props) => {
         </div>
       }
       className="homePage_tooltip"
+      anchorClassName="inputAppendIcon"
       position="right"
       content={
         <ul className="homePage_toolTipUl">
@@ -150,7 +152,7 @@ const ClusterConnectionForm = (props: Props) => {
         </ul>
       }
     >
-      <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+      <RiIcon type="InfoIcon" style={{ cursor: 'pointer' }} />
     </RiTooltip>
   )
 
@@ -168,6 +170,7 @@ const ClusterConnectionForm = (props: Props) => {
   const SubmitButton = ({ onClick, submitIsDisabled }: ISubmitButton) => (
     <RiTooltip
       position="top"
+      anchorClassName="euiToolTip__btn-disabled"
       title={
         submitIsDisabled
           ? validationErrors.REQUIRED_TITLE(Object.values(errors).length)

@@ -1,8 +1,5 @@
 import {
   Criteria,
-  EuiIcon,
-  EuiPopover,
-  EuiResizeObserver,
   EuiTableFieldDataColumnType,
   PropertySort,
 } from '@elastic/eui'
@@ -25,14 +22,9 @@ import { Text, ColorText } from 'uiSrc/components/base/text'
 import {
   MoreactionsIcon,
   EditIcon,
-  CopyIcon,
   TagIcon,
+  CopyIcon,
 } from 'uiSrc/components/base/icons'
-import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
-import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
-import RediStackDarkLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoDark.svg'
-import RediStackLightLogo from 'uiSrc/assets/img/modules/redistack/RedisStackLogoLight.svg'
-import CloudLinkIcon from 'uiSrc/assets/img/oauth/cloud_link.svg?react'
 import DatabaseListModules from 'uiSrc/components/database-list-modules/DatabaseListModules'
 import ItemList from 'uiSrc/components/item-list'
 import {
@@ -65,6 +57,7 @@ import {
   OAuthSocialSource,
 } from 'uiSrc/slices/interfaces'
 import {
+  getRedisInfoSummary,
   getRedisModulesSummary,
   sendEventTelemetry,
   TelemetryEvent,
@@ -84,13 +77,17 @@ import { getUtmExternalLink } from 'uiSrc/utils/links'
 import { CREATE_CLOUD_DB_ID, HELP_LINKS } from 'uiSrc/pages/home/constants'
 
 import { Tag } from 'uiSrc/slices/interfaces/tag'
-import { FeatureFlagComponent, RiTooltip } from 'uiSrc/components'
+import { FeatureFlagComponent } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { EmptyButton, IconButton } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Link } from 'uiSrc/components/base/link/Link'
-import DbStatus from '../db-status'
+import { RIResizeObserver } from 'uiSrc/components/base/utils'
 
+import DbStatus from '../db-status'
 import { TagsCell } from '../tags-cell/TagsCell'
 import { TagsCellHeader } from '../tags-cell/TagsCellHeader'
+
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -186,12 +183,13 @@ const DatabasesListWrapper = (props: Props) => {
 
     history.push(Pages.browser(id))
   }
-  const handleCheckConnectToInstance = (
+  const handleCheckConnectToInstance = async (
     event: React.MouseEvent | React.KeyboardEvent,
     { id, provider, modules }: Instance,
   ) => {
     event.preventDefault()
     const modulesSummary = getRedisModulesSummary(modules)
+    const infoData = await getRedisInfoSummary(id)
     sendEventTelemetry({
       event: TelemetryEvent.CONFIG_DATABASES_OPEN_DATABASE,
       eventData: {
@@ -199,6 +197,7 @@ const DatabasesListWrapper = (props: Props) => {
         provider,
         source: 'db_list',
         ...modulesSummary,
+        ...infoData,
       },
     })
     dispatch(
@@ -451,7 +450,11 @@ const DatabasesListWrapper = (props: Props) => {
           return (
             <div className="host_port" data-testid="host-port">
               <Text className="copyHostPortText">{text}</Text>
-              <RiTooltip position="right" content="Copy">
+              <RiTooltip
+                position="right"
+                content="Copy"
+                anchorClassName="copyHostPortTooltip"
+              >
                 <IconButton
                   icon={CopyIcon}
                   aria-label="Copy host:port"
@@ -493,11 +496,11 @@ const DatabasesListWrapper = (props: Props) => {
                   <DatabaseListModules
                     content={
                       isRediStack ? (
-                        <EuiIcon
+                        <RiIcon
                           type={
                             theme === Theme.Dark
-                              ? RediStackDarkMin
-                              : RediStackLightMin
+                              ? 'RediStackDarkMinIcon'
+                              : 'RediStackLightMinIcon'
                           }
                           data-testid="redis-stack-icon"
                         />
@@ -506,11 +509,11 @@ const DatabasesListWrapper = (props: Props) => {
                     tooltipTitle={
                       isRediStack ? (
                         <>
-                          <EuiIcon
+                          <RiIcon
                             type={
                               theme === Theme.Dark
-                                ? RediStackDarkLogo
-                                : RediStackLightLogo
+                                ? 'RediStackDarkLogoIcon'
+                                : 'RediStackLightLogoIcon'
                             }
                             className={styles.tooltipLogo}
                             data-testid="tooltip-redis-stack-icon"
@@ -599,17 +602,13 @@ const DatabasesListWrapper = (props: Props) => {
                     onClick={handleClickGoToCloud}
                     data-testid={`cloud-link-${instance.id}`}
                   >
-                    <EuiIcon
-                      type={CloudLinkIcon}
-                      className={styles.cloudIcon}
-                    />
+                    <RiIcon type="CloudLinkIcon" className={styles.cloudIcon} />
                   </Link>
                 </RiTooltip>
               )}
               <FeatureFlagComponent name={FeatureFlags.databaseManagement}>
-                <EuiPopover
+                <RiPopover
                   ownFocus
-                  initialFocus={false}
                   anchorPosition="leftUp"
                   isOpen={controlsOpenIdRef.current === instance.id}
                   closePopover={() => toggleControlsPopover('')}
@@ -648,7 +647,7 @@ const DatabasesListWrapper = (props: Props) => {
                       />
                     </div>
                   </div>
-                </EuiPopover>
+                </RiPopover>
               </FeatureFlagComponent>
             </>
           )
@@ -677,7 +676,7 @@ const DatabasesListWrapper = (props: Props) => {
   )
 
   return (
-    <EuiResizeObserver onResize={onResize}>
+    <RIResizeObserver onResize={onResize}>
       {(resizeRef) => (
         <div className={styles.container} ref={resizeRef}>
           <ItemList<Instance>
@@ -698,7 +697,7 @@ const DatabasesListWrapper = (props: Props) => {
           />
         </div>
       )}
-    </EuiResizeObserver>
+    </RIResizeObserver>
   )
 }
 

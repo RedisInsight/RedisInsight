@@ -1,5 +1,4 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react'
-import { EuiPopover } from '@elastic/eui'
 import JsxParser from 'react-jsx-parser'
 import cx from 'classnames'
 import { debounce } from 'lodash'
@@ -8,6 +7,7 @@ import { useSelector } from 'react-redux'
 
 import { ChevronLeftIcon } from 'uiSrc/components/base/icons'
 import { ExternalLink, HorizontalRule, LoadingContent } from 'uiSrc/components'
+import { RiPopover } from 'uiSrc/components/base'
 import { IEnablementAreaItem } from 'uiSrc/slices/interfaces'
 import {
   sendEventTelemetry,
@@ -167,8 +167,7 @@ const InternalPage = (props: Props) => {
     <div className={styles.container} data-test-subj="internal-page">
       <div className={styles.header}>
         <div style={{ padding: 0 }}>
-          <EuiPopover
-            initialFocus={false}
+          <RiPopover
             panelClassName={cx('popoverLikeTooltip', styles.popover)}
             anchorClassName={styles.popoverAnchor}
             anchorPosition="leftCenter"
@@ -197,7 +196,7 @@ const InternalPage = (props: Props) => {
                 started.
               </Text>
             </div>
-          </EuiPopover>
+          </RiPopover>
         </div>
         <div>
           <HorizontalRule margin="xs" />

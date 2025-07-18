@@ -42,14 +42,62 @@ describe('LocalAgreementsRepository', () => {
 
   describe('getOrCreate', () => {
     it('should return agreements', async () => {
-      const result = await service.getOrCreate();
+      const result = await service.getOrCreate(mockSessionMetadata);
 
       expect(result).toEqual(mockAgreements);
     });
     it('should create new agreements', async () => {
       repository.findOneBy.mockResolvedValueOnce(null);
 
-      const result = await service.getOrCreate();
+      const result = await service.getOrCreate(mockSessionMetadata);
+
+      expect(result).toEqual({
+        ...mockAgreements,
+        version: undefined,
+        data: undefined,
+      });
+    });
+    it('should create new agreements when entity exists but has no data', async () => {
+      // Mock an entity that exists but has no data property
+      const entityWithoutData = Object.assign(new AgreementsEntity(), {
+        id: mockUserId,
+        version: '1.0.0',
+        data: undefined, // This should trigger the !entity?.data check
+      });
+
+      repository.findOneBy.mockResolvedValueOnce(entityWithoutData);
+
+      const result = await service.getOrCreate(mockSessionMetadata);
+
+      // Verify that save was called to create a new entity
+      expect(repository.save).toHaveBeenCalledWith({
+        id: 1,
+        data: undefined,
+      });
+
+      expect(result).toEqual({
+        ...mockAgreements,
+        version: undefined,
+        data: undefined,
+      });
+    });
+    it('should create new agreements when entity exists but has empty string data', async () => {
+      // Mock an entity that exists but has empty string data
+      const entityWithEmptyData = Object.assign(new AgreementsEntity(), {
+        id: mockUserId,
+        version: '1.0.0',
+        data: '', // This should also trigger the !entity?.data check
+      });
+
+      repository.findOneBy.mockResolvedValueOnce(entityWithEmptyData);
+
+      const result = await service.getOrCreate(mockSessionMetadata);
+
+      // Verify that save was called to create a new entity
+      expect(repository.save).toHaveBeenCalledWith({
+        id: 1,
+        data: undefined,
+      });
 
       expect(result).toEqual({
         ...mockAgreements,
@@ -62,7 +110,7 @@ describe('LocalAgreementsRepository', () => {
       repository.findOneBy.mockResolvedValueOnce(mockAgreements);
       repository.save.mockRejectedValueOnce({ code: 'SQLITE_CONSTRAINT' });
 
-      const result = await service.getOrCreate();
+      const result = await service.getOrCreate(mockSessionMetadata);
 
       expect(result).toEqual(mockAgreements);
     });
@@ -70,7 +118,19 @@ describe('LocalAgreementsRepository', () => {
       repository.findOneBy.mockResolvedValueOnce(null);
       repository.save.mockRejectedValueOnce(new Error());
 
-      await expect(service.getOrCreate()).rejects.toThrow(Error);
+      await expect(service.getOrCreate(mockSessionMetadata)).rejects.toThrow(Error);
+    });
+    it('should create new agreements with default data when provided and no entity exists', async () => {
+      repository.findOneBy.mockResolvedValueOnce(null);
+      const defaultData = { eula: true, analytics: false };
+
+      await service.getOrCreate(mockSessionMetadata, { data: defaultData });
+
+      expect(repository.save).toHaveBeenCalledWith({
+        id: 1,
+        data: JSON.stringify(defaultData),
+      });
+      expect(repository.save).toHaveBeenCalled();
     });
   });
 

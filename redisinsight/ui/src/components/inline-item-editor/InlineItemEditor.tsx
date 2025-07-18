@@ -1,9 +1,9 @@
 import React, { ChangeEvent, Ref, useEffect, useRef, useState } from 'react'
 import { capitalize } from 'lodash'
 import cx from 'classnames'
-import { EuiFieldText, EuiForm, EuiPopover, keys } from '@elastic/eui'
+import { EuiFieldText, EuiForm, keys } from '@elastic/eui'
 
-import { RiTooltip } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
 import { FocusTrap } from 'uiSrc/components/base/utils/FocusTrap'
@@ -165,6 +165,7 @@ const InlineItemEditor = (props: Props) => {
 
   const ApplyBtn = (
     <RiTooltip
+      anchorClassName={styles.tooltip}
       position="bottom"
       title={
         (isDisabled && disabledTooltipText?.title) ||
@@ -250,13 +251,12 @@ const InlineItemEditor = (props: Props) => {
                   />
                   {!approveByValidation && ApplyBtn}
                   {approveByValidation && (
-                    <EuiPopover
+                    <RiPopover
                       anchorPosition="leftCenter"
                       isOpen={isShowApprovePopover}
                       closePopover={() => setIsShowApprovePopover(false)}
                       anchorClassName={styles.popoverAnchor}
                       panelClassName={cx(styles.popoverPanel)}
-                      className={styles.popoverWrapper}
                       button={ApplyBtn}
                     >
                       <div
@@ -289,7 +289,7 @@ const InlineItemEditor = (props: Props) => {
                           </DestructiveButton>
                         </div>
                       </div>
-                    </EuiPopover>
+                    </RiPopover>
                   )}
                 </div>
               </EuiForm>

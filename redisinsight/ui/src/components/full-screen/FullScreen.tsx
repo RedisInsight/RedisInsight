@@ -19,6 +19,7 @@ const FullScreen = ({
   <RiTooltip
     content={isFullScreen ? 'Exit Full Screen' : 'Full Screen'}
     position="left"
+    anchorClassName={anchorClassName}
   >
     <IconButton
       icon={isFullScreen ? ShrinkIcon : ExtendIcon}

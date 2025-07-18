@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiResizableContainer } from '@elastic/eui'
 
 import { isNumber } from 'lodash'
 import {
@@ -43,8 +42,11 @@ import {
 import OnboardingStartPopover from 'uiSrc/pages/browser/components/onboarding-start-popover'
 import { sidePanelsSelector } from 'uiSrc/slices/panels/sidePanels'
 import { useStateWithContext } from 'uiSrc/services/hooks'
+
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { ArrowLeftIcon } from 'uiSrc/components/base/icons'
+import { ResizableContainer, ResizablePanel, ResizablePanelHandle } from 'uiSrc/components/base/layout'
+
 import BrowserSearchPanel from './components/browser-search-panel'
 import BrowserLeftPanel from './components/browser-left-panel'
 import BrowserRightPanel from './components/browser-right-panel'
@@ -120,9 +122,9 @@ const BrowserPage = () => {
     // componentWillUnmount
     return () => {
       globalThis.removeEventListener('resize', updateWindowDimensions)
-      setSizes((prevSizes: any) => {
+      setSizes((prevSizes: number[]) => {
         dispatch(setBrowserPanelSizes(prevSizes))
-        return {}
+        return []
       })
       dispatch(setBrowserBulkActionOpen(isBulkActionsPanelOpenRef.current))
       dispatch(setBrowserSelectedKey(selectedKeyRef.current))
@@ -283,7 +285,6 @@ const BrowserPage = () => {
 
   return (
     <div className={`browserPage ${styles.container}`}>
-      <OnboardingStartPopover />
       {arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen && (
         <EmptyButton
           icon={ArrowLeftIcon}
@@ -306,88 +307,52 @@ const BrowserPage = () => {
           handleCreateIndexPanel={handleCreateIndexPanel}
         />
       </div>
-      <div
-        className={cx(styles.main, {
-          [styles.mainWithBackBtn]:
-            arePanelsCollapsed && isRightPanelOpen && !isBrowserFullScreen,
-        })}
-      >
-        <div className={styles.resizableContainer}>
-          <EuiResizableContainer
-            onPanelWidthChange={onPanelWidthChange}
-            style={{ height: '100%' }}
+      <div className={cx(styles.main)}>
+        <ResizableContainer className={styles.resizableContainer} direction="horizontal" onLayout={onPanelWidthChange}>
+          <ResizablePanel
+            defaultSize={sizes && sizes[0] ? sizes[0] : 50}
+            minSize={45}
+            id={firstPanelId}
+            className={cx({
+              [styles.fullWidth]: arePanelsCollapsed || (isBrowserFullScreen && !isRightPanelOpen)
+            })}
           >
-            {(EuiResizablePanel, EuiResizableButton) => (
-              <>
-                <EuiResizablePanel
-                  id={firstPanelId}
-                  scrollable={false}
-                  initialSize={sizes[firstPanelId] ?? 50}
-                  minSize="600px"
-                  paddingSize="none"
-                  wrapperProps={{
-                    className: cx(styles.resizePanelLeft, {
-                      [styles.fullWidth]:
-                        arePanelsCollapsed ||
-                        (isBrowserFullScreen && !isRightPanelOpen),
-                    }),
-                  }}
-                >
-                  <BrowserLeftPanel
-                    selectedKey={selectedKey}
-                    selectKey={selectKey}
-                    removeSelectedKey={handleRemoveSelectedKey}
-                    handleAddKeyPanel={handleAddKeyPanel}
-                  />
-                </EuiResizablePanel>
-
-                <EuiResizableButton
-                  className={cx(styles.resizableButton, {
-                    [styles.hidden]: arePanelsCollapsed || isBrowserFullScreen,
-                  })}
-                  data-test-subj="resize-btn-keyList-keyDetails"
-                />
-
-                <EuiResizablePanel
-                  id={secondPanelId}
-                  scrollable={false}
-                  initialSize={sizes[secondPanelId] ?? 50}
-                  minSize="600px"
-                  paddingSize="none"
-                  data-testid="key-details"
-                  wrapperProps={{
-                    className: cx(styles.resizePanelRight, {
-                      [styles.noVisible]:
-                        isBrowserFullScreen && !isRightPanelOpen,
-                      [styles.fullWidth]:
-                        arePanelsCollapsed ||
-                        (isBrowserFullScreen && isRightPanelOpen),
-                      [styles.keyDetails]:
-                        arePanelsCollapsed ||
-                        (isBrowserFullScreen && isRightPanelOpen),
-                      [styles.keyDetailsOpen]: isRightPanelOpen,
-                    }),
-                  }}
-                >
-                  <BrowserRightPanel
-                    arePanelsCollapsed={arePanelsCollapsed}
-                    setSelectedKey={setSelectedKey}
-                    selectedKey={selectedKey}
-                    isAddKeyPanelOpen={isAddKeyPanelOpen}
-                    isCreateIndexPanelOpen={isCreateIndexPanelOpen}
-                    isBulkActionsPanelOpen={isBulkActionsPanelOpen}
-                    handleAddKeyPanel={handleAddKeyPanel}
-                    handleBulkActionsPanel={handleBulkActionsPanel}
-                    closeRightPanels={closeRightPanels}
-                  />
-                </EuiResizablePanel>
-              </>
-            )}
-          </EuiResizableContainer>
-        </div>
-        <OnboardingStartPopover />
+            <BrowserLeftPanel
+              selectedKey={selectedKey}
+              selectKey={selectKey}
+              removeSelectedKey={handleRemoveSelectedKey}
+              handleAddKeyPanel={handleAddKeyPanel}
+            />
+          </ResizablePanel>
+          {!arePanelsCollapsed && !isBrowserFullScreen && (
+            <ResizablePanelHandle />
+          )}
+          <ResizablePanel
+            defaultSize={sizes && sizes[1] ? sizes[1] : 50}
+            minSize={45}
+            id={secondPanelId}
+            className={cx({
+              [styles.keyDetailsOpen]: isRightPanelOpen,
+              [styles.fullWidth]: arePanelsCollapsed || (isRightPanelOpen && isBrowserFullScreen),
+              [styles.keyDetails]: arePanelsCollapsed || (isRightPanelOpen && isBrowserFullScreen),
+            })}
+          >
+            <BrowserRightPanel
+              arePanelsCollapsed={arePanelsCollapsed}
+              setSelectedKey={setSelectedKey}
+              selectedKey={selectedKey}
+              isAddKeyPanelOpen={isAddKeyPanelOpen}
+              isCreateIndexPanelOpen={isCreateIndexPanelOpen}
+              isBulkActionsPanelOpen={isBulkActionsPanelOpen}
+              handleAddKeyPanel={handleAddKeyPanel}
+              handleBulkActionsPanel={handleBulkActionsPanel}
+              closeRightPanels={closeRightPanels}
+            />
+          </ResizablePanel>
+        </ResizableContainer>
       </div>
-    </div>
+      <OnboardingStartPopover />
+    </div >
   )
 }
 

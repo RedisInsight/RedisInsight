@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { cloneDeep, remove, get, isUndefined } from 'lodash'
 import axios, { AxiosError, CancelTokenSource } from 'axios'
-import { useSelector } from 'react-redux'
 import { apiService, localStorageService } from 'uiSrc/services'
+import { getConfig } from 'uiSrc/config'
 import {
   ApiEndpoints,
   BrowserStorageItem,
@@ -62,7 +62,7 @@ import {
   refreshZsetMembersAction,
 } from './zset'
 import { fetchSetMembers, refreshSetMembersAction } from './set'
-import { fetchReJSON, setEditorType } from './rejson'
+import { fetchReJSON, setEditorType, setIsWithinThreshold } from './rejson'
 import {
   setHashInitialState,
   fetchHashFields,
@@ -103,6 +103,8 @@ import {
 import { AppDispatch, RootState } from '../store'
 import { StreamViewType } from '../interfaces/stream'
 import { EditorType, RedisResponseBuffer, RedisString } from '../interfaces'
+
+const riConfig = getConfig()
 
 const defaultViewFormat = KeyValueFormat.Unicode
 
@@ -808,6 +810,11 @@ export function fetchKeyInfo(
       if (data.type === KeyTypes.ReJSON) {
         dispatch<any>(fetchReJSON(key, '$', data.length, resetData))
         dispatch<any>(setEditorType(EditorType.Default))
+        dispatch<any>(
+          setIsWithinThreshold(
+            data.size <= riConfig.browser.rejsonMonacoEditorMaxThreshold,
+          ),
+        )
       }
       if (data.type === KeyTypes.Stream) {
         const { viewType } = state.browser.stream

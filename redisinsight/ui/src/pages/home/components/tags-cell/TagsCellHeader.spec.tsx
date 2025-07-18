@@ -5,7 +5,7 @@ import {
   fireEvent,
   render,
   screen,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
 } from 'uiSrc/utils/test-utils'
 import { Tag } from 'uiSrc/slices/interfaces/tag'
 import { TagsCellHeader } from './TagsCellHeader'
@@ -13,6 +13,7 @@ import { TagsCellHeader } from './TagsCellHeader'
 jest.mock('react-redux', () => ({
   useDispatch: jest.fn(),
   useSelector: jest.fn(),
+  connect: () => (Component: any) => Component,
 }))
 
 const mockDispatch = useDispatch as jest.MockedFunction<typeof useDispatch>
@@ -52,7 +53,7 @@ describe('TagsCellHeader', () => {
   it('should open the popover when the filter icon is clicked', async () => {
     const { getByRole } = render(<TagsCellHeader />)
     fireEvent.click(getByRole('button'))
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     expect(screen.getByRole('search')).toBeInTheDocument()
   })
@@ -60,7 +61,7 @@ describe('TagsCellHeader', () => {
   it('should filter tags based on search input', async () => {
     const { getByRole, getByTestId } = render(<TagsCellHeader />)
     fireEvent.click(getByRole('button'))
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     expect(getByTestId(`${mockTags[0].key}:${mockTags[0].value}`)).toBeVisible()
     expect(getByTestId(`${mockTags[1].key}:${mockTags[1].value}`)).toBeVisible()

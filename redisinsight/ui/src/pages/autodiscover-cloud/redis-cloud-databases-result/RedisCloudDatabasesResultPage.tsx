@@ -1,4 +1,3 @@
-import { EuiIcon } from '@elastic/eui'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -30,6 +29,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import RedisCloudDatabasesResult from './RedisCloudDatabasesResult'
 
@@ -82,6 +82,7 @@ const RedisCloudDatabasesResultPage = () => {
               position="bottom"
               title="Database"
               className={styles.tooltipColumnName}
+              anchorClassName="truncateText"
               content={formatLongName(name)}
             >
               <Text>{cellContent}</Text>
@@ -113,6 +114,7 @@ const RedisCloudDatabasesResultPage = () => {
               position="bottom"
               title="Subscription"
               className={styles.tooltipColumnName}
+              anchorClassName="truncateText"
               content={formatLongName(name)}
             >
               <Text>{cellContent}</Text>
@@ -152,7 +154,7 @@ const RedisCloudDatabasesResultPage = () => {
         return (
           <div className="public_endpoint">
             <Text className="copyPublicEndpointText">{text}</Text>
-            <RiTooltip position="right" content="Copy">
+            <RiTooltip position="right" content="Copy" anchorClassName="copyPublicEndpointTooltip">
               <IconButton
                 icon={CopyIcon}
                 aria-label="Copy public endpoint"
@@ -205,10 +207,10 @@ const RedisCloudDatabasesResultPage = () => {
             {statusAdded === AddRedisDatabaseStatus.Success ? (
               <Text>{messageAdded}</Text>
             ) : (
-              <RiTooltip position="left" title="Error" content={messageAdded}>
+              <RiTooltip position="left" title="Error" content={messageAdded} anchorClassName="truncateText">
                 <Row align="center" gap="s">
                   <FlexItem>
-                    <EuiIcon type="alert" color="danger" />
+                    <RiIcon type="ToastDangerIcon" color="danger600" />
                   </FlexItem>
 
                   <FlexItem>

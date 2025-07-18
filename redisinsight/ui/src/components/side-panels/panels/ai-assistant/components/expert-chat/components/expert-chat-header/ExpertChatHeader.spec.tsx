@@ -7,7 +7,7 @@ import {
   mockedStore,
   render,
   screen,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
 } from 'uiSrc/utils/test-utils'
 
 import {
@@ -55,7 +55,7 @@ describe('ExpertChatHeader', () => {
 
     fireEvent.click(screen.getByTestId('ai-expert-tutorial-btn'))
 
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     fireEvent.click(screen.getByTestId('ai-expert-open-tutorials'))
 

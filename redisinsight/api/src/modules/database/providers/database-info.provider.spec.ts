@@ -32,12 +32,21 @@ const mockRedisServerInfoDto = {
   tcp_port: '11113',
   uptime_in_seconds: '1000',
 };
+const mockRedisStatsDto = {
+  instantaneous_input_kbps: undefined,
+  instantaneous_ops_per_sec: undefined,
+  instantaneous_output_kbps: undefined,
+  maxmemory_policy: undefined,
+  numberOfKeysRange: '0 - 500 000',
+  uptime_in_days: undefined,
+};
 
 const mockRedisGeneralInfo: RedisDatabaseInfoResponse = {
   version: mockRedisServerInfoDto.redis_version,
   databases: 16,
   role: 'master',
   server: mockRedisServerInfoDto,
+  stats: mockRedisStatsDto,
   usedMemory: 1000000,
   totalKeys: 1,
   connectedClients: 1,
@@ -441,6 +450,10 @@ describe('DatabaseInfoProvider', () => {
 
       expect(result).toEqual({
         ...mockRedisGeneralInfo,
+        stats: {
+          ...mockRedisStatsDto,
+          numberOfKeysRange: undefined,
+        },
         totalKeys: undefined,
         usedMemory: undefined,
         hitRatio: undefined,
@@ -481,6 +494,10 @@ describe('DatabaseInfoProvider', () => {
 
       expect(result).toEqual({
         ...mockRedisGeneralInfo,
+        stats: {
+          ...mockRedisStatsDto,
+          numberOfKeysRange: undefined,
+        },
         server: {
           redis_mode: mockRedisServerInfoDto.redis_mode,
           redis_version: mockRedisGeneralInfo.version,

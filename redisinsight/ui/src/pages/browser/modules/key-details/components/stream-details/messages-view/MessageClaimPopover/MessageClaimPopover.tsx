@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiPopover, EuiForm } from '@elastic/eui'
+import { EuiForm } from '@elastic/eui'
 import { useFormik } from 'formik'
 import { orderBy, filter } from 'lodash'
 
@@ -26,7 +26,7 @@ import {
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { NumericInput, SwitchInput } from 'uiSrc/components/base/inputs'
-import { RiTooltip } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import {
   ClaimPendingEntryDto,
@@ -187,6 +187,7 @@ const MessageClaimPopover = (props: Props) => {
     <RiTooltip
       content="There is no consumer to claim the message."
       position="top"
+      anchorClassName="flex-row"
       data-testid="claim-pending-message-tooltip"
     >
       {button}
@@ -194,13 +195,12 @@ const MessageClaimPopover = (props: Props) => {
   )
 
   return (
-    <EuiPopover
+    <RiPopover
       key={id}
       onWheel={(e) => e.stopPropagation()}
       anchorPosition="leftCenter"
       ownFocus
       isOpen={isOpen}
-      className="popover"
       panelPaddingSize="m"
       anchorClassName="claimPendingMessage"
       panelClassName={styles.popoverWrapper}
@@ -352,7 +352,7 @@ const MessageClaimPopover = (props: Props) => {
           </div>
         </Row>
       </EuiForm>
-    </EuiPopover>
+    </RiPopover>
   )
 }
 

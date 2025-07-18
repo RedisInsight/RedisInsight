@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from 'react'
-import { EuiIcon } from '@elastic/eui'
 import { format } from 'date-fns'
 import { useDispatch } from 'react-redux'
 import { isNull } from 'lodash'
@@ -16,8 +15,6 @@ import {
 import { removeCapiKeyAction } from 'uiSrc/slices/oauth/cloud'
 import { Text } from 'uiSrc/components/base/text'
 
-import CloudStars from 'uiSrc/assets/img/oauth/stars.svg?react'
-
 import {
   EmptyButton,
   IconButton,
@@ -25,6 +22,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import { Link } from 'uiSrc/components/base/link/Link'
@@ -88,11 +86,14 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
         return (
           <div className={styles.nameField}>
             {!valid && (
-              <RiTooltip content="This API key is invalid. Remove it from Redis Cloud and create a new one instead.">
-                <EuiIcon
+              <RiTooltip
+                content="This API key is invalid. Remove it from Redis Cloud and create a new one instead."
+                anchorClassName={styles.invalidIconAnchor}
+              >
+                <RiIcon
+                  type="ToastDangerIcon"
+                  color="danger600"
                   className={styles.invalidIcon}
-                  type="alert"
-                  color="danger"
                 />
               </RiTooltip>
             )}
@@ -151,7 +152,10 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
         },
       }) => (
         <div>
-          <RiTooltip content="Copy API Key Name">
+          <RiTooltip
+            content="Copy API Key Name"
+            anchorClassName={styles.copyBtnAnchor}
+          >
             <IconButton
               icon={CopyIcon}
               aria-label="Copy API key"
@@ -203,7 +207,11 @@ const UserApiKeysTable = ({ items, loading }: Props) => {
       <>
         <div className={styles.noKeysMessage} data-testid="no-api-keys-message">
           <Title size="XS">
-            <EuiIcon className={styles.starsIcon} type={CloudStars} />
+            <RiIcon
+                className={styles.starsIcon}
+                type="StarsIcon"
+                color="attention300"
+              />
             The ultimate Redis starting point
           </Title>
           <Spacer size="s" />

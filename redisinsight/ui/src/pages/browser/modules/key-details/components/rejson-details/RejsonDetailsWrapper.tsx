@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiProgress } from '@elastic/eui'
 import { isUndefined } from 'lodash'
 
 import {
@@ -26,6 +25,7 @@ import {
 import { stringToBuffer } from 'uiSrc/utils'
 import { IJSONData } from 'uiSrc/pages/browser/modules/key-details/components/rejson-details/interfaces'
 
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import RejsonDetails from './rejson-details'
 import MonacoEditor from './monaco-editor'
 import { parseJsonData } from './utils'
@@ -123,18 +123,20 @@ const RejsonDetailsWrapper = (props: Props) => {
   const shouldShowTextEditor =
     !isUndefined(updatedData) && editorType === EditorType.Text
 
+  const keyDetailsBodyName = shouldShowDefaultEditor
+    ? 'key-details-body'
+    : 'key-details-body-monaco-editor'
+
   return (
     <div className="fluid flex-column relative">
       <KeyDetailsHeader {...props} key="key-details-header" />
 
-      <div className="key-details-body" key="key-details-body">
+      <div className={keyDetailsBodyName} key={keyDetailsBodyName}>
         <div className="flex-column" style={{ flex: '1', height: '100%' }}>
           <div data-testid="json-details" className={styles.container}>
             {loading && (
-              <EuiProgress
+              <ProgressBarLoader
                 color="primary"
-                size="xs"
-                position="absolute"
                 data-testid="progress-key-json"
               />
             )}

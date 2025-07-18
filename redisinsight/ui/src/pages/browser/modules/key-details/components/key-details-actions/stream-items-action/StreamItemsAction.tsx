@@ -20,6 +20,9 @@ const StreamItemsAction = ({ width, title, openAddItemPanel }: Props) => (
   <RiTooltip
     content={width > MIDDLE_SCREEN_RESOLUTION ? '' : title}
     position="left"
+    anchorClassName={cx(styles.actionBtn, {
+      [styles.withText]: width > MIDDLE_SCREEN_RESOLUTION,
+    })}
   >
     <span
       className={cx(styles.actionBtn, {

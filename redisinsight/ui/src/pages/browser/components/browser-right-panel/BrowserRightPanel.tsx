@@ -98,7 +98,7 @@ const BrowserRightPanel = (props: Props) => {
   }
 
   const handleEditKey = (
-    key: RedisResponseBuffer,
+    _key: RedisResponseBuffer,
     newKey: RedisResponseBuffer,
   ) => {
     setSelectedKey(newKey)

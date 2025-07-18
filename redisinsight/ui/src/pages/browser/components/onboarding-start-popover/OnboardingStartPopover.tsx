@@ -1,5 +1,4 @@
 import React from 'react'
-import { EuiPopover } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   appFeatureOnboardingSelector,
@@ -14,6 +13,7 @@ import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { EmptyButton, PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
+import { RiPopover } from 'uiSrc/components/base'
 import styles from './styles.module.scss'
 
 const OnboardingStartPopover = () => {
@@ -44,7 +44,7 @@ const OnboardingStartPopover = () => {
   }
 
   return (
-    <EuiPopover
+    <RiPopover
       button={<></>}
       isOpen={isActive && currentStep === OnboardingSteps.Start}
       ownFocus={false}
@@ -52,6 +52,7 @@ const OnboardingStartPopover = () => {
       panelClassName={styles.onboardingStartPopover}
       anchorPosition="upCenter"
       data-testid="onboarding-start-popover"
+      style={{ display: 'none' }}
     >
       <Title size="S">Take a quick tour of Redis Insight?</Title>
       <Spacer size="s" />
@@ -79,7 +80,7 @@ const OnboardingStartPopover = () => {
           Show me around
         </PrimaryButton>
       </div>
-    </EuiPopover>
+    </RiPopover>
   )
 }
 

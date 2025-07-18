@@ -1,4 +1,3 @@
-import { EuiIcon, EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -23,7 +22,8 @@ import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { RiRocketIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Checkbox } from 'uiSrc/components/base/forms/checkbox/Checkbox'
-import { RiTooltip } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -101,7 +101,7 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
 
   return (
     <OutsideClickDetector onOutsideClick={handleClosePopover}>
-      <EuiPopover
+      <RiPopover
         closePopover={handleClosePopover}
         ownFocus
         initialFocus={false}
@@ -153,8 +153,8 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
           />
 
           <RiTooltip content="The pipeline will take a new snapshot of the data and process it, then continue tracking changes.">
-            <EuiIcon
-              type="iInCircle"
+            <RiIcon
+              type="InfoIcon"
               size="m"
               style={{ cursor: 'pointer' }}
               data-testid="reset-checkbox-info-icon"
@@ -174,7 +174,7 @@ const DeployPipelineButton = ({ loading, disabled, onReset }: Props) => {
             </PrimaryButton>
           </FlexItem>
         </Row>
-      </EuiPopover>
+      </RiPopover>
     </OutsideClickDetector>
   )
 }

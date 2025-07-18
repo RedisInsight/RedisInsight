@@ -1,7 +1,6 @@
 import React from 'react'
-import { EuiPopover } from '@elastic/eui'
 
-import { RiTooltip } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { DeleteIcon } from 'uiSrc/components/base/icons'
 import { RedisString } from 'uiSrc/slices/interfaces'
 import { isTruncatedString } from 'uiSrc/utils'
@@ -87,6 +86,7 @@ const PopoverDelete = (props: Props) => {
   const deleteButtonWithTooltip = (
     <RiTooltip
       content={TEXT_DISABLED_ACTION_WITH_TRUNCATED_DATA}
+      anchorClassName={styles.editBtnAnchor}
       data-testid={testid ? `${testid}-tooltip` : 'remove-tooltip'}
     >
       {deleteButton}
@@ -94,7 +94,7 @@ const PopoverDelete = (props: Props) => {
   )
 
   return (
-    <EuiPopover
+    <RiPopover
       key={item}
       anchorPosition="leftCenter"
       ownFocus
@@ -125,7 +125,7 @@ const PopoverDelete = (props: Props) => {
           </DestructiveButton>
         </div>
       </div>
-    </EuiPopover>
+    </RiPopover>
   )
 }
 

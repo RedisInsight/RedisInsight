@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 import cx from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { EuiIcon, EuiPopover } from '@elastic/eui'
 import { isEqual } from 'lodash'
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
@@ -17,7 +16,6 @@ import {
   setBrowserTreeDelimiter,
   setBrowserTreeSort,
 } from 'uiSrc/slices/app/context'
-import TreeViewSort from 'uiSrc/assets/img/browser/treeViewSort.svg?react'
 import { comboBoxToArray } from 'uiSrc/utils'
 
 import { Col, FlexItem } from 'uiSrc/components/base/layout/flex'
@@ -31,7 +29,9 @@ import {
   AutoTag,
   AutoTagOption,
 } from 'uiSrc/components/base/forms/combo-box/AutoTag'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
+import { RiPopover } from 'uiSrc/components/base'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -138,7 +138,7 @@ const KeyTreeSettings = ({ loading }: Props) => {
 
   return (
     <div className={styles.container}>
-      <EuiPopover
+      <RiPopover
         ownFocus={false}
         anchorPosition="downLeft"
         isOpen={isPopoverOpen}
@@ -166,7 +166,7 @@ const KeyTreeSettings = ({ loading }: Props) => {
           </FlexItem>
           <FlexItem className={styles.row}>
             <div className={styles.label}>
-              <EuiIcon type={TreeViewSort} className={styles.sortIcon} />
+              <RiIcon type="DescendingIcon" className={styles.sortIcon} />
               Sort by
             </div>
             <RiSelect
@@ -197,7 +197,7 @@ const KeyTreeSettings = ({ loading }: Props) => {
             </div>
           </FlexItem>
         </Col>
-      </EuiPopover>
+      </RiPopover>
     </div>
   )
 }

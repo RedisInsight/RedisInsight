@@ -2383,7 +2383,7 @@
     "@react-hook/latest" "^1.0.2"
     "@react-hook/passive-layout-effect" "^1.2.0"
 
-"@redis-ui/components@^38.0.0", "@redis-ui/components@^38.1.3":
+"@redis-ui/components@^38.0.0", "@redis-ui/components@^38.1.4":
   version "38.1.4"
   resolved "https://registry.yarnpkg.com/@redis-ui/components/-/components-38.1.4.tgz#02e620f937629162539b2fb36f8b1505442fad24"
   integrity sha512-13SDg3R4hQ1tGyOz8glk3NEuduTsnQpm5sjBf6AtsDHGmugFtQSn3JHvcOgVM+i4Ax6m42SvB6q/4nJD1Yygvg==
@@ -2414,10 +2414,10 @@
   resolved "https://registry.yarnpkg.com/@redis-ui/icons/-/icons-4.16.1.tgz#87fc6ab073a203de6b313a4868c0a84f076c8580"
   integrity sha512-ZRQWzambHq9A/5zWx4HXEBNU8uCFwf6Ap0NKZryoMq5iGfygBF8k8A89RmwUXuSlJ99NRxW+RvmbcMd+Tyosmg==
 
-"@redis-ui/styles@^11.0.2":
-  version "11.0.2"
-  resolved "https://registry.yarnpkg.com/@redis-ui/styles/-/styles-11.0.2.tgz#9c9bf40cbcf256a056c1664a613725d310b051f2"
-  integrity sha512-Lx2+WQ1obHq64W9tJV1zG+fRJIP9DoLbhc3JsAApyw/Xd4+e19Kqrvm7kysMMUCqKyYHu8eyx1WfmlS0nprX2A==
+"@redis-ui/styles@^11.4.0":
+  version "11.4.0"
+  resolved "https://registry.yarnpkg.com/@redis-ui/styles/-/styles-11.4.0.tgz#188712020d985d6c94cacabcf47e341335e46270"
+  integrity sha512-t+3sgLblPxas+qGx0gGzQFm6kQoA8Pxg7y355OeT+fMJ03WMZmeAj+hcfR3zAgVUTfyU9QgOCJKo5/QKfIxNgQ==
   dependencies:
     color-alpha "^2.0.0"
 
@@ -3344,6 +3344,11 @@
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@types/json-bigint/-/json-bigint-1.0.1.tgz#201062a6990119a8cc18023cfe1fed12fc2fc8a7"
   integrity sha512-zpchZLNsNuzJHi6v64UBoFWAvQlPhch7XAi36FkH6tL1bbbmimIF+cS7vwkzY4u5RaSWMoflQfu+TshMPPw8uw==
+
+"@types/json-dup-key-validator@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@types/json-dup-key-validator/-/json-dup-key-validator-1.0.2.tgz#30120b573e6ccfa0eac5c9a3f07d384805fa9dce"
+  integrity sha512-zJSAGITlz2nFT7xcKsvns8UifwSJpKuhgsdZj7+WoxiixiGnIefNiLK2uNhEICRkI9S2ccU6RYdqPS7iJRtU7Q==
 
 "@types/json-schema@^7.0.0", "@types/json-schema@^7.0.5", "@types/json-schema@^7.0.8", "@types/json-schema@^7.0.9":
   version "7.0.15"
@@ -4650,6 +4655,11 @@ babel-preset-vite@^1.1.3:
     babel-plugin-transform-vite-meta-env "1.0.3"
     babel-plugin-transform-vite-meta-glob "1.1.2"
     babel-plugin-transform-vite-meta-hot "1.0.0"
+
+backslash@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/backslash/-/backslash-0.2.0.tgz#6c3c1fce7e7e714ccfc10fd74f0f73410677375f"
+  integrity sha512-Avs+8FUZ1HF/VFP4YWwHQZSGzRPm37ukU1JQYQWijuHhtXdOuAzcZ8PcAzfIw898a8PyBzdn+RtnKA6MzW0X2A==
 
 bail@^1.0.0:
   version "1.0.5"
@@ -9390,6 +9400,13 @@ json-buffer@3.0.1:
   resolved "https://registry.yarnpkg.com/json-buffer/-/json-buffer-3.0.1.tgz#9338802a30d3b6605fbe0613e094008ca8c05a13"
   integrity sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==
 
+json-dup-key-validator@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/json-dup-key-validator/-/json-dup-key-validator-1.0.3.tgz#ec147e457ef600bd2a794121e88f4ec9f3edef85"
+  integrity sha512-JvJcV01JSiO7LRz7DY1Fpzn4wX2rJ3dfNTiAfnlvLNdhhnm0Pgdvhi2SGpENrZn7eSg26Ps3TPhOcuD/a4STXQ==
+  dependencies:
+    backslash "^0.2.0"
+
 json-parse-even-better-errors@^2.3.0, json-parse-even-better-errors@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/json-parse-even-better-errors/-/json-parse-even-better-errors-2.3.1.tgz#7c47805a94319928e05777405dc12e1f7a4ee02d"
@@ -11965,6 +11982,11 @@ react-remove-scroll@^2.6.0, react-remove-scroll@^2.6.3:
     tslib "^2.1.0"
     use-callback-ref "^1.3.3"
     use-sidecar "^1.1.3"
+
+react-resizable-panels@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/react-resizable-panels/-/react-resizable-panels-3.0.2.tgz#c059bd1317eb24ae0d1065a15ab2280f1e7f9e90"
+  integrity sha512-j4RNII75fnHkLnbsTb5G5YsDvJsSEZrJK2XSF2z0Tc2jIonYlIVir/Yh/5LvcUFCfs1HqrMAoiBFmIrRjC4XnA==
 
 react-rnd@^10.3.5:
   version "10.4.1"

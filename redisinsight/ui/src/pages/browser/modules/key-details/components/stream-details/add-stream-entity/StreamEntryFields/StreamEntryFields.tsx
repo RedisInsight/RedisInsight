@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useRef } from 'react'
-import { EuiFieldText, EuiIcon } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import cx from 'classnames'
 import { validateEntryId } from 'uiSrc/utils'
 import { INITIAL_STREAM_FIELD_STATE } from 'uiSrc/pages/browser/components/add-key/AddKeyStream/AddKeyStream'
@@ -10,6 +10,7 @@ import { RiTooltip } from 'uiSrc/components'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from '../styles.module.scss'
 
 export interface Props {
@@ -122,6 +123,7 @@ const StreamEntryFields = (props: Props) => {
             onFocus={() => setIsEntryIdFocused(true)}
             append={
               <RiTooltip
+                anchorClassName="inputAppendIcon"
                 className={styles.entryIdTooltip}
                 position="left"
                 title="Enter Valid ID or *"
@@ -135,7 +137,7 @@ const StreamEntryFields = (props: Props) => {
                   </>
                 }
               >
-                <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+                <RiIcon type="InfoIcon" style={{ cursor: 'pointer' }} />
               </RiTooltip>
             }
             isInvalid={!!entryIdError}

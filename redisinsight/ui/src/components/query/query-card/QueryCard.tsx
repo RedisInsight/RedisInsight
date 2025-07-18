@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { KeyboardKeys as keys } from 'uiSrc/constants/keys'
 import { useParams } from 'react-router-dom'
 import { isNull } from 'lodash'
+import { KeyboardKeys as keys } from 'uiSrc/constants/keys'
 
 import { LoadingContent } from 'uiSrc/components/base/layout'
 import {
@@ -234,7 +234,7 @@ const QueryCard = (props: Props) => {
         {isOpen && (
           <>
             {React.isValidElement(commonError) &&
-              (!isGroupResults(resultsMode) || isNull(command)) ? (
+            (!isGroupResults(resultsMode) || isNull(command)) ? (
               <QueryCardCommonResult loading={loading} result={commonError} />
             ) : (
               <>

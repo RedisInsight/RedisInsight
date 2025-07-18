@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 import { map } from 'lodash'
 import { useSelector } from 'react-redux'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Maybe } from 'uiSrc/utils'
-import { RiTooltip } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { InstanceRedisCluster } from 'uiSrc/slices/interfaces'
 import { clusterSelector } from 'uiSrc/slices/instances/cluster'
 import validationErrors from 'uiSrc/constants/validationErrors'
@@ -108,7 +107,7 @@ const RedisClusterDatabases = ({
   }
 
   const CancelButton = ({ isPopoverOpen: popoverIsOpen }: IPopoverProps) => (
-    <EuiPopover
+    <RiPopover
       anchorPosition="upCenter"
       isOpen={popoverIsOpen}
       closePopover={closePopover}
@@ -138,7 +137,7 @@ const RedisClusterDatabases = ({
           Proceed
         </DestructiveButton>
       </div>
-    </EuiPopover>
+    </RiPopover>
   )
 
   return (
@@ -212,6 +211,7 @@ const RedisClusterDatabases = ({
             <CancelButton isPopoverOpen={isPopoverOpen} />
             <RiTooltip
               position="top"
+              anchorClassName="euiToolTip__btn-disabled"
               title={
                 isSubmitDisabled()
                   ? validationErrors.SELECT_AT_LEAST_ONE('database')

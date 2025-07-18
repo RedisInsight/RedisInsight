@@ -1,16 +1,20 @@
 import { ClientMetadata } from 'src/common/models';
 import { Database } from 'src/modules/database/models/database';
 import { SshTunnelProvider } from 'src/modules/ssh/ssh-tunnel.provider';
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { IRedisConnectionOptions } from 'src/modules/redis/redis.client.factory';
 import { RedisClient } from 'src/modules/redis/client';
-import { CONNECTION_NAME_GLOBAL_PREFIX } from 'src/constants';
+import { CONNECTION_NAME_GLOBAL_PREFIX, CustomErrorCodes } from 'src/constants';
 
 @Injectable()
 export abstract class RedisConnectionStrategy {
   protected logger = new Logger(this.constructor.name);
 
-  constructor(protected readonly sshTunnelProvider: SshTunnelProvider) {}
+  protected connectionErrors: {};
+
+  constructor(protected readonly sshTunnelProvider: SshTunnelProvider) {
+    this.resetConnectionErrors();
+  }
 
   /**
    * Try to create standalone redis connection
@@ -69,5 +73,33 @@ export abstract class RedisConnectionStrategy {
     ]
       .join('-')
       .toLowerCase();
+  }
+
+  private resetConnectionErrors() {
+    this.connectionErrors = {
+      [CustomErrorCodes.RedisConnectionFailed]: 0,
+      [CustomErrorCodes.RedisConnectionTimeout]: 0,
+      [CustomErrorCodes.RedisConnectionUnauthorized]: 0,
+      [CustomErrorCodes.RedisConnectionClusterNodesUnavailable]: 0,
+      [CustomErrorCodes.RedisConnectionUnavailable]: 0,
+    };
+  }
+
+  protected addConnectionError(error: HttpException) {
+    const errorCode = error.getResponse?.()?.['errorCode'];
+
+    if (this.connectionErrors[errorCode] !== undefined) {
+      this.connectionErrors[errorCode] += 1;
+    }
+  }
+
+  public getConnectionErrorsAndReset() {
+    const connectionErrors = {
+      ...this.connectionErrors,
+    };
+
+    this.resetConnectionErrors();
+
+    return connectionErrors;
   }
 }

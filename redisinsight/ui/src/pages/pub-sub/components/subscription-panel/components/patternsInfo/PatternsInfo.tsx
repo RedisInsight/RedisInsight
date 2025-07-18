@@ -1,9 +1,9 @@
-import { EuiIcon } from '@elastic/eui'
 import React from 'react'
 import { DEFAULT_SEARCH_MATCH } from 'uiSrc/constants/api'
 import { Text } from 'uiSrc/components/base/text'
 import { RiTooltip } from 'uiSrc/components'
 
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface PatternsInfoProps {
@@ -22,18 +22,19 @@ const PatternsInfo = ({ channels }: PatternsInfoProps) => {
         Patterns:&nbsp;{getChannelsCount()}{' '}
       </Text>
       <RiTooltip
+        anchorClassName={styles.appendIcon}
         position="right"
         title={
-          <span className={styles.appendIcon}>
+          <>
             {channels
               ?.trim()
               .split(' ')
               .map((ch) => <p key={`${ch}`}>{ch}</p>)}
-          </span>
+          </>
         }
       >
-        <EuiIcon
-          type="iInCircle"
+        <RiIcon
+          type="InfoIcon"
           style={{ cursor: 'pointer' }}
           data-testid="append-info-icon"
         />

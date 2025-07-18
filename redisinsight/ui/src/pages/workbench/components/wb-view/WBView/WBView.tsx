@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { isEmpty } from 'lodash'
 import { useParams } from 'react-router-dom'
-import { EuiResizableContainer } from '@elastic/eui'
 
 import {
   Maybe,
@@ -24,6 +23,11 @@ import { userSettingsConfigSelector } from 'uiSrc/slices/user/user-settings'
 import { PIPELINE_COUNT_DEFAULT } from 'uiSrc/constants/api'
 import { CodeButtonParams } from 'uiSrc/constants'
 
+import {
+  ResizableContainer,
+  ResizablePanel,
+  ResizablePanelHandle,
+} from 'uiSrc/components/base/layout'
 import QueryWrapper from '../../query'
 import WBResultsWrapper from '../../wb-results'
 
@@ -93,28 +97,26 @@ const WBView = (props: Props) => {
   }
 
   const { instanceId = '' } = useParams<{ instanceId: string }>()
-  const {
-    panelSizes: { vertical },
-  } = useSelector(appContextWorkbench)
+  const { panelSizes } = useSelector(appContextWorkbench)
   const { commandsArray: REDIS_COMMANDS_ARRAY } = useSelector(
     appRedisCommandsSelector,
   )
   const { batchSize = PIPELINE_COUNT_DEFAULT } =
     useSelector(userSettingsConfigSelector) ?? {}
 
-  const verticalSizesRef = useRef(vertical)
+  const verticalPanelSizesRef = useRef(panelSizes)
 
   const dispatch = useDispatch()
 
   useEffect(
     () => () => {
-      dispatch(setWorkbenchVerticalPanelSizes(verticalSizesRef.current))
+      dispatch(setWorkbenchVerticalPanelSizes(verticalPanelSizesRef.current))
     },
     [],
   )
 
   const onVerticalPanelWidthChange = useCallback((newSizes: any) => {
-    verticalSizesRef.current = newSizes
+    verticalPanelSizesRef.current = newSizes
   }, [])
 
   const handleSubmit = (value?: string) => {
@@ -196,67 +198,56 @@ const WBView = (props: Props) => {
     <div className={cx('workbenchPage', styles.container)}>
       <div className={styles.main}>
         <div className={styles.content}>
-          <EuiResizableContainer
-            onPanelWidthChange={onVerticalPanelWidthChange}
+          <ResizableContainer
+            onLayout={onVerticalPanelWidthChange}
             direction="vertical"
-            style={{ height: '100%' }}
           >
-            {(EuiResizablePanel, EuiResizableButton) => (
-              <>
-                <EuiResizablePanel
-                  id={verticalPanelIds.firstPanelId}
-                  minSize="140px"
-                  paddingSize="none"
-                  scrollable={false}
-                  className={styles.queryPanel}
-                  initialSize={vertical[verticalPanelIds.firstPanelId] ?? 20}
-                  style={{ minHeight: '240px', zIndex: '8' }}
-                >
-                  <QueryWrapper
-                    query={script}
-                    activeMode={activeMode}
-                    resultsMode={resultsMode}
-                    setQuery={setScript}
-                    setQueryEl={setScriptEl}
-                    onSubmit={handleSubmit}
-                    onQueryChangeMode={onQueryChangeMode}
-                    onChangeGroupMode={onChangeGroupMode}
-                  />
-                </EuiResizablePanel>
+            <ResizablePanel
+              id={verticalPanelIds.firstPanelId}
+              minSize={30}
+              className={styles.queryPanel}
+              defaultSize={panelSizes && panelSizes[0] ? panelSizes[0] : 20}
+            >
+              <QueryWrapper
+                query={script}
+                activeMode={activeMode}
+                resultsMode={resultsMode}
+                setQuery={setScript}
+                setQueryEl={setScriptEl}
+                onSubmit={handleSubmit}
+                onQueryChangeMode={onQueryChangeMode}
+                onChangeGroupMode={onChangeGroupMode}
+              />
+            </ResizablePanel>
 
-                <EuiResizableButton
-                  className={styles.resizeButton}
-                  data-test-subj="resize-btn-scripting-area-and-results"
-                />
+            <ResizablePanelHandle
+              direction="horizontal"
+              data-test-subj="resize-btn-scripting-area-and-results"
+            />
 
-                <EuiResizablePanel
-                  id={verticalPanelIds.secondPanelId}
-                  minSize="60px"
-                  paddingSize="none"
-                  scrollable={false}
-                  initialSize={vertical[verticalPanelIds.secondPanelId] ?? 80}
-                  className={cx(styles.queryResults, styles.queryResultsPanel)}
-                  // Fix scroll on low height - 140px (queryPanel)
-                  style={{ maxHeight: 'calc(100% - 240px)' }}
-                >
-                  <WBResultsWrapper
-                    items={items}
-                    clearing={clearing}
-                    processing={processing}
-                    isResultsLoaded={isResultsLoaded}
-                    activeMode={activeMode}
-                    activeResultsMode={resultsMode}
-                    scrollDivRef={scrollDivRef}
-                    onQueryReRun={handleReRun}
-                    onQueryProfile={handleProfile}
-                    onQueryOpen={onQueryOpen}
-                    onQueryDelete={onQueryDelete}
-                    onAllQueriesDelete={onAllQueriesDelete}
-                  />
-                </EuiResizablePanel>
-              </>
-            )}
-          </EuiResizableContainer>
+            <ResizablePanel
+              id={verticalPanelIds.secondPanelId}
+              minSize={10}
+              maxSize={70}
+              defaultSize={panelSizes && panelSizes[1] ? panelSizes[1] : 80}
+              className={cx(styles.queryResults, styles.queryResultsPanel)}
+            >
+              <WBResultsWrapper
+                items={items}
+                clearing={clearing}
+                processing={processing}
+                isResultsLoaded={isResultsLoaded}
+                activeMode={activeMode}
+                activeResultsMode={resultsMode}
+                scrollDivRef={scrollDivRef}
+                onQueryReRun={handleReRun}
+                onQueryProfile={handleProfile}
+                onQueryOpen={onQueryOpen}
+                onQueryDelete={onQueryDelete}
+                onAllQueriesDelete={onAllQueriesDelete}
+              />
+            </ResizablePanel>
+          </ResizableContainer>
         </div>
       </div>
     </div>

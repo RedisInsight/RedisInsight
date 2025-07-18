@@ -53,6 +53,7 @@ const AddItemsActions = (props: Props) => {
               <RiTooltip
                 content={length === 1 ? 'Clear' : 'Remove'}
                 position="left"
+                anchorClassName={anchorClassName}
               >
                 <IconButton
                   icon={DeleteIcon}
@@ -66,14 +67,17 @@ const AddItemsActions = (props: Props) => {
           )}
           {index === length - 1 && (
             <div>
-              <RiTooltip content="Add" position="left">
+              <RiTooltip
+                content="Add"
+                position="left"
+                anchorClassName={anchorClassName}
+              >
                 <IconButton
                   icon={PlusInCircleIcon}
                   disabled={loading || addItemIsDisabled}
                   aria-label="Add new item"
                   onClick={addItem}
                   data-testid={dataTestId || 'add-new-item'}
-                  className={anchorClassName}
                 />
               </RiTooltip>
             </div>

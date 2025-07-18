@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { NodePublicState } from 'react-vtree/dist/es/Tree'
 import cx from 'classnames'
-import { EuiIcon, keys as ElasticKeys } from '@elastic/eui'
+import {  keys as ElasticKeys } from '@elastic/eui'
 
 import { useSelector } from 'react-redux'
 import { Maybe } from 'uiSrc/utils'
@@ -12,6 +12,7 @@ import KeyRowName from 'uiSrc/pages/browser/components/key-row-name'
 import KeyRowType from 'uiSrc/pages/browser/components/key-row-type'
 import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
 import { appContextDbConfig } from 'uiSrc/slices/app/context'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiTooltip } from 'uiSrc/components'
 import { DeleteKeyPopover } from '../../../delete-key-popover/DeleteKeyPopover'
 import { TreeData } from '../../interfaces'
@@ -111,16 +112,20 @@ const Node = ({
   }
 
   const Folder = () => (
-    <RiTooltip content={tooltipContent} position="bottom">
-      <span className={styles.anchorTooltipNode}>
+    <RiTooltip
+      content={tooltipContent}
+      position="bottom"
+      anchorClassName={styles.anchorTooltipNode}
+    >
+      <>
         <div className={styles.nodeName}>
-          <EuiIcon
-            type={isOpen ? 'arrowDown' : 'arrowRight'}
+          <RiIcon
+            type={isOpen ? 'ArrowDownIcon' : 'ArrowRightIcon'}
             className={cx(styles.nodeIcon, styles.nodeIconArrow)}
             data-test-subj={`node-arrow-icon_${fullName}`}
           />
-          <EuiIcon
-            type={isOpen ? 'folderOpen' : 'folderClosed'}
+          <RiIcon
+            type="FolderIcon"
             className={styles.nodeIcon}
             data-test-subj={`node-folder-icon_${fullName}`}
           />
@@ -141,7 +146,7 @@ const Node = ({
             {keyCount ?? ''}
           </div>
         </div>
-      </span>
+      </>
     </RiTooltip>
   )
 

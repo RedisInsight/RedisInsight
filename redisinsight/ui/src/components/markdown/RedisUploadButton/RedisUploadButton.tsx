@@ -1,4 +1,3 @@
-import { EuiIcon, EuiPopover } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
@@ -29,8 +28,10 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { PlayFilledIcon, ContractsIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
-import styles from './styles.module.scss'
+import { RiPopover } from 'uiSrc/components/base'
 import { Link } from 'uiSrc/components/base/link/Link'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import styles from './styles.module.scss'
 
 export interface Props {
   label: string
@@ -107,9 +108,8 @@ const RedisUploadButton = ({ label, path }: Props) => {
 
   return (
     <div className={cx(styles.wrapper, 'mb-s mt-s')}>
-      <EuiPopover
+      <RiPopover
         ownFocus
-        initialFocus={false}
         id="upload-data-bulk-btn"
         anchorPosition="downLeft"
         isOpen={isPopoverOpen}
@@ -138,7 +138,7 @@ const RedisUploadButton = ({ label, path }: Props) => {
             className={styles.containerPopover}
             data-testid="upload-data-bulk-tooltip"
           >
-            <EuiIcon type="alert" className={styles.popoverIcon} />
+            <RiIcon type="ToastDangerIcon" className={styles.popoverIcon} />
             <div className={cx(styles.popoverItem, styles.popoverItemTitle)}>
               Execute commands in bulk
             </div>
@@ -172,7 +172,7 @@ const RedisUploadButton = ({ label, path }: Props) => {
         ) : (
           <DatabaseNotOpened />
         )}
-      </EuiPopover>
+      </RiPopover>
     </div>
   )
 }

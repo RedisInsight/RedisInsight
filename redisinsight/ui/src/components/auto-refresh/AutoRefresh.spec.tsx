@@ -6,6 +6,7 @@ import {
   screen,
   render,
   act,
+  waitForRiPopoverVisible,
 } from 'uiSrc/utils/test-utils'
 import { localStorageService } from 'uiSrc/services'
 import AutoRefresh, { Props } from './AutoRefresh'
@@ -77,7 +78,8 @@ describe('AutoRefresh', () => {
   it('refresh text should contain "Auto-refresh" time with enabled auto-refresh', async () => {
     render(<AutoRefresh {...instance(mockedProps)} displayText />)
 
-    fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+    await userEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+    await waitForRiPopoverVisible()
     await userEvent.click(screen.getByTestId('auto-refresh-switch'))
 
     expect(screen.getByTestId('refresh-message-label')).toHaveTextContent(
@@ -158,7 +160,8 @@ describe('AutoRefresh', () => {
       const onRefresh = jest.fn()
       render(<AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} />)
 
-      fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+      await userEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+      await waitForRiPopoverVisible()
       await userEvent.click(screen.getByTestId('auto-refresh-switch'))
       fireEvent.click(screen.getByTestId('refresh-rate'))
 
@@ -264,7 +267,8 @@ describe('AutoRefresh', () => {
       <AutoRefresh {...instance(mockedProps)} onRefresh={onRefresh} />,
     )
 
-    fireEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+    await userEvent.click(screen.getByTestId('auto-refresh-config-btn'))
+    await waitForRiPopoverVisible()
     await userEvent.click(screen.getByTestId('auto-refresh-switch'))
     fireEvent.click(screen.getByTestId('refresh-rate'))
     fireEvent.change(screen.getByTestId(INLINE_ITEM_EDITOR), {

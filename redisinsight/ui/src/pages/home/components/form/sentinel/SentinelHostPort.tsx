@@ -23,7 +23,11 @@ const SentinelHostPort = (props: Props) => {
       Sentinel Host & Port:
       <div className={styles.hostPort}>
         <ColorText>{`${host}:${port}`}</ColorText>
-        <RiTooltip position="right" content="Copy">
+        <RiTooltip
+          position="right"
+          content="Copy"
+          anchorClassName="copyHostPortTooltip"
+        >
           <IconButton
             icon={CopyIcon}
             aria-label="Copy host:port"

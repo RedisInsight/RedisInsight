@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiIcon } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import cx from 'classnames'
 import { isNull } from 'lodash'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
@@ -31,6 +31,7 @@ import { FlexItem, Grid } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiTooltip } from 'uiSrc/components'
 import styles from './styles.module.scss'
 
@@ -142,7 +143,7 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
   }
 
   const appendKeyEditing = () =>
-    !keyIsEditing ? <EuiIcon type="pencil" color="subdued" /> : ''
+    !keyIsEditing ? <RiIcon type="EditIcon" color="informative400" /> : ''
 
   return (
     <FlexItem
@@ -165,8 +166,9 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
               title="Key Name"
               position="left"
               content={tooltipContent}
+              anchorClassName={styles.toolTipAnchorKey}
             >
-              <span className={styles.toolTipAnchorKey}>
+              <>
                 <InlineItemEditor
                   onApply={() => applyEditKey()}
                   isDisabled={!keyIsEditable}
@@ -199,10 +201,14 @@ const KeyDetailsHeaderName = ({ onEditKey }: Props) => {
                   />
                 </InlineItemEditor>
                 <p className={styles.keyHiddenText}>{key}</p>
-              </span>
+              </>
             </RiTooltip>
             {keyIsHovering && (
-              <RiTooltip position="right" content="Copy">
+              <RiTooltip
+                position="right"
+                content="Copy"
+                anchorClassName={styles.copyKey}
+              >
                 <IconButton
                   icon={CopyIcon}
                   id={COPY_KEY_NAME_ICON}

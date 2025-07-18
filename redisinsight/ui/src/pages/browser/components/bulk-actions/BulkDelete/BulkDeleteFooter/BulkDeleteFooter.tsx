@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { EuiIcon, EuiPopover } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import cx from 'classnames'
@@ -27,6 +26,8 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { RefreshIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiPopover } from 'uiSrc/components/base'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import BulkDeleteContent from '../BulkDeleteContent'
 import { isProcessedBulkAction } from '../../utils'
 
@@ -116,7 +117,7 @@ const BulkDeleteFooter = (props: Props) => {
         )}
 
         {!isProcessedBulkAction(status) && (
-          <EuiPopover
+          <RiPopover
             id="bulk-delete-warning-popover"
             anchorPosition="upCenter"
             isOpen={isPopoverOpen}
@@ -139,7 +140,11 @@ const BulkDeleteFooter = (props: Props) => {
               className={styles.containerPopover}
               data-testid="bulk-action-tooltip"
             >
-              <EuiIcon type="alert" className={styles.popoverIcon} />
+              <RiIcon
+                type="ToastDangerIcon"
+                color="danger600"
+                className={styles.popoverIcon}
+              />
               <div className={cx(styles.popoverItem, styles.popoverItemTitle)}>
                 Are you sure you want to perform this action?
               </div>
@@ -155,7 +160,7 @@ const BulkDeleteFooter = (props: Props) => {
                 Delete
               </DestructiveButton>
             </Text>
-          </EuiPopover>
+          </RiPopover>
         )}
         {isProcessedBulkAction(status) && (
           <PrimaryButton

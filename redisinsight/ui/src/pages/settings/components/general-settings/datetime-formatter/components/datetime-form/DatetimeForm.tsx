@@ -221,6 +221,7 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
             </FlexItem>
             <RiTooltip
               position="top"
+              anchorClassName="euiToolTip__btn-disabled"
               content={
                 showError ? error || 'This format is not supported' : null
               }

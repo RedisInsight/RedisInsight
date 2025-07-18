@@ -56,6 +56,7 @@ const ClusterDetailsHeader = () => {
         ) : (
           <RiTooltip
             className={styles.tooltip}
+            anchorClassName="truncateText"
             position="bottom"
             content={<>{formatLongName(username || DEFAULT_USERNAME)}</>}
           >

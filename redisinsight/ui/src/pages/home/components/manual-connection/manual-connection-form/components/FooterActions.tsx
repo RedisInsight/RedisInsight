@@ -41,6 +41,7 @@ const FooterActions = (props: Props) => {
   }: ISubmitButton) => (
     <RiTooltip
       position="top"
+      anchorClassName="euiToolTip__btn-disabled"
       title={
         submitIsDisabled
           ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)
@@ -67,6 +68,7 @@ const FooterActions = (props: Props) => {
       <FlexItem className="btn-back">
         <RiTooltip
           position="top"
+          anchorClassName="euiToolTip__btn-disabled"
           title={
             submitIsDisable()
               ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)

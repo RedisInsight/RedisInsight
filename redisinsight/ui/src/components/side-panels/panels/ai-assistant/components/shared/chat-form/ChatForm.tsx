@@ -1,10 +1,10 @@
 import React, { Ref, useRef, useState } from 'react'
-import { EuiForm, EuiPopover, keys } from '@elastic/eui'
+import { EuiForm, keys } from '@elastic/eui'
 
 import cx from 'classnames'
 import { isModifiedEvent } from 'uiSrc/services'
 
-import { RiTooltip } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import { PrimaryButton } from 'uiSrc/components/base/forms/buttons'
 import { SendIcon } from 'uiSrc/components/base/icons'
@@ -129,9 +129,8 @@ const ChatForm = (props: Props) => {
             disabled={!!validation}
             data-testid="ai-message-textarea"
           />
-          <EuiPopover
+          <RiPopover
             ownFocus
-            initialFocus={false}
             isOpen={isAgreementsPopoverOpen}
             anchorPosition="downRight"
             closePopover={() => setIsAgreementsPopoverOpen(false)}
@@ -163,7 +162,7 @@ const ChatForm = (props: Props) => {
                 I accept
               </PrimaryButton>
             </>
-          </EuiPopover>
+          </RiPopover>
         </EuiForm>
       </RiTooltip>
       <Text textAlign="center" size="xs" className={styles.agreementText}>

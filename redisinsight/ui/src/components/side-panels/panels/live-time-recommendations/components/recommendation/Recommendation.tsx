@@ -1,17 +1,15 @@
 import React, { useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import { useHistory, useParams } from 'react-router-dom'
-import { EuiAccordion, EuiIcon } from '@elastic/eui'
 import { isUndefined } from 'lodash'
-import cx from 'classnames'
 
-import { Nullable, Maybe, findTutorialPath } from 'uiSrc/utils'
+import { findTutorialPath, Maybe, Nullable } from 'uiSrc/utils'
 import { FeatureFlags, Pages, Theme } from 'uiSrc/constants'
 import {
-  RecommendationVoting,
-  RecommendationCopyComponent,
-  RecommendationBody,
   FeatureFlagComponent,
+  RecommendationBody,
+  RecommendationCopyComponent,
+  RecommendationVoting,
   RiTooltip,
 } from 'uiSrc/components'
 import { Vote } from 'uiSrc/constants/recommendations'
@@ -23,17 +21,15 @@ import {
 } from 'uiSrc/slices/recommendations/recommendations'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
 import {
-  IRecommendationsStatic,
   IRecommendationParams,
+  IRecommendationsStatic,
 } from 'uiSrc/slices/interfaces/recommendations'
 
-import RediStackDarkMin from 'uiSrc/assets/img/modules/redistack/RediStackDark-min.svg'
-import RediStackLightMin from 'uiSrc/assets/img/modules/redistack/RediStackLight-min.svg'
 import {
-  SnoozeIcon,
-  StarsIcon,
   HideIcon,
   ShowIcon,
+  SnoozeIcon,
+  StarsIcon,
 } from 'uiSrc/components/base/icons'
 
 import { openTutorialByPath } from 'uiSrc/slices/panels/sidePanels'
@@ -44,7 +40,10 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { RiAccordion } from 'uiSrc/components/base/display/accordion/RiAccordion'
 import { Link } from 'uiSrc/components/base/link/Link'
+
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -57,6 +56,57 @@ export interface IProps {
   provider?: string
   params: IRecommendationParams
   recommendationsContent: IRecommendationsStatic
+}
+
+const RecommendationTitle = ({
+  redisStack,
+  title,
+  id,
+}: {
+  redisStack: Maybe<boolean>
+  title?: string
+  id: string
+}) => {
+  const { theme } = useContext(ThemeContext)
+  return (
+    <Row
+      align="center"
+      justify="start"
+      gap="m"
+      style={{
+        maxWidth: '60%',
+        textAlign: 'left',
+      }}
+    >
+      {redisStack && (
+        <FlexItem>
+          <Link
+            target="_blank"
+            href={EXTERNAL_LINKS.redisStack}
+            className={styles.redisStackLink}
+            data-testid={`${id}-redis-stack-link`}
+          >
+            <RiTooltip
+              content="Redis Stack"
+              position="top"
+              anchorClassName="flex-row"
+            >
+              <RiIcon
+                type={
+                  theme === Theme.Dark
+                    ? 'RediStackDarkMinIcon'
+                    : 'RediStackLightMinIcon'
+                }
+                className={styles.redisStackIcon}
+                data-testid={`${id}-redis-stack-icon`}
+              />
+            </RiTooltip>
+          </Link>
+        </FlexItem>
+      )}
+      <FlexItem className="truncateText">{title}</FlexItem>
+    </Row>
+  )
 }
 
 const Recommendation = ({
@@ -72,7 +122,6 @@ const Recommendation = ({
 }: IProps) => {
   const history = useHistory()
   const dispatch = useDispatch()
-  const { theme } = useContext(ThemeContext)
   const { instanceId = '' } = useParams<{ instanceId: string }>()
 
   const {
@@ -81,8 +130,6 @@ const Recommendation = ({
     liveTitle,
     content = [],
   } = recommendationsContent[name] || {}
-
-  const recommendationTitle = liveTitle || title
 
   const handleRedirect = () => {
     sendEventTelemetry({
@@ -194,32 +241,8 @@ const Recommendation = ({
   )
 
   const renderButtonContent = (
-    redisStack: Maybe<boolean>,
-    title: string,
-    id: string,
-  ) => (
     <Row className={styles.fullWidth} align="center" justify="between">
       <Row className={styles.fullWidth} align="center">
-        <FlexItem>
-          {redisStack && (
-            <Link
-              target="_blank"
-              href={EXTERNAL_LINKS.redisStack}
-              className={styles.redisStackLink}
-              data-testid={`${id}-redis-stack-link`}
-            >
-              <RiTooltip content="Redis Stack" position="top">
-                <EuiIcon
-                  type={
-                    theme === Theme.Dark ? RediStackDarkMin : RediStackLightMin
-                  }
-                  className={styles.redisStackIcon}
-                  data-testid={`${id}-redis-stack-icon`}
-                />
-              </RiTooltip>
-            </Link>
-          )}
-        </FlexItem>
         <FlexItem grow className="truncateText">
           {title}
         </FlexItem>
@@ -228,6 +251,7 @@ const Recommendation = ({
             title="Snooze tip"
             content="This tip will be removed from the list and displayed again when relevant."
             position="top"
+            anchorClassName="flex-row"
           >
             <IconButton
               icon={SnoozeIcon}
@@ -247,6 +271,7 @@ const Recommendation = ({
                 : 'This tip will be removed from the list and not displayed again.'
             }`}
             position="top"
+            anchorClassName="flex-row"
           >
             <IconButton
               icon={hide ? HideIcon : ShowIcon}
@@ -267,28 +292,27 @@ const Recommendation = ({
 
   return (
     <div
-      className={cx(styles.recommendationAccordion, { [styles.read]: isRead })}
       data-testid={`${name}-recommendation`}
+      style={{ marginBottom: '1rem' }}
     >
-      <EuiAccordion
+      <RiAccordion
         id={name}
-        initialIsOpen={!isRead}
-        arrowDisplay="right"
-        buttonContent={renderButtonContent(
-          redisStack,
-          recommendationTitle,
-          name,
-        )}
-        buttonClassName={styles.accordionBtn}
-        buttonProps={{ 'data-test-subj': `${name}-button` }}
-        className={styles.accordion}
+        defaultOpen={!isRead}
+        actions={renderButtonContent}
+        label={
+          <RecommendationTitle
+            redisStack={redisStack}
+            title={title || liveTitle}
+            id={name}
+          />
+        }
         data-testid={`${name}-accordion`}
         aria-label={`${name}-accordion`}
       >
         <Card className={styles.accordionContent} color="subdued">
           {recommendationContent()}
         </Card>
-      </EuiAccordion>
+      </RiAccordion>
     </div>
   )
 }

@@ -1,4 +1,6 @@
-import { EuiAccordion, EuiIcon } from '@elastic/eui'
+import {
+  EuiAccordion,
+} from '@elastic/eui'
 import cx from 'classnames'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,11 +17,10 @@ import {
   setChangedFile,
   setPipelineJobs,
 } from 'uiSrc/slices/rdi/pipeline'
-import { TelemetryEvent, sendEventTelemetry } from 'uiSrc/telemetry'
+import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { isEqualPipelineFile, Nullable } from 'uiSrc/utils'
-import statusErrorIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/status_error.svg?react'
 
-import { Text, ColorText } from 'uiSrc/components/base/text'
+import { ColorText, Text } from 'uiSrc/components/base/text'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { DeleteIcon, EditIcon, PlusIcon } from 'uiSrc/components/base/icons'
 import { RiTooltip } from 'uiSrc/components'
@@ -27,6 +28,7 @@ import {
   DestructiveButton,
   IconButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Loader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
@@ -42,7 +44,7 @@ const buildValidationMessage = (text: string) => ({
   content: (
     <Row align="center" gap="s">
       <FlexItem>
-        <EuiIcon type="iInCircle" />
+        <RiIcon type="InfoIcon" />
       </FlexItem>
       <FlexItem grow>{text}</FlexItem>
     </Row>
@@ -168,8 +170,8 @@ const JobsTree = (props: IProps) => {
         {name}
 
         {!isValid && (
-          <EuiIcon
-            type={statusErrorIcon}
+          <RiIcon
+            type="IndicatorXIcon"
             className="rdi-pipeline-nav__error"
             data-testid="rdi-pipeline-nav__error"
           />
@@ -179,7 +181,11 @@ const JobsTree = (props: IProps) => {
         className={styles.actions}
         data-testid={`rdi-nav-job-actions-${name}`}
       >
-        <RiTooltip content="Edit job file name" position="top">
+        <RiTooltip
+          content="Edit job file name"
+          position="top"
+          anchorClassName="flex-row"
+        >
           <IconButton
             icon={EditIcon}
             onClick={() => {
@@ -190,7 +196,11 @@ const JobsTree = (props: IProps) => {
             data-testid={`edit-job-name-${name}`}
           />
         </RiTooltip>
-        <RiTooltip content="Delete job" position="top">
+        <RiTooltip
+          content="Delete job"
+          position="top"
+          anchorClassName="flex-row"
+        >
           <ConfirmationPopover
             title={`Delete ${name}`}
             body={
@@ -269,6 +279,7 @@ const JobsTree = (props: IProps) => {
             <RiTooltip
               content="This file contains undeployed changes."
               position="top"
+              anchorClassName={styles.dotWrapper}
             >
               <span className={styles.dotWrapper}>
                 <span
@@ -281,8 +292,8 @@ const JobsTree = (props: IProps) => {
         </div>
         <Row className={styles.fullWidth} align="center">
           <FlexItem>
-            <EuiIcon
-              type="document"
+            <RiIcon
+              type="ContractsIcon"
               className={styles.fileIcon}
               data-test-subj="jobs-folder-icon-close"
             />
@@ -298,8 +309,9 @@ const JobsTree = (props: IProps) => {
     <Row className={styles.fullWidth} align="center" justify="between">
       <Row className={styles.fullWidth} align="center">
         <FlexItem>
-          <EuiIcon
-            type={accordionState === 'open' ? 'folderOpen' : 'folderClosed'}
+          <RiIcon
+            type="FolderIcon"
+            color={accordionState === 'open' ? 'success300' : 'informative400'}
             className={styles.folderIcon}
             data-test-subj="jobs-folder-icon"
           />
@@ -337,6 +349,7 @@ const JobsTree = (props: IProps) => {
         <RiTooltip
           content={!hideTooltip ? 'Add a job file' : null}
           position="top"
+          anchorClassName="flex-row"
         >
           <IconButton
             icon={PlusIcon}
@@ -367,8 +380,8 @@ const JobsTree = (props: IProps) => {
         >
           <Row className={styles.fullWidth} align="center">
             <FlexItem>
-              <EuiIcon
-                type="document"
+              <RiIcon
+                type="ContractsIcon"
                 className={styles.fileIcon}
                 data-test-subj="jobs-file-icon"
               />

@@ -155,17 +155,14 @@ export class DatabaseClientFactory {
       return client;
     } catch (error) {
       this.logger.error('Failed to create database client', error);
-      const exception = getRedisConnectionException(
-        error,
-        database,
-        database.name,
-      );
+
       this.analytics.sendConnectionFailedEvent(
         clientMetadata.sessionMetadata,
         database,
-        exception,
+        error,
       );
-      throw exception;
+
+      throw error;
     }
   }
 

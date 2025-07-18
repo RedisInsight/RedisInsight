@@ -83,6 +83,7 @@ const SentinelConnectionForm = (props: Props) => {
   const SubmitButton = ({ onClick, submitIsDisabled }: ISubmitButton) => (
     <RiTooltip
       position="top"
+      anchorClassName="euiToolTip__btn-disabled"
       title={
         submitIsDisabled
           ? validationErrors.REQUIRED_TITLE(Object.keys(errors).length)

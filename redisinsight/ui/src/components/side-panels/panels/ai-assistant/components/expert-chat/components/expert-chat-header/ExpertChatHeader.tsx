@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { EuiPopover } from '@elastic/eui'
 import cx from 'classnames'
 
 import { useDispatch } from 'react-redux'
@@ -10,7 +9,7 @@ import {
   TELEMETRY_EMPTY_VALUE,
   TelemetryEvent,
 } from 'uiSrc/telemetry'
-import { RiTooltip } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { InsightsPanelTabs, SidePanels } from 'uiSrc/slices/interfaces/insights'
 import {
   changeSelectedTab,
@@ -63,7 +62,10 @@ const ExpertChatHeader = (props: Props) => {
   return (
     <div className={styles.header}>
       {connectedInstanceName ? (
-        <RiTooltip content={connectedInstanceName}>
+        <RiTooltip
+          content={connectedInstanceName}
+          anchorClassName={styles.dbName}
+        >
           <Text size="xs" className="truncateText">
             {connectedInstanceName}
           </Text>
@@ -78,19 +80,17 @@ const ExpertChatHeader = (props: Props) => {
               ? undefined
               : 'Open relevant tutorials to learn more'
           }
+          anchorClassName={styles.headerBtnAnchor}
           position="bottom"
         >
-          <EuiPopover
+          <RiPopover
             ownFocus
-            initialFocus={false}
-            className={styles.popoverAnchor}
             panelClassName={cx('popoverLikeTooltip', styles.popover)}
             anchorClassName={styles.popoverAnchor}
             anchorPosition="downLeft"
             isOpen={isTutorialsPopoverOpen}
             panelPaddingSize="m"
             closePopover={() => setIsTutorialsPopoverOpen(false)}
-            focusTrapProps={{ scrollLock: true }}
             button={
               <EmptyButton
                 icon={LightBulbIcon}
@@ -115,7 +115,7 @@ const ExpertChatHeader = (props: Props) => {
                 Open tutorials
               </PrimaryButton>
             </>
-          </EuiPopover>
+          </RiPopover>
         </RiTooltip>
         <RestartChat
           button={

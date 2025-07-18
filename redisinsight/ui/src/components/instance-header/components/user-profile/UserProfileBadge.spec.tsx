@@ -5,7 +5,7 @@ import {
   fireEvent,
   render,
   screen,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
   within,
 } from 'uiSrc/utils/test-utils'
 import * as appFeaturesSlice from 'uiSrc/slices/app/features'
@@ -104,7 +104,7 @@ describe('UserProfileBadge', () => {
       await act(async () => {
         fireEvent.click(screen.getByTestId('user-profile-btn'))
       })
-      await waitForEuiPopoverVisible()
+      await waitForRiPopoverVisible()
 
       return resp
     }

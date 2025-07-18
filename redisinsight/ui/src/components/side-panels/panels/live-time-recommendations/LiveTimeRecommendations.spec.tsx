@@ -10,7 +10,7 @@ import {
   mockStore,
   render,
   screen,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
 } from 'uiSrc/utils/test-utils'
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FeatureFlags, Pages } from 'uiSrc/constants'
@@ -142,7 +142,7 @@ describe('LiveTimeRecommendations', () => {
 
     fireEvent.click(screen.getByTestId('footer-db-analysis-link'))
     ;(async () => {
-      await waitForEuiPopoverVisible()
+      await waitForRiPopoverVisible()
     })()
 
     fireEvent.click(screen.getByTestId('approve-insights-db-analysis-btn'))

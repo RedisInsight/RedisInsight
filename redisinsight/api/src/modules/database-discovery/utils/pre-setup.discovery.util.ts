@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { pathExists, readFile } from 'fs-extra';
 import { Database } from 'src/modules/database/models/database';
 import {
@@ -34,7 +35,7 @@ export const populateDefaultValues = (
   database: Partial<Database>,
 ): Database => {
   const {
-    id,
+    id = uuidv4(),
     host,
     port = 6379,
     name = `${host}:${port}`,
@@ -126,6 +127,7 @@ export const prepareDatabaseFromEnvs = async (
       id: id || '0',
       host: process.env[hostEnv],
       port: parseInt(process.env[`RI_REDIS_PORT${id}`], 10) || 6379,
+      db: parseInt(process.env[`RI_REDIS_DB${id}`], 10) || 0,
       name: process.env[`RI_REDIS_ALIAS${id}`],
       username: process.env[`RI_REDIS_USERNAME${id}`],
       password: process.env[`RI_REDIS_PASSWORD${id}`],

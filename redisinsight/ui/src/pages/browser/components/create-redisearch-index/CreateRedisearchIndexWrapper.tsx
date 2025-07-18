@@ -31,7 +31,11 @@ const CreateRedisearchIndexWrapper = ({
             New Index
           </Title>
           {!arePanelsCollapsed && (
-            <RiTooltip content="Close" position="left">
+            <RiTooltip
+              content="Close"
+              position="left"
+              anchorClassName={styles.closeRightPanel}
+            >
               <IconButton
                 icon={CancelSlimIcon}
                 aria-label="Close panel"

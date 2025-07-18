@@ -123,6 +123,7 @@ const AddDatabaseScreen = (props: Props) => {
           <FlexItem>
             <RiTooltip
               position="top"
+              anchorClassName="euiToolTip__btn-disabled"
               content={
                 isInvalid ? (
                   <span>
@@ -158,6 +159,7 @@ const AddDatabaseScreen = (props: Props) => {
               <FlexItem>
                 <RiTooltip
                   position="top"
+                  anchorClassName="euiToolTip__btn-disabled"
                   content={
                     isInvalid ? (
                       <span>

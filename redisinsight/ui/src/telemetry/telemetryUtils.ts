@@ -4,7 +4,6 @@
  */
 import isGlob from 'is-glob'
 import { cloneDeep, get } from 'lodash'
-import jsonpath from 'jsonpath'
 import { Maybe, isRedisearchAvailable } from 'uiSrc/utils'
 import { ApiEndpoints, KeyTypes } from 'uiSrc/constants'
 import { KeyViewType } from 'uiSrc/slices/interfaces/keys'
@@ -16,6 +15,7 @@ import {
 } from 'uiSrc/telemetry/interfaces'
 import { apiService } from 'uiSrc/services'
 import { store } from 'uiSrc/slices/store'
+import { getInstanceInfo } from 'uiSrc/services/database/instancesService'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import { IRedisModulesSummary, MatchType, RedisModules } from './interfaces'
 import { TelemetryEvent } from './events'
@@ -135,18 +135,17 @@ const getBasedOnViewTypeEvent = (
   }
 }
 
-const getJsonPathLevel = (path: string): string => {
+const getJsonPathLevel = (path: string): number => {
   try {
-    if (path === '$') {
-      return 'root'
-    }
-    const levelsLength = jsonpath.parse(
-      `$${path.startsWith('$') ? '.' : '..'}${path}`,
-    ).length
+    if (!path || path === '$') return 0
 
-    return levelsLength === 2 ? 'root' : `${levelsLength - 2}`
+    const stripped = path.startsWith('$.') ? path.slice(2) : path.slice(1)
+
+    const parts = stripped.split(/[.[\]]/).filter(Boolean)
+
+    return parts.length
   } catch (e) {
-    return 'root'
+    return 0
   }
 }
 
@@ -237,7 +236,28 @@ const getModuleSummaryToSent = (
   version: module.version,
   semanticVersion: module.semanticVersion,
 })
+const getRedisInfoSummary = async (id: string) => {
+  let infoData: any = {}
+  try {
+    const info = await getInstanceInfo(id)
+    infoData = {
+      redis_version: info?.version,
+      uptime_in_days: info?.stats?.uptime_in_days,
+      used_memory: info?.usedMemory,
+      connected_clients: info?.connectedClients,
+      maxmemory_policy: info?.stats?.maxmemory_policy,
+      instantaneous_ops_per_sec: info?.stats?.instantaneous_ops_per_sec,
+      instantaneous_input_kbps: info?.stats?.instantaneous_input_kbps,
+      instantaneous_output_kbps: info?.stats?.instantaneous_output_kbps,
+      numberOfKeysRange: info?.stats?.numberOfKeysRange,
+      totalKeys: info?.totalKeys,
+    }
+  } catch (e) {
+    // continue regardless of error
+  }
 
+  return infoData
+}
 const getRedisModulesSummary = (
   modules: AdditionalRedisModule[] = [],
 ): IRedisModulesSummary => {
@@ -279,4 +299,5 @@ export {
   getMatchType,
   getRedisModulesSummary,
   getFreeDbFlag,
+  getRedisInfoSummary,
 }

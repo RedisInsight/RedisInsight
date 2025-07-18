@@ -1,10 +1,11 @@
 import React from 'react'
+
+import styled from 'styled-components'
 import { numberWithSpaces } from 'uiSrc/utils/numbers'
 import { millisecondsFormat } from 'uiSrc/utils'
 import { BulkActionsType } from 'uiSrc/constants'
 import { Text } from 'uiSrc/components/base/text'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import styles from './styles.module.scss'
 
 export interface Props {
   type?: BulkActionsType
@@ -14,6 +15,16 @@ export interface Props {
   duration?: number
   'data-testid': string
 }
+
+const SummaryContainer = styled(Row)`
+  padding-top: 18px;
+`
+const SummaryValue = styled(Text)`
+  font-size: 18px !important;
+  line-height: 24px;
+  font-weight: 500 !important;
+`
+
 const BulkActionSummary = ({
   type = BulkActionsType.Delete,
   processed = 0,
@@ -22,34 +33,26 @@ const BulkActionSummary = ({
   duration = 0,
   'data-testid': testId,
 }: Props) => (
-  <Row align="start" className={styles.summary} data-testid={testId}>
+  <SummaryContainer data-testid={testId} gap="xl">
     <FlexItem>
-      <Text className={styles.summaryValue}>{numberWithSpaces(processed)}</Text>
-      <Text color="subdued" className={styles.summaryLabel}>
+      <SummaryValue>{numberWithSpaces(processed)}</SummaryValue>
+      <SummaryValue color="subdued">
         {type === BulkActionsType.Delete ? 'Keys' : 'Commands'} Processed
-      </Text>
+      </SummaryValue>
     </FlexItem>
     <FlexItem>
-      <Text className={styles.summaryValue}>{numberWithSpaces(succeed)}</Text>
-      <Text color="subdued" className={styles.summaryLabel}>
-        Success
-      </Text>
+      <SummaryValue>{numberWithSpaces(succeed)}</SummaryValue>
+      <SummaryValue color="subdued">Success</SummaryValue>
     </FlexItem>
     <FlexItem>
-      <Text className={styles.summaryValue}>{numberWithSpaces(failed)}</Text>
-      <Text color="subdued" className={styles.summaryLabel}>
-        Errors
-      </Text>
+      <SummaryValue>{numberWithSpaces(failed)}</SummaryValue>
+      <SummaryValue color="subdued">Errors</SummaryValue>
     </FlexItem>
     <FlexItem>
-      <Text className={styles.summaryValue}>
-        {millisecondsFormat(duration, 'H:mm:ss.SSS')}
-      </Text>
-      <Text color="subdued" className={styles.summaryLabel}>
-        Time Taken
-      </Text>
+      <SummaryValue>{millisecondsFormat(duration, 'H:mm:ss.SSS')}</SummaryValue>
+      <SummaryValue color="subdued">Time Taken</SummaryValue>
     </FlexItem>
-  </Row>
+  </SummaryContainer>
 )
 
 export default BulkActionSummary

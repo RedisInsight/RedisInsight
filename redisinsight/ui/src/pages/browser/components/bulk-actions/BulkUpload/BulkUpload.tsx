@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiFilePicker, EuiIcon, EuiPopover } from '@elastic/eui'
+import { EuiFilePicker } from '@elastic/eui'
 
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
@@ -20,7 +20,8 @@ import BulkActionSummary from 'uiSrc/pages/browser/components/bulk-actions/BulkA
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { isProcessedBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
-import { RiTooltip, UploadWarning } from 'uiSrc/components'
+import { UploadWarning } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
   PrimaryButton,
@@ -28,6 +29,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { RefreshIcon } from 'uiSrc/components/base/icons'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -117,8 +119,8 @@ const BulkUpload = (props: Props) => {
               }
               data-testid="bulk-upload-tooltip-example"
             >
-              <EuiIcon
-                type="iInCircle"
+              <RiIcon
+                type="InfoIcon"
                 style={{ marginLeft: 4, marginBottom: 2 }}
               />
             </RiTooltip>
@@ -177,7 +179,7 @@ const BulkUpload = (props: Props) => {
           {isProcessedBulkAction(status) ? 'Close' : 'Cancel'}
         </SecondaryButton>
         {!isCompleted ? (
-          <EuiPopover
+          <RiPopover
             id="bulk-upload-warning-popover"
             anchorPosition="upCenter"
             isOpen={isPopoverOpen}
@@ -200,7 +202,7 @@ const BulkUpload = (props: Props) => {
               className={styles.containerPopover}
               data-testid="bulk-action-tooltip"
             >
-              <EuiIcon type="alert" className={styles.popoverIcon} />
+              <RiIcon type="ToastDangerIcon" className={styles.popoverIcon} />
               <div className={cx(styles.popoverItem, styles.popoverItemTitle)}>
                 Are you sure you want to perform this action?
               </div>
@@ -217,7 +219,7 @@ const BulkUpload = (props: Props) => {
                 Upload
               </PrimaryButton>
             </Text>
-          </EuiPopover>
+          </RiPopover>
         ) : (
           <PrimaryButton
             icon={RefreshIcon}

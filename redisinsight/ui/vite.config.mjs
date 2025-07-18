@@ -10,7 +10,7 @@ import { fileURLToPath, URL } from 'url';
 import path from 'path';
 import { defaultConfig } from './src/config/default';
 
-const isElectron = defaultConfig.app.type === 'electron';
+const isElectron = defaultConfig.app.type === 'ELECTRON';
 // set path to index.tsx in the index.html
 process.env.RI_INDEX_NAME = isElectron ? 'indexElectron.tsx' : 'index.tsx';
 const outDir = isElectron ? '../dist/renderer' : './dist';
@@ -37,6 +37,18 @@ export default defineConfig({
     svgr({ include: ['**/*.svg?react'] }),
     reactClickToComponent(),
     ViteEjsPlugin(),
+    // Inject app info to window global object via custom plugin
+    {
+      name: 'app-info',
+      transformIndexHtml(html) {
+        const script = `<script>window.appInfo = ${JSON.stringify({
+          version: defaultConfig.app.version,
+          sha: defaultConfig.app.sha,
+        })};</script>`;
+
+        return html.replace(/<head>/, `<head>\n  ${script}`);
+      }
+    }
     // !isElectron && compression({
     //   include: [/\.(js)$/, /\.(css)$/],
     //   deleteOriginalAssets: true

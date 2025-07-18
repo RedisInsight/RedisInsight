@@ -1,4 +1,3 @@
-import { EuiIcon } from '@elastic/eui'
 import React, { useEffect, useState } from 'react'
 import { map, pick } from 'lodash'
 import { useHistory } from 'react-router-dom'
@@ -20,6 +19,7 @@ import { SentinelInputFieldType } from 'uiSrc/components/input-field-sentinel/In
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import { CreateSentinelDatabaseDto } from 'apiSrc/modules/redis-sentinel/dto/create.sentinel.database.dto'
 
@@ -157,7 +157,11 @@ const SentinelDatabasesPage = () => {
         return (
           <div className="host_port">
             <Text className="copyHostPortText">{text}</Text>
-            <RiTooltip position="right" content="Copy">
+            <RiTooltip
+              position="right"
+              content="Copy"
+              anchorClassName="copyPublicEndpointTooltip"
+            >
               <IconButton
                 icon={CopyIcon}
                 aria-label="Copy public endpoint"
@@ -243,10 +247,11 @@ const SentinelDatabasesPage = () => {
               onChangedInput={handleChangedInput}
               append={
                 <RiTooltip
+                  anchorClassName="inputAppendIcon"
                   position="left"
                   content="Select the Redis logical database to work with in Browser and Workbench."
                 >
-                  <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+                  <RiIcon type="InfoIcon" style={{ cursor: 'pointer' }} />
                 </RiTooltip>
               }
             />

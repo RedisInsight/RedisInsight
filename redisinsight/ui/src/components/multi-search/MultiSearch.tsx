@@ -1,6 +1,6 @@
-import { EuiFieldText, EuiIcon, EuiProgress, keys } from '@elastic/eui'
-import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import cx from 'classnames'
+import { EuiFieldText, keys } from '@elastic/eui'
 
 import { GroupBadge, RiTooltip } from 'uiSrc/components'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
@@ -15,6 +15,8 @@ import {
   ActionIconButton,
   IconButton,
 } from 'uiSrc/components/base/forms/buttons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { ProgressBarLoader } from 'uiSrc/components/base/display'
 import styles from './styles.module.scss'
 
 interface MultiSearchSuggestion {
@@ -204,11 +206,9 @@ const MultiSearch = (props: Props) => {
               data-testid="suggestions"
             >
               {suggestions?.loading && (
-                <EuiProgress
-                  color="primary"
-                  size="xs"
-                  position="absolute"
+                <ProgressBarLoader
                   data-testid="progress-suggestions"
+                  color="primary"
                 />
               )}
               <ul role="listbox">
@@ -262,7 +262,7 @@ const MultiSearch = (props: Props) => {
                 }
                 data-testid="clear-history-btn"
               >
-                <EuiIcon type="eraser" style={{ marginRight: 6 }} />
+                <RiIcon type="EraserIcon" style={{ marginRight: 6 }} />
                 <span>Clear history</span>
               </div>
             </div>
@@ -302,6 +302,7 @@ const MultiSearch = (props: Props) => {
           {disableSubmit && (
             <RiTooltip
               position="top"
+              anchorClassName={styles.anchorSubmitBtn}
               content="Please choose index in order to preform the search"
             >
               {SubmitBtn()}

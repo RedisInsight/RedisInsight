@@ -1,4 +1,6 @@
 /* eslint-disable max-len */
+import { numberWithSpaces } from 'src/utils/base.helper';
+
 export default {
   UNAUTHORIZED: 'Authorization failed',
   FORBIDDEN: 'Access denied',
@@ -102,14 +104,17 @@ export default {
     `Required ${module} module is not loaded.`,
   APP_SETTINGS_NOT_FOUND: () => 'Could not find application settings.',
   SERVER_INFO_NOT_FOUND: () => 'Could not find server info.',
-  INCREASE_MINIMUM_LIMIT: (count: string) =>
-    `Set MAXSEARCHRESULTS to at least ${count}.`,
+  INCREASE_MINIMUM_LIMIT: (count?: number) =>
+    count
+      ? `Set MAXSEARCHRESULTS to at least ${numberWithSpaces(count)}.`
+      : 'Increase MAXSEARCHRESULTS value to search more.',
   INVALID_WINDOW_ID: 'Invalid window id.',
   UNDEFINED_WINDOW_ID: 'Undefined window id.',
   LIBRARY_NOT_EXIST: 'This library does not exist.',
 
-  CLOUD_CAPI_KEY_UNAUTHORIZED: 'Unable to authorize such CAPI key',
+  REDIS_CONNECTION_FAILED: 'Unable to connect to the Redis database',
 
+  CLOUD_CAPI_KEY_UNAUTHORIZED: 'Unable to authorize such CAPI key',
   CLOUD_OAUTH_CANCELED: 'Authorization request was canceled.',
   CLOUD_OAUTH_MISCONFIGURATION: 'Authorization server misconfiguration.',
   CLOUD_OAUTH_GITHUB_EMAIL_PERMISSION:
@@ -154,6 +159,7 @@ export default {
     'Encountered a timeout error while attempting to retrieve data',
   RDI_VALIDATION_ERROR: 'Validation error',
   INVALID_RDI_INSTANCE_ID: 'Invalid rdi instance id.',
+  UNSAFE_BIG_JSON_LENGTH: 'This JSON is too large. Try opening it with Redis Insight Desktop.',
 
   // database settings
   DATABASE_SETTINGS_NOT_FOUND: 'Could not find settings for this database',

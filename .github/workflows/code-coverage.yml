@@ -1,0 +1,140 @@
+name: 'Code Coverage'
+on:
+  workflow_call:
+    inputs:
+      type:
+        description: Type of report (unit or integration)
+        type: string
+      resource_name:
+        description: Resource name of coverage report
+        type: string
+
+jobs:
+  coverage-unit:
+    runs-on: ubuntu-latest
+    name: Unit tests coverage
+    if: ${{ inputs.type == 'unit' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Coverage Report
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.resource_name }}
+          path: report
+
+      - uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+
+      - uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          prnumber: ${{ steps.findPr.outputs.number }}
+          coverage-file: report/coverage/report.json
+          base-coverage-file: report/coverage/report.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-step: all
+          custom-title: Code Coverage - ${{ inputs.resource_name == 'report-be' && 'Backend' || 'Frontend' }} unit tests
+
+  coverage-integration:
+    runs-on: ubuntu-latest
+    name: Integration tests coverage
+    if: ${{ inputs.type == 'integration' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Coverage Report
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.resource_name }}
+
+      - name: Parse Coverage Summary
+        id: parse-coverage
+        run: |
+          # Extract coverage data from file.
+          # Example of processed row:
+          #   Statements   : 81.75% ( 16130/19730 )
+          # field '$3' = 81.75%, field '$5' = 16130
+          extract_coverage_data() {
+              local keyword=$1
+              local field=$2
+              awk "/$keyword/ {print $field}" integration-coverage.txt | tr -d '\n|%'
+          }
+
+          # Determine status based on percentage
+          get_status() {
+              if [ "$(echo "$1 < 50" | bc)" -eq 1 ]; then
+                  echo "🔴"
+              elif [ "$(echo "$1 < 80" | bc)" -eq 1 ]; then
+                  echo "🟡"
+              else
+                  echo "🟢"
+              fi
+          }
+
+          # Extract coverage data from the summary
+          STATEMENTS_PERCENT=$(extract_coverage_data "Statements" '$3')
+          STATEMENTS_COVERED=$(extract_coverage_data "Statements" '$5')
+          STATEMENTS_STATUS=$(get_status $STATEMENTS_PERCENT)
+
+          BRANCHES_PERCENT=$(extract_coverage_data "Branches" '$3')
+          BRANCHES_COVERED=$(extract_coverage_data "Branches" '$5')
+          BRANCHES_STATUS=$(get_status $BRANCHES_PERCENT)
+
+          FUNCTIONS_PERCENT=$(extract_coverage_data "Functions" '$3')
+          FUNCTIONS_COVERED=$(extract_coverage_data "Functions" '$5')
+          FUNCTIONS_STATUS=$(get_status $FUNCTIONS_PERCENT)
+
+          LINES_PERCENT=$(extract_coverage_data "Lines" '$3')
+          LINES_COVERED=$(extract_coverage_data "Lines" '$5')
+          LINES_STATUS=$(get_status $LINES_PERCENT)
+
+          # Format as a Markdown table
+          echo "| Status      | Category    | Percentage  | Covered / Total |" > coverage-table.md
+          echo "|-------------|-------------|-------------|-----------------|" >> coverage-table.md
+          echo "| $STATEMENTS_STATUS | Statements  | ${STATEMENTS_PERCENT}% | ${STATEMENTS_COVERED} |" >> coverage-table.md
+          echo "| $BRANCHES_STATUS | Branches    | ${BRANCHES_PERCENT}% | ${BRANCHES_COVERED} |" >> coverage-table.md
+          echo "| $FUNCTIONS_STATUS | Functions   | ${FUNCTIONS_PERCENT}% | ${FUNCTIONS_COVERED} |" >> coverage-table.md
+          echo "| $LINES_STATUS | Lines       | ${LINES_PERCENT}% | ${LINES_COVERED} |" >> coverage-table.md
+
+      - uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+
+      - name: Post or Update Coverage Summary Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const table = fs.readFileSync('coverage-table.md', 'utf8');
+            const commentBody = `### Code Coverage - Integration Tests\n\n${table}`;
+
+            // Fetch existing comments on the pull request
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: process.env.RR_Number,
+            });
+
+            // Check if a comment with the same header already exists
+            const existingComment = comments.find(comment =>
+              comment.body.startsWith('### Code Coverage - Integration Tests')
+            );
+
+            if (existingComment) {
+              // Update the existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: commentBody,
+              });
+            } else {
+              // Create a new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: process.env.RR_Number,
+                body: commentBody,
+              });
+            }
+        env:
+          RR_Number: ${{ steps.findPr.outputs.number }}

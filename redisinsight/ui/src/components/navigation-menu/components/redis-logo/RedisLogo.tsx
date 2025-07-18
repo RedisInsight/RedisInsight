@@ -1,15 +1,18 @@
-import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { Pages } from 'uiSrc/constants'
-import { RiTooltip } from 'uiSrc/components'
+
 import { BuildType } from 'uiSrc/constants/env'
-import { getRouterLinkProps } from 'uiSrc/services'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
-import LogoSVG from 'uiSrc/assets/img/logo_small.svg?react'
 import { appFeatureFlagsFeaturesSelector } from 'uiSrc/slices/app/features'
+import {
+  SideBarItem,
+  SideBarItemIcon,
+} from 'uiSrc/components/base/layout/sidebar'
+import { getRouterLinkProps } from 'uiSrc/services'
+import { Pages } from 'uiSrc/constants'
 import { Link } from 'uiSrc/components/base/link/Link'
+import LogoSVG from 'uiSrc/assets/img/logo_small.svg?react'
 import styles from '../../styles.module.scss'
 
 type Props = {
@@ -23,32 +26,31 @@ export const RedisLogo = ({ isRdiWorkspace }: Props) => {
   if (!envDependent?.flag) {
     return (
       <span className={cx(styles.iconNavItem, styles.homeIcon)}>
-        <EuiIcon aria-label="Redis Insight Homepage" type={LogoSVG} />
+        <SideBarItemIcon aria-label="Redis Insight Homepage" icon={LogoSVG} />
       </span>
     )
   }
 
   return (
-    <RiTooltip
-      content={
-        server?.buildType === BuildType.RedisStack
-          ? 'Edit database'
-          : isRdiWorkspace
-            ? 'Redis Data Integration'
-            : 'Redis Databases'
-      }
-      position="right"
+    <Link
+      {...getRouterLinkProps(isRdiWorkspace ? Pages.rdi : Pages.home)}
+      data-testid="redis-logo-link"
+      style={{ backgroundColor: 'transparent' }}
     >
-      <span className={cx(styles.iconNavItem, styles.homeIcon)}>
-        <Link
-          {...getRouterLinkProps(isRdiWorkspace ? Pages.rdi : Pages.home)}
-          className={styles.logo}
-          data-test-subj="home-page-btn"
-          data-testid="redis-logo-link"
-        >
-          <EuiIcon aria-label="Redis Insight Homepage" type={LogoSVG} />
-        </Link>
-      </span>
-    </RiTooltip>
+      <SideBarItem
+        tooltipProps={{
+          text:
+            server?.buildType === BuildType.RedisStack
+              ? 'Edit database'
+              : isRdiWorkspace
+                ? 'Redis Data Integration'
+                : 'Redis Databases',
+          placement: 'right',
+        }}
+        style={{ marginBlock: '2rem', marginInline: 'auto' }}
+      >
+        <SideBarItemIcon icon={LogoSVG} />
+      </SideBarItem>
+    </Link>
   )
 }

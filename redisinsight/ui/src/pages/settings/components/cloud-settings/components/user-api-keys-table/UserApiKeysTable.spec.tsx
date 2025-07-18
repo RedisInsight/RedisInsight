@@ -7,7 +7,7 @@ import {
   render,
   screen,
   fireEvent,
-  waitForEuiPopoverVisible,
+  waitForRiPopoverVisible,
   act,
 } from 'uiSrc/utils/test-utils'
 
@@ -78,7 +78,7 @@ describe('UserApiKeysTable', () => {
     fireEvent.click(
       screen.getByTestId(`remove-key-button-${mockedCapiKeys[0].name}-icon`),
     )
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     fireEvent.click(
       screen.getByTestId(`remove-key-button-${mockedCapiKeys[0].name}`),
@@ -100,7 +100,7 @@ describe('UserApiKeysTable', () => {
     fireEvent.click(
       screen.getByTestId(`remove-key-button-${mockedCapiKeys[0].name}-icon`),
     )
-    await waitForEuiPopoverVisible()
+    await waitForRiPopoverVisible()
 
     expect(sendEventTelemetry).toBeCalledWith({
       event: TelemetryEvent.SETTINGS_CLOUD_API_KEY_REMOVE_CLICKED,

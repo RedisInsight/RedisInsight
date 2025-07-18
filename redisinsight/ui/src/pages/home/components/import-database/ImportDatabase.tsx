@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiFilePicker, EuiIcon } from '@elastic/eui'
+import { EuiFilePicker } from '@elastic/eui'
 import ReactDOM from 'react-dom'
 import {
   fetchInstancesAction,
@@ -22,6 +22,7 @@ import { InfoIcon } from 'uiSrc/components/base/icons'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { ColorText, Text } from 'uiSrc/components/base/text'
 import { Loader } from 'uiSrc/components/base/display'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import ResultsLog from './components/ResultsLog'
 
 import styles from './styles.module.scss'
@@ -143,6 +144,7 @@ const ImportDatabase = (props: Props) => {
         </SecondaryButton>
         <RiTooltip
           position="top"
+          anchorClassName="euiToolTip__btn-disabled"
           content={isSubmitDisabled ? 'Upload a file' : undefined}
         >
           <PrimaryButton
@@ -211,11 +213,7 @@ const ImportDatabase = (props: Props) => {
             )}
             {error && (
               <div className={styles.result} data-testid="result-failed">
-                <EuiIcon
-                  type="crossInACircleFilled"
-                  size="xxl"
-                  color="danger"
-                />
+                <RiIcon type="ToastCancelIcon" color="danger600" size="xxl" />
                 <Text color="subdued" style={{ marginTop: 16 }}>
                   Failed to add database connections
                 </Text>

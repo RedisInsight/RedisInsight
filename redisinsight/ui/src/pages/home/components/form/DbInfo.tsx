@@ -1,6 +1,5 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { EuiIcon } from '@elastic/eui'
 import { capitalize } from 'lodash'
 import cx from 'classnames'
 
@@ -14,6 +13,7 @@ import {
   Group as ListGroup,
   Item as ListGroupItem,
 } from 'uiSrc/components/base/layout/list'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { Endpoint } from 'apiSrc/common/models'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
@@ -48,6 +48,7 @@ const DbInfo = (props: Props) => {
     <RiTooltip
       title="Host:port"
       position="left"
+      anchorClassName={styles.anchorEndpoints}
       content={
         <ul className={styles.endpointsList}>
           {nodes?.map(({ host: eHost, port: ePort }) => (
@@ -60,9 +61,9 @@ const DbInfo = (props: Props) => {
         </ul>
       }
     >
-      <EuiIcon
-        type="iInCircle"
-        color="subdued"
+      <RiIcon
+        type="InfoIcon"
+        color="informative400"
         title=""
         style={{ cursor: 'pointer' }}
       />

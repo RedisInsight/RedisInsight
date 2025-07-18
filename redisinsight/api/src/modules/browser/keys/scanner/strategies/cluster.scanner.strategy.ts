@@ -98,11 +98,11 @@ export class ClusterScannerStrategy extends ScannerStrategy {
           ...commandArgs,
         ]);
 
-        // eslint-disable-next-line no-param-reassign
+        /* eslint-disable no-param-reassign */
         node.cursor = parseInt(result[0], 10);
-        node.keys.push(...result[1]);
-        // eslint-disable-next-line no-param-reassign
+        node.keys = node.keys.concat(result[1]);
         node.scanned += count;
+        /* eslint-enable no-param-reassign */
       }),
     );
   }

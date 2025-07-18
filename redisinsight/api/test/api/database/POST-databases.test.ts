@@ -1240,7 +1240,7 @@ describe('POST /databases', () => {
 
         await validateApiCall({
           endpoint,
-          statusCode: 400,
+          statusCode: 424,
           data: {
             name: dbName,
             host: constants.TEST_REDIS_HOST,

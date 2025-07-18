@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { EuiPopover } from '@elastic/eui'
 import { map, pick } from 'lodash'
 import { useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -16,7 +15,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
-import { RiTooltip } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { Pages } from 'uiSrc/constants'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { SearchInput } from 'uiSrc/components/base/inputs'
@@ -131,7 +130,7 @@ const RedisCloudDatabasesPage = ({
   }
 
   const CancelButton = ({ isPopoverOpen: popoverIsOpen }: IPopoverProps) => (
-    <EuiPopover
+    <RiPopover
       anchorPosition="upCenter"
       isOpen={popoverIsOpen}
       closePopover={closePopover}
@@ -161,12 +160,13 @@ const RedisCloudDatabasesPage = ({
           Proceed
         </DestructiveButton>
       </div>
-    </EuiPopover>
+    </RiPopover>
   )
 
   const SubmitButton = ({ isDisabled }: { isDisabled: boolean }) => (
     <RiTooltip
       position="top"
+      anchorClassName="euiToolTip__btn-disabled"
       title={
         isDisabled ? validationErrors.SELECT_AT_LEAST_ONE('database') : null
       }

@@ -61,6 +61,7 @@ const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
   }) => (
     <RiTooltip
       position="top"
+      anchorClassName="euiToolTip__btn-disabled"
       data-testid="btn-submit-tooltip"
       content={
         disabled ? (

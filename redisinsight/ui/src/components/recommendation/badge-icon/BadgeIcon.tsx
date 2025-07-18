@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { RiTooltip } from 'uiSrc/components'
 import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import styles from '../styles.module.scss'
@@ -15,7 +16,7 @@ const BadgeIcon = ({ id, icon, name }: Props) => (
     data-testid={`recommendation-badge-${id}`}
   >
     <div data-testid={id} className={styles.badgeWrapper}>
-      <RiTooltip content={name} position="top">
+      <RiTooltip content={name} position="top" anchorClassName="flex-row">
         {icon}
       </RiTooltip>
     </div>

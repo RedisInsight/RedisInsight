@@ -22,7 +22,11 @@ export const WindowControlGroup = ({
 }: Props) => (
   <Row gap="m" justify="end">
     <FlexItem>
-      <RiTooltip content={hideContent} position="top">
+      <RiTooltip
+        content={hideContent}
+        position="top"
+        anchorClassName="flex-row"
+      >
         <IconButton
           size="S"
           icon={MinusIcon}
@@ -34,7 +38,11 @@ export const WindowControlGroup = ({
       </RiTooltip>
     </FlexItem>
     <FlexItem>
-      <RiTooltip content={closeContent} position="top">
+      <RiTooltip
+        content={closeContent}
+        position="top"
+        anchorClassName="flex-row"
+      >
         <IconButton
           size="S"
           icon={CancelSlimIcon}

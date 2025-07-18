@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import cx from 'classnames'
-import { EuiPopover } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
 import { sentinelSelector } from 'uiSrc/slices/instances/sentinel'
@@ -18,7 +17,7 @@ import { InfoIcon } from 'uiSrc/components/base/icons'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
 import { Text } from 'uiSrc/components/base/text'
-import { RiTooltip } from 'uiSrc/components'
+import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { Table, ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import styles from '../../../styles.module.scss'
@@ -114,8 +113,6 @@ const SentinelDatabases = ({
         item.numberOfSlaves?.toString().includes(value),
     )
 
-    console.log('+++onQueryChange', itemsTemp)
-
     if (!itemsTemp.length) {
       setMessage(notFoundMsg)
     }
@@ -123,7 +120,7 @@ const SentinelDatabases = ({
   }
 
   const CancelButton = ({ isPopoverOpen: popoverIsOpen }: IPopoverProps) => (
-    <EuiPopover
+    <RiPopover
       anchorPosition="upCenter"
       isOpen={popoverIsOpen}
       closePopover={closePopover}
@@ -154,7 +151,7 @@ const SentinelDatabases = ({
           Proceed
         </DestructiveButton>
       </div>
-    </EuiPopover>
+    </RiPopover>
   )
 
   const SubmitButton = ({ onClick }: { onClick: () => void }) => {
@@ -175,6 +172,7 @@ const SentinelDatabases = ({
     return (
       <RiTooltip
         position="top"
+        anchorClassName="euiToolTip__btn-disabled"
         title={title}
         content={
           isSubmitDisabled() ? (

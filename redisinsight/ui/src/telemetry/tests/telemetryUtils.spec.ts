@@ -1,6 +1,10 @@
 import { RootState, store } from 'uiSrc/slices/store'
 import { TelemetryEvent } from '../events'
-import { getRedisModulesSummary, getFreeDbFlag } from '../telemetryUtils'
+import {
+  getRedisModulesSummary,
+  getFreeDbFlag,
+  getJsonPathLevel,
+} from '../telemetryUtils'
 
 const DEFAULT_SUMMARY = Object.freeze({
   RediSearch: { loaded: false },
@@ -152,5 +156,48 @@ describe('determineFreeDbFlag', () => {
     const result = getFreeDbFlag(event, freeDbEvents)
 
     expect(result).toEqual({})
+  })
+})
+
+describe('getJsonPathLevel', () => {
+  it('returns 0 for empty or root path', () => {
+    expect(getJsonPathLevel('')).toBe(0)
+    expect(getJsonPathLevel('$')).toBe(0)
+  })
+
+  it('returns 1 for top-level properties', () => {
+    expect(getJsonPathLevel('$.foo')).toBe(1)
+    expect(getJsonPathLevel('$[0]')).toBe(1)
+  })
+
+  it('returns correct level for nested dot paths', () => {
+    expect(getJsonPathLevel('$.foo.bar')).toBe(2)
+    expect(getJsonPathLevel('$.foo.bar.baz')).toBe(3)
+  })
+
+  it('returns correct level for mixed dot and bracket paths', () => {
+    expect(getJsonPathLevel('$.foo[0].bar')).toBe(3)
+    expect(getJsonPathLevel('$[0].foo.bar')).toBe(3)
+    expect(getJsonPathLevel('$[0][1][2]')).toBe(3)
+  })
+
+  it('returns correct level for complex mixed paths', () => {
+    expect(getJsonPathLevel('$.foo[1].bar[2].baz')).toBe(5)
+    expect(getJsonPathLevel('$[0].foo[1].bar')).toBe(4)
+  })
+
+  it('handles malformed paths gracefully', () => {
+    expect(getJsonPathLevel('.foo.bar')).toBe(2) // missing $
+    expect(getJsonPathLevel('foo.bar')).toBe(2) // missing $
+    expect(getJsonPathLevel('$foo.bar')).toBe(2) // $ not followed by dot
+  })
+
+  it('returns 0 if an exception is thrown (e.g., non-string)', () => {
+    // @ts-expect-error testing runtime failure
+    expect(getJsonPathLevel(null)).toBe(0)
+    // @ts-expect-error testing runtime failure
+    expect(getJsonPathLevel(undefined)).toBe(0)
+    // @ts-expect-error testing runtime failure
+    expect(getJsonPathLevel({})).toBe(0)
   })
 })

@@ -17,6 +17,7 @@ const agreementItemSchema = Joi.object().keys({
   category: Joi.string().optional(),
   description: Joi.string().optional(),
   requiredText: Joi.string().optional(),
+  linkToPrivacyPolicy: Joi.boolean().required(),
 });
 
 const responseSchema = Joi.object()

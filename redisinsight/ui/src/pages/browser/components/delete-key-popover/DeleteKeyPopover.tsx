@@ -1,5 +1,3 @@
-import { EuiPopover } from '@elastic/eui'
-
 import React from 'react'
 
 import cx from 'classnames'
@@ -13,6 +11,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { DeleteIcon } from 'uiSrc/components/base/icons'
 import { Text } from 'uiSrc/components/base/text'
+import { RiPopover } from 'uiSrc/components/base'
 
 export interface DeleteProps {
   nameString: string
@@ -35,7 +34,7 @@ export const DeleteKeyPopover = ({
   onDelete,
   onOpenPopover,
 }: DeleteProps) => (
-  <EuiPopover
+  <RiPopover
     anchorClassName={cx('showOnHoverKey', { show: deletePopoverId === rowId })}
     anchorPosition="leftUp"
     isOpen={deletePopoverId === rowId}
@@ -69,5 +68,5 @@ export const DeleteKeyPopover = ({
         Delete
       </DestructiveButton>
     </>
-  </EuiPopover>
+  </RiPopover>
 )

@@ -106,11 +106,11 @@ export class StandaloneScannerStrategy extends ScannerStrategy {
       ])) as [string, RedisClientCommandReply[]];
 
       const [nextCursor, keys] = execResult;
-      // eslint-disable-next-line no-param-reassign
+      /* eslint-disable no-param-reassign */
       node.cursor = parseInt(nextCursor, 10);
-      // eslint-disable-next-line no-param-reassign
       node.scanned += COUNT;
-      node.keys.push(...keys);
+      node.keys = node.keys.concat(keys);
+      /* eslint-enable no-param-reassign */
       fullScanned = node.cursor === 0;
     }
   }

@@ -1,39 +1,6 @@
-export type { IconProps } from './Icon'
-export { BannedIcon } from './BannedIcon'
-export { BulkActions } from './BulkActions'
-export { Cloud } from './Cloud'
-export { CopilotIcon } from './Copilot'
-export { DislikeIcon } from './DislikeIcon'
-export { ExtendIcon } from './ExtendIcon'
-export { Group as GroupModeIcon } from './Group'
-export { Icon } from './Icon'
-export { LikeIcon } from './LikeIcon'
-export { MinusInCircleIcon } from './MinusInCircle'
-export { Play as PlayIcon } from './Play'
-export { ProfilerIcon } from './ProfilerIcon'
-export { PlayFilledIcon } from './PlayFilled'
-export { PlusInCircle as PlusInCircleIcon } from './PlusInCircle'
-export { RawMode as RawModeIcon } from './RawMode'
-export { RedisLogo } from './RedisLogo'
-export { RedisLogoFullIcon } from './RedisLogoFullIcon'
-export { RiResetIcon } from './RIResetIcon'
-export { RiRocketIcon } from './RIRocketIcon'
-export { RiStopIcon } from './RIStopIcon'
-export { ShrinkIcon } from './ShrinkIcon'
-export { SnoozeIcon } from './SnoozeIcon'
-export { StarsIcon } from './StarsIcon'
-export { ThreeDotsIcon } from './ThreeDotsIcon'
-export { Trigger } from './Trigger'
-export { UserInCircle } from './UserInCircle'
-
-export * from './modules'
-export * from './options'
-export * from './sidebar'
-
-export * from '@redis-ui/icons'
-export {
-  LoaderLargeIcon,
-  AzureIcon,
-  Awss3Icon,
-  GooglecloudIcon,
-} from '@redis-ui/icons/multicolor'
+// Core icon system exports
+export * from './Icon'
+// New centralized icon system
+export * from './RiIcon'
+// Export all individual icons from the registry
+export * from './iconRegistry'

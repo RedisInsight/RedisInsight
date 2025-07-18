@@ -1,10 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { classToClass } from 'src/utils';
-import { AgreementsRepository } from 'src/modules/settings/repositories/agreements.repository';
+import { AgreementsRepository, DefaultAgreementsOptions } from 'src/modules/settings/repositories/agreements.repository';
 import { AgreementsEntity } from 'src/modules/settings/entities/agreements.entity';
 import { Agreements } from 'src/modules/settings/models/agreements';
 import { SessionMetadata } from 'src/common/models';
+import { plainToInstance } from 'class-transformer';
 
 export class LocalAgreementsRepository extends AgreementsRepository {
   constructor(
@@ -14,15 +15,22 @@ export class LocalAgreementsRepository extends AgreementsRepository {
     super();
   }
 
-  async getOrCreate(): Promise<Agreements> {
+  async getOrCreate(
+    sessionMetadata: SessionMetadata,
+    defaultOptions: DefaultAgreementsOptions = {},
+  ): Promise<Agreements> {
     let entity = await this.repository.findOneBy({});
-
-    if (!entity) {
+    if (!entity?.data) {
       try {
-        entity = await this.repository.save(this.repository.create({ id: 1 }));
+        entity = await this.repository.save(
+          classToClass(AgreementsEntity, plainToInstance(Agreements, {
+            ...defaultOptions,
+            id: 1,
+          })),
+        );
       } catch (e) {
         if (e.code === 'SQLITE_CONSTRAINT') {
-          return this.getOrCreate();
+          return this.getOrCreate(sessionMetadata, defaultOptions);
         }
 
         throw e;
@@ -33,13 +41,13 @@ export class LocalAgreementsRepository extends AgreementsRepository {
   }
 
   async update(
-    _: SessionMetadata,
+    sessionMetadata: SessionMetadata,
     agreements: Agreements,
   ): Promise<Agreements> {
     const entity = classToClass(AgreementsEntity, agreements);
 
     await this.repository.save(entity);
 
-    return this.getOrCreate();
+    return this.getOrCreate(sessionMetadata);
   }
 }

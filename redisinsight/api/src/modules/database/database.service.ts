@@ -9,16 +9,12 @@ import { Database } from 'src/modules/database/models/database';
 import ERROR_MESSAGES from 'src/constants/error-messages';
 import { DatabaseRepository } from 'src/modules/database/repositories/database.repository';
 import { DatabaseAnalytics } from 'src/modules/database/database.analytics';
-import {
-  catchRedisConnectionError,
-  classToClass,
-  getRedisConnectionException,
-} from 'src/utils';
+import { classToClass } from 'src/utils';
 import { CreateDatabaseDto } from 'src/modules/database/dto/create.database.dto';
 import { DatabaseInfoProvider } from 'src/modules/database/providers/database-info.provider';
 import { DatabaseFactory } from 'src/modules/database/providers/database.factory';
 import { UpdateDatabaseDto } from 'src/modules/database/dto/update.database.dto';
-import { AppRedisInstanceEvents, RedisErrorCodes } from 'src/constants';
+import { AppRedisInstanceEvents } from 'src/constants';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DeleteDatabasesResponse } from 'src/modules/database/dto/delete.databases.response';
 import { ClientContext, SessionMetadata } from 'src/common/models';
@@ -31,6 +27,7 @@ import {
   RedisClientFactory,
 } from 'src/modules/redis/redis.client.factory';
 import { RedisClientStorage } from 'src/modules/redis/redis.client.storage';
+import { RedisConnectionSentinelMasterRequiredException } from 'src/modules/redis/exceptions/connection';
 
 @Injectable()
 export class DatabaseService {
@@ -221,11 +218,9 @@ export class DatabaseService {
     } catch (error) {
       this.logger.error('Failed to add database.', error, sessionMetadata);
 
-      const exception = getRedisConnectionException(error, dto);
+      this.analytics.sendInstanceAddFailedEvent(sessionMetadata, error);
 
-      this.analytics.sendInstanceAddFailedEvent(sessionMetadata, exception);
-
-      throw exception;
+      throw error;
     }
   }
 
@@ -279,7 +274,8 @@ export class DatabaseService {
         error,
         sessionMetadata,
       );
-      throw catchRedisConnectionError(error, database);
+
+      throw error;
     }
   }
 
@@ -317,12 +313,13 @@ export class DatabaseService {
       return;
     } catch (error) {
       // don't throw an error to support sentinel autodiscovery flow
-      if (error.message === RedisErrorCodes.SentinelParamsRequired) {
+      if (error instanceof RedisConnectionSentinelMasterRequiredException) {
         return;
       }
 
       this.logger.error('Connection test failed', error, sessionMetadata);
-      throw catchRedisConnectionError(error, database);
+
+      throw error;
     }
   }
 

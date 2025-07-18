@@ -1,18 +1,14 @@
 import React from 'react'
-import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 import { useSelector } from 'react-redux'
 import { oauthCloudPAgreementSelector } from 'uiSrc/slices/oauth/cloud'
 import { OAuthStrategy } from 'uiSrc/slices/interfaces'
 
-import GoogleIcon from 'uiSrc/assets/img/oauth/google.svg?react'
-import GithubIcon from 'uiSrc/assets/img/oauth/github.svg?react'
-import SsoIcon from 'uiSrc/assets/img/oauth/sso.svg?react'
-
 import { EmptyButton } from 'uiSrc/components/base/forms/buttons'
 import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import { Text } from 'uiSrc/components/base/text'
 import { RiTooltip } from 'uiSrc/components'
+import { AllIconsType, RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -31,21 +27,21 @@ const OAuthSocialButtons = (props: Props) => {
     {
       text: 'Google',
       className: styles.googleButton,
-      icon: GoogleIcon,
+      icon: 'GoogleSigninIcon',
       label: 'google-oauth',
       strategy: OAuthStrategy.Google,
     },
     {
       text: 'Github',
       className: styles.githubButton,
-      icon: GithubIcon,
+      icon: 'GithubIcon',
       label: 'github-oauth',
       strategy: OAuthStrategy.GitHub,
     },
     {
       text: 'SSO',
       className: styles.ssoButton,
-      icon: SsoIcon,
+      icon: 'SsoIcon',
       label: 'sso-oauth',
       strategy: OAuthStrategy.SSO,
     },
@@ -60,6 +56,7 @@ const OAuthSocialButtons = (props: Props) => {
         <RiTooltip
           key={label}
           position="top"
+          anchorClassName={!agreement ? 'euiToolTip__btn-disabled' : ''}
           content={agreement ? null : 'Acknowledge the agreement'}
           data-testid={`${label}-tooltip`}
         >
@@ -75,7 +72,7 @@ const OAuthSocialButtons = (props: Props) => {
             aria-labelledby={label}
           >
             <FlexItem direction={inline ? 'row' : 'column'}>
-              <EuiIcon type={icon} />
+              <RiIcon type={icon as AllIconsType} />
               <Text className={styles.label}>{text}</Text>
             </FlexItem>
           </EmptyButton>

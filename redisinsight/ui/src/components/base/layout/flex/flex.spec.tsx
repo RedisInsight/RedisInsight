@@ -8,8 +8,9 @@ const gapStyles = {
   xs: '0.2rem',
   s: '0.4rem',
   m: '0.8rem',
-  l: '2rem',
-  xl: '2.4rem',
+  l: '1.2rem',
+  xl: '2rem',
+  xxl: '2.4rem',
 }
 describe('Flex Components', () => {
   it('should render', () => {

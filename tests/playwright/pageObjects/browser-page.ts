@@ -2463,4 +2463,242 @@ export class BrowserPage extends BasePage {
             }
         }
     }
+
+    async editJsonProperty(
+        propertyKey: string,
+        newValue: string | number | boolean,
+    ): Promise<void> {
+        // TODO: Ideally this should find by property key, but the current DOM structure
+        // makes it complex to navigate from key to value reliably. For now, we use the
+        // working approach of finding by current value.
+        const currentValue = await this.getJsonPropertyValue(propertyKey)
+        if (!currentValue) {
+            throw new Error(`Property "${propertyKey}" not found`)
+        }
+
+        // Find and click the value element
+        const valueElement = this.page
+            .getByTestId('json-scalar-value')
+            .filter({ hasText: currentValue })
+            .first()
+
+        await valueElement.click()
+        await expect(this.inlineItemEditor).toBeVisible()
+
+        // Format and apply the new value
+        const formattedValue =
+            typeof newValue === 'string' ? `"${newValue}"` : newValue.toString()
+
+        await this.inlineItemEditor.clear()
+        await this.inlineItemEditor.fill(formattedValue)
+        await this.applyButton.click()
+        await expect(this.inlineItemEditor).not.toBeVisible()
+
+        if (await this.toast.isCloseButtonVisible()) {
+            await this.toast.closeToast()
+        }
+    }
+
+    // Convenience methods that use the generic editJsonProperty method
+    async editJsonString(propertyKey: string, newValue: string): Promise<void> {
+        await this.editJsonProperty(propertyKey, newValue)
+    }
+
+    async editJsonNumber(propertyKey: string, newValue: number): Promise<void> {
+        await this.editJsonProperty(propertyKey, newValue)
+    }
+
+    async editJsonBoolean(
+        propertyKey: string,
+        newValue: boolean,
+    ): Promise<void> {
+        await this.editJsonProperty(propertyKey, newValue)
+    }
+
+    async addJsonProperty(
+        key: string,
+        value: string | number | boolean,
+    ): Promise<void> {
+        // For JSON objects, add a new property at the same level
+        await this.addJsonObjectButton.click()
+
+        // Wait for the form to appear
+        await expect(this.jsonKeyInput).toBeVisible()
+        await expect(this.jsonValueInput).toBeVisible()
+
+        // Format the key and value properly for JSON
+        const formattedKey = `"${key}"`
+        let formattedValue: string
+        if (typeof value === 'string') {
+            formattedValue = `"${value}"`
+        } else {
+            formattedValue = value.toString()
+        }
+
+        // Fill the key and value
+        await this.jsonKeyInput.clear()
+        await this.jsonKeyInput.fill(formattedKey)
+        await this.jsonValueInput.clear()
+        await this.jsonValueInput.fill(formattedValue)
+
+        // Apply the changes
+        await this.applyButton.click()
+
+        // Wait for the form to disappear
+        await expect(this.jsonKeyInput).not.toBeVisible()
+
+        // Close any success toast if it appears
+        if (await this.toast.isCloseButtonVisible()) {
+            await this.toast.closeToast()
+        }
+    }
+
+    async editEntireJsonStructure(newJsonStructure: string): Promise<void> {
+        // Switch to Monaco editor
+        await this.page
+            .getByRole('button', { name: 'Change editor type' })
+            .click()
+
+        // Wait for Monaco editor
+        const monacoContainer = this.page.getByTestId('monaco-editor-json-data')
+        await expect(monacoContainer).toBeVisible()
+
+        // Clear and set new JSON content
+        const textarea = monacoContainer.locator('textarea').first()
+        await textarea.focus()
+        await this.page.keyboard.press('Control+A')
+        await this.page.keyboard.press('Delete')
+        await textarea.type(newJsonStructure)
+
+        // Wait for button to be enabled and click it
+        const updateButton = this.page.getByTestId('json-data-update-btn')
+        await expect(updateButton).toBeEnabled()
+        await updateButton.click()
+
+        // Close editor and return to tree view
+        const cancelButton = this.page.getByTestId('json-data-cancel-btn')
+        if (await cancelButton.isVisible()) {
+            await cancelButton.click()
+        }
+
+        if (await this.toast.isCloseButtonVisible()) {
+            await this.toast.closeToast()
+        }
+    }
+
+    async verifyJsonPropertyExists(key: string, value: string): Promise<void> {
+        // Expand all objects and get the actual value
+        const actualValue = await this.getJsonPropertyValue(key)
+        expect(actualValue).toBe(value)
+    }
+
+    async verifyJsonPropertyNotExists(key: string): Promise<void> {
+        const actualValue = await this.getJsonPropertyValue(key)
+        expect(actualValue).toBeNull()
+    }
+
+    async waitForJsonDetailsToBeVisible(): Promise<void> {
+        await expect(this.page.getByTestId('json-details')).toBeVisible()
+    }
+
+    async waitForJsonPropertyUpdate(
+        key: string,
+        expectedValue: string,
+    ): Promise<void> {
+        await expect
+            .poll(async () => {
+                try {
+                    const actualValue = await this.getJsonPropertyValue(key)
+                    return actualValue === expectedValue
+                } catch (error) {
+                    return false
+                }
+            })
+            .toBe(true)
+    }
+
+    async expandAllJsonObjects(): Promise<void> {
+        // Keep expanding until no more expand buttons exist
+        while (true) {
+            const expandButtons = this.page.getByTestId('expand-object')
+            const count = await expandButtons.count()
+
+            if (count === 0) {
+                break // No more expand buttons to click
+            }
+
+            // Click ALL visible expand buttons in this iteration
+            const buttons = await expandButtons.all()
+            for (const button of buttons) {
+                if (await button.isVisible()) {
+                    await button.click()
+                }
+            }
+
+            // Wait for DOM to be ready before checking for new buttons
+            await this.page.waitForLoadState('domcontentloaded')
+        }
+    }
+
+    async getJsonPropertyValue(propertyName: string): Promise<string | null> {
+        // Expand all objects to make sure we can see the property
+        await this.expandAllJsonObjects()
+
+        // Get the JSON content and look for the property with a simple approach
+        const jsonContent = await this.jsonKeyValue.textContent()
+        if (!jsonContent) return null
+
+        // Use a more precise regex pattern for different value types
+        // Try patterns for strings, numbers, and booleans
+        const patterns = [
+            new RegExp(`${propertyName}:"([^"]*)"`, 'g'), // String values: name:"value"
+            new RegExp(`${propertyName}:(\\d+(?:\\.\\d+)?)`, 'g'), // Number values: age:25
+            new RegExp(`${propertyName}:(true|false)`, 'g'), // Boolean values: active:true
+        ]
+
+        for (const pattern of patterns) {
+            pattern.lastIndex = 0 // Reset regex state
+            const match = pattern.exec(jsonContent)
+            if (match && match[1]) {
+                return match[1]
+            }
+        }
+
+        return null
+    }
+
+    async verifyJsonStructureValid(): Promise<void> {
+        // Check that no JSON error is displayed
+        await expect(this.jsonError).not.toBeVisible()
+
+        // Check that the JSON data container is visible
+        await expect(this.jsonKeyValue).toBeVisible()
+    }
+
+    async cancelJsonScalarValueEdit(propertyKey: string): Promise<void> {
+        // Store original value, start editing, then cancel
+        const originalValue = await this.getJsonPropertyValue(propertyKey)
+        if (!originalValue) {
+            throw new Error(`Property "${propertyKey}" not found`)
+        }
+
+        await this.expandAllJsonObjects()
+
+        // Find the element containing this value
+        const targetElement = this.page
+            .getByTestId('json-scalar-value')
+            .filter({ hasText: originalValue })
+            .first()
+
+        // Start edit, make change, then cancel
+        await targetElement.click()
+        await expect(this.inlineItemEditor).toBeVisible()
+        await this.inlineItemEditor.fill('"canceled_value"')
+        await this.page.keyboard.press('Escape')
+        await expect(this.inlineItemEditor).not.toBeVisible()
+
+        // Verify no change occurred
+        const finalValue = await this.getJsonPropertyValue(propertyKey)
+        expect(finalValue).toBe(originalValue)
+    }
 }

@@ -358,16 +358,6 @@ const MonacoEditor = (props: Props) => {
           {/* Legacy diff toggle for non-AI diffs */}
           {originalValue && !showAcceptReject && (
             <div className={styles.diffToggleContainer}>
-              <EuiButton
-                size="s"
-                onClick={toggleDiffMode}
-                iconType={isDiffMode ? 'eye' : 'diff'}
-                className={styles.diffToggleBtn}
-                data-testid="diff-mode-toggle"
-                title={isDiffMode ? 'Switch to normal editor view' : 'Switch to diff view'}
-              >
-                {isDiffMode ? 'Normal' : 'Diff'} Mode
-              </EuiButton>
               {isDiffMode && (
                 <EuiButton
                   size="s"

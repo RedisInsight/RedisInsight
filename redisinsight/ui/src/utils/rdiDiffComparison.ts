@@ -1,4 +1,4 @@
-import { AppDispatch, store } from 'uiSrc/slices/store'
+import { store } from 'uiSrc/slices/store'
 import {
   disableConfigDiff,
   disableJobDiff,
@@ -142,7 +142,11 @@ export const isConfigDiff = () => {
   const state = store.getState()
   const { config, desiredPipeline } = rdiPipelineSelector(state)
 
-  return desiredPipeline.active && config !== desiredPipeline.config && isNotDiffEmpty(desiredPipeline.config)
+  return (
+    desiredPipeline.active &&
+    config !== desiredPipeline.config &&
+    isNotDiffEmpty(desiredPipeline.config)
+  )
 }
 
 export const isJobDiff = (jobName: string) => {
@@ -152,9 +156,15 @@ export const isJobDiff = (jobName: string) => {
   if (!desiredPipeline.active) return false
 
   const currentJob = jobs.find((job: any) => job.name === jobName)
-  const desiredJob = desiredPipeline.jobs.find((job: any) => job.name === jobName)
+  const desiredJob = desiredPipeline.jobs.find(
+    (job: any) => job.name === jobName,
+  )
 
-  return desiredJob && currentJob?.value !== desiredJob.value && isNotDiffEmpty(desiredJob.value)
+  return (
+    desiredJob &&
+    currentJob?.value !== desiredJob.value &&
+    isNotDiffEmpty(desiredJob.value)
+  )
 }
 //
 // export const isDiff = () => {
@@ -168,9 +178,15 @@ export const isJobDiff = (jobName: string) => {
 //   return
 // }
 
-export const setPipeline = (pipeline: { config: string, jobs: any[] }) =>
-  (dispatch: AppDispatch) => dispatch(setDesiredPipeline(pipeline))
-
+export const setPipeline = (pipeline: {
+  config: string
+  jobs: IRdiPipelineJob[]
+}) => {
+  store.dispatch(setDesiredPipeline(pipeline))
+  // return (dispatch: AppDispatch) => {
+  //   dispatch(setDesiredPipeline(pipeline))
+  // }
+}
 // Expose to window object for testing
 declare global {
   interface Window {

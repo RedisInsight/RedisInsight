@@ -306,6 +306,7 @@ const JobsTree = (props: IProps) => {
     // Convert to array and sort for consistent rendering
     const allJobsArray = Array.from(allJobNames).sort()
 
+    const hasDesiredJobs = !!desiredPipeline?.jobs?.length
     return allJobsArray.map((name) => {
       const currentJob = jobs.find((job) => job.name === name)
       const desiredJobValue = desiredJobsMap[name]
@@ -330,18 +331,18 @@ const JobsTree = (props: IProps) => {
         | 'secondary' = 'default'
       let statusText: string | null = null
 
-      if (jobExists && desiredJobExists) {
+      if (hasDesiredJobs && jobExists && desiredJobExists) {
         if (!isEqualPipelineFile(currentJob.value, desiredJobValue)) {
           statusColor = 'warning'
           statusText = 'Job will be modified'
-          statusIcon = 'tokenElement'
+          statusIcon = 'editorCodeBlock'
         }
-      } else if (!jobExists && desiredJobExists) {
+      } else if (hasDesiredJobs && !jobExists && desiredJobExists) {
         statusColor = 'success'
         statusText = 'Job will be added'
         // Added job
         statusIcon = 'plus'
-      } else if (jobExists && !desiredJobExists) {
+      } else if (hasDesiredJobs && jobExists && !desiredJobExists) {
         statusColor = 'danger'
         statusText = 'Job will be deleted'
         // Deleted job
@@ -381,7 +382,7 @@ const JobsTree = (props: IProps) => {
                 data-test-subj="jobs-folder-icon-close"
               />
             </FlexItem>
-            {statusIcon && statusText && (
+            {desiredPipeline?.jobs?.length > 0 && statusIcon && statusText && (
               <FlexItem>
                 <EuiToolTip content={statusText} position="left">
                   <EuiIcon

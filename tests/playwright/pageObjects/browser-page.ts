@@ -1600,4 +1600,36 @@ export class BrowserPage extends BasePage {
         await this.verifyKeyTTL(expectedTTL)
         await this.closeKeyDetailsAndVerify()
     }
+
+    async verifyKeyExists(keyName: string): Promise<void> {
+        await this.searchByKeyName(keyName)
+        const keyExists = await this.isKeyIsDisplayedInTheList(keyName)
+        expect(keyExists).toBe(true)
+    }
+
+    async verifyKeyDoesNotExist(keyName: string): Promise<void> {
+        await this.searchByKeyName(keyName)
+        const keyStillExists = await this.isKeyIsDisplayedInTheList(keyName)
+        expect(keyStillExists).toBe(false)
+    }
+
+    async deleteKeyFromDetailsView(keyName: string): Promise<void> {
+        await this.openKeyDetailsByKeyName(keyName)
+        await this.deleteKeyButton.click()
+        await this.confirmDeleteKeyButton.click()
+    }
+
+    async deleteKeyFromListView(keyName: string): Promise<void> {
+        await this.deleteKeyByNameFromList(keyName)
+    }
+
+    async startKeyDeletion(keyName: string): Promise<void> {
+        await this.openKeyDetailsByKeyName(keyName)
+        await this.deleteKeyButton.click()
+    }
+
+    async cancelKeyDeletion(): Promise<void> {
+        // Click outside the confirmation popover to cancel deletion
+        await this.keyDetailsHeader.click()
+    }
 }

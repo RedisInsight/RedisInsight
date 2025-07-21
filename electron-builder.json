@@ -5,6 +5,9 @@
   "files": ["dist", "node_modules", "package.json"],
   "artifactName": "Redis-Insight-${os}-${arch}.${ext}",
   "compression": "normal",
+  "npmRebuild": false,
+  "nodeGypRebuild": false,
+  "buildDependenciesFromSource": false,
   "asarUnpack": ["node_modules/keytar", "node_modules/sqlite3"],
   "protocols": [
     {
@@ -24,7 +27,9 @@
         "arch": ["x64", "arm64"]
       }
     ],
-    "notarize": false,
+    "notarize": {
+      "teamId": "UUK47G4BAZ"
+    },
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,

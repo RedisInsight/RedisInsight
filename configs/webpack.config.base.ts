@@ -1,7 +1,8 @@
 import webpack from 'webpack'
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin'
-import webpackPaths from './webpack.paths'
-import { dependencies as externals } from '../redisinsight/package.json'
+import webpackPaths from './webpack.paths.ts'
+import packageJson from '../redisinsight/package.json' with { type: 'json' }
+const externals = packageJson.dependencies
 import { resolve } from 'path'
 
 const configuration: webpack.Configuration = {

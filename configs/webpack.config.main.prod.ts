@@ -1,12 +1,12 @@
 import path from 'path'
 import webpack from 'webpack'
 import { merge } from 'webpack-merge'
-import { toString } from 'lodash'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import baseConfig from './webpack.config.base.ts'
-import DeleteSourceMaps from '../scripts/DeleteSourceMaps'
-import { version } from '../redisinsight/package.json'
-import webpackPaths from './webpack.paths'
+import DeleteSourceMaps from '../scripts/DeleteSourceMaps.js'
+import packageJson from '../redisinsight/package.json' with { type: 'json' }
+const version = packageJson.version
+import webpackPaths from './webpack.paths.ts'
 
 DeleteSourceMaps()
 
@@ -75,7 +75,7 @@ export default merge(baseConfig, {
       RI_CONNECTIONS_TIMEOUT_DEFAULT:
         'RI_CONNECTIONS_TIMEOUT_DEFAULT' in process.env
           ? process.env.RI_CONNECTIONS_TIMEOUT_DEFAULT
-          : toString(30 * 1000), // 30 sec
+          : `${30 * 1000}`, // 30 sec
       // cloud auth
       RI_CLOUD_IDP_AUTHORIZE_URL:
         'RI_CLOUD_IDP_AUTHORIZE_URL' in process.env

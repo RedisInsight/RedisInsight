@@ -1,8 +1,8 @@
 import webpack from 'webpack'
 import { merge } from 'webpack-merge'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
-import mainProdConfig from './webpack.config.main.prod'
-import DeleteSourceMaps from '../scripts/DeleteSourceMaps'
+import mainProdConfig from './webpack.config.main.prod.ts'
+import DeleteSourceMaps from '../scripts/DeleteSourceMaps.js'
 
 DeleteSourceMaps()
 

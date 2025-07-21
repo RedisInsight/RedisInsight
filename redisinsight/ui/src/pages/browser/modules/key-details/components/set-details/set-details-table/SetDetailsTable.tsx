@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
-import { EuiProgress } from '@elastic/eui'
 import { CellMeasurerCache } from 'react-virtualized'
 
 import { Text } from 'uiSrc/components/base/text'
@@ -324,15 +323,6 @@ const SetDetailsTable = (props: Props) => {
         styles.container,
       )}
     >
-      {loading && (
-        <EuiProgress
-          color="primary"
-          size="xs"
-          position="absolute"
-          data-testid="progress-key-set"
-        />
-      )}
-
       <VirtualTable
         autoHeight
         hideProgress

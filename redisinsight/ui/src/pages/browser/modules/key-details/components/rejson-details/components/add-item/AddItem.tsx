@@ -153,7 +153,7 @@ const AddItem = (props: Props) => {
               <div className={cx(styles.errorMessage)}>
                 <FieldMessage
                   scrollViewOnAppear
-                  icon="alert"
+                  icon="ToastDangerIcon"
                   testID="edit-json-error"
                 >
                   {error}

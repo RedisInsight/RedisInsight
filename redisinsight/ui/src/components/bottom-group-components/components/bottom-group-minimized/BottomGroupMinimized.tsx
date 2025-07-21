@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import cx from 'classnames'
-import { EuiIcon } from '@elastic/eui'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -19,7 +18,6 @@ import {
   toggleHideMonitor,
   toggleMonitor,
 } from 'uiSrc/slices/cli/monitor'
-import SurveyIcon from 'uiSrc/assets/img/survey_icon.svg'
 import FeatureFlagComponent from 'uiSrc/components/feature-flag-component'
 import { FeatureFlags } from 'uiSrc/constants'
 
@@ -31,6 +29,7 @@ import {
   DocumentationIcon,
   ProfilerIcon,
 } from 'uiSrc/components/base/icons'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from '../../styles.module.scss'
 
 const BottomGroupMinimized = () => {
@@ -149,7 +148,7 @@ const BottomGroupMinimized = () => {
           onClick={onClickSurvey}
           data-testid="user-survey-link"
         >
-          <EuiIcon type={SurveyIcon} className={styles.surveyIcon} />
+          <RiIcon type="SurveyIcon" className={styles.surveyIcon} />
           <HideFor sizes={['xs', 's']}>
             <span>Let us know what you think</span>
           </HideFor>

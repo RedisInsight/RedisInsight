@@ -2,7 +2,6 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import cx from 'classnames'
 import { useParams } from 'react-router-dom'
-import { EuiIcon } from '@elastic/eui'
 
 import {
   monitorSelector,
@@ -25,6 +24,7 @@ import {
   BannedIcon,
 } from 'uiSrc/components/base/icons'
 import { WindowControlGroup } from 'uiSrc/components/base/shared/WindowControlGroup'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -82,7 +82,7 @@ const MonitorHeader = ({ handleRunMonitor }: Props) => {
     <div className={styles.container} data-testid="monitor-header">
       <Row justify="between" align="center" style={{ height: '100%' }}>
         <FlexItem className={styles.title}>
-          <EuiIcon type="inspect" size="m" />
+          <RiIcon type="ProfilerIcon" size="m" />
           <OnboardingTour
             options={ONBOARDING_FEATURES.BROWSER_PROFILER}
             anchorPosition="upLeft"

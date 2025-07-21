@@ -1,4 +1,3 @@
-import { EuiIcon } from '@elastic/eui'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
@@ -30,6 +29,7 @@ import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
 import { CopyIcon } from 'uiSrc/components/base/icons'
 import { ColorText, Text } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { ColumnDefinition } from 'uiSrc/components/base/layout/table'
 import RedisCloudDatabasesResult from './RedisCloudDatabasesResult'
 
@@ -210,7 +210,7 @@ const RedisCloudDatabasesResultPage = () => {
               <RiTooltip position="left" title="Error" content={messageAdded} anchorClassName="truncateText">
                 <Row align="center" gap="s">
                   <FlexItem>
-                    <EuiIcon type="alert" color="danger" />
+                    <RiIcon type="ToastDangerIcon" color="danger600" />
                   </FlexItem>
 
                   <FlexItem>

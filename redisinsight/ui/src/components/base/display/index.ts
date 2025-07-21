@@ -1,1 +1,4 @@
-export { default as Loader } from './loader/Loader'
+import Loader from './loader/Loader'
+import ProgressBarLoader from './progress-bar/ProgressBarLoader'
+
+export { Loader, ProgressBarLoader }

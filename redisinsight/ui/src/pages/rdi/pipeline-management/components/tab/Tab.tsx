@@ -1,11 +1,9 @@
 import React from 'react'
 import cx from 'classnames'
-import { EuiIcon } from '@elastic/eui'
-
-import statusErrorIcon from 'uiSrc/assets/img/rdi/pipelineStatuses/status_error.svg?react'
 import { Text } from 'uiSrc/components/base/text'
 import { Loader } from 'uiSrc/components/base/display'
 
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 export interface IProps {
@@ -41,14 +39,14 @@ const Tab = (props: IProps) => {
       </Text>
       {fileName ? (
         <div className="rdi-pipeline-nav__file">
-          <EuiIcon type="document" className="rdi-pipeline-nav__fileIcon" />
+          <RiIcon type="ContractsIcon" className="rdi-pipeline-nav__fileIcon" />
           <Text className={cx('rdi-pipeline-nav__text', { invalid: !isValid })}>
             {fileName}
           </Text>
 
           {!isValid && (
-            <EuiIcon
-              type={statusErrorIcon}
+            <RiIcon
+              type="IndicatorXIcon"
               className="rdi-pipeline-nav__error"
               data-testid="rdi-nav-config-error"
             />

@@ -1,6 +1,5 @@
 /* eslint-disable sonarjs/no-nested-template-literals */
 import React, { useContext } from 'react'
-import { EuiIcon } from '@elastic/eui'
 import cx from 'classnames'
 
 import { Theme } from 'uiSrc/constants'
@@ -8,10 +7,10 @@ import { getModule, truncateText } from 'uiSrc/utils'
 import { IDatabaseModule, sortModules } from 'uiSrc/utils/modules'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 
-import { DEFAULT_MODULES_INFO } from 'uiSrc/constants/modules'
+import { DEFAULT_MODULES_INFO, ModuleInfo } from 'uiSrc/constants/modules'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
-import { UnknownDarkIcon, UnknownLightIcon } from 'uiSrc/components/base/icons'
 import { ColorText } from 'uiSrc/components/base/text'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiTooltip } from 'uiSrc/components'
 import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
@@ -47,20 +46,18 @@ const DatabaseListModules = React.memo((props: Props) => {
 
   const newModules: IDatabaseModule[] = sortModules(
     modules?.map(({ name: propName, semanticVersion = '', version = '' }) => {
-      const moduleName = DEFAULT_MODULES_INFO[propName]?.text || propName
+      const module: ModuleInfo = DEFAULT_MODULES_INFO[propName]
+      const moduleName = module?.text || propName
 
       const { abbreviation = '', name = moduleName } = getModule(moduleName)
 
       const moduleAlias = truncateText(name, 50)
       // eslint-disable-next-line sonarjs/no-nested-template-literals
-      let icon =
-        DEFAULT_MODULES_INFO[propName]?.[
-          theme === Theme.Dark ? 'iconDark' : 'iconLight'
-        ]
+      let icon = module?.[theme === Theme.Dark ? 'iconDark' : 'iconLight']
       const content = `${moduleAlias}${semanticVersion || version ? ` v. ${semanticVersion || version}` : ''}`
 
       if (!icon && !abbreviation) {
-        icon = theme === Theme.Dark ? UnknownDarkIcon : UnknownLightIcon
+        icon = theme === Theme.Dark ? 'UnknownDarkIcon' : 'UnknownLightIcon'
       }
 
       mainContent.push({ icon, content, abbreviation, moduleName })
@@ -88,7 +85,7 @@ const DatabaseListModules = React.memo((props: Props) => {
   const Content = sortModules(mainContent).map(
     ({ icon, content, abbreviation = '' }) => (
       <div className={styles.tooltipItem} key={content || abbreviation}>
-        {!!icon && <EuiIcon type={icon} style={{ marginRight: 10 }} />}
+        {!!icon && <RiIcon type={icon} style={{ marginRight: 10 }} />}
         {!icon && (
           <ColorText
             className={cx(styles.icon, styles.abbr)}

@@ -111,7 +111,7 @@ const RejsonScalar = (props: JSONScalarProps) => {
                     <div className={cx(styles.errorMessage)}>
                       <FieldMessage
                         scrollViewOnAppear
-                        icon="alert"
+                        icon="ToastDangerIcon"
                         testID="edit-json-error"
                       >
                         {error}

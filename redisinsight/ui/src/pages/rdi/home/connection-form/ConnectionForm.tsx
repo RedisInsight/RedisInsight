@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiForm, EuiIcon, ToolTipPositions } from '@elastic/eui'
+import { EuiFieldText, EuiForm, ToolTipPositions } from '@elastic/eui'
 import {
   Field,
   FieldInputProps,
@@ -27,6 +27,7 @@ import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { PasswordInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import ValidationTooltip from './components/ValidationTooltip'
 
 import styles from './styles.module.scss'
@@ -67,7 +68,7 @@ const AppendInfo = ({ title, content, ...rest }: AppendInfoProps) => (
     content={content}
     {...rest}
   >
-    <EuiIcon type="iInCircle" style={{ cursor: 'pointer' }} />
+    <RiIcon type="InfoIcon" style={{ cursor: 'pointer' }} />
   </RiTooltip>
 )
 

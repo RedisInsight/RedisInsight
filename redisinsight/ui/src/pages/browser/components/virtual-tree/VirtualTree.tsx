@@ -1,6 +1,5 @@
 import React, {
   useCallback,
-  useContext,
   useEffect,
   useRef,
   useState,
@@ -8,25 +7,22 @@ import React, {
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { debounce, get, set } from 'lodash'
 import { TreeWalker, TreeWalkerValue, FixedSizeTree as Tree } from 'react-vtree'
-import { EuiIcon, EuiImage, EuiProgress } from '@elastic/eui'
+import { EuiImage } from '@elastic/eui'
 import { useDispatch } from 'react-redux'
 
 import { bufferToString, Maybe, Nullable } from 'uiSrc/utils'
 import { useDisposableWebworker } from 'uiSrc/services'
 import { IKeyPropTypes } from 'uiSrc/constants/prop-types/keys'
-import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import {
   DEFAULT_TREE_SORTING,
   KeyTypes,
   ModulesKeyTypes,
   SortOrder,
-  Theme,
 } from 'uiSrc/constants'
-import KeyLightSVG from 'uiSrc/assets/img/sidebar/browser.svg'
-import KeyDarkSVG from 'uiSrc/assets/img/sidebar/browser_active.svg'
 import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 import { fetchKeysMetadataTree } from 'uiSrc/slices/browser/keys'
-import { Loader } from 'uiSrc/components/base/display'
+import { Loader, ProgressBarLoader } from 'uiSrc/components/base/display'
+import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { GetKeyInfoResponse } from 'apiSrc/modules/browser/keys/dto'
 
 import { Node } from './components/Node'
@@ -79,7 +75,6 @@ const VirtualTree = (props: Props) => {
     onDeleteLeaf,
   } = props
 
-  const { theme } = useContext(ThemeContext)
   const [rerenderState, rerender] = useState({})
   const controller = useRef<Nullable<AbortController>>(null)
   const elements = useRef<any>({})
@@ -228,7 +223,6 @@ const VirtualTree = (props: Props) => {
       updateStatusSelected: handleUpdateSelected,
       updateStatusOpen: handleUpdateOpen,
       onDelete: onDeleteLeaf,
-      leafIcon: theme === Theme.Dark ? KeyDarkSVG : KeyLightSVG,
       keyApproximate: node.keyApproximate,
       isSelected: !!node.isLeaf && statusSelected === node?.nameString,
       isOpenByDefault: statusOpen[node.fullName],
@@ -283,13 +277,10 @@ const VirtualTree = (props: Props) => {
           {nodes.current.length > 0 && (
             <>
               {loading && (
-                <EuiProgress
+                <ProgressBarLoader
                   color="primary"
-                  size="xs"
-                  position="absolute"
-                  className={styles.progress}
-                  style={{ width }}
                   data-testid="progress-key-tree"
+                  style={{ width }}
                 />
               )}
               <Tree
@@ -322,7 +313,10 @@ const VirtualTree = (props: Props) => {
                     alt="loading"
                   />
                 ) : (
-                  <EuiIcon type="empty" className={styles.loadingIcon} />
+                  <RiIcon
+                    type="LoaderLargeIcon"
+                    className={styles.loadingIcon}
+                  />
                 )}
               </div>
             </div>

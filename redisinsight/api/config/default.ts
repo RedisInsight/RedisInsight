@@ -1,7 +1,7 @@
 import { join, posix } from 'path';
 import * as os from 'os';
 import { trim } from 'lodash';
-const { version } = require('../package.json');
+import { version } from '../package.json';
 
 const homedir = join(__dirname, '..');
 

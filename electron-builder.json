@@ -87,7 +87,7 @@
     "target": ["nsis"],
     "artifactName": "Redis-Insight-${os}-installer.${ext}",
     "icon": "resources/icon.ico",
-    "legalTrademarks": "Redis Inc., Redis Labs Inc."
+    "publisherName": ["Redis Inc.", "Redis Labs Inc."]
   },
   "nsis": {
     "oneClick": false,

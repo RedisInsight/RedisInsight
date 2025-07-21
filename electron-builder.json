@@ -27,9 +27,7 @@
         "arch": ["x64", "arm64"]
       }
     ],
-    "notarize": {
-      "teamId": "UUK47G4BAZ"
-    },
+    "notarize": true,
     "type": "distribution",
     "hardenedRuntime": true,
     "darkModeSupport": true,

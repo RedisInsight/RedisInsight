@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiFormFieldset } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { EuiComboBoxOptionOption } from '@elastic/eui/src/components/combo_box/types'
 import cx from 'classnames'
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
@@ -23,6 +23,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { AutoTag } from 'uiSrc/components/base/forms/combo-box/AutoTag'
+import { FormFieldset } from 'uiSrc/components/base/forms/fieldset'
 import { InfoIcon } from 'uiSrc/components/base/icons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { HealthText, Text } from 'uiSrc/components/base/text'
@@ -225,7 +226,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                 </FormField>
               </FlexItem>
               <FlexItem grow>
-                <EuiFormFieldset
+                <FormFieldset
                   legend={{ children: 'Select key type', display: 'hidden' }}
                 >
                   <FormField label="Key Type*">
@@ -241,7 +242,7 @@ const CreateRedisearchIndex = ({ onClosePanel, onCreateIndex }: Props) => {
                       data-testid="key-type"
                     />
                   </FormField>
-                </EuiFormFieldset>
+                </FormFieldset>
               </FlexItem>
             </Row>
             <Row className={styles.row} style={{ maxWidth: '100%' }}>

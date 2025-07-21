@@ -147,14 +147,7 @@ const NavigationMenu = () => {
       dataTestId: 'vector-search-page-btn',
       connectedInstanceId,
       isActivePage: activePage === `/${PageNames.vectorSearch}`,
-      getClassName() {
-        return cx(navigationButtonStyle, { [styles.active]: this.isActivePage })
-      },
-      getIconType() {
-        // TODO: Icon or move to another menu
-        // eslint-disable-next-line sonarjs/no-all-duplicated-branches
-        return this.isActivePage ? SearchIcon : SearchIcon
-      },
+      iconType: SearchIcon,
     },
     {
       tooltipText: 'Analysis Tools',

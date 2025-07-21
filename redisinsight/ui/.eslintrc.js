@@ -93,6 +93,7 @@ module.exports = {
     'sonarjs/no-duplicate-string': 'off',
     'sonarjs/cognitive-complexity': [1, 20],
     'sonarjs/no-identical-functions': [0, 5],
+    'sonarjs/no-nested-template-literals': 'off',
     'import/order': [
       1,
       {

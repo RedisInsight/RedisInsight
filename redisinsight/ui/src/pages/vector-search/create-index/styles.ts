@@ -7,6 +7,7 @@ export const CreateIndexWrapper = styled(FlexGroup)`
     margin-top: ${useTheme().core.space.space250};
     margin-bottom: ${useTheme().core.space.space250};
     background-color: ${useTheme().semantic.color.background.neutral100};
+    border-radius: 8px;
   `}
 
   width: 95%;

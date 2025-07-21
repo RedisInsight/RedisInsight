@@ -2,8 +2,8 @@ import path from 'path'
 import webpack from 'webpack'
 import { merge } from 'webpack-merge'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
-import baseConfig from './webpack.config.base.ts'
-import webpackPaths from './webpack.paths.ts'
+import baseConfig from './webpack.config.base'
+import webpackPaths from './webpack.paths'
 
 const configuration: webpack.Configuration = {
   devtool: 'inline-source-map',

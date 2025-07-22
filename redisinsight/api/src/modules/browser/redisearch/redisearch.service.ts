@@ -295,10 +295,6 @@ export class RedisearchService {
         clientMetadata,
       );
 
-      if (error.message?.toLowerCase()?.includes('no such index')) {
-        throw new NotFoundException(`Index "${index}" does not exist`);
-      }
-
       throw catchRedisSearchError(error);
     }
   }

@@ -1,5 +1,5 @@
 // TODO: Since v1 would use predefined data, return a hardcoded command
-// instead of generating it dynamically. Below is the intended implementation.
+// instead of generating it dynamically.
 
 export const generateFtCreateCommand = (): string => `FT.CREATE idx:bikes_vss
     ON HASH

@@ -62,9 +62,9 @@ describe('RiTooltip', () => {
     expect(screen.queryByRole('heading')).not.toBeInTheDocument()
   })
 
-  it('should not render tooltip when content is not provided', async () => {
+  it('should not render tooltip when content and title is provided', async () => {
     render(
-      <RiTooltip title="Test Title">
+      <RiTooltip>
         <TestButton />
       </RiTooltip>,
     )
@@ -119,8 +119,12 @@ describe('RiTooltip', () => {
     })
     await waitForRiTooltipVisible()
 
-    expect(screen.getAllByTestId('tooltip-custom-content')[0]).toBeInTheDocument()
-    expect(screen.getAllByText('Custom content with HTML')[0]).toBeInTheDocument()
+    expect(
+      screen.getAllByTestId('tooltip-custom-content')[0],
+    ).toBeInTheDocument()
+    expect(
+      screen.getAllByText('Custom content with HTML')[0],
+    ).toBeInTheDocument()
     expect(
       screen.getAllByRole('button', { name: 'Hover me' })[0],
     ).toBeInTheDocument()

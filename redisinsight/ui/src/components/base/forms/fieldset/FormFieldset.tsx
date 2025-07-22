@@ -17,7 +17,7 @@ export const FormFieldset = ({
   ...props
 }: FormFieldsetProps) => (
   <StyledFieldset {...props}>
-    {legend && <StyledLegend {...legend} />}
+    {legend && legend.display !== 'hidden' && <StyledLegend {...legend} />}
     {children}
   </StyledFieldset>
 )

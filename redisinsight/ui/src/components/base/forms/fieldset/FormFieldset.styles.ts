@@ -17,9 +17,8 @@ export interface StyledLegendProps extends HTMLAttributes<HTMLLegendElement> {
 }
 
 export const StyledLegend = styled.legend<StyledLegendProps>`
-  ${({ theme, display }: { theme: Theme } & StyledLegendProps) => css`
+  ${({ theme }: { theme: Theme } & StyledLegendProps) => css`
     margin-bottom: ${theme.core.space.space100};
-    display: ${display === 'hidden' ? 'none' : 'block'};
   `}
   padding: 0;
 `

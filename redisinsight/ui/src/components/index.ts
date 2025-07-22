@@ -6,7 +6,6 @@ import DatabaseListModules from './database-list-modules/DatabaseListModules'
 import DatabaseListOptions from './database-list-options/DatabaseListOptions'
 import DatabaseOverview from './database-overview/DatabaseOverview'
 import InputFieldSentinel from './input-field-sentinel/InputFieldSentinel'
-import PageBreadcrumbs from './page-breadcrumbs/PageBreadcrumbs'
 import ContentEditable from './ContentEditable'
 import Config from './config'
 import SettingItem from './settings-item/SettingItem'
@@ -56,7 +55,6 @@ export {
   DatabaseListOptions,
   DatabaseOverview,
   InputFieldSentinel,
-  PageBreadcrumbs,
   Config,
   ContentEditable,
   ConsentsSettings,

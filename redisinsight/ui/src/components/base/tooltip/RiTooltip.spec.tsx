@@ -62,7 +62,7 @@ describe('RiTooltip', () => {
     expect(screen.queryByRole('heading')).not.toBeInTheDocument()
   })
 
-  it('should not render tooltip when content and title is provided', async () => {
+  it('should not render tooltip when content and title are not provided', async () => {
     render(
       <RiTooltip>
         <TestButton />

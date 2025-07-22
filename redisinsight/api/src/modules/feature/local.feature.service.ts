@@ -111,7 +111,14 @@ export class LocalFeatureService extends FeatureService {
     });
 
     return {
-      features,
+      features: {
+        ...features,
+        // @ts-ignore
+        databaseChat: {
+          name: 'databaseChat',
+          flag: true,
+        },
+      },
       ...(await this.featuresConfigService.getControlInfo(sessionMetadata)),
     };
   }

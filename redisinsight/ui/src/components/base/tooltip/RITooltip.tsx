@@ -23,7 +23,7 @@ export const RiTooltip = ({
   <TooltipProvider>
     <Tooltip
       {...props}
-      content={<HoverContent title={title} content={content} />}
+      content={content && <HoverContent title={title} content={content} />}
       placement={position}
       openDelayDuration={delay}
     >

@@ -1,16 +1,21 @@
 import React, { ReactNode } from 'react'
-import { Section, SectionProps } from '@redis-ui/components'
 import cx from 'classnames'
+import {
+  RiAccordion,
+  RiAccordionProps,
+} from 'uiSrc/components/base/display/accordion/RiAccordion'
 
 export type RICollapsibleNavGroupProps = Omit<
-  SectionProps,
-  'collapsible' | 'content' | 'label' | 'defaultOpen'
+  RiAccordionProps,
+  'collapsible' | 'content' | 'defaultOpen' | 'title' | 'label'
 > & {
-  title: string
+  title: ReactNode
   children: ReactNode
   isCollapsible?: boolean
   className?: string
   initialIsOpen?: boolean
+  onToggle?: (isOpen: boolean) => void
+  forceState?: 'open' | 'closed'
 }
 export const RICollapsibleNavGroup = ({
   children,
@@ -18,14 +23,20 @@ export const RICollapsibleNavGroup = ({
   isCollapsible = true,
   className,
   initialIsOpen,
+  onToggle,
+  forceState,
+  open,
   ...rest
 }: RICollapsibleNavGroupProps) => (
-  <Section
+  <RiAccordion
     {...rest}
     collapsible={isCollapsible}
     className={cx(className, 'RI-collapsible-nav-group')}
     defaultOpen={initialIsOpen}
-    content={<div className="RI-collapsible-nav-group-content">{children}</div>}
+    open={forceState === 'open' || open}
     label={title}
-  />
+    onOpenChange={onToggle}
+  >
+    <div className="RI-collapsible-nav-group-content">{children}</div>
+  </RiAccordion>
 )

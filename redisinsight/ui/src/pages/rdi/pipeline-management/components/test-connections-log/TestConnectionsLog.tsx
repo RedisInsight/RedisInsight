@@ -1,7 +1,7 @@
-import { EuiCollapsibleNavGroup } from '@elastic/eui'
 import cx from 'classnames'
 import React, { useState } from 'react'
 
+import { RICollapsibleNavGroup } from 'uiSrc/components/base/display'
 import { TransformGroupResult } from 'uiSrc/slices/interfaces'
 import TestConnectionsTable from 'uiSrc/pages/rdi/pipeline-management/components/test-connections-table'
 
@@ -65,7 +65,7 @@ const TestConnectionsLog = (props: Props) => {
     openedNav === name ? 'open' : 'closed'
 
   return (
-    <EuiCollapsibleNavGroup
+    <RICollapsibleNavGroup
       title={
         <CollapsibleNavTitle
           title={navTitle}
@@ -82,7 +82,7 @@ const TestConnectionsLog = (props: Props) => {
       data-testid={`${status}-connections-${getNavGroupState(status)}`}
     >
       <TestConnectionsTable data={statusData ?? []} />
-    </EuiCollapsibleNavGroup>
+    </RICollapsibleNavGroup>
   )
 }
 

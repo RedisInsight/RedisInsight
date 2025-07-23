@@ -64,6 +64,32 @@ describe('DELETE /databases/:id/redisearch', () => {
             );
           },
         },
+      ].map(mainCheckFn);
+    });
+
+    describe('RediSearch version < 2.10.X', () => {
+      requirements('rte.modules.search.version<21000');
+      before(async () => rte.data.generateRedisearchIndexes(true));
+
+      [
+        {
+          name: 'Should return 404 if index does not exist',
+          data: { index: 'non-existing-index' },
+          statusCode: 404,
+          responseBody: {
+            statusCode: 404,
+            message: 'Unknown Index name',
+            error: 'Not Found',
+          },
+        },
+      ].map(mainCheckFn);
+    });
+
+    describe('RediSearch version >= 2.10.X', () => {
+      requirements('rte.modules.search.version>=21000');
+      before(async () => rte.data.generateRedisearchIndexes(true));
+
+      [
         {
           name: 'Should return 404 if index does not exist',
           data: { index: 'non-existing-index' },
@@ -105,7 +131,7 @@ describe('DELETE /databases/:id/redisearch', () => {
           },
           before: () => {
             // Remove permission for "FT.DROPINDEX" command
-            return rte.data.setAclUserRules('~* +@all -FT.DROPINDEX')
+            return rte.data.setAclUserRules('~* +@all -FT.DROPINDEX');
           },
         },
       ].map(mainCheckFn);

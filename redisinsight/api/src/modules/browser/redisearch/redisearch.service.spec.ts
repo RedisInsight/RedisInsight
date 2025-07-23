@@ -3,6 +3,7 @@ import {
   ConflictException,
   ForbiddenException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { when } from 'jest-when';
 import {
@@ -501,7 +502,7 @@ describe('RedisearchService', () => {
           index: mockIndexName,
         });
       } catch (e) {
-        expect(e).toBeInstanceOf(ConflictException);
+        expect(e).toBeInstanceOf(NotFoundException);
       }
     });
 

@@ -34,7 +34,7 @@ import successMessages from 'uiSrc/components/notifications/success-messages'
 import { AppDispatch, RootState } from '../store'
 
 export const initialState: IStateRdiPipeline = {
-  loading: false,
+  loading: true,
   error: '',
   data: null,
   config: '',
@@ -258,10 +258,14 @@ export function fetchRdiPipeline(
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(getPipeline())
+      console.log('___ dispatch getPipeline')
       const { data, status } = await apiService.get<IPipelineJSON>(
         getRdiUrl(rdiInstanceId, ApiEndpoints.RDI_PIPELINE),
       )
+      console.log('received data', data, status)
       if (isStatusSuccessful(status)) {
+        console.log('___ dispatch getPipelineSuccess')
+
         dispatch(getPipelineSuccess(pipelineToYaml(data)))
         dispatch(setChangedFiles({}))
 

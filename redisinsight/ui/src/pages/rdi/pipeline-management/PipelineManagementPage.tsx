@@ -1,12 +1,13 @@
-import React, { useEffect, useRef } from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { IRoute, PageNames, Pages } from 'uiSrc/constants'
 import { connectedInstanceSelector } from 'uiSrc/slices/rdi/instances'
 import {
+  fetchRdiPipeline,
   fetchRdiPipelineJobFunctions,
-  fetchRdiPipelineSchema,
+  fetchRdiPipelineSchema, rdiPipelineSelector,
 } from 'uiSrc/slices/rdi/pipeline'
 import {
   appContextPipelineManagement,
@@ -33,6 +34,13 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
     connectedInstanceSelector,
   )
 
+  const [showInitialPopup, setShowInitialPopup] = useState(false)
+
+  const {
+    loading: pipelineLoading,
+    config: pipelineConfig,
+  } = useSelector(rdiPipelineSelector)
+
   const pathnameRef = useRef<string>('')
 
   const history = useHistory()
@@ -43,6 +51,11 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
   setTitle(`${rdiInstanceName} - Pipeline Management`)
 
   useEffect(() => {
+    setShowInitialPopup(!pipelineLoading && pipelineConfig === '')
+  }, [pipelineConfig, pipelineLoading])
+
+  useEffect(() => {
+    dispatch(fetchRdiPipeline(rdiInstanceId))
     dispatch(fetchRdiPipelineSchema(rdiInstanceId))
     dispatch(fetchRdiPipelineJobFunctions(rdiInstanceId))
   }, [])
@@ -81,7 +94,7 @@ const PipelineManagementPage = ({ routes = [] }: Props) => {
   return (
     <div className={styles.wrapper}>
       <Navigation />
-      <SourcePipelineDialog />
+      {showInitialPopup && <SourcePipelineDialog />}
       <PipelinePageRouter routes={routes} />
     </div>
   )

@@ -87,7 +87,8 @@ export class ApiRdiClient extends RdiClient {
   async getPipeline(): Promise<RdiPipeline> {
     try {
       const { data } = await this.client.get(RdiUrl.GetPipeline);
-
+      // data.config = { source: { mysql: { port: 3306 }}}
+      await new Promise(res => setTimeout(res, 2000))
       return convertApiDataToRdiPipeline(data);
     } catch (e) {
       throw wrapRdiPipelineError(e);

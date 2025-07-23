@@ -275,22 +275,24 @@ export class RedisearchService {
     clientMetadata: ClientMetadata,
     dto: IndexDeleteRequestBodyDto,
   ): Promise<void> {
-    const { index } = dto;
-    this.logger.debug(`Deleting redisearch index ${index}.`, clientMetadata);
+    this.logger.debug('Deleting redisearch index ', clientMetadata);
 
     try {
+      const { index } = dto;
       const client: RedisClient =
         await this.databaseClientFactory.getOrCreateClient(clientMetadata);
 
-      await client.sendCommand(['FT.DROPINDEX', index]);
+      await client.sendCommand(['FT.DROPINDEX', index], {
+        replyEncoding: 'utf8',
+      });
 
       this.logger.debug(
-        `Successfully deleted redisearch index ${index}.`,
+        'Successfully deleted redisearch index ',
         clientMetadata,
       );
     } catch (error) {
       this.logger.error(
-        `Failed to delete redisearch index ${index}.`,
+        'Failed to delete redisearch index ',
         error,
         clientMetadata,
       );

@@ -1,11 +1,12 @@
 import React, { ChangeEvent } from 'react'
 import { toNumber } from 'lodash'
-import { EuiFieldText, EuiFormFieldset } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { MAX_TTL_NUMBER, Maybe, validateTTLNumberForAddKey } from 'uiSrc/utils'
 
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
+import { FormFieldset } from 'uiSrc/components/base/forms/fieldset'
 import { AddCommonFieldsFormConfig as config } from '../constants/fields-config'
 
 import styles from './styles.module.scss'
@@ -48,7 +49,7 @@ const AddKeyCommonFields = (props: Props) => {
     <div className={styles.wrapper}>
       <Row className={styles.container}>
         <FlexItem grow>
-          <EuiFormFieldset
+          <FormFieldset
             legend={{ children: 'Select key type', display: 'hidden' }}
           >
             <FormField label="Key Type*">
@@ -63,7 +64,7 @@ const AddKeyCommonFields = (props: Props) => {
                 data-testid="select-key-type"
               />
             </FormField>
-          </EuiFormFieldset>
+          </FormFieldset>
         </FlexItem>
         <FlexItem grow>
           <FormField label={config.keyTTL.label}>

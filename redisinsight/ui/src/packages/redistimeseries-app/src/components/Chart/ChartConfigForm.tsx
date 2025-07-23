@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import {
   EuiFieldText,
-  EuiFormFieldset,
   EuiButtonGroup,
   EuiAccordion,
   EuiButtonGroupProps,
 } from '@elastic/eui'
 import { SwitchInput } from 'uiSrc/components/base/inputs'
+import { FormFieldset } from 'uiSrc/components/base/forms/fieldset'
 import { AxisScale, GraphMode, ChartConfigFormProps } from './interfaces'
 import {
   X_LABEL_MAX_LENGTH,
@@ -71,7 +71,7 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
       {moreOptions && (
         <div className="more-options">
           <section>
-            <EuiFormFieldset legend={{ children: 'Title' }}>
+            <FormFieldset legend={{ children: 'Title' }}>
               <EuiFieldText
                 placeholder="Title"
                 value={value.title}
@@ -79,8 +79,8 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
                 aria-label="Title"
                 maxLength={parseInt(TITLE_MAX_LENGTH)}
               />
-            </EuiFormFieldset>
-            <EuiFormFieldset legend={{ children: 'X axis Label' }}>
+            </FormFieldset>
+            <FormFieldset legend={{ children: 'X axis Label' }}>
               <EuiFieldText
                 placeholder="X axis label"
                 value={value.xlabel}
@@ -88,7 +88,7 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
                 aria-label="X Label"
                 maxLength={parseInt(X_LABEL_MAX_LENGTH)}
               />
-            </EuiFormFieldset>
+            </FormFieldset>
           </section>
           <section>
             <div className="right-y-axis">
@@ -151,7 +151,7 @@ export default function ChartConfigForm(props: ChartConfigFormProps) {
 
 const YAxisConfigForm = ({ value, onChange, label }: any) => (
   <div>
-    <EuiFormFieldset legend={{ children: `${label} Label` }}>
+    <FormFieldset legend={{ children: `${label} Label` }}>
       <EuiFieldText
         placeholder="Label"
         value={value.label}
@@ -159,8 +159,8 @@ const YAxisConfigForm = ({ value, onChange, label }: any) => (
         aria-label="label"
         maxLength={parseInt(Y_LABEL_MAX_LENGTH)}
       />
-    </EuiFormFieldset>
-    <EuiFormFieldset legend={{ children: `${label} Scale` }}>
+    </FormFieldset>
+    <FormFieldset legend={{ children: `${label} Scale` }}>
       <EnumSelect
         inputLabel="Scale"
         onChange={(e) =>
@@ -169,7 +169,7 @@ const YAxisConfigForm = ({ value, onChange, label }: any) => (
         value={value.scale}
         enumType={AxisScale}
       />
-    </EuiFormFieldset>
+    </FormFieldset>
   </div>
 )
 

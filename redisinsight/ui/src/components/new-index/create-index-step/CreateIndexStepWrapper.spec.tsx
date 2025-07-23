@@ -1,10 +1,14 @@
 import React from 'react'
-import { fireEvent, render, screen } from 'uiSrc/utils/test-utils'
+import { cleanup, fireEvent, render, screen } from 'uiSrc/utils/test-utils'
 import { CreateIndexStepWrapper } from './CreateIndexStepWrapper'
 
 const renderComponent = () => render(<CreateIndexStepWrapper />)
 
 describe('CreateIndexStepWrapper', () => {
+  beforeEach(() => {
+    cleanup()
+  })
+
   it('should render', () => {
     const { container } = renderComponent()
 
@@ -37,7 +41,7 @@ describe('CreateIndexStepWrapper', () => {
     expect(buildNewIndexTabContent).toBeInTheDocument()
   })
 
-  it('shouldn\'t switch to "Build new index" tab when clicked, since it is disabled', () => {
+  it("shouldn't switch to 'Build new index' tab when clicked, since it is disabled", () => {
     renderComponent()
 
     const buildNewIndexTabTriggerLabel = screen.getByText('Build new index')

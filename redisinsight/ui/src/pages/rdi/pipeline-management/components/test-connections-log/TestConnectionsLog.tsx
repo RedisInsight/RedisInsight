@@ -64,6 +64,8 @@ const TestConnectionsLog = (props: Props) => {
   const getNavGroupState = (name: ResultsStatus) =>
     openedNav === name ? 'open' : 'closed'
 
+  const id = `${status}-connections-${getNavGroupState(status)}`
+
   return (
     <RICollapsibleNavGroup
       title={
@@ -79,7 +81,8 @@ const TestConnectionsLog = (props: Props) => {
       initialIsOpen={false}
       onToggle={(isOpen) => onToggle(statusData?.length, isOpen, status)}
       forceState={getNavGroupState(status)}
-      data-testid={`${status}-connections-${getNavGroupState(status)}`}
+      data-testid={id}
+      id={id}
     >
       <TestConnectionsTable data={statusData ?? []} />
     </RICollapsibleNavGroup>

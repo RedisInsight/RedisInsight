@@ -158,6 +158,8 @@ const SettingsPage = () => {
               title="Workbench"
               initialIsOpen={initialOpenSection === '#workbench'}
               data-test-subj="accordion-workbench-settings"
+              data-testid="accordion-workbench-settings"
+              id="accordion-workbench-settings"
             >
               {WorkbenchSettingsGroup()}
             </RICollapsibleNavGroup>

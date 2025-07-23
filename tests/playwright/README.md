@@ -1,68 +1,20 @@
 # RedisInsight Playwright Tests
 
-This project contains Playwright tests for RedisInsight.
-It supports running tests on Electron, Docker and Web Redisinsight builds.
+This project contains end-to-end tests for RedisInsight using [Playwright](https://playwright.dev/). It supports running tests against three different RedisInsight builds:
 
-## Folder structure
+- **Docker Build**
+- **Electron Build**
+- **Local Web Build** (built directly from the source code)
 
-- `/env` - contains env configs for the 3 types of builds.
-- `/tests` - Contains the actual tests.
-- `/helpers/api` - ported some api helpers from the tests/e2e project. They are used for setting up data.
-- `/pageObjects` - ported page element locators and logic from the tests/e2e project.
-
-## Prerequisites
-
-### General Requirements
-
-- Docker installed and running.
-- Redis test environment and RedisInsight configurations from the `tests/e2e` project.
-
-### Steps to Set Up
-
-1. **Start the Redis Test Environment**  
-   Navigate to the `tests/e2e` directory and run:
-
-   ```shell
-   docker compose -p test-docker -f rte.docker-compose.yml up --force-recreate --detach
-   ```
-
-2. **For Docker RI Build**
-
-   - Build the Docker image locally or trigger a [GitHub Action](https://github.com/RedisInsight/RedisInsight/actions/workflows/manual-build.yml) to build and download the artifact (`docker-linux-alpine.amd64.tar`).
-   - Load the image:
-     ```shell
-     docker load -i docker-linux-alpine.amd64.tar
-     ```
-   - Ensure the following environment variables are set in `tests/e2e/.env`:
-     - `RI_ENCRYPTION_KEY`
-     - `RI_SERVER_TLS_CERT`
-     - `RI_SERVER_TLS_KEY`
-   - Navigate to the `tests/e2e` directory and start the container:
-     ```shell
-     docker compose -p e2e-ri-docker -f docker.web.docker-compose.yml up --detach --force-recreate
-     ```
-   - Access the app at: `https://localhost:5540`.
-
-3. **For Electron RI Build**
-
-   - Build the project from the root directory:
-     ```shell
-     yarn package:prod
-     ```
-   - Update `ELECTRON_EXECUTABLE_PATH` in `tests/playwright/env/.desktop.env` to point to the generated executable file (MacOS by default).
-
-4. **For Local Web Build**
-   - Stop the Docker RI container from step 2 (to free up port 5540).
-   - Start the UI and API servers:
-     ```shell
-     yarn dev:ui
-     yarn dev:api
-     ```
-   - Access the app at: `http://localhost:8080`.
+---
 
 ## Installation
 
-1. Install dependencies:
+> _Note: All commands below should be run from the `tests/playwright` directory._
+
+Before running any tests, make sure you have the dependencies installed:
+
+1. Install Node dependencies:
 
    ```shell
    yarn install
@@ -74,52 +26,112 @@ It supports running tests on Electron, Docker and Web Redisinsight builds.
    yarn playwright install
    ```
 
-3. Install Playwright OS dependencies (requires `sudo`):
+3. Install Playwright OS dependencies (Linux only):
+
    ```shell
    sudo yarn playwright install-deps
    ```
 
+## Prerequisites
+
+- Docker installed and running.
+- Redis test environment and RedisInsight configurations from the `tests/e2e` project.
+
+## Environment-Specific Setup and Test Execution
+
 For more details, refer to the [Playwright documentation](https://playwright.dev/docs/running-tests).
 
-## Running Tests
+### Start Redis Test Environment (Required for All Builds)
+
+Navigate to the `tests/e2e` directory and run:
+
+```shell
+docker compose -p test-docker -f rte.docker-compose.yml up --force-recreate --detach
+```
+
+### Docker Build
+
+- Build the Docker image locally or trigger a [GitHub Action](https://github.com/RedisInsight/RedisInsight/actions/workflows/manual-build.yml) to build and download the artifact (`docker-linux-alpine.amd64.tar`).
+- Load the image:
+  ```shell
+  docker load -i docker-linux-alpine.amd64.tar
+  ```
+- Ensure the following environment variables are set in `tests/e2e/.env`:
+  - `RI_ENCRYPTION_KEY`
+  - `RI_SERVER_TLS_CERT`
+  - `RI_SERVER_TLS_KEY`
+- Navigate to the `tests/e2e` directory and start the container:
+  ```shell
+  docker compose -p e2e-ri-docker -f docker.web.docker-compose.yml up --detach --force-recreate
+  ```
+- Validate app is running at: `https://localhost:5540`.
+
+#### Run Playwright Tests
 
 _Note: Make sure to run the commands bellow from the `e2e/playwright` directory._
 
-### Docker RI Build
-
-Run end-to-end tests in Chromium:
+Run all tests:
 
 ```shell
 yarn test:chromium:docker
 ```
 
-Run tests in debug mode:
+Run in debug mode:
 
 ```shell
 yarn test:chromium:docker:debug
 ```
 
-Run tests for a specific `.spec` file:
+Run a specific spec file:
 
 ```shell
 yarn test:chromium:docker basic-navigation
 ```
 
-### Electron RI Build
+---
 
-Run end-to-end tests for the Electron build:
+### Electron Build
+
+- Build the project from the root directory:
+  ```shell
+  yarn package:prod
+  ```
+- Update `ELECTRON_EXECUTABLE_PATH` in `tests/playwright/env/.desktop.env` to point to the generated executable file (MacOS by default).
+
+#### Run Playwright Tests
+
+_Note: Make sure to run the commands bellow from the `e2e/playwright` directory._
 
 ```shell
 yarn test:electron
 ```
 
-### Local Web Environment
+---
 
-Run tests for the local web environment:
+### Local Web Build
+
+- Make sure you don't have anything (docker container, local server, etc.) running on port 5540.
+- Start the UI and API servers:
+  ```shell
+  yarn dev:ui
+  yarn dev:api
+  ```
+- Access the app at: `http://localhost:8080`.
+
+#### Run Playwright Tests
+
+_Note: Make sure to run the command bellow from the `e2e/playwright` directory._
 
 ```shell
 yarn test:chromium:local-web
 ```
+
+## Folder structure
+
+- `/env` - contains env configs for the 3 types of builds.
+- `/tests` - Contains the actual tests.
+- `/helpers/api` - ported some api helpers from the tests/e2e project. They are used for setting up data.
+- `/pageObjects` - ported page element locators and logic from the tests/e2e project.
 
 ## Extra Tooling
 

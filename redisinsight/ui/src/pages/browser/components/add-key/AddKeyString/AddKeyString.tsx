@@ -1,7 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { EuiForm } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 
 import { addKeyStateSelector, addStringKey } from 'uiSrc/slices/browser/keys'
@@ -54,7 +53,7 @@ const AddKeyString = (props: Props) => {
   }
 
   return (
-    <EuiForm component="form" onSubmit={onFormSubmit}>
+    <form onSubmit={onFormSubmit}>
       <FormField label={config.value.label}>
         <TextArea
           name="value"
@@ -98,7 +97,7 @@ const AddKeyString = (props: Props) => {
           </Row>
         </>
       </AddKeyFooter>
-    </EuiForm>
+    </form>
   )
 }
 

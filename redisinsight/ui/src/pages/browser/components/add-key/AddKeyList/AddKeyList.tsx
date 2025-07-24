@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiForm, EuiFieldText } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addListKey } from 'uiSrc/slices/browser/keys'
@@ -86,7 +86,7 @@ const AddKeyList = (props: Props) => {
   }
 
   return (
-    <EuiForm component="form" onSubmit={onFormSubmit}>
+    <form onSubmit={onFormSubmit}>
       <RiSelect
         value={destination}
         options={optionsDestinations}
@@ -142,7 +142,7 @@ const AddKeyList = (props: Props) => {
           </Row>
         </>
       </AddKeyFooter>
-    </EuiForm>
+    </form>
   )
 }
 

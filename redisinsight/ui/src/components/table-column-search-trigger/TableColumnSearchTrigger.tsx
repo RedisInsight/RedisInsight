@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import cx from 'classnames'
-import { keys } from '@elastic/eui'
 
+import * as keys from 'uiSrc/constants/keys'
 import { SearchInput } from 'uiSrc/components/base/inputs'
 import { Maybe, Nullable } from 'uiSrc/utils'
 import { SearchIcon } from 'uiSrc/components/base/icons'

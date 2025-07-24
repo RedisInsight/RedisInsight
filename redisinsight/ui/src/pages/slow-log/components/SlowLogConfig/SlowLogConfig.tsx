@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiForm } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import React, { ChangeEvent, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -175,7 +175,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
       {connectionType === ConnectionType.Cluster && clusterContent()}
       {connectionType !== ConnectionType.Cluster && (
         <>
-          <EuiForm component="form">
+          <form>
             <FormField
               layout="horizontal"
               className={styles.formRow}
@@ -255,7 +255,7 @@ const SlowLogConfig = ({ closePopover, onRefresh }: Props) => {
               </>
             </FormField>
             <Spacer size="m" />
-          </EuiForm>
+          </form>
 
           <Row className={styles.footer}>
             <FlexItem className={styles.helpText}>

@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiFieldText, EuiForm } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { toNumber } from 'lodash'
 import {
   isVersionHigherOrEquals,
@@ -163,7 +163,7 @@ const AddKeyHash = (props: Props) => {
     !(item.fieldName.length || item.fieldValue.length || item.fieldTTL?.length)
 
   return (
-    <EuiForm component="form" onSubmit={onFormSubmit}>
+    <form onSubmit={onFormSubmit}>
       <AddMultipleFields
         items={fields}
         isClearDisabled={isClearDisabled}
@@ -261,7 +261,7 @@ const AddKeyHash = (props: Props) => {
           </Row>
         </>
       </AddKeyFooter>
-    </EuiForm>
+    </form>
   )
 }
 

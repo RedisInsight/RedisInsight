@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash'
 import React, { ChangeEvent, useState } from 'react'
-import { EuiFieldText, EuiForm } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { FormikErrors, useFormik } from 'formik'
 import { validateEmail, validateField } from 'uiSrc/utils'
 
@@ -89,7 +89,7 @@ const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
       <Title className={styles.title} size="S">
         Single Sign-On
       </Title>
-      <EuiForm component="form" onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit}>
         <Row>
           <FlexItem>
             <FormField className={styles.formRaw} label="Email">
@@ -126,7 +126,7 @@ const OAuthSsoForm = ({ onBack, onSubmit }: Props) => {
             <SubmitButton text="Login" disabled={submitIsDisabled()} />
           </FlexItem>
         </Row>
-      </EuiForm>
+      </form>
     </div>
   )
 }

@@ -1,6 +1,5 @@
 import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { EuiForm } from '@elastic/eui'
 import { addStreamKey } from 'uiSrc/slices/browser/keys'
 import {
   entryIdRegex,
@@ -90,11 +89,7 @@ const AddKeyStream = (props: Props) => {
   }
 
   return (
-    <EuiForm
-      className={styles.container}
-      component="form"
-      onSubmit={onFormSubmit}
-    >
+    <form className={styles.container} onSubmit={onFormSubmit}>
       <StreamEntryFields
         entryID={entryID}
         entryIdError={entryIdError}
@@ -133,7 +128,7 @@ const AddKeyStream = (props: Props) => {
           </Row>
         </>
       </AddKeyFooter>
-    </EuiForm>
+    </form>
   )
 }
 

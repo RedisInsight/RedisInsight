@@ -2,9 +2,10 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { FormikErrors, useFormik } from 'formik'
 import { isEmpty } from 'lodash'
-import { EuiFieldText, EuiForm, keys } from '@elastic/eui'
-
+import { EuiFieldText } from '@elastic/eui'
 import { useSelector } from 'react-redux'
+
+import * as keys from 'uiSrc/constants/keys'
 import { validateField } from 'uiSrc/utils/validations'
 import validationErrors from 'uiSrc/constants/validationErrors'
 import { FeatureFlagComponent, RiTooltip } from 'uiSrc/components'
@@ -184,7 +185,7 @@ const CloudConnectionForm = (props: Props) => {
       <MessageCloudApiKeys />
       <Spacer />
       <WindowEvent event="keydown" handler={onKeyDown} />
-      <EuiForm component="form" onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit}>
         <Row responsive>
           <FlexItem>
             <FormField label="API Account Key*">
@@ -228,7 +229,7 @@ const CloudConnectionForm = (props: Props) => {
           </FlexItem>
         </Row>
         <Footer />
-      </EuiForm>
+      </form>
     </div>
   )
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { EuiFieldText, EuiForm } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { FormikProps } from 'formik'
 import {
   PrimaryGroupSentinel,
@@ -128,11 +128,11 @@ const EditSentinelConnection = (props: Props) => {
   )
 
   return (
-    <EuiForm
-      component="form"
+    <form
       onSubmit={formik.handleSubmit}
       data-testid="form"
       onKeyDown={onKeyDown}
+      role="presentation"
     >
       {activeTab === ManualFormTab.General && (
         <>{isCloneMode ? GeneralFormClodeMode : GeneralFormEditMode}</>
@@ -148,7 +148,7 @@ const EditSentinelConnection = (props: Props) => {
       {activeTab === ManualFormTab.Decompression && (
         <DecompressionAndFormatters formik={formik} />
       )}
-    </EuiForm>
+    </form>
   )
 }
 

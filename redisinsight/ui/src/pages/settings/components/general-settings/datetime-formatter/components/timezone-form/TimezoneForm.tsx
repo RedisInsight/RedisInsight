@@ -2,7 +2,6 @@ import React, { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
 
-import { EuiForm } from '@elastic/eui'
 import { TimezoneOption, timezoneOptions } from 'uiSrc/constants'
 import {
   updateUserConfigSettingsAction,

@@ -15,20 +15,14 @@ export class LocalAiQueryAuthProvider extends AiQueryAuthProvider {
   async getAuthData(
     sessionMetadata: SessionMetadata,
   ): Promise<AiQueryAuthData> {
-    return {
-      sessionId: '1',
-      accountId: '1',
-      csrf: '1',
-    };
+    const session =
+      await this.cloudUserApiService.getUserSession(sessionMetadata);
 
-    // const session =
-    //   await this.cloudUserApiService.getUserSession(sessionMetadata);
-    //
-    // return {
-    //   sessionId: session.apiSessionId,
-    //   csrf: session.csrf,
-    //   accountId: `${session.user.currentAccountId}`,
-    // };
+    return {
+      sessionId: session.apiSessionId,
+      csrf: session.csrf,
+      accountId: `${session.user.currentAccountId}`,
+    };
   }
 
   async callWithAuthRetry(

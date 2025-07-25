@@ -33,6 +33,7 @@ import {
 import { RefreshIcon } from 'uiSrc/components/base/icons'
 import { ColorText, Text } from 'uiSrc/components/base/text'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -109,8 +110,10 @@ const BulkUpload = (props: Props) => {
     <div className={styles.container} data-testid="bulk-upload-container">
       {!isCompleted ? (
         <div className={styles.content}>
-          <Text color="subdued">
-            Upload the text file with the list of Redis commands
+          <Row align="start">
+            <Text color="subdued">
+              Upload the text file with the list of Redis commands
+            </Text>
             <RiTooltip
               content={
                 <>
@@ -124,10 +127,13 @@ const BulkUpload = (props: Props) => {
             >
               <RiIcon
                 type="InfoIcon"
-                style={{ marginLeft: 4, marginBottom: 2 }}
+                style={{
+                  marginLeft: 4,
+                  marginBottom: 2,
+                }}
               />
             </RiTooltip>
-          </Text>
+          </Row>
           <Spacer size="l" />
           <RiFilePicker
             id="bulk-upload-file-input"

@@ -6,7 +6,7 @@ import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import styles from './styles.module.scss'
 
 const UploadWarning = () => (
-  <Row className={styles.wrapper} gap="s">
+  <Row className={styles.wrapper} gap="s" align="center">
     <FlexItem>
       <RiIcon type="IndicatorErrorIcon" />
     </FlexItem>

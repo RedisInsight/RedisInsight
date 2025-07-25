@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiFilePicker } from '@elastic/eui'
 
 import cx from 'classnames'
 import { Nullable } from 'uiSrc/utils'
@@ -20,8 +19,12 @@ import BulkActionSummary from 'uiSrc/pages/browser/components/bulk-actions/BulkA
 
 import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { isProcessedBulkAction } from 'uiSrc/pages/browser/components/bulk-actions/utils'
-import { UploadWarning } from 'uiSrc/components'
-import { RiPopover, RiTooltip } from 'uiSrc/components/base'
+import {
+  RiFilePicker,
+  UploadWarning,
+  RiPopover,
+  RiTooltip,
+} from 'uiSrc/components'
 import { Spacer } from 'uiSrc/components/base/layout/spacer'
 import {
   PrimaryButton,
@@ -30,6 +33,7 @@ import {
 import { RefreshIcon } from 'uiSrc/components/base/icons'
 import { ColorText, Text } from 'uiSrc/components/base/text'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
+import { Row } from 'uiSrc/components/base/layout/flex'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -106,8 +110,10 @@ const BulkUpload = (props: Props) => {
     <div className={styles.container} data-testid="bulk-upload-container">
       {!isCompleted ? (
         <div className={styles.content}>
-          <Text color="subdued">
-            Upload the text file with the list of Redis commands
+          <Row align="start">
+            <Text color="subdued">
+              Upload the text file with the list of Redis commands
+            </Text>
             <RiTooltip
               content={
                 <>
@@ -121,12 +127,15 @@ const BulkUpload = (props: Props) => {
             >
               <RiIcon
                 type="InfoIcon"
-                style={{ marginLeft: 4, marginBottom: 2 }}
+                style={{
+                  marginLeft: 4,
+                  marginBottom: 2,
+                }}
               />
             </RiTooltip>
-          </Text>
+          </Row>
           <Spacer size="l" />
-          <EuiFilePicker
+          <RiFilePicker
             id="bulk-upload-file-input"
             initialPromptText="Select or drag and drop a file"
             className={styles.fileDrop}

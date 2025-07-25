@@ -1632,4 +1632,65 @@ export class BrowserPage extends BasePage {
         // Click outside the confirmation popover to cancel deletion
         await this.keyDetailsHeader.click()
     }
+
+    async editKeyTTLValue(newTTL: number): Promise<void> {
+        await this.editKeyTTLButton.click()
+        await this.editKeyTTLInput.clear()
+        await this.editKeyTTLInput.fill(newTTL.toString())
+        await this.applyButton.click()
+    }
+
+    async removeKeyTTL(): Promise<void> {
+        await this.editKeyTTLButton.click()
+        await this.editKeyTTLInput.clear()
+        await this.editKeyTTLInput.fill('') // Explicitly set to empty string
+        // Don't fill anything - empty field means persistent (-1)
+        await this.applyButton.click()
+
+        // Wait for the TTL to become persistent using the existing helper
+        await expect
+            .poll(async () => {
+                try {
+                    await this.verifyTTLIsPersistent()
+                    return true
+                } catch {
+                    return false
+                }
+            })
+            .toBe(true)
+    }
+
+    async waitForTTLToUpdate(expectedMinValue: number): Promise<void> {
+        await expect
+            .poll(async () => {
+                const currentTTL = await this.keyDetailsTTL.textContent()
+                const ttlMatch = currentTTL?.match(/TTL:\s*(\d+)/)
+                return ttlMatch ? parseInt(ttlMatch[1], 10) : 0
+            })
+            .toBeGreaterThan(expectedMinValue)
+    }
+
+    async verifyTTLIsWithinRange(
+        expectedTTL: number,
+        marginSeconds = 60,
+    ): Promise<void> {
+        const displayedTTL = await this.keyDetailsTTL.textContent()
+        const ttlMatch = displayedTTL?.match(/TTL:\s*(\d+)/)
+        expect(ttlMatch).toBeTruthy()
+
+        const actualTTL = parseInt(ttlMatch![1], 10)
+        expect(actualTTL).toBeGreaterThan(expectedTTL - marginSeconds)
+        expect(actualTTL).toBeLessThanOrEqual(expectedTTL)
+    }
+
+    async verifyTTLIsPersistent(): Promise<void> {
+        const displayedTTL = await this.keyDetailsTTL.textContent()
+        expect(displayedTTL).toContain('No limit')
+    }
+
+    async verifyTTLIsNotPersistent(): Promise<void> {
+        const displayedTTL = await this.keyDetailsTTL.textContent()
+        expect(displayedTTL).toContain('TTL:')
+        expect(displayedTTL).not.toContain('No limit')
+    }
 }

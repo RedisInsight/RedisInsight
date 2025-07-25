@@ -6,12 +6,9 @@ import {
   redisearchListSelector,
 } from 'uiSrc/slices/browser/redisearch'
 import { connectedInstanceSelector } from 'uiSrc/slices/instances/instances'
-import {
-  bufferToString,
-  formatLongName,
-  isRedisearchAvailable,
-} from 'uiSrc/utils'
+import { bufferToString, isRedisearchAvailable } from 'uiSrc/utils'
 import { StyledManageIndexesListAction } from './ManageIndexesList.styles'
+import { IndexSection } from './IndexSection'
 
 export const ManageIndexesList = () => {
   const { loading, data } = useSelector(redisearchListSelector)
@@ -34,17 +31,9 @@ export const ManageIndexesList = () => {
     <StyledManageIndexesListAction data-testid="manage-indexes-list">
       {loading && <Loader data-testid="manage-indexes-list--loader" />}
 
-      {data.map((index) => {
-        const indexName = bufferToString(index)
-        return (
-          <div
-            key={`index-${indexName}`}
-            data-testid={`manage-indexes-list--item--${indexName}`}
-          >
-            {formatLongName(indexName)}
-          </div>
-        )
-      })}
+      {data.map((index) => (
+        <IndexSection index={index} key={`index-${bufferToString(index)}`} />
+      ))}
     </StyledManageIndexesListAction>
   )
 }

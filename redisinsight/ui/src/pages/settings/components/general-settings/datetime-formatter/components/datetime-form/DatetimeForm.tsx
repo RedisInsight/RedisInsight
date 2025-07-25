@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFormik } from 'formik'
-import { EuiFieldText, EuiForm } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { checkDateTimeFormat, formatTimestamp } from 'uiSrc/utils'
 import {
   DATETIME_FORMATTER_DEFAULT,
@@ -177,11 +177,7 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
   ]
 
   return (
-    <EuiForm
-      component="form"
-      onSubmit={formik.handleSubmit}
-      data-testid="format-timestamp-form"
-    >
+    <form onSubmit={formik.handleSubmit} data-testid="format-timestamp-form">
       <RiRadioGroup
         items={dateTimeFormatOptions}
         id="datetime-format"
@@ -240,7 +236,7 @@ const DatetimeForm = ({ onFormatChange }: Props) => {
           </>
         )}
       </Row>
-    </EuiForm>
+    </form>
   )
 }
 

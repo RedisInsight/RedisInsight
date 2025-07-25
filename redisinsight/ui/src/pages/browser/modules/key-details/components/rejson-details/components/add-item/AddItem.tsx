@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import cx from 'classnames'
-import { EuiFieldText, EuiForm, keys } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { useSelector } from 'react-redux'
 
+import * as keys from 'uiSrc/constants/keys'
 import { rejsonDataSelector } from 'uiSrc/slices/browser/rejson'
 import { checkExistingPath } from 'uiSrc/utils/rejson'
 import FieldMessage from 'uiSrc/components/field-message/FieldMessage'
@@ -89,8 +90,7 @@ const AddItem = (props: Props) => {
         <div>
           <WindowEvent event="keydown" handler={(e) => handleOnEsc(e)} />
           <FocusTrap>
-            <EuiForm
-              component="form"
+            <form
               className="relative"
               onSubmit={(e) => handleFormSubmit(e)}
               style={{ display: 'flex' }}
@@ -148,7 +148,7 @@ const AddItem = (props: Props) => {
                   />
                 </div>
               </ConfirmOverwrite>
-            </EuiForm>
+            </form>
             {!!error && (
               <div className={cx(styles.errorMessage)}>
                 <FieldMessage

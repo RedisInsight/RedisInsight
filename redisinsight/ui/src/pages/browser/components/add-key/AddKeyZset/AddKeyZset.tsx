@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { toNumber } from 'lodash'
-import { EuiFieldText, EuiForm } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { Maybe, stringToBuffer, validateScoreNumber } from 'uiSrc/utils'
 import { isNaNConvertedString } from 'uiSrc/utils/numbers'
 import { addKeyStateSelector, addZsetKey } from 'uiSrc/slices/browser/keys'
@@ -182,7 +182,7 @@ const AddKeyZset = (props: Props) => {
     members.length === 1 && !(item.name.length || item.score.length)
 
   return (
-    <EuiForm component="form" onSubmit={onFormSubmit}>
+    <form onSubmit={onFormSubmit}>
       <AddMultipleFields
         items={members}
         isClearDisabled={isClearDisabled}
@@ -266,7 +266,7 @@ const AddKeyZset = (props: Props) => {
           </Row>
         </>
       </AddKeyFooter>
-    </EuiForm>
+    </form>
   )
 }
 

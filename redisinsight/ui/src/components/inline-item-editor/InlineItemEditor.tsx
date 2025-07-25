@@ -1,8 +1,9 @@
 import React, { ChangeEvent, Ref, useEffect, useRef, useState } from 'react'
 import { capitalize } from 'lodash'
 import cx from 'classnames'
-import { EuiFieldText, EuiForm, keys } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 
+import * as keys from 'uiSrc/constants/keys'
 import { RiPopover, RiTooltip } from 'uiSrc/components/base'
 import { FlexItem } from 'uiSrc/components/base/layout/flex'
 import { WindowEvent } from 'uiSrc/components/base/utils/WindowEvent'
@@ -51,7 +52,6 @@ export interface Props {
   disableFocusTrap?: boolean
   approveByValidation?: (value: string) => boolean
   approveText?: { title: string; text: string }
-  formComponentType?: 'form' | 'div'
   textFiledClassName?: string
 }
 
@@ -85,7 +85,6 @@ const InlineItemEditor = (props: Props) => {
     disableFocusTrap = false,
     approveByValidation,
     approveText,
-    formComponentType = 'form',
     textFiledClassName,
   } = props
   const containerEl: Ref<HTMLDivElement> = useRef(null)
@@ -199,8 +198,7 @@ const InlineItemEditor = (props: Props) => {
           <div ref={containerEl} className={styles.container}>
             <WindowEvent event="keydown" handler={handleOnEsc} />
             <FocusTrap disabled={disableFocusTrap}>
-              <EuiForm
-                component={formComponentType}
+              <form
                 className="relative"
                 onSubmit={(e: unknown) =>
                   handleFormSubmit(e as React.MouseEvent<HTMLElement>)
@@ -292,7 +290,7 @@ const InlineItemEditor = (props: Props) => {
                     </RiPopover>
                   )}
                 </div>
-              </EuiForm>
+              </form>
             </FocusTrap>
           </div>
         </OutsideClickDetector>

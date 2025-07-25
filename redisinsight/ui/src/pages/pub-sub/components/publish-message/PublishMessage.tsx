@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiForm } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import cx from 'classnames'
 import React, {
   ChangeEvent,
@@ -80,11 +80,7 @@ const PublishMessage = () => {
   }
 
   return (
-    <EuiForm
-      className={styles.container}
-      component="form"
-      onSubmit={onFormSubmit}
-    >
+    <form className={styles.container} onSubmit={onFormSubmit}>
       <FlexItem
         grow
         className={cx('flexItemNoFullWidth', 'inlineFieldsNoSpace')}
@@ -154,7 +150,7 @@ const PublishMessage = () => {
           </PrimaryButton>
         </FlexItem>
       </Row>
-    </EuiForm>
+    </form>
   )
 }
 

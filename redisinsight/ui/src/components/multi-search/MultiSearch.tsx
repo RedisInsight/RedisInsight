@@ -1,7 +1,8 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import cx from 'classnames'
-import { EuiFieldText, keys } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 
+import * as keys from 'uiSrc/constants/keys'
 import { GroupBadge, RiTooltip } from 'uiSrc/components'
 import { OutsideClickDetector } from 'uiSrc/components/base/utils'
 import { Nullable } from 'uiSrc/utils'

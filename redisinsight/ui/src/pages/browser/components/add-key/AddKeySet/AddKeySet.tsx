@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { EuiFieldText, EuiForm } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import { Maybe, stringToBuffer } from 'uiSrc/utils'
 import { addKeyStateSelector, addSetKey } from 'uiSrc/slices/browser/keys'
 
@@ -128,7 +128,7 @@ const AddKeySet = (props: Props) => {
     members.length === 1 && !item.name.length
 
   return (
-    <EuiForm component="form" onSubmit={onFormSubmit}>
+    <form onSubmit={onFormSubmit}>
       <AddMultipleFields
         items={members}
         isClearDisabled={isClearDisabled}
@@ -187,7 +187,7 @@ const AddKeySet = (props: Props) => {
           </Row>
         </>
       </AddKeyFooter>
-    </EuiForm>
+    </form>
   )
 }
 

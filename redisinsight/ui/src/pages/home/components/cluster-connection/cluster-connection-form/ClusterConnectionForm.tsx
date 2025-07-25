@@ -2,8 +2,9 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { isEmpty } from 'lodash'
 import { FormikErrors, useFormik } from 'formik'
-import { EuiFieldText, EuiForm, keys } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 
+import * as keys from 'uiSrc/constants/keys'
 import { MAX_PORT_NUMBER, validateField } from 'uiSrc/utils/validations'
 import { handlePasteHostName } from 'uiSrc/utils'
 import validationErrors from 'uiSrc/constants/validationErrors'
@@ -220,7 +221,7 @@ const ClusterConnectionForm = (props: Props) => {
       <MessageEnterpriceSoftware />
       <br />
 
-      <EuiForm>
+      <form>
         <WindowEvent event="keydown" handler={onKeyDown} />
         <Row responsive>
           <FlexItem grow={4}>
@@ -298,7 +299,7 @@ const ClusterConnectionForm = (props: Props) => {
             </FormField>
           </FlexItem>
         </Row>
-      </EuiForm>
+      </form>
       <Footer />
     </div>
   )

@@ -1,4 +1,4 @@
-import { EuiFieldText, EuiForm, ToolTipPositions } from '@elastic/eui'
+import { EuiFieldText } from '@elastic/eui'
 import {
   Field,
   FieldInputProps,
@@ -34,7 +34,7 @@ import styles from './styles.module.scss'
 
 export interface AppendInfoProps
   extends Omit<RiTooltipProps, 'children' | 'delay' | 'position'> {
-  position?: ToolTipPositions
+  position?: RiTooltipProps['position']
 }
 
 export interface ConnectionFormValues {
@@ -166,11 +166,7 @@ const ConnectionForm = (props: Props) => {
     >
       {({ isValid, errors, values }) => (
         <Form className={styles.form}>
-          <EuiForm
-            component="div"
-            className="databasePanelWrapper"
-            data-testid="connection-form"
-          >
+          <div className="databasePanelWrapper" data-testid="connection-form">
             <div className={cx('container relative')}>
               <FormField label="RDI Alias*" className={styles.withoutPadding}>
                 <Field name="name">
@@ -267,7 +263,7 @@ const ConnectionForm = (props: Props) => {
               errors={errors}
               onSubmit={() => handleSubmit(values)}
             />
-          </EuiForm>
+          </div>
         </Form>
       )}
     </Formik>

@@ -16,8 +16,8 @@ import {
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import {
   CreateListWithExpireDto,
-  ListElementDestination,
-} from 'apiSrc/modules/browser/list/dto'
+  CreateListWithExpireDtoDestinationEnum as ListElementDestination,
+} from 'uiSrc/api-client'
 
 import { AddListFormConfig as config } from '../constants/fields-config'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'

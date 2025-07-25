@@ -66,16 +66,14 @@ import { NoResultsFoundText } from 'uiSrc/constants/texts'
 import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { getColumnWidth } from 'uiSrc/components/virtual-grid'
 import { decompressingBuffer } from 'uiSrc/utils/decompressors'
+import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { SetListElementResponse, SetListElementDto } from 'uiSrc/api-client'
 
 import {
   EditableTextArea,
   FormattedValue,
 } from 'uiSrc/pages/browser/modules/key-details/shared'
 import { Text } from 'uiSrc/components/base/text'
-import {
-  SetListElementDto,
-  SetListElementResponse,
-} from 'apiSrc/modules/browser/list/dto'
 
 import styles from './styles.module.scss'
 
@@ -99,7 +97,9 @@ const ListDetailsTable = () => {
     total,
     searchedIndex,
   } = useSelector(listDataSelector)
-  const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
+  const key =
+    useSelector(selectedKeyDataSelector)?.name ||
+    ('' as unknown as RedisResponseBuffer)
   const { id: instanceId, compressor = null } = useSelector(
     connectedInstanceSelector,
   )

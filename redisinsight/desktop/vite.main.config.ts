@@ -14,10 +14,8 @@ export default defineConfig({
           const relativePath = source.replace('desktopSrc/', '')
           return path.join(__dirname, 'src', relativePath)
         }
-        if (source.startsWith('apiSrc/') || source.includes('api/dist/src/')) {
-          const modulePath = source.includes('apiSrc/')
-            ? source.replace('apiSrc/', '')
-            : source.split('api/dist/src/')[1]
+        if (source.includes('api/dist/src/')) {
+          const modulePath = source.split('api/dist/src/')[1]
 
           return {
             id: path.join(apiDistPath, modulePath),

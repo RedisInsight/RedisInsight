@@ -19,7 +19,7 @@ import {
   MOCK_TRUNCATED_STRING_VALUE,
 } from 'uiSrc/mocks/data/bigString'
 import { TEXT_CONSUMER_NAME_TOO_LONG } from 'uiSrc/constants'
-import { PendingEntryDto } from 'apiSrc/modules/browser/stream/dto'
+import { PendingEntryDto } from 'uiSrc/api-client'
 import MessagesView, { Props as MessagesViewProps } from './MessagesView'
 import MessagesViewWrapper, { Props } from './MessagesViewWrapper'
 
@@ -74,7 +74,7 @@ const mockMessagesView = jest.fn((props: MessagesViewProps) => (
 
 describe('MessagesViewWrapper', () => {
   beforeAll(() => {
-    MessagesView.mockImplementation(mockMessagesView)
+    jest.mocked(MessagesView).mockImplementation(mockMessagesView)
   })
 
   it('should render', () => {
@@ -98,6 +98,7 @@ describe('MessagesViewWrapper', () => {
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
+      // @ts-expect-error
       setSelectedGroup(),
       loadConsumerGroups(false),
     ])

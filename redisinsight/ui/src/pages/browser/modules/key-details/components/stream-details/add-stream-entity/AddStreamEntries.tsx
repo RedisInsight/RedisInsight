@@ -24,7 +24,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
-import { AddStreamEntriesDto } from 'apiSrc/modules/browser/stream/dto'
+import { AddStreamEntriesDto } from 'uiSrc/api-client'
 
 import StreamEntryFields from './StreamEntryFields/StreamEntryFields'
 import styles from './styles.module.scss'

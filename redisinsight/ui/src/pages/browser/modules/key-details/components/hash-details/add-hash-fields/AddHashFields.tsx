@@ -31,10 +31,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
-import {
-  AddFieldsToHashDto,
-  HashFieldDto,
-} from 'apiSrc/modules/browser/hash/dto'
+import { AddFieldsToHashDto, HashFieldDto } from 'uiSrc/api-client'
 
 import styles from './styles.module.scss'
 

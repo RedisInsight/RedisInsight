@@ -18,11 +18,8 @@ import { getPercentage, numberWithSpaces } from 'uiSrc/utils/numbers'
 
 import { SwitchInput } from 'uiSrc/components/base/inputs'
 import { Title } from 'uiSrc/components/base/text/Title'
+import { DatabaseAnalysis, SimpleTypeSummary } from 'uiSrc/api-client'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
-import {
-  DatabaseAnalysis,
-  SimpleTypeSummary,
-} from 'apiSrc/modules/database-analysis/models'
 
 import styles from './styles.module.scss'
 

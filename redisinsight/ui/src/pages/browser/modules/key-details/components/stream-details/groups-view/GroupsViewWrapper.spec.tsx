@@ -19,7 +19,7 @@ import VirtualTable from 'uiSrc/components/virtual-table/VirtualTable'
 import { stringToBuffer } from 'uiSrc/utils'
 import { setSelectedKeyRefreshDisabled } from 'uiSrc/slices/browser/keys'
 import { MOCK_TRUNCATED_BUFFER_VALUE } from 'uiSrc/mocks/data/bigString'
-import { ConsumerGroupDto } from 'apiSrc/modules/browser/stream/dto'
+import { ConsumerGroupDto } from 'uiSrc/api-client'
 import GroupsView, { Props as GroupsViewProps } from './GroupsView'
 import GroupsViewWrapper, { Props } from './GroupsViewWrapper'
 
@@ -57,6 +57,7 @@ jest.mock('./GroupsView', () => ({
 const mockGroups: ConsumerGroupDto[] = [
   {
     name: {
+      // @ts-ignore
       ...stringToBuffer('test'),
       viewValue: 'test',
     },
@@ -68,6 +69,7 @@ const mockGroups: ConsumerGroupDto[] = [
   },
   {
     name: {
+      // @ts-ignore
       ...stringToBuffer('test2'),
       viewValue: 'test2',
     },

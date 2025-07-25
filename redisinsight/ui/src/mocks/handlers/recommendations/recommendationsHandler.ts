@@ -2,7 +2,7 @@ import { rest, RestHandler } from 'msw'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { getMswURL } from 'uiSrc/utils/test-utils'
 import { getUrl } from 'uiSrc/utils'
-import { DatabaseRecommendationsResponse as RecommendationResponse } from 'apiSrc/modules/database-recommendation/dto/database-recommendations.response'
+import { DatabaseRecommendationsResponse as RecommendationResponse } from 'uiSrc/api-client'
 import { INSTANCE_ID_MOCK } from '../instances/instancesHandlers'
 
 export const RECOMMENDATIONS_DATA_MOCK = {

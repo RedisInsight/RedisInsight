@@ -30,7 +30,7 @@ import { HealthText, Text } from 'uiSrc/components/base/text'
 import { Link } from 'uiSrc/components/base/link/Link'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
 import { RiPopover } from 'uiSrc/components/base'
-import { CreateRedisearchIndexDto } from 'apiSrc/modules/browser/redisearch/dto'
+import { CreateRedisearchIndexDto } from 'uiSrc/api-client'
 
 import { KEY_TYPE_OPTIONS, RedisearchIndexKeyType } from './constants'
 

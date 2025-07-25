@@ -24,7 +24,7 @@ import {
   SearchZSetMembersResponse,
   ZSetMemberDto,
   GetZSetResponse,
-} from 'apiSrc/modules/browser/z-set/dto'
+} from 'uiSrc/api-client'
 import {
   deleteKeyFromList,
   deleteSelectedKeySuccess,
@@ -36,6 +36,7 @@ import { AppDispatch, RootState } from '../store'
 import {
   addErrorNotification,
   addMessageNotification,
+  IAddInstanceErrorPayload,
 } from '../app/notifications'
 import { RedisResponseBuffer } from '../interfaces'
 
@@ -284,8 +285,8 @@ export function fetchZSetMembers(
         dispatch(updateSelectedKeyRefreshTime(Date.now()))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(loadZSetMembersFailure(errorMessage))
     }
   }
@@ -322,8 +323,8 @@ export function fetchMoreZSetMembers(
         dispatch(loadMoreZSetMembersSuccess(data))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(loadMoreZSetMembersFailure(errorMessage))
     }
   }
@@ -366,8 +367,8 @@ export function fetchAddZSetMembers(
       }
     } catch (error) {
       onFailAction?.()
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(updateScoreFailure(errorMessage))
     }
   }
@@ -420,8 +421,8 @@ export function deleteZSetMembers(
         }
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(removeZsetMembersFailure(errorMessage))
     }
   }
@@ -464,8 +465,8 @@ export function updateZSetMembers(
       }
     } catch (error) {
       onFailAction?.()
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(updateScoreFailure(errorMessage))
     }
   }
@@ -503,8 +504,8 @@ export function fetchSearchZSetMembers(
         onSuccess?.(data)
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(searchZSetMembersFailure(errorMessage))
     }
   }
@@ -539,8 +540,8 @@ export function fetchSearchMoreZSetMembers(
         dispatch(searchMoreZSetMembersSuccess(data))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(searchMoreZSetMembersFailure(errorMessage))
     }
   }
@@ -578,14 +579,16 @@ export function refreshZsetMembersAction(
           dispatch(searchZSetMembersSuccess(data))
         }
       } catch (error) {
-        const errorMessage = getApiErrorMessage(error)
-        dispatch(addErrorNotification(error))
+        const errorMessage = getApiErrorMessage(
+          error as IAddInstanceErrorPayload,
+        )
+        dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
         dispatch(searchZSetMembersFailure(errorMessage))
       }
       return
     }
     const { sortOrder } = state.browser.zset.data
-    dispatch(loadZSetMembers([sortOrder, resetData]))
+    dispatch(loadZSetMembers([sortOrder as any, resetData]))
 
     try {
       const state = stateInit()
@@ -608,8 +611,8 @@ export function refreshZsetMembersAction(
         dispatch(loadZSetMembersSuccess(data))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(loadZSetMembersFailure(errorMessage))
     }
   }

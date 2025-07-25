@@ -21,6 +21,7 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "minify:prod": "node ./esbuild.js --production",
     "minify:dev": "node ./esbuild.js --watch",
+    "generate-client": "openapi-generator-cli generate -i http://localhost:5540/api/docs-json -g typescript-axios -o ../ui/src/api-client",
     "lint": "eslint --ext .ts .",
     "start": "nest start",
     "start:dev": "cross-env NODE_ENV=development nest start --watch",
@@ -106,6 +107,7 @@
     "@nestjs/cli": "^11.0.6",
     "@nestjs/schematics": "^11.0.5",
     "@nestjs/testing": "^11.0.20",
+    "@openapitools/openapi-generator-cli": "^2.21.0",
     "@types/adm-zip": "^0.5.0",
     "@types/express": "^5.0.0",
     "@types/ioredis-mock": "^8",
@@ -172,7 +174,6 @@
     ],
     "moduleNameMapper": {
       "src/(.*)": "<rootDir>/$1",
-      "apiSrc/(.*)": "<rootDir>/$1",
       "tests/(.*)": "<rootDir>/__tests__/$1"
     },
     "reporters": [

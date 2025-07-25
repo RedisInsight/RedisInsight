@@ -10,12 +10,11 @@ import { sendEventTelemetry, TelemetryEvent } from 'uiSrc/telemetry'
 import { FormatedDate, RiTooltip } from 'uiSrc/components'
 import { ChevronDownIcon } from 'uiSrc/components/base/icons'
 import { IconButton } from 'uiSrc/components/base/forms/buttons'
-import { IMessage } from 'apiSrc/modules/pub-sub/interfaces/message.interface'
-
+import { IPubsubMessage } from 'uiSrc/slices/interfaces/pubsub'
 import styles from './styles.module.scss'
 
 export interface Props {
-  items: IMessage[]
+  items: IPubsubMessage[]
   width?: number
   height?: number
 }

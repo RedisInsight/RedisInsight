@@ -8,7 +8,7 @@ import {
   Group as ListGroup,
   Item as ListGroupItem,
 } from 'uiSrc/components/base/layout/list'
-import { SentinelMaster } from 'apiSrc/modules/redis-sentinel/models/sentinel-master'
+import { SentinelMaster } from 'uiSrc/api-client'
 import SentinelHostPort from './SentinelHostPort'
 
 import styles from '../../styles.module.scss'

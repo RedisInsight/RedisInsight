@@ -12,7 +12,7 @@ import {
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
 import { TextArea } from 'uiSrc/components/base/inputs'
-import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
+import { SetStringWithExpireDto } from 'uiSrc/api-client'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import { AddStringFormConfig as config } from '../constants/fields-config'
 

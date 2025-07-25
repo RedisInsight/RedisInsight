@@ -1,5 +1,6 @@
 import { StreamViewType } from 'uiSrc/slices/interfaces/stream'
 import { ApiEndpoints } from 'uiSrc/constants'
+import { DatabaseCompressorEnum } from 'uiSrc/api-client'
 import { CommandGroup } from './commands'
 
 export enum KeyTypes {
@@ -154,26 +155,20 @@ export enum KeyValueFormat {
 
 export const DATETIME_FORMATTER_DEFAULT = 'HH:mm:ss d MMM yyyy'
 
-export enum KeyValueCompressor {
-  GZIP = 'GZIP',
-  ZSTD = 'ZSTD',
-  LZ4 = 'LZ4',
-  SNAPPY = 'SNAPPY',
-  Brotli = 'Brotli',
-  PHPGZCompress = 'PHPGZCompress',
-}
+export const KeyValueCompressor = DatabaseCompressorEnum
 
 export const COMPRESSOR_MAGIC_SYMBOLS: ICompressorMagicSymbols = Object.freeze({
-  [KeyValueCompressor.GZIP]: '31,139', // 1f 8b hex
-  [KeyValueCompressor.ZSTD]: '40,181,47,253', // 28 b5 2f fd hex
-  [KeyValueCompressor.LZ4]: '4,34,77,24', // 04 22 4d 18 hex
-  [KeyValueCompressor.SNAPPY]: '', // no magic symbols
+  [KeyValueCompressor.None]: '',
+  [KeyValueCompressor.Gzip]: '31,139', // 1f 8b hex
+  [KeyValueCompressor.Zstd]: '40,181,47,253', // 28 b5 2f fd hex
+  [KeyValueCompressor.Lz4]: '4,34,77,24', // 04 22 4d 18 hex
+  [KeyValueCompressor.Snappy]: '', // no magic symbols
   [KeyValueCompressor.Brotli]: '', // no magic symbols
-  [KeyValueCompressor.PHPGZCompress]: '', // no magic symbols
+  [KeyValueCompressor.PhpgzCompress]: '', // no magic symbols
 })
 
 export type ICompressorMagicSymbols = {
-  [key in KeyValueCompressor]: string
+  [key in (typeof DatabaseCompressorEnum)[keyof typeof DatabaseCompressorEnum]]: string
 }
 
 export const ENDPOINT_BASED_ON_KEY_TYPE = Object.freeze({

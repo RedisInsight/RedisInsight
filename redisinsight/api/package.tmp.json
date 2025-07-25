@@ -51,7 +51,6 @@
     "testEnvironment": "node",
     "moduleNameMapper": {
       "src/(.*)": "<rootDir>/$1",
-      "apiSrc/(.*)": "<rootDir>/$1",
       "tests/(.*)": "<rootDir>/__tests__/$1"
     },
     "setupFilesAfterEnv": ["../test/jest.setup.ts"]

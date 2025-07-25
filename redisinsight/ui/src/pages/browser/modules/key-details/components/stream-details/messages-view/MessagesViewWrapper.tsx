@@ -28,7 +28,7 @@ import {
   PendingEntryDto,
   ClaimPendingEntryDto,
   ClaimPendingEntriesResponse,
-} from 'apiSrc/modules/browser/stream/dto'
+} from 'uiSrc/api-client'
 
 import MessagesView from './MessagesView'
 import MessageClaimPopover from './MessageClaimPopover'
@@ -50,7 +50,7 @@ const MessagesViewWrapper = (props: Props) => {
     name: consumerName,
     pending = 0,
   } = useSelector(selectedConsumerSelector) ?? {}
-  const isTruncatedConsumerName = isTruncatedString(consumerName)
+  const isTruncatedConsumerName = isTruncatedString(consumerName!)
   const { name: group } = useSelector(selectedGroupSelector) ?? { name: '' }
   const { name: key } = useSelector(selectedKeyDataSelector) ?? { name: '' }
   const { instanceId } = useParams<{ instanceId: string }>()
@@ -97,6 +97,7 @@ const MessagesViewWrapper = (props: Props) => {
   }
 
   const handleAchPendingMessage = (entry: string) => {
+    // @ts-expect-error TODO: check type mismatch
     dispatch(ackPendingEntriesAction(key, group, [entry], onSuccessAck))
   }
 

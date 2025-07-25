@@ -1,6 +1,34 @@
 import { BulkActionsStatus, BulkActionsType } from 'uiSrc/constants'
 import { Nullable } from 'uiSrc/utils'
-import { IBulkActionOverview as IBulkActionOverviewBE } from 'apiSrc/modules/bulk-actions/interfaces/bulk-action-overview.interface'
+
+interface IBulkActionProgressOverview {
+  total: number
+  scanned: number
+}
+
+interface IBulkActionSummaryOverview {
+  processed: number
+  succeed: number
+  failed: number
+  errors: Array<Record<string, string>>
+  keys: Array<string | Buffer>
+}
+
+interface IBulkActionFilterOverview {
+  type: string
+  match: string
+}
+
+interface IBulkActionOverviewBE {
+  id: string
+  databaseId: string
+  duration: number
+  type: string
+  status: string
+  filter: IBulkActionFilterOverview
+  progress: IBulkActionProgressOverview
+  summary: IBulkActionSummaryOverview
+}
 
 export interface IBulkActionOverview
   extends Omit<IBulkActionOverviewBE, 'status'> {

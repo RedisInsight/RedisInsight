@@ -4,10 +4,10 @@ import { getUrl } from 'uiSrc/utils'
 import { getMswURL } from 'uiSrc/utils/test-utils'
 import {
   ClusterDetails,
-  HealthStatus,
-  NodeRole,
-} from 'apiSrc/modules/cluster-monitor/models'
-import { Database as DatabaseInstanceResponse } from 'apiSrc/modules/database/models/database'
+  Database as DatabaseInstanceResponse,
+  ClusterNodeDetailsHealthEnum,
+  ClusterNodeDetailsRoleEnum,
+} from 'uiSrc/api-client'
 
 export const INSTANCE_ID_MOCK = 'instanceId'
 
@@ -39,9 +39,9 @@ export const CLUSTER_DETAILS_DATA_MOCK: ClusterDetails = {
       id: '3',
       host: '3.93.234.244',
       port: 12511,
-      role: 'primary' as NodeRole,
+      role: ClusterNodeDetailsRoleEnum.Primary,
       slots: ['10923-16383'],
-      health: 'online' as HealthStatus,
+      health: ClusterNodeDetailsHealthEnum.Online,
       totalKeys: 0,
       usedMemory: 38448896,
       opsPerSecond: 0,
@@ -61,9 +61,9 @@ export const CLUSTER_DETAILS_DATA_MOCK: ClusterDetails = {
       id: '4',
       host: '44.202.117.57',
       port: 12511,
-      role: 'primary' as NodeRole,
+      role: ClusterNodeDetailsRoleEnum.Primary,
       slots: ['0-5460'],
-      health: 'online' as HealthStatus,
+      health:ClusterNodeDetailsHealthEnum.Online,
       totalKeys: 0,
       usedMemory: 38448896,
       opsPerSecond: 0,
@@ -83,9 +83,9 @@ export const CLUSTER_DETAILS_DATA_MOCK: ClusterDetails = {
       id: '5',
       host: '44.210.115.34',
       port: 12511,
-      role: 'primary' as NodeRole,
+      role: ClusterNodeDetailsRoleEnum.Primary,
       slots: ['5461-10922'],
-      health: 'online' as HealthStatus,
+      health: ClusterNodeDetailsHealthEnum.Online,
       totalKeys: 0,
       usedMemory: 38448896,
       opsPerSecond: 0,

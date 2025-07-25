@@ -27,7 +27,7 @@ export interface IResizeEvent {
   height: number
 }
 
-export interface ITableColumn {
+export interface ITableColumn<T = any> {
   id: string
   label: string | ReactNode
   minWidth?: number
@@ -45,8 +45,8 @@ export interface ITableColumn {
   alignment?: TableCellAlignment
   textAlignment?: TableCellTextAlignment
   render?: (
-    cellData?: any,
-    columnItem?: any,
+    cellData: any,
+    columnItem: T,
     expanded?: boolean,
     rowIndex?: number,
   ) => any

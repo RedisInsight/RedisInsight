@@ -24,7 +24,7 @@ import {
 } from 'uiSrc/components/base/forms/buttons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
-import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/z-set/dto'
+import { CreateZSetWithExpireDto } from 'uiSrc/api-client'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 import { AddZsetFormConfig as config } from '../constants/fields-config'
 

@@ -21,7 +21,7 @@ import {
   MOCK_TRUNCATED_BUFFER_VALUE,
   MOCK_TRUNCATED_STRING_VALUE,
 } from 'uiSrc/mocks/data/bigString'
-import { ConsumerDto } from 'apiSrc/modules/browser/stream/dto'
+import { ConsumerDto } from 'uiSrc/api-client'
 import ConsumersViewWrapper, { Props } from './ConsumersViewWrapper'
 import ConsumersView, { Props as ConsumersViewProps } from './ConsumersView'
 
@@ -48,10 +48,10 @@ jest.mock('./ConsumersView', () => ({
   default: jest.fn(),
 }))
 
-const mockConsumerName = 'group'
 const mockConsumers: ConsumerDto[] = [
   {
     name: {
+      // @ts-ignore
       ...bufferToString('test'),
       viewValue: 'test',
     },
@@ -60,6 +60,7 @@ const mockConsumers: ConsumerDto[] = [
   },
   {
     name: {
+      // @ts-ignore
       ...bufferToString('test2'),
       viewValue: 'test2',
     },
@@ -73,7 +74,7 @@ const mockConsumersView = jest.fn((props: ConsumersViewProps) => (
     <button
       type="button"
       data-testid="select-consumer-btn"
-      onClick={() => props?.onSelectConsumer?.({ name: mockConsumerName })}
+      onClick={() => props?.onSelectConsumer?.({ rowData: undefined })}
     >
       some consumer name
     </button>
@@ -89,7 +90,7 @@ const mockConsumersView = jest.fn((props: ConsumersViewProps) => (
 
 describe('ConsumersViewWrapper', () => {
   beforeAll(() => {
-    ConsumersView.mockImplementation(mockConsumersView)
+    jest.mocked(ConsumersView).mockImplementation(mockConsumersView)
   })
 
   it('should render', () => {
@@ -113,7 +114,7 @@ describe('ConsumersViewWrapper', () => {
 
     expect(store.getActions()).toEqual([
       ...afterRenderActions,
-      setSelectedConsumer(),
+      setSelectedConsumer(undefined),
       loadConsumerGroups(false),
     ])
   })

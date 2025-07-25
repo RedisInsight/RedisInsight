@@ -17,7 +17,7 @@ import {
 import { EMPTY_COMMAND } from 'uiSrc/constants'
 import { CommandExecutionType, ResultsMode } from 'uiSrc/slices/interfaces'
 import { setDbIndexState } from 'uiSrc/slices/app/context'
-import { SendClusterCommandDto } from 'apiSrc/modules/cli/dto/cli.dto'
+import { SendCommandDto as SendClusterCommandDto } from 'uiSrc/api-client'
 import reducer, {
   initialState,
   sendWBCommand,
@@ -614,6 +614,7 @@ describe('workbench results slice', () => {
       const commandId = `${Date.now()}`
       const options: SendClusterCommandDto = {
         command: 'keys *',
+        // @ts-expect-error TODO: check type mismatch
         nodeOptions: {
           host: 'localhost',
           port: 7000,

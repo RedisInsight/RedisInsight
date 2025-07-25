@@ -14,7 +14,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
-import { CreateStreamDto } from 'apiSrc/modules/browser/stream/dto'
+import { CreateStreamDto } from 'uiSrc/api-client'
 import AddKeyFooter from '../AddKeyFooter/AddKeyFooter'
 
 import styles from './styles.module.scss'
@@ -69,7 +69,7 @@ const AddKeyStream = (props: Props) => {
 
   const submitData = (): void => {
     const data: CreateStreamDto = {
-      keyName: stringToBuffer(keyName),
+      keyName: stringToBuffer(keyName) as any,
       entries: [
         {
           id: entryID,

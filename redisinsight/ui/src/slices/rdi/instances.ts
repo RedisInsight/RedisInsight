@@ -11,12 +11,13 @@ import {
   Maybe,
   Nullable,
 } from 'uiSrc/utils'
-import { Rdi as RdiInstanceResponse } from 'apiSrc/modules/rdi/models/rdi'
+import { Rdi as RdiInstanceResponse } from 'uiSrc/api-client'
 
 import { AppDispatch, RootState } from '../store'
 import {
   addErrorNotification,
   addMessageNotification,
+  IAddInstanceErrorPayload,
 } from '../app/notifications'
 import {
   IErrorData,
@@ -33,13 +34,14 @@ export const initialState: InitialStateRdiInstances = {
     name: '',
     url: '',
     version: '',
-    lastConnection: new Date(),
+    lastConnection: new Date().toString(),
     loading: false,
     error: '',
   },
   loadingChanging: false,
   errorChanging: '',
   changedSuccessfully: false,
+  isPipelineLoaded: false,
 }
 
 // A slice for recipes
@@ -120,6 +122,7 @@ const instancesSlice = createSlice({
       state,
       { payload }: { payload: Nullable<RdiInstance> },
     ) => {
+      // @ts-expect-error TODO: check if this is needed
       state.editedInstance.data = payload
     },
 
@@ -208,7 +211,7 @@ export function fetchInstancesAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(loadInstancesFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
     }
   }
 }
@@ -245,7 +248,7 @@ export function createInstanceAction(
       dispatch(defaultInstanceChangingFailure(errorMessage))
       const errorData = error?.response?.data as IErrorData
       onFail?.(errorData?.errorCode || errorData?.error)
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
     }
   }
 }
@@ -280,7 +283,7 @@ export function editInstanceAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(defaultInstanceChangingFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
     }
   }
 }
@@ -328,7 +331,7 @@ export function deleteInstancesAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(setDefaultInstanceFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
     }
   }
 }
@@ -354,7 +357,7 @@ export function fetchConnectedInstanceAction(
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
       dispatch(setConnectedInstanceFailure(errorMessage))
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
     }
   }
 }
@@ -381,7 +384,12 @@ export function checkConnectToRdiInstanceAction(
       const errorMessage = getApiErrorMessage(error)
 
       dispatch(setDefaultInstanceFailure(errorMessage))
-      dispatch(addErrorNotification({ ...error, instanceId: id }))
+      dispatch(
+        addErrorNotification({
+          ...error,
+          instanceId: id,
+        } as IAddInstanceErrorPayload),
+      )
       onFailAction?.()
     }
   }

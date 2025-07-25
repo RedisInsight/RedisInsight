@@ -21,7 +21,7 @@ import {
   GetHashFieldsResponse,
   AddFieldsToHashDto,
   UpdateHashFieldsTtlDto,
-} from 'apiSrc/modules/browser/hash/dto'
+} from 'uiSrc/api-client'
 import {
   deleteKeyFromList,
   deleteSelectedKeySuccess,
@@ -34,6 +34,7 @@ import { HashField, RedisResponseBuffer, StateHash } from '../interfaces'
 import {
   addErrorNotification,
   addMessageNotification,
+  IAddInstanceErrorPayload,
 } from '../app/notifications'
 
 export const initialState: StateHash = {
@@ -258,8 +259,8 @@ export function fetchHashFields(
         onSuccess?.(data)
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(loadHashFieldsFailure(errorMessage))
     }
   }
@@ -295,7 +296,7 @@ export function refreshHashFieldsAction(
         dispatch(loadHashFieldsSuccess(data))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
       dispatch(loadHashFieldsFailure(errorMessage))
     }
   }
@@ -332,8 +333,8 @@ export function fetchMoreHashFields(
         dispatch(loadMoreHashFieldsSuccess(data))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(loadMoreHashFieldsFailure(errorMessage))
     }
   }
@@ -386,8 +387,8 @@ export function deleteHashFields(
         }
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(removeHashFieldsFailure(errorMessage))
     }
   }
@@ -423,8 +424,8 @@ export function addHashFieldsAction(
       if (onFailAction) {
         onFailAction()
       }
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(updateValueFailure(errorMessage))
     }
   }
@@ -467,8 +468,8 @@ export function updateHashFieldsAction(
         onSuccessAction?.()
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(updateValueFailure(errorMessage))
       onFailAction?.()
     }
@@ -531,8 +532,8 @@ export function updateHashTTLAction(
         dispatch(updateFieldsInList(data.fields as any))
       }
     } catch (error) {
-      const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      const errorMessage = getApiErrorMessage(error as IAddInstanceErrorPayload)
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(updateValueFailure(errorMessage))
       onFailAction?.()
     }

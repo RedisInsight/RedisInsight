@@ -3,7 +3,7 @@ import { AxiosError } from 'axios'
 import { ApiEndpoints } from 'uiSrc/constants'
 import { Vote } from 'uiSrc/constants/recommendations'
 import { apiService } from 'uiSrc/services'
-import { addErrorNotification } from 'uiSrc/slices/app/notifications'
+import { addErrorNotification, IAddInstanceErrorPayload } from 'uiSrc/slices/app/notifications'
 import {
   StateDatabaseAnalysis,
   DatabaseAnalysisViewTab,
@@ -12,7 +12,7 @@ import { getApiErrorMessage, getUrl, isStatusSuccessful } from 'uiSrc/utils'
 import {
   DatabaseAnalysis,
   ShortDatabaseAnalysis,
-} from 'apiSrc/modules/database-analysis/models'
+} from 'uiSrc/api-client'
 
 import { AppDispatch, RootState } from '../store'
 
@@ -139,7 +139,7 @@ export function fetchDBAnalysisAction(
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(getDBAnalysisError(errorMessage))
       onFailAction?.()
     }
@@ -176,7 +176,7 @@ export function putRecommendationVote(
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(setRecommendationVoteError(errorMessage))
       onFailAction?.()
     }
@@ -204,7 +204,7 @@ export function fetchDBAnalysisReportsHistory(
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(loadDBAnalysisReportsError(errorMessage))
       onFailAction?.()
     }
@@ -237,7 +237,7 @@ export function createNewAnalysis(
     } catch (_err) {
       const error = _err as AxiosError
       const errorMessage = getApiErrorMessage(error)
-      dispatch(addErrorNotification(error))
+      dispatch(addErrorNotification(error as IAddInstanceErrorPayload))
       dispatch(getDBAnalysisError(errorMessage))
       onFailAction?.()
     }

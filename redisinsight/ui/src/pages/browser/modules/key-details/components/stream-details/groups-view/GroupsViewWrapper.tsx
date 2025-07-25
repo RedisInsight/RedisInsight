@@ -41,7 +41,7 @@ import {
   ConsumerDto,
   ConsumerGroupDto,
   UpdateConsumerGroupDto,
-} from 'apiSrc/modules/browser/stream/dto'
+} from 'uiSrc/api-client'
 
 import GroupsView from './GroupsView'
 
@@ -49,6 +49,15 @@ import styles from './GroupsView/styles.module.scss'
 
 export interface IConsumerGroup extends ConsumerGroupDto {
   editing: boolean
+  name: ConsumerGroupDto['name'] & {
+    viewValue?: string
+  }
+  greatestPendingId: ConsumerGroupDto['greatestPendingId'] & {
+    viewValue?: string
+  }
+  smallestPendingId: ConsumerGroupDto['smallestPendingId'] & {
+    viewValue?: string
+  }
 }
 
 const suffix = '_stream_group'
@@ -101,14 +110,17 @@ const GroupsViewWrapper = (props: Props) => {
       ...item,
       editing: false,
       name: {
+        // @ts-ignore
         ...item.name,
         viewValue: bufferToString(item.name),
       },
       greatestPendingId: {
+        // @ts-ignore
         ...item.greatestPendingId,
         viewValue: bufferToString(item.greatestPendingId),
       },
       smallestPendingId: {
+        // @ts-ignore
         ...item.smallestPendingId,
         viewValue: bufferToString(item.smallestPendingId),
       },
@@ -184,7 +196,7 @@ const GroupsViewWrapper = (props: Props) => {
     }
   }
 
-  const handleApplyEditId = (groupName: RedisResponseBuffer) => {
+  const handleApplyEditId = (groupName: any) => {
     if (!!groupName?.data?.length && !idError && selectedKey) {
       const data: UpdateConsumerGroupDto = {
         keyName: selectedKey,

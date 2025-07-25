@@ -48,11 +48,6 @@ module.exports = {
             group: 'internal',
             position: 'after',
           },
-          {
-            pattern: 'apiSrc/**',
-            group: 'internal',
-            position: 'after',
-          },
         ],
         warnOnUnassignedImports: true,
         pathGroupsExcludedImportTypes: ['builtin'],

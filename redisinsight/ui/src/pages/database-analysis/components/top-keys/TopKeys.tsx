@@ -5,7 +5,7 @@ import { Nullable } from 'uiSrc/utils'
 import { TableLoader } from 'uiSrc/pages/database-analysis/components'
 import { TextBtn } from 'uiSrc/pages/database-analysis/components/base/TextBtn'
 import { Title } from 'uiSrc/components/base/text/Title'
-import { DatabaseAnalysis } from 'apiSrc/modules/database-analysis/models'
+import { DatabaseAnalysis } from 'uiSrc/api-client'
 
 import Table from './Table'
 

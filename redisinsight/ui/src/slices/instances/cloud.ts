@@ -20,7 +20,10 @@ import {
   LoadedCloud,
   OAuthSocialAction,
 } from '../interfaces'
-import { addErrorNotification } from '../app/notifications'
+import {
+  addErrorNotification,
+  IAddInstanceErrorPayload,
+} from '../app/notifications'
 import { AppDispatch, RootState } from '../store'
 
 export const initialState: InitialStateCloud = {
@@ -236,7 +239,7 @@ export function fetchSubscriptionsRedisCloud(
       const err = getAxiosError(error as EnhancedAxiosError)
 
       dispatch(loadSubscriptionsRedisCloudFailure(errorMessage))
-      dispatch(addErrorNotification(err))
+      dispatch(addErrorNotification(err as IAddInstanceErrorPayload))
       onFailAction?.()
     }
   }
@@ -270,7 +273,7 @@ export function fetchAccountRedisCloud(
       const err = getAxiosError(error as EnhancedAxiosError)
 
       dispatch(loadAccountRedisCloudFailure(errorMessage))
-      dispatch(addErrorNotification(err))
+      dispatch(addErrorNotification(err as IAddInstanceErrorPayload))
     }
   }
 }
@@ -311,7 +314,7 @@ export function fetchInstancesRedisCloud(
       const err = getAxiosError(error as EnhancedAxiosError)
 
       dispatch(loadInstancesRedisCloudFailure(errorMessage))
-      dispatch(addErrorNotification(err))
+      dispatch(addErrorNotification(err as IAddInstanceErrorPayload))
     }
   }
 }
@@ -351,7 +354,11 @@ export function addInstancesRedisCloud(
           ...ApiEncryptionErrors,
         )
         if (encryptionErrors.length) {
-          dispatch(addErrorNotification(encryptionErrors[0]))
+          dispatch(
+            addErrorNotification(
+              encryptionErrors[0] as IAddInstanceErrorPayload,
+            ),
+          )
         }
         dispatch(createInstancesRedisCloudSuccess(data))
       }
@@ -360,7 +367,7 @@ export function addInstancesRedisCloud(
       const err = getAxiosError(error as EnhancedAxiosError)
 
       dispatch(createInstancesRedisCloudFailure(errorMessage))
-      dispatch(addErrorNotification(err))
+      dispatch(addErrorNotification(err as IAddInstanceErrorPayload))
     }
   }
 }

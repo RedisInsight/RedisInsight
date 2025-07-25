@@ -1,5 +1,4 @@
 import { cloneDeep } from 'lodash'
-import { AxiosError } from 'axios'
 import { configureStore } from '@reduxjs/toolkit'
 import { getConfig } from 'uiSrc/config'
 import {
@@ -23,9 +22,14 @@ import {
 import {
   addErrorNotification,
   addMessageNotification,
+  IAddInstanceErrorPayload,
 } from 'uiSrc/slices/app/notifications'
 import successMessages from 'uiSrc/components/notifications/success-messages'
-import { SearchHistoryItem, SearchMode } from 'uiSrc/slices/interfaces/keys'
+import {
+  KeysStore,
+  SearchHistoryItem,
+  SearchMode,
+} from 'uiSrc/slices/interfaces/keys'
 import {
   resetBrowserTree,
   setBrowserSelectedKey,
@@ -36,16 +40,16 @@ import {
   setEditorType,
   setIsWithinThreshold,
 } from 'uiSrc/slices/browser/rejson'
-import { EditorType } from 'uiSrc/slices/interfaces'
-import { CreateHashWithExpireDto } from 'apiSrc/modules/browser/hash/dto'
+import { EditorType, RedisString } from 'uiSrc/slices/interfaces'
 import {
+  CreateHashWithExpireDto,
   CreateListWithExpireDto,
-  ListElementDestination,
-} from 'apiSrc/modules/browser/list/dto'
-import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/rejson-rl/dto'
-import { CreateSetWithExpireDto } from 'apiSrc/modules/browser/set/dto'
-import { CreateZSetWithExpireDto } from 'apiSrc/modules/browser/z-set/dto'
-import { SetStringWithExpireDto } from 'apiSrc/modules/browser/string/dto'
+  CreateListWithExpireDtoDestinationEnum as ListElementDestination,
+  CreateRejsonRlWithExpireDto,
+  CreateSetWithExpireDto,
+  CreateZSetWithExpireDto,
+  SetStringWithExpireDto,
+} from 'uiSrc/api-client'
 import { getString, getStringSuccess } from '../../browser/string'
 import reducer, {
   addHashKey,
@@ -141,7 +145,7 @@ describe('keys slice', () => {
       const nextState = initialState
 
       // Act
-      const result = reducer(undefined, {})
+      const result = reducer(undefined, {} as any)
 
       // Assert
       expect(result).toEqual(nextState)
@@ -863,7 +867,7 @@ describe('keys slice', () => {
         data: {
           keys: [{ name: data.key }],
         },
-      }
+      } as KeysStore
       const state = {
         ...initialState,
         data: {
@@ -894,7 +898,7 @@ describe('keys slice', () => {
         data: {
           keys: [{ name: key }],
         },
-      }
+      } as KeysStore
       const state = {
         ...initialState,
         data: {
@@ -1220,7 +1224,7 @@ describe('keys slice', () => {
         // Assert
         const expectedActions = [
           loadKeys(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           loadKeysFailure(errorMessage),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1298,7 +1302,7 @@ describe('keys slice', () => {
         // Assert
         const expectedActions = [
           loadMoreKeys(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           loadMoreKeysFailure(errorMessage),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1351,7 +1355,7 @@ describe('keys slice', () => {
         // Assert
         const expectedActions = [
           defaultSelectedKeyAction(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           defaultSelectedKeyActionFailure(errorMessage),
         ]
         expect(store.getActions()).toEqual(expectedActions)
@@ -1375,7 +1379,7 @@ describe('keys slice', () => {
         // Assert
         const expectedActions = [
           defaultSelectedKeyAction(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
           defaultSelectedKeyActionFailure(errorMessage),
           resetKeyInfo(),
           setBrowserSelectedKey(null),
@@ -1501,7 +1505,7 @@ describe('keys slice', () => {
         const expectedActions = [
           refreshKeyInfo(),
           refreshKeyInfoFail(),
-          addErrorNotification(responsePayload as AxiosError),
+          addErrorNotification(responsePayload as IAddInstanceErrorPayload),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })
@@ -1820,6 +1824,7 @@ describe('keys slice', () => {
 
           const testStore = configureStore({
             reducer: rootReducer,
+            // @ts-ignore
             preloadedState: initialStateWithColumns,
           })
 
@@ -1856,7 +1861,7 @@ describe('keys slice', () => {
           // Act
           await testStore.dispatch<any>(
             fetchKeysMetadata(
-              data.map(({ name }) => ({ name })),
+              data.map(({ name }) => ({ name })) as unknown as RedisString[],
               null,
               controller.signal,
               onSuccessMock,
@@ -1866,10 +1871,9 @@ describe('keys slice', () => {
           const expectedData = {
             keys: data.map(({ name }) => ({ name })),
             type: undefined,
+            includeTTL: shownColumns.includes(BrowserColumns.TTL),
+            includeSize: shownColumns.includes(BrowserColumns.Size),
           }
-
-          expectedData.includeTTL = shownColumns.includes(BrowserColumns.TTL)
-          expectedData.includeSize = shownColumns.includes(BrowserColumns.Size)
 
           expect(apiServiceMock).toBeCalledWith(
             '/databases//keys/get-metadata',
@@ -1898,6 +1902,7 @@ describe('keys slice', () => {
 
           const testStore = configureStore({
             reducer: rootReducer,
+            // @ts-ignore
             preloadedState: initialStateWithColumns,
           })
 
@@ -1937,7 +1942,7 @@ describe('keys slice', () => {
           // Act
           await testStore.dispatch<any>(
             fetchKeysMetadataTree(
-              data.map(({ name }, i) => [i, name]),
+              data.map(({ name }, i) => [i, name]) as unknown as RedisString[],
               null,
               controller.signal,
               onSuccessMock,
@@ -1947,10 +1952,9 @@ describe('keys slice', () => {
           const expectedData = {
             keys: data.map(({ name }) => name),
             type: undefined,
+            includeTTL: shownColumns.includes(BrowserColumns.TTL),
+            includeSize: shownColumns.includes(BrowserColumns.Size),
           }
-
-          expectedData.includeTTL = shownColumns.includes(BrowserColumns.TTL)
-          expectedData.includeSize = shownColumns.includes(BrowserColumns.Size)
 
           // Assert
           expect(apiServiceMock).toBeCalledWith(
@@ -1968,13 +1972,13 @@ describe('keys slice', () => {
       it('updateKeyList should be called', async () => {
         // Act
         await store.dispatch<any>(
-          addKeyIntoList({ key: 'key', keyType: 'hash' }),
+          addKeyIntoList({ key: 'key', keyType: KeyTypes.Hash }),
         )
 
         // Assert
         const expectedActions = [
           resetBrowserTree(),
-          updateKeyList({ keyName: 'key', keyType: 'hash' }),
+          updateKeyList({ keyName: 'key', keyType: KeyTypes.Hash }),
         ]
         expect(store.getActions()).toEqual(expectedActions)
       })

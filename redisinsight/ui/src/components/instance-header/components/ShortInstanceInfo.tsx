@@ -14,8 +14,8 @@ import { Theme } from 'uiSrc/constants'
 import { ThemeContext } from 'uiSrc/contexts/themeContext'
 import { FlexItem, Row } from 'uiSrc/components/base/layout/flex'
 import { Text } from 'uiSrc/components/base/text'
+import { AdditionalRedisModule } from 'uiSrc/api-client'
 import { AllIconsType, RiIcon } from 'uiSrc/components/base/icons/RiIcon'
-import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 import styles from './styles.module.scss'
 
 export interface Props {
@@ -37,7 +37,7 @@ const ShortInstanceInfo = ({ info, databases, modules }: Props) => {
 
   const getIcon = (name: string) => {
     const icon: AllIconsType =
-      DEFAULT_MODULES_INFO[name]?.[
+      DEFAULT_MODULES_INFO[name as keyof typeof DEFAULT_MODULES_INFO]?.[
         theme === Theme.Dark ? 'iconDark' : 'iconLight'
       ]
     if (icon) {
@@ -106,7 +106,9 @@ const ShortInstanceInfo = ({ info, databases, modules }: Props) => {
               <span>
                 {truncateText(
                   getModule(name)?.name ||
-                    DATABASE_LIST_MODULES_TEXT[name] ||
+                    DATABASE_LIST_MODULES_TEXT[
+                      name as keyof typeof DATABASE_LIST_MODULES_TEXT
+                    ] ||
                     name,
                   50,
                 )}

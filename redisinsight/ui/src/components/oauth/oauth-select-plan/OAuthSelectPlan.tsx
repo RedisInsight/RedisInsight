@@ -27,7 +27,7 @@ import { Title } from 'uiSrc/components/base/text/Title'
 import { ColorText, Text } from 'uiSrc/components/base/text'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
 import { RiSelect } from 'uiSrc/components/base/forms/select/RiSelect'
-import { CloudSubscriptionPlanResponse } from 'apiSrc/modules/cloud/subscription/dto'
+import { CloudSubscriptionPlanResponse } from 'uiSrc/api-client'
 import { OAuthProvider, OAuthProviders } from './constants'
 import styles from './styles.module.scss'
 

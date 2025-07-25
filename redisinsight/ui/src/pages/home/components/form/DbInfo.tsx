@@ -13,9 +13,8 @@ import {
   Group as ListGroup,
   Item as ListGroupItem,
 } from 'uiSrc/components/base/layout/list'
+import { Endpoint, AdditionalRedisModule } from 'uiSrc/api-client'
 import { RiIcon } from 'uiSrc/components/base/icons/RiIcon'
-import { Endpoint } from 'apiSrc/common/models'
-import { AdditionalRedisModule } from 'apiSrc/modules/database/models/additional.redis.module'
 
 import styles from '../styles.module.scss'
 

@@ -15,7 +15,7 @@ import {
   SecondaryButton,
 } from 'uiSrc/components/base/forms/buttons'
 import { FormField } from 'uiSrc/components/base/forms/FormField'
-import { CreateRejsonRlWithExpireDto } from 'apiSrc/modules/browser/rejson-rl/dto'
+import { CreateRejsonRlWithExpireDto } from 'uiSrc/api-client'
 
 import { AddJSONFormConfig as config } from '../constants/fields-config'
 

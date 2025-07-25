@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { last, mergeWith, toNumber } from 'lodash'
-import { RedisResponseBuffer } from 'uiSrc/slices/interfaces'
+import { RedisResponseBuffer, RedisString } from 'uiSrc/slices/interfaces'
 
 import {
   bufferToString,
@@ -38,7 +38,7 @@ import { decompressingBuffer } from 'uiSrc/utils/decompressors'
 import { FormattedValue } from 'uiSrc/pages/browser/modules/key-details/shared'
 import { FormatedDate } from 'uiSrc/components'
 import { Text } from 'uiSrc/components/base/text'
-import { StreamEntryDto } from 'apiSrc/modules/browser/stream/dto'
+import { StreamEntryDto, StreamEntryFieldDto } from 'uiSrc/api-client'
 import StreamDataView from './StreamDataView'
 import styles from './StreamDataView/styles.module.scss'
 import {
@@ -185,11 +185,12 @@ const StreamDataViewWrapper = (props: Props) => {
       },
       ...columnsNames,
       actions: '',
-    }
+    } as unknown as StreamEntryDto
     setEntries([headerRow, ...streamEntries])
     setColumns([
       idColumn,
       ...Object.keys(columnsNames).map((field) =>
+        // @ts-ignore
         getTemplateColumn(field, columnsNames[field]?.id),
       ),
       actionsColumn,
@@ -209,7 +210,7 @@ const StreamDataViewWrapper = (props: Props) => {
   }, [])
 
   const formatItem = useCallback(
-    (field) => ({
+    (field: StreamEntryFieldDto) => ({
       name: field.name,
       value: field.value,
     }),
@@ -231,8 +232,8 @@ const StreamDataViewWrapper = (props: Props) => {
     })
   }
 
-  const handleDeleteEntry = (entryId = '') => {
-    dispatch(deleteStreamEntry(key, [entryId], onSuccessRemoved))
+  const handleDeleteEntry = (entryId: RedisString = '') => {
+    dispatch(deleteStreamEntry(key, [entryId as string], onSuccessRemoved))
     closePopover()
   }
 

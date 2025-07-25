@@ -8,7 +8,7 @@ import styles from './styles.module.scss'
 const UploadWarning = () => (
   <Row className={styles.wrapper} gap="s" align="center">
     <FlexItem>
-      <RiIcon type="IndicatorErrorIcon" />
+      <RiIcon color="attention500" type="IndicatorErrorIcon" />
     </FlexItem>
     <FlexItem>
       <Text className={styles.warningMessage}>

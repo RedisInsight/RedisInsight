@@ -58,7 +58,10 @@ const pluginsAssetsUri = posix.join(
   'plugins',
 );
 
-const socketProxyPath = trim(process.env.RI_SOCKET_PROXY_PATH, '/');
+const socketProxyPath = trim(
+  process.env.RI_SOCKET_PROXY_PATH ?? process.env.RI_PROXY_PATH,
+  '/',
+);
 
 const socketPath = posix.join('/', socketProxyPath, 'socket.io');
 

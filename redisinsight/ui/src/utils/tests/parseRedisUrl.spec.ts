@@ -168,10 +168,10 @@ const parseRedisUrlTests: Array<[string, any]> = [
       ...defaultRedisParams,
       host: '::1',
       port: 6379,
-      hostname: '[::1]:6379',
+      hostname: '::1:6379',
     },
   ],
-  ['redis://[::1]', { ...defaultRedisParams, host: '::1', hostname: '[::1]' }],
+  ['redis://[::1]', { ...defaultRedisParams, host: '::1', hostname: '::1' }],
   [
     'rediss://user:pa@ss@[2001:db8::1]:6380/2',
     {
@@ -180,7 +180,7 @@ const parseRedisUrlTests: Array<[string, any]> = [
       password: 'pa@ss',
       host: '2001:db8::1',
       port: 6380,
-      hostname: '[2001:db8::1]:6380',
+      hostname: '2001:db8::1:6380',
       dbNumber: 2,
     },
   ],

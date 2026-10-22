@@ -27,13 +27,14 @@ const parseRedisUrl = (urlString: string = ''): Nullable<ParsedRedisUrl> => {
 
   if (pureMatch) {
     const [, host, port] = pureMatch
+    const unwrappedHost = unwrapIpv6Host(host)
     return {
       protocol: 'redis',
       username: '',
       password: '',
-      host: unwrapIpv6Host(host),
+      host: unwrappedHost,
       port: port ? parseInt(port, 10) : undefined,
-      hostname: port ? `${host}:${port}` : host,
+      hostname: port ? `${unwrappedHost}:${port}` : unwrappedHost,
       dbNumber: undefined,
     }
   }
@@ -50,13 +51,16 @@ const parseRedisUrl = (urlString: string = ''): Nullable<ParsedRedisUrl> => {
   const [, protocol, userInfo, host, port, dbNumber] = match
   const [, username, password] = userInfo?.match(/^(.*?)(?::(.*))?$/) || []
 
+  const unwrappedHost = unwrapIpv6Host(host)
+
   return {
     protocol: protocol || 'redis',
     username: username || '',
     password: password || '',
-    host: unwrapIpv6Host(host),
+    host: unwrappedHost,
     port: port ? parseInt(port, 10) : undefined,
-    hostname: port ? `${host}:${port}` : host,
+    // same "host:port" format the API uses for default database names
+    hostname: port ? `${unwrappedHost}:${port}` : unwrappedHost,
     dbNumber: dbNumber ? parseInt(dbNumber, 10) : undefined,
   }
 }

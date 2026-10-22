@@ -3,7 +3,7 @@ import { Maybe, Nullable } from 'uiSrc/utils/types'
 /*
   [redis[s]://]             - Optional Protocol (redis or rediss)
   [username][:password]@    - Optional username and password
-  host                      - Hostname or IP address
+  host                      - Hostname or IP address (IPv6 in square brackets)
   [:port]                   - Optional port
   [/db-number]              - Optional database number
 */
@@ -18,26 +18,30 @@ interface ParsedRedisUrl {
   dbNumber: Maybe<number>
 }
 
+// [::1] => ::1
+const unwrapIpv6Host = (host: string) => host.replace(/^\[(.*)\]$/, '$1')
+
 const parseRedisUrl = (urlString: string = ''): Nullable<ParsedRedisUrl> => {
-  const pureUrlPattern = /^([^:]+):(\d+)$/
+  const pureUrlPattern = /^(\[[^\]]+\]|[^:]+):(\d+)$/
   const pureMatch = urlString.match(pureUrlPattern)
 
   if (pureMatch) {
     const [, host, port] = pureMatch
+    const unwrappedHost = unwrapIpv6Host(host)
     return {
       protocol: 'redis',
       username: '',
       password: '',
-      host,
+      host: unwrappedHost,
       port: port ? parseInt(port, 10) : undefined,
-      hostname: port ? `${host}:${port}` : host,
+      hostname: port ? `${unwrappedHost}:${port}` : unwrappedHost,
       dbNumber: undefined,
     }
   }
 
   // eslint-disable-next-line no-useless-escape
   const redisUrlPattern =
-    /^(redis[s]?):\/\/(?:(.+)?@)?(?:.*@)?([^:\/]+)(?::(\d+))?(?:\/(\d+))?$/
+    /^(redis[s]?):\/\/(?:(.+)?@)?(?:.*@)?(\[[^\]\/]+\]|[^:\/]+)(?::(\d+))?(?:\/(\d+))?$/
   const match = urlString.match(redisUrlPattern)
 
   if (!match) {
@@ -47,13 +51,16 @@ const parseRedisUrl = (urlString: string = ''): Nullable<ParsedRedisUrl> => {
   const [, protocol, userInfo, host, port, dbNumber] = match
   const [, username, password] = userInfo?.match(/^(.*?)(?::(.*))?$/) || []
 
+  const unwrappedHost = unwrapIpv6Host(host)
+
   return {
     protocol: protocol || 'redis',
     username: username || '',
     password: password || '',
-    host,
+    host: unwrappedHost,
     port: port ? parseInt(port, 10) : undefined,
-    hostname: port ? `${host}:${port}` : host,
+    // same "host:port" format the API uses for default database names
+    hostname: port ? `${unwrappedHost}:${port}` : unwrappedHost,
     dbNumber: dbNumber ? parseInt(dbNumber, 10) : undefined,
   }
 }
